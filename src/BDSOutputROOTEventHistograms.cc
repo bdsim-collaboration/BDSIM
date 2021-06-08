@@ -24,6 +24,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBH4DBase.hh"
 #include "BDSBH4D.hh"
 
+#ifndef USE_BOOST
+#include "BDSDebug.hh"
+#include "BDSException.hh"
+#endif
+
 ClassImp(BDSOutputROOTEventHistograms)
 
 BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms()
@@ -175,6 +180,7 @@ G4int BDSOutputROOTEventHistograms::Create3DHistogram(G4String name, G4String ti
   return (G4int)histograms3D.size() - 1;
 }
 
+#ifdef USE_BOOST
 G4int BDSOutputROOTEventHistograms::Create4DHistogram(const G4String& name,
 						      const G4String& title,
 						      const G4String& eScale,
@@ -184,9 +190,6 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(const G4String& name,
 						      unsigned int nzbins, G4double zmin, G4double zmax,
 						      unsigned int nebins, G4double emin, G4double emax)
 {
-
-#ifdef USE_BOOST
-
   std::string nameC   = (std::string)name;
   std::string titleC  = (std::string)title;
   std::string eScaleC = (std::string)eScale;
@@ -215,10 +218,19 @@ G4int BDSOutputROOTEventHistograms::Create4DHistogram(const G4String& name,
 								   nzbins, zmin, zmax));
     }
 
-#endif
-
   return (G4int)histograms4D.size() - 1;
 }
+#else
+G4int BDSOutputROOTEventHistograms::Create4DHistogram(const G4String&, const G4String&, const G4String&,
+						      const std::vector<double>&,
+						      unsigned int, G4double, G4double,
+						      unsigned int, G4double, G4double,
+						      unsigned int, G4double, G4double,
+						      unsigned int, G4double, G4double)
+{
+  throw BDSException(__METHOD_NAME__, "BDSIM compiled without BOOST support -> no 4D histograms.");
+}
+#endif
 
 void BDSOutputROOTEventHistograms::Fill1DHistogram(G4int    histoId,
 						   G4double value,
@@ -244,36 +256,49 @@ void BDSOutputROOTEventHistograms::Fill3DHistogram(G4int    histoId,
   histograms3D[histoId]->Fill(xValue,yValue,zValue,weight);
 }
 
-void BDSOutputROOTEventHistograms::Fill4DHistogram(G4int histoId,
-                            G4double xValue,
-                            G4double yValue,
-                            G4double zValue,
-                            G4double eValue)
-{
 #ifdef USE_BOOST
-    histograms4D[histoId]->Fill_BDSBH4D(xValue, yValue, zValue, eValue);
-#endif
+void BDSOutputROOTEventHistograms::Fill4DHistogram(G4int    histoId,
+						   G4double xValue,
+						   G4double yValue,
+						   G4double zValue,
+						   G4double eValue)
+{
+  histograms4D[histoId]->Fill_BDSBH4D(xValue, yValue, zValue, eValue);
 }
+#else
+void BDSOutputROOTEventHistograms::Fill4DHistogram(G4int,
+						   G4double,
+						   G4double,
+						   G4double,
+						   G4double)
+{
+  throw BDSException(__METHOD_NAME__, "BDSIM compiled without BOOST support -> no 4D histograms.");
+}
+#endif
 
 void BDSOutputROOTEventHistograms::Set3DHistogramBinContent(G4int histoId,
 							    G4int globalBinID,
 							    G4double value)
 {
   histograms3D[histoId]->SetBinContent(globalBinID, value);
-
 }
 
-void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int histoId,
-                                G4int x,
-                                G4int y,
-                                G4int z,
-                                G4int e,
-                                G4double value)
-{
 #ifdef USE_BOOST
-    histograms4D[histoId]->Set_BDSBH4D(x, y, z, e, value);
-#endif
+void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int histoId,
+							    G4int x,
+							    G4int y,
+							    G4int z,
+							    G4int e,
+							    G4double value)
+{
+  histograms4D[histoId]->Set_BDSBH4D(x, y, z, e, value);
 }
+#else
+void BDSOutputROOTEventHistograms::Set4DHistogramBinContent(G4int, G4int, G4int, G4int, G4int, G4double)
+{
+  throw BDSException(__METHOD_NAME__, "BDSIM compiled without BOOST support -> no 4D histograms.");
+}
+#endif
 
 void BDSOutputROOTEventHistograms::AccumulateHistogram3D(G4int histoId,
 							 TH3D* otherHistogram)
