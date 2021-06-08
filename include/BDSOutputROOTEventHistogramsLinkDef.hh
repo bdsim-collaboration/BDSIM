@@ -16,7 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#pragma link C++ class BDSOutputROOTEventHistograms+;
+
+#ifdef USE_BOOST
 #pragma link C++ class boost::use_default+;
 #pragma link C++ class boost::histogram::axis::regular<double>+;
 #pragma link C++ class boost::histogram::histogram<boost::histogram::axis::regular<double>>+;
-#pragma link C++ class BDSOutputROOTEventHistograms+;
+#endif
