@@ -3162,6 +3162,9 @@ This defines a circular (by default) sampler with radius 10 cm positioned with r
 the 2nd instance of the d1 element (zero counting) in the main beam line with a rotation
 about the unit Y axis of :math:`\pi / 4`.
 
+.. note:: samplerplacements have no S coordinate, so the S variable will always be -1 m in
+	  the output (the default unphysical value for easy filtering).
+
 Shape
 *****
 
