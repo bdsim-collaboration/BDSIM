@@ -3138,7 +3138,7 @@ Sampler Visualisation
 The samplers are normally invisible and are built in a parallel world geometry in Geant4. To
 visualise them, the following command should be used in the visualiser::
 
-  /vis/drawVolume worlds
+  /bds/samplers/view
 
 The samplers will appear in semi-transparent green, as well as the curvilinear geometry used
 for coordinate transforms (cylinders).
@@ -3304,10 +3304,8 @@ User Sampler Visualisation
 **************************
 
 Samplers are by default invisible. To visualise the samplerplacement, all samplers should be
-visualised as described in :ref:`sampler-visualisation`. The scene tree can then be explored
-in the visualiser to hide other hidden volumes (such as the 'curvilinear' coordinate transform
-worlds) and other samplers. It is recommended to tick and untick the desired element to see
-it appear and disappear repeatedly.
+visualised as described in :ref:`sampler-visualisation`. It is recommended to tick and untick
+the desired element to see it appear and disappear repeatedly.
 
 .. _scoring:
 

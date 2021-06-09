@@ -53,6 +53,7 @@ New Features
   collimator histograms and summary information with the element definition :code:`markAsCollimator=1`.
 * More colours for default material colours.
 * New units accepted in input (PeV, PJ, GJ, MJ, kJ, J, mJ, uJ, nJ, pJ). J=1, GeV=1.
+* New visualisation command :code:`/bds/samplers/view` to easily view samplers.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+
