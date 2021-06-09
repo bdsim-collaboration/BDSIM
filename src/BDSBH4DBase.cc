@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBH4DBase.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 
 #include "TFile.h"
 
@@ -35,6 +37,49 @@ BDSBH4DBase::BDSBH4DBase():
   h_emin(0), h_emax(0),
   h_entries(0)
 {;}
+
+BDSBH4DBase::BDSBH4DBase(unsigned int nXBinsIn, unsigned int nYBinsIn,
+			 unsigned int nZBinsIn, unsigned int nEBinsIn,
+			 double xMinIn, double xMaxIn, double yMinIn, double yMaxIn,
+			 double zMinIn, double zMaxIn, double eMinIn, double eMaxIn,
+			 const std::string& nameIn,
+			 const std::string& titleIn,
+			 const std::string& escaleIn):
+  h_nxbins(nXBinsIn), h_nybins(nYBinsIn), h_nzbins(nZBinsIn), h_nebins(nEBinsIn),
+  h_xmin(xMinIn), h_xmax(xMaxIn),
+  h_ymin(yMinIn), h_ymax(yMaxIn),
+  h_zmin(zMinIn), h_zmax(zMaxIn),
+  h_emin(eMinIn), h_emax(eMaxIn),
+  h_name(nameIn),
+  h_title(titleIn),
+  h_escale(escaleIn),
+  h_entries(0)
+{;}
+
+BDSBH4DBase::BDSBH4DBase(unsigned int nXBinsIn, unsigned int nYBinsIn, unsigned int nZBinsIn,
+			 double xMinIn, double xMaxIn,
+			 double yMinIn, double yMaxIn,
+			 double zMinIn, double zMaxIn,
+			 const std::string& nameIn,
+			 const std::string& titleIn,
+			 const std::string& escaleIn,
+			 const std::vector<double>& eBinEdgesIn):
+  h_nxbins(nXBinsIn), h_nybins(nYBinsIn), h_nzbins(nZBinsIn),
+  h_xmin(xMinIn), h_xmax(xMaxIn),
+  h_ymin(yMinIn), h_ymax(yMaxIn),
+  h_zmin(zMinIn), h_zmax(zMaxIn),
+  h_name(nameIn),
+  h_title(titleIn),
+  h_escale(escaleIn),
+  h_ebinsedges(eBinEdgesIn),
+  h_entries(0)
+{
+  if (eBinEdgesIn.size() < 2)
+    {throw BDSException(__METHOD_NAME__, "bin edges vector must be at least 2 numbers");}
+  h_nebins = (unsigned int)(eBinEdgesIn.size() - 1);
+  h_emin   = eBinEdgesIn[0];
+  h_emax   = eBinEdgesIn.back();
+}
 
 int BDSBH4DBase::GetNbinsX() const
 {
