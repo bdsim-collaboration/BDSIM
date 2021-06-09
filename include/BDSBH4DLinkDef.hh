@@ -23,6 +23,8 @@ typedef double boost_histogram_storage_type;
 typedef double boost_histogram_storage_type;
 #endif
 
+#include "BDSBH4DTypeDefs.hh"
+
 #pragma link C++ class boost::histogram::histogram<std::__1::tuple<boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default>, boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default> >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > >+;
 #pragma link C++ class tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default> >+;
 #pragma link C++ class boost::histogram::detail::mutex_base<tuple<boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default>,boost::histogram::axis::regular<double,boost::use_default,boost::use_default,boost::use_default> >,boost::histogram::storage_adaptor<vector<boost_histogram_storage_type> >,boost::histogram::detail::null_mutex>+;
@@ -49,5 +51,6 @@ typedef double boost_histogram_storage_type;
 #pragma link C++ class BDSBH4D<boost_histogram_linear>+;
 #pragma link C++ class BDSBH4D<boost_histogram_log>+;
 #pragma link C++ class BDSBH4D<boost_histogram_variable>+;
+
 
 #endif
