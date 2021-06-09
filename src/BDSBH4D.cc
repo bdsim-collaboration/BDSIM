@@ -18,18 +18,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBH4D.hh"
 
-#include <string>
-
 #ifdef USE_BOOST
 #include <boost/format.hpp>
 #endif
 
-
-#include "iostream"
-
-templateClassImp(BDSBH4D)
+#include <string>
+#include <vector>
 
 #ifdef USE_BOOST
+templateClassImp(BDSBH4D)
 
 template <>
 BDSBH4D<boost_histogram_linear>::BDSBH4D()
@@ -84,10 +81,10 @@ BDSBH4D<boost_histogram_variable>::BDSBH4D()
 
 template <>
 BDSBH4D<boost_histogram_linear>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
-                 unsigned int nxbins, double xmin, double xmax,
-                 unsigned int nybins, double ymin, double ymax,
-                 unsigned int nzbins, double zmin, double zmax,
-                 unsigned int nebins, double emin, double emax)
+					 unsigned int nxbins, double xmin, double xmax,
+					 unsigned int nybins, double ymin, double ymax,
+					 unsigned int nzbins, double zmin, double zmax,
+					 unsigned int nebins, double emin, double emax)
 {
     h = boost::histogram::make_histogram_with(std::vector<double>(),boost::histogram::axis::regular<double> {nxbins, xmin, xmax, "x"},
                                               boost::histogram::axis::regular<double> {nybins, ymin, ymax, "y"},
@@ -126,7 +123,8 @@ BDSBH4D<boost_histogram_log>::BDSBH4D(std::string& name, std::string& title, con
 
 
 template <>
-BDSBH4D<boost_histogram_variable>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,std::vector<double> eBinsEdges,
+BDSBH4D<boost_histogram_variable>::BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
+					   std::vector<double> eBinsEdges,
                                       unsigned int nxbins, double xmin, double xmax,
                                       unsigned int nybins, double ymin, double ymax,
                                       unsigned int nzbins, double zmin, double zmax)
@@ -145,6 +143,9 @@ BDSBH4D<boost_histogram_variable>::BDSBH4D(std::string& name, std::string& title
 
 }
 
+template<class T>
+BDSBH4D<T>::~BDSBH4D()
+{;}
 
 template <class T>
 void BDSBH4D<T>::Initialize(std::string& name, std::string& title, const std::string& eScale,
@@ -171,7 +172,8 @@ void BDSBH4D<T>::Initialize(std::string& name, std::string& title, const std::st
 }
 
 template <class T>
-void BDSBH4D<T>::Initialize(std::string& name, std::string& title, const std::string& eScale,std::vector<double> eBinsEdges,
+void BDSBH4D<T>::Initialize(std::string& name, std::string& title, const std::string& eScale,
+			    std::vector<double> eBinsEdges,
                             unsigned int nxbins, double xmin, double xmax,
                             unsigned int nybins, double ymin, double ymax,
                             unsigned int nzbins, double zmin, double zmax){
@@ -195,8 +197,8 @@ void BDSBH4D<T>::Initialize(std::string& name, std::string& title, const std::st
 }
 
 template <class T>
-void BDSBH4D<T>::to_PyROOT(const std::string& filename, const std::string& histo_name) {
-
+void BDSBH4D<T>::to_PyROOT(const std::string& filename, const std::string& histo_name)
+{
     const char* filename_char = filename.c_str();
 
     std::string path ="Event/MergedHistograms/" +histo_name;
@@ -230,13 +232,15 @@ void BDSBH4D<T>::to_PyROOT(const std::string& filename, const std::string& histo
 }
 
 template <class T>
-void BDSBH4D<T>::Reset_BDSBH4D() {
+void BDSBH4D<T>::Reset_BDSBH4D()
+{
     h.reset();
     h_entries = 0;
 }
 
 template <class T>
-BDSBH4D<T>* BDSBH4D<T>::Clone(const char* newname) const {
+BDSBH4D<T>* BDSBH4D<T>::Clone(const char* newname) const
+{
     auto clone = new BDSBH4D<T>(*this);
     clone->SetName(newname);
     return clone;
@@ -246,7 +250,8 @@ template <class T>
 void BDSBH4D<T>::Fill_BDSBH4D(double xValue,
                    double yValue,
                    double zValue,
-                   double eValue) {
+                   double eValue)
+{
     h(xValue, yValue, zValue, eValue);
 }
 
@@ -255,7 +260,8 @@ void BDSBH4D<T>::Set_BDSBH4D(int x,
                   int y,
                   int z,
                   int e,
-                  double value) {
+                  double value)
+{
     h.at(x, y, z, e) = value;
 }
 
@@ -264,24 +270,27 @@ void BDSBH4D<T>::SetError_BDSBH4D(int x,
                        int y,
                        int z,
                        int e,
-                       double value) {
+                       double value)
+{
     h_err.at(x, y, z, e) = value;
 }
 
 template <class T>
-void BDSBH4D<T>::Add_BDSBH4D(BDSBH4DBase* otherHistogram) {
+void BDSBH4D<T>::Add_BDSBH4D(BDSBH4DBase* otherHistogram)
+{
     auto tmp = dynamic_cast<BDSBH4D<T>*>(otherHistogram);
     h += tmp->h;
 }
 
 template <class T>
-double BDSBH4D<T>::At(int x, int y, int z, int e) {
+double BDSBH4D<T>::At(int x, int y, int z, int e)
+{
     return h.at(x, y, z, e);
 }
 
 template <class T>
-double BDSBH4D<T>::LowBinEdgeAt(int x, int y, int z, int e) {
-
+double BDSBH4D<T>::LowBinEdgeAt(int x, int y, int z, int e)
+{
     std::ostringstream os4;
     for (auto&& i : indexed(h)) {
 
@@ -293,26 +302,26 @@ double BDSBH4D<T>::LowBinEdgeAt(int x, int y, int z, int e) {
 }
 
 template <class T>
-double BDSBH4D<T>::HighBinEdgeAt(int x, int y, int z, int e) {
-
+double BDSBH4D<T>::HighBinEdgeAt(int x, int y, int z, int e)
+{
     std::ostringstream os4;
-    for (auto&& i : indexed(h)) {
-
-        if (i.index(0) == x and i.index(1) == y and i.index(2) == z and i.index(3) == e) {
-            return i.bin(3).upper();
-        }
-    }
+    for (auto&& i : indexed(h))
+      {
+        if (i.index(0) == x and i.index(1) == y and i.index(2) == z and i.index(3) == e)
+	  {return i.bin(3).upper();}
+      }
     return 0;
 }
 
 template <class T>
-double BDSBH4D<T>::AtError(int x, int y, int z, int e) {
+double BDSBH4D<T>::AtError(int x, int y, int z, int e)
+{
     return h_err.at(x, y, z, e);
 }
 
 template <class T>
-void BDSBH4D<T>::Print_BDSBH4D(bool with_zero_values) {
-
+void BDSBH4D<T>::Print_BDSBH4D(bool with_zero_values)
+{
     std::ostringstream os4;
     for (auto&& x : indexed(this->h)) {
 
