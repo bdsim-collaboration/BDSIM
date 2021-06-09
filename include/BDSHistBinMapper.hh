@@ -16,10 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSIM_BDSHISTBINMAPPER_H
-#define BDSIM_BDSHISTBINMAPPER_H
+#ifndef BDSHISTBINMAPPER_H
+#define BDSHISTBINMAPPER_H
 
-#include "BDSBH4DTypedefs.hh"
+#include "BDSBH4DTypeDefs.hh"
 #include "G4ThreeVector.hh"
 
 

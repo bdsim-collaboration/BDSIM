@@ -28,8 +28,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
-#include "BDSBH4DBase.hh"
+
+#ifdef USE_BOOST
 #include "BDSBH4D.hh"
+#include "BDSBH4DBase.hh"
+#include "BDSBH4DTypeDefs.hh"
+#endif
 
 #include <string>
 #include <vector>

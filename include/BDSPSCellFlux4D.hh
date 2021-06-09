@@ -16,11 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSIM_BDSPSCELLFLUX4D_H
-#define BDSIM_BDSPSCELLFLUX4D_H
-#include "BDSBH4DTypedefs.hh"
+#ifndef BDSPSCELLFLUX4D_H
+#define BDSPSCELLFLUX4D_H
+#include "BDSBH4DTypeDefs.hh"
 
 #include "G4PSCellFlux3D.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 
 class BDSHistBinMapper;
 

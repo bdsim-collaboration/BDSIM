@@ -18,12 +18,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBH4D.hh"
 
+#include "TFile.h"
+
 #ifdef USE_BOOST
-#include "BDSBH4dTypeDefs.hh"
+#include "BDSBH4DTypeDefs.hh"
 #include <boost/format.hpp>
 #include <boost/histogram.hpp>
 #endif
 
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
