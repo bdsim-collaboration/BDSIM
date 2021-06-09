@@ -24,6 +24,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 ClassImp(BDSBH4DBase)
 
+BDSBH4DBase::BDSBH4DBase():
+  h_nxbins(0),
+  h_nybins(0),
+  h_nzbins(0),
+  h_nebins(0),
+  h_xmin(0), h_xmax(0),
+  h_ymin(0), h_ymax(0),
+  h_zmin(0), h_zmax(0),
+  h_emin(0), h_emax(0),
+  h_entries(0)
+{;}
+
 int BDSBH4DBase::GetNbinsX() const
 {
   return static_cast<int>(h_nxbins);
