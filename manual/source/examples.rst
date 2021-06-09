@@ -33,6 +33,7 @@ Detailed start-to-finish examples with explanation.
    worked_example_target/worked_example_target
    worked_example_collimation/worked_example_collimation
    worked_example_atf2
+   worked_example_no_accelerator/worked_example_no_accelerator
 
 
 Specific Machines
