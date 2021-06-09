@@ -7,7 +7,7 @@
 # ROOT_LIBRARY_DIR    PATH to the library directory
 # ROOT_EXECUTABLE     executable for root
 
-MESSAGE(STATUS "Looking for ROOT...")
+MESSAGE(STATUS "Looking for ROOT")
 
 if (DEFINED ENV{ROOTSYS})
   set(ROOTSYS $ENV{ROOTSYS})
