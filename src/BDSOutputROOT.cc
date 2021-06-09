@@ -35,7 +35,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTParticleData.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
 
@@ -155,7 +154,7 @@ void BDSOutputROOT::NewFile()
           // set the tree branches
           theEventOutputTree->Branch((collimatorName + ".").c_str(),
                                      "BDSOutputROOTEventCollimator",
-                                     collimatorLocal, 32000, 1);
+                                     collimatorLocal, 32000, 0);
         }
     }
 
