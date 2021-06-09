@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSIM_HISTOGRAMDEF4D_H
-#define BDSIM_HISTOGRAMDEF4D_H
+#ifndef HISTOGRAMDEF4D_H
+#define HISTOGRAMDEF4D_H
 #include "BinSpecification.hh"
 #include "HistogramDef3D.hh"
 

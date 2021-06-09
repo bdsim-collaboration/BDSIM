@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 ClassImp(HistogramDef4D)
 
 HistogramDef4D::HistogramDef4D():
-eBinning(BinSpecification())
+  eBinning(BinSpecification())
 {;}
 
 HistogramDef4D::HistogramDef4D(const std::string&      treeNameIn,
