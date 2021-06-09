@@ -14,6 +14,17 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
 
+V1.6.1 - 2021 / XX / XX
+=======================
+
+* Scoring of the differential flux following either a linear, logarithmic or user-defined energy axis scale.
+
+New Features
+------------
+
+* New scorer type: cellflux4d
+
+
 V1.6.0 - 2021 / XX / XX
 =======================
 
