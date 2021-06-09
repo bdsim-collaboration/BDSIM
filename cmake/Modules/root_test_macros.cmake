@@ -14,8 +14,8 @@ macro(root_test test_name input_args)
     set_tests_properties(${test_name}
       PROPERTIES ENVIRONMENT ROOT_INCLUDE_PATH=${CMAKE_SOURCE_DIR}/include:${CMAKE_SOURCE_DIR}/analysis:${Boost_INCLUDE_DIRS})
   else()
-  set_tests_properties(${test_name}
-    PROPERTIES ENVIRONMENT ROOT_INCLUDE_PATH=${CMAKE_SOURCE_DIR}/include:${CMAKE_SOURCE_DIR}/analysis)
+    set_tests_properties(${test_name}
+      PROPERTIES ENVIRONMENT ROOT_INCLUDE_PATH=${CMAKE_SOURCE_DIR}/include:${CMAKE_SOURCE_DIR}/analysis)
   endif ()
   # unset TESTING_ARGS so only used for this test
   unset(TESTING_ARGS)
