@@ -33,6 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBH4D.hh"
 #include "BDSBH4DBase.hh"
 #include "BDSBH4DTypeDefs.hh"
+#else
+#include <iostream>
 #endif
 
 #include <string>
@@ -81,8 +83,10 @@ TH1* HistogramFactory::CreateHistogram(const HistogramDef* definition,
 	const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
 	if (d)
 	  {result = CreateHistogram4D(d, overRideName, overRideTitle);}
-	break;
+#else
+	std::cerr << "Not compiled with BOOST libraries - no 4D histograms." << std::endl;	
 #endif
+	break;
       }
     default:
       {break;}
