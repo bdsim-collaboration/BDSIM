@@ -22,44 +22,56 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBH4DTypeDefs.hh"
 #include "G4ThreeVector.hh"
 
+/**
+ * @brief Mapping from axis indices to 1D index.
+ * 
+ * @author Eliott Ramoisiaux
+ */
 
 class BDSHistBinMapper
 {
 public:
-    BDSHistBinMapper(G4int nBinsIIn,G4int nBinsJIn,G4int nBinsKIn, G4int nBinsLIn);
+  BDSHistBinMapper(G4int nBinsIIn,
+		   G4int nBinsJIn,
+		   G4int nBinsKIn,
+		   G4int nBinsLIn);
 #ifdef USE_BOOST
-    BDSHistBinMapper(G4int nBinsIIn,G4int nBinsJIn,G4int nBinsKIn, G4int nBinsLIn, boost_histogram_axes_variant energyAxisIn);
+  BDSHistBinMapper(G4int nBinsIIn,
+		   G4int nBinsJIn,
+		   G4int nBinsKIn,
+		   G4int nBinsLIn,
+		   boost_histogram_axes_variant energyAxisIn);
 #endif
-
-    virtual ~BDSHistBinMapper(){;}
-
-    virtual G4int GlobalFromIJKLIndex(G4int iIndex,
-                                     G4int jIndex,
-                                     G4int kIndex,
-                                     G4int lIndex = 0) const;
-
-    virtual void IJKLFromGlobal(G4int  globalBin,
-                               G4int& iIndex,
-                               G4int& jIndex,
-                               G4int& kIndex,
-                               G4int& lIndex) const;
-
-    inline G4double NBinsI() const {return nBinsI;}
-    inline G4double NBinsJ() const {return nBinsJ;}
-    inline G4double NBinsK() const {return nBinsK;}
-    inline G4double NBinsL() const {return nBinsL;}
-
+  
+  virtual ~BDSHistBinMapper(){;}
+  
+  virtual G4int GlobalFromIJKLIndex(G4int iIndex,
+				    G4int jIndex,
+				    G4int kIndex,
+				    G4int lIndex = 0) const;
+  
+  virtual void IJKLFromGlobal(G4int  globalBin,
+			      G4int& iIndex,
+			      G4int& jIndex,
+			      G4int& kIndex,
+			      G4int& lIndex) const;
+  
+  inline G4double NBinsI() const {return nBinsI;}
+  inline G4double NBinsJ() const {return nBinsJ;}
+  inline G4double NBinsK() const {return nBinsK;}
+  inline G4double NBinsL() const {return nBinsL;}
+  
 #ifdef USE_BOOST
-    inline boost_histogram_axes_variant  GetEnergyAxis() const {return energyAxis;}
+  inline boost_histogram_axes_variant GetEnergyAxis() const {return energyAxis;}
 #endif
-
+  
 protected:
-    G4int nBinsI;
-    G4int nBinsJ;
-    G4int nBinsK;
-    G4int nBinsL;
+  G4int nBinsI;
+  G4int nBinsJ;
+  G4int nBinsK;
+  G4int nBinsL;
 #ifdef USE_BOOST
-    boost_histogram_axes_variant energyAxis;
+  boost_histogram_axes_variant energyAxis;
 #endif
 };
 
