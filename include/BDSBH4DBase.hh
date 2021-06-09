@@ -81,7 +81,7 @@ public:
   std::string h_title;
   std::string h_escale;
   std::vector<double> h_ebinsedges;
-  unsigned long h_entries = 0;
+  unsigned long h_entries;
   
   ClassDefOverride(BDSBH4DBase,1);
 };
