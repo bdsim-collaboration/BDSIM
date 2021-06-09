@@ -362,6 +362,8 @@ namespace GMAD
     
     bool        storeModel;
 
+    int         samplersSplitLevel;
+
     // circular options
     int         nturns;
     std::string ptcOneTurnMapFileName;
