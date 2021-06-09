@@ -164,6 +164,7 @@ Build Changes
   with :code:`BDS_`, for example, :code:`BDS_USE_HEPMC3`.
 * If building a CMake project with respect to a BDSIM installation (i.e. using BDSIM), the variable
   :code:`BDSIM_INCLUDE_DIR` now correctly includes "bdsim" at the end.
+* The bdsim.sh in the installation directory should now be portable and also work with zsh as well as bash.
 
 Bug Fixes
 ---------
@@ -416,6 +417,12 @@ New Features
 | yokeFieldsMatchLHCGeometry         | Boolean whether to use yoke fields that are the sum of two         |
 |                                    | multipole yoke fields with the LHC separation of 194 mm. Default   |
 |                                    | true. Applies to rbend, sbend, quadrupole and sextupole.           |
++------------------------------------+--------------------------------------------------------------------+
+| storeApertureImpactsHistograms     | Whether to generate the primary first aperture impact histogram    |
+|                                    | `PFirstAI`, on by default.                                         |
++------------------------------------+--------------------------------------------------------------------+
+| samplersSplitLevel                 | The ROOT splitlevel of the branch. Default 0 (unsplit). Set to 1   |
+|                                    | or 2 to allow columnar access (e.g. with `uproot`).                |
 +------------------------------------+--------------------------------------------------------------------+
 
 
