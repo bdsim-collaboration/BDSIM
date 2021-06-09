@@ -16,12 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSBH4D_HH
-#define BDSBH4D_HH
-
+#ifndef BDSBH4D_H
+#define BDSBH4D_H
 #include "BDSBH4DBase.hh"
 
-#include "BDSBH4DTypedefs.hh"  // to comment if USE_BOOST=OFF
 #ifdef USE_BOOST
 #include <boost/histogram.hpp>
 #endif
@@ -30,62 +28,67 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TTree.h"
 
+#include <vector>
+
 /** @brief 4D histogram class.
  *
  * @author Eliott Ramoisiaux
  */
 
 template<class T>
-class BDSBH4D : public BDSBH4DBase {
-
+class BDSBH4D: public BDSBH4DBase
+{
 #ifdef USE_BOOST
 
 public:
-    BDSBH4D();
-    BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
-            unsigned int nxbins, double xmin, double xmax,
-            unsigned int nybins, double ymin, double ymax,
-            unsigned int nzbins, double zmin, double zmax,
-            unsigned int nebins, double emin, double emax);
-    BDSBH4D(std::string& name, std::string& title, const std::string& eScale, std::vector<double> eBinsEdges,
-            unsigned int nxbins, double xmin, double xmax,
-            unsigned int nybins, double ymin, double ymax,
-            unsigned int nzbins, double zmin, double zmax);
+  BDSBH4D();
+  BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
+	  unsigned int nxbins, double xmin, double xmax,
+	  unsigned int nybins, double ymin, double ymax,
+	  unsigned int nzbins, double zmin, double zmax,
+	  unsigned int nebins, double emin, double emax);
+  BDSBH4D(std::string& name, std::string& title, const std::string& eScale,
+	  std::vector<double> eBinsEdges,
+	  unsigned int nxbins, double xmin, double xmax,
+	  unsigned int nybins, double ymin, double ymax,
+	  unsigned int nzbins, double zmin, double zmax);
+  virtual ~BDSBH4D();
+  T h;
+  T h_err;
+  
+  BDSBH4DBase& operator+=(const BDSBH4DBase& other) override
+  {
+    h += dynamic_cast<const BDSBH4D<T>&>(other).h;
+    return *this;
+  }
+  void Initialize(std::string& name, std::string& title, const std::string& eScale,
+		  unsigned int nxbins, double xmin, double xmax,
+		  unsigned int nybins, double ymin, double ymax,
+		  unsigned int nzbins, double zmin, double zmax,
+		  unsigned int nebins, double emin, double emax);
+  void Initialize(std::string& name, std::string& title, const std::string& eScale,
+		  std::vector<double> eBinsEdges,
+		  unsigned int nxbins, double xmin, double xmax,
+		  unsigned int nybins, double ymin, double ymax,
+		  unsigned int nzbins, double zmin, double zmax);
 
-    T h;
-    T h_err;
-
-    BDSBH4DBase& operator+=(const BDSBH4DBase& other) override {
-      h += dynamic_cast<const BDSBH4D<T>&>(other).h;
-      return *this;
-    }
-    void Initialize(std::string& name, std::string& title, const std::string& eScale,
-                                unsigned int nxbins, double xmin, double xmax,
-                                unsigned int nybins, double ymin, double ymax,
-                                unsigned int nzbins, double zmin, double zmax,
-                                unsigned int nebins, double emin, double emax);
-    void Initialize(std::string& name, std::string& title, const std::string& eScale,std::vector<double> eBinsEdges,
-                                unsigned int nxbins, double xmin, double xmax,
-                                unsigned int nybins, double ymin, double ymax,
-                                unsigned int nzbins, double zmin, double zmax);
-    void to_PyROOT(const std::string&, const std::string&);
-    void Reset_BDSBH4D() override;
-    BDSBH4D* Clone(const char*) const override;
-    void Fill_BDSBH4D(double, double, double, double) override;
-    void Set_BDSBH4D(int, int, int, int, double) override;
-    void SetError_BDSBH4D(int, int, int, int, double) override;
-    void Add_BDSBH4D(BDSBH4DBase*) override;
-    double At(int, int, int, int) override;
-    double AtError(int, int, int, int) override;
-    double LowBinEdgeAt(int, int, int, int) override;
-    double HighBinEdgeAt(int, int, int, int) override;
-    void Print_BDSBH4D(bool with_zero_values = true) override;
-    void Print_BDSBH4D(int , int , int , int) override;
+  void to_PyROOT(const std::string&, const std::string&);
+  void Reset_BDSBH4D() override;
+  BDSBH4D* Clone(const char*) const override;
+  void Fill_BDSBH4D(double, double, double, double) override;
+  void Set_BDSBH4D(int, int, int, int, double) override;
+  void SetError_BDSBH4D(int, int, int, int, double) override;
+  void Add_BDSBH4D(BDSBH4DBase*) override;
+  double At(int, int, int, int) override;
+  double AtError(int, int, int, int) override;
+  double LowBinEdgeAt(int, int, int, int) override;
+  double HighBinEdgeAt(int, int, int, int) override;
+  void Print_BDSBH4D(bool with_zero_values=true) override;
+  void Print_BDSBH4D(int, int, int, int) override;
 
 #endif
 
 ClassDef(BDSBH4D,1);
-
 };
 
-#endif // BDSBH4D_HH
+#endif
