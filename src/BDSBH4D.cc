@@ -19,7 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBH4D.hh"
 
 #ifdef USE_BOOST
+#include "BDSBH4dTypeDefs.hh"
 #include <boost/format.hpp>
+#include <boost/histogram.hpp>
 #endif
 
 #include <string>
