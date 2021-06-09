@@ -37,6 +37,23 @@ class BDSBH4DBase: public TH1D
 {
 public:
   BDSBH4DBase();
+  /// Constructor where 'e' dimension specifications are given.
+  BDSBH4DBase(unsigned int h_nxbinsIn, unsigned int h_nybinsIn,
+	      unsigned int h_nzbinsIn, unsigned int h_nebinsIn,
+	      double xminIn, double xmaxIn, double yminIn, double ymaxIn,
+	      double zminIn, double zmaxIn, double eminIn, double emaxIn,
+	      const std::string& nameIn,
+	      const std::string& titleIn,
+	      const std::string& escaleIn);
+  /// Alternative where the 'e' dimension specifications are determined from a supplied vector of edges.
+  BDSBH4DBase(unsigned int h_nxbinsIn, unsigned int h_nybinsIn, unsigned int h_nzbinsIn,
+	      double xminIn, double xmaxIn,
+	      double yminIn, double ymaxIn,
+	      double zminIn, double zmaxIn,
+	      const std::string& nameIn,
+	      const std::string& titleIn,
+	      const std::string& escaleIn,
+	      const std::vector<double>& eBinEdgesIn);
   virtual ~BDSBH4DBase() override = default;
 
   int GetNbinsX() const final;
