@@ -86,10 +86,9 @@ public:
   double HighBinEdgeAt(int, int, int, int) override;
   void Print_BDSBH4D(bool with_zero_values=true) override;
   void Print_BDSBH4D(int, int, int, int) override;
-
 #endif
 
-ClassDef(BDSBH4D,1);
+  ClassDef(BDSBH4D,1);
 };
 
 #endif
