@@ -2660,6 +2660,8 @@ with the following options.
 | storeTrajectories                  | An alias to `storeTrajectory`                                      |
 +------------------------------------+--------------------------------------------------------------------+
 
+.. _options-trajectory-filtering:
+
 Trajectory Filtering Options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -2722,6 +2724,7 @@ These options control, if :code:`storeTrajectory=1;`, which tracks trajectories 
 |                                    | position (sqrt(x^2, y^2)).                                         |
 +------------------------------------+--------------------------------------------------------------------+
 
+.. _options-trajectory-storage:
 
 Trajectory Storage Options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
