@@ -20,8 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSBH4DTYPEDEFS_H
 
 #ifdef USE_BOOST
-
-#ifdef USE_BOOST
 #include <boost/histogram.hpp>
 #include <boost/variant.hpp>
 
