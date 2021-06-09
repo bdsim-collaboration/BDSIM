@@ -427,6 +427,10 @@ running CMake by prefixing them with "-D". The following options are available.
 | **USE_SIXTRACK_LINK**       | Use experimental sixtrack link interface. Affects output.   |
 |                             | (default OFF)                                               |
 +-----------------------------+-------------------------------------------------------------+
+| **USE_BOOST**               | Whether to link againt Boost library. (default OFF)         |
+|                             | This options enables the differential flux scoring feature  |
+|                             | available using the scorer type cellflux4d.                 |
++-----------------------------+-------------------------------------------------------------+
 | **BDSIM_BUILD_STATIC_LIBS** | Whether to build the static library in addition to the main |
 |                             | shared one. Note, currently the executables will only ever  |
 |                             | be linked to the shared libraries - work in progress.       |
