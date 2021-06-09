@@ -1,9 +1,9 @@
 beam, particle = "proton",
       energy = 1088*MeV;
 
-DRIFT: drift, l=1*m;
+d: drift, l=1*m;
 
-l0: line = (DRIFT);
+l0: line = (d);
 lattice: line = (l0);
 use, period=lattice;
 
