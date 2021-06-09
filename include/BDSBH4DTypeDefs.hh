@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBH4DTYPEDEFS_H
 #define BDSBH4DTYPEDEFS_H
 
+#ifdef USE_BOOST
+
 #include <boost/histogram.hpp>
 #include <boost/variant.hpp>
 
@@ -27,8 +29,6 @@ typedef double boost_histogram_storage_type;
 #else
 typedef double boost_histogram_storage_type;
 #endif
-
-#ifdef USE_BOOST
 
 typedef boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default> boost_histogram_linear_axis;
 typedef boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> boost_histogram_log_axis;

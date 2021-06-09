@@ -20,6 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSBH4D_H
 #include "BDSBH4DBase.hh"
 
+#ifdef USE_BOOST
+#include <boost/histogram.hpp>
+#include "BDSBH4DTypeDefs.hh"
+#endif
+
 #include "Rtypes.h"
 #include "TH1D.h"
 #include "TTree.h"

@@ -16,12 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSBH4DTypedefs.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSExtent.hh"
 #include "BDSScorerMeshInfo.hh"
 #include "BDSUtilities.hh"
+
+#ifdef USE_BOOST
+#include "BDSBH4DTypeDefs.hh"
+#endif
 
 #include "G4Types.hh"
 

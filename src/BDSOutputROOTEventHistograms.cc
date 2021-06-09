@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBH4D.hh"
 
 #ifndef USE_BOOST
+#include "BDSBH4DTypeDefs.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #endif
