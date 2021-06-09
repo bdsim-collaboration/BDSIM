@@ -45,7 +45,7 @@ public:
 		  G4int ni = 1, G4int nj = 1, G4int nk = 1,
 		  G4int depi = 2, G4int depj = 1, G4int depk = 0);
   
-  ~BDSPSCellFlux4D() override {;}
+  virtual ~BDSPSCellFlux4D() override {;}
   
 protected:
   G4int GetIndex(G4Step* aStep) override;
