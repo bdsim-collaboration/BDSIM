@@ -2966,6 +2966,8 @@ An example can be found in :code:`bdsim/examples/features/io/1_rootevent/sc_scor
 +----------------+-----------------+-------------------------------------------------------+
 | nbinsz         | 1               | Number of bins in global Z                            |
 +----------------+-----------------+-------------------------------------------------------+
+| nbinse         | 1               | Number of bins in Energy                              |
++----------------+-----------------+-------------------------------------------------------+
 | xmin           | -0.5            | Lower global X limit (m)                              |
 +----------------+-----------------+-------------------------------------------------------+
 | xmax           | 0.5             | Upper global X limit (m)                              |
@@ -2977,6 +2979,10 @@ An example can be found in :code:`bdsim/examples/features/io/1_rootevent/sc_scor
 | zmin           | 0               | Lower global Z limit (m)                              |
 +----------------+-----------------+-------------------------------------------------------+
 | zmax           | 1               | Upper global Z limit (m)                              |
++----------------+-----------------+-------------------------------------------------------+
+| emin           | 1e-12           | Lower Energy limit (GeV)                              |
++----------------+-----------------+-------------------------------------------------------+
+| emax           | 1e4             | Upper Energy limit (GeV)                              |
 +----------------+-----------------+-------------------------------------------------------+
 
 
@@ -3383,11 +3389,21 @@ example parameter and value pairs. The following parameters may be specified.
 +-------------------------+---------------+------------------------------------------------+
 | nz                      | Yes           | Number of cells in local z dimension           |
 +-------------------------+---------------+------------------------------------------------+
+| ne                      | Yes(*)        | Number of cells in energy dimension            |
++-------------------------+---------------+------------------------------------------------+
 | xsize                   | Yes           | Full width in local x dimension (m)            |
 +-------------------------+---------------+------------------------------------------------+
 | ysize                   | Yes           | Full width in local y dimension (m)            |
 +-------------------------+---------------+------------------------------------------------+
 | zsize                   | Yes           | Full width in local z dimension (m)            |
++-------------------------+---------------+------------------------------------------------+
+| eScale                  | Yes(*)        | Energy axis scoring type (linear, log, user)   |
++-------------------------+---------------+------------------------------------------------+
+| eLow                    | Yes(*)        | Low limit value for the energy axis binning    |
++-------------------------+---------------+------------------------------------------------+
+| eHigh                   | Yes(*)        | High limit value for the energy axis binning   |
++-------------------------+---------------+------------------------------------------------+
+| eBinsEdgesFilenamePath  | Yes(*)        | Path to the energy bin edges .txt file(**)     |
 +-------------------------+---------------+------------------------------------------------+
 | referenceElement        | No            | Name of beam line element to place with        |
 |                         |               | respect to                                     |
@@ -3422,6 +3438,14 @@ example parameter and value pairs. The following parameters may be specified.
 | axisAngle               | No            | Boolean whether to use the axis angle rotation |
 |                         |               | scheme (default false)                         |
 +-------------------------+---------------+------------------------------------------------+
+
+.. note:: (\*) The option eScale is required when defining a scorermesh for a cellflux4d scorer.
+                If the eScale types "linear" or "log" are used, the options ne, eLow and eHigh are required.
+                If the eScale type "user" is used, the option eBinsEdgesFilenamePath is required.
+
+.. note:: (\**) Each energy bin edge value must be written on a separate line in a .txt file in GeV.
+                An example can be found in :code:`bdsim/examples/features/scoring`.
+
 
 The placement parameters are the exact same as those used in general geometry placements -
 see :ref:`placements` for the 3 possible ways to make placements easily in BDSIM.
@@ -3504,24 +3528,26 @@ The following are accepted scorer types.
 +===========================+=================+==================================================+
 | cellcharge                | e-              |The charge deposited in the cell                  |
 +---------------------------+-----------------+--------------------------------------------------+
-| cellflux                  | :math:`cm^{-2}` | The flux (step length / cell volume)             | 
+| cellflux(*)               | :math:`cm^{-2}` | The flux (step length / cell volume)             |
 +---------------------------+-----------------+--------------------------------------------------+
-| cellfluxscaled            | :math:`cm^{-2}` | The flux (step length / cell volume) multiplied  | 
+| cellfluxscaled            | :math:`cm^{-2}` | The flux (step length / cell volume) multiplied  |
 |                           |                 | a factor as a function of kinetic energy as      |
 |                           |                 | specified in the :code:`conversionFactorFile`.   |
 |                           |                 | Default factor is 1.0.                           |
 +---------------------------+-----------------+--------------------------------------------------+
-| cellfluxscaledperparticle | :math:`cm^{-2}` | Similar to `cellfluxscaled` but per particle     | 
+| cellfluxscaledperparticle | :math:`cm^{-2}` | Similar to `cellfluxscaled` but per particle     |
 |                           |                 | species. Specify :code:`conversionFilePath` to   |
 |                           |                 | files (see below). Default factor is 0 for all   |
 |                           |                 | particles and energies.                          |
 +---------------------------+-----------------+--------------------------------------------------+
-| depositeddose             | Gray (J/kg)     |The dose (energy deposited per unit mass)         | 
+| depositeddose             | Gray (J/kg)     |The dose (energy deposited per unit mass)         |
 +---------------------------+-----------------+--------------------------------------------------+
-| depositedenergy           | GeV             |The deposited energy in the cell                  | 
+| depositedenergy           | GeV             |The deposited energy in the cell                  |
 +---------------------------+-----------------+--------------------------------------------------+
-| population                | NA              |The number of particles passing through the cell  | 
+| population                | NA              |The number of particles passing through the cell  |
 +---------------------------+-----------------+--------------------------------------------------+
+
+.. note:: (\*) It is possible to score the differential flux by using the scorer type cellflux4D which adds a binning along the energy axis.
 
 .. _scorer-conversion-factor-file:
 
@@ -3598,6 +3624,43 @@ In this example, a similar mesh as Example 1 is used, but two 3D histograms are 
 the neutron population and one for the ambient dose (using the "h10protons.txt" conversion
 file) for protons between 20 MeV and 1 GeV in kinetic energy and that exist between 0 s
 (the start of the simulation) and 1 s in time of flight.
+
+Example 3: ::
+
+  neutron_flux_4D: scorer, type="cellflux4d",
+                         particleName="neutron";
+
+  meshAir_4D_linear: scorermesh, nx=40, ny=20, nz=20, ne= 100, xsize=40*cm, ysize=20*cm, zsize=20*cm, eScale="linear",
+                     eLow=1e-12*GeV,eHigh=1*GeV,
+                     scoreQuantity="neutron_flux_4D",
+                     z=20.75*m;
+
+  meshAir_4D_log: scorermesh, nx=40, ny=20, nz=20, ne= 100, xsize=40*cm, ysize=20*cm, zsize=20*cm, eScale="log",
+                  eLow=1e-3*GeV,eHigh=1*GeV,
+                  scoreQuantity="neutron_flux_4D",
+                  z=20.75*m;
+
+  meshAir_4d_variable: scorermesh, nx=40, ny=20, nz=20, xsize=40*cm, ysize=20*cm, zsize=20*cm, eScale="user",
+                       eBinsEdgesFilenamePath="./eBins.txt",
+                       scoreQuantity="neutron_flux_4D",
+                       z=20.75*m;
+
+
+In this example, three 4D meshes similar to the mesh of the Example 1 are used with each of them using a different scaling type for the energy axis.
+They respectively use the "linear", "log" and "user" type. The file "eBins.txt" is required by the "user" scaling type for the energy bin edges definition.
+
+Column of the eBins.txt file is:
+
+1) Kinetic energy in **GeV**
+
+Below is an example contents : ::
+
+0.001
+0.02
+0.2
+0.5
+1.0
+
 
 Visualising a Scoring Mesh
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
