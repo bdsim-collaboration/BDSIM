@@ -104,7 +104,12 @@ a drift pipe where it covers the full volume of the drift (not outside it though
 
 Each beam line element will allow "fieldAll", "fieldVacuum" and "fieldOuter" to be specified.
 
-When defining a field, the following parameters can be specified.
+.. _field-map-definition:
+
+Field Map Definition
+^^^^^^^^^^^^^^^^^^^^
+
+When defining a :code:`field`, the following parameters can be specified. Example below.
 
 .. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
@@ -170,6 +175,14 @@ When defining a field, the following parameters can be specified.
 |                      | a magnetic 'sub' field that overlays this one.                  |
 +----------------------+-----------------------------------------------------------------+
 
+Simple example: ::
+
+  detectorField: field, type="bmap2d",
+                 magneticFile="bdsim:fieldmap.dat";
+
+This will use a BDSIM format magnetic (only) field map. By default it will have cubic
+interpolation and use a 4th order Runge Kutta integrator.
+
 The :code:`maximumStepLength` will be the minimum of the one specified in the field definition,
 110% of the element length that the field is attached to, or the global maximum step length,
 or the minimum spacing in any dimension of the field map. In the case of a 4D field, the
@@ -221,8 +234,8 @@ Field Types
 
 .. _model-description-field-formats:
 
-Formats
-^^^^^^^
+File Formats
+^^^^^^^^^^^^
 
 .. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
@@ -263,6 +276,9 @@ for BDSIM format files is provided here :ref:`field-map-file-preparation`.
 
 Integrators
 ^^^^^^^^^^^
+
+An integrator is an algorithm that calculates the particle motion in a field. There
+are many algorithms - some fast, some more precise, some work only with certain fields.
 
 The following integrators are provided.  The majority are interfaces to Geant4 integrators.
 *g4classicalrk4* is typically the recommended default and is very robust.
@@ -409,6 +425,20 @@ in the visualiser below. The magnetic field lines were visualised using the Gean
 	   :width: 60%
 	   :align: center
 
+.. _fields-visualisation:
+		   
+Field Map Visualisation
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Recent versions of Geant4 (> 5) provide a mechanism in the visualiser to visualise magnetic fields. The
+following command can be used to add magnetic field lines to the visualisation. ::
+
+  /vis/scene/add/magneticField 10 lightArrow
+
+This may take some time as particles are being tracked to determine the field direction. The number 10 here
+sets a density of points. If few useful arrows appear, then this number can be increased. Note, the time taken
+will go with the cube (i.e. N^3) of this number. Suggested values are 10, 30, 40. An example can be seen above
+in the :ref:`fields-sub-fields` section.
 
 .. _materials-and-atoms:
 	  
