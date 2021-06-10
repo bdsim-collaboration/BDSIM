@@ -396,6 +396,8 @@ Optional Configuration Options
 BDSIM has a few optional configuration options. These can be specified with a value when
 running CMake by prefixing them with "-D". The following options are available.
 
+.. tabularcolumns:: |p{7cm}|p{8cm}|
+
 +-----------------------------+-------------------------------------------------------------+
 | **Option**                  | **Description**                                             |
 +=============================+=============================================================+
@@ -482,6 +484,8 @@ Advanced Configuration Options
 
 These options are for developers of BDSIM. These may change without notice or cause unintended
 effects.
+
+.. tabularcolumns:: |p{7cm}|p{8cm}|
 
 +------------------------------------+-------------------------------------------------------------+
 | **Option**                         | **Description**                                             |
