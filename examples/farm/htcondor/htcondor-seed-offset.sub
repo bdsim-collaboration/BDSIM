@@ -3,16 +3,18 @@ universe = vanilla
 executable = bdsimjob.sh
 
 # use some variables for various paths
-basedir   = /scratch2/lnevay/
-outputdir = $(basedir)/data/study1
+basedir   = /scratch2/lnevay
+outputdir = $(basedir)/data/gen2
 logdir    = $(outputdir)/log
-modeldir  = $(basedir)/beamline-model
+modeldir  = $(basedir)/model-model
+# this bit of offsetting a seed it tricky and not well documented in htcondor
+seed      = $(ProcID) + 4000
+seedV     = $INT(seed)
 
 # make the output directory including one for the logs 
 include command : mkdir -p $(logdir)
 
-# arguments : input.gmad outputdir outputfilename analysisfile seed ngenerate
-arguments = $(modeldir)/models/beamline.gmad $(outputdir) $(ProcId) $(modeldir)/analysis/analysisConfig.txt 500
+arguments = $(modeldir)/model/job.gmad $(outputdir) $(seedV) $(modeldir)/analysis/analysisConfig.txt 1000
 
 # direct logging and screen out
 output = $(logdir)/$(ProcId).out
@@ -22,7 +24,7 @@ log    = $(logdir)/$(ProcId).log
 # resources
 request_cpus = 1
 request_disk = 500MB
-request_memory = 500MB
+request_memory = 1000MB
 
 ShouldTransferFiles = YES
 when_to_transfer_output = ON_EXIT
@@ -30,5 +32,5 @@ when_to_transfer_output = ON_EXIT
 # queue name
 +JobFlavour = "medium"
 
-# submit 1000 jobs
-queue 1000
+# submit 4k jobs
+queue 4000
