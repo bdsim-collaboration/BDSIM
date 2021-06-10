@@ -3655,11 +3655,11 @@ Column of the eBins.txt file is:
 
 Below is an example contents : ::
 
-0.001
-0.02
-0.2
-0.5
-1.0
+    0.001
+    0.02
+    0.2
+    0.5
+    1.0
 
 
 Visualising a Scoring Mesh
