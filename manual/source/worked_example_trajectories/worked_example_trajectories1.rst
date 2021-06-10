@@ -1,3 +1,5 @@
+.. _worked-example-trajectory-generation:
+
 Trajectory Generation
 =====================
 
@@ -14,6 +16,7 @@ Topics Covered
 Contents
 --------
 
+* `Preparation`_
 * `Key Concepts`_
 * `Motivation`_
 * `Generating Trajectories`_
