@@ -132,6 +132,11 @@ simulation. Cross-section biasing is used to increase the likelihood of decay by
 100 for all muons and pions in the world air volume (i.e. not in the copper block). Most of the output
 is turned off but the trajectory information is turned on.
 
+.. note:: This biasing is likely far too strong for a practical application, which could be seen
+	  by a larger simulation and looking at the weights spectrum and observing very large or
+	  small weights. However, it vastly improves the efficiency of this simulation here so
+	  we use it knowing this.
+
 More details of various options can be found in:
 
 * :ref:`physics-process-options`
