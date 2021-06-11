@@ -11,7 +11,7 @@ Basic Examples
 --------------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    examples/airwatertarget
    examples/beamLoss
@@ -19,6 +19,7 @@ Basic Examples
    examples/simpleMachine
    examples/model-model.rst
    examples/target-simple.rst
+   basic_example_python_histograms.rst
 
 .. _worked-examples:
    
