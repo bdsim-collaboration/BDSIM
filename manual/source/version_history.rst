@@ -25,7 +25,7 @@ New Features
 * New scorer type: cellflux4d
 
 
-V1.6.0 - 2021 / XX / XX
+V1.6.0 - 2021 / 06 / 16
 =======================
 
 * Public CVMFS build now available. See :ref:`cvmfs-build`.
@@ -64,8 +64,14 @@ New Features
   collimator histograms and summary information with the element definition :code:`markAsCollimator=1`.
 * More colours for default material colours.
 * New units accepted in input (PeV, PJ, GJ, MJ, kJ, J, mJ, uJ, nJ, pJ). J=1, GeV=1.
+* New visualisation command :code:`/bds/samplers/view` to easily view samplers.
+* New custom physics list interface to :code:`BDSIMClass` - see :ref:`interfacing-custom-physics`.
+* "ModelTree" is now copied over when using `rebdsimCombine` to combine multiple `rebdsim`
+  output files.
 * New options:
-  
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
@@ -171,6 +177,7 @@ General
   the commonly named vis.mac, which makes it ambiguous as to which one is really being used.
 * The visualisation macro path has the current working directory now as the last directory to search
   after the installation directory.
+* Test program written for output Model tree functions.
 
 Build Changes
 -------------
@@ -188,6 +195,8 @@ Build Changes
 * If building a CMake project with respect to a BDSIM installation (i.e. using BDSIM), the variable
   :code:`BDSIM_INCLUDE_DIR` now correctly includes "bdsim" at the end.
 * The bdsim.sh in the installation directory should now be portable and also work with zsh as well as bash.
+* Test executable programs are no longer built by default and must be explicitly turned on
+  with the CMake option :code:`BDSIM_BUILD_TEST_PROGRAMS`.
 
 Bug Fixes
 ---------
@@ -258,6 +267,7 @@ Bug Fixes
   air or the element before the expected one.
 * Fix build with a modern compiler (e.g. GCC9) of ROOT and BDSIM. Specifically, if ROOT was compiled
   with C++14 or 17 the C++ standard for BDSIM is matched to that rather than the default C++11.
+* Fixed the implementation of :code:`BDSOutputROOTEventModel::findNearestElement`.
 
 
 Output Changes
@@ -294,11 +304,11 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventBeam            | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventCoords          | N           | 3               | 3               |
-+-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimator      | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCoords          | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventHeader          | N           | 4               | 4               |
 +-----------------------------------+-------------+-----------------+-----------------+
@@ -324,6 +334,14 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTParticleData         | N           | 3               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
+
+Utilities
+---------
+
+* pybdsim v2.4.0
+* pymadx v1.8.2
+* pymad8 v1.6.1
+* pytransport v1.5.0
 
 
 V1.5.1 - 2020 / 12 / 21
