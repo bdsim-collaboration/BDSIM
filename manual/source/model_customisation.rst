@@ -104,7 +104,12 @@ a drift pipe where it covers the full volume of the drift (not outside it though
 
 Each beam line element will allow "fieldAll", "fieldVacuum" and "fieldOuter" to be specified.
 
-When defining a field, the following parameters can be specified.
+.. _field-map-definition:
+
+Field Map Definition
+^^^^^^^^^^^^^^^^^^^^
+
+When defining a :code:`field`, the following parameters can be specified. Example below.
 
 .. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
@@ -170,6 +175,14 @@ When defining a field, the following parameters can be specified.
 |                      | a magnetic 'sub' field that overlays this one.                  |
 +----------------------+-----------------------------------------------------------------+
 
+Simple example: ::
+
+  detectorField: field, type="bmap2d",
+                 magneticFile="bdsim:fieldmap.dat";
+
+This will use a BDSIM format magnetic (only) field map. By default it will have cubic
+interpolation and use a 4th order Runge Kutta integrator.
+
 The :code:`maximumStepLength` will be the minimum of the one specified in the field definition,
 110% of the element length that the field is attached to, or the global maximum step length,
 or the minimum spacing in any dimension of the field map. In the case of a 4D field, the
@@ -221,8 +234,8 @@ Field Types
 
 .. _model-description-field-formats:
 
-Formats
-^^^^^^^
+File Formats
+^^^^^^^^^^^^
 
 .. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
@@ -263,6 +276,9 @@ for BDSIM format files is provided here :ref:`field-map-file-preparation`.
 
 Integrators
 ^^^^^^^^^^^
+
+An integrator is an algorithm that calculates the particle motion in a field. There
+are many algorithms - some fast, some more precise, some work only with certain fields.
 
 The following integrators are provided.  The majority are interfaces to Geant4 integrators.
 *g4classicalrk4* is typically the recommended default and is very robust.
@@ -409,6 +425,20 @@ in the visualiser below. The magnetic field lines were visualised using the Gean
 	   :width: 60%
 	   :align: center
 
+.. _fields-visualisation:
+		   
+Field Map Visualisation
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Recent versions of Geant4 (> 5) provide a mechanism in the visualiser to visualise magnetic fields. The
+following command can be used to add magnetic field lines to the visualisation. ::
+
+  /vis/scene/add/magneticField 10 lightArrow
+
+This may take some time as particles are being tracked to determine the field direction. The number 10 here
+sets a density of points. If few useful arrows appear, then this number can be increased. Note, the time taken
+will go with the cube (i.e. N^3) of this number. Suggested values are 10, 30, 40. An example can be seen above
+in the :ref:`fields-sub-fields` section.
 
 .. _materials-and-atoms:
 	  
@@ -1082,16 +1112,13 @@ Externally Provided Geometry
 
 BDSIM provides the ability to use externally provided geometry in the Geant4 model constructed
 by BDSIM. A variety of formats are supported (see :ref:`geometry-formats`). External
-geometry can be used in three ways:
+geometry can be used in several ways:
 
-1) A placement of a piece of geometry unrelated to the beam line.
-2) Wrapped around the beam pipe in a BDSIM magnet element.
-3) As a general element in the beam line where the geometry constitutes the whole object.
-4) As the world volume in which the BDSIM beamline is placed.
-
-These are discussed in order in :ref:`placements`, :ref:`external-magnet-geometry` and
-:ref:`element-external-geometry`.
-
+1) A placement of a piece of geometry unrelated to the beam line (see :ref:`placements`)
+2) Wrapped around the beam pipe in a BDSIM magnet element (see :ref:`external-magnet-geometry`)
+3) As a general element in the beam line where the geometry constitutes the whole object. (see :ref:`element`)
+4) As the world volume in which the BDSIM beamline is placed. (see :ref:`external-world-geometry`)
+   
 .. _geometry-formats:
 
 Geometry Formats
@@ -1105,12 +1132,12 @@ formats are described in more detail in :ref:`external-geometry-formats`.
 | **Format String**    | **Description**                                                     |
 +======================+=====================================================================+
 | gdml                 | | Geometry Description Markup Language - Geant4's official geometry |
-|                      | | persistency format - recommended                                  |
+|                      | | persistency format - recommended, maintained and supported        |
 +----------------------+---------------------------------------------------------------------+
 | ggmad                | | Simple text interface provided by BDSIM to some simple Geant4     |
-|                      | | geometry classes                                                  |
+|                      | | geometry classes - not maintained                                 |
 +----------------------+---------------------------------------------------------------------+
-| mokka                | | An SQL style description of geometry                              |
+| mokka                | | An SQL style description of geometry - not maintained             |
 +----------------------+---------------------------------------------------------------------+
 
 * With the `option, checkOverlaps=1;` turned on, each externally loaded piece of geometry will
@@ -1189,15 +1216,25 @@ file. See :ref:`externally-provided-geometry` for more details.
 Placements
 ----------
 
-Geometry provided in an external file may be placed at any location in the world with
-any rotation. This is intended to place geometry alongside the beam line and **not** inside
-or as part of it. The user is responsible for ensuring that the geometry does not
-overlap with any other geometry including the beam line. Only in special cases, such as
-for a magnet yoke, can externally provided geometry be placed "inside" BDSIM geometry.
+Aside from a beam line, pieces of geometry may be placed at any location in the world with
+any orientation. The mechanism to do this in BDSIM is called "placements". Either an
+externally provided piece of geometry (e.g. GDML file and optional field map) or a BDSIM
+provided accelerator component can be placed by declaring a :code:`placement` object in
+the input.
 
-The geometry may also have a field map overlaid on it.
+* :code:`bdsimElement` should be used to name a component to place. In this case the component
+  should be defined **before** the placement definition in the input GMAD.
+* :code:`geometryFile` should be used to place an externally provided geometry file.
+* Only one of :code:`bdsimElement` or :code:`geometryFile` should be used in a placement.
+* This is intended to place geometry alongside the beam line and **not** inside or as part of it.
+* The user is responsible for ensuring that the geometry does not
+  overlap with any other geometry including the beam line.
+* Only in special cases, such as for a magnet yoke, can externally provided
+  geometry be placed "inside" BDSIM geometry.
+* The geometry may also have a field map overlaid on it.
+* Placements cannot be made with respect to other placements.
 
-For geometry to be placed in the beam line, use the :ref:`element`.
+For geometry to be placed as part of the beam line, use the :ref:`element` component in a line.
 
 .. warning:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
 	     incorrect results and there may not always be warnings provided. For this reason,
@@ -1228,12 +1265,13 @@ There are 3 possible ways to place a piece of geometry.
      are with respect to the centre of that element. **Therefore**, `s` in this case is `local` curvilinear
      `s`.
 
-The scenario is automatically selected based on which parameters are set. If `s` is finite, then
+The scenario is automatically selected based on which parameters are set. If `s` is non-zero, then
 it is either scenario 2 or 3. If `referenceElement` is specified, scenario 3 is assumed.
 
 .. warning:: For both scenarios 2) and 3), a placement can only be made **inside** the S length of
 	     the accelerator - it is not possible to place something beyond the accelerator currently.
 	     In this case, the user should resort to a global placement.
+
 	     
 The following parameters may be specified with a placement in BDSIM:
 
@@ -1241,6 +1279,8 @@ The following parameters may be specified with a placement in BDSIM:
 | **Parameter**           |  **Description**                                                   |
 +-------------------------+--------------------------------------------------------------------+
 | geometryFile            | :code:`format:file` - which geometry format and file to use        |
++-------------------------+--------------------------------------------------------------------+
+| bdsimElement            | Name of the beam line element defined in the parser to be used     |
 +-------------------------+--------------------------------------------------------------------+
 | x                       | Offset in global x                                                 |
 +-------------------------+--------------------------------------------------------------------+
@@ -1320,16 +1360,34 @@ directly, which is also the same as a :code:`CLHEP::HepRotation`.
 .. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
 	  the default units for offsets and angles in BDSIM.
 
-The following is an example syntax used to place a piece of geometry::
+External Geometry File
+^^^^^^^^^^^^^^^^^^^^^^
+	  
+The following is an example syntax used to place a piece of geometry: ::
 
   leadblock: placement, x = 10*m,
                         y = 3*cm,
 			z = 12*m,
 			geometryFile="gdml:mygeometry/detector.gdml";
 
+
+BDSIM Component
+^^^^^^^^^^^^^^^
+			
+The following is an example of placing a **single** BDSIM-generated component at an arbitrary position: ::
+
+  block1: rcol, l=1*m, material="Cu";
+  pl1: placement, bdsimElement="block1", x=2*m, z=20*m, axisAngle=1, axisY=1, angle=pi/4;
+
+
 .. warning:: Care must be taken not to define the same placement name twice. If `leadblock`
 	     were declared again here, the first definition would be updated with parameters
 	     from the second, leading to possibly unexpected geometry.
+
+.. note:: For using a general piece of geometry as part of a beam line, it is better to use
+	  the `element` beam line element.  See :ref:`element`.  The length should be specified
+	  accurately and then the beam line will fit together well without any air gaps.
+
 	     
 .. _external-magnet-geometry:
 
@@ -1355,15 +1413,6 @@ Example: ::
 density if desired. This is on by default.  Example to turn it off: ::
     
   q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml", autoColour=0;
-
-
-.. _element-external-geometry:
-
-Element
-^^^^^^^
-
-A general piece of geometry may be placed in the beam line along with any externally provided
-field map using the `element` beam line element.  See `element`_.
 
   
 .. _tunnel-geometry:
@@ -1627,137 +1676,145 @@ For convenience the predefined colours in BDSIM are:
 +---------------------+-----+-----+-----+-----+
 | Name                |  R  |  G  |  B  |  A  |
 +=====================+=====+=====+=====+=====+
-|              LHCcoil| 229 | 191 |   0 |   1 |
+| LHCcoil             | 229 | 191 | 0   | 1   |
 +---------------------+-----+-----+-----+-----+
-|            LHCcollar| 229 | 229 | 229 |   1 |
+| LHCcollar           | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+
-|        LHCcopperskin| 184 | 133 |  10 |   1 |
+| LHCcopperskin       | 184 | 133 | 10  | 1   |
 +---------------------+-----+-----+-----+-----+
-|              LHCyoke|   0 | 127 | 255 |   1 |
+| LHCyoke             | 0   | 127 | 255 | 1   |
 +---------------------+-----+-----+-----+-----+
-|           LHCyokered| 209 |  25 |  25 |   1 |
+| LHCyokered          | 209 | 25  | 25  | 1   |
 +---------------------+-----+-----+-----+-----+
-|          awakescreen| 175 | 196 | 222 |   1 |
+| awakescreen         | 175 | 196 | 222 | 1   |
 +---------------------+-----+-----+-----+-----+
-|    awakespectrometer|   0 | 102 | 204 |   1 |
+| awakespectrometer   | 0   | 102 | 204 | 1   |
 +---------------------+-----+-----+-----+-----+
-|             beampipe| 102 | 102 | 102 |   1 |
+| beampipe            | 102 | 102 | 102 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                black|   0 |   0 |   0 |   1 |
+| black               | 0   | 0   | 0   | 1   |
 +---------------------+-----+-----+-----+-----+
-|                 blue|   0 |   0 | 255 |   1 |
+| blue                | 0   | 0   | 255 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                brown| 114 |  63 |   0 |   1 |
+| brown               | 114 | 63  | 0   | 1   |
 +---------------------+-----+-----+-----+-----+
-|                 coil| 184 | 115 |  51 |   1 |
+| coil                | 184 | 115 | 51  | 1   |
 +---------------------+-----+-----+-----+-----+
-|           collimator|  76 | 102 |  51 |   1 |
+| collimator          | 76  | 102 | 51  | 1   |
 +---------------------+-----+-----+-----+-----+
-|               copper| 184 | 115 |  51 |   1 |
+| copper              | 184 | 115 | 51  | 1   |
 +---------------------+-----+-----+-----+-----+
-|              crystal| 175 | 196 | 222 |   1 |
+| crystal             | 175 | 196 | 222 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                 cyan|   0 | 255 | 255 |   1 |
+| cyan                | 0   | 255 | 255 | 1   |
 +---------------------+-----+-----+-----+-----+
-|             decapole|  76 |  51 | 178 |   1 |
+| decapole            | 76  | 51  | 178 | 1   |
 +---------------------+-----+-----+-----+-----+
-|              default| 229 | 229 | 229 |   1 |
+| default             | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+
-|             degrader| 159 | 159 | 159 |   1 |
+| degrader            | 159 | 159 | 159 | 1   |
 +---------------------+-----+-----+-----+-----+
-|         dipolefringe| 229 | 229 | 229 |   1 |
+| dipolefringe        | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                drift| 102 | 102 | 102 |   1 |
+| drift               | 102 | 102 | 102 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                 ecol|  76 | 102 |  51 |   1 |
+| ecol                | 76  | 102 | 51  | 1   |
 +---------------------+-----+-----+-----+-----+
-|              element| 229 | 229 | 229 |   1 |
+| element             | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                  gap| 229 | 229 | 229 |   1 |
+| gap                 | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                 gdml| 102 |  51 |   0 |   1 |
+| gdml                | 102 | 51  | 0   | 1   |
 +---------------------+-----+-----+-----+-----+
-|                 gray| 127 | 127 | 127 |   1 |
+| gray                | 127 | 127 | 127 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                green|   0 | 255 |   0 |   1 |
+| green               | 0   | 255 | 0   | 1   |
 +---------------------+-----+-----+-----+-----+
-|                 grey| 127 | 127 | 127 |   1 |
+| grey                | 127 | 127 | 127 | 1   |
 +---------------------+-----+-----+-----+-----+
-|              hkicker|  76 |  51 | 178 |   1 |
+| hkicker             | 76  | 51  | 178 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                 jcol|  76 | 102 |  51 |   1 |
+| iron                | 129 | 81  | 74  | 1   |
 +---------------------+-----+-----+-----+-----+
-|               kicker|   0 | 102 | 204 |   1 |
+| jcol                | 76  | 102 | 51  | 1   |
 +---------------------+-----+-----+-----+-----+
-|              magenta| 255 |   0 | 255 |   1 |
+| kapton              | 236 | 96  | 20  | 0.5 |
 +---------------------+-----+-----+-----+-----+
-|               marker| 229 | 229 | 229 |   1 |
+| kicker              | 0   | 102 | 204 | 1   |
 +---------------------+-----+-----+-----+-----+
-|            multipole| 118 | 135 | 153 |   1 |
+| lead                | 96  | 104 | 115 | 1   |
 +---------------------+-----+-----+-----+-----+
-|          muonspoiler|   0 | 205 | 208 |   1 |
+| magenta             | 255 | 0   | 255 | 1   |
 +---------------------+-----+-----+-----+-----+
-|             octupole|   0 | 153 |  76 |   1 |
+| marker              | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+
-|  paralleltransporter| 229 | 229 | 229 |   1 |
+| multipole           | 118 | 135 | 153 | 1   |
 +---------------------+-----+-----+-----+-----+
-|           quadrupole| 209 |  25 |  25 |   1 |
+| muonspoiler         | 0   | 205 | 208 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                rbend|   0 | 102 | 204 |   1 |
+| octupole            | 0   | 153 | 76  | 1   |
 +---------------------+-----+-----+-----+-----+
-|                 rcol|  76 | 102 |  51 |   1 |
+| opaquebox           | 51  | 51  | 51  | 0.2 |
 +---------------------+-----+-----+-----+-----+
-| reallyreallydarkgrey|  51 |  51 |  51 |   1 |
+| paralleltransporter | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+
-|      rectangularbend|   0 | 102 | 204 |   1 |
+| quadrupole          | 209 | 25  | 25  | 1   |
 +---------------------+-----+-----+-----+-----+
-|                  red| 255 |   0 |   0 |   1 |
+| rbend               | 0   | 102 | 204 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                   rf| 118 | 135 | 153 |   1 |
+| rcol                | 76  | 102 | 51  | 1   |
 +---------------------+-----+-----+-----+-----+
-|             rfcavity| 118 | 135 | 153 |   1 |
+| reallyreallydarkgrey| 51  | 51  | 51  | 1   |
 +---------------------+-----+-----+-----+-----+
-|              rmatrix| 229 | 229 | 229 |   1 |
+| rectangularbend     | 0   | 102 | 204 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                sbend|   0 | 102 | 204 |   1 |
+| red                 | 255 | 0   | 0   | 1   |
 +---------------------+-----+-----+-----+-----+
-|               screen| 175 | 196 | 222 |   1 |
+| rf                  | 118 | 135 | 153 | 1   |
 +---------------------+-----+-----+-----+-----+
-|          screenframe| 178 | 178 | 178 | 0.4 |
+| rfcavity            | 118 | 135 | 153 | 1   |
 +---------------------+-----+-----+-----+-----+
-|           sectorbend|   0 | 102 | 204 |   1 |
+| rmatrix             | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+
-|            sextupole| 255 | 204 |   0 |   1 |
+| sbend               | 0   | 102 | 204 | 1   |
 +---------------------+-----+-----+-----+-----+
-|               shield| 138 | 135 | 119 |   1 |
+| screen              | 175 | 196 | 222 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                 soil| 138 |  90 |   0 | 0.4 |
+| screenframe         | 178 | 178 | 178 | 0.4 |
 +---------------------+-----+-----+-----+-----+
-|             solenoid| 255 | 139 |   0 |   1 |
+| sectorbend          | 0   | 102 | 204 | 1   |
 +---------------------+-----+-----+-----+-----+
-|            srfcavity| 175 | 196 | 222 |   1 |
+| sextupole           | 255 | 204 | 0   | 1   |
 +---------------------+-----+-----+-----+-----+
-|        thinmultipole| 229 | 229 | 229 |   1 |
+| shield              | 138 | 135 | 119 | 1   |
 +---------------------+-----+-----+-----+-----+
-|          thinrmatrix| 229 | 229 | 229 |   1 |
+| soil                | 138 | 90  | 0   | 0.4 |
 +---------------------+-----+-----+-----+-----+
-|              tkicker|   0 | 102 | 204 |   1 |
+| solenoid            | 255 | 139 | 0   | 1   |
 +---------------------+-----+-----+-----+-----+
-|               tunnel| 138 | 135 | 119 |   1 |
+| srfcavity           | 175 | 196 | 222 | 1   |
 +---------------------+-----+-----+-----+-----+
-|          tunnelfloor| 127 | 127 | 114 |   1 |
+| thinmultipole       | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+
-|            undulator| 159 | 159 | 159 |   1 |
+| thinrmatrix         | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+
-|              vkicker| 186 |  84 | 211 |   1 |
+| tkicker             | 0   | 102 | 204 | 1   |
 +---------------------+-----+-----+-----+-----+
-|              warning| 255 |  19 | 146 |   1 |
+| tunnel              | 138 | 135 | 119 | 1   |
 +---------------------+-----+-----+-----+-----+
-|                white| 255 | 255 | 255 |   1 |
+| tunnelfloor         | 127 | 127 | 114 | 1   |
 +---------------------+-----+-----+-----+-----+
-|          wirescanner| 138 | 135 | 119 |   1 |
+| undulator           | 159 | 159 | 159 | 1   |
 +---------------------+-----+-----+-----+-----+
-|               yellow| 255 | 255 |   0 |   1 |
+| vkicker             | 186 | 84  | 211 | 1   |
++---------------------+-----+-----+-----+-----+
+| warning             | 255 | 19  | 146 | 1   |
++---------------------+-----+-----+-----+-----+
+| white               | 255 | 255 | 255 | 1   |
++---------------------+-----+-----+-----+-----+
+| wirescanner         | 138 | 135 | 119 | 1   |
++---------------------+-----+-----+-----+-----+
+| yellow              | 255 | 255 | 0   | 1   |
 +---------------------+-----+-----+-----+-----+
 
 

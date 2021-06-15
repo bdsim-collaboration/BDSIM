@@ -58,13 +58,13 @@ BDSCollimatorCrystal::BDSCollimatorCrystal(const G4String&  nameIn,
   crystalLeft(nullptr),
   crystalRight(nullptr)
 {
-#ifdef SIXTRACKLINK
+#ifdef USE_SIXTRACKLINK
   G4cout << "Left " << crystalInfoLeftIn << G4endl;
   G4cout << "Right " << crystalInfoRightIn << G4endl;
 #endif
   if (crystalInfoLeft)
     {crystalInfoLeft->bendingAngleYAxis *= -1.0;}
-#ifdef SIXTRACKLINK
+#ifdef USE_SIXTRACKLINK
   G4cout << "halfGapLeftIn " << halfGapLeftIn << G4endl;
   G4cout << "halfGapRightIn " << halfGapRightIn << G4endl;
 #endif
@@ -147,7 +147,7 @@ void BDSCollimatorCrystal::Build()
 	      {BDS::Warning(__METHOD_NAME__, "Left crystal potential overlap in component \"" + name +"\"");}
       LongitudinalOverlap(crystalLeft->GetExtent(), angleYAxisLeft, "Left");
 
-#ifdef SIXTRACKLINK
+#ifdef USE_SIXTRACKLINK
       G4cout << "left crystal placement offset   " << placementOffsetL << G4endl;
       if (placementRot)
       {
@@ -165,7 +165,7 @@ void BDSCollimatorCrystal::Build()
 				  0,
 				  true); // always check
       RegisterPhysicalVolume(cL);
-#ifdef SIXTRACKLINK
+#ifdef USE_SIXTRACKLINK
       G4cout << "Placement of left crystal " << placementOffsetL << G4endl;
 #endif
     }
@@ -200,7 +200,7 @@ void BDSCollimatorCrystal::Build()
         {BDS::Warning(__METHOD_NAME__, "Right crystal potential overlap in component \"" + name +"\"");}
       LongitudinalOverlap(crystalRight->GetExtent(), angleYAxisRight, "Right");
 
-#ifdef SIXTRACKLINK
+#ifdef USE_SIXTRACKLINK
     G4cout << "right crystal placement offset   " << placementOffsetL << G4endl;
     if (placementRot)
     {

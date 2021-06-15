@@ -1,13 +1,14 @@
 .. macro for non breaking white space useful or units:
 .. |nbsp| unicode:: 0xA0
    :trim:
-
+      
 .. _model-control:
 
 =============
 Model Control
 =============
 
+* :ref:`random-engine`
 * :ref:`beam-parameters`    
 * :ref:`physics-processes`
 
@@ -39,6 +40,29 @@ Model Control
 * More details about :ref:`bend-tracking-behaviour`
 
 
+.. _random-engine:
+
+Random Engine
+-------------
+
+BDSIM, like Geant4 uses CLHEP for pseudo-random number generation. BDSIM requires Geant4 to be
+compiled with respect to a system installation of CLHEP and not the partially included one inside
+Geant4. This is because we require the full set of classes from CLHEP for beam coordinate generation
+but these classes aren't available in the limited version in Geant4. If we permit Geant4 to use its
+own internal CLHEP and BDSIM to use the system CLHEP, we can end up with two random number generators
+and the simulation is not reproducible. Therefore we prevent this behaviour at compilation.
+
+BDSIM uses the HepJamesRandom CLHEP engine by default. This was traditionally the default pseudo-random
+number engine used in Geant4 until recently. Now, Geant4 uses CLHEP's MixMax engine. BDSIM explicitly
+sets the engine to HepJamesRandom so the same engine is used by Geant4 and BDSIM.
+
+This behaviour can be controlled by the option :code:`randomEngine`. ::
+
+  option, randomEngine="hepjames";
+  option, randomEngine="mixmax";
+
+Examples are included in :code:`bdsim/examples/features/beam/random-engine*`.
+  
 .. _beam-parameters:
 
 Beam Parameters
@@ -1833,16 +1857,30 @@ using the following syntax::
 
   option, <option_name>=<value>;
 
-Values accepted can be a number (integer, floating point or scientific notation), a string
-with the value enclosed in "double inverted commas", or a Boolean. For Boolean options (described
-as on or off, or true or false) a number 1 or 0 is used.
+Values accepted can be:
 
-Multiple options can be defined at once using the following syntax::
+* a **number** (integer, floating point or scientific notation)
+* a **string** with the value enclosed in "double inverted commas"
+* a **Boolean** (described as on or off, or true or false): must be 1 or 0.
 
-  option, <option1> = <value>,
-          <option2> = <value>;
+Examples (of fictional options): ::
 
-.. note:: No options are required to be specified to run a BDSIM model.  Defaults will be used in
+  option, numericalOption = 123;
+  option, numericalOption = 1.23e2;
+  option, stringOption = "value";
+  option, booleanOptionOn = 1;
+  option, booleanOptionOff = 0;
+
+Multiple options can be defined at once separated by commans and new lines are tolerated. The declaration
+should end in a semi-colon. For example: ::
+
+  option, anOption = 123, anotherOption = "bananas";
+
+  option, anOption = 123,
+          anotherOption = "bananas";
+
+
+.. note:: No options are required to be specified to run a BDSIM model. Defaults will be used in
 	  all cases.  However, we do recommend you select an appropriate physics list and beam pipe
 	  radius, as these will have a large impact on the outcome of the simulation.
 
@@ -1937,7 +1975,7 @@ Common Options
 | stopSecondaries                  | Whether to stop secondaries or not (default = false)  |
 +----------------------------------+-------------------------------------------------------+
 | worldMaterial                    | The default material surrounding the model. This is   |
-|                                  | by default air.                                       |
+|                                  | by default "G4_AIR".                                  |
 +----------------------------------+-------------------------------------------------------+
 
 .. _options-general-run:
@@ -1966,6 +2004,9 @@ For a description of recreating events, see :ref:`running-recreation`.
 |                                  | of the total number of turns to simulation (default   |
 |                                  | is 0.2 i.e. 20%.  Varies from 0 to 1. -1 for all.     |
 |                                  | Will only print out in an event that also prints out. |
++----------------------------------+-------------------------------------------------------+
+| randomEngine                     | Name of which random engine ("hepjames", "mixmax").   |
+|                                  | Default is "hepjames".                                |
 +----------------------------------+-------------------------------------------------------+
 | recreate                         | Whether to use recreation mode or not (default 0). If |
 |                                  | used as an executable option, this should be a string |
@@ -2007,24 +2048,24 @@ described in :ref:`tunnel-geometry`.
 +==================================+=======================================================+
 | apertureType                     | Default aperture type for all elements.               |
 +----------------------------------+-------------------------------------------------------+
-| aper1                            | Default aper1 parameter                               |
+| aper1                            | Default aper1 parameter (default = 2.5 cm)            |
 +----------------------------------+-------------------------------------------------------+
-| aper2                            | Default aper2 parameter                               |
+| aper2                            | Default aper2 parameter (default = 2.5 cm)            |
 +----------------------------------+-------------------------------------------------------+
-| aper3                            | Default aper3 parameter                               |
+| aper3                            | Default aper3 parameter (default = 2.5 cm)            |
 +----------------------------------+-------------------------------------------------------+
-| aper4                            | Default aper4 parameter                               |
+| aper4                            | Default aper4 parameter (default = 2.5 cm)            |
 +----------------------------------+-------------------------------------------------------+
 | beampipeRadius                   | Default beam pipe inner radius - alias for aper1 [m]  |
 +----------------------------------+-------------------------------------------------------+
-| beampipeThickness                | Default beam pipe thickness [m]                       |
+| beampipeThickness                | Default beam pipe thickness [m] (default 2.5 mm)      |
 +----------------------------------+-------------------------------------------------------+
-| beampipeMaterial                 | Default beam pipe material                            |
+| beampipeMaterial                 | Default beam pipe material (default "stainlesssteel"  |
 +----------------------------------+-------------------------------------------------------+
-| buildTunnel                      | Whether to build a tunnel (default = 0)               |
+| buildTunnel                      | Whether to build a tunnel (default = false)           |
 +----------------------------------+-------------------------------------------------------+
 | buildTunnelStraight              | Whether to build a tunnel, ignoring the beamline and  |
-|                                  | just in a straight line (default = 0).                |
+|                                  | just in a straight line (default = false).            |
 +----------------------------------+-------------------------------------------------------+
 | buildTunnelFloor                 | Whether to add a floor to the tunnel                  |
 +----------------------------------+-------------------------------------------------------+
@@ -2066,7 +2107,7 @@ described in :ref:`tunnel-geometry`.
 | magnetGeometryType               | The default magnet geometry style to use              |
 +----------------------------------+-------------------------------------------------------+
 | outerMaterial                    | The default material to use for the yoke of magnet    |
-|                                  | geometry                                              |
+|                                  | geometry (default = "iron")                           |
 +----------------------------------+-------------------------------------------------------+
 | preprocessGDML                   | Whether to prepend the element name at the front of   |
 |                                  | every tag in a temporary copy of the GDML file.       |
@@ -2080,17 +2121,17 @@ described in :ref:`tunnel-geometry`.
 |                                  | internet access. On by default.                       |
 +----------------------------------+-------------------------------------------------------+
 | removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
-|                                  | when BDSIM exits. Default true.                       |
+|                                  | when BDSIM exits (default = true)                     |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | Diameter of all samplers (default 5 m) [m].           |
+| samplerDiameter                  | Diameter of all samplers [m]. (default = 5 m)         |
 +----------------------------------+-------------------------------------------------------+
 | sensitiveBeamPipe                | Whether the beam pipe records energy loss. This       |
-|                                  | includes cavities.                                    |
+|                                  | includes cavities. (default = true)                   |
 +----------------------------------+-------------------------------------------------------+
 | sensitiveOuter                   | Whether the outer part of each component (other than  |
-|                                  | the beam pipe records energy loss                     |
+|                                  | the beam pipe records energy loss (default = true)    |
 +----------------------------------+-------------------------------------------------------+
-| soilMaterial                     | Material for soil outside tunnel wall                 |
+| soilMaterial                     | Material for outside tunnel wall (default = "soil")   |
 +----------------------------------+-------------------------------------------------------+
 | temporaryDirectory               | By default, BDSIM tries :code:`/tmp`, :code:`/temp`,  |
 |                                  | and the current working directory in that order to    |
@@ -2215,7 +2256,7 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | "geant4dp")                                           |
 +----------------------------------+-------------------------------------------------------+
 | killNeutrinos                    | Whether to always stop tracking neutrinos for         |
-|                                  | increased efficiency (default = true)                 |
+|                                  | increased efficiency (default = false)                |
 +----------------------------------+-------------------------------------------------------+
 | killedParticlesMassAddedToEloss  | Default 0 (off). When a particle is killed its rest   |
 |                                  | mass will be included in the energy deposition hit.   |
@@ -2608,6 +2649,9 @@ with the following options.
 | storeSamplerIon                    | Stores A, Z and Boolean whether the entry is an ion or not as well |
 |                                    | as the `nElectrons` variable for possible number of electrons.     |
 +------------------------------------+--------------------------------------------------------------------+
+| samplersSplitLevel                 | The ROOT splitlevel of the branch. Default 0 (unsplit). Set to 1   |
+|                                    | or 2 to allow columnar access (e.g. with `uproot`).                |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectory                    | Whether to store trajectories. If turned on, only the primary      |
 |                                    | particle(s) trajectory(ies) are stored by default. This is         |
 |                                    | required for the storage of any other trajectories at all. Note    |
@@ -2615,6 +2659,8 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectories                  | An alias to `storeTrajectory`                                      |
 +------------------------------------+--------------------------------------------------------------------+
+
+.. _options-trajectory-filtering:
 
 Trajectory Filtering Options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2678,6 +2724,7 @@ These options control, if :code:`storeTrajectory=1;`, which tracks trajectories 
 |                                    | position (sqrt(x^2, y^2)).                                         |
 +------------------------------------+--------------------------------------------------------------------+
 
+.. _options-trajectory-storage:
 
 Trajectory Storage Options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3094,7 +3141,7 @@ Sampler Visualisation
 The samplers are normally invisible and are built in a parallel world geometry in Geant4. To
 visualise them, the following command should be used in the visualiser::
 
-  /vis/drawVolume worlds
+  /bds/samplers/view
 
 The samplers will appear in semi-transparent green, as well as the curvilinear geometry used
 for coordinate transforms (cylinders).
@@ -3120,6 +3167,9 @@ create with the name of the `samplerplacement`. The user may define an arbitrary
 This defines a circular (by default) sampler with radius 10 cm positioned with respect to
 the 2nd instance of the d1 element (zero counting) in the main beam line with a rotation
 about the unit Y axis of :math:`\pi / 4`.
+
+.. note:: samplerplacements have no S coordinate, so the S variable will always be -1 m in
+	  the output (the default unphysical value for easy filtering).
 
 Shape
 *****
@@ -3257,10 +3307,8 @@ User Sampler Visualisation
 **************************
 
 Samplers are by default invisible. To visualise the samplerplacement, all samplers should be
-visualised as described in :ref:`sampler-visualisation`. The scene tree can then be explored
-in the visualiser to hide other hidden volumes (such as the 'curvilinear' coordinate transform
-worlds) and other samplers. It is recommended to tick and untick the desired element to see
-it appear and disappear repeatedly.
+visualised as described in :ref:`sampler-visualisation`. It is recommended to tick and untick
+the desired element to see it appear and disappear repeatedly.
 
 .. _scoring:
 

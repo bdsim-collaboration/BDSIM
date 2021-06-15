@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTParticleData.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
 
@@ -132,6 +133,7 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree->Branch("Histos.",     "BDSOutputROOTEventHistograms", evtHistos, 32000, 1);
 
   // build sampler structures
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   for (G4int i = 0; i < (G4int)samplerTrees.size(); ++i)
     {
       auto samplerTreeLocal = samplerTrees.at(i);
@@ -139,7 +141,7 @@ void BDSOutputROOT::NewFile()
       // set tree branches
       theEventOutputTree->Branch((samplerName+".").c_str(),
                                  "BDSOutputROOTEventSampler",
-                                 samplerTreeLocal,32000,0);
+                                 samplerTreeLocal,32000,globals->SamplersSplitLevel());
     }
 
   // build collimator structures
@@ -225,7 +227,6 @@ void BDSOutputROOT::Close()
     }
 }
 
-#ifdef SIXTRACKLINK
 void BDSOutputROOT::UpdateSamplers()
 {
   G4int nNewSamplers = BDSOutputStructures::UpdateSamplerStructures();
@@ -240,4 +241,3 @@ void BDSOutputROOT::UpdateSamplers()
 				 samplerTreeLocal,32000,0);
     }
 }
-#endif

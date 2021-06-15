@@ -87,7 +87,8 @@ BDSIM::BDSIM():
   bdsOutput(nullptr),
   bdsBunch(nullptr),
   runManager(nullptr),
-  userComponentFactory(nullptr)
+  userComponentFactory(nullptr),
+  userPhysicsList(nullptr)
 {;}
 
 BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
@@ -101,7 +102,8 @@ BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
   bdsOutput(nullptr),
   bdsBunch(nullptr),
   runManager(nullptr),
-  userComponentFactory(nullptr)
+  userComponentFactory(nullptr),
+  userPhysicsList(nullptr)
 {
   initialisationResult = Initialise();
 }
@@ -157,7 +159,7 @@ int BDSIM::Initialise()
   BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   /// Initialize random number generator
-  BDSRandom::CreateRandomNumberGenerator();
+  BDSRandom::CreateRandomNumberGenerator(globalConstants->RandomEngine());
   BDSRandom::SetSeed(); // set the seed from options
 
   /// Construct output
@@ -174,7 +176,7 @@ int BDSIM::Initialise()
 
   /// Construct mandatory run manager (the G4 kernel) and
   /// register mandatory initialization classes.
-  runManager = new BDSRunManager;
+  runManager = new BDSRunManager();
 
   /// Register the geometry and parallel world construction methods with run manager.
   BDSDetectorConstruction* realWorld = new BDSDetectorConstruction(userComponentFactory);
@@ -207,7 +209,14 @@ int BDSIM::Initialise()
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto parallelWorldPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
   G4int physicsVerbosity = BDSGlobalConstants::Instance()->PhysicsVerbosity();
-  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);
+  G4VModularPhysicsList* physList;
+  if (userPhysicsList)
+    {
+      G4cout << "Using externally registered user defined physics list" << G4endl;
+      physList = userPhysicsList;
+    }
+  else
+    {physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);}
 
   // create geometry sampler and register importance sampling biasing. Has to be here
   // before physicsList is "initialised" in run manager.
@@ -407,10 +416,10 @@ void BDSIM::BeamOn(int nGenerate)
   sigemptyset(&act.sa_mask);
   act.sa_flags = 0;
   if (!ignoreSIGINT)
-    {sigaction(SIGINT,  &act, 0);}
-  sigaction(SIGABRT, &act, 0);
-  sigaction(SIGTERM, &act, 0);
-  sigaction(SIGSEGV, &act, 0);
+    {sigaction(SIGINT,  &act, nullptr);}
+  sigaction(SIGABRT, &act, nullptr);
+  sigaction(SIGTERM, &act, nullptr);
+  sigaction(SIGSEGV, &act, nullptr);
   
   /// Run in either interactive or batch mode
   try
@@ -479,7 +488,7 @@ BDSIM::~BDSIM()
     {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
 }
 
-void BDSIM::RegisterUserComponent(G4String componentTypeName,
+void BDSIM::RegisterUserComponent(const G4String& componentTypeName,
 				  BDSComponentConstructor* componentConstructor)
 {
   if (initialised)
