@@ -58,7 +58,9 @@ New Features
 * "ModelTree" is now copied over when using `rebdsimCombine` to combine multiple `rebdsim`
   output files.
 * New options:
-  
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+
 +----------------------------------+-------------------------------------------------------+
 | **Option**                       | **Function**                                          |
 +==================================+=======================================================+
