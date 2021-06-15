@@ -427,16 +427,10 @@ running CMake by prefixing them with "-D". The following options are available.
 |                               | data generated with this build cannot be used with a        |
 |                               | normal build with this turned off. (default OFF)            |
 +-------------------------------+-------------------------------------------------------------+
-| **USE_SIXTRACK_LINK**         | Use experimental sixtrack link interface. Affects output.   |
-|                               | (default OFF)                                               |
-+-------------------------------+-------------------------------------------------------------+
 | **BDSIM_BUILD_STATIC_LIBS**   | Whether to build the static library in addition to the main |
 |                               | shared one. Note, currently the executables will only ever  |
 |                               | be linked to the shared libraries - work in progress.       |
 |                               | (default OFF)                                               |
-+-------------------------------+-------------------------------------------------------------+
-| **BDSIM_BUILD_TEST_PROGRAMS** | Whether to build a set of test executable programs. For     |
-|                               | developers. Also defines extra CTest tests. Default off.    |
 +-------------------------------+-------------------------------------------------------------+
 
 * Booleans can be specified with OFF or ON.
@@ -494,6 +488,9 @@ effects.
 +------------------------------------+-------------------------------------------------------------+
 | **Option**                         | **Description**                                             |
 +====================================+=============================================================+
+| **BDSIM_BUILD_TEST_PROGRAMS**      | Whether to build a set of test executable programs. For     |
+|                                    | developers. Also defines extra CTest tests. Default off.    |
++------------------------------------+-------------------------------------------------------------+
 | **BDSIM_FINAL_INSTALL_DIR**        | This path if set will used as the first vis macro path to   |
 |                                    | be searched. Should be up to and including "bdsim". Used in |
 |                                    | the case of a CVMFS build where the build is relocated.     |
@@ -506,6 +503,9 @@ effects.
 |                                    | the geometry.                                               |
 +------------------------------------+-------------------------------------------------------------+
 | **USE_FIELD_DOUBLE_PRECISION**     | Use double precision for all field maps.                    |
++------------------------------------+-------------------------------------------------------------+
+| **USE_SIXTRACK_LINK**              | Use experimental sixtrack link interface. Affects output.   |
+|                                    | (default OFF)                                               |
 +------------------------------------+-------------------------------------------------------------+
 | **USE_SPHINX_GOOGLE**              | Assume we have the patched google analytics package for     |
 |                                    | for sphinx contrib installed. It's no longer supported, but |
