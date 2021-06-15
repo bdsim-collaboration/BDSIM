@@ -75,18 +75,6 @@ public:
   /// and the (user-provided) constructor that can construct it.
   void RegisterUserComponent(const G4String& componentTypeName,
 			     BDSComponentConstructor* componentConstructor);
-
-  /*
-  void TrackEnergy(double pdgID, double totalEnergy,
-		   double x, double px,
-		   double y, double py,
-		   double s, double t);
-
-  void TrackMomentum(double pdgID, double momentum,
-		     double x, double px,
-		     double y, double py,
-		     double s, double t);
-  */
 private:
   /// The main function where everything is constructed.
   int Initialise();
@@ -98,7 +86,7 @@ private:
   int    argcCache;            ///< Cache of argc.
   char** argvCache;            ///< Cache of argv.
 
-  /// @{ Cache of main object in BDSIM.
+  /// @{ Cache of main objects in BDSIM.
   BDSParser*     parser;
   BDSOutput*     bdsOutput;
   BDSBunch*      bdsBunch;
