@@ -31,9 +31,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "G4Types.hh"
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <vector>
+#include <utility>
 #endif
 
 ClassImp(BDSOutputROOTEventModel)
@@ -48,22 +50,21 @@ BDSOutputROOTEventModel::BDSOutputROOTEventModel():
 BDSOutputROOTEventModel::~BDSOutputROOTEventModel()
 {;}
 
-int BDSOutputROOTEventModel::findNearestElement(TVector3 vPoint)
+int BDSOutputROOTEventModel::findNearestElement(const TVector3& point) const
 {
-  // TODO : Better search using lower
-  double dMin = 1e50;
-  int iMin = -1;
-  for (int i=0; i < (int)midRefPos.size(); i++)
-    {
-      const TVector3& vRef = midRefPos[i];
-      double d = (vRef-vPoint).Mag();
-      if(d < dMin)
-	{
-	  iMin = i;
-	  dMin = d;
-	}
-    } 
-  return iMin;
+  // we make a vector of pairs of the distance between the mid of each element
+  // and the specified point along with the index. We then sort this vector by
+  // the distance (first part of pair only). Could use a map as it's sorted but
+  // can't guarantee access with a double or float as a key due to binary representation.
+  std::vector<std::pair<float, int> > distanceAndIndex;
+  distanceAndIndex.reserve(midRefPos.size());
+  for (int i = 0; i < (int)midRefPos.size(); i++)
+    {distanceAndIndex.emplace_back(std::make_pair((midRefPos[i]-point).Mag(), i));}
+  
+  struct customLess
+  {bool operator()(std::pair<float, int>& a, std::pair<float, int>& b) const {return a.first < b.first;};};
+  std::sort(distanceAndIndex.begin(), distanceAndIndex.end(), customLess());
+  return distanceAndIndex[0].second;
 }
 
 void BDSOutputROOTEventModel::Flush()

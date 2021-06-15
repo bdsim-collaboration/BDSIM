@@ -238,6 +238,7 @@ Bug Fixes
   air or the element before the expected one.
 * Fix build with a modern compiler (e.g. GCC9) of ROOT and BDSIM. Specifically, if ROOT was compiled
   with C++14 or 17 the C++ standard for BDSIM is matched to that rather than the default C++11.
+* Fixed the implementation of :code:`BDSOutputROOTEventModel::findNearestElement`.
 
 
 Output Changes
