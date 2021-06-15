@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSIMLINK_H
 #include "BDSHitSamplerLink.hh"
 #include "BDSLinkRunAction.hh"
-#include "G4String.hh"
 
 #include <map>
 #include <string>
@@ -85,8 +84,8 @@ public:
   /// in the input gmad files as an option.
   void BeamOn(int nGenerate=-1);
 
-  void SelectLinkElement(const std::string& elementName, G4bool debug = false);
-  void SelectLinkElement(int index, G4bool debug = false);
+  void SelectLinkElement(const std::string& elementName, bool debug = false);
+  void SelectLinkElement(int index, bool debug = false);
 
   /// Use standard C++ types as expected to be used externally.
   void AddLinkCollimatorJaw(const std::string& collimatorName,
@@ -140,6 +139,7 @@ private:
   std::vector<BDSParticleExternal*> externalParticles;
   std::map<std::string, int>        nameToElementIndex;
   int                               currentElementIndex; ///< Element to track in.
+  G4VModularPhysicsList*            userPhysicsList;     ///< Optional user registered physics list.
 };
 
 #endif
