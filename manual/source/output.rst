@@ -1196,6 +1196,7 @@ BDSOutputROOTEventRunInfo
 |                             |                   | start of the run as provided by CLHEP       |
 +-----------------------------+-------------------+---------------------------------------------+
 
+.. _output-structure-trajectory:
 
 BDSOutputROOTEventTrajectory
 ****************************
