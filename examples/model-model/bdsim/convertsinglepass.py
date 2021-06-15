@@ -21,6 +21,3 @@ a,b = pybdsim.Convert.MadxTfs2Gmad("../madx/ring_from_collimation.tfs.gz",
                                    stopname="QUAD.F.H_17",
                                    samplers=None)
 
-# make collimator beams in gmad
-import makecollimatorbeams
-
