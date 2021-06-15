@@ -14,7 +14,7 @@ project(bdsim)
 
 # project version
 set( BDSIM_MAJOR_VERSION 1 )
-set( BDSIM_MINOR_VERSION 5 )
+set( BDSIM_MINOR_VERSION 6 )
 set( BDSIM_PATCH_LEVEL   develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
@@ -85,17 +85,10 @@ endif()
 # HEPMC3
 include(cmake/HepMC.cmake)
 
-# Field double precision (off by default)
-option( FIELDDOUBLEPRECISION "Field values in double precision."  OFF )
-if(FIELDDOUBLEPRECISION)
-  add_definitions("-DFIELDDOUBLE")
-  message(STATUS "Field double precision ON")
-endif()
-
 # Sixtrack linking bits of code that aren't needed otherwise
 option( USE_SIXTRACKLINK "Include linking code for SixTrack." OFF )
 if(USE_SIXTRACKLINK)
-  add_definitions("-DSIXTRACKLINK")
+  add_definitions("-DUSE_SIXTRACKLINK")
   message(STATUS "SixTrack link ON")
 endif()
 
@@ -138,6 +131,8 @@ include(bdsim_install)
 # Before any linkages we define library names
 set(BDSIM_LIB_NAME "bdsim")
 set(BDSIM_LIB_NAME_STATIC "bdsim-static")
+set(GMAD_LIB_NAME "gmad")
+set(GMAD_LIB_NAME_STATIC "gmad-static")
 
 # Source files
 string(TIMESTAMP CURRENT_YEAR %Y)
@@ -262,6 +257,56 @@ bdsim_install_libs(${root_pcms})
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh)
 bdsim_install_headers(${headers} ${root_dicts_headers})
 
+## Add subdirectories
+# Visualisation directory
+add_subdirectory(vis)
+
+# For testing
+add_subdirectory(examples)
+# copy examples to build directory - macro defined in bdsim_macros.cmake
+if (GIT_FOUND)
+  copy_examples()
+else()
+  copy_examples_no_git()
+endif()
+
+# optional test programs
+option(BDSIM_BUILD_TEST_PROGRAMS "Build test executables" OFF)
+  
+# Include directory for tests
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+if (BDSIM_BUILD_TEST_PROGRAMS)
+  add_subdirectory(test)
+endif()
+
+# Include directory for analysis
+add_subdirectory(analysis)
+
+# Include directory for comparator
+add_subdirectory(comparator)
+
+# Include directory for conversion utilities
+add_subdirectory(convert)
+
+# Include directory for interpolator
+add_subdirectory(interpolator)
+
+# Manual
+add_subdirectory(manual)
+
+# Mark some variables as advanced to clean up GUI
+if(APPLE)
+  mark_as_advanced(CMAKE_OSX_ARCHITECTURES)
+  mark_as_advanced(CMAKE_OSX_DEPLOYMENT_TARGET)
+  mark_as_advanced(CMAKE_OSX_SYSROOT)
+endif()
+
+
+
+# CMake packaging so others can use BDSIM in their cmake applications.
+
+
+## in development
 include(CPack)
 
 option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
@@ -286,47 +331,7 @@ add_custom_target(dist
 add_custom_target(copy-deps
   COMMAND ${CMAKE_SOURCE_DIR}/cmake/copyldd.sh bdsim ${CMAKE_BINARY_DIR}/deps
 )
-
-## Add subdirectories
-# Visualisation directory
-add_subdirectory(vis)
-
-# For testing
-add_subdirectory(examples)
-# copy examples to build directory - macro defined in bdsim_macros.cmake
-if (GIT_FOUND)
-  copy_examples()
-else()
-  copy_examples_no_git()
-endif()
-  
-# Include directory for tests
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-add_subdirectory(test)
-
-# Include directory for analysis
-add_subdirectory(analysis)
-
-# Include directory for comparator
-add_subdirectory(comparator)
-
-# Include directory for conversion utilities
-add_subdirectory(convert)
-
-# Include directory for interpolator
-add_subdirectory(interpolator)
-
-# Manual
-add_subdirectory(manual)
-
-# Mark some variables as advanced to clean up GUI
-if(APPLE)
-  mark_as_advanced(CMAKE_OSX_ARCHITECTURES)
-  mark_as_advanced(CMAKE_OSX_DEPLOYMENT_TARGET)
-  mark_as_advanced(CMAKE_OSX_SYSROOT)
-endif()
-
-# CMake packaging so others can use BDSIM in their cmake applications.
+## end in development
 
 # we use "bdsimcmake" for install cmake stuff as it's prepared in the build
 # directory and this would clash with the main library name. the ConfigPackageLocation

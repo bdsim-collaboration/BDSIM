@@ -1,3 +1,5 @@
+message(STATUS "Building test programs")
+
 add_executable(BDSFieldTester BDSFieldTester.cc)
 set_target_properties(BDSFieldTester PROPERTIES OUTPUT_NAME "BDSFieldTest" VERSION ${BDSIM_VERSION})
 target_link_libraries(BDSFieldTester ${BDSIM_LIB_NAME} ${GMAD_LIB_NAME})
@@ -13,7 +15,7 @@ add_test(NAME "tester-interpolator" COMMAND BDSInterpolatorTester)
 add_executable(BDSLinkTester BDSLinkTester.cc)
 set_target_properties(BDSLinkTester PROPERTIES OUTPUT_NAME "BDSLinkTester" VERSION ${BDSIM_VERSION})
 target_link_libraries(BDSLinkTester ${BDSIM_LIB_NAME} gmad)
-add_test(NAME "tester-link" COMMAND BDSLinkTester)
+#add_test(NAME "tester-link" COMMAND BDSLinkTester)
 
 add_executable(BDSSixTrackTester BDSSixTrackTester.cc)
 set_target_properties(BDSSixTrackTester PROPERTIES OUTPUT_NAME "BDSSixTrackTester" VERSION ${BDSIM_VERSION})
@@ -32,5 +34,9 @@ set_target_properties(BDSTrajectoryTester PROPERTIES OUTPUT_NAME "BDSTrajectoryT
 target_link_libraries(BDSTrajectoryTester rebdsim bdsimRootEvent bdsim)
 add_test(NAME "tester-trajectories" COMMAND BDSTrajectoryTester "../examples/features/data/trajectory-sample.root")
 
+add_executable(BDSModelTreeTester BDSModelTreeTester.cc)
+set_target_properties(BDSModelTreeTester PROPERTIES OUTPUT_NAME "BDSModelTreeTest" VERSION ${BDSIM_VERSION})
+target_link_libraries(BDSModelTreeTester rebdsim bdsimRootEvent bdsim)
+add_test(NAME "tester-model-tree" COMMAND BDSModelTreeTester "../examples/features/data/sample1.root")
 
 add_subdirectory(TrackingTestFiles)

@@ -46,7 +46,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class G4Userlimits;
 
-
 BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
 		     const G4String&     nameIn,
 		     G4double            lengthIn,
@@ -351,4 +350,13 @@ BDSMagnet::~BDSMagnet()
   delete magnetOuterInfo;
   delete vacuumFieldInfo;
   delete outerFieldInfo;
+}
+
+void BDSMagnet::SetFieldUsePlacementWorldTransform()
+{
+  BDSAcceleratorComponent::SetFieldUsePlacementWorldTransform();
+  if (vacuumFieldInfo)
+    {vacuumFieldInfo->SetUsePlacementWorldTransform(true);}
+  if (outerFieldInfo)
+    {outerFieldInfo->SetUsePlacementWorldTransform(true);}
 }

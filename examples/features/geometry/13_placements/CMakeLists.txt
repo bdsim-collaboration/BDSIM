@@ -11,3 +11,9 @@ if (USE_GDML)
 endif()
 
 simple_testing(placement-sampler-no-beamline  "--file=sampler_placement_no_beamline.gmad"                ${OVERLAP_CHECK})
+
+simple_testing(placement-bdsim-element-passive "--file=10_placement_element_passive.gmad" ${OVERLAP_CHECK})
+simple_testing(placement-bdsim-element-active  "--file=11_placement_element_active.gmad"  ${OVERLAP_CHECK})
+simple_fail(placement-bad-no-element-file      "--file=13_placement_bad_no_file.gmad" "")
+simple_fail(placement-bad-both-element-file    "--file=14_placement_bad_both_file_element.gmad" "")
+simple_fail(placement-bad-parser-input         "--file=15_placement_bad_input.gmad" "")

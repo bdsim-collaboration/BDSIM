@@ -193,6 +193,7 @@ void Options::PublishMembers()
   publish("verboseImportanceSampling", &Options::verboseImportanceSampling);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
+  publish("randomEngine",          &Options::randomEngine);
   publish("recreate",              &Options::recreate);
   publish("recreateFileName",      &Options::recreateFileName);
   publish("startFromEvent",        &Options::startFromEvent);
@@ -471,6 +472,8 @@ void Options::PublishMembers()
   publish("trajCutLTR",                     &Options::trajCutLTR);
   
   publish("storeModel",                     &Options::storeModel);
+
+  publish("samplersSplitLevel",             &Options::samplersSplitLevel);
 
   // circular options
   publish("nturns",                   &Options::nturns);
