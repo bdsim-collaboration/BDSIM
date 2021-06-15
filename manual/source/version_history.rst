@@ -310,6 +310,14 @@ Output Class Versions
 | BDSOutputROOTParticleData         | N           | 3               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
 
+Utilities
+---------
+
+* pybdsim v2.4.0
+* pymadx v1.8.2
+* pymad8 v1.6.1
+* pytransport v1.5.0
+
 
 V1.5.1 - 2020 / 12 / 21
 =======================
