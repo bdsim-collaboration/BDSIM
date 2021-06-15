@@ -14,7 +14,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
 
-V1.6.0 - 2021 / XX / XX
+V1.6.0 - 2021 / 06 / 16
 =======================
 
 * Public CVMFS build now available. See :ref:`cvmfs-build`.
@@ -149,6 +149,7 @@ General
   the commonly named vis.mac, which makes it ambiguous as to which one is really being used.
 * The visualisation macro path has the current working directory now as the last directory to search
   after the installation directory.
+* Test program written for output Model tree functions.
 
 Build Changes
 -------------
