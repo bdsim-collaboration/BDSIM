@@ -223,7 +223,7 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
       componentName.push_back((*i)->GetName());
       placementName.push_back((*i)->GetPlacementName());
       componentType.push_back((*i)->GetType());
-      length.push_back((float &&) (*i)->GetAcceleratorComponent()->GetArcLength() / CLHEP::m);
+      length.push_back((float)((*i)->GetAcceleratorComponent()->GetArcLength() / CLHEP::m));
       staPos.push_back(ConvertToROOT((*i)->GetPositionStart()));
       midPos.push_back(ConvertToROOT((*i)->GetPositionMiddle()));
       endPos.push_back(ConvertToROOT((*i)->GetPositionEnd()));
@@ -241,9 +241,9 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
       BDSTiltOffset* to = (*i)->GetTiltOffset();
       if (to)
 	{
-	  tilt.push_back((float)to->GetTilt() / CLHEP::rad);
-	  offsetX.push_back((float)to->GetXOffset() / CLHEP::m);
-	  offsetY.push_back((float)to->GetYOffset() / CLHEP::m);
+	  tilt.push_back((float)(to->GetTilt() / CLHEP::rad));
+	  offsetX.push_back((float)(to->GetXOffset() / CLHEP::m));
+	  offsetY.push_back((float)(to->GetYOffset() / CLHEP::m));
 	}
       else
 	{
@@ -253,9 +253,9 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 	}
       
       // S positions
-      staS.push_back((float &&) (*i)->GetSPositionStart()  / CLHEP::m);
-      midS.push_back((float &&) (*i)->GetSPositionMiddle() / CLHEP::m);
-      endS.push_back((float &&) (*i)->GetSPositionEnd()    / CLHEP::m);
+      staS.push_back((float)((*i)->GetSPositionStart()  / CLHEP::m));
+      midS.push_back((float)((*i)->GetSPositionMiddle() / CLHEP::m));
+      endS.push_back((float)((*i)->GetSPositionEnd()    / CLHEP::m));
       
       // beam pipe
       BDSBeamPipeInfo* beampipeinfo = (*i)->GetBeamPipeInfo();
@@ -311,14 +311,14 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 	  for (int j = 0; j < (int)localSkew.size(); j++)
 	    {localSkew[j]->push_back((float)skewComponents[j]);}
 	  
-	  ks.push_back((float)(*ms)["ks"]/BDSMagnetStrength::Unit("ks"));
-	  hkick.push_back((float)(*ms)["hkick"]/BDSMagnetStrength::Unit("hkick"));
-	  vkick.push_back((float)(*ms)["vkick"]/BDSMagnetStrength::Unit("vkick"));
-	  bField.push_back((float)(*ms)["field"]/BDSMagnetStrength::Unit("field"));
-	  eField.push_back((float)(*ms)["efield"]/BDSMagnetStrength::Unit("efield"));
-	  e1.push_back((float)(*ms)["e1"]/BDSMagnetStrength::Unit("e1"));
-	  e2.push_back((float)(*ms)["e2"]/BDSMagnetStrength::Unit("e2"));
-	  hgap.push_back((float)(*ms)["hgap"]/BDSMagnetStrength::Unit("hgap"));
+	  ks.push_back((float)((*ms)["ks"]/BDSMagnetStrength::Unit("ks")));
+	  hkick.push_back( (float)((*ms)["hkick"]/BDSMagnetStrength::Unit("hkick")));
+	  vkick.push_back( (float)((*ms)["vkick"]/BDSMagnetStrength::Unit("vkick")));
+	  bField.push_back((float)((*ms)["field"]/BDSMagnetStrength::Unit("field")));
+	  eField.push_back((float)((*ms)["efield"]/BDSMagnetStrength::Unit("efield")));
+	  e1.push_back((float)((*ms)["e1"]/BDSMagnetStrength::Unit("e1")));
+	  e2.push_back((float)((*ms)["e2"]/BDSMagnetStrength::Unit("e2")));
+	  hgap.push_back((float)((*ms)["hgap"]/BDSMagnetStrength::Unit("hgap")));
 	  fint.push_back((float)(*ms)["fint"]);
 	  fintx.push_back((float)(*ms)["fintx"]);
 	  fintk2.push_back((float)(*ms)["fintk2"]);
