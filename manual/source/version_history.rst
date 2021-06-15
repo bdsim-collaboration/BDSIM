@@ -55,6 +55,8 @@ New Features
 * New units accepted in input (PeV, PJ, GJ, MJ, kJ, J, mJ, uJ, nJ, pJ). J=1, GeV=1.
 * New visualisation command :code:`/bds/samplers/view` to easily view samplers.
 * New custom physics list interface to :code:`BDSIMClass` - see :ref:`interfacing-custom-physics`.
+* "ModelTree" is now copied over when using `rebdsimCombine` to combine multiple `rebdsim`
+  output files.
 * New options:
   
 +----------------------------------+-------------------------------------------------------+

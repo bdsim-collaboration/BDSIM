@@ -38,7 +38,7 @@ Detailed start-to-finish examples with explanation.
    worked_example_custom_analysis/worked_example_custom_analysis
    worked_example_no_accelerator/worked_example_no_accelerator
    worked_example_model_model/model-model-single-pass
-
+   worked_example_machine_diagram/worked_example_machine_diagram
 
 Specific Machines
 -----------------
