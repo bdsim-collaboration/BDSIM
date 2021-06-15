@@ -36,6 +36,7 @@ class BDSParticleCoordsFull;
 class BDSParticleDefinition;
 class BDSParticleExternal;
 class G4RunManager;
+class G4VModularPhysicsList;
 
 /** 
  * @brief Interface class to use BDSIM with trackers.
@@ -110,6 +111,10 @@ public:
 
   inline G4int NSecondariesToReturn() const {return runAction ? runAction->NSecondariesToReturn() : 0;}
   inline G4int NPrimariesToReturn()   const {return runAction ? runAction->NPrimariesToReturn() : 0;}
+
+  /// Provide a physics list that will be used inplace of the BDSIM generate one.
+  void RegisterUserPhysicsList(G4VModularPhysicsList* userPhysicsListIn) {userPhysicsList = userPhysicsListIn;}
+  G4VModularPhysicsList* UserPhysicsList() const {return userPhysicsList;} ///< Access user physics list.
   
 private:
   /// The main function where everything is constructed.

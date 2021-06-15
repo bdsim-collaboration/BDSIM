@@ -25,6 +25,7 @@ class BDSComponentFactoryUser;
 class BDSOutput;
 class BDSParser;
 class BDSRunManager;
+class G4VModularPhysicsList;
 
 #include "G4String.hh"
 
@@ -75,6 +76,11 @@ public:
   /// and the (user-provided) constructor that can construct it.
   void RegisterUserComponent(const G4String& componentTypeName,
 			     BDSComponentConstructor* componentConstructor);
+  
+  /// Provide a physics list that will be used inplace of the BDSIM generate one.
+  void RegisterUserPhysicsList(G4VModularPhysicsList* userPhysicsListIn) {userPhysicsList = userPhysicsListIn;}
+  G4VModularPhysicsList* UserPhysicsList() const {return userPhysicsList;} ///< Access user physics list.
+  
 private:
   /// The main function where everything is constructed.
   int Initialise();
@@ -91,7 +97,8 @@ private:
   BDSOutput*     bdsOutput;
   BDSBunch*      bdsBunch;
   BDSRunManager* runManager;
-  BDSComponentFactoryUser* userComponentFactory;
+  BDSComponentFactoryUser* userComponentFactory; ///< Optional user registered compont factory.
+  G4VModularPhysicsList* userPhysicsList;        ///< Optional user registered physics list.
   /// @}
 };
 
