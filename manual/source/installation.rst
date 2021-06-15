@@ -398,42 +398,46 @@ running CMake by prefixing them with "-D". The following options are available.
 
 .. tabularcolumns:: |p{7cm}|p{8cm}|
 
-+-----------------------------+-------------------------------------------------------------+
-| **Option**                  | **Description**                                             |
-+=============================+=============================================================+
-| **USE_AWAKE**               | Use AWAKE model components. (default OFF)                   |
-+-----------------------------+-------------------------------------------------------------+
-| **USE_CUSTOM_CHANNELLING**  | Use RHUL custom crystal channelling package in Geant4. Only |
-|                             | if you have this package patched onto Geant4.               |
-| **USE_EVENT_DISPLAY**       | Turn on or off event display. Requires ROOT EVE libraries   |
-|                             | and is an unmaintained work in progress. (default OFF)      |
-+-----------------------------+-------------------------------------------------------------+
-| **USE_GDML**                | Control over use of GDML. On if Geant4 has GDML support.    |
-+-----------------------------+-------------------------------------------------------------+
-| **USE_GEANT4_EMD_ID**       | If using RHUL Geant4 with EMD process with its own ID turn  |
-|                             | this on to uniquely identify that process in cross-section  |
-|                             | biasing. (default OFF)                                      |
-+-----------------------------+-------------------------------------------------------------+
-| **USE_GZSTREAM**            | Control over using GZip library. (default ON)               |
-+-----------------------------+-------------------------------------------------------------+
-| **USE_HEPMC3**              | Whether to link against HepMC3. (default OFF)               |
-+-----------------------------+-------------------------------------------------------------+
-| **USE_HEPMC3_ROOTIO**       | Whether HEPMC3 was built with ROOTIO on. (default OFF)      |
-+-----------------------------+-------------------------------------------------------------+
-| **USE_ROOT_DOUBLE_OUTPUT**  | Whether to use double precision for all output. Note this   |
-|                             | will roughly double the size of the output files. Useful    |
-|                             | only for precision tracking tests using samplers. Note,     |
-|                             | data generated with this build cannot be used with a        |
-|                             | normal build with this turned off. (default OFF)            |
-+-----------------------------+-------------------------------------------------------------+
-| **USE_SIXTRACK_LINK**       | Use experimental sixtrack link interface. Affects output.   |
-|                             | (default OFF)                                               |
-+-----------------------------+-------------------------------------------------------------+
-| **BDSIM_BUILD_STATIC_LIBS** | Whether to build the static library in addition to the main |
-|                             | shared one. Note, currently the executables will only ever  |
-|                             | be linked to the shared libraries - work in progress.       |
-|                             | (default OFF)                                               |
-+-----------------------------+-------------------------------------------------------------+
++-------------------------------+-------------------------------------------------------------+
+| **Option**                    | **Description**                                             |
++===============================+=============================================================+
+| **USE_AWAKE**                 | Use AWAKE model components. (default OFF)                   |
++-------------------------------+-------------------------------------------------------------+
+| **USE_CUSTOM_CHANNELLING**    | Use RHUL custom crystal channelling package in Geant4. Only |
+|                               | if you have this package patched onto Geant4.               |
++-------------------------------+-------------------------------------------------------------+
+| **USE_EVENT_DISPLAY**         | Turn on or off event display. Requires ROOT EVE libraries   |
+|                               | and is an unmaintained work in progress. (default OFF)      |
++-------------------------------+-------------------------------------------------------------+
+| **USE_GDML**                  | Control over use of GDML. On if Geant4 has GDML support.    |
++-------------------------------+-------------------------------------------------------------+
+| **USE_GEANT4_EMD_ID**         | If using RHUL Geant4 with EMD process with its own ID turn  |
+|                               | this on to uniquely identify that process in cross-section  |
+|                               | biasing. (default OFF)                                      |
++-------------------------------+-------------------------------------------------------------+
+| **USE_GZSTREAM**              | Control over using GZip library. (default ON)               |
++-------------------------------+-------------------------------------------------------------+
+| **USE_HEPMC3**                | Whether to link against HepMC3. (default OFF)               |
++-------------------------------+-------------------------------------------------------------+
+| **USE_HEPMC3_ROOTIO**         | Whether HEPMC3 was built with ROOTIO on. (default OFF)      |
++-------------------------------+-------------------------------------------------------------+
+| **USE_ROOT_DOUBLE_OUTPUT**    | Whether to use double precision for all output. Note this   |
+|                               | will roughly double the size of the output files. Useful    |
+|                               | only for precision tracking tests using samplers. Note,     |
+|                               | data generated with this build cannot be used with a        |
+|                               | normal build with this turned off. (default OFF)            |
++-------------------------------+-------------------------------------------------------------+
+| **USE_SIXTRACK_LINK**         | Use experimental sixtrack link interface. Affects output.   |
+|                               | (default OFF)                                               |
++-------------------------------+-------------------------------------------------------------+
+| **BDSIM_BUILD_STATIC_LIBS**   | Whether to build the static library in addition to the main |
+|                               | shared one. Note, currently the executables will only ever  |
+|                               | be linked to the shared libraries - work in progress.       |
+|                               | (default OFF)                                               |
++-------------------------------+-------------------------------------------------------------+
+| **BDSIM_BUILD_TEST_PROGRAMS** | Whether to build a set of test executable programs. For     |
+|                               | developers. Also defines extra CTest tests. Default off.    |
++-------------------------------+-------------------------------------------------------------+
 
 * Booleans can be specified with OFF or ON.
 

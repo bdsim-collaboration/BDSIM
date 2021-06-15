@@ -1,3 +1,5 @@
+message(STATUS "Building test programs")
+
 add_executable(BDSFieldTester BDSFieldTester.cc)
 set_target_properties(BDSFieldTester PROPERTIES OUTPUT_NAME "BDSFieldTest" VERSION ${BDSIM_VERSION})
 target_link_libraries(BDSFieldTester ${BDSIM_LIB_NAME} ${GMAD_LIB_NAME})
