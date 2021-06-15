@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
   // build input file list
   std::vector<std::string> inputFiles;
   for (int i = 2; i < argc; ++i)
-    {inputFiles.push_back(std::string(argv[i]));}
+    {inputFiles.emplace_back(std::string(argv[i]));}
 
   // checks
   if (inputFiles.size() == 1)
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     }
 
   std::string outputFile = std::string(argv[1]);
-  if (outputFile.find("*") != std::string::npos)
+  if (outputFile.find('*') != std::string::npos)
     {
       std::cerr << "First argument for output file \"" << outputFile << "\" contains an *." << std::endl;
       std::cerr << "Should only be a singular file - check order of arguments." << std::endl;
