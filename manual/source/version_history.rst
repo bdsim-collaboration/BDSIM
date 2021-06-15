@@ -166,6 +166,8 @@ Build Changes
 * If building a CMake project with respect to a BDSIM installation (i.e. using BDSIM), the variable
   :code:`BDSIM_INCLUDE_DIR` now correctly includes "bdsim" at the end.
 * The bdsim.sh in the installation directory should now be portable and also work with zsh as well as bash.
+* Test executable programs are no longer built by default and must be explicitly turned on
+  with the CMake option :code:`BDSIM_BUILD_TEST_PROGRAMS`.
 
 Bug Fixes
 ---------

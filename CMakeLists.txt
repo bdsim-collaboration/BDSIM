@@ -269,10 +269,15 @@ if (GIT_FOUND)
 else()
   copy_examples_no_git()
 endif()
+
+# optional test programs
+option(BDSIM_BUILD_TEST_PROGRAMS "Build test executables" OFF)
   
 # Include directory for tests
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-add_subdirectory(test)
+if (BDSIM_BUILD_TEST_PROGRAMS)
+  add_subdirectory(test)
+endif()
 
 # Include directory for analysis
 add_subdirectory(analysis)
