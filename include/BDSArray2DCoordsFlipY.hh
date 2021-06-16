@@ -58,6 +58,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSArray2DCoordsFlipY: public BDSArray2DCoords
 {
 public:
+  BDSArray2DCoordsFlipY() = delete;
   /// Wrap an existing BDSArray2DCoords instance.
   explicit BDSArray2DCoordsFlipY(BDSArray2DCoords* arrayIn);
   virtual ~BDSArray2DCoordsFlipY(){;}
@@ -92,8 +93,6 @@ public:
   friend std::ostream& operator<< (std::ostream& out, BDSArray2DCoordsFlipY const &a);
 
 private:
-  BDSArray2DCoordsFlipY() = delete;
-
   /// Must return by reference and the true data value may have to be reflected
   /// in one or more dimensions.  Copy to this and return reference to it.
   mutable BDSFieldValue returnValue;
