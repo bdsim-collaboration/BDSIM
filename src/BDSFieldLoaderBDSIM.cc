@@ -419,9 +419,7 @@ void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
 {
   std::istringstream liness(line);
   G4float value = 0;
-
-  // put a default value in.
-  lineData[0] = 0;
+  std::fill(lineData.begin(), lineData.end(), 0); // reset data - technically unnecessary
   
   // read all columns - indices shifted +1 for default value offset
   for (unsigned long i = 1; i < nColumns+1; ++i)
