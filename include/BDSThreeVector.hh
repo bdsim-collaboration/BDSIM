@@ -96,7 +96,7 @@ public:
   {return x()*b.x() + y()*b.y() + z()*b.z();}
   
   /// Get the magnitude of it.
-  inline T mag() const {return std::hypot(values[0], values[1], values[2]);}
+  inline T mag() const {return std::sqrt(values[0]*values[0] + values[1]*values[1] + values[2]*values[2]);}
 
   /// @{ Multiplication
   inline friend BDSThreeVector operator * (const BDSThreeVector& a, const double& b)
