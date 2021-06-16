@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 types / globals
 
+#include <cmath>
 #include <ostream>
 
 /**
@@ -93,6 +94,9 @@ public:
 
   T dot(const BDSThreeVector& b) const
   {return x()*b.x() + y()*b.y() + z()*b.z();}
+  
+  /// Get the magnitude of it.
+  inline T mag() const {return std::hypot(values[0], values[1], values[2]);}
 
   /// @{ Multiplication
   inline friend BDSThreeVector operator * (const BDSThreeVector& a, const double& b)
