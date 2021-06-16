@@ -49,7 +49,8 @@ BDSFieldLoaderBDSIM<T>::BDSFieldLoaderBDSIM():
   nColumns(0),
   fv(BDSFieldValue()),
   result(nullptr),
-  headerMustBePositiveKeys({"nx", "ny", "nz", "nt"})
+  headerMustBePositiveKeys({"nx", "ny", "nz", "nt"}),
+  indexOfFirstFieldValue(0)
 {
   dimKeyMap = {
 	       {BDSDimensionType::x, {"nx", "xmin", "xmax"}},
@@ -78,6 +79,7 @@ void BDSFieldLoaderBDSIM<T>::CleanUp()
     {header[key] = 1;}
   result    = nullptr;
   loopOrder = "xyzt";
+  indexOfFirstFieldValue = 0;
 }
 
 template <class T>
@@ -122,7 +124,7 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
   CleanUp();
   
   file.open(fileName);
-
+  long long unsigned int currentLineNumber = 0;
   // test if file is valid
 #ifdef USE_GZSTREAM
   bool validFile = file.rdbuf()->is_open();
@@ -313,6 +315,7 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
 	    }
           lineData.resize(nColumns + 1); // +1 for default value
           intoData = true;
+          indexOfFirstFieldValue = std::min({xIndex, yIndex, zIndex});
           
           for (const auto& key : headerMustBePositiveKeys)
 	    {
@@ -417,7 +420,7 @@ void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
   for (unsigned long i = 1; i < nColumns+1; ++i)
     {
       liness >> value;
-      if (i < xIndex)// x is the first field value - coordinates before that
+      if (i < indexOfFirstFieldValue)// coordinates before this index
 	{value *= CLHEP::cm;}
       lineData[i] = value;
     }
