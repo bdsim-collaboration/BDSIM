@@ -61,8 +61,11 @@ public:
   /// Assignment operator.
   BDSThreeVector& operator=(const BDSThreeVector& rhs)
   {
-    for (G4int i : {0, 1, 2})
-      {values[i] = rhs.values[i];}
+    if (&rhs != this)
+      {
+	for (G4int i : {0, 1, 2})
+	  {values[i] = rhs.values[i];}
+      }
     return *this;
   }
 
