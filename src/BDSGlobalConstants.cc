@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -25,9 +25,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputType.hh"
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSParser.hh"
+#include "BDSSamplerCustom.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryFilter.hh"
+#include "BDSTrajectoryOptions.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
@@ -120,7 +122,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 
   InitialiseBeamlineTransform();
 
-  BDSSamplerPlane::chordLength = LengthSafety();
+  BDSSamplerPlane::chordLength  = 10*LengthSafety();
+  BDSSamplerCustom::chordLength = 10*BDSSamplerPlane::chordLength;
   
   ProcessTrajectoryELossSRange();
 
@@ -131,7 +134,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   trajectoryFiltersSet[BDSTrajectoryFilter::energyThreshold] = options.HasBeenSet("storeTrajectoryEnergyThreshold");
   trajectoryFiltersSet[BDSTrajectoryFilter::sampler]         = options.HasBeenSet("storeTrajectorySamplerID");
   trajectoryFiltersSet[BDSTrajectoryFilter::elossSRange]     = options.HasBeenSet("storeTrajectoryElossSRange");
-  trajectoryFiltersSet[BDSTrajectoryFilter::transportation]  = options.HasBeenSet("storeTrajectoryTransportationSteps");
   trajectoryFiltersSet[BDSTrajectoryFilter::minimumZ]        = options.HasBeenSet("trajCutGTZ");
   trajectoryFiltersSet[BDSTrajectoryFilter::maximumR]        = options.HasBeenSet("trajCutLTR");
 
@@ -140,6 +142,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
       G4cout << "\nGlobal option> storing minimal data\n" << G4endl;
       // these options are made with respect to the defaults in parser/optionsBase.cc - i.e. no need ot set false
       // for a default that is false -> saves code
+      // the one on the right MUST be the one returned by this class in the getter function in the header
       auto& o = options;
       std::map<std::string, bool*> otc = {
         {"storeApertureImpacts",               &o.storeApertureImpacts},
@@ -149,21 +152,34 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
         {"storeCollimatorHitsLinks",           &o.storeCollimatorHitsLinks},
         {"storeCollimatorHitsIons",            &o.storeCollimatorHitsIons},
         {"storeCollimatorHitsAll",             &o.storeCollimatorHitsAll},
-        {"storeELoss",                         &o.storeEloss},               // note we prefer E'L'oss as the best name
-        {"storeELossHistograms",               &o.storeElossHistograms},
-        {"storeParticleData",                  &o.storeParticleData},
-        {"storePrimaries",                     &o.storePrimaries},
         {"storePrimaryHistograms",             &o.storePrimaryHistograms},
-        {"storeTrajectory",                    &o.storeTrajectory},
         {"storeTrajectoryTransportationSteps", &o.storeTrajectoryTransportationSteps},
         {"storeModel",                         &o.storeModel}
       };
       for (auto& no : otc)
-      {
-        if (!options.HasBeenSet(no.first))
-        {*no.second = false;}
-      }
-      }
+	{
+	  if (!options.HasBeenSet(no.first))
+	    {*no.second = false;}
+	}
+      // try again for options that have multiple versions and check if any are set
+      // even though there's only one member bool we turn on / off in the options
+      std::map<std::set<std::string>, bool*> otcMultiple = {
+        {{"storeELoss", "storeEloss"},                     &o.storeEloss},
+        {{"storeELoss","storeEloss"},                      &o.storeEloss},
+        {{"storeELossHistograms", "storeElossHistograms"}, &o.storeElossHistograms},
+        {{"storeTrajectory", "storeTrajectories"},         &o.storeTrajectory},
+        {{"storeParticleData","storeGeant4Data"},          &o.storeParticleData},
+        {{"storePrimaries", "writePrimaries"},             &o.storePrimaries},
+      };
+      for (auto& no : otcMultiple)
+	{
+	  bool hasBeenSet = false;
+	  for (auto& op : no.first)
+	    {hasBeenSet = hasBeenSet || options.HasBeenSet(op);}
+	  if (!hasBeenSet)
+	    {*no.second = false;}
+	}
+    }
 }
 
 void BDSGlobalConstants::InitialiseBeamlineTransform()
@@ -309,4 +325,28 @@ G4bool BDSGlobalConstants::StoreTrajectoryTransportationSteps() const
     {return false;}
   else
     {return options.storeTrajectoryTransportationSteps;}
+}
+
+BDS::TrajectoryOptions BDSGlobalConstants::StoreTrajectoryOptions() const
+{
+  BDS::TrajectoryOptions result = {!StoreTrajectoryTransportationSteps(),
+				   StoreTrajectoryKineticEnergy(),
+				   StoreTrajectoryMomentumVector(),
+				   StoreTrajectoryProcesses(),
+				   StoreTrajectoryTime(),
+				   StoreTrajectoryLocal(),
+				   StoreTrajectoryLinks(),
+				   StoreTrajectoryIon()};
+  
+  if (StoreTrajectoryAllVariables())
+  {
+    result.storeKineticEnergy  = true;
+    result.storeMomentumVector = true;
+    result.storeProcesses      = true;
+    result.storeTime           = true;
+    result.storeLocal          = true;
+    result.storeLinks          = true;
+    result.storeIon            = true;
+  }
+  return result;
 }

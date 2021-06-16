@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSColours.hh"
+#include "BDSColourFromMaterial.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDType.hh"
@@ -75,7 +76,7 @@ void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
   /// build logical volumes
   BuildLogicalVolumes(nameIn,vacuumMaterialIn,beamPipeMaterialIn);
   /// set visual attributes
-  SetVisAttributes();
+  SetVisAttributes(beamPipeMaterialIn);
   /// set user limits
   SetUserLimits(length);
   /// place volumes
@@ -103,9 +104,11 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
   allLogicalVolumes.insert(beamPipeLV);
 }
 
-void BDSBeamPipeFactoryBase::SetVisAttributes()
+void BDSBeamPipeFactoryBase::SetVisAttributes(G4Material* beamPipeMaterialIn)
 {
-  G4VisAttributes* pipeVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("beampipe"));
+  G4Colour* c = BDSColourFromMaterial::Instance()->GetColourWithDefault(beamPipeMaterialIn,
+                                                             BDSColours::Instance()->GetColour("beampipe"));
+  G4VisAttributes* pipeVisAttr = new G4VisAttributes(*c);
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.insert(pipeVisAttr);

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -34,6 +34,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UIExecutive.hh"
 #endif
 
+#include "G4String.hh"
+#include "G4Types.hh"
+
 #include "G4TrajectoryDrawByCharge.hh"
 #include "G4Version.hh"
 
@@ -47,7 +50,7 @@ BDSVisManager::BDSVisManager(G4String visMacroFileNameIn,
   geant4MacroFileName(geant4MacroFileNameIn)
 {;}
 
-void BDSVisManager::StartSession(G4int argc, char** argv)
+void BDSVisManager::StartSession(int argc, char** argv)
 {
   /// Create BDS UI messenger
   BDSMessenger* bdsMessenger = new BDSMessenger();
@@ -78,16 +81,19 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
 
   G4UImanager* UIManager = G4UImanager::GetUIpointer();
   // setup paths to look for macros for the install then the build directory
-  UIManager->ApplyCommand("/control/macroPath ./:@CMAKE_INSTALL_PREFIX@/share/bdsim/vis:@CMAKE_BINARY_DIR@/vis");
+  G4String bdsimExecPath = G4String(BDS::GetBDSIMExecPath());
+  G4String macroPaths    = bdsimExecPath + "../share/bdsim/vis:@CMAKE_BINARY_DIR@/vis:./";
+  G4cout << __METHOD_NAME__ << "Setting macro path to: " << macroPaths << G4endl;
+  UIManager->ApplyCommand("/control/macroPath "+macroPaths);
 
   G4String visMacName = visMacroFileName;
   G4String visMacPath = visMacName; // by default just copy it
   if (visMacName.empty()) // none specified - use default in BDSIM
     {
 #ifdef G4VIS_USE_OPENGLQT
-      visMacName = "vis.mac";
+      visMacName = "bdsim_default_vis.mac";
 #else
-      visMacName = "dawnfile.mac";
+      visMacName = "bdsim_default_dawnfile.mac";
 #endif
       // check if we find the file to at least let the user know what's being executed
       visMacPath = UIManager->FindMacroPath(visMacName);
@@ -95,7 +101,7 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
       G4cout << __METHOD_NAME__ << "Visualisation macro path: " << visMacPath << G4endl;
       if (visMacPath == visMacName) // this happens when the geant4 ui manager doesn't find the file in any directory
         {// behaviour found from geant4 source code inspection...
-          G4cout << __METHOD_NAME__ << "vis.mac missing from BDSIM installation directory." << G4endl;
+          G4cout << __METHOD_NAME__ << "bdsim_default_vis.mac missing from BDSIM installation directory." << G4endl;
           return;
         }
     }
@@ -119,9 +125,9 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
 #if G4VERSION_NUMBER < 1030
   if (session2->IsGUI())
     {// these were added by default in Geant4.10.3 onwards
-      UIManager->ApplyCommand("/control/execute icons.mac"); // add icons
+      UIManager->ApplyCommand("/control/execute bdsim_default_icons.mac"); // add icons
       UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" run.png"); // add run icon
-      UIManager->ApplyCommand("/control/execute gui.mac");   // add menus
+      UIManager->ApplyCommand("/control/execute bdsim_default_gui.mac");   // add menus
     }
 #endif
 #endif

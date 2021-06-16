@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -31,7 +31,6 @@ std::map<BDSTrajectoryFilter, std::string>* BDSTrajectoryFilter::dictionary =
    {BDSTrajectoryFilter::energyThreshold, "energyThreshold"},
    {BDSTrajectoryFilter::sampler,         "sampler"},
    {BDSTrajectoryFilter::elossSRange,     "elossSRange"},
-   {BDSTrajectoryFilter::transportation,  "transportation"},
    {BDSTrajectoryFilter::minimumZ,        "minimumZ"},
    {BDSTrajectoryFilter::maximumR,        "maximumR"},
    {BDSTrajectoryFilter::connect,         "connect"}

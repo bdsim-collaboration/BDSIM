@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -25,6 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @brief Type definition for trajectory filters.
  *
  * Note: no Geant4 classes are used by this as it can be called by the output.
+ *
+ * An enum exists here for a filter that can accept or reject a whole trajectory,
+ * not just certain steps.
  * 
  * @author Laurie Nevay
  */
@@ -32,14 +35,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 struct trajectoryfiltertypes_def
 {
   enum type {primary, depth, particle, energyThreshold, sampler, elossSRange,
-	     transportation, minimumZ, maximumR, connect};
+	     minimumZ, maximumR, connect};
 };
 
 typedef BDSTypeSafeEnum<trajectoryfiltertypes_def,int> BDSTrajectoryFilter;
 
 namespace BDS
 {
-  const static int NTrajectoryFilters = 10;
+  const static int NTrajectoryFilters = 9;
   BDSTrajectoryFilter BDSTrajectoryFilterEnumOfIndex(int i);
 }
 

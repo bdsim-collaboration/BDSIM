@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -40,7 +40,7 @@ typedef BDSTypeSafeEnum<beampipetypes_def,int> BDSBeamPipeType;
 
 namespace BDS
 {
-  /// function that gives corresponding enum value for string (case-insensitive)
+  /// Function that gives corresponding enum value for string (case-insensitive).
   BDSBeamPipeType DetermineBeamPipeType(G4String apertureType);
 }
 

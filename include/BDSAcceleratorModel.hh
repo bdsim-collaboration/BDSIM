@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -18,8 +18,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSACCELERATORMODEL_H
 #define BDSACCELERATORMODEL_H
-
 #include "BDSBeamlineSet.hh"
+#include "BDSPlacementToMake.hh"
 #include "BDSScorerHistogramDef.hh"
 
 #include "globals.hh"         // geant4 globals / types
@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSApertureInfo;
 class BDSBeamline;
 class BDSFieldObjects;
+class BDSLinkComponent;
 class BDSRegion;
 class G4LogicalVolume;
 class G4Region;
@@ -92,6 +93,12 @@ public:
 
   /// Access the beam line of arbitrary placements.
   inline BDSBeamline* PlacementBeamline() const {return placementBeamline;}
+  
+  /// Register complete placements to make for field volumes in parallel world.
+  inline void RegisterPlacementFieldPlacements(const std::vector<BDSPlacementToMake>& pIn) {placementFieldPlacements = pIn;}
+  
+  /// Access field volumes for parallel world.
+  const std::vector<BDSPlacementToMake>& PlacementFieldPWPlacements() const {return placementFieldPlacements;}
 
   /// Register a beam line of blm placements.
   inline void RegisterBLMs(BDSBeamline* blmsIn) {blmsBeamline = blmsIn;}
@@ -112,7 +119,7 @@ public:
   void RegisterRegion(BDSRegion* region);
 
   /// Register a single aperture.
-  inline void RegisterAperture(G4String name, BDSApertureInfo* apertureIn) {apertures[name] = apertureIn;}
+  inline void RegisterAperture(const G4String& name, BDSApertureInfo* apertureIn) {apertures[name] = apertureIn;}
   
   /// Register a map of apertures with associated names.
   void RegisterApertures(const std::map<G4String, BDSApertureInfo*>& aperturesIn);
@@ -161,6 +168,9 @@ public:
   const std::map<G4String, G4Transform3D>& ScorerMeshPlacementsMap() const {return scorerMeshPlacements;}
   /// @}
   
+  void RegisterLinkComponent(BDSLinkComponent* linkComponentIn) {linkComponents.insert(linkComponentIn);}
+  inline const std::set<BDSLinkComponent*>& LinkComponents() const {return linkComponents;}
+  
 private:
   BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
@@ -193,6 +203,10 @@ private:
   std::map<G4String, BDSRegion*>        regions;
   std::set<BDSRegion*>                  regionStorage; ///< Unique storage of regions.
   std::map<G4String, BDSApertureInfo*>  apertures; ///< All apertures.
+  
+  /// Placements for parallel world field volumes for geometry placements (the placement beam line). These
+  /// contain lvs and transforms to place in a parallel world when it's built for the coordinate look ups.
+  std::vector<BDSPlacementToMake>       placementFieldPlacements;
 
   std::map<G4String, std::set<G4LogicalVolume*>* > volumeRegistries; ///< All volume registries.
 
@@ -201,6 +215,8 @@ private:
   std::map<G4String, BDSScorerHistogramDef> scorerHistogramDefsMap;
   /// @}
   std::map<G4String, G4Transform3D> scorerMeshPlacements;
+  
+  std::set<BDSLinkComponent*> linkComponents;
 };
 
 #endif

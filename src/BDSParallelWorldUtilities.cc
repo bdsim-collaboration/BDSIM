@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -20,10 +20,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSLinkDetectorConstruction.hh"
 #include "BDSParallelWorldCurvilinear.hh"
 #include "BDSParallelWorldCurvilinearBridge.hh"
 #include "BDSParallelWorldImportance.hh"
 #include "BDSParallelWorldInfo.hh"
+#include "BDSParallelWorldPlacementFields.hh"
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh"
@@ -74,7 +76,8 @@ std::vector<BDSParallelWorldInfo> BDS::NumberOfExtraWorldsRequired()
 }
 
 std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUserDetectorConstruction* massWorld,
-									   G4bool buildSamplerWorld)
+									   G4bool buildSamplerWorld,
+									   G4bool buildPlacementFieldsWorld)
 {
   BDSAcceleratorModel* acceleratorModel = BDSAcceleratorModel::Instance();
 
@@ -87,6 +90,12 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
     {
       auto samplerWorld = new BDSParallelWorldSampler("main");
       massWorld->RegisterParallelWorld(samplerWorld);
+      auto massWorldBDS = dynamic_cast<BDSLinkDetectorConstruction*>(massWorld);
+      if (massWorldBDS)
+	{
+	  G4int samplerWorldID = massWorld->GetNumberOfParallelWorld() - 1;
+	  massWorldBDS->SetSamplerWorldID(samplerWorldID);
+	}
       acceleratorModel->RegisterParallelWorld(samplerWorld);
       worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(samplerWorld));
     }
@@ -116,8 +125,8 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
 	}
       if (info.samplerWorld)
 	{
-	  BDSParallelWorldSampler* sWorld = new BDSParallelWorldSampler(info.sequenceName);
-	  acceleratorModel->RegisterParallelWorld(sWorld); // register for deletion with bdsim
+	  auto sWorld = new BDSParallelWorldSampler(info.sequenceName);
+	  acceleratorModel->RegisterParallelWorld(sWorld);
 	  worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(sWorld));
 	  massWorld->RegisterParallelWorld(sWorld);
 	}
@@ -128,12 +137,20 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
     {
       G4String importanceWorldGeometryFile = BDSGlobalConstants::Instance()->ImportanceWorldGeometryFile();
       G4String importanceVolumeMapFile     = BDSGlobalConstants::Instance()->ImportanceVolumeMapFile();
-      BDSParallelWorldImportance* importanceWorld = new BDSParallelWorldImportance("main",
-                                                                                   importanceWorldGeometryFile,
-                                                                                   importanceVolumeMapFile);
+      auto importanceWorld = new BDSParallelWorldImportance("main",
+							    importanceWorldGeometryFile,
+							    importanceVolumeMapFile);
       acceleratorModel->RegisterParallelWorld(importanceWorld);
       massWorld->RegisterParallelWorld(importanceWorld);
       worldsRequiringPhysics.push_back(dynamic_cast<G4VUserParallelWorld*>(importanceWorld));
+    }
+  
+  // optional parallel world for coordinate transforms for fields attached to placements of geometry
+  if (buildPlacementFieldsWorld)
+    {
+      auto placementFieldsPW = new BDSParallelWorldPlacementFields("placement_fields");
+      acceleratorModel->RegisterParallelWorld(placementFieldsPW);
+      massWorld->RegisterParallelWorld(placementFieldsPW);
     }
 
   return worldsRequiringPhysics;

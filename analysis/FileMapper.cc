@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -66,6 +66,8 @@ bool RBDS::GetFileType(TFile*       file,
 bool RBDS::IsBDSIMOutputFile(TFile* file,
 			     int* dataVersion)
 {
+  if (!file)
+    {return false;}
   // check if valid file at all
   if (file->IsZombie())
     {return false;}

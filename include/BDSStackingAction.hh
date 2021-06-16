@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -37,7 +37,7 @@ public:
   virtual ~BDSStackingAction();
 
   /// Decide whether to kill tracks if they're neutrinos or we're killing all secondaries. Note
-  /// the even won't conserve energy with the stopSecondaries on.
+  /// the event won't conserve energy with the stopSecondaries on.
   virtual G4ClassificationOfNewTrack ClassifyNewTrack(const G4Track* aTrack);
   
   virtual void NewStage(); ///< We don't do anything here.

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -50,7 +50,7 @@ namespace GMAD
     /// Reset
     void clear();
     /// Print some properties
-    void print()const;
+    void print() const;
     /// Set methods by property name and value
     template <typename T>
     void set_value(std::string property, T value);

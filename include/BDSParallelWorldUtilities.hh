@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -43,7 +43,8 @@ namespace BDS
   /// to the main mass world argument. Returns the vector of worlds that required a
   /// physics process so that their boundaries are respected in tracking.
   std::vector<G4VUserParallelWorld*> ConstructAndRegisterParallelWorlds(G4VUserDetectorConstruction* massWorld,
-									G4bool buildSamplerWorld);
+									G4bool buildSamplerWorld,
+									G4bool buildPlacementFieldsWorld);
 
   /// Construct the parallel physics process for each sampler world.
   std::vector<G4ParallelWorldPhysics*> ConstructParallelWorldPhysics(const std::vector<G4VUserParallelWorld*>& worlds);

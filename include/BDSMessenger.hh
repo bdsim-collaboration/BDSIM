@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -48,6 +48,7 @@ public:
   void        GoToElement(const std::string& name);
   void        ElementTypeSearch(std::string type);
   void        SamplerList();
+  void        ViewSamplers();
   std::string BDSSamplerToString(G4int iSampler);
   std::string BDSSamplerToString(std::string samplerName);
 
@@ -59,6 +60,7 @@ protected:
   G4UIcmdWithAString*      elementGoToCmd;
   G4UIdirectory*           bdsSamplersDirectory;
   G4UIcmdWithoutParameter* samplerListCmd;
+  G4UIcmdWithoutParameter* samplerViewCmd;
 };
 
 #endif

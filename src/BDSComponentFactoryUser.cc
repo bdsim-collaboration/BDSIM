@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -33,7 +33,7 @@ BDSComponentFactoryUser::BDSComponentFactoryUser():
 
 BDSComponentFactoryUser::~BDSComponentFactoryUser()
 {
-  for (auto constructor : userFunctions)
+  for (auto& constructor : userFunctions)
     {delete constructor.second;}
 }
 
@@ -44,18 +44,18 @@ void BDSComponentFactoryUser::SetDesignParticle(const BDSParticleDefinition* des
   beta0 = designParticle->Beta();
 }
 
-void BDSComponentFactoryUser::RegisterComponent(G4String componentTypeName,
+void BDSComponentFactoryUser::RegisterComponent(const G4String& componentTypeName,
 						BDSComponentConstructor* componentConstructor)
 {
   userFunctions[componentTypeName] = componentConstructor;
 }
 
-G4bool BDSComponentFactoryUser::CanConstructComponentByName(G4String componentTypeName) const 
+G4bool BDSComponentFactoryUser::CanConstructComponentByName(const G4String& componentTypeName) const
 {
   return userFunctions.find(componentTypeName) != userFunctions.end();
 }
 
-BDSAcceleratorComponent* BDSComponentFactoryUser::ConstructComponent(G4String componentTypeName,
+BDSAcceleratorComponent* BDSComponentFactoryUser::ConstructComponent(const G4String& componentTypeName,
 								     GMAD::Element const* elementIn,
 								     GMAD::Element const* prevElementIn,
 								     GMAD::Element const* nextElementIn,

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -42,7 +42,6 @@ public:
   /// misalignment from the local coordinates.
   BDSFieldMag();
   explicit BDSFieldMag(G4Transform3D transformIn);
-
   virtual ~BDSFieldMag(){;}
 
   /// Get the magnetic field vector in local coordinates. The derived class does

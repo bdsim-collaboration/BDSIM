@@ -1,4 +1,4 @@
-.. macro for non breaking white space usefulf or units:
+.. macro for non breaking white space useful or units:
 .. |nbsp| unicode:: 0xA0
    :trim:
 
@@ -104,9 +104,14 @@ a drift pipe where it covers the full volume of the drift (not outside it though
 
 Each beam line element will allow "fieldAll", "fieldVacuum" and "fieldOuter" to be specified.
 
-When defining a field, the following parameters can be specified.
+.. _field-map-definition:
 
-.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
+Field Map Definition
+^^^^^^^^^^^^^^^^^^^^
+
+When defining a :code:`field`, the following parameters can be specified. Example below.
+
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.5\textwidth}|
 
 +----------------------+-----------------------------------------------------------------+
 | **Parameter**        | **Description**                                                 |
@@ -170,10 +175,18 @@ When defining a field, the following parameters can be specified.
 |                      | a magnetic 'sub' field that overlays this one.                  |
 +----------------------+-----------------------------------------------------------------+
 
+Simple example: ::
+
+  detectorField: field, type="bmap2d",
+                 magneticFile="bdsim:fieldmap.dat";
+
+This will use a BDSIM format magnetic (only) field map. By default it will have cubic
+interpolation and use a 4th order Runge Kutta integrator.
+
 The :code:`maximumStepLength` will be the minimum of the one specified in the field definition,
 110% of the element length that the field is attached to, or the global maximum step length,
 or the minimum spacing in any dimension of the field map. In the case of a 4D field, the
-velocity is assume to be :code:`c`, the speed of light, for the spatial distance calcualted
+velocity is assume to be :code:`c`, the speed of light, for the spatial distance calculated
 from this.
 
 .. Note:: See :ref:`fields-sub-fields` below for more details on overlaying two field maps in one.
@@ -221,8 +234,8 @@ Field Types
 
 .. _model-description-field-formats:
 
-Formats
-^^^^^^^
+File Formats
+^^^^^^^^^^^^
 
 .. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
@@ -263,6 +276,9 @@ for BDSIM format files is provided here :ref:`field-map-file-preparation`.
 
 Integrators
 ^^^^^^^^^^^
+
+An integrator is an algorithm that calculates the particle motion in a field. There
+are many algorithms - some fast, some more precise, some work only with certain fields.
 
 The following integrators are provided.  The majority are interfaces to Geant4 integrators.
 *g4classicalrk4* is typically the recommended default and is very robust.
@@ -409,6 +425,20 @@ in the visualiser below. The magnetic field lines were visualised using the Gean
 	   :width: 60%
 	   :align: center
 
+.. _fields-visualisation:
+		   
+Field Map Visualisation
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Recent versions of Geant4 (> 5) provide a mechanism in the visualiser to visualise magnetic fields. The
+following command can be used to add magnetic field lines to the visualisation. ::
+
+  /vis/scene/add/magneticField 10 lightArrow
+
+This may take some time as particles are being tracked to determine the field direction. The number 10 here
+sets a density of points. If few useful arrows appear, then this number can be increased. Note, the time taken
+will go with the cube (i.e. N^3) of this number. Suggested values are 10, 30, 40. An example can be seen above
+in the :ref:`fields-sub-fields` section.
 
 .. _materials-and-atoms:
 	  
@@ -550,7 +580,7 @@ elements:
 * nitrogen
 * silicon
 * titanium
-* tungstem
+* tungsten
 * uranium
 * vanadium
 * zinc
@@ -560,7 +590,7 @@ The following materials are also defined in BDSIM. The user should consult
 elements, mass fractions, temperature and state.
 
 * air (G4_AIR)
-* airbdsim
+* airbdsim  (previously defined air in bdsim)
 * aralditef
 * awakeplasma
 * berylliumcopper
@@ -574,7 +604,8 @@ elements, mass fractions, temperature and state.
 * clay
 * clayousMarl
 * concrete
-* cu_4k
+* cu_2k (G4_Cu at 2K)
+* cu_4k (G4_Cu at 4K)
 * dy061
 * epoxyresin3
 * fusedsilica
@@ -597,30 +628,34 @@ elements, mass fractions, temperature and state.
 * marl
 * medex
 * mild_steel
-* niobium_2k
+* n-bk7
+* nb_87k
 * nbti.1
 * nbti_4k
 * nbti_87k
+* niobium_2k
 * nb_2k (niobium_2k)
-* nb_87k
-* n-bk7
 * perspex
 * pet
 * pet_lanex
 * pet_opaque
 * polyurethane
 * quartz
+* rch1000_4k (ultra high molecular weight ethylene)
 * smco
 * soil
 * solidhydrogen
 * solidnitrogen
 * solidoxygen
-* stainlesssteel
 * stainless_steel_304L
+* stainless_steel_304L_2K
 * stainless_steel_304L_87K
-* stainless_steel_304LN
-* stainless_steel_304LN_87K
+* stainless_steel_316LN
+* stainless_steel_316LN_2K
+* stainless_steel_316LN_87K
+* stainlesssteel
 * ti_87k
+* titaniumalloy
 * tungsten_heavy_alloy
 * ups923a
 * vacuum
@@ -699,6 +734,7 @@ The required parameters and their meaning are given in the following table.
 	  only the vacuum volume without any beam pipe. The vacuum material is the usual vacuum
 	  but can of course can be controlled with :code:`vacuumMaterial`. So you could create
 	  a magnet with air and no beam pipe.
+.. note:: The default beam pipe material is "stainlessSteel".
 
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`        | `aper4`          |
@@ -713,7 +749,7 @@ The required parameters and their meaning are given in the following table.
 | `lhc`             | 3            | x half-width of   | y half-width of | radius of      | NA               |
 |                   |              | rectangle         | rectangle       | circle         |                  |
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `lhcdetailed`     | 3            | x half-width of   | y half-width of | radius of      | NA               |
+| `lhcdetailed` (\*)| 3            | x half-width of   | y half-width of | radius of      | NA               |
 |                   |              | rectangle         | rectangle       | circle         |                  |
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | `rectellipse`     | 4            | x half-width of   | y half-width of | x semi-axis    | y semi-axis      |
@@ -730,6 +766,9 @@ The required parameters and their meaning are given in the following table.
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | `circularvacuum`  | 1            | radius            | NA              | NA             | NA               |
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
+
+.. note:: (\*) :code:`lhcdetailed` aperture type will result in the :code:`beampipeMaterial` being ignored
+	  and LHC-specific materials at 2K being used.
 
 These parameters can be set with the *option* command, as the default parameters
 and also on a per element basis that overrides the defaults for that specific element.
@@ -763,7 +802,7 @@ The magnet geometry is controlled by the following parameters.
 
 .. note:: In the case that the `lhcleft` or `lhcright` magnet geometry types are used,
 	  the yoke field will be a sum of two regular yoke fields at the LHC beam pipe
-	  separation. The option :code:`yokeFielsMatchLHCGeometry` can be used to control
+	  separation. The option :code:`yokeFieldsMatchLHCGeometry` can be used to control
 	  this. These are described in :ref:`fields-multipole-outer-lhc`.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
@@ -820,6 +859,10 @@ Examples: ::
 .. warning:: The choice of magnet outer geometry will significantly affect the beam loss pattern in the
 	     simulation, as particles and radiation may propagate much further along the beam line when
 	     a magnet geometry with poles is used.
+
+.. warning:: Use of "lhcleft" or "lhcright" will result in the :code:`outerMaterial` parameter being
+	     ignored and the correct LHC materials being used. The secondary beam pipe included with this
+	     will always be the correct LHC arc aperture and all materials are at 2K.
 
 .. note:: Should a custom selection of various magnet styles be required for your simulation, please
 	  contact us (see :ref:`feature-request`) and this can be added - it is a relatively simple process.
@@ -955,6 +998,8 @@ This geometry is parameterised to a degree regarding the beam pipe chosen.  Of c
 to the LHC make most sense, as does use of the `lhcdetailed` aperture type. Examples are shown with various
 beam pipes and both `sbend` and `quadrupole` geometries.
 
+* :code:`outerMaterial` is ignored with this choice of geometry.
+
 
 .. |lhcleft_sbend| image:: figures/lhcleft_sbend.png
 			   :width: 60%
@@ -1067,16 +1112,13 @@ Externally Provided Geometry
 
 BDSIM provides the ability to use externally provided geometry in the Geant4 model constructed
 by BDSIM. A variety of formats are supported (see :ref:`geometry-formats`). External
-geometry can be used in three ways:
+geometry can be used in several ways:
 
-1) A placement of a piece of geometry unrelated to the beam line.
-2) Wrapped around the beam pipe in a BDSIM magnet element.
-3) As a general element in the beam line where the geometry constitutes the whole object.
-4) As the world volume in which the BDSIM beamline is placed.
-
-These are discussed in order in :ref:`placements`, :ref:`external-magnet-geometry` and
-:ref:`element-external-geometry`.
-
+1) A placement of a piece of geometry unrelated to the beam line (see :ref:`placements`)
+2) Wrapped around the beam pipe in a BDSIM magnet element (see :ref:`external-magnet-geometry`)
+3) As a general element in the beam line where the geometry constitutes the whole object. (see :ref:`element`)
+4) As the world volume in which the BDSIM beamline is placed. (see :ref:`external-world-geometry`)
+   
 .. _geometry-formats:
 
 Geometry Formats
@@ -1086,35 +1128,53 @@ The following geometry formats are supported. More may be added in collaboration
 developers - please see :ref:`feature-request`. The syntax and preparation of these geometry
 formats are described in more detail in :ref:`external-geometry-formats`.
 
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.50\textwidth}|
+
 +----------------------+---------------------------------------------------------------------+
 | **Format String**    | **Description**                                                     |
 +======================+=====================================================================+
 | gdml                 | | Geometry Description Markup Language - Geant4's official geometry |
-|                      | | persistency format - recommended                                  |
+|                      | | persistency format - recommended, maintained and supported        |
 +----------------------+---------------------------------------------------------------------+
 | ggmad                | | Simple text interface provided by BDSIM to some simple Geant4     |
-|                      | | geometry classes                                                  |
+|                      | | geometry classes - not maintained                                 |
 +----------------------+---------------------------------------------------------------------+
-| mokka                | | An SQL style description of geometry                              |
+| mokka                | | An SQL style description of geometry - not maintained             |
 +----------------------+---------------------------------------------------------------------+
 
 * With the `option, checkOverlaps=1;` turned on, each externally loaded piece of geometry will
   also be checked for overlaps.
 
-.. note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
 
-.. note:: For GDML geometry, we preprocess the input file prepending all names with the name
-	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
-	  not handle unique file names. However, in the case of very large files with many
-	  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
-	  should be turned off. The loading will only work with one file in this case.
+GDML Geometry Specifics
+^^^^^^^^^^^^^^^^^^^^^^^
 
-.. warning:: If a geometry file path is defined relative to the location of the GMAD file and that
-	     GMAD file is included in a parent file in a different location, the file will not be
-	     correctly located (i.e. main.gmad includes ../somedir/anotherfile.gmad, which defines
-	     geometry in "../a/relative/path/geometryfile.gdml". The file will not be found). If all
-	     GMAD files are located in the same directory, this will not be a problem. It is better / cleaner
-	     overall to use multiple GMAD input files and include them.
+* BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
+* For GDML geometry, we preprocess the input file prepending all names with the name
+  of the element. This is to compensate for the fact that the Geant4 GDML loader does
+  not handle unique file names. However, in the case of very large files with many
+  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
+  should be turned off. The loading will only work with one file in this case.
+* BDSIM will put the preprocessed GDML files in a temporary directory and remove
+  them once finished. The temporary files can be retained by using the option
+  :code:`option, removeTemporaryFiles=0;`.
+* BDSIM will create a temporary directory based on the template name "bdsim_XXXXXX" where the
+  X characters will be replaced by a randomly generated alpha-numeric sequence from the system
+  using `mkdtemp`.
+* BDSIM will try :code:`/tmp/`, then :code:`/temp/`, then the current working directory in that
+  order to create the temporary directory. This behaviour can be overridden by specifying the option
+  :code:`option, temporaryDirectory="/path/to/desired/directory"`. :code:`"./"` could be used
+  for example for the current working directory.
+
+GMAD Geometry Specifics
+^^^^^^^^^^^^^^^^^^^^^^^
+
+If a geometry file path is defined relative to the location of the GMAD file and that
+GMAD file is included in a parent file in a different location, the file will not be
+correctly located (i.e. main.gmad includes ../somedir/anotherfile.gmad, which defines
+geometry in "../a/relative/path/geometryfile.gdml". The file will not be found). If all
+GMAD files are located in the same directory, this will not be a problem. It is better / cleaner
+overall to use multiple GMAD input files and include them.
 
 .. _external-world-geometry:
 
@@ -1142,19 +1202,41 @@ file. See :ref:`externally-provided-geometry` for more details.
   :code:`worldGeometryFile`, BDSIM will exit.
 * The option :code:`autoColourWorldGeometryFile` can be used (default true) to colour
   the supplied geometry by density. See :ref:`automatic-colours` for details.
+* The option :code:`biasForWorldContents` may be used to attach a bias object to the
+  daughter volumes (i.e. excluding the world volume itself) of the loaded world geometry.
+  This is useful for shielding.
+* The option :code:`biasForWorldVolume` may be used to attach a bias object to the world
+  volume itself (only). See :ref:`physics-biasing` for details.
+
+.. warning:: Be careful to avoid name clashing if loading multiple GDML files including the world.
+	     The usual preprocessGDML option is on to protect against this, but should the user wish,
+	     this can be turned off for quicker loading times. The user must therefore ensure no
+	     name clashing (i.e. degenerate names for anything between GDML files).
 
 .. _placements:
 
 Placements
 ----------
 
-Geometry provided in an external file may be placed at any location in the world with
-any rotation. This is intended to place geometry alongside the beam line and **not** inside
-or as part of it. The user is responsible for ensuring that the geometry does not
-overlap with any other geometry including the beam line. Only in special cases, such as
-for a magnet yoke, can externally provided geometry be placed "inside" BDSIM geometry.
+Aside from a beam line, pieces of geometry may be placed at any location in the world with
+any orientation. The mechanism to do this in BDSIM is called "placements". Either an
+externally provided piece of geometry (e.g. GDML file and optional field map) or a BDSIM
+provided accelerator component can be placed by declaring a :code:`placement` object in
+the input.
 
-For geometry to be placed in the beam line, use the :ref:`element`.
+* :code:`bdsimElement` should be used to name a component to place. In this case the component
+  should be defined **before** the placement definition in the input GMAD.
+* :code:`geometryFile` should be used to place an externally provided geometry file.
+* Only one of :code:`bdsimElement` or :code:`geometryFile` should be used in a placement.
+* This is intended to place geometry alongside the beam line and **not** inside or as part of it.
+* The user is responsible for ensuring that the geometry does not
+  overlap with any other geometry including the beam line.
+* Only in special cases, such as for a magnet yoke, can externally provided
+  geometry be placed "inside" BDSIM geometry.
+* The geometry may also have a field map overlaid on it.
+* Placements cannot be made with respect to other placements.
+
+For geometry to be placed as part of the beam line, use the :ref:`element` component in a line.
 
 .. warning:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
 	     incorrect results and there may not always be warnings provided. For this reason,
@@ -1185,12 +1267,13 @@ There are 3 possible ways to place a piece of geometry.
      are with respect to the centre of that element. **Therefore**, `s` in this case is `local` curvilinear
      `s`.
 
-The scenario is automatically selected based on which parameters are set. If `s` is finite, then
+The scenario is automatically selected based on which parameters are set. If `s` is non-zero, then
 it is either scenario 2 or 3. If `referenceElement` is specified, scenario 3 is assumed.
 
 .. warning:: For both scenarios 2) and 3), a placement can only be made **inside** the S length of
 	     the accelerator - it is not possible to place something beyond the accelerator currently.
 	     In this case, the user should resort to a global placement.
+
 	     
 The following parameters may be specified with a placement in BDSIM:
 
@@ -1198,6 +1281,8 @@ The following parameters may be specified with a placement in BDSIM:
 | **Parameter**           |  **Description**                                                   |
 +-------------------------+--------------------------------------------------------------------+
 | geometryFile            | :code:`format:file` - which geometry format and file to use        |
++-------------------------+--------------------------------------------------------------------+
+| bdsimElement            | Name of the beam line element defined in the parser to be used     |
 +-------------------------+--------------------------------------------------------------------+
 | x                       | Offset in global x                                                 |
 +-------------------------+--------------------------------------------------------------------+
@@ -1232,6 +1317,9 @@ The following parameters may be specified with a placement in BDSIM:
 +-------------------------+--------------------------------------------------------------------+
 | autoColour              | Boolean whether the geometry should be automatically coloured by   |
 |                         | density if no colour information is supplied. (default true)       |
++-------------------------+--------------------------------------------------------------------+
+| fieldAll                | Name of field object definition to be used as the field for the    |
+|                         | whole geometry including all daughter volumes.                     |
 +-------------------------+--------------------------------------------------------------------+
 
 `referenceElementNumber` is the occurrence of that element in the sequence. For example, if a sequence
@@ -1274,16 +1362,34 @@ directly, which is also the same as a :code:`CLHEP::HepRotation`.
 .. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
 	  the default units for offsets and angles in BDSIM.
 
-The following is an example syntax used to place a piece of geometry::
+External Geometry File
+^^^^^^^^^^^^^^^^^^^^^^
+	  
+The following is an example syntax used to place a piece of geometry: ::
 
   leadblock: placement, x = 10*m,
                         y = 3*cm,
 			z = 12*m,
 			geometryFile="gdml:mygeometry/detector.gdml";
 
+
+BDSIM Component
+^^^^^^^^^^^^^^^
+			
+The following is an example of placing a **single** BDSIM-generated component at an arbitrary position: ::
+
+  block1: rcol, l=1*m, material="Cu";
+  pl1: placement, bdsimElement="block1", x=2*m, z=20*m, axisAngle=1, axisY=1, angle=pi/4;
+
+
 .. warning:: Care must be taken not to define the same placement name twice. If `leadblock`
 	     were declared again here, the first definition would be updated with parameters
 	     from the second, leading to possibly unexpected geometry.
+
+.. note:: For using a general piece of geometry as part of a beam line, it is better to use
+	  the `element` beam line element.  See :ref:`element`.  The length should be specified
+	  accurately and then the beam line will fit together well without any air gaps.
+
 	     
 .. _external-magnet-geometry:
 
@@ -1310,15 +1416,6 @@ density if desired. This is on by default.  Example to turn it off: ::
     
   q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml", autoColour=0;
 
-
-.. _element-external-geometry:
-
-Element
-^^^^^^^
-
-A general piece of geometry may be placed in the beam line along with any externally provided
-field map using the `element` beam line element.  See `element`_.
-
   
 .. _tunnel-geometry:
 
@@ -1332,60 +1429,69 @@ BDSIM can build a tunnel around the beam line. Currently, there are two main way
    may also cause geometry overlaps (the user is responsible for checking this!)
 
 .. warning:: With option 2, the user is entirely responsible to ensure no overlaps occur
-	     (through good design). Also note that the samplers may overlap the tunnel
-	     depending on the tunnel geometry (samplers are square with half-width of
-	     `samplerRadius`). In practice, however, we haven't observed many ill effects
-	     because of this. Problems would take the form of 'stuck particles' and
-	     Geant4 would terminate that event.
+	     (through good design).
 
-Examples of tunnel geometry can be found with the BDSIM source code in */examples/features/geometry/tunnel*
-and are described in :ref:`tunnel-examples`.
+Examples of tunnel geometry can be found with the BDSIM source code in
+:code:`bdsim/examples/features/geometry/tunnel*` and are described in :ref:`tunnel-examples`.
 
 The automatic tunnel building is controlled through the following options used with the
 :code:`option` command.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+----------------------------------+-------------------------------------------------------+
-| **Tunnel Parameters**            | **Description**                                       |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnel                      | Whether to build a tunnel (default = 0)               |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnelStraight              | Whether to build a tunnel, ignoring the beamline and  |
-|                                  | just in a straight line (default = 0)                 |
-+----------------------------------+-------------------------------------------------------+
-| buildTunnelFloor                 | Whether to add a floor to the tunnel                  |
-+----------------------------------+-------------------------------------------------------+
-| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
-|                                  | should be killed or not (default = false)             |
-+----------------------------------+-------------------------------------------------------+
-| tunnelType                       | Which style of tunnel to use - one of:                |
-|                                  | `circular`, `elliptical`, `square`, `rectangular`     |
-|                                  | (more to come in v0.9)                                |
-+----------------------------------+-------------------------------------------------------+
-| tunnelAper1                      | Tunnel aperture parameter #1 - typically              |
-|                                  | horizontal (m)                                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelAper2                      | Tunnel aperture parameter #2 - typically              |
-|                                  | vertical (m)                                          |
-+----------------------------------+-------------------------------------------------------+
-| tunnelThickness                  | Thickness of tunnel wall (m)                          |
-+----------------------------------+-------------------------------------------------------+
-| tunnelSoilThickness              | Soil thickness outside tunnel wall (m)                |
-+----------------------------------+-------------------------------------------------------+
-| tunnelMaterial                   | Material for tunnel wall                              |
-+----------------------------------+-------------------------------------------------------+
-| soilMaterial                     | Material for soil outside tunnel wall                 |
-+----------------------------------+-------------------------------------------------------+
-| tunnelOffsetX                    | Horizontal offset of the tunnel with respect to the   |
-|                                  | beam line reference trajectory                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelOffsetY                    | Vertical offset of the tunnel with respect to the     |
-|                                  | beam line reference trajectory                        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelFloorOffset                | The offset of the tunnel floor from the centre of the |
-|                                  | tunnel (**not** the beam line)                        |
-+----------------------------------+-------------------------------------------------------+
++----------------------------------+-------------+-----------------------------------------+
+| **Tunnel Parameters**            | **Default** | **Description**                         |
++==================================+=============+=========================================+
+| buildTunnel                      | 0 (false)   | Whether to build a tunnel               |
++----------------------------------+-------------+-----------------------------------------+
+| buildTunnelStraight              | 0 (false)   | Whether to build a tunnel, ignoring the |
+|                                  |             | beamline and just in a straight line    |
++----------------------------------+-------------+-----------------------------------------+
+| buildTunnelFloor                 | 1 (true)    | Whether to add a floor to the tunnel    |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelIsInfiniteAbsorber         | 0 (false)   | Whether all particles entering the      |
+|                                  |             | tunnel material should be killed or not |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelType                       | "circular"  | Which style of tunnel to use - one of:  |
+|                                  |             | "circular`, "elliptical", "square",     |
+|                                  |             | "rectangular"                           |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelAper1                      | 2           | Tunnel aperture parameter #1, typically |
+|                                  |             | horizontal (m)                          |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelAper2                      | 2           | Tunnel aperture parameter #2, typically |
+|                                  |             | vertical (m)                            |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelThickness                  | 0.1         | Thickness of tunnel wall (m)            |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelSoilThickness              | 1.0         | Soil thickness outside tunnel wall (m)  |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelMaterial                   | "concrete"  | Material for tunnel wall                |
++----------------------------------+-------------+-----------------------------------------+
+| soilMaterial                     | "soil"      | Material for soil outside tunnel wall   |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelOffsetX                    | 0           | Horizontal offset of the tunnel with    |
+|                                  |             | respect to the beam line reference      |
+|                                  |             | trajectory                              |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelOffsetY                    | 0           | Vertical offset of the tunnel with      | 
+|                                  |             | respect to the beam line reference      |
+|                                  |             | trajectory                              |
++----------------------------------+-------------+-----------------------------------------+
+| tunnelFloorOffset                | 1.0         | The offset of the tunnel floor from the |
+|                                  |             | centre of the tunnel (**not** the beam  |
+|                                  |             | line). Must be positive.                |
++----------------------------------+-------------+-----------------------------------------+
+
+Example: ::
+
+  option, buildTunnel = 1,
+	  tunnelOffsetX = -35*cm,
+	  tunnelOffsetY = 30*cm,
+	  tunnelAper1 = 220*cm,
+	  tunnelThickness = 30*cm,
+	  tunnelSoilThickness = 23*m;
+
 
 These parameters are shown schematically in the figure below (gaps not to scale, elliptical
 shown as an example).
@@ -1598,6 +1704,8 @@ For convenience the predefined colours in BDSIM are:
 +---------------------+-----+-----+-----+-----+
 | collimator          | 76  | 102 | 51  | 1   |
 +---------------------+-----+-----+-----+-----+
+| copper              | 184 | 115 | 51  | 1   |
++---------------------+-----+-----+-----+-----+
 | crystal             | 175 | 196 | 222 | 1   |
 +---------------------+-----+-----+-----+-----+
 | cyan                | 0   | 255 | 255 | 1   |
@@ -1628,9 +1736,15 @@ For convenience the predefined colours in BDSIM are:
 +---------------------+-----+-----+-----+-----+
 | hkicker             | 76  | 51  | 178 | 1   |
 +---------------------+-----+-----+-----+-----+
+| iron                | 129 | 81  | 74  | 1   |
++---------------------+-----+-----+-----+-----+
 | jcol                | 76  | 102 | 51  | 1   |
 +---------------------+-----+-----+-----+-----+
+| kapton              | 236 | 96  | 20  | 0.5 |
++---------------------+-----+-----+-----+-----+
 | kicker              | 0   | 102 | 204 | 1   |
++---------------------+-----+-----+-----+-----+
+| lead                | 96  | 104 | 115 | 1   |
 +---------------------+-----+-----+-----+-----+
 | magenta             | 255 | 0   | 255 | 1   |
 +---------------------+-----+-----+-----+-----+
@@ -1641,6 +1755,8 @@ For convenience the predefined colours in BDSIM are:
 | muonspoiler         | 0   | 205 | 208 | 1   |
 +---------------------+-----+-----+-----+-----+
 | octupole            | 0   | 153 | 76  | 1   |
++---------------------+-----+-----+-----+-----+
+| opaquebox           | 51  | 51  | 51  | 0.2 |
 +---------------------+-----+-----+-----+-----+
 | paralleltransporter | 229 | 229 | 229 | 1   |
 +---------------------+-----+-----+-----+-----+

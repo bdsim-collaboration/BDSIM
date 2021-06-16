@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -49,7 +49,9 @@ public:
 
   virtual void NewFile();    ///< Open a new file.
   virtual void CloseFile();  ///< Write contents and close file.
-
+  
+  /// Implementation for ROOT output. Only for link - not for regular use.
+  virtual void UpdateSamplers();
 private:
   /// Copy header and write to file.
   virtual void WriteHeader();

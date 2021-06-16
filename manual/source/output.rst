@@ -144,6 +144,8 @@ When using the option :code:`storeMinimalData=1`, the following options are turn
 * storeTrajectory
 * storeModel
 
+.. warning:: Note, this won't respect alternative versions of these options such as "storeTrajectories".
+
 Therefore, there is no model (required for optics comparisons and loading samplers in analysis),
 no particle data, no energy deposition hits and 0 per-event histograms (primary hit, loss and
 energy deposition).
@@ -765,6 +767,8 @@ One entry in the model tree represents one beam line.
 
 Optional collimator information also store in the model.
 
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.3\textwidth}|p{0.4\textwidth}|
+
 +-----------------------------+----------------------------+----------------------------------------------------------+
 | **Variable Name**           | **Type**                   | **Description**                                          |
 +=============================+============================+==========================================================+
@@ -851,7 +855,7 @@ Event Tree
 This tree contains information on a per-event basis.  Everything shown in the above tree has a
 different value per-event run in BDSIM.
 
-.. tabularcolumns:: |p{0.15\textwidth}|p{0.35\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.18\textwidth}|p{0.32\textwidth}|p{0.4\textwidth}|
 
 +---------------------------+----------------------------------+--------------------------------------------------+
 | **Branch Name**           | **Type**                         | **Description**                                  |
@@ -940,7 +944,7 @@ The types and names of the contents of each class can be found in the header fil
 BDSOutputROOTEventAperture
 **************************
 
-.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.3\textwidth}|p{0.4\textwidth}|
 
 +------------------------+----------------------+-----------------------------------------------------------+
 |  **Variable**          | **Type**             |  **Description**                                          |
@@ -991,70 +995,77 @@ BDSOutputROOTEventAperture
 BDSOutputROOTEventInfo
 **********************
 
-.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.2\textwidth}|p{0.4\textwidth}|
 
-+-----------------------------+-------------------+---------------------------------------------+
-|  **Variable**               | **Type**          |  **Description**                            |
-+=============================+===================+=============================================+
-| startTime                   | time_t            | Time stamp at start of event                |
-+-----------------------------+-------------------+---------------------------------------------+
-| stopTime                    | time_t            | Time stamp at end of event                  |
-+-----------------------------+-------------------+---------------------------------------------+
-| durationWall                | float             | Duration (wall time) of event in seconds    |
-+-----------------------------+-------------------+---------------------------------------------+
-| durationCPU                 | float             | Duration (CPU time) of event in seconds     |
-+-----------------------------+-------------------+---------------------------------------------+
-| seedStateAtStart            | std::string       | State of random number generator at the     |
-|                             |                   | start of the event as provided by CLHEP     |
-+-----------------------------+-------------------+---------------------------------------------+
-| index                       | int               | Index of the event (0 counting)             |
-+-----------------------------+-------------------+---------------------------------------------+
-| aborted                     | bool              | Whether event was aborted or not            |
-+-----------------------------+-------------------+---------------------------------------------+
-| primaryHitMachine           | bool              | Whether the primary particle hit the        |
-|                             |                   | machine. This is judged by whether there    |
-|                             |                   | are any energy deposition hits or not. If   |
-|                             |                   | no physics processes are registered this    |
-|                             |                   | won't work correctly.                       |
-+-----------------------------+-------------------+---------------------------------------------+
-| primaryAbsorbedInCollimator | bool              | Whether the primary particle stopped in a   |
-|                             |                   | collimator or not.                          |
-+-----------------------------+-------------------+---------------------------------------------+
-| memoryUsageMb               | double            | Memory usage of the whole program at the    |
-|                             |                   | the current event including the geometry.   |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyDeposited             | double            | (GeV) Integrated energy in Eloss including  |
-|                             |                   | the statistical weights.                    |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyDepositedVacuum       | double            | (GeV) Integrated energy in ElossVacuum      |
-|                             |                   | the statistical weights.                    |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyDepositedWorld        | double            | (GeV) Integrated energy in the ElossWorld   |
-|                             |                   | structure including the statistical weight. |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyDepositedTunnel       | double            | (GeV) Integrated energy in the ElossTunnel  |
-|                             |                   | including the statistical weight.           |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyWorldExit             | double            | (GeV) Integrated energy of all particles    |
-|                             |                   | including their rest mass leaving the       |
-|                             |                   | world volume and therefore the simulation.  |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyImpactingAperture     | double            | (GeV) Integrated energy of all particles    |
-|                             |                   | including their rest mass impacting the     |
-|                             |                   | aperture and including their weight.        |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyKilled                | double            | (GeV) Integrated energy including their     |
-|                             |                   | rest mass of any particles that were        |
-|                             |                   | artificially killed in the stacking action. |
-+-----------------------------+-------------------+---------------------------------------------+
-| energyTotal                 | double            | The sum of the above energies for the       |
-|                             |                   | current event.                              |
-+-----------------------------+-------------------+---------------------------------------------+
-| nCollimatorsInteracted      | int               | The number of collimators the primary       |
-|                             |                   | particle interacted with.                   |
-+-----------------------------+-------------------+---------------------------------------------+
-| nTracks                     | long long int     | Number of tracks created in the event.      |
-+-----------------------------+-------------------+---------------------------------------------+
++--------------------------------+-------------------+---------------------------------------------+
+|  **Variable**                  | **Type**          |  **Description**                            |
++================================+===================+=============================================+
+| startTime                      | time_t            | Time stamp at start of event                |
++--------------------------------+-------------------+---------------------------------------------+
+| stopTime                       | time_t            | Time stamp at end of event                  |
++--------------------------------+-------------------+---------------------------------------------+
+| durationWall                   | float             | Duration (wall time) of event in seconds    |
++--------------------------------+-------------------+---------------------------------------------+
+| durationCPU                    | float             | Duration (CPU time) of event in seconds     |
++--------------------------------+-------------------+---------------------------------------------+
+| seedStateAtStart               | std::string       | State of random number generator at the     |
+|                                |                   | start of the event as provided by CLHEP     |
++--------------------------------+-------------------+---------------------------------------------+
+| index                          | int               | Index of the event (0 counting)             |
++--------------------------------+-------------------+---------------------------------------------+
+| aborted                        | bool              | Whether event was aborted or not            |
++--------------------------------+-------------------+---------------------------------------------+
+| primaryHitMachine              | bool              | Whether the primary particle hit the        |
+|                                |                   | machine. This is judged by whether there    |
+|                                |                   | are any energy deposition hits or not. If   |
+|                                |                   | no physics processes are registered this    |
+|                                |                   | won't work correctly.                       |
++--------------------------------+-------------------+---------------------------------------------+
+| primaryAbsorbedInCollimator    | bool              | Whether the primary particle stopped in a   |
+|                                |                   | collimator or not.                          |
++--------------------------------+-------------------+---------------------------------------------+
+| memoryUsageMb                  | double            | Memory usage of the whole program at the    |
+|                                |                   | the current event including the geometry.   |
++--------------------------------+-------------------+---------------------------------------------+
+| energyDeposited                | double            | (GeV) Integrated energy in Eloss including  |
+|                                |                   | the statistical weights.                    |
++--------------------------------+-------------------+---------------------------------------------+
+| energyDepositedVacuum          | double            | (GeV) Integrated energy in ElossVacuum      |
+|                                |                   | the statistical weights.                    |
++--------------------------------+-------------------+---------------------------------------------+
+| energyDepositedWorld           | double            | (GeV) Integrated energy in the ElossWorld   |
+|                                |                   | structure including the statistical weight. |
++--------------------------------+-------------------+---------------------------------------------+
+| energyDepositedTunnel          | double            | (GeV) Integrated energy in the ElossTunnel  |
+|                                |                   | including the statistical weight.           |
++--------------------------------+-------------------+---------------------------------------------+
+| energyWorldExit                | double            | (GeV) Integrated energy of all particles    |
+|                                |                   | including their rest mass leaving the       |
+|                                |                   | world volume and therefore the simulation.  |
++--------------------------------+-------------------+---------------------------------------------+
+| energyWorldExitKinetic         | double            | (GeV) Integrated kinetic energy of all      |
+|                                |                   | particles leaving the world volume.         |
++--------------------------------+-------------------+---------------------------------------------+
+| energyImpactingAperture        | double            | (GeV) Integrated energy of all particles    |
+|                                |                   | including their rest mass impacting the     |
+|                                |                   | aperture and including their weight.        |
++--------------------------------+-------------------+---------------------------------------------+
+| energyImpactingApertureKinetic | double            | (GeV) Integrated kinetic energy of all      |
+|                                |                   | particles impacting the aperture and        |
+|                                |                   | including their weight.                     |
++--------------------------------+-------------------+---------------------------------------------+
+| energyKilled                   | double            | (GeV) Integrated energy including their     |
+|                                |                   | rest mass of any particles that were        |
+|                                |                   | artificially killed in the stacking action. |
++--------------------------------+-------------------+---------------------------------------------+
+| energyTotal                    | double            | The sum of the above energies for the       |
+|                                |                   | current event.                              |
++--------------------------------+-------------------+---------------------------------------------+
+| nCollimatorsInteracted         | int               | The number of collimators the primary       |
+|                                |                   | particle interacted with.                   |
++--------------------------------+-------------------+---------------------------------------------+
+| nTracks                        | long long int     | Number of tracks created in the event.      |
++--------------------------------+-------------------+---------------------------------------------+
 
 .. note:: :code:`energyDepositedVacuum` will only be non-zero if the option :code:`storeElossVacuum`
 	  is on which is off by default.
@@ -1138,6 +1149,8 @@ BDSOutputROOTEventLossWorld
 For the point where particles exit the world, there is no concept of a curvilinear coordinate
 system so there are only global coordinates recorded.
 
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+
 +-----------------------+-----------------------+-------------------------------------------------------------------+
 |  **Variable**         | **Type**              |  **Description**                                                  |
 +=======================+=======================+===================================================================+
@@ -1170,7 +1183,7 @@ system so there are only global coordinates recorded.
 BDSOutputROOTEventRunInfo
 *************************
 
-.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.25\textwidth}|p{0.25\textwidth}|p{0.3\textwidth}|
 
 +-----------------------------+-------------------+---------------------------------------------+
 |  **Variable**               | **Type**          |  **Description**                            |
@@ -1187,6 +1200,7 @@ BDSOutputROOTEventRunInfo
 |                             |                   | start of the run as provided by CLHEP       |
 +-----------------------------+-------------------+---------------------------------------------+
 
+.. _output-structure-trajectory:
 
 BDSOutputROOTEventTrajectory
 ****************************
@@ -1226,7 +1240,7 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 	  in practice. Also, in practice most compilers will use a larger bit depth by default as
 	  it is more optimal on most hardware.
 
-.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.18\textwidth}|p{0.32\textwidth}|p{0.4\textwidth}|
 
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 |  **Variable**            | **Type**                            |  **Description**                                        |
@@ -1254,16 +1268,16 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 | primaryStepIndex         | std::vector<int>                    | The index of the step along the primary trajectory that |
 |                          |                                     | that this current trajectory ultimately traces back to  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| preProcessTypes          | std::vector<std::vector<int>>       | Geant4 enum of pre-step physics process - general       |
+| preProcessTypes (\+)     | std::vector<std::vector<int>>       | Geant4 enum of pre-step physics process - general       |
 |                          |                                     | category                                                |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| preProcessSubTypes       | std::vector<std::vector<int>>       | Geant4 enum of pre-step physics process - specific      |
+| preProcessSubTypes (\+)  | std::vector<std::vector<int>>       | Geant4 enum of pre-step physics process - specific      |
 |                          |                                     | process ID within category                              |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| postProcessTypes         | std::vector<std::vector<int>>       | Geant4 enum of post-step physics process - general      |
+| postProcessTypes (\+)    | std::vector<std::vector<int>>       | Geant4 enum of post-step physics process - general      |
 |                          |                                     | category                                                |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| postProcesssSubTypes     | std::vector<std::vector<int>>       | Geant4 enum of post-step physics process - specific     |
+| postProcesssSubTypes(\+) | std::vector<std::vector<int>>       | Geant4 enum of post-step physics process - specific     |
 |                          |                                     | process ID within category                              |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | preWeights               | std::vector<std::vector<double>>    | Weighting associated with pre-step point                |
@@ -1277,9 +1291,9 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | S                        | std::vector<std::vector<double>>    | Curvilinear pre-step S of the trajectory point (m)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| PXPYPZ                   | std::vector<std::vector<TVector3>>  | Momentum of the pre-step point - global Cartesian (GeV) |
+| PXPYPZ (\+)              | std::vector<std::vector<TVector3>>  | Momentum of the pre-step point - global Cartesian (GeV) |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| T                        | std::vector<std::vector<double>>    | Global pres-step time of the trajectory point (ns)      |
+| T (\+)                   | std::vector<std::vector<double>>    | Global pres-step time of the trajectory point (ns)      |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | xyz (\*)                 | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
 |                          |                                     | from G4Track->GetPosition() - local Cartesian (m)       |
@@ -1288,7 +1302,7 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | charge (\**)             | std::vector<std::vector<int>>       | Charge of particle (e)                                  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| kineticEnergy (\**)      | std::vector<std::vector<double>>    | Kinetic energy of the particle at the pre-step point    |
+| kineticEnergy            | std::vector<std::vector<double>>    | Kinetic energy of the particle at the pre-step point    |
 |                          |                                     | (GeV)                                                   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | turnsTaken (\**)         | std::vector<std::vector<int>>       | Number of turns taken at this step                      |
@@ -1316,16 +1330,22 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 	  as described in :ref:`bdsim-options-output`.
 .. note:: (\***) These are not stored by default (i.e. the vectors exist but are empty). Use the option `storeTrajectoryIon=1;`
 	  as described in :ref:`bdsim-options-output`.
+.. note:: (\+) Not stored by default, but controlled by a specific option for this variable
+	  described in :ref:`bdsim-options-output`.
 
 
 In addition, some maps are stored to link the entries together conceptually.
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+--------------------------+-------------------------------------+---------------------------------------------------------+
-|  **Variable**            | **Type**                            |  **Description**                                        |
-+==========================+=====================================+=========================================================+
-| trackID_trackIndex       | std::map<int, int>                  | A map of all trackIDs to the index in this class        |
++--------------------------+---------------------+----------------------------------------------------------+
+|  **Variable**            | **Type**            |  **Description**                                         |
++==========================+=====================+==========================================================+
+| trackID_trackIndex       | std::map<int, int>  | A map of all trackIDs to the storage index in this class |
++--------------------------+---------------------+----------------------------------------------------------+
+
+These are currently not implemented.
+
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | trackIndex_trackProcess  | std::map<int, std::pair<int,int>>   | A map from the index in this class to track process     |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
@@ -1336,25 +1356,36 @@ In addition, some maps are stored to link the entries together conceptually.
 
 Functions are provided that allow exploration of the data through the connections stored.
 
-.. tabularcolumns:: |p{0.20\textwidth}|p{0.40\textwidth}|p{0.4\textwidth}|
+* Using the shorthand :code:`TP` = :code:`BDSOutputROOTEventTrajectoryPoint` for readability.
 
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| **Function**                      | **Return Type**                                 | **Description**                                         |
-+===================================+=================================================+=========================================================+
-| findParentProcess(int trackIndex) | std::pair<int,int>                              | Find the parent track index and process index from      |
-|                                   |                                                 | the ultimate parent of this particle up the             |
-|                                   |                                                 | trajectory table.                                       |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| trackInteractions(int trackID)    | std::vector<BDSOutputROOTEventTrajectoryPoint>  | Return vector of points where this particle interacted  |
-|                                   |                                                 | all the way to the primary. Transportation steps are    |
-|                                   |                                                 | suppressed.                                             |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| primaryProcessPoint(int trackID)  | BDSOutputROOTEventTrajectoryPoint               | For a given track ID, return the point where the        |
-|                                   |                                                 | primary particle first interacted.                      |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| processHistory(int trackID)       | std::vector<BDSOutputROOTEventTrajectoryPoint>  | A full history up the trajectory table to the primary   |
-|                                   |                                                 | for a given track ID.                                   |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
+.. tabularcolumns:: |p{0.3\textwidth}|p{0.2\textwidth}|p{0.4\textwidth}|
+
++---------------------------------------+--------------------+----------------------------------------------------------+
+| **Function**                          | **Return Type**    | **Description**                                          |
++=======================================+====================+==========================================================+
+| trackInteractions(int trackID)        | std::vector<TP>    | Return vector of points where this particle interacted   |
+|                                       |                    | all the way to the primary. Transportation steps are     |
+|                                       |                    | suppressed.                                              |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| primaryProcessPoint(int trackID)      | TP                 | For a given track ID, return the point on the primary    |
+|                                       |                    | trajectory where this track ultimately leads back to.    |
+|                                       |                    | Therefore, for a given trajectory, this function will    |
+|                                       |                    | recurse up the trajectory tree on to the primary one.    |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| parentProcessPoint(int trackID)       | TP                 | For a given track ID, return the point on the parent     |
+|                                       |                    | trajectory particle first interacted.                    |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| processHistory(int trackID)           | std::vector<TP>    | A full history up the trajectory table to the primary    |
+|                                       |                    | for a given track ID.                                    |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| printTrajectoryByTrackID(int trackID) | void               | Print information and history for a given track ID.      |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| printTrajectoryBy(int storageIndex)   | void               | Print information and history for a given storage index. |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| parentIsPrimary(int trackID)          | bool               | Whether the creator of this track is a primary particle  |
+|                                       |                    | This returns false for a primary itself.                 |
++---------------------------------------+--------------------+----------------------------------------------------------+
+
 
 BDSOutputROOTEventSampler
 *************************

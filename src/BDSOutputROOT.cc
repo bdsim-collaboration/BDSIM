@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTParticleData.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
 
@@ -132,6 +133,7 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree->Branch("Histos.",     "BDSOutputROOTEventHistograms", evtHistos, 32000, 1);
 
   // build sampler structures
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   for (G4int i = 0; i < (G4int)samplerTrees.size(); ++i)
     {
       auto samplerTreeLocal = samplerTrees.at(i);
@@ -139,7 +141,7 @@ void BDSOutputROOT::NewFile()
       // set tree branches
       theEventOutputTree->Branch((samplerName+".").c_str(),
                                  "BDSOutputROOTEventSampler",
-                                 samplerTreeLocal,32000,0);
+                                 samplerTreeLocal,32000,globals->SamplersSplitLevel());
     }
 
   // build collimator structures
@@ -222,5 +224,20 @@ void BDSOutputROOT::Close()
 	  delete theRootOutputFile;
 	  theRootOutputFile = nullptr;
 	}
+    }
+}
+
+void BDSOutputROOT::UpdateSamplers()
+{
+  G4int nNewSamplers = BDSOutputStructures::UpdateSamplerStructures();
+  G4int nSamplers = (G4int)samplerTrees.size();
+  for (G4int i = nSamplers - nNewSamplers; i < nSamplers; ++i)
+    {
+      auto samplerTreeLocal = samplerTrees.at(i);
+      auto samplerName      = samplerNames.at(i);
+      // set tree branches
+      theEventOutputTree->Branch((samplerName+".").c_str(),
+				 "BDSOutputROOTEventSampler",
+				 samplerTreeLocal,32000,0);
     }
 }

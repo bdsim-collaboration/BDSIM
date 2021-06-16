@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -20,8 +20,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @file rebdsimCombine.cc
  */
 #include "FileMapper.hh"
+#include "Header.hh"
 #include "HistogramAccumulatorMerge.hh"
 #include "HistogramAccumulatorSum.hh"
+#include "RBDSException.hh"
 
 #include "BDSOutputROOTEventHeader.hh"
 
@@ -48,7 +50,7 @@ int main(int argc, char* argv[])
   // build input file list
   std::vector<std::string> inputFiles;
   for (int i = 2; i < argc; ++i)
-    {inputFiles.push_back(std::string(argv[i]));}
+    {inputFiles.emplace_back(std::string(argv[i]));}
 
   // checks
   if (inputFiles.size() == 1)
@@ -58,7 +60,7 @@ int main(int argc, char* argv[])
     }
 
   std::string outputFile = std::string(argv[1]);
-  if (outputFile.find("*") != std::string::npos)
+  if (outputFile.find('*') != std::string::npos)
     {
       std::cerr << "First argument for output file \"" << outputFile << "\" contains an *." << std::endl;
       std::cerr << "Should only be a singular file - check order of arguments." << std::endl;
@@ -76,8 +78,6 @@ int main(int argc, char* argv[])
   headerOut->SetFileType("REBDSIMCOMBINE");
   TTree* headerTree = new TTree("Header", "REBDSIM Header");
   headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
-  headerTree->Fill();
-  output->Write(nullptr,TObject::kOverwrite);
 
   // ensure new histograms are written to file
   TH1::AddDirectory(true);
@@ -94,13 +94,30 @@ int main(int argc, char* argv[])
   HistogramMap* histMap = nullptr;
   try
     {histMap = new HistogramMap(f, output);} // map out first file
-  catch (const std::exception& e)
-    {std::cout << e.what() << std::endl; return 1;}
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
+  catch (const std::exception& error)
+    {std::cerr << error.what(); exit(1);}
+  
+  // copy the model tree over if it exists - expect the name to be ModelTree
+  TTree* oldModelTree = (TTree*)f->Get("ModelTree");
+  if (!oldModelTree)
+    {oldModelTree = (TTree*)f->Get("Model");}
+  if (oldModelTree)
+    {// TChain can be valid but TTree might not be in corrupt / bad file
+      output->cd();
+      auto newTree = oldModelTree->CloneTree();
+      newTree->SetName("ModelTree");
+      newTree->Write("", TObject::kOverwrite);
+    }
+  
   f->Close();
   delete f;
 
   std::vector<RBDS::HistogramPath> histograms = histMap->Histograms();
 
+  unsigned long long int nOriginalEvents = 0;
+  
   // loop over files and accumulate
   for (const auto& file : inputFiles)
     {
@@ -111,11 +128,18 @@ int main(int argc, char* argv[])
 	  for (const auto& hist : histograms)
 	    {
 	      std::string histPath = hist.path + hist.name; // histPath has trailing '/'
-	      TH1* h = static_cast<TH1*>(f->Get(histPath.c_str()));
+	      TH1* h = dynamic_cast<TH1*>(f->Get(histPath.c_str()));
 	      if (!h)
 		{RBDS::WarningMissingHistogram(histPath, file); continue;}
 	      hist.accumulator->Accumulate(h);
 	    }
+	  
+	  Header* h = new Header();
+	  TTree* ht = (TTree*)f->Get("Header");
+	  h->SetBranchAddress(ht);
+	  ht->GetEntry(0);
+	  nOriginalEvents += h->header->nOriginalEvents;
+	  delete h;
 	}
       else
 	{std::cout << "Skipping " << file << " as not a rebdsim output file" << std::endl;}
@@ -131,6 +155,9 @@ int main(int argc, char* argv[])
       hist.outputDir->Add(result);
       delete hist.accumulator; // this removes temporary histograms from the file
     }
+  
+  headerOut->nOriginalEvents = nOriginalEvents;
+  headerTree->Fill();
 
   output->Write(nullptr,TObject::kOverwrite);
   output->Close();

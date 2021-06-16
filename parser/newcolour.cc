@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -44,7 +44,7 @@ void NewColour::PublishMembers()
   publish("alpha", &NewColour::alpha);
 }
 
-void NewColour::print()const
+void NewColour::print() const
 {
   std::cout << "colour: "
 	    << "name "  << name  << std::endl
