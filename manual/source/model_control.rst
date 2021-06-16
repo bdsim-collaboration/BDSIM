@@ -2667,6 +2667,8 @@ Trajectory Filtering Options
 
 These options control, if :code:`storeTrajectory=1;`, which tracks trajectories should be prepared for.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Function**                                                       |
 +====================================+====================================================================+
@@ -2731,6 +2733,8 @@ Trajectory Storage Options
 
 These options control what information or variables are written to file **for** a given trajectory
 that has passed the filters above.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +------------------------------------+--------------------------------------------------------------------+
 | **Option**                         | **Function**                                                       |
@@ -2798,6 +2802,8 @@ Recommendations:
 * Run is a group of events where the physics and geometry remained the same.
 
 The options listed below are list roughly in terms of the simulation hierarchy.
+
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.15\textwidth}|p{0.4\textwidth}|
 
 +----------------------------------+----------+-------------------------------------------------------------------+
 | **Option**                       | **Type** | **Description**                                                   |
