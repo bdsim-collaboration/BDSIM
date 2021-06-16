@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -37,7 +37,7 @@ BDSFieldValue BDSInterpolator2DCubic::GetInterpolatedValueT(G4double x, G4double
   G4double xarr = array->ArrayCoordsFromX(x);
   G4double yarr = array->ArrayCoordsFromY(y);
 
-  // Array indicies will look like this where point lies in unit (in array coords)
+  // Array indices will look like this where point lies in unit (in array coords)
   // square between 11,12,22,21.
 
   // 03 13 23 33

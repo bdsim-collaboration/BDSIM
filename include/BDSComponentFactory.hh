@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSCOMPONENTFACTORY_H
 
 #include "BDSFieldType.hh"
+#include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSIntegratorType.hh"
@@ -112,8 +113,8 @@ public:
   /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
   /// SBendBuilder.
   static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* el,
-					      const G4ThreeVector inputFaceNormal  = G4ThreeVector(0,0,-1),
-					      const G4ThreeVector outputFaceNormal = G4ThreeVector(0,0,1));
+					      const G4ThreeVector& inputFaceNormal  = G4ThreeVector(0,0,-1),
+					      const G4ThreeVector& outputFaceNormal = G4ThreeVector(0,0,1));
 
   /// Interface to other PrepareBeamPipeInfo() for convenience to avoid preparing
   /// face normal vectors repeatedly.
@@ -150,6 +151,10 @@ public:
 						    G4double defaultVHRatio            = 1.0,
 						    G4double defaultCoilWidthFraction  = -1,
 						    G4double defaultCoilHeightFraction = -1);
+  
+  /// Determine the magnet geometry type. If not specified or the global option to ignore
+  /// local magnet geometry definitions is on, then the global default is used
+  static BDSMagnetGeometryType MagnetGeometryType(const GMAD::Element* el);
 
   /// Prepare the recipe for magnet outer geometry with full control of the angled faces
   /// and which side the yoke is on. The angle in and out are the face angles relative
@@ -245,7 +250,7 @@ private:
   BDSAcceleratorComponent* CreateThinRMatrix(G4double        angleIn,
 					     const G4String& name);
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
-					     const BDSMagnetStrength* stIn,
+					     BDSMagnetStrength*       stIn,
 					     const G4String&          name,
 					     BDSIntegratorType        intType = BDSIntegratorType::rmatrixthin,
 					     BDSFieldType             fieldType = BDSFieldType::rmatrix,
@@ -253,7 +258,7 @@ private:
   BDSAcceleratorComponent* CreateUndulator();
   BDSAcceleratorComponent* CreateDump();
   BDSAcceleratorComponent* CreateCavityFringe(G4double                 angleIn,
-					      const BDSMagnetStrength* stIn,
+					      BDSMagnetStrength*       stIn,
 					      const G4String&          name,
 					      G4double                 irisRadius);
 
@@ -390,5 +395,9 @@ private:
 
   /// Variable used to pass around the possibly modified name of an element.
   G4String elementName;
+  
+  /// Only allow colours to be constructed from parser definitions once. Static so we can use
+  /// a component factory many times without calling multiple times.
+  static G4bool coloursInitialised;
 };
 #endif

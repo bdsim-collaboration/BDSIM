@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -90,6 +90,8 @@ private:
   std::map<G4String, double>   header;    ///< Header keys and values.
   BDSArray4DCoords*            result;    ///< Resultant array from loading.
   G4String                     loopOrder; ///< String for looping order when loading.
+  const std::vector<G4String>  headerMustBePositiveKeys;
+  unsigned long indexOfFirstFieldValue;
 
   struct DimensionKeys
   {

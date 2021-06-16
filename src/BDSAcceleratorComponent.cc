@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -194,4 +194,10 @@ std::set<G4LogicalVolume*> BDSAcceleratorComponent::GetAcceleratorMaterialLogica
   for (auto lv : acceleratorVacuumLV)
     {result.erase(lv);}
   return result;
+}
+
+void BDSAcceleratorComponent::SetFieldUsePlacementWorldTransform()
+{
+  if (fieldInfo)
+    {fieldInfo->SetUsePlacementWorldTransform(true);}
 }

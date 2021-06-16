@@ -6,9 +6,11 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURC
 
 simple_testing(bunch-beam-momentum            "--file=beam-by-momentum.gmad"        "")
 simple_testing(bunch-beam-kinetic-energy      "--file=beam-by-kinetic-energy.gmad"  "")
+simple_testing(bunch-box                      "--file=box.gmad"                     "")
 simple_testing(bunch-circle                   "--file=circle.gmad"                  "")
 simple_testing(bunch-composite                "--file=composite.gmad"               "")
 simple_testing(bunch-composite-w-gauss        "--file=composite-w-gauss.gmad"       "")
+simple_testing(bunch-composite-sde            "--file=compositespacedirectionenergy.gmad" "")
 simple_testing(bunch-different-beam-particle  "--file=different-beam-particle.gmad" "")
 simple_testing(bunch-exotic-particle          "--file=exotic-particle.gmad"         "")
 simple_testing(bunch-exotic-particle-pdgid    "--file=exotic-particle-pdgid.gmad"   "")
@@ -47,3 +49,10 @@ simple_testing(bunch-tilt                     "--file=tilt.gmad"                
 
 set(TESTING_ARGS --ngenerate=32)
 simple_testing(bunch-ptc-loop-file "--file=ptc.gmad" "")
+
+simple_testing(random-engine-hepjames   "--file=random-engine-hepjames.gmad"  "")
+if (CLHEP_HAS_MIXMAX)
+  simple_testing(random-engine-mixmax     "--file=random-engine-mixmax.gmad"    "")
+else()
+  simple_fail(random-engine-mixmax "--file=random-engine-mixmax.gmad")
+endif()

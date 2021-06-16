@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -193,6 +193,7 @@ void Options::PublishMembers()
   publish("verboseImportanceSampling", &Options::verboseImportanceSampling);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
+  publish("randomEngine",          &Options::randomEngine);
   publish("recreate",              &Options::recreate);
   publish("recreateFileName",      &Options::recreateFileName);
   publish("startFromEvent",        &Options::startFromEvent);
@@ -299,8 +300,10 @@ void Options::PublishMembers()
   publish("showTunnel",          &Options::tunnelVisible); // for backwards compatibility
   publish("tunnelOffsetX",       &Options::tunnelOffsetX);
   publish("tunnelOffsetY",       &Options::tunnelOffsetY);
+  publish("tunnelMaxSegmentLength", &Options::tunnelMaxSegmentLength);
 
   publish("removeTemporaryFiles", &Options::removeTemporaryFiles);
+  publish("temporaryDirectory",   &Options::temporaryDirectory);
 
   publish("samplerDiameter",&Options::samplerDiameter);
   
@@ -337,6 +340,10 @@ void Options::PublishMembers()
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
   publish("defaultBiasMaterial", &Options::defaultBiasMaterial);
+  publish("biasForWorldVolume",  &Options::biasForWorldVolume);
+  publish("biasForWorldContents",&Options::biasForWorldContents);
+  publish("biasForWorldVacuum",  &Options::biasForWorldVacuum);
+  publish("worldVacuumVolumeNames",&Options::worldVacuumVolumeNames);
 
   // options which influence tracking
   publish("integratorSet",            &Options::integratorSet);
@@ -354,10 +361,12 @@ void Options::PublishMembers()
   publish("deltaOneStep",             &Options::deltaOneStep);
   publish("stopSecondaries",          &Options::stopSecondaries);
   publish("killNeutrinos",            &Options::killNeutrinos);
+  publish("killedParticlesMassAddedToEloss", &Options::killedParticlesMassAddedToEloss);
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("sampleElementsWithPoleface",  &Options::sampleElementsWithPoleface);
   publish("nominalMatrixRelativeMomCut", &Options::nominalMatrixRelativeMomCut);
   publish("teleporterFullTransform",  &Options::teleporterFullTransform);
+  publish("dEThresholdForScattering", &Options::dEThresholdForScattering);
 
   // hit generation
   publish("sensitiveOuter",              &Options::sensitiveOuter);
@@ -423,6 +432,7 @@ void Options::PublishMembers()
   publish("storePrimaries",                 &Options::storePrimaries);
   publish("storePrimaryHistograms",         &Options::storePrimaryHistograms);
   publish("writePrimaries",                 &Options::storePrimaries); // backwards compatibility
+  
   publish("storeTrajectory",                    &Options::storeTrajectory);
   publish("storeTrajectories",                  &Options::storeTrajectory);
   publish("storeTrajectoryDepth",               &Options::storeTrajectoryDepth);
@@ -433,12 +443,18 @@ void Options::PublishMembers()
   publish("storeTrajectoryEnergyThreshold",     &Options::storeTrajectoryEnergyThreshold);
   publish("storeTrajectorySamplerID",           &Options::storeTrajectorySamplerID);
   publish("storeTrajectoryELossSRange",         &Options::storeTrajectoryELossSRange);
+  
   publish("storeTrajectoryTransportationSteps", &Options::storeTrajectoryTransportationSteps);
   publish("trajNoTransportation",               &Options::trajNoTransportation); ///< kept only for backwards compatibility.
+  publish("storeTrajectoryKineticEnergy",       &Options::storeTrajectoryKineticEnergy);
+  publish("storeTrajectoryMomentumVector",      &Options::storeTrajectoryMomentumVector);
+  publish("storeTrajectoryProcesses",           &Options::storeTrajectoryProcesses);
+  publish("storeTrajectoryTime",                &Options::storeTrajectoryTime);
   publish("storeTrajectoryLocal",               &Options::storeTrajectoryLocal);
   publish("storeTrajectoryLinks",               &Options::storeTrajectoryLinks);
   publish("storeTrajectoryIon",                 &Options::storeTrajectoryIon);
   publish("storeTrajectoryIons",                &Options::storeTrajectoryIon); ///< alternative for backwards compatibility.
+  publish("storeTrajectoryAllVariables",        &Options::storeTrajectoryAllVariables);
   publish("trajectoryFilterLogicAND",           &Options::trajectoryFilterLogicAND);
 
   publish("storeSamplerAll",                &Options::storeSamplerAll);
@@ -456,6 +472,8 @@ void Options::PublishMembers()
   publish("trajCutLTR",                     &Options::trajCutLTR);
   
   publish("storeModel",                     &Options::storeModel);
+
+  publish("samplersSplitLevel",             &Options::samplersSplitLevel);
 
   // circular options
   publish("nturns",                   &Options::nturns);

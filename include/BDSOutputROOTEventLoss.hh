@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __ROOTBUILD__
 class BDSHitEnergyDeposition;
 class BDSTrajectoryPoint;
+class BDSTrajectoryPointHit;
 #endif
 
 #include "TObject.h"
@@ -86,7 +87,7 @@ public:
 			 bool storeStepLengthIn,
 			 bool storePreStepKineticEnergyIn,
 			 bool storePhysicsProcessesIn);
-  void Fill(const BDSTrajectoryPoint* hit);
+  void Fill(const BDSTrajectoryPointHit* hit);
   void Fill(const BDSHitEnergyDeposition* hit);
 
   bool storeTurn       = false; ///< Store turn number.

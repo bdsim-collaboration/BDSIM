@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -113,14 +113,14 @@ public:
   // Communal constructions tasks
   
   /// @{ Copy the bias list to this element
-  virtual void SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
+  virtual void SetBiasVacuumList(const std::list<std::string>& biasVacuumListIn)
   {biasVacuumList = biasVacuumListIn;}
-  virtual void SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
+  virtual void SetBiasMaterialList(const std::list<std::string>& biasMaterialListIn)
   {biasMaterialList = biasMaterialListIn;}
   /// @}
   
   /// Set the region name for this component.
-  virtual void SetRegion(G4String regionIn) {region = regionIn;}
+  virtual void SetRegion(const G4String& regionIn) {region = regionIn;}
 
   /// Set the field definition for the whole component.
   void SetField(BDSFieldInfo* fieldInfoIn);
@@ -132,7 +132,7 @@ public:
   // Accessors
   
   /// The name of the component without modification
-  inline G4String GetName() const {return name;}
+  virtual inline G4String GetName() const {return name;}
 
   /// @{ Access the length of the component. Note there is no z length - this is chord length.
   /// Only chord OR arc makes it explicit.
@@ -152,6 +152,14 @@ public:
 
   /// Get the region name for this component.
   G4String GetRegion() const {return region;}
+
+  /// Whether this component has a field or not (ie is active). Implicit cast of pointer to bool.
+  virtual G4bool HasAField() const {return fieldInfo;}
+  
+  /// For when an accelerator component is used in a placement, we need to flag the field transform
+  /// should come from a different parallel world and not the regularly curvilinear ones. This should
+  /// be used before Initialise() when the field is registered for construction.
+  virtual void SetFieldUsePlacementWorldTransform();
 
   /// Access beam pipe information, which is stored in this class to provide
   /// aperture information when making a survey of the beamline consisting of
@@ -225,7 +233,7 @@ protected:
   inline void SetAcceleratorVacuumLogicalVolume(G4LogicalVolume* accVacLVIn)
   {acceleratorVacuumLV.insert(accVacLVIn);}
 
-  inline void SetAcceleratorVacuumLogicalVolume(const std::set<G4LogicalVolume*> accVacLVIn)
+  inline void SetAcceleratorVacuumLogicalVolume(const std::set<G4LogicalVolume*>& accVacLVIn)
   {acceleratorVacuumLV.insert(accVacLVIn.begin(), accVacLVIn.end());}
 
   /// This tests to see if the length of the BDSAcceleratorComponent is shorter than the

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "EventAnalysis.hh"
 #include "ModelAnalysis.hh"
 #include "OptionsAnalysis.hh"
+#include "RBDSException.hh"
 #include "RebdsimTypes.hh"
 #include "RunAnalysis.hh"
 
@@ -72,20 +73,29 @@ int main(int argc, char *argv[])
 			  branchesToActivate,
 			  config->GetOptionBool("backwardscompatible"));
     }
-  catch (const std::string& e)
-    {std::cerr << e << std::endl; exit(1);}
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
+  catch (const std::exception& error)
+    {std::cerr << error.what(); exit(1);}
   
   BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl->GetBeam(),
 						  dl->GetBeamTree(),
 						  config->PerEntryBeam(),
 						  debug);
-  EventAnalysis*   evtAnalysis = new EventAnalysis(dl->GetEvent(),
-                                                   dl->GetEventTree(),
-						   config->PerEntryEvent(),
-						   config->ProcessSamplers(),
-                                                   debug,
-                                                   config->PrintModuloFraction(),
-						   config->GetOptionBool("emittanceonthefly"));
+  EventAnalysis*   evtAnalysis;
+  try
+    {
+      evtAnalysis = new EventAnalysis(dl->GetEvent(),
+				      dl->GetEventTree(),
+				      config->PerEntryEvent(),
+				      config->ProcessSamplers(),
+				      debug,
+				      config->PrintModuloFraction(),
+				      config->GetOptionBool("emittanceonthefly"));
+    }
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
+  
   RunAnalysis*     runAnalysis = new RunAnalysis(dl->GetRun(),
 						 dl->GetRunTree(),
 						 config->PerEntryRun(),
@@ -138,11 +148,10 @@ int main(int argc, char *argv[])
       delete outputFile;
       std::cout << "Result written to: " << config->OutputFileName() << std::endl;
     }
-  catch (const std::string& error)
-    {
-      std::cout << error << std::endl;
-      exit(1);
-    }
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
+  catch (const std::exception& error)
+    {std::cerr << error.what(); exit(1);}
   delete dl;
   for (auto analysis : analyses)
     {delete analysis;}

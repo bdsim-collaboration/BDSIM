@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DataLoader.hh"
 #include "EventAnalysis.hh"
+#include "RBDSException.hh"
 
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventHeader.hh"
@@ -84,8 +85,10 @@ int main(int argc, char* argv[])
   DataLoader* dl = nullptr;
   try
     {dl = new DataLoader(inputFileName, false, true);}
-  catch (const std::string& e)
-    {std::cerr << e << std::endl; exit(1);}
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
+  catch (const std::exception& error)
+    {std::cerr << error.what(); exit(1);}
 
   // beam required to get the mass of the primary particle in EventAnalysis
   Beam*   beam     = dl->GetBeam();
@@ -101,9 +104,15 @@ int main(int argc, char* argv[])
       exit(1);
     }
 
-  EventAnalysis* evtAnalysis = new EventAnalysis(dl->GetEvent(), dl->GetEventTree(),
-						 false, true, false, -1, emittanceOnFly, 0, -1, particleName);
-  evtAnalysis->Execute();
+  EventAnalysis* evtAnalysis;
+  try
+    {
+      evtAnalysis = new EventAnalysis(dl->GetEvent(), dl->GetEventTree(),
+				      false, true, false, -1, emittanceOnFly, 0, -1, particleName);
+      evtAnalysis->Execute();
+    }
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
 
   TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
 

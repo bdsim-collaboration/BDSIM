@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -79,6 +79,11 @@ private:
 
   /// Singleton instance
   static BDSFieldLoader* instance;
+  
+  /// @{ Check file path isn't empty and throw exception if it is.
+  void BFilePathOK(const BDSFieldInfo& info) const;
+  void EFilePathOK(const BDSFieldInfo& info) const;
+  /// @}
 
   /// @{ Return the cached array if there is one - may return nullptr.
   BDSArray1DCoords* Get1DCached(const G4String& filePath);

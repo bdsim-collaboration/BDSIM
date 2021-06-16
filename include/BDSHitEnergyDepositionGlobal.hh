@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -53,6 +53,7 @@ public:
   virtual ~BDSHitEnergyDepositionGlobal();
 
   inline G4double TotalEnergyWeighted() const {return weight * totalEnergy;}
+  inline G4double KineticEnergyWeighted() const {return weight * postStepKineticEnergy;}
   
   G4double totalEnergy;
   G4double preStepKineticEnergy;

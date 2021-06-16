@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDFilterPrimary.hh"
 #include "BDSSDManager.hh"
 #include "BDSSDSampler.hh"
+#include "BDSSDSamplerLink.hh"
 #include "BDSSDThinThing.hh"
 #include "BDSSDType.hh"
 #include "BDSSDTerminator.hh"
@@ -46,6 +47,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <vector>
+
+class BDSLinkRegistry;
 
 BDSSDManager* BDSSDManager::instance = nullptr;
 
@@ -67,9 +70,6 @@ BDSSDManager::~BDSSDManager()
 
 BDSSDManager::BDSSDManager()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Constructor - creating all necessary Sensitive Detectors" << G4endl;
-#endif
   BDSGlobalConstants* g    = BDSGlobalConstants::Instance();
   storeCollimatorHitsAll   = g->StoreCollimatorHitsAll();
   storeCollimatorHitsIons  = g->StoreCollimatorHitsIons();
@@ -80,6 +80,8 @@ BDSSDManager::BDSSDManager()
   apertureImpactsMinimumKE = g->ApertureImpactsMinimumKE();
   generateELossHits        = g->StoreELoss() || g->StoreELossHistograms();
   generateELossVacuumHits  = g->StoreELossVacuum() || g->StoreELossVacuumHistograms(); generateELossTunnelHits  = g->StoreELossTunnel() || g->StoreELossTunnelHistograms();
+
+  G4bool killedParticleMassAddedToEloss = g->KilledParticlesMassAddedToEloss();
 
   generateELossWorldContents = g->UseImportanceSampling() || g->StoreELossWorldContents();
   
@@ -137,26 +139,29 @@ BDSSDManager::BDSSDManager()
   samplerCylinder = new BDSSDSampler("cylinder");
   SDMan->AddNewDetector(samplerCylinder);
 
+  samplerLink = new BDSSDSamplerLink("link");
+  SDMan->AddNewDetector(samplerLink);
+
   // Terminator sd to measure how many times that primary has passed through the terminator
   terminator = new BDSSDTerminator("terminator");
   SDMan->AddNewDetector(terminator);
 
-  energyDeposition = new BDSSDEnergyDeposition("general", storeELossExtras);
+  energyDeposition = new BDSSDEnergyDeposition("general", storeELossExtras, killedParticleMassAddedToEloss);
   SDMan->AddNewDetector(energyDeposition);
 
-  energyDepositionFull = new BDSSDEnergyDeposition("general_full", true);
+  energyDepositionFull = new BDSSDEnergyDeposition("general_full", true, killedParticleMassAddedToEloss);
   SDMan->AddNewDetector(energyDepositionFull);
   
-  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", storeELossExtras);
+  energyDepositionVacuum = new BDSSDEnergyDeposition("vacuum", storeELossExtras, killedParticleMassAddedToEloss);
   SDMan->AddNewDetector(energyDepositionVacuum);
 
-  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", storeELossExtras);
+  energyDepositionTunnel = new BDSSDEnergyDeposition("tunnel", storeELossExtras, killedParticleMassAddedToEloss);
   SDMan->AddNewDetector(energyDepositionTunnel);
 
-  energyDepositionWorld = new BDSSDEnergyDepositionGlobal("worldLoss");
+  energyDepositionWorld = new BDSSDEnergyDepositionGlobal("worldLoss", killedParticleMassAddedToEloss);
   SDMan->AddNewDetector(energyDepositionWorld);
 
-  energyDepositionWorldContents = new BDSSDEnergyDepositionGlobal("worldLoss_contents");
+  energyDepositionWorldContents = new BDSSDEnergyDepositionGlobal("worldLoss_contents", killedParticleMassAddedToEloss);
   SDMan->AddNewDetector(energyDepositionWorldContents);
 
   worldExit = new BDSSDVolumeExit("worldExit", true);
@@ -224,10 +229,7 @@ BDSSDManager::BDSSDManager()
   SDMan->AddNewDetector(collimatorCompleteSD);
 
   // thin things
-  thinThingSD = new BDSSDThinThing("thinthing_general",
-				   g->StoreTrajectoryLocal(),
-				   g->StoreTrajectoryLinks(),
-				   g->StoreTrajectoryIon());
+  thinThingSD = new BDSSDThinThing("thinthing_general", g->StoreTrajectoryOptions());
   thinThingSD->SetFilter(filters["primary"]);
   SDMan->AddNewDetector(thinThingSD);
 
@@ -247,6 +249,8 @@ G4VSensitiveDetector* BDSSDManager::SensitiveDetector(const BDSSDType sdType,
       {result = samplerPlane; break;}
     case BDSSDType::samplercylinder:
       {result = samplerCylinder; break;}
+    case BDSSDType::samplerlink:
+      {result = samplerLink; break;}
     case BDSSDType::terminator:
       {result = terminator; break;}
     case BDSSDType::energydep:
@@ -391,4 +395,10 @@ void BDSSDManager::RegisterPrimitiveScorerNames(const std::vector<G4String>& nam
       for (const auto& name : namesIn)
 	{RegisterPrimitiveScorerName(name);}
     }
+}
+
+void BDSSDManager::SetLinkRegistry(BDSLinkRegistry* registry)
+{
+  if (samplerLink)
+    {samplerLink->SetLinkRegistry(registry);}
 }

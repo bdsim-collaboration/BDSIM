@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -25,7 +25,7 @@ class BDSOutputROOTEventHeader;
 class TTree;
 
 /**
- * @brief Options loader.
+ * @brief Header loader.
  *
  * @author Laurie Nevay.
  */

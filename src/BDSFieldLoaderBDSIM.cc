@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -48,7 +48,9 @@ template <class T>
 BDSFieldLoaderBDSIM<T>::BDSFieldLoaderBDSIM():
   nColumns(0),
   fv(BDSFieldValue()),
-  result(nullptr)
+  result(nullptr),
+  headerMustBePositiveKeys({"nx", "ny", "nz", "nt"}),
+  indexOfFirstFieldValue(0)
 {
   dimKeyMap = {
 	       {BDSDimensionType::x, {"nx", "xmin", "xmax"}},
@@ -71,17 +73,20 @@ void BDSFieldLoaderBDSIM<T>::CleanUp()
   std::vector<G4String> allKeys = {"nx", "ny", "nz", "nt",
 				   "xmin", "xmax", "ymin", "ymax",
 				   "zmin", "zmax", "tmin", "tmax"};
-  for (const std::string& s : allKeys)
-    {header[s] = 0;}
+  for (auto& key : allKeys)
+    {header[key] = 0;}
+  for (auto& key : headerMustBePositiveKeys)
+    {header[key] = 1;}
   result    = nullptr;
   loopOrder = "xyzt";
+  indexOfFirstFieldValue = 0;
 }
 
 template <class T>
 void BDSFieldLoaderBDSIM<T>::Terminate(const G4String& message)
 {
   file.close();
-  throw BDSException(__METHOD_NAME__, message);
+  throw BDSException("BDSFieldLoaderBDSIM", message);
 } 
 
 template <class T>
@@ -116,10 +121,11 @@ template <class T>
 void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
 				  const unsigned int nDim)
 {
+  G4String functionName = "BDSIM Field Format> ";
   CleanUp();
   
   file.open(fileName);
-
+  long long unsigned int currentLineNumber = 0;
   // test if file is valid
 #ifdef USE_GZSTREAM
   bool validFile = file.rdbuf()->is_open();
@@ -129,7 +135,7 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
   if (!validFile)
     {throw BDSException(__METHOD_NAME__, "Invalid file name or no such file named \"" + fileName + "\"");}
   else
-    {G4cout << "BDSIM field format - loading \"" << fileName << "\"" << G4endl;}
+    {G4cout << functionName << "Loading \"" << fileName << "\"" << G4endl;}
 
   // temporary variables
   unsigned long xIndex = 0;
@@ -158,9 +164,11 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
   // wrap in vectors for easy assignment
   G4String nominalOrder = "xyzt";
   
+  float maximumFieldValue = 0;
+  float minimumFieldValue = 0;
   while (std::getline(file, line))
     {// read a line only if it's not a blank one
-      
+      currentLineNumber++;
       // Skip a line if it's only whitespace
       if (std::all_of(line.begin(), line.end(), isspace))
 	{continue;}
@@ -181,7 +189,9 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
 	      // is constructed with the right dimensions and can therefore be filled in
 	      // any order.
           (*result)(indX, indY, indZ, indT) = fv;
-	  
+          float mag = fv.mag();
+          maximumFieldValue = std::max(maximumFieldValue, mag);
+          minimumFieldValue = std::min(minimumFieldValue, mag);
           (*ind1)++; // increment counter
           if ((*ind1) == (*n1))
 	    {// we've completed one set of ind1.
@@ -217,7 +227,7 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
       if (std::regex_search(line, matchHeaderNumber, keyValue))
 	{// must be key definition
           if (matchHeaderNumber.size() < 2)
-	    {Terminate("Invalid key definition in field format: " + line);}
+	    {Terminate(functionName+"Invalid key definition in field format: " + line);}
           else
 	    {
               G4String key = G4String(matchHeaderNumber[1]);
@@ -225,24 +235,30 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
 
 	      // check it's a valid key - header preloaded with valid keys
 	      if (header.find(key) == header.end())
-		{Terminate("BDSIM Format Loader > Invalid key \"" + key +"\" in header");}
+		{Terminate(functionName+"Invalid key \"" + key +"\" in header");}
 	      
               G4double value = 0;
               try
 		{value = std::stod(matchHeaderNumber[2]);}
               catch (const std::invalid_argument&)
-		{Terminate("Invalid argument " + std::string(matchHeaderNumber[2]));}
+		{Terminate(functionName+"Invalid argument " + std::string(matchHeaderNumber[2]));}
               catch (const std::out_of_range&)
-		{Terminate("Number out of range " + std::string(matchHeaderNumber[2]));}
+		{Terminate(functionName+"Number out of range " + std::string(matchHeaderNumber[2]));}
 	      
+              if (std::find(headerMustBePositiveKeys.begin(), headerMustBePositiveKeys.end(), key) != headerMustBePositiveKeys.end())
+		{
+		  if (value < 1)
+		    {Terminate(functionName+"Number of points in dimension must be greater than 0 -> see \"" + key + "\"");}
+		}
+              
               header[key] = value;
               continue;
 	    }
 	}
 
       std::smatch matchHeaderString;
-      // mathces "key > string" where string is 1-4 characters (not numbers)
-      // can be paddded between each part with whitespace \s*
+      // matches "key > string" where string is 1-4 characters (not numbers)
+      // can be padded between each part with whitespace \s*
       // not more than four characters (via \b for word boundary)
       std::regex keyWord(R"((\w+)\s*>\s*([a-zA-Z]{1,4})\b\s*)");
       if (std::regex_search(line, matchHeaderString, keyWord))
@@ -269,7 +285,7 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
 		      (*nums[i]) = numReferences[foundIndex];
 		    }
 		  else
-		    {Terminate("Invalid dimension specifier in loopOrder key: \"" + loopOrder + "\"");}
+		    {Terminate(functionName+"Invalid dimension specifier in loopOrder key: \"" + loopOrder + "\"");}
 		}
 	    }
 	  continue; // loopOrder -> it's not a number so don't try matching it
@@ -304,9 +320,16 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
 	    }
           lineData.resize(nColumns + 1); // +1 for default value
           intoData = true;
+          indexOfFirstFieldValue = std::min({xIndex, yIndex, zIndex});
+          
+          for (const auto& key : headerMustBePositiveKeys)
+	    {
+	      if (header[key] < 1)
+		{Terminate(functionName+"Number of points in dimension must be greater than 0 -> see \"" + key + "\"");}
+	    }
 	  
           if (nColumns < (nDim + 3)) // 3 for field components
-	    {Terminate("Too few columns for " + std::to_string(nDim) + "D field loading");}
+	    {Terminate(functionName+"Too few columns for " + std::to_string(nDim) + "D field loading");}
 	  
           // we have all the information now, so initialise the container
           switch (nDim)
@@ -384,6 +407,8 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
     }
   
   file.close();
+  G4cout << functionName << "Loaded " << currentLineNumber << " lines from file" << G4endl;
+  G4cout << functionName << "(Min | Max) field magnitudes in loaded file (before scaling): (" << minimumFieldValue << " | " << maximumFieldValue << ")" << G4endl;
 }
 
 template <class T>
@@ -394,15 +419,13 @@ void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
 {
   std::istringstream liness(line);
   G4float value = 0;
-
-  // put a default value in.
-  lineData[0] = 0;
+  std::fill(lineData.begin(), lineData.end(), 0); // reset data - technically unnecessary
   
   // read all columns - indices shifted +1 for default value offset
   for (unsigned long i = 1; i < nColumns+1; ++i)
     {
       liness >> value;
-      if (i < xIndex)// x is the first field value - coordinates before that
+      if (i < indexOfFirstFieldValue)// coordinates before this index
 	{value *= CLHEP::cm;}
       lineData[i] = value;
     }

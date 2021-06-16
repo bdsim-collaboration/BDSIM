@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
+
+#include <cmath>
 
 BDSFieldMag::BDSFieldMag():
   finiteStrength(true),
@@ -53,8 +55,10 @@ G4ThreeVector BDSFieldMag::GetFieldTransformed(const G4ThreeVector& position,
 void BDSFieldMag::GetFieldValue(const G4double point[4],
 				G4double* field) const
 {
-  G4ThreeVector fieldValue = GetFieldTransformed(G4ThreeVector(point[0], point[1],
-							       point[2]), point[3]);
+  G4double t = point[3];
+  if (std::isnan(t))
+    {t = 0;}
+  G4ThreeVector fieldValue = GetFieldTransformed(G4ThreeVector(point[0], point[1], point[2]), t);
   field[0] = fieldValue[0]; // B_x
   field[1] = fieldValue[1]; // B_y
   field[2] = fieldValue[2]; // B_z

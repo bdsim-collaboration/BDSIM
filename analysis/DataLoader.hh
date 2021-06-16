@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
+University of London 2001 - 2021.
 
 This file is part of BDSIM.
 
@@ -55,7 +55,7 @@ public:
 
   /// Create an instance of each class in the file to be overlaid by loading
   /// the ROOT file.
-  void CommonCtor(std::string fileName);
+  void CommonCtor(const std::string& fileName);
 
   /// Build up the input file list.
   void BuildInputFileList(std::string inputPath);
