@@ -577,13 +577,15 @@ energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 square
 ******
 
-This distribution has similar properties to the `circle`_ distribution, with the
-exception that the particles are randomly uniformly distributed within a square. Each parameter
-defines the maximum absolute extent in that dimension, i.e. the possible values
-`x` values range from `-envelopeX` to `envelopeX` for example. The total
+Particles are randomly uniformly distributed within a square in each phase space dimension,
+i.e. (x,xp) and (y,yp). Each parameter defines the maximum absolute extent in that dimension,
+i.e. the possible values `x` values range from `-envelopeX` to `+envelopeX`. The total
 energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 
 * All parameters from `reference`_ distribution are used as centroids.
+* `Z` is by default correlated with `T`. `T` is sampled, then `Z` calculated from :math:`c * t`.
+* To create an uncorrelated `Z` distribution, `envelopeZ` should be set explicitly.
+* Default values of envelopes are 0.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -602,7 +604,34 @@ energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 +----------------------------------+-------------------------------------------------------+
 | `envelopeE`                      | Maximum energy offset [GeV]                           |
 +----------------------------------+-------------------------------------------------------+
+| `envelopeZ`                      | (Optional) maximum position in Z [m]                  |
++----------------------------------+-------------------------------------------------------+
 
+Examples: ::
+
+  beam, particle="e-",
+        kineticEnergy=1*GeV,
+	distrType="square",
+	envelopeX=1*cm,
+	envelopeXp=1e-3,
+	envelopeY=1*cm,
+	envelopeYp=1e-3,
+	envelopeT=10*ns;
+
+For a `square` distribution with no z offset but still an offset in time: ::
+
+  beam, particle="e-",
+        kineticEnergy=1*GeV,
+	distrType="square",
+	envelopeX=1*cm,
+	envelopeXp=1e-3,
+	envelopeY=1*cm,
+	envelopeYp=1e-3,
+	envelopeT=10*ns,
+	envelopeZ=0;
+
+We set `envelopeZ` which means the distribution will be uncorrelated in `Z` with `T`, but
+also to 0 so it has no variation in `Z`.
 
 ring
 ****
