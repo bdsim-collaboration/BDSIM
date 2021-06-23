@@ -13,6 +13,30 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
+V1.7.0 - 2021 / XX / XX
+=======================
+
+New Features
+------------
+
+* The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
+  explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
+
+General
+-------
+
+Bug Fixes
+---------
+
+Output Changes
+--------------
+
+Output Class Versions
+---------------------
+
+Utilities
+---------
+  
 
 V1.6.0 - 2021 / 06 / 16
 =======================
