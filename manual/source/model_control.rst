@@ -545,7 +545,7 @@ which the beam :math:`\sigma` -matrix is calculated, using the following equatio
 | `sigmaP`                         | Normalised momentum spread                            |
 +----------------------------------+-------------------------------------------------------+
 
-* \* Only one of :code:`emitx` or :code:`emitnx` (similarly in y) can be set.
+* (\*) Only one of :code:`emitx` or :code:`emitnx` (similarly in y) can be set.
 
 
 circle
