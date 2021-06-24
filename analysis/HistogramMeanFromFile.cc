@@ -124,14 +124,7 @@ void HistogramMeanFromFile::Write(TDirectory* dir)
       for (auto& h : histograms3d)
 	{dir->Add(h->Result());}
       for (auto& h : histograms4d)
-	{
-	  
-	  BDSBH4DBase *hist = dynamic_cast<BDSBH4DBase *>(h->Result());
-	  TTree *tree = new TTree(hist->GetName(), "BDSBH4DBase Tree");
-	  tree->Branch("BDSBH4DBase", &hist, 32000, 0);
-	  tree->Fill();
-	  dir->WriteTObject(tree,h->Result()->GetName(),"",32000); 
-	}
+	{dir->Add(h->Result());}
     }
 
   // write to currently open file.
@@ -140,6 +133,8 @@ void HistogramMeanFromFile::Write(TDirectory* dir)
   for (auto& h : histograms2d)
     {h->Result()->Write();}
   for (auto& h : histograms3d)
+    {h->Result()->Write();}
+  for (auto& h : histograms4d)
     {h->Result()->Write();}
 }
 
