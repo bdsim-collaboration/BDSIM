@@ -157,40 +157,6 @@ BDSBH4D<T>::~BDSBH4D()
 {;}
 
 template <class T>
-void BDSBH4D<T>::to_PyROOT(const std::string& filename, const std::string& histo_name)
-{
-  const char* filename_char = filename.c_str();
-  
-  std::string path ="Event/MergedHistograms/" +histo_name;
-  const char* path_char = path.c_str();
-  
-  TFile *_file0 = TFile::Open(filename_char);
-  auto* tree = (TTree*) _file0->Get(path_char);
-  auto* Boost_histogram = new BDSBH4D<T>();
-  tree->SetBranchAddress("BDSBH4DBase",&Boost_histogram);
-  tree->GetEntry(0);
-  
-  this->h = Boost_histogram->h;
-  this->h_err = Boost_histogram->h_err;
-  this->h_nxbins = Boost_histogram->h_nxbins;
-  this->h_nybins = Boost_histogram->h_nybins;
-  this->h_nzbins = Boost_histogram->h_nzbins;
-  this->h_nebins = Boost_histogram->h_nebins;
-  this->h_xmin = Boost_histogram->h_xmin;
-  this->h_xmax = Boost_histogram->h_xmax;
-  this->h_ymin = Boost_histogram->h_ymin;
-  this->h_ymax = Boost_histogram->h_ymax;
-  this->h_zmin = Boost_histogram->h_zmin;
-  this->h_zmax = Boost_histogram->h_zmax;
-  this->h_emin = Boost_histogram->h_emin;
-  this->h_emax = Boost_histogram->h_emax;
-  this->h_name = Boost_histogram->h_name;
-  this->h_title = Boost_histogram->h_title;
-  this->h_escale = Boost_histogram->h_escale;
-  this->h_ebinsedges = Boost_histogram->h_ebinsedges;  
-}
-
-template <class T>
 void BDSBH4D<T>::Reset_BDSBH4D()
 {
   h.reset();

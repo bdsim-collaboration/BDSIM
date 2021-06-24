@@ -63,7 +63,6 @@ public:
     return *this;
   }
 
-  void to_PyROOT(const std::string&, const std::string&);
   void Reset_BDSBH4D() override;
   BDSBH4D* Clone(const char*) const override;
   void Fill_BDSBH4D(double, double, double, double) override;
