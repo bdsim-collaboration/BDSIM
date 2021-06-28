@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1.h"
 #include "TH2.h"
 #include "TH3.h"
+#include "BDSBH4D.hh"
 #include "TTree.h"
 
 #include <exception>
@@ -128,7 +129,20 @@ int main(int argc, char* argv[])
 	  for (const auto& hist : histograms)
 	    {
 	      std::string histPath = hist.path + hist.name; // histPath has trailing '/'
-	      TH1* h = dynamic_cast<TH1*>(f->Get(histPath.c_str()));
+
+	      TH1* h = nullptr;
+	      
+	      if (hist.BDSBH4Dtype == false)
+		{h = dynamic_cast<TH1*>(f->Get(histPath.c_str()));}
+	      else
+		{
+		  TDirectory* rootDir = static_cast<TDirectory*>(f);
+		  TObject* dirObject = rootDir->Get(histPath.c_str());
+		  TTree* tree = static_cast<TTree*>(dirObject);
+		  tree->SetBranchAddress("BDSBH4DBase",&h);
+		  tree->GetEntry(0);
+		}
+
 	      if (!h)
 		{RBDS::WarningMissingHistogram(histPath, file); continue;}
 	      hist.accumulator->Accumulate(h);
@@ -151,9 +165,24 @@ int main(int argc, char* argv[])
   for (const auto& hist : histograms)
     {
       TH1* result = hist.accumulator->Terminate();
-      result->SetDirectory(hist.outputDir);
-      hist.outputDir->Add(result);
-      delete hist.accumulator; // this removes temporary histograms from the file
+
+      if (hist.BDSBH4Dtype == false)
+	{
+          result->SetDirectory(hist.outputDir);
+          hist.outputDir->Add(result);
+          delete hist.accumulator; // this removes temporary histograms from the file
+	}
+      else
+	{
+	  BDSBH4DBase *h = dynamic_cast<BDSBH4DBase *>(result);
+	  TTree *tree = new TTree(h->GetName(), "BDSBH4DBase Tree");
+	  tree->Branch("BDSBH4DBase", &h, 32000, 0);
+	  tree->Fill();
+	  hist.outputDir->WriteTObject(tree,result->GetName(),"",32000);
+	  delete h;
+	  delete tree;
+	  delete hist.accumulator;
+	}
     }
   
   headerOut->nOriginalEvents = nOriginalEvents;

@@ -38,6 +38,17 @@ Utilities
 ---------
   
 
+V1.6.1 - 2021 / XX / XX
+=======================
+
+* Scoring of the differential flux following either a linear, logarithmic or user-defined energy axis scale.
+
+New Features
+------------
+
+* New scorer type: cellflux4d
+
+
 V1.6.0 - 2021 / 06 / 16
 =======================
 
@@ -152,6 +163,18 @@ New Features
 |                                  | logical volume names for volumes to be labelled as    |
 |                                  | `vacuum` for the purpose of biasing.                  |
 +----------------------------------+-------------------------------------------------------+
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+
++------------------------------------+--------------------------------------------------------------------+
+| **Option**                         | **Description**                                                    |
++====================================+====================================================================+
+| storeApertureImpactsHistograms     | Whether to generate the primary first aperture impact histogram    |
+|                                    | `PFirstAI`, on by default.                                         |
++------------------------------------+--------------------------------------------------------------------+
+| samplersSplitLevel                 | The ROOT splitlevel of the branch. Default 0 (unsplit). Set to 1   |
+|                                    | or 2 to allow columnar access (e.g. with `uproot`).                |
++------------------------------------+--------------------------------------------------------------------+
 
 General
 -------
