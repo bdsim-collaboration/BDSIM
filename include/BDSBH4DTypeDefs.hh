@@ -31,13 +31,13 @@ typedef double boost_histogram_storage_type;
 
 typedef boost::histogram::axis::regular<double, boost::use_default, boost::use_default, boost::use_default> boost_histogram_linear_axis;
 typedef boost::histogram::axis::regular<double, boost::histogram::axis::transform::log, boost::use_default, boost::use_default> boost_histogram_log_axis;
-typedef boost::histogram::axis::variable<double, boost::use_default, boost::use_default, std::__1::allocator<double> > boost_histogram_variable_axis;
+typedef boost::histogram::axis::variable<double, boost::use_default, boost::use_default, std::allocator<double> > boost_histogram_variable_axis;
 
 typedef boost::variant<boost_histogram_linear_axis*, boost_histogram_log_axis*, boost_histogram_variable_axis*> boost_histogram_axes_variant;
 
-typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis   >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > > boost_histogram_linear;
-typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_log_axis      >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > > boost_histogram_log;
-typedef boost::histogram::histogram<std::__1::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_variable_axis >, boost::histogram::storage_adaptor<std::__1::vector<boost_histogram_storage_type, std::__1::allocator<boost_histogram_storage_type> > > > boost_histogram_variable;
+typedef boost::histogram::histogram<std::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis   >, boost::histogram::storage_adaptor<std::vector<boost_histogram_storage_type, std::allocator<boost_histogram_storage_type> > > > boost_histogram_linear;
+typedef boost::histogram::histogram<std::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_log_axis      >, boost::histogram::storage_adaptor<std::vector<boost_histogram_storage_type, std::allocator<boost_histogram_storage_type> > > > boost_histogram_log;
+typedef boost::histogram::histogram<std::tuple<boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_linear_axis, boost_histogram_variable_axis >, boost::histogram::storage_adaptor<std::vector<boost_histogram_storage_type, std::allocator<boost_histogram_storage_type> > > > boost_histogram_variable;
 
 #endif
 
