@@ -31,7 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
-/** @brief 4D histogram class.
+/** @brief 4D histogram classes with linear, logarithmic and user-defined energy binning.
  *
  * @author Eliott Ramoisiaux
  */
