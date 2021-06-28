@@ -111,7 +111,7 @@ Field Map Definition
 
 When defining a :code:`field`, the following parameters can be specified. Example below.
 
-.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.5\textwidth}|
 
 +----------------------+-----------------------------------------------------------------+
 | **Parameter**        | **Description**                                                 |
@@ -1128,6 +1128,8 @@ The following geometry formats are supported. More may be added in collaboration
 developers - please see :ref:`feature-request`. The syntax and preparation of these geometry
 formats are described in more detail in :ref:`external-geometry-formats`.
 
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.50\textwidth}|
+
 +----------------------+---------------------------------------------------------------------+
 | **Format String**    | **Description**                                                     |
 +======================+=====================================================================+
@@ -1435,7 +1437,7 @@ Examples of tunnel geometry can be found with the BDSIM source code in
 The automatic tunnel building is controlled through the following options used with the
 :code:`option` command.
 
-.. tabularcolumns:: |p{5cm}|p{4cm}|p{10cm}|
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
 +----------------------------------+-------------+-----------------------------------------+
 | **Tunnel Parameters**            | **Default** | **Description**                         |

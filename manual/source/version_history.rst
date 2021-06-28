@@ -13,6 +13,30 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
+V1.7.0 - 2021 / XX / XX
+=======================
+
+New Features
+------------
+
+* The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
+  explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
+
+General
+-------
+
+Bug Fixes
+---------
+
+Output Changes
+--------------
+
+Output Class Versions
+---------------------
+
+Utilities
+---------
+  
 
 V1.6.1 - 2021 / XX / XX
 =======================
@@ -227,6 +251,8 @@ Bug Fixes
 * Fix transforms for when an E or EM field was used in a component that was offset or tilted with
   respect to the beam line. The field would not correctly be aligned to the component. B fields were fine.
 * User limits (minimum kinetic energy for example) weren't attached to placement geometry.
+* Fix factor of 10 in field map strength for BDSIM-format field maps if the field components were not
+  in the usual x, y, z order. i.e. X,Y,BY,BX,BZ would result in the field being a factor of 10 stronger.
 * Fix S coordinate for energy deposition hit of a secondary particle that is killed. In the case where
   secondaries were killed, the S coordinate of that energy deposition hit would have been wrong.
 * The curvilinear world and bridge world volumes and extra start and finish volumes are now
