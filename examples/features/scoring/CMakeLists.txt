@@ -2,9 +2,6 @@ simple_testing(scoring-arbitrary-mesh                    "--file=arbitrary-mesh.
 simple_testing(scoring-population                        "--file=scoring-population.gmad"                       "")
 simple_testing(scoring-cellcharge                        "--file=scoring-cellcharge.gmad"                       "")
 simple_testing(scoring-cellflux                          "--file=scoring-cellflux.gmad"                         "")
-simple_testing(scoring-cellflux4d-linear                 "--file=scoring-cellflux4d-linear.gmad"                "")
-simple_testing(scoring-cellflux4d-log                    "--file=scoring-cellflux4d-log.gmad"                   "")
-simple_testing(scoring-cellflux4d-variable               "--file=scoring-cellflux4d-variable.gmad"              "")
 simple_testing(scoring-cellfluxscaled                    "--file=scoring-cellfluxscaled.gmad"                   "")
 simple_testing(scoring-cellfluxscaledperparticle         "--file=scoring-cellfluxscaledperparticle.gmad"        "")	
 simple_testing(scoring-depositeddose                     "--file=scoring-depositeddose.gmad"                    "")
@@ -20,3 +17,13 @@ simple_testing(scoring-filter-primary                    "--file=scoring-filter-
 
 
 simple_fail(scoring-noconversionfilepath "--file=scoring-cellfluxscaledperparticle-nodir.gmad")
+
+if (USE_BOOST)
+  simple_testing(scoring-cellflux4d-linear                 "--file=scoring-cellflux4d-linear.gmad"                "")
+  simple_testing(scoring-cellflux4d-log                    "--file=scoring-cellflux4d-log.gmad"                   "")
+  simple_testing(scoring-cellflux4d-variable               "--file=scoring-cellflux4d-variable.gmad"              "")
+else()
+  simple_fail(scoring-cellflux4d-linear                 "--file=scoring-cellflux4d-linear.gmad"                "")
+  simple_fail(scoring-cellflux4d-log                    "--file=scoring-cellflux4d-log.gmad"                   "")
+  simple_fail(scoring-cellflux4d-variable               "--file=scoring-cellflux4d-variable.gmad"              "")
+endif()
