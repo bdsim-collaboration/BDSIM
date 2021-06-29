@@ -57,6 +57,7 @@ int main(int argc, char* argv[])
   if (inputFiles.size() == 1)
     {
       std::cout << "Only one input file provided \"" << inputFiles[0] << "\" - no point." << std::endl;
+      std::cout << "Or glob with * did not match any files" << std::endl;
       exit(1);
     }
 
