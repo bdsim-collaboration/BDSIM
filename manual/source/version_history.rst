@@ -21,9 +21,14 @@ New Features
 
 * The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
-
+* Scoring of the differential flux (3D mesh + energy spectrum per cell) following either a linear,
+  logarithmic or user-defined energy axis scale (requires Boost).
+* New scorer type: cellflux4d
+  
 General
 -------
+
+* Optional dependency on Boost libraries (at least V1.71.0) for 4D histograms.
 
 Bug Fixes
 ---------
@@ -36,17 +41,6 @@ Output Class Versions
 
 Utilities
 ---------
-  
-
-V1.6.1 - 2021 / XX / XX
-=======================
-
-* Scoring of the differential flux following either a linear, logarithmic or user-defined energy axis scale.
-
-New Features
-------------
-
-* New scorer type: cellflux4d
 
 
 V1.6.0 - 2021 / 06 / 16
