@@ -21,7 +21,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtent.hh"
 #include "BDSScorerMeshInfo.hh"
 #include "BDSUtilities.hh"
-
 #ifdef USE_BOOST
 #include "BDSBH4DTypeDefs.hh"
 #endif
@@ -32,7 +31,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <algorithm>
 #include <fstream>
+#include <iterator>
+#include <vector>
 
 BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
 {
@@ -82,14 +84,14 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
           std::istream_iterator<double> end;
           std::back_insert_iterator<std::vector<double>> it2(eBinsEdges);
 	  
-          copy(it, end, it2);
+          std::copy(it, end, it2);
 	}
       else
 	{throw BDSException(__METHOD_NAME__, "eBinsEdgesFilenamePath must be the path to a .txt file");}
-
-      nBinsE = eBinsEdges.size()-1;
-      eLow = eBinsEdges[0];
-      eHigh = eBinsEdges[nBinsE];
+      
+      nBinsE = (G4int)eBinsEdges.size()-1;
+      eLow   = eBinsEdges[0];
+      eHigh  = eBinsEdges[nBinsE];
     }
   
   if (nBinsE > 1)
@@ -101,9 +103,8 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
 	{energyAxis = new boost_histogram_log_axis(nBinsE, eLow, eHigh, "energy");}
       else if (eScale == "user")
 	{
-	  std::vector<double> eBinsEdgesEnergyAxis;
-	  for (int i=0; i < (int)eBinsEdges.size(); i++)
-	    {eBinsEdgesEnergyAxis.push_back(eBinsEdges[i]*CLHEP::GeV);}
+	  std::vector<double> eBinsEdgesEnergyAxis = eBinsEdges;
+	  std::for_each(eBinsEdgesEnergyAxis.begin(), eBinsEdgesEnergyAxis.end(), [](double& el){el *= CLHEP::GeV;});
 	  energyAxis = new boost_histogram_variable_axis(eBinsEdgesEnergyAxis, "energy");
 	}
       else
