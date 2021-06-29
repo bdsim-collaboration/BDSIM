@@ -56,8 +56,10 @@ int main(int argc, char* argv[])
   // checks
   if (inputFiles.size() == 1)
     {
-      std::cout << "Only one input file provided \"" << inputFiles[0] << "\" - no point." << std::endl;
-      std::cout << "Or glob with * did not match any files" << std::endl;
+      if (inputFiles[0].find('*') != std::string::npos) // glob didn't expand in shell - infer this
+        {std::cout << "Glob with * did not match any files" << std::endl;}
+      else
+        {std::cout << "Only one input file provided \"" << inputFiles[0] << "\" - no point." << std::endl;}
       exit(1);
     }
 
