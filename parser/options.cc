@@ -193,6 +193,7 @@ void Options::PublishMembers()
   publish("verboseImportanceSampling", &Options::verboseImportanceSampling);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
+  publish("randomEngine",          &Options::randomEngine);
   publish("recreate",              &Options::recreate);
   publish("recreateFileName",      &Options::recreateFileName);
   publish("startFromEvent",        &Options::startFromEvent);
@@ -472,6 +473,8 @@ void Options::PublishMembers()
   
   publish("storeModel",                     &Options::storeModel);
 
+  publish("samplersSplitLevel",             &Options::samplersSplitLevel);
+
   // circular options
   publish("nturns",                   &Options::nturns);
   publish("ptcOneTurnMapFileName",    &Options::ptcOneTurnMapFileName);
@@ -488,11 +491,14 @@ void Options::PublishMembers()
   publish("nbinsx", &Options::nbinsx);
   publish("nbinsy", &Options::nbinsy);
   publish("nbinsz", &Options::nbinsz);
+  publish("nbinse" , &Options::nbinse);
   publish("xmin",   &Options::xmin);
   publish("xmax",   &Options::xmax);
   publish("ymin",   &Options::ymin);
   publish("ymax",   &Options::ymax);
   publish("zmin",   &Options::zmin);
   publish("zmax",   &Options::zmax);
+  publish("emin", &Options::emin);
+  publish("emax", &Options::emax);
   publish("useScoringMap", &Options::useScoringMap);
 }
