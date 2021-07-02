@@ -34,12 +34,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4NuclideTable.hh"
 #include "G4PhysicsListHelper.hh"
 
-BDSPhysicsRadioactivation::BDSPhysicsRadioactivation(const G4String&):
-  G4VPhysicsConstructor("BDSPhysicsRadioactivation")
-{;}
-
-BDSPhysicsRadioactivation::BDSPhysicsRadioactivation()
-{;}
+BDSPhysicsRadioactivation::BDSPhysicsRadioactivation():
+        G4VPhysicsConstructor("BDSPhysicsRadioactivation")
+{
+  ra = new G4Radioactivation();
+}
 
 BDSPhysicsRadioactivation::~BDSPhysicsRadioactivation()
 {;}
@@ -54,7 +53,6 @@ void BDSPhysicsRadioactivation::ConstructProcess()
   if (Activated())
     {return;}
 
-  G4Radioactivation* ra = new G4Radioactivation();
 
   // atomic rearrangement
   G4bool ARMflag = false;
