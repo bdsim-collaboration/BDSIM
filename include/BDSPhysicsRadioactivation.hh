@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSingleUse.hh"
 
 #include "G4VPhysicsConstructor.hh"
+class G4Radioactivation;
 
 /**
  * @brief Radioactivation processes.
@@ -32,7 +33,6 @@ class BDSPhysicsRadioactivation: public G4VPhysicsConstructor, public BDSSingleU
 {
 public:
     BDSPhysicsRadioactivation();
-    BDSPhysicsRadioactivation(const G4String& name);
     virtual ~BDSPhysicsRadioactivation();
 
     // This is a dummy method for physics
@@ -42,5 +42,7 @@ public:
     // each physics process will be instantiated and
     // registered to the process manager of each particle type
     virtual void ConstructProcess();
+
+    G4Radioactivation* ra;
 };
 #endif
