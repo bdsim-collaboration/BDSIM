@@ -39,10 +39,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
-BDSCollimator::BDSCollimator(G4String    nameIn,
-			     G4double    lengthIn,
-			     G4double    horizontalWidthIn,
-			     G4String    typeIn,
+BDSCollimator::BDSCollimator(const G4String& nameIn,
+			     G4double        lengthIn,
+			     G4double        horizontalWidthIn,
+			     const G4String& typeIn,
 			     G4Material* collimatorMaterialIn,
 			     G4Material* vacuumMaterialIn,
 			     G4double    xApertureIn,
