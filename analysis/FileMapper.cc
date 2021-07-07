@@ -207,21 +207,17 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	}
       else if (dirObject->InheritsFrom("TH1") or dirPath =="/Event/MergedHistograms" )
 	{
-	  TH1* h = nullptr;
+	  TH1* h = static_cast<TH1*>(dirObject);
 	  int nDim;
 	  bool BDSBH4Dtype;
 	  
-	  if (!(dirObject->InheritsFrom("TH1")))
-	    {
-	      TTree* tree = static_cast<TTree*>(dirObject);
-	      tree->SetBranchAddress("BDSBH4DBase",&h);
-	      tree->GetEntry(0);
+	  if ((dirObject->InheritsFrom("BDSBH4DBase")))
+      {
 	      nDim=4;
 	      BDSBH4Dtype = true;
 	    }
 	  else
 	    {
-	      h = static_cast<TH1*>(dirObject);
 	      nDim = RBDS::DetermineDimensionality(h);
 	      BDSBH4Dtype = false;
 	    }
