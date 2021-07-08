@@ -33,6 +33,8 @@ General
 Bug Fixes
 ---------
 
+* If a multipole has a zero-length, it will be converted in a thin multipole.
+
 Output Changes
 --------------
 
