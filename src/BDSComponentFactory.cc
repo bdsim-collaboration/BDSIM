@@ -306,7 +306,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     case ElementType::_DECAPOLE:
       {component = CreateDecapole(); break;}
     case ElementType::_MULT:
-      {component = CreateMultipole(); break;}
+      {
+        if(!BDS::IsFinite(element->l))
+        {
+          component = CreateThinMultipole(angleIn);
+          break;
+        }
+          component = CreateMultipole();
+        break;}
     case ElementType::_THINMULT:
       {component = CreateThinMultipole(angleIn); break;}
     case ElementType::_ELEMENT:
@@ -1108,8 +1115,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 {
-  if (!HasSufficientMinimumLength(element, false))
-    {return CreateThinMultipole(0);}
+  if (!HasSufficientMinimumLength(element))
+    {return nullptr;}
   
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
   
