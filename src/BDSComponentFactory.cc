@@ -207,7 +207,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	    {differentFromDefinition = true;}
 	}
     }
-  else if (element->type == ElementType::_THINMULT || (element->type == ElementType::_MULT && !HasSufficientMinimumLength(element, false)))
+  else if (element->type == ElementType::_THINMULT || (element->type == ElementType::_MULT && !HasSufficientMinimumLength(element, false)) || (element->type == ElementType::_THINRMATRIX))
     {
     // thinmultipole only uses one angle - so `angleIn`
        if (prevElement && nextElement)
