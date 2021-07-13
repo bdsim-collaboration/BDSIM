@@ -75,6 +75,7 @@ void BDSOutputROOTEventModel::Flush()
   placementName.clear();
   componentType.clear();
   length.clear();
+  angle.clear();
   staPos.clear();
   midPos.clear();
   endPos.clear();
@@ -225,6 +226,7 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
       placementName.push_back((*i)->GetPlacementName());
       componentType.push_back((*i)->GetType());
       length.push_back((float)((*i)->GetAcceleratorComponent()->GetArcLength() / CLHEP::m));
+      angle.push_back((float)((*i)->GetAcceleratorComponent()->GetAngle() / CLHEP::radian));
       staPos.push_back(ConvertToROOT((*i)->GetPositionStart()));
       midPos.push_back(ConvertToROOT((*i)->GetPositionMiddle()));
       endPos.push_back(ConvertToROOT((*i)->GetPositionEnd()));
