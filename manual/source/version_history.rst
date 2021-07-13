@@ -39,6 +39,7 @@ Bug Fixes
 
 Output Changes
 --------------
+* Add angle of the element in the Model Tree
 
 Output Class Versions
 ---------------------

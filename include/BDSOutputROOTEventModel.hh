@@ -80,6 +80,7 @@ public:
   std::vector<std::string> placementName;
   std::vector<std::string> componentType;
   std::vector<float>       length;
+  std::vector<float>       angle;
   std::vector<TVector3>    staPos;
   std::vector<TVector3>    midPos;
   std::vector<TVector3>    endPos;
