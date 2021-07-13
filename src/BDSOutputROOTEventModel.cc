@@ -160,11 +160,11 @@ TRotation BDSOutputROOTEventModel::ConvertToROOT(const G4RotationMatrix* rm) con
   if (!rm)
     {return rr;}
   
-  double angle;
+  double rotAngle;
   CLHEP::Hep3Vector axis;
   
-  rm->getAngleAxis(angle, axis);
-  rr.Rotate(angle, TVector3(axis.x(), axis.y(), axis.z()));
+  rm->getAngleAxis(rotAngle, axis);
+  rr.Rotate(rotAngle, TVector3(axis.x(), axis.y(), axis.z()));
   return rr;
 }
 
