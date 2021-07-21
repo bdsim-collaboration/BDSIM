@@ -27,17 +27,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 
-#include "globals.hh"
 #include "G4Box.hh"
 #include "G4DisplacedSolid.hh"
 #include "G4ExtrudedSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4RotationMatrix.hh"
+#include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4Torus.hh"
 #include "G4Tubs.hh"
 #include "G4TwoVector.hh"
+#include "G4Types.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4Version.hh"
@@ -46,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <algorithm>
 #include <cmath>
+#include <memory>
 #include <set>
 #include <vector>
 
