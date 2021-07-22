@@ -368,8 +368,11 @@ BDSIM uses the standard Particle Data Group identification numbers for each part
 similarly to Geant4. These are typically referred to as "partID". A table of the particles
 and explanation of the numbering scheme can be found online:
 
-* `<http://pdg.lbl.gov/2018/reviews/rpp2018-rev-monte-carlo-numbering.pdf>`_
+* `<https://pdg.lbl.gov/2021/web/viewer.html?file=%2F2021/reviews/rpp2020-rev-monte-carlo-numbering.pdf>`_.
 
+..
+    _Update the link in worked_example_target.rst also
+  
 Notes:
   
 * These are integers.
