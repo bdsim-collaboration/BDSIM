@@ -311,8 +311,11 @@ each particle species. The following analysis is used. ::
   Histogram1D  Event.  Q2Muons             {130} {0:6500}  c1.energy  c1.zp>0&&abs(c1.partID)==13
 
 The particle IDs are the Particle Data Group IDs that can be found online at
-`<http://pdg.lbl.gov/2018/reviews/rpp2018-rev-monte-carlo-numbering.pdf>`_.
-  
+`<https://pdg.lbl.gov/2021/web/viewer.html?file=%2F2021/reviews/rpp2020-rev-monte-carlo-numbering.pdf>`_.
+
+..
+    _Update the link in output also
+
 After the target there is air as this is the default `worldMaterial` (see
 :ref:`options-common`). Potentially, a (likely secondary) particle could
 bounce back off of the air and go through the sampler before hitting the
