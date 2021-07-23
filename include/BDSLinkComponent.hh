@@ -57,8 +57,8 @@ public:
   /// @{ Accessor.
   inline BDSLinkOpaqueBox* Component() const {return component;}
   inline G4String LinkName() const {return component ? component->LinkName() : "unknown";}
-  inline G4double ComponentArcLength() const {return component ? component->ArcLength() : 0.0;}
-  inline G4double ComponentChordLength() const {return component ? component->ChordLength() : 0.0;}
+  inline G4double ComponentArcLength() const {return component ? component->ArcLength() : -1.0;}
+  inline G4double ComponentChordLength() const {return component ? component->ChordLength() : -1.0;}
   /// @}
 
 private:
