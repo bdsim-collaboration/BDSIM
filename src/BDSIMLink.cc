@@ -46,6 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSLinkComponent.hh"
 #include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkEventAction.hh"
 #include "BDSLinkPrimaryGeneratorAction.hh"
@@ -442,15 +443,60 @@ BDSIMLink::~BDSIMLink()
     {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
 }
 
+int BDSIMLink::GetLinkIndex(const std::string& elementName) const
+{
+  int result = -1;
+  auto search = nameToElementIndex.find(elementName);
+  if (search != nameToElementIndex.end())
+    {result = search->second;}
+  return result;
+}
+
+const BDSLinkComponent* BDSIMLink::GetLinkComponent(int linkID) const
+{
+  const BDSBeamline* bl = construction->LinkBeamline();
+  if (!bl)
+    {return nullptr;}
+  if (linkID > (int)bl->size())
+    {return nullptr;}
+  const auto rawAccComponent = bl->at(linkID)->GetAcceleratorComponent();
+  const auto linkComponent = dynamic_cast<const BDSLinkComponent*>(rawAccComponent);
+  return linkComponent;
+}
+
+double BDSIMLink::GetChordLengthOfLinkElement(int linkID) const
+{
+  const BDSLinkComponent* component = GetLinkComponent(linkID);
+  if (!component)
+    {return 0.0;} // play it safe
+  return component->ComponentChordLength();
+}
+
+double BDSIMLink::GetChordLengthOfLinkElement(const std::string& elementName)
+{
+  int linkID = GetLinkIndex(elementName);
+  return GetChordLengthOfLinkElement(linkID);
+}
+
+double BDSIMLink::GetArcLengthOfLinkElement(int linkID) const
+{
+  const BDSLinkComponent* component = GetLinkComponent(linkID);
+  if (!component)
+    {return 0.0;} // play it safe
+  return component->ComponentArcLength();
+}
+
+double BDSIMLink::GetArcLengthOfLinkElement(const std::string& elementName)
+{
+  int linkID = GetLinkIndex(elementName);
+  return GetArcLengthOfLinkElement(linkID);
+}
+
 void BDSIMLink::SelectLinkElement(const std::string& elementName, G4bool debug)
 {
   if (debug)
     {G4cout << "Searching for " << elementName;}
-  auto search = nameToElementIndex.find(elementName);
-  if (search != nameToElementIndex.end())
-    {currentElementIndex = search->second;}
-  else
-    {currentElementIndex = -1;}
+  currentElementIndex = GetLinkIndex(elementName);
   if (debug)
     {G4cout << ", Index " << currentElementIndex << G4endl;}
 }
@@ -462,7 +508,7 @@ void BDSIMLink::SelectLinkElement(int index, G4bool debug)
   currentElementIndex = index;
 }
 
-void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
+int BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
 				     const std::string& materialName,
 				     double length,
 				     double halfApertureLeft,
@@ -480,7 +526,7 @@ void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
   if (gm->IsGeometryClosed())
     {gm->OpenGeometry();}
 
-  construction->AddLinkCollimatorJaw(collimatorName,
+  G4int linkID = construction->AddLinkCollimatorJaw(collimatorName,
 				     materialName,
 				     length,
 				     halfApertureLeft,
@@ -503,6 +549,7 @@ void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
   G4bool bCloseGeometry = gm->CloseGeometry();
   if (!bCloseGeometry)
     {throw BDSException(__METHOD_NAME__, "error - geometry not closed.");}
+  return (int)linkID;
 }
 
 BDSHitsCollectionSamplerLink* BDSIMLink::SamplerHits() const

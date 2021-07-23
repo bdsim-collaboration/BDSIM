@@ -30,6 +30,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * This is similar to BDSSimpleComponent but specialised for a link
  * box containing a component. This is to allow it to be used in a beam line.
  *
+ * Note, the lengths reported for this are for the full thing and not the component
+ * inside as this is required to comply with beam line building mechanics.
+ *
  * @author Laurie Nevay
  */
 

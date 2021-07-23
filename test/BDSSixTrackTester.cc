@@ -105,6 +105,9 @@ int main(int /*argc2*/, char** /*argv2*/)
 	  bds->BeamOn((G4int) stp->Size());
 	  Summarise(bds);
 	}
+      
+      // test accessing information after construction
+      std::cout << "Length of element #6 " << bds->GetChordLengthOfLinkElement(5) << " mm " << std::endl;
 
       // purely for code coverage
       ParticleClassTests();

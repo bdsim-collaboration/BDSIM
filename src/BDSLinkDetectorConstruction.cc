@@ -171,19 +171,19 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
   return worldPV;
 }
 
-void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collimatorName,
-						                                           const std::string& materialName,
-                                                       G4double length,
-                                                       G4double halfApertureLeft,
-                                                       G4double halfApertureRight,
-                                                       G4double rotation,
-                                                       G4double xOffset,
-                                                       G4double yOffset,
-                                                       G4bool   buildLeftJaw,
-                                                       G4bool   buildRightJaw,
-                                                       G4bool   isACrystalIn,
-                                                       G4double crystalAngle,
-                                                       G4bool   /*sampleIn*/)
+G4int BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collimatorName,
+						                                            const std::string& materialName,
+                                                        G4double length,
+                                                        G4double halfApertureLeft,
+                                                        G4double halfApertureRight,
+                                                        G4double rotation,
+                                                        G4double xOffset,
+                                                        G4double yOffset,
+                                                        G4bool   buildLeftJaw,
+                                                        G4bool   buildRightJaw,
+                                                        G4bool   isACrystalIn,
+                                                        G4double crystalAngle,
+                                                        G4bool   /*sampleIn*/)
 {
   auto componentFactory = new BDSComponentFactory(designParticle, nullptr, false);
 
@@ -315,6 +315,8 @@ void BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& collim
 
   // update crystal biasing
   BuildPhysicsBias();
+  
+  return linkID;
 }
 
 void BDSLinkDetectorConstruction::UpdateWorldSolid()
