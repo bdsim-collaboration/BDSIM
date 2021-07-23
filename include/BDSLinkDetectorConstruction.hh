@@ -54,20 +54,20 @@ public:
   virtual G4VPhysicalVolume* Construct();
 
   /// Interface to append a collimator of jaw style to the linking.
-  void AddLinkCollimatorJaw(const std::string& collimatorName,
-			    const std::string& materialName,
-			    G4double length,
-                            G4double halfApertureLeft,
-                            G4double halfApertureRight,
-                            G4double rotation,
-                            G4double xOffset,
-                            G4double yOffset,
-                            G4bool   buildLeftJaw  = true,
-                            G4bool   buildRightJaw = true,
-                            G4bool   isACrystal    = false,
-                            G4double crystalAngle  = 0,
-                            G4bool   sampleIn      = false);
-
+  G4int AddLinkCollimatorJaw(const std::string& collimatorName,
+			     const std::string& materialName,
+			     G4double length,
+			     G4double halfApertureLeft,
+			     G4double halfApertureRight,
+			     G4double rotation,
+			     G4double xOffset,
+			     G4double yOffset,
+			     G4bool   buildLeftJaw  = true,
+			     G4bool   buildRightJaw = true,
+			     G4bool   isACrystal    = false,
+			     G4double crystalAngle  = 0,
+			     G4bool   sampleIn      = false);
+  
   /// Set the design particle definition.
   inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
   inline void SetPrimaryGeneratorAction(BDSLinkPrimaryGeneratorAction* pgIn) {primaryGeneratorAction = pgIn;}
@@ -83,6 +83,7 @@ public:
   inline const std::map<std::string, G4int>& NameToElementIndex() const {return nameToElementIndex;}
   inline G4int NumberOfElements() const {return linkBeamline ? (G4int)linkBeamline->size() : 0;}
   inline void SetSamplerWorldID(G4int samplerWorldIDIn) {samplerWorldID = samplerWorldIDIn;}
+  inline const BDSBeamline* LinkBeamline() const {return linkBeamline;}
 
  private:
   /// Create the worldSolid if it doesn't exist and if not expand it to the extent of the
