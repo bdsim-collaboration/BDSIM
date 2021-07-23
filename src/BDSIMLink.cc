@@ -468,7 +468,7 @@ double BDSIMLink::GetChordLengthOfLinkElement(int linkID) const
 {
   const BDSLinkComponent* component = GetLinkComponent(linkID);
   if (!component)
-    {return 0.0;} // play it safe
+    {return -1.0;} // play it safe
   return component->ComponentChordLength();
 }
 
@@ -482,7 +482,7 @@ double BDSIMLink::GetArcLengthOfLinkElement(int linkID) const
 {
   const BDSLinkComponent* component = GetLinkComponent(linkID);
   if (!component)
-    {return 0.0;} // play it safe
+    {return -1.0;} // play it safe
   return component->ComponentArcLength();
 }
 
