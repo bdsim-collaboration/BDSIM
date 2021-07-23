@@ -36,6 +36,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSLinkComponent: public BDSAcceleratorComponent
 {
 public:
+  BDSLinkComponent() = delete; ///< No default constructor.
   /// Constructor that keeps the component as a daughter geometry component.
   /// Face normal (unit) vectors are w.r.t. the incoming / outgoing reference 
   /// trajectory and NOT the local geometry of the component.
@@ -58,12 +59,9 @@ public:
   /// @}
 
 private:
-  /// Private default constructor to force use of given one.
-  BDSLinkComponent();
-  
   /// @{ Assignment and copy constructor not implemented nor used
-  BDSLinkComponent& operator=(const BDSLinkComponent&);
-  BDSLinkComponent(BDSLinkComponent&);
+  BDSLinkComponent& operator=(const BDSLinkComponent&) = delete;
+  BDSLinkComponent(BDSLinkComponent&) = delete;
   /// @}
 
   /// Required implementation from base class.
