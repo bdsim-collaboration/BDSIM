@@ -475,7 +475,8 @@ double BDSIMLink::GetChordLengthOfLinkElement(int beamlineIndex) const
 double BDSIMLink::GetChordLengthOfLinkElement(const std::string& elementName)
 {
   int linkID = GetLinkIndex(elementName);
-  return GetChordLengthOfLinkElement(linkID);
+  int beamlineIndex = linkIDToBeamlineIndex[linkID];
+  return GetChordLengthOfLinkElement(beamlineIndex);
 }
 
 double BDSIMLink::GetArcLengthOfLinkElement(int beamlineIndex) const
@@ -489,7 +490,8 @@ double BDSIMLink::GetArcLengthOfLinkElement(int beamlineIndex) const
 double BDSIMLink::GetArcLengthOfLinkElement(const std::string& elementName)
 {
   int linkID = GetLinkIndex(elementName);
-  return GetArcLengthOfLinkElement(linkID);
+  int beamlineIndex = linkIDToBeamlineIndex[linkID];
+  return GetArcLengthOfLinkElement(beamlineIndex);
 }
 
 void BDSIMLink::SelectLinkElement(const std::string& elementName, G4bool debug)
@@ -541,6 +543,7 @@ int BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
 				     sampleIn);
   // update this class's nameToElementIndex map
   nameToElementIndex = construction->NameToElementIndex();
+  linkIDToBeamlineIndex = construction->LinkIDToBeamlineIndex();
   
   if (bdsOutput)
     {bdsOutput->UpdateSamplers();}

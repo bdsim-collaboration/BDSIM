@@ -150,6 +150,7 @@ private:
   
   std::vector<BDSParticleExternal*> externalParticles;
   std::map<std::string, int>        nameToElementIndex;
+  std::map<int, int>                linkIDToBeamlineIndex;
   int                               currentElementIndex; ///< Element to track in.
   G4VModularPhysicsList*            userPhysicsList;     ///< Optional user registered physics list.
 };
