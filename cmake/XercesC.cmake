@@ -1,12 +1,4 @@
+message(STATUS "Looking for XercesC for GDML support")
 find_package(XercesC REQUIRED)
-
+message(STATUS "Found XercesC version: ${XercesC_VERSION}")
 include_directories(SYSTEM ${XercesC_INCLUDE_DIR})
-
-message(STATUS "NOW NOW ${INCLUDE_DIRECTORIES}")
-message(STATUS "NOW NOW ${XercesC_INCLUDE_DIR}")
-
-
-get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-foreach(dir ${dirs})
-  message(STATUS "dir='${dir}'")
-endforeach()
