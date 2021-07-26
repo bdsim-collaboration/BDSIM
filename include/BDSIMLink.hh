@@ -117,9 +117,9 @@ public:
   
   const BDSLinkComponent* GetLinkComponent(int linkID) const;
   /// @{ Access the length of a component. If bad name or ID given, -1 will be returned.
-  double GetChordLengthOfLinkElement(int linkID) const;
+  double GetChordLengthOfLinkElement(int beamlineIndex) const;
   double GetChordLengthOfLinkElement(const std::string& elementName);
-  double GetArcLengthOfLinkElement(int linkID) const;
+  double GetArcLengthOfLinkElement(int beamlineIndex) const;
   double GetArcLengthOfLinkElement(const std::string& elementName);
   /// @}
 

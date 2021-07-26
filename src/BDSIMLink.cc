@@ -464,9 +464,9 @@ const BDSLinkComponent* BDSIMLink::GetLinkComponent(int linkID) const
   return linkComponent;
 }
 
-double BDSIMLink::GetChordLengthOfLinkElement(int linkID) const
+double BDSIMLink::GetChordLengthOfLinkElement(int beamlineIndex) const
 {
-  const BDSLinkComponent* component = GetLinkComponent(linkID);
+  const BDSLinkComponent* component = GetLinkComponent(beamlineIndex);
   if (!component)
     {return -1.0;} // play it safe
   return component->ComponentChordLength();
@@ -478,9 +478,9 @@ double BDSIMLink::GetChordLengthOfLinkElement(const std::string& elementName)
   return GetChordLengthOfLinkElement(linkID);
 }
 
-double BDSIMLink::GetArcLengthOfLinkElement(int linkID) const
+double BDSIMLink::GetArcLengthOfLinkElement(int beamlineIndex) const
 {
-  const BDSLinkComponent* component = GetLinkComponent(linkID);
+  const BDSLinkComponent* component = GetLinkComponent(beamlineIndex);
   if (!component)
     {return -1.0;} // play it safe
   return component->ComponentArcLength();
