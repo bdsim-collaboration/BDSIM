@@ -81,6 +81,7 @@ public:
   void BuildPhysicsBias();
 
   inline const std::map<std::string, G4int>& NameToElementIndex() const {return nameToElementIndex;}
+  inline const std::map<int, int>& LinkIDToBeamlineIndex() const {return linkIDToBeamlineIndex;}
   inline G4int NumberOfElements() const {return linkBeamline ? (G4int)linkBeamline->size() : 0;}
   inline void SetSamplerWorldID(G4int samplerWorldIDIn) {samplerWorldID = samplerWorldIDIn;}
   inline const BDSBeamline* LinkBeamline() const {return linkBeamline;}
@@ -111,6 +112,7 @@ public:
   G4int samplerWorldID;
 
   std::map<std::string, G4int> nameToElementIndex; ///< Build up a copy here too.
+  std::map<G4int, G4int> linkIDToBeamlineIndex;    ///< Special linkID to linkBeamline index
 };
 
 #endif
