@@ -71,6 +71,7 @@ void BDSOutputROOTEventModel::Flush()
 {
   n = 0;
   samplerNamesUnique.clear();
+  samplerSPosition.clear();
   componentName.clear();
   placementName.clear();
   componentType.clear();
@@ -183,9 +184,12 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 				   const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn,
 				   const std::vector<G4String>&             collimatorBranchNamesIn,
                                    const std::map<G4String, G4Transform3D>* scorerMeshPlacements)
-{  
-  for (const auto& name : BDSSamplerRegistry::Instance()->GetUniqueNames())
-    {samplerNamesUnique.push_back(std::string(name) + ".");}
+{
+  for (const auto& nameSPos : BDSSamplerRegistry::Instance()->GetUniqueNamesAndSPosition())
+    {
+      samplerNamesUnique.push_back(std::string(nameSPos.first) + ".");
+      samplerSPosition.push_back((double) nameSPos.second / CLHEP::m);
+    }
 
   for (const auto& name : collimatorBranchNamesIn)
     {collimatorBranchNamesUnique.push_back(std::string(name) + ".");}

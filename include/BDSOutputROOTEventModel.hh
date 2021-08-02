@@ -76,6 +76,7 @@ public:
   
   int n;
   std::vector<std::string> samplerNamesUnique;
+  std::vector<double>      samplerSPosition;
   std::vector<std::string> componentName;
   std::vector<std::string> placementName;
   std::vector<std::string> componentType;
@@ -162,7 +163,7 @@ public:
   std::map<std::string, TRotation> scoringMeshRotation;
   std::vector<std::string>         scoringMeshName;
 
-  ClassDef(BDSOutputROOTEventModel, 5);
+  ClassDef(BDSOutputROOTEventModel, 6);
 };
 
 #endif
