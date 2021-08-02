@@ -36,6 +36,7 @@ Bug Fixes
 * If a multipole has a zero-length, it will be converted in a thin multipole.
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.
+* Fix a bug where a sampler before a dump wouldn't record any output.
 
 Output Changes
 --------------
