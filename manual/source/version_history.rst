@@ -37,6 +37,7 @@ Bug Fixes
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.
 * Fix a bug where a sampler before a dump wouldn't record any output.
+* Fix the wrong value being stored in PrimaryFirstHist.postStepProcessType which was in fact SubType again.
 
 Output Changes
 --------------
