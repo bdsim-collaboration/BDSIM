@@ -347,5 +347,6 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint(G4int postProcessType,
   if (totalEnergyDeposit > dEThresholdForScattering)
     {return true;}
 
-  return initialised && notTransportation && notGeneral && notParallel && notUndefined;
+  G4bool result = initialised && notTransportation && notGeneral && notParallel && notUndefined;
+  return result;
 }
