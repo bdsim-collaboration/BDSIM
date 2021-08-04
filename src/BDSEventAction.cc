@@ -514,7 +514,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	}
       
       // loop over energy hits to connect trajectories
-      if (trajSRangeToStore.size() != 0)
+      if (!trajSRangeToStore.empty())
 	{
 	  if (eCounterHits)
 	    {
