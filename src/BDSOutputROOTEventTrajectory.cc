@@ -104,7 +104,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 	    {
 	      auto trajStartPos = traj->GetPoint(0)->GetPosition();
 	      traj->SetParentStepIndex(-1);
-	      for (auto i = 0; i < parent->GetPointEntries(); ++i)
+	      for (int i = 0; i < parent->GetPointEntries(); ++i)
 		{
 		  if(parent->GetPoint(i)->GetPosition() == trajStartPos)
 		    {
@@ -300,7 +300,7 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   
   if (point->extraLink)
     {
-      itj.charge.push_back(point->GetCharge() / (G4double)CLHEP::eplus);
+      itj.charge.push_back((int) (point->GetCharge() / (G4double)CLHEP::eplus));
       itj.turn.push_back(point->GetTurnsTaken());
       itj.mass.push_back(point->GetMass() / CLHEP::GeV);
       itj.rigidity.push_back(point->GetRigidity() / (CLHEP::tesla*CLHEP::m));

@@ -518,7 +518,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	{
 	  if (eCounterHits)
 	    {
-	      G4int nHits = eCounterHits->entries();
+	      G4int nHits = (G4int)eCounterHits->entries();
 	      BDSHitEnergyDeposition* hit;
 	      for (G4int i = 0; i < nHits; i++)
 		{
@@ -543,7 +543,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	    }
 	  if (eCounterFullHits)
 	    {
-	      G4int nHits = eCounterFullHits->entries();
+	      G4int nHits = (G4int)eCounterFullHits->entries();
 	      BDSHitEnergyDeposition* hit;
 	      for (G4int i = 0; i < nHits; i++)
 		{
