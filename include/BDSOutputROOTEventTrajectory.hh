@@ -154,7 +154,7 @@ public:
   /// (basic C++ / ROOT types) from Geant4 types from 'traj' trajectory for 1 track.
   void FillIndividualTrajectory(IndividualTrajectory& itj,
 				BDSTrajectory*        traj,
-				int                   i);
+				int                   i) const;
 #endif
 
   /// Required to find beamline index careful including in streamer.

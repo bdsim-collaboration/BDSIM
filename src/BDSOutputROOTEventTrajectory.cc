@@ -252,7 +252,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
 
 void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory& itj,
 							    BDSTrajectory*        traj,
-							    int                   i)
+							    int                   i) const
 {
   BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
   
