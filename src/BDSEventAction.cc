@@ -441,13 +441,13 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	  BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
 	  
 	  // fill track ID map
-	  trackIDMap.insert(std::pair<int, BDSTrajectory*>(traj->GetTrackID(), traj));
+	  trackIDMap[traj->GetTrackID()] = traj;
 	  
 	  // fill depth map
 	  if (traj->GetParentID() == 0) 
-	    {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, 0));}
+	    {depthMap[traj] = 0;}
 	  else
-	    {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, depthMap.at(trackIDMap.at(traj->GetParentID())) + 1));}
+	    {depthMap[traj] = depthMap.at(trackIDMap.at(traj->GetParentID())) + 1;}
 	}
       
       // fill parent pointer - this can only be done once the map in the previous loop has been made
