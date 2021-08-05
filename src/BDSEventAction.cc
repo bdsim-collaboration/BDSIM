@@ -444,6 +444,8 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	  trackIDMap[traj->GetTrackID()] = traj;
 	  
 	  // fill depth map
+	  G4int depth = traj->GetParentID() == 0 ? 0 : depthMap.at(trackIDMap.at(traj->GetParentID())) + 1;
+	  traj->SetDepth(depth);
 	  if (traj->GetParentID() == 0) 
 	    {depthMap[traj] = 0;}
 	  else

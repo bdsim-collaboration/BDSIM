@@ -41,7 +41,8 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
   parent(nullptr),
   trajIndex(0),
   parentIndex(0),
-  parentStepIndex(0)
+  parentStepIndex(0),
+  depth(-1)
 {
   suppressTransportationAndNotInteractive = storageOptionsIn.suppressTransportationSteps && !interactiveIn;
   const G4VProcess* proc = aTrack->GetCreatorProcess();
