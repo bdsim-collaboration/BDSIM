@@ -118,22 +118,16 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
     {(*fpBDSPointsContainer)[0]->SetMaterial(aStep->GetTrack()->GetMaterial());}
   if (suppressTransportationAndNotInteractive)
     {
-      // decode aStep and if on storage.
-      auto preStepPoint  = aStep->GetPreStepPoint();
-      auto postStepPoint = aStep->GetPostStepPoint();
-      
-      // add step
-      const G4VProcess* preProcess  = preStepPoint->GetProcessDefinedStep();
+      // note for a first step of a track, the prestep point process
+      // may be nullptr, but if we're appending a step we really care
+      // about what the post process is - test on that
+      auto postStepPoint = aStep->GetPostStepPoint(); 
       const G4VProcess* postProcess = postStepPoint->GetProcessDefinedStep();
-      
-      if (preProcess && postProcess)
+      if (postProcess)
 	{
-	  G4int preProcessType = preProcess->GetProcessType();
 	  G4int postProcessType = postProcess->GetProcessType();
-	  if((preProcessType  != 1   /* transportation */ &&
-	      preProcessType  != 10 /* parallel world */) ||
-	     (postProcessType != 1   /* transportation */ &&
-	      postProcessType != 10 /* parallel world */) )
+	  if(postProcessType != 1   /* transportation */ &&
+	     postProcessType != 10 /* parallel world */ )
 	    {
 	      fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep,
 								     storageOptions.storeLocal,
