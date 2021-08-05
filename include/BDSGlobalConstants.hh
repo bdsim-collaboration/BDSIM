@@ -255,6 +255,7 @@ public:
   inline G4bool   StoreTrajectoryLocal()     const {return G4bool  (options.storeTrajectoryLocal);}
   inline G4bool   StoreTrajectoryLinks()     const {return G4bool  (options.storeTrajectoryLinks);}
   inline G4bool   StoreTrajectoryIon()       const {return G4bool  (options.storeTrajectoryIon);}
+  inline G4bool   StoreTrajectoryMaterial()  const {return G4bool  (options.storeTrajectoryMaterial);}
   inline G4bool   StoreTrajectoryAllVariables()const{return G4bool (options.storeTrajectoryAllVariables);}
   inline G4String StoreTrajectorySamplerID() const {return G4String(options.storeTrajectorySamplerID);}
   inline std::vector<std::pair<G4double, G4double> > StoreTrajectoryELossSRange() const {return elossSRange;}

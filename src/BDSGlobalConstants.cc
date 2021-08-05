@@ -336,7 +336,8 @@ BDS::TrajectoryOptions BDSGlobalConstants::StoreTrajectoryOptions() const
 				   StoreTrajectoryTime(),
 				   StoreTrajectoryLocal(),
 				   StoreTrajectoryLinks(),
-				   StoreTrajectoryIon()};
+				   StoreTrajectoryIon(),
+				   StoreTrajectoryMaterial()};
   
   if (StoreTrajectoryAllVariables())
   {
@@ -347,6 +348,7 @@ BDS::TrajectoryOptions BDSGlobalConstants::StoreTrajectoryOptions() const
     result.storeLocal          = true;
     result.storeLinks          = true;
     result.storeIon            = true;
+    result.storeMaterial       = true;
   }
   return result;
 }
