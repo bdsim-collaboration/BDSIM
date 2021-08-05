@@ -71,7 +71,9 @@ public:
                     const std::map<G4String, G4int>& collimatorIndicesByNameIn = {},
                     const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn = {},
                     const std::vector<G4String>& collimatorBranchNamesIn = {},
-                    const std::map<G4String, G4Transform3D>* scorerMeshPlacements = nullptr);
+                    const std::map<G4String, G4Transform3D>* scorerMeshPlacements = nullptr,
+		    const std::map<short int, G4String>* materialIDToNameUnique = nullptr,
+		    G4bool storeTrajectory = false);
 #endif
   
   int n;
@@ -162,6 +164,9 @@ public:
   std::map<std::string, TVector3>  scoringMeshTranslation;
   std::map<std::string, TRotation> scoringMeshRotation;
   std::vector<std::string>         scoringMeshName;
+
+  std::map<short int, std::string> materialIDToName;
+  std::map<std::string, short int> materialNameToID;
 
   ClassDef(BDSOutputROOTEventModel, 6);
 };

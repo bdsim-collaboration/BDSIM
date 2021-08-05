@@ -146,6 +146,9 @@ void BDSOutputROOTEventModel::Flush()
   scoringMeshTranslation.clear();
   scoringMeshRotation.clear();
   scoringMeshName.clear();
+
+  materialIDToName.clear();
+  materialNameToID.clear();
 }
 
 #ifndef __ROOTBUILD__
@@ -183,7 +186,9 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 				   const std::map<G4String, G4int>&         collimatorIndicesByNameIn,
 				   const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn,
 				   const std::vector<G4String>&             collimatorBranchNamesIn,
-                                   const std::map<G4String, G4Transform3D>* scorerMeshPlacements)
+                                   const std::map<G4String, G4Transform3D>* scorerMeshPlacements,
+				   const std::map<short int, G4String>*     materialIDToNameUnique,
+				   G4bool storeTrajectory)
 {
   for (const auto& nameSPos : BDSSamplerRegistry::Instance()->GetUniqueNamesAndSPosition())
     {
@@ -220,6 +225,15 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 	{collimatorIndicesByName[(std::string)kv.first] = (int)kv.second;}
 
       collimatorInfo = collimatorInfoIn;
+    }
+
+  if (materialIDToNameUnique && storeTrajectory)
+    {
+      for (const auto& kv : *materialIDToNameUnique)
+	{
+	  materialIDToName[kv.first] = (std::string)kv.second;
+	  materialNameToID[(std::string)kv.second] = kv.first;
+	}
     }
 
   n = (int)beamline->size();
