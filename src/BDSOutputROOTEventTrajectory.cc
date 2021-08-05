@@ -68,7 +68,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
                                         const BDS::TrajectoryOptions& storageOptions,
                                         const std::map<G4Material*, short int>& materialToID)
 {
-  if(!auxNavigator)
+  if (!auxNavigator)
     {// navigator for converting coordinates to curvilinear coordinate system
       auxNavigator = new BDSAuxiliaryNavigator();
     }
@@ -354,6 +354,7 @@ void BDSOutputROOTEventTrajectory::Flush()
   S.clear();
   PXPYPZ.clear();
   modelIndicies.clear();
+  
   trackID_trackIndex.clear();
   T.clear();
 
@@ -461,7 +462,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv; // trajectory point vector - result
 
-  int nstep = XYZ[ti].size();
+  int nstep = (int)XYZ[ti].size();
   if (nstep == 0) // no points or it wasn't stored
     {return std::vector<BDSOutputROOTEventTrajectoryPoint>();}
 
@@ -532,14 +533,14 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPo
       return BDSOutputROOTEventTrajectoryPoint();
     }
   int ti = trackID_trackIndex.at(trackIDIn);  // get track index
-  int pid = parentID[ti];                   // parent trackID
+  int pid = (int)parentID[ti];                   // parent trackID
   int chosenTrackID = trackIDIn;
   while (pid != 0)
     {
       if (parentID[trackID_trackIndex.at(pid)] > 0)
 	{chosenTrackID = pid;}
       ti = trackID_trackIndex.at(pid);
-      pid = parentID[ti];
+      pid = (int)parentID[ti];
     }
   return parentProcessPoint(chosenTrackID);
 }
@@ -554,7 +555,7 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::parentProcessPoi
     }
   
   int ti  = trackID_trackIndex.at(trackIDIn);  // get track index
-  int pti = parentID[ti]; // parent trackID
+  int pti = (int)parentID[ti]; // parent trackID
   
   if (pti == 0)
     {
@@ -562,7 +563,7 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::parentProcessPoi
       return BDSOutputROOTEventTrajectoryPoint();
     }
   
-  int si  = parentStepIndex.at(ti);          // get primary index
+  int si  = (int)parentStepIndex.at(ti);          // get primary index
   int pi = 0;
   if (pti > 0)
     {pi  = trackID_trackIndex.at(pti);}      // parent track storage index
