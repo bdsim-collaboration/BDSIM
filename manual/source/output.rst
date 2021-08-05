@@ -1334,7 +1334,10 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | ionZ (\***)              | std::vector<std::vector<int>>       | Atomic number. 0 for non-nuclei                         |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| nElectrons (\****)       | std::vector<std::vector<int>>       | Number of bound electrons if an ion. 0 otherwise        |
+| nElectrons (\***)        | std::vector<std::vector<int>>       | Number of bound electrons if an ion. 0 otherwise        |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| materialID (\-)          | std::vector<sd::vector<short int>>  | Integer ID of material at that step point. See the      |
+|                          |                                     | Model tree for decoding this to material name.          |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | modelIndicies            | std::vector<std::vector<int>>       | Index in beam line of which element the trajectory is in|
 |                          |                                     | (-1 if not inside an accelerator component)             |
@@ -1349,6 +1352,7 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 	  as described in :ref:`bdsim-options-output`.
 .. note:: (\+) Not stored by default, but controlled by a specific option for this variable
 	  described in :ref:`bdsim-options-output`.
+.. note:: (\-) Not stored by default, but controlled by the option `storeTrajectoryMaterial`.
 
 
 In addition, some maps are stored to link the entries together conceptually.
