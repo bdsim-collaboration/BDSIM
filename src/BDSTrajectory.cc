@@ -109,7 +109,12 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
   // we do not use G4Trajectory::AppendStep here as that would
   // duplicate position information in its own vector of positions
   // which we prevent access to be overriding GetPoint
-
+  
+  // if the first step, we update the material of the 0th point which was
+  // constructed from the track before geometry tracking and we didn't know
+  // the material
+  if (fpBDSPointsContainer->size() == 1)
+    {(*fpBDSPointsContainer)[0]->SetMaterial(aStep->GetTrack()->GetMaterial());}
   if (suppressTransportationAndNotInteractive)
     {
       // decode aStep and if on storage.
