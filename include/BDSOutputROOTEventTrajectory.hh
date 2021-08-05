@@ -176,6 +176,7 @@ public:
   std::vector<unsigned int>          parentIndex;
   std::vector<unsigned int>          parentStepIndex;
   std::vector<int>                   primaryStepIndex;
+  std::vector<int>                   depth;
 
   std::vector<std::vector<int>>      preProcessTypes;
   std::vector<std::vector<int>>      preProcessSubTypes;
