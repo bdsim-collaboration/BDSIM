@@ -2782,6 +2782,10 @@ that has passed the filters above.
 | storeTrajectoryLinks               | Store `charge`, `kineticEnergy`, `turnsTaken`, `mass` and          |
 |                                    | `rigidity` variables for each step.                                |
 +------------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryMaterial            | Store an integer ID for the material of the material at that point |
+|                                    | in the trajectory. The ID can be looked up in the Model tree to    |
+|                                    | get the name of the material.                                      |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryMomentumVector      | Store `PXPYPZ`, momentum (not unit) 3-vector in GeV for each step. |
 |                                    | Default False.                                                     |
 +------------------------------------+--------------------------------------------------------------------+

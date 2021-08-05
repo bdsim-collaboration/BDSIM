@@ -38,11 +38,23 @@ Bug Fixes
   with pole face rotations. Issue #306.
 * Fix a bug where a sampler before a dump wouldn't record any output.
 * Fix the wrong value being stored in PrimaryFirstHist.postStepProcessType which was in fact SubType again.
+* When storing trajectories, it was possible if store transportation steps was
+  purposively turned off that the first step point may not be stored. So, the pre-step
+  was the creation of the particle and the post step was an interaction (ie not
+  transportation). Previously, this step would not be stored breaking the indexing
+  for parent step index.
+* Materials are now stored for each trajectory step point (optionally) as described
+  by an integer ID.
 
 Output Changes
 --------------
 * Add angle of the element in the Model Tree.
 * Add samplerSPosition in the Model Tree.
+* Trajectories now have the variable `depth` for which level of the tree that trajectory is.
+* Trajectories now have the variable `materialID`, which is an integer ID for each material
+  for a given model. In the Model tree, a map of this integer to the name is stored. An integer
+  is used to save space as it is stored for every step of each trajectory stored.
+* Model tree now has two maps for material ID to name and vica-versa.
 
 Output Class Versions
 ---------------------
@@ -72,7 +84,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventModel           | N           | 5               | 6               |
+| BDSOutputROOTEventModel           | Y           | 5               | 6               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventOptions         | N           | 6               | 6               |
 +-----------------------------------+-------------+-----------------+-----------------+
@@ -80,9 +92,9 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventSampler         | N           | 5               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventTrajectory      | N           | 4               | 4               |
+| BDSOutputROOTEventTrajectory      | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventTrajectoryPoint | N           | 5               | 5               |
+| BDSOutputROOTEventTrajectoryPoint | Y           | 5               | 6               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTParticleData         | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
