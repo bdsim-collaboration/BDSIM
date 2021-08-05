@@ -137,6 +137,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       parentID.push_back((unsigned int) std::abs(traj->GetParentID()));
       parentIndex.push_back((unsigned int) std::abs(traj->GetParentIndex()));
       parentStepIndex.push_back((unsigned int) std::abs(traj->GetParentStepIndex()));
+      depth.push_back((int) traj->GetDepth());
 
       // now we convert the geant4 type based BDSTrajectory information into
       // basic C++ and ROOT types for the output
@@ -341,6 +342,7 @@ void BDSOutputROOTEventTrajectory::Flush()
   parentIndex.clear();
   parentStepIndex.clear();
   primaryStepIndex.clear();
+  depth.clear();
   preProcessTypes.clear();
   preProcessSubTypes.clear();
   postProcessTypes.clear();
@@ -386,6 +388,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
   parentIndex         = other->parentIndex;
   parentStepIndex     = other->parentStepIndex;
   primaryStepIndex    = other->primaryStepIndex;
+  depth               = other->depth;
   preProcessTypes     = other->preProcessTypes;
   preProcessSubTypes  = other->preProcessSubTypes;
   postProcessTypes    = other->postProcessTypes;

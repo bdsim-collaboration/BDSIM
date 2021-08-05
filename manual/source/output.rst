@@ -1282,6 +1282,9 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 | primaryStepIndex         | std::vector<int>                    | The index of the step along the primary trajectory that |
 |                          |                                     | that this current trajectory ultimately traces back to  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
+| depth                    | std::vector<int>                    | The depth in the tree of the trajectory - i.e. the      |
+|                          |                                     | number of parent particles this one has.                |
++--------------------------+-------------------------------------+---------------------------------------------------------+
 | preProcessTypes (\+)     | std::vector<std::vector<int>>       | Geant4 enum of pre-step physics process - general       |
 |                          |                                     | category                                                |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
