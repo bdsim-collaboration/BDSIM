@@ -34,6 +34,7 @@ class BDSHitEnergyDeposition;
 class BDSTrajectory;
 template <class T> class G4THitsCollection;
 typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
+class G4Material;
 namespace BDS
 {
   struct TrajectoryOptions;
@@ -119,7 +120,8 @@ public:
   void Fill(const BDSTrajectoriesToStore* t,
             int  storeStepPointsN,
             bool storeStepPointLast,
-            const BDS::TrajectoryOptions& storageOptions);
+            const BDS::TrajectoryOptions& storageOptions,
+            const std::map<G4Material*, short int>& materialToID);
   void Fill(const BDSHitsCollectionEnergyDeposition* phc);
 
   /// Temporary structure for an individual trajectory used to convert types.
@@ -148,13 +150,15 @@ public:
     std::vector<int>      ionZ;
     std::vector<int>      nElectrons;
     std::vector<int>      modelIndex;
+    std::vector<short int> materialID;
   };
 
   /// Fill an trajectory point with index 'i' into the IndividualTrajectory struct
   /// (basic C++ / ROOT types) from Geant4 types from 'traj' trajectory for 1 track.
   void FillIndividualTrajectory(IndividualTrajectory& itj,
 				BDSTrajectory*        traj,
-				int                   i) const;
+				int                   i,
+				const std::map<G4Material*, short int>& materialToID) const;
 #endif
 
   /// Required to find beamline index careful including in streamer.
@@ -206,6 +210,8 @@ public:
   std::vector<std::vector<int>>      ionZ;
   std::vector<std::vector<int>>      nElectrons;
   /// @}
+  
+  std::vector<std::vector<short int>> materialID;
 
   std::vector<std::vector<int>>      modelIndicies;
 
@@ -226,7 +232,7 @@ public:
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
   
-  ClassDef(BDSOutputROOTEventTrajectory,4);
+  ClassDef(BDSOutputROOTEventTrajectory,5);
 };
 
 #endif
