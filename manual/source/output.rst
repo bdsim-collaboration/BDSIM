@@ -802,6 +802,17 @@ Information stored about any scoring meshes used.
 | scoringMeshName        | std::vector<std::string>         | All names of scoring meshes in the model.            |
 +------------------------+----------------------------------+------------------------------------------------------+
 
+Information stored about materials for trajectory storage.
+
++------------------------+----------------------------------+------------------------------------------------------+
+| **Variable Name**      | **Type**                         | **Description**                                      |
++========================+==================================+======================================================+
+| materialIDToName       | std::map<short int, std::string> | A map of the bdsim-assigned integer material ID to   |
+|                        |                                  | its real name as defined in the input / code.        |
++------------------------+----------------------------------+------------------------------------------------------+
+| materialNameToID       | std::map<std::string, short int> | The same map but the other way around.               |
++------------------------+----------------------------------+------------------------------------------------------+
+
 
 BDSOutputROOTEventCollimatorInfo
 ********************************
