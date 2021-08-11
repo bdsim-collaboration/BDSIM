@@ -681,12 +681,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 								-incomingFaceAngle,
 								-outgoingFaceAngle,
 								bpInfo, yokeOnLeft);
+
+      G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
+      BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
       
       BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::dipolequadrupole,
 						       brho,
-						       BDSIntegratorType::g4classicalrk4,
+						       intType,
 						       st,
-						       true);
+						       true,
+						       fieldTiltOffset);
       
       BDSFieldInfo* outerFieldInfo = new BDSFieldInfo( BDSFieldType::bmap3d, brho, BDSIntegratorType::g4classicalrk4, nullptr,true,G4Transform3D(),element->fieldOuter,BDSFieldFormat::bdsim3d);
       
