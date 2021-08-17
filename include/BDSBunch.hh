@@ -88,7 +88,7 @@ public:
   virtual void BeginOfRunAction(G4int numberOfEvents);
 
   /// Access the beam particle definition.
-  inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
+  inline virtual const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
 
   /// Set the flag to whether we're only generating primaries only. This sets the member
   /// variable generatePrimariesOnly which skips trying to perform a curvilinear transform

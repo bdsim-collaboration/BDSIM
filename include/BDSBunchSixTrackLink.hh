@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 class BDSParticleCoordsFull;
+class BDSParticleDefinition;
 
 /**
  * @brief A bunch distribution that holds a bunch from Sixtrack Link.
@@ -52,13 +53,18 @@ public:
   inline size_t Size() const {return particles.size();}
   inline int    CurrentExternalParticleID() const {return currentExternalParticleID;}
   inline int    CurrentExternalParentID()   const {return currentExternalParentID;}
-  
+
+  /// Access the beam particle definition.
+  inline virtual const BDSParticleDefinition* ParticleDefinition() const {return currentParticleDefinition;}
+
   void UpdateGeant4ParticleDefinition(G4int pdgID);
   
 private:
   G4int currentIndex;
   G4int currentExternalParticleID;
   G4int currentExternalParentID;
+  BDSParticleDefinition* currentParticleDefinition;
+
   G4int size;         ///< Number of particles (1 counting).
   std::vector<BDSParticleExternal*> particles;
 };
