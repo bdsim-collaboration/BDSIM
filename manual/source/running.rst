@@ -124,7 +124,11 @@ be used literally.  The following command may be used to display all options::
 +-------------------------------------+------------------------------------------------+
 |  -\-verboseSteppingPrimaryOnly      | Print stepping info for primary only           |
 +-------------------------------------+------------------------------------------------+
-|  -\-version                         | Displays the version number of bdsim           |
+|  -\-version                         | Displays the version number of BDSIM           |
++-------------------------------------+------------------------------------------------+
+|  -\-versionGit                      | Displays the version number of BDSIM along     |
+|                                     | with the git SHA1 from the repository when     |
+|                                     | BDSIM was built                                |
 +-------------------------------------+------------------------------------------------+
 |  -\-vis_debug                       | Displays all volumes in the visualiser         |
 +-------------------------------------+------------------------------------------------+
