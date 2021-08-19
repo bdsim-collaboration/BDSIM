@@ -117,7 +117,7 @@ public:
   /// case it's an ion. This can only be done later one once the run has started. Since
   /// the particle definition is kept here in the bunch this interface allows control
   /// over it being updated.
-  void UpdateIonDefinition();
+  virtual void UpdateIonDefinition();
 
   /// Whether the particle definition has been updated since the last call to
   /// GetNextParticle() or GetNextParticleValid().

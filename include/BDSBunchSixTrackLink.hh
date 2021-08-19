@@ -58,6 +58,9 @@ public:
   inline virtual const BDSParticleDefinition* ParticleDefinition() const {return currentParticleDefinition;}
 
   void UpdateGeant4ParticleDefinition(G4int pdgID);
+
+  /// Override method in BDSBunch to use our local currentParticleDefinition member.
+  virtual void UpdateIonDefinition();
   
 private:
   G4int currentIndex;
