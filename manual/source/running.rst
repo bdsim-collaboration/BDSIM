@@ -50,6 +50,10 @@ be used literally.  The following command may be used to display all options::
 |                                     | extension, which determines the format         |
 |                                     | where possible extensions are ("gdml")         |
 +-------------------------------------+------------------------------------------------+
+|  -\-E0=N                            | Set the beam E0 total energy (in GeV only)     |
++-------------------------------------+------------------------------------------------+
+|  -\-Ek0=N                           | Set the beam Ek0 kinetic energy (in GeV only)  |
++-------------------------------------+------------------------------------------------+
 |  -\-geant4Macro=<file>              | Optional Geant4 macro file to run after the    |
 |                                     | visualisation has started. Only works in       |
 |                                     | interactive visualisation.                     |
@@ -69,19 +73,6 @@ be used literally.  The following command may be used to display all options::
 |  -\-outfile=<file>                  | Outputs file name. Will be appended with _N    |
 |                                     | where N = 0, 1, 2, 3...                        |
 +-------------------------------------+------------------------------------------------+
-|  -\-recreate=<file>                 | The rootevent output file to recreate events   |
-|                                     | from.                                          |
-+-------------------------------------+------------------------------------------------+
-|  -\-seed=<N>                        | Seed for the random number generator           |
-+-------------------------------------+------------------------------------------------+
-|  -\-seedStateFileName=<file>        | File containing CLHEP::Random seed state       |
-|                                     | NB \- this overrides other seed values         |
-+-------------------------------------+------------------------------------------------+
-|  -\-startFromEvent=N                | Event offset to start from when recreating     |
-|                                     | events when using :code:`--recreate`           |
-+-------------------------------------+------------------------------------------------+
-|  -\-survey=<file>                   | Prints survey info to <file>                   |
-+-------------------------------------+------------------------------------------------+
 |  -\-printFractionEvents=N           | How often to print out events as a fraction    |
 |                                     | of the total number of events to simulate      |
 |                                     | (default 0.1 i.e. 10%). -1 for all.            |
@@ -96,6 +87,21 @@ be used literally.  The following command may be used to display all options::
 |                                     | particles registered according to the physics  |
 |                                     | list chosen and print out the name of every    |
 |                                     | physics process for that particle.             |
++-------------------------------------+------------------------------------------------+
+|  -\-P0=N                            | Set the beam P0 momentum (in GeV only)         |
++-------------------------------------+------------------------------------------------+
+|  -\-recreate=<file>                 | The rootevent output file to recreate events   |
+|                                     | from.                                          |
++-------------------------------------+------------------------------------------------+
+|  -\-seed=<N>                        | Seed for the random number generator           |
++-------------------------------------+------------------------------------------------+
+|  -\-seedStateFileName=<file>        | File containing CLHEP::Random seed state       |
+|                                     | NB \- this overrides other seed values         |
++-------------------------------------+------------------------------------------------+
+|  -\-startFromEvent=N                | Event offset to start from when recreating     |
+|                                     | events when using :code:`--recreate`           |
++-------------------------------------+------------------------------------------------+
+|  -\-survey=<file>                   | Prints survey info to <file>                   |
 +-------------------------------------+------------------------------------------------+
 |  -\-verbose                         | Displays general parameters before run         |
 +-------------------------------------+------------------------------------------------+

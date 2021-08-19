@@ -206,6 +206,25 @@ from this value given the proton's mass).
 * If no :code:`beamParticleName` is given but one of :code:`E0`, :code:`Ek0`, :code:`P0` are given,
   the same particle is assumed as :code:`particle` but with a different energy.
 
+Beam Energy From Command Line
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The energy of the beam can also be controlled using executable options to override what is provided
+in the input GMAD files. The following executable options can be used (with example value of 123.456 GeV):
+
+* :code:`--E0=123.456`
+* :code:`--Ek0=123.456`
+* :code:`--P0=123.456`
+
+This makes it easy to run many instances of BDSIM with different energies. These update the central
+energy / kinetic energy / momentum values of the beam and not the design energy / kinetic energy / momentum
+so as not to affect the strength of magnetic fields. ::
+
+  bdsim --file=target.gmad --outfile=r1 --batch --ngenerate=100 --Ek0=400
+
+.. note:: These executable options do not accept units - only the raw number should be provided
+	  and it must be in GeV.
+
 
 Generate Only the Input Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
