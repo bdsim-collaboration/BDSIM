@@ -45,7 +45,7 @@ BDSParticleCoordsFull BDSBunchSixTrackLink::GetNextParticleLocal()
 {
   if (currentIndex >= size)
     {
-      G4cout << __METHOD_NAME__ << "looping" << G4endl;
+      G4cout << __METHOD_NAME__ << "looping to start of bunch" << G4endl;
       currentIndex = 0;
     }
 
@@ -71,8 +71,6 @@ void BDSBunchSixTrackLink::AddParticle(BDSParticleDefinition*       particleDefi
 {
   particles.emplace_back(new BDSParticleExternal(particleDefinitionIn, coordsIn, externalParticleID, externalParentID));
   size = (G4int)particles.size();
-//  if (!particleDefinition)
-//    {particleDefinition = new BDSParticleDefinition(*(particles.back()->particleDefinition));}
 }
 
 void BDSBunchSixTrackLink::ClearParticles()
