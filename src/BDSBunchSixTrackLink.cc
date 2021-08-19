@@ -55,8 +55,8 @@ BDSParticleCoordsFull BDSBunchSixTrackLink::GetNextParticleLocal()
   auto particle = particles[ci];
   currentParticleDefinition = particle->particleDefinition;
   particleDefinitionHasBeenUpdated = true;
-  //UpdateGeant4ParticleDefinition(particleDefinition->PDGID());
-  //UpdateIonDefinition();
+  //UpdateGeant4ParticleDefinition(particleDefinition->PDGID()); // TBC
+  UpdateIonDefinition();
   
   currentExternalParticleID = particle->externalParticleID;
   currentExternalParentID   = particle->externalParentID;
@@ -114,5 +114,28 @@ void BDSBunchSixTrackLink::UpdateGeant4ParticleDefinition(G4int pdgID)
   // in the case of ions the particle definition is only available now
   // fix the looping thresholds now it's available
   BDS::FixGeant105ThreshholdsForParticle(newParticleDefinition);
+#endif
+}
+
+void BDSBunchSixTrackLink::UpdateIonDefinition()
+{
+  if (!currentParticleDefinition->IsAnIon())
+    {return;}
+  
+  G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
+  BDSIonDefinition* ionDefinition = currentParticleDefinition->IonDefinition();
+  G4ParticleDefinition* ionParticleDef = ionTable->GetIon(ionDefinition->Z(),
+							  ionDefinition->A(),
+							  ionDefinition->ExcitationEnergy());
+  currentParticleDefinition->UpdateG4ParticleDefinition(ionParticleDef);
+  // Note we don't need to take care of electrons here. These are automatically
+  // allocated by Geant4 when it converts the primary vertex to a dynamic particle
+  // (in the process of constructing a track from it) (done in G4PrimaryTransformer)
+  // this relies on the charge being set correctly - Geant4 detects this isn't the same
+  // as Z and adds electrons accordingly.
+#if G4VERSION_NUMBER > 1049
+  // in the case of ions the particle definition is only available now
+  // fix the looping thresholds now it's available
+  BDS::FixGeant105ThreshholdsForParticle(ionParticleDef);
 #endif
 }
