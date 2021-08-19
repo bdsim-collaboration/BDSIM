@@ -94,6 +94,9 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "file", 1, 0, 0 },
 					{ "distrFile", 1, 0, 0 },
 					{ "distrFileNLinesSkip", 1, 0, 0 },
+                                        { "E0", 1, 0, 0},
+                                        { "P0", 1, 0, 0},
+                                        { "Ek0", 1, 0, 0},
 					{ "vis_debug", 0, 0, 0 },
 					{ "vis_mac", 1, 0, 0 },
 					{ "geant4Macro", 1, 0, 0 },
@@ -255,6 +258,24 @@ void BDSExecOptions::Parse(int argc, char **argv)
 		conversion = BDS::IsInteger(optarg, result);
 		beam.set_value("nlinesSkip", result);
 	      }
+	    else if (!strcmp(optionName, "E0") )
+	      {
+		double result = 1;
+		conversion = BDS::IsNumber(optarg, result);
+		beam.set_value("E0", result);
+	      }
+	    else if (!strcmp(optionName, "P0") )
+	      {
+		double result = 1;
+		conversion = BDS::IsNumber(optarg, result);
+		beam.set_value("P0", result);
+	      }
+	    else if (!strcmp(optionName, "Ek0") )
+	      {
+		double result = 1;
+		conversion = BDS::IsNumber(optarg, result);
+		beam.set_value("Ek0", result);
+	      }
 	    else if ( !strcmp(optionName , "vis_debug") )
 	      {options.set_value("visDebug", true);}
 	    else if ( !strcmp(optionName , "vis_mac") )
@@ -382,45 +403,39 @@ void BDSExecOptions::Parse(int argc, char **argv)
 
 void BDSExecOptions::Usage() const
 {
-  G4cout<<"Usage: bdsim [options]"           << G4endl;
+  G4cout<<"Usage: bdsim [options]" << G4endl;
   G4cout<<"Note options are case sensitive." << G4endl;
-  G4cout<<"Options:"                         << G4endl;
-  G4cout<<"--file=<filename>            : specify the lattice and options file "             << G4endl
+  G4cout<<"bdsim --help : display this message" << G4endl;
+  G4cout<<"Options (alphabetically):" << G4endl;
+  G4cout<<"--file=<filename>            : specify the input file "                           << G4endl
 	<<"--batch                      : batch mode - no graphics"                          << G4endl
 	<<"--circular                   : assume circular machine - turn control"            << G4endl
-	<<"--distrFile=<file>           : specify which file to use for the bunch"           << G4endl
-	<<"                               distribution"                                      << G4endl
-	<<"--distrFileNLinesSkip=N      : number of lines to skip at the start of the file"  << G4endl
-	<<"                               over and above nlinesIgnore in input gmad"         << G4endl
-	<<"--exportGeometryTo=<file>    : export the geometry to a file - extension"         << G4endl
-	<<"                               determines format"                                 << G4endl
-	<<"                               where possible extensions are (\"gdml\")"          << G4endl
-	<<"--geant4Macro=<file>         : macro file to run after initialisation of"         << G4endl
-	<<"                               visualiser"                                        << G4endl
-	<<"--generatePrimariesOnly      : generate N primary particle coordinates"           << G4endl
-	<<"                               without simulation then quit"                      << G4endl
-	<<"--help                       : display this message"                              << G4endl
-	<<"--materials                  : list materials included in bdsim by default"       << G4endl
 	<<"--colours                    : list available colours included in bdsim"          << G4endl
 	<<"                               by default"                                        << G4endl
+	<<"--E0=N                       : set E0 for the bunch for this run (GeV only)"      << G4endl
+    	<<"--Ek0=N                      : set Ek0 for the bunch for this run (GeV only)"     << G4endl
+	<<"--generatePrimariesOnly      : generate N primary particle coordinates"           << G4endl
+	<<"                               without simulation then quit"                      << G4endl
+	<<"--materials                  : list materials included in bdsim by default"       << G4endl
 	<<"--ngenerate=N                : the number of primary events to simulate:"         << G4endl
 	<<"                               overrides ngenerate option in the input gmad file" << G4endl
 	<<"--nturns=N                   : the number of turns to simulate:"                  << G4endl
 	<<"                               overrides nturns option in the input gmad file"    << G4endl
 	<<"--output=<fmt>               : output format (rootevent|none), default rootevent" << G4endl
 	<<"--outfile=<file>             : output file name. Will be appended with _N"        << G4endl
-        <<"                               where N = 0, 1, 2, 3... etc."                      << G4endl
-        <<"--seed=N                     : the seed to use for the random number generator"   << G4endl
-    	<<"--recreate=<file>            : the rootevent file to recreate events from"        << G4endl
-	<<"--seedStateFileName=<file>   : use this ASCII file seed state to run an event"    << G4endl
-	<<"--startFromEvent=N           : event offset to start from when recreating events" << G4endl
-	<<"--survey=<file>              : print survey info to <file>"                       << G4endl
-	<<"--printFractionEvents=N      : fraction of events to print out (default 0.1)"     << G4endl
+	<<"                               where N = 0, 1, 2, 3... etc."                      << G4endl
+    	<<"--printFractionEvents=N      : fraction of events to print out (default 0.1)"     << G4endl
 	<<"                               -1 is all, range [0-1]"                            << G4endl
-    	<<"--printFractionTurns=N       : fraction of turns to print out (default 0.2)"      << G4endl
+	<<"--printFractionTurns=N       : fraction of turns to print out (default 0.2)"      << G4endl
 	<<"                               -1 is all, range [0-1]"                            << G4endl
 	<<"--printPhysicsProcesses      : print out every particle registered and all "      << G4endl
 	<<"                               their processes - depends on physics list in input"<< G4endl
+    	<<"--P0=N                       : set P0 for the bunch for this run (GeV only)"      << G4endl
+    	<<"--recreate=<file>            : the rootevent file to recreate events from"        << G4endl
+	<<"--seed=N                     : the seed to use for the random number generator"   << G4endl
+	<<"--seedStateFileName=<file>   : use this ASCII file seed state to run an event"    << G4endl
+	<<"--startFromEvent=N           : event offset to start from when recreating events" << G4endl
+	<<"--survey=<file>              : print survey info to <file>"                       << G4endl
 	<<"--verbose                    : display general parameters before run"             << G4endl
 	<<"--verboseRunLevel=N          : set Geant4 verbosity at run level [0:5]"           << G4endl
 	<<"--verboseEventLevel=N        : set Geant4 event manager verbosity level"          << G4endl
