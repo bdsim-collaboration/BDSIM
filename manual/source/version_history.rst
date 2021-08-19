@@ -24,6 +24,7 @@ New Features
 * Scoring of the differential flux (3D mesh + energy spectrum per cell) following either a linear,
   logarithmic or user-defined energy axis scale (requires Boost).
 * New scorer type: cellflux4d
+* New `--versionGit` executable option to get the git SHA1 code as well as the version number.
   
 General
 -------
