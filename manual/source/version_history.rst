@@ -46,6 +46,7 @@ Bug Fixes
   for parent step index.
 * Materials are now stored for each trajectory step point (optionally) as described
   by an integer ID.
+* Fix double deletion bug for particle definition when using the Link version of BDSIM.
 
 Output Changes
 --------------
