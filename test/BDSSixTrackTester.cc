@@ -57,6 +57,7 @@ struct Collimator
 
 std::vector<Collimator> ReadFile(const std::string& filename);
 void ParticleClassTests();
+void BunchTests();
 void AddParticle(BDSBunchSixTrackLink* stp);
 void Summarise(BDSIMLink* bds);
 
@@ -112,6 +113,8 @@ int main(int /*argc2*/, char** /*argv2*/)
 
       // purely for code coverage
       ParticleClassTests();
+      
+      BunchTests();
       
 #ifdef VISLINK
       BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
@@ -182,6 +185,13 @@ void ParticleClassTests()
   
   delete aParticle2;
   delete aParticle1;
+}
+
+void BunchTests()
+{
+  BDSBunchSixTrackLink* stp = new BDSBunchSixTrackLink();
+  stp->ClearParticles();
+  delete stp;
 }
 
 void AddParticle(BDSBunchSixTrackLink* stp)
