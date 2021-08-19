@@ -138,6 +138,11 @@ set(BDSIM_LIB_NAME_STATIC "bdsim-static")
 set(GMAD_LIB_NAME "gmad")
 set(GMAD_LIB_NAME_STATIC "gmad-static")
 
+# Configuration information - do this before collating sources as defines
+# some cmake variables for file configuration including git version
+add_subdirectory(configuration)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/configuration)
+
 # Source files
 string(TIMESTAMP CURRENT_YEAR %Y)
 configure_file(${PROJECT_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
@@ -170,10 +175,6 @@ if($ENV{VERBOSE})
   message(STATUS "ROOT dictionaries ${root_dicts}")
   message(STATUS "BDSIM sources ${bdsim_sources}")
 endif()
-
-# Configuration information
-add_subdirectory(configuration)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/configuration)
 
 # Parser
 add_subdirectory(parser)
