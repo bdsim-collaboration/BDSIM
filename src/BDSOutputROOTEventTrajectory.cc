@@ -262,7 +262,9 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
 							    int                   i,
                                                             const std::map<G4Material*, short int>& materialToID) const
 {
-  BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
+  BDSTrajectoryPoint* point = dynamic_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
+  if (!point)
+    {return;}
   
   // Position
   G4ThreeVector pos = point->GetPosition();
