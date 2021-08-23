@@ -251,6 +251,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	    else if ( !strcmp(optionName, "distrFile") )
 	      {// build absolute path
 		beam.set_value("distrFile", std::string(optarg));
+		beam.set_value("distrFileFromExecOptions", true);
 	      }
 	    else if ( !strcmp(optionName, "distrFileNLinesSkip") )
 	      {
