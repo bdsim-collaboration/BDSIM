@@ -151,7 +151,7 @@ std::string BDS::GetBDSIMExecPath()
   return bdsimPath;
 }
 
-G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
+G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath, bool useCWDForPrefix)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << fileName << " strip name off?: " << excludeNameFromPath << G4endl;
@@ -179,10 +179,10 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
     {fullPath = inputFilepath;}
   else // the main file has a relative path or just the file name, add bdsimpath
     {
-      if (inputFilepath == "./") // don't insert a ./ in path
-	{fullPath = BDSGlobalConstants::Instance()->BDSIMPath();}
-      else
-	{fullPath = BDSGlobalConstants::Instance()->BDSIMPath() + inputFilepath;}
+      G4String prefixPath = useCWDForPrefix ? BDS::GetCurrentDir() : BDSGlobalConstants::Instance()->BDSIMPath();
+      fullPath = prefixPath;
+      if (inputFilepath != "./") // don't insert a ./ in path
+        {fullPath += inputFilepath;}
     }
   
   if (fullPath.back() != '/') // ensure ends in '/'
