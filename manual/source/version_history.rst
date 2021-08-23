@@ -49,6 +49,9 @@ Bug Fixes
 * Materials are now stored for each trajectory step point (optionally) as described
   by an integer ID.
 * Fix double deletion bug for particle definition when using the Link version of BDSIM.
+* Fix `distrFile` not being found when used as an executable option in the case where the
+  current working directory, the main input gmad file and the distribution file were all in
+  different places.
 
 Output Changes
 --------------
@@ -70,7 +73,7 @@ Output Class Versions
 +===================================+=============+=================+=================+
 | BDSOutputROOTEventAperture        | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventBeam            | N           | 5               | 5               |
+| BDSOutputROOTEventBeam            | Y           | 6               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimator      | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
@@ -90,7 +93,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventModel           | Y           | 5               | 6               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventOptions         | N           | 6               | 6               |
+| BDSOutputROOTEventOptions         | Y           | 7               | 6               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventRunInfo         | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
