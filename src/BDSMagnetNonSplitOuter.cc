@@ -135,14 +135,15 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
   /// Update record of normal vectors now beam pipe has been constructed.
   SetInputFaceNormal(BDS::RotateToReferenceFrame(outer->InputFaceNormal(), angle));
   SetOutputFaceNormal(BDS::RotateToReferenceFrame(outer->OutputFaceNormal(), -angle));
-  
-  if (!element->extractOuterContainer) // check if the beampipe and outer geometry elements must be placed in the container logical volume
+
+  // check if the beampipe and outer geometry elements must be placed in the container logical volume
+  if (!element->extractOuterContainer) 
     {
       // Create a beamline receiving the beampipe elements with the correct offset and angle
       G4double offsetAngle = element->angle/2;
       G4double offsetLength = chordLength/2;
       
-      G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength) ;
+      G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength);
       G4ThreeVector u = G4ThreeVector( std::cos(-offsetAngle), 0, std::sin(-offsetAngle));
       G4ThreeVector v = G4ThreeVector(0, 1,0);
       G4ThreeVector w = G4ThreeVector(-std::sin(-offsetAngle), 0, std::cos(-offsetAngle));
@@ -160,13 +161,13 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 	      G4String placementName = el->GetPlacementName() + "_pv";
 	      G4Transform3D* placementTransform = el->GetPlacementTransform();
 	      G4int copyNumber = i;
-	      auto vv = new G4PVPlacement(*placementTransform,                  // placement transform
+	      auto vv = new G4PVPlacement(*placementTransform,             // placement transform
 					  el->GetContainerLogicalVolume(), // volume to be placed
-					  placementName,                        // placement name
-					  containerLogicalVolume,               // volume to place it in
-					  false,                         // no boolean operation
-					  copyNumber,                           // copy number
-					  false);                       // overlap checking
+					  placementName,                   // placement name
+					  containerLogicalVolume,          // volume to place it in
+					  false,                           // no boolean operation
+					  copyNumber,                      // copy number
+					  false);                          // overlap checking
 	      
 	      i++; // for incremental copy numbers
 	      
@@ -178,19 +179,19 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
       
       G4ThreeVector outerOffset = outer->GetPlacementOffset();
       
-      std::cout << "placing the content of the gdml file" << std::endl;
       auto gdml_world = outer->GetContainerLogicalVolume();
-      
-      if (element->includeGdmlWorldVolume) // Check if the outer logical volume (Gdml world volume) must be placed into the container logical volume
+
+      // Check if the outer logical volume (GDML world volume) must be placed into the container logical volume
+      if (element->includeGdmlWorldVolume)
         {
 	  G4Transform3D* placementTransform = new G4Transform3D();
-	  auto vv = new G4PVPlacement(*placementTransform,                  // placement transform
-				      gdml_world,                           // volume to be placed
+	  auto vv = new G4PVPlacement(*placementTransform,           // placement transform
+				      gdml_world,                    // volume to be placed
 				      gdml_world->GetName() + "_pv", // placement name
-				      containerLogicalVolume,               // volume to place it in
+				      containerLogicalVolume,        // volume to place it in
 				      false,                         // no boolean operation
-				      0,                           // copy number
-				      false);                      // overlap checking
+				      0,                             // copy number
+				      false);                        // overlap checking
 	  
 	  if (vv->CheckOverlaps() and checkOverlaps)
             {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
@@ -201,18 +202,19 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
         {
 	  const auto& pv = gdml_world->GetDaughter(j);
 	  G4String placementName = pv->GetName() + "_pv";
-	  std::cout << "placing " << placementName << std::endl;
 	  G4int copyNumber = 1;
 	  
 	  if (!element->includeGdmlWorldVolume)
-            {// if the Gdml world volume has not been placed in the container logical volume, placed the outer geometry elements one by one instead
+            {
+	      // if the GDML world volume has not been placed in the container logical volume,
+	      // placed the outer geometry elements one by one instead
 	      auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(), // placement transform
 					  pv->GetLogicalVolume(),                  // volume to be placed
 					  placementName,                           // placement name
 					  containerLogicalVolume,                  // volume to place it in
-					  false,                            // no boolean operation
-					  copyNumber,                             // copy number
-					  false);                         // overlap checking
+					  false,                                   // no boolean operation
+					  copyNumber,                              // copy number
+					  false);                                  // overlap checking
 	      
 	      if (vv->CheckOverlaps() and checkOverlaps)
                 {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
