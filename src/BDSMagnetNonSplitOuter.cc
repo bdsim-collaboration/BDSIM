@@ -49,6 +49,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/element.h"
 #include "parser/elementtype.h"
 
+#include <algorithm>
+#include <cmath>
+
 using namespace GMAD;
 
 class G4Userlimits;
