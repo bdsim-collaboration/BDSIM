@@ -184,8 +184,8 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
       // Check if the outer logical volume (GDML world volume) must be placed into the container logical volume
       if (element->includeGdmlWorldVolume)
         {
-	  G4Transform3D* placementTransform = new G4Transform3D();
-	  auto vv = new G4PVPlacement(*placementTransform,           // placement transform
+	  G4Transform3D placementTransform;
+	  auto vv = new G4PVPlacement(placementTransform,            // placement transform
 				      gdml_world,                    // volume to be placed
 				      gdml_world->GetName() + "_pv", // placement name
 				      containerLogicalVolume,        // volume to place it in
