@@ -139,21 +139,20 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
   // check if the beampipe and outer geometry elements must be placed in the container logical volume
   if (!element->extractOuterContainer) 
     {
-      // Create a beamline receiving the beampipe elements with the correct offset and angle
-      G4double offsetAngle = element->angle/2;
-      G4double offsetLength = chordLength/2;
-      
-      G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0, -offsetLength);
-      G4ThreeVector u = G4ThreeVector( std::cos(-offsetAngle), 0, std::sin(-offsetAngle));
-      G4ThreeVector v = G4ThreeVector(0, 1,0);
-      G4ThreeVector w = G4ThreeVector(-std::sin(-offsetAngle), 0, std::cos(-offsetAngle));
-      G4RotationMatrix* initialGlobalRotation  =  new G4RotationMatrix(u, v, w);
-      G4double          initialS = 0;
-      
-      BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition, initialGlobalRotation,initialS);
-      
-      if (element->apertureType != "none") // check if the beampipe elements must be placed in the container logical volume
+      // check if the beampipe elements must be placed in the container logical volume
+      if (element->apertureType != "none") 
         {
+          // Create a beamline receiving the beampipe elements with the correct offset and angle
+          G4double offsetAngle = element->angle/2;
+          G4double offsetLength = chordLength/2;
+  
+          G4ThreeVector initialGlobalPosition = G4ThreeVector(0,0, -offsetLength);
+          G4ThreeVector u = G4ThreeVector( std::cos(-offsetAngle), 0, std::sin(-offsetAngle));
+          G4ThreeVector v = G4ThreeVector(0, 1,0);
+          G4ThreeVector w = G4ThreeVector(-std::sin(-offsetAngle), 0, std::cos(-offsetAngle));
+          G4RotationMatrix* initialGlobalRotation = new G4RotationMatrix(u, v, w);
+          G4double          initialS = 0;
+	  BDSBeamline* beamline = new BDSBeamline(initialGlobalPosition, initialGlobalRotation, initialS);
 	  beamline->AddComponent(pipeLine);
 	  G4int i = 0;
 	  for (auto el : *beamline)
