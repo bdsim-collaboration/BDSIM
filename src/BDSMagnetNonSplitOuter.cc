@@ -216,7 +216,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 					  copyNumber,                              // copy number
 					  false);                                  // overlap checking
 	      
-	      if (vv->CheckOverlaps() and checkOverlaps)
+	      if (vv->CheckOverlaps() && checkOverlaps)
                 {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
 	      RegisterPhysicalVolume(vv);
             }
