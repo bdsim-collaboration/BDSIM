@@ -174,6 +174,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
                 {throw BDSException(__METHOD_NAME__, "Overlapping detected for the beampipe elements");}
 	      RegisterPhysicalVolume(vv);    
             }
+	  delete beamline;
         }
       
       G4ThreeVector outerOffset = outer->GetPlacementOffset();
