@@ -124,7 +124,6 @@ void Element::PublishMembers()
   publish("aperture4",        &Element::aper4);
   alternativeNames["aperture4"] = "aper4";
   publish("horizontalWidth",  &Element::horizontalWidth);
-  publish("containerRadius",  &Element::containerRadius);
   publish("outerDiameter",    &Element::horizontalWidth);
   alternativeNames["outerDiameter"] = "horizontalWidth";
   publish("xsize",            &Element::xsize);
@@ -134,9 +133,12 @@ void Element::PublishMembers()
   publish("xsizeLeft",        &Element::xsizeLeft);
   publish("xsizeRight",       &Element::xsizeRight);
   publish("tilt",             &Element::tilt);
-
-  publish("offsetX",     &Element::offsetX);
-  publish("offsetY",     &Element::offsetY);
+  publish("offsetX",          &Element::offsetX);
+  publish("offsetY",          &Element::offsetY);
+  publish("dontSplitOuter",   &Element::dontSplitOuter);
+  publish("extractOuterContainer", &Element::extractOuterContainer);
+  publish("includeGdmlWorldVolume" , &Element::includeGdmlWorldVolume);
+  publish("containerRadius",  &Element::containerRadius);
   
   publish("x",           &Element::xdir);
   alternativeNames["x"] = "xdir";
@@ -214,9 +216,6 @@ void Element::PublishMembers()
   publish("coilHeightFraction",  &Element::coilHeightFraction);
   publish("apertureType",        &Element::apertureType);
   publish("magnetGeometryType",  &Element::magnetGeometryType);
-  publish("dontSplitOuter",          &Element::dontSplitOuter);
-  publish("extractOuterContainer",   &Element::extractOuterContainer);
-  publish("includeGdmlWorldVolume" , &Element::includeGdmlWorldVolume);
   publish("beampipeMaterial",    &Element::beampipeMaterial);
   publish("vacuumMaterial",      &Element::vacuumMaterial);
   publish("scintmaterial",       &Element::scintmaterial);

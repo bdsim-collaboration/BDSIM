@@ -112,11 +112,7 @@ namespace GMAD
   
     // magnet geometry
     std::string magnetGeometryType;
-    bool dontSplitOuter;
-    bool extractOuterContainer;
-    bool includeGdmlWorldVolume;
     double horizontalWidth; // formerly outerDiameter
-    double containerRadius;
     bool   yokeOnInside;
     int    hStyle;  ///< -1 = unset; 0 = false (ie c style); 1 = true, use hstyle
     double vhRatio; ///< ratio of vertial to horizontal for some magnets
@@ -128,6 +124,10 @@ namespace GMAD
     double xsizeLeft, xsizeRight; ///< individual collimator jaw half widths
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
+    bool dontSplitOuter;
+    bool extractOuterContainer;
+    bool includeGdmlWorldVolume;
+    double containerRadius;
 
     // screen parameters
     double tscint; ///<thickness of scintillating part of screen

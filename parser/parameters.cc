@@ -93,11 +93,7 @@ Parameters::Parameters()
   setMap["beampipeMaterial"]   = false;
   setMap["vacuumMaterial"]     = false;
   setMap["magnetGeometryType"] = false;
-  setMap["dontSplitOuter"]     = false;
-  setMap["extractOuterContainer"] = false;
-  setMap["includeGdmlWorldVolume"] = false;
   setMap["horizontalWidth"]    = false;
-  setMap["containerRadius"]    = false;
   setMap["yokeOnInside"]       = false;
   setMap["hStyle"]             = false;
   setMap["vhRatio"]            = false;
@@ -112,6 +108,10 @@ Parameters::Parameters()
   setMap["xsizeRight"]         = false;
   setMap["offsetX"]            = false;
   setMap["offsetY"]            = false;
+  setMap["dontSplitOuter"]     = false;
+  setMap["extractOuterContainer"] = false;
+  setMap["includeGdmlWorldVolume"] = false;
+  setMap["containerRadius"]    = false;
   setMap["tscint"]             = false;
   setMap["twindow"]            = false;
   setMap["tmount"]             = false;
