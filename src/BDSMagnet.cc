@@ -330,7 +330,7 @@ void BDSMagnet::PlaceComponents()
 							   0,                                       // copy number
 							   false);
 	  
-	  if (magnetOuterPV->CheckOverlaps() and checkOverlaps)
+	  if (magnetOuterPV->CheckOverlaps() && checkOverlaps)
 	    {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
 	  RegisterPhysicalVolume(magnetOuterPV);
 	}
@@ -341,7 +341,7 @@ void BDSMagnet::PlaceComponents()
           auto gdml_world = outer->GetContainerLogicalVolume();
           for (G4int j = 0; j < (G4int)gdml_world->GetNoDaughters(); j++)
 	    {
-              const auto &pv = gdml_world->GetDaughter(j);
+              const auto& pv = gdml_world->GetDaughter(j);
               G4String placementName = pv->GetName() + "_pv";
               std::cout << "placing " << placementName << std::endl;
               G4int copyNumber = 1;

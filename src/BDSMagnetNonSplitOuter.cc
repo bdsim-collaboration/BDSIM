@@ -174,7 +174,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 	      
 	      i++; // for incremental copy numbers
 	      
-	      if (vv->CheckOverlaps() and checkOverlaps)
+	      if (vv->CheckOverlaps() && checkOverlaps)
                 {throw BDSException(__METHOD_NAME__, "Overlapping detected for the beampipe elements");}
 	      RegisterPhysicalVolume(vv);    
             }
@@ -196,7 +196,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 				      0,                             // copy number
 				      false);                        // overlap checking
 	  
-	  if (vv->CheckOverlaps() and checkOverlaps)
+	  if (vv->CheckOverlaps() && checkOverlaps)
             {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
 	  RegisterPhysicalVolume(vv); 
         }
@@ -240,7 +240,7 @@ void BDSMagnetNonSplitOuter::Build()
 {
   SBendWithSingleOuter(element->name);
   
-  if (element->fieldOuter != "" and !(element->extractOuterContainer)) // check when to build the outer field
+  if (!(element->fieldOuter.empty()) && !(element->extractOuterContainer)) // check when to build the outer field
     {
       BuildOuterField(); // must be done when the containerLV exists
     }
