@@ -381,13 +381,13 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 
   for (auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
     {
-      // find next and previous element, but ignore special elements or thin multipoles.
+      // find next and previous element, but ignore special elements or thin elements.
       const GMAD::Element* prevElement = nullptr;
       auto prevIt = elementIt;
       while (prevIt != beamLine.begin())
 	{
 	  --prevIt;
-	  if (prevIt->isSpecial() == false && prevIt->type != GMAD::ElementType::_THINMULT)
+	  if (prevIt->isSpecial() == false && prevIt->l > BDSGlobalConstants::Instance()->ThinElementLength())
 	    {
 	      prevElement = &(*prevIt);
 	      break;
@@ -400,7 +400,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       G4double nextElementInputFace = 0; // get poleface angle for next element whilst testing if next element exists
       while (nextIt != beamLine.end())
 	{
-	  if (nextIt->isSpecial() == false && nextIt->type != GMAD::ElementType::_THINMULT)
+	  if (nextIt->isSpecial() == false && nextIt->l > BDSGlobalConstants::Instance()->ThinElementLength())
 	    {
 	      nextElement = &(*nextIt);
           //rotated entrance face of the next element may modify the exit face of the current element.

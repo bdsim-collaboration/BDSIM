@@ -304,6 +304,7 @@ OptionsBase::OptionsBase()
   storeTrajectoryLocal               = false;
   storeTrajectoryLinks               = false;
   storeTrajectoryIon                 = false;
+  storeTrajectoryMaterial            = false;
   storeTrajectoryAllVariables        = false;
 
   trajectoryFilterLogicAND = false;

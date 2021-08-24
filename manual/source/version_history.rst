@@ -24,6 +24,9 @@ New Features
 * Scoring of the differential flux (3D mesh + energy spectrum per cell) following either a linear,
   logarithmic or user-defined energy axis scale (requires Boost).
 * New scorer type: cellflux4d
+* New :code:`--versionGit` executable option to get the git SHA1 code as well as the version number.
+* new :code:`--E0=number`, :code:`--Ek0=number`, and :code:`--P0=number` executable options are
+  introduced to permit overriding the energy of the beam.
   
 General
 -------
@@ -34,15 +37,82 @@ Bug Fixes
 ---------
 
 * If a multipole has a zero-length, it will be converted in a thin multipole.
+* Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
+  with pole face rotations. Issue #306.
+* Fix a bug where a sampler before a dump wouldn't record any output.
+* Fix the wrong value being stored in PrimaryFirstHist.postStepProcessType which was in fact SubType again.
+* When storing trajectories, it was possible if store transportation steps was
+  purposively turned off that the first step point may not be stored. So, the pre-step
+  was the creation of the particle and the post step was an interaction (ie not
+  transportation). Previously, this step would not be stored breaking the indexing
+  for parent step index.
+* Materials are now stored for each trajectory step point (optionally) as described
+  by an integer ID.
+* Fix double deletion bug for particle definition when using the Link version of BDSIM.
+* Fix `distrFile` not being found when used as an executable option in the case where the
+  current working directory, the main input gmad file and the distribution file were all in
+  different places.
 
 Output Changes
 --------------
+* Add angle of the element in the Model Tree.
+* Add samplerSPosition in the Model Tree.
+* Trajectories now have the variable `depth` for which level of the tree that trajectory is.
+* Trajectories now have the variable `materialID`, which is an integer ID for each material
+  for a given model. In the Model tree, a map of this integer to the name is stored. An integer
+  is used to save space as it is stored for every step of each trajectory stored.
+* Model tree now has two maps for material ID to name and vica-versa.
 
 Output Class Versions
 ---------------------
 
+* Data Version 8.
+
++-----------------------------------+-------------+-----------------+-----------------+
+| **Class**                         | **Changed** | **Old Version** | **New Version** |
++===================================+=============+=================+=================+
+| BDSOutputROOTEventAperture        | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventBeam            | Y           | 6               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimator      | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimatorInfo  | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCoords          | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHeader          | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHistograms      | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventInfo            | N           | 6               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLoss            | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventModel           | Y           | 5               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventOptions         | Y           | 7               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventRunInfo         | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSampler         | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectory      | Y           | 4               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectoryPoint | Y           | 5               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTParticleData         | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+
 Utilities
 ---------
+
+* pybdsim v2.4.0
+* pymadx v1.8.2
+* pymad8 v1.6.1
+* pytransport v1.5.0
 
 
 V1.6.0 - 2021 / 06 / 16
@@ -354,7 +424,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventTrajectoryPoint | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTParticleData         | N           | 3               | 2               |
+| BDSOutputROOTParticleData         | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
 
 Utilities
@@ -621,7 +691,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTGeant4Data (\*)      | N           | 2               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTParticleData         | Y           | NA              | 2               |
+| BDSOutputROOTParticleData         | Y           | NA              | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
 
 * (\*) deprecated in favour of the renamed class BDSOutputROOTParticleData

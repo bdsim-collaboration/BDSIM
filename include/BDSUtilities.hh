@@ -82,13 +82,14 @@ namespace BDS
   /// supports linux/unix and mac OS
   std::string GetBDSIMExecPath();
 
-  /// get full absolute directory path where file can be found.
-  /// returns absolute path
-  ///
-  /// option to exclude the filename from path, such that
-  /// getFullPath(filename,true) + filename 
-  /// will return the absolute filename path
-  G4String GetFullPath(G4String filename, bool excludeNameFromPath=false);
+  /// Get the full absolute directory path where a file can be found.
+  /// Option excludeNameFromPath: if true will return only the path without
+  /// the filename appended to exclude the filename from path.
+  /// Option useCWDForPrefix: if the path is relative, then we would normally
+  /// prepend the absolute path of the main input file so it's relative to that
+  /// but with an absolute path. However, we may want to do this relative to the
+  /// executable directory of the program. If this option is on, it'll be CWD.
+  G4String GetFullPath(G4String filename, bool excludeNameFromPath=false, bool useCWDForPrefix=false);
 
   /// Split a full file path into the path and file components. The path
   /// ends with '/'.
