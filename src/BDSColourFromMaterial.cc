@@ -20,8 +20,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSColourFromMaterial.hh"
 
 #include "G4Colour.hh"
+#include "G4DataVector.hh"
 #include "G4Material.hh"
-#include "G4PhysicsOrderedFreeVector.hh"
+#include "G4PhysicsFreeVector.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
 
@@ -88,11 +89,17 @@ BDSColourFromMaterial::BDSColourFromMaterial()
   defines["water"]       = c->GetColour("water:0 102 204 0.5");
   defines["G4_WATER"]    = defines["water"];
   
-  std::vector<G4double> densities = {1e2,  1,   0.1,  0.01, 1e-4}; // high to low
-  for (auto& v : densities)
-    {v *= CLHEP::g / CLHEP::cm3;}
-  std::vector<G4double> values    = {100,  120,  150,  180,  210};
-  generalDensity = new G4PhysicsOrderedFreeVector(&densities[0], &values[0], values.size());
+  // for older versions of Geant4 < V11 we have to use G4DataVector which
+  // can't use list initialisation. In V11 onwards, G4PhysicsFreeVector
+  // changed to take std::vector<G4double> as arguments but G4DataVector
+  // inherits this so it's ok. Order must be ascending.
+  G4DataVector densities(5);
+  for (auto v : {1e-4, 0.01, 0.1, 1.0, 1e2})
+    {densities.emplace_back(v * CLHEP::g / CLHEP::cm3);}
+  G4DataVector values(5);
+  for (auto v : {210, 180, 150, 120, 100})
+    {values.emplace_back(v);}
+  generalDensity = new G4PhysicsFreeVector(densities, values);
 }
 
 G4Colour* BDSColourFromMaterial::GetColour(const G4Material* material)
