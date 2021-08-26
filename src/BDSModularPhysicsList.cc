@@ -421,6 +421,8 @@ void BDSModularPhysicsList::ConfigurePhysics()
 
 void BDSModularPhysicsList::ConfigureOptical()
 {
+  G4long maxPhotonsPerStep = globals->MaximumPhotonsPerStep();
+#if G4VERSION_NUMBER < 1079
   // cherenkov turned on with optical even if it's not on as separate list
   opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov, true);
   opticalPhysics->Configure(G4OpticalProcessIndex::kScintillation, true);                                ///< Scintillation process index
@@ -430,9 +432,22 @@ void BDSModularPhysicsList::ConfigureOptical()
   opticalPhysics->Configure(G4OpticalProcessIndex::kBoundary,      globals->TurnOnOpticalSurface());     ///< Boundary process index
   opticalPhysics->Configure(G4OpticalProcessIndex::kWLS,           true);                                ///< Wave Length Shifting process index
   opticalPhysics->SetScintillationYieldFactor(globals->ScintYieldFactor());
-  G4long maxPhotonsPerStep = globals->MaximumPhotonsPerStep();
   if (maxPhotonsPerStep >= 0)
     {opticalPhysics->SetMaxNumPhotonsPerStep(maxPhotonsPerStep);}
+#else
+  G4OpticalParameters* opticalParameters = G4OpticalParameters::Instance();
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kCerenkov), true);
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kScintillation), true);
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kAbsorption), globals->TurnOnOpticalAbsorption());
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kRayleigh), globals->TurnOnRayleighScattering());
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kMieHG), globals->TurnOnMieScattering());
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kBoundary), globals->TurnOnOpticalSurface());
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kWLS), true);
+  // this is unimplemented causing a linker error (reported) in V11 - remains to be seen if it stays
+  //opticalParameters->SetScintYieldFactor(globals->ScintYieldFactor());
+  if (maxPhotonsPerStep >= 0)
+    {opticalParameters->SetCerenkovMaxPhotonsPerStep(maxPhotonsPerStep);}
+#endif
 }
 
 void BDSModularPhysicsList::CheckIncompatiblePhysics(const G4String& singlePhysicsIn) const
