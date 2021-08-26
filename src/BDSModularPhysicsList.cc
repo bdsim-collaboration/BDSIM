@@ -359,7 +359,7 @@ void BDSModularPhysicsList::ParsePhysicsList(const G4String& physListName)
       physicsListNames.push_back(name);
     }
 
-  // seach for em physics (could be any order) - needed for different construction of muon phyiscs
+  // search for em physics (could be any order) - needed for different construction of muon phyiscs
   if (std::find(physicsListNames.begin(), physicsListNames.end(), "em") != physicsListNames.end())
     {emWillBeUsed = true;}
 
