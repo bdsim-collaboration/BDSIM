@@ -154,11 +154,8 @@ G4Colour* BDSColourFromMaterial::GetColourWithDefault(const G4Material* material
   std::string toErase = "g4_";
   size_t pos = materialName.find(toErase);
   if (pos != std::string::npos)
-  {materialName.erase(pos, toErase.length());}
+    {materialName.erase(pos, toErase.length());}
   
   auto search = defines.find(materialName);
-  if (search != defines.end())
-  {return search->second;}
-  else
-  {return defaultIn;}
+  return search != defines.end() ? search->second : defaultIn;
 }
