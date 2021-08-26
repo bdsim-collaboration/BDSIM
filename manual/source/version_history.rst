@@ -31,6 +31,7 @@ New Features
 General
 -------
 
+* Compatibility with Geant4 V11.
 * Optional dependency on Boost libraries (at least V1.71.0) for 4D histograms.
 
 Bug Fixes
