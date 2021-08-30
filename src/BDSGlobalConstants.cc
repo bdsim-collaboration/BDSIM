@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectoryOptions.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh"
 #include "G4Colour.hh"
@@ -39,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 #include "G4UserLimits.hh"
+#include "G4Version.hh"
 #include "G4VisAttributes.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -180,6 +182,10 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 	    {*no.second = false;}
 	}
     }
+#if G4VERSION_NUMBER > 1079
+  if (options.HasBeenSet("scintYieldFactor"))
+    {BDS::Warning("The option \"scintYieldFactor\" has no effect with Geant4 11.0 onwards");}
+#endif
 }
 
 void BDSGlobalConstants::InitialiseBeamlineTransform()

@@ -33,6 +33,7 @@ General
 
 * Compatibility with Geant4 V11.
 * Optional dependency on Boost libraries (at least V1.71.0) for 4D histograms.
+* The option :code:`scintYieldFactor` has no effect from Geant4 V11 onwards.
 
 Bug Fixes
 ---------
