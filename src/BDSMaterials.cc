@@ -581,14 +581,13 @@ void BDSMaterials::DefineScintillators()
   G4double energyGOSLanexTab[]={2.239*CLHEP::eV, 2.241*CLHEP::eV};
   G4double rindexGOSLanexTab[]={rindexGOSLanex, rindexGOSLanex};
   G4double abslenGOSLanex[]={7*CLHEP::mm, 7*CLHEP::mm};
-
-  G4double mieHgTimeConst=1.0*CLHEP::ns;
-  G4double emitspecGOSLanex[]={1.0, 1.0};
   G4double gosLanexMiehgForward=0.911;
   G4double gosLanexMiehgBackward=0.911;
   G4double gosLanexMiehgForwardRatio=0.5;
-  G4double mieScatteringLengthGOSLanex=60.3*CLHEP::um;
 #if G4VERSION_NUMBER < 1079
+  G4double mieHgTimeConst=1.0*CLHEP::ns;
+  G4double emitspecGOSLanex[]={1.0, 1.0};
+  G4double mieScatteringLengthGOSLanex=60.3*CLHEP::um;
   mptGOSLanex->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
   mptGOSLanex->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
   mptGOSLanex->AddConstProperty("YIELDRATIO", 1.0);
