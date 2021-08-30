@@ -537,7 +537,7 @@ void BDSMaterials::DefineScintillators()
   mptLanex->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
   mptLanex->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
 #if G4VERSION_NUMBER < 1079
-  mptLanex->AddProperty("MIEHG", 60.3e-3*CLHEP::mm); // interface changed in V11
+  mptLanex->AddConstProperty("MIEHG", 60.3e-3*CLHEP::mm); // interface changed in V11
   G4double emitspec[]={1.0, 1.0};
   mptLanex->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
   mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
@@ -559,7 +559,7 @@ void BDSMaterials::DefineScintillators()
   mptLanex2->AddProperty("RINDEX",energytab, rindextab, nentLanex); //Average refractive index of bulk material
   mptLanex2->AddProperty("ABSLENGTH", energytab, abslen, nentLanex);
 #if G4VERSION_NUMBER < 1079
-  mptLanex2->AddProperty("MIEHG", 60.3e-3*CLHEP::mm);
+  mptLanex2->AddConstProperty("MIEHG", 60.3e-3*CLHEP::mm);
   mptLanex2->AddProperty("FASTCOMPONENT",energytab, emitspec, nentLanex);
   mptLanex2->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
 #endif
@@ -591,7 +591,7 @@ void BDSMaterials::DefineScintillators()
   mptGOSLanex->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
   mptGOSLanex->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
   mptGOSLanex->AddConstProperty("YIELDRATIO", 1.0);
-  mptGOSLanex->AddProperty("MIEHG", mieScatteringLengthGOSLanex);
+  mptGOSLanex->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
 #endif
   mptGOSLanex->AddConstProperty("SCINTILLATIONYIELD",8.9e4/CLHEP::MeV); //Intrinisic scintilation yield of GOS
   mptGOSLanex->AddConstProperty("RESOLUTIONSCALE", 1.0);
@@ -633,7 +633,7 @@ void BDSMaterials::DefineScintillators()
   mptPETLanex->AddConstProperty("MIEHG_BACKWARD", gosLanexMiehgBackward);
   mptPETLanex->AddConstProperty("MIEHG_FORWARD_RATIO", gosLanexMiehgForwardRatio);
 #if G4VERSION_NUMBER < 1079
-  mptPETLanex->AddProperty("MIEHG", mieScatteringLengthGOSLanex);
+  mptPETLanex->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
 #endif
   mptPETLanex->AddProperty("RINDEX",energyGOSLanexTab, rindexGOSLanexTab, nentGOSLanex); //Average refractive index of bulk material
   mptPETLanex->AddProperty("ABSLENGTH", energyGOSLanexTab, abslenGOSLanex, nentGOSLanex);
@@ -658,7 +658,7 @@ void BDSMaterials::DefineScintillators()
   mptMedex->AddProperty("RINDEX",energytab, medexRindextab, nentMedex); //Average refractive index of bulk material
   mptMedex->AddProperty("ABSLENGTH", energytab, medexAbslen, nentMedex);
 #if G4VERSION_NUMBER < 1079
-  mptMedex->AddProperty("MIEHG", 230e-3*CLHEP::mm);
+  mptMedex->AddConstProperty("MIEHG", 230e-3*CLHEP::mm);
   G4double medexEmitspec[]={1.0, 1.0};
   mptMedex->AddProperty("FASTCOMPONENT",energytab, medexEmitspec, nentMedex);
   mptMedex->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
