@@ -299,7 +299,7 @@ void BDSGlobalConstants::ProcessTrajectoryELossSRange()
   std::string tok;
   while (is >> tok)
     {
-      std::size_t loc = tok.find(":",0);
+      std::size_t loc = tok.find(':',0);
       if (loc == std::string::npos)
 	{throw BDSException(__METHOD_NAME__, "Error: no ':' character found in option storeTrajectoryELossSRange \"" + options.storeTrajectoryELossSRange + "\" - invalid range.");}
       G4double rstart = 0;
