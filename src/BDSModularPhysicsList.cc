@@ -443,8 +443,6 @@ void BDSModularPhysicsList::ConfigureOptical()
   opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kMieHG), globals->TurnOnMieScattering());
   opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kBoundary), globals->TurnOnOpticalSurface());
   opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kWLS), true);
-  // this is unimplemented causing a linker error (reported) in V11 - remains to be seen if it stays
-  //opticalParameters->SetScintYieldFactor(globals->ScintYieldFactor());
   if (maxPhotonsPerStep >= 0)
     {opticalParameters->SetCerenkovMaxPhotonsPerStep(maxPhotonsPerStep);}
 #endif
