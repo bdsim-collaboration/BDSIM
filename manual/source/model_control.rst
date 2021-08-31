@@ -2813,8 +2813,10 @@ that has passed the filters above.
 |                                    | post step points. Default False.                                   |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryStepPoints (\*)     | Integer number of step points to store for each trajectory that is |
-|                                    | chosen to be stored. Should be greater than 1. Storing 1 will mean |
-|                                    | only the first creation point is stored.                           |
+|                                    | chosen to be stored. Should be greater than or equal to 1. Storing |
+|                                    | 1 will mean only the first creation point is stored. Caution, this |
+|                                    | will break any references to step index such as parentStepIndex in |
+|                                    | other trajectories. It is purely a last storage filtering step.    |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryStepPointLast (\*)  | Boolean. If true, and used in combination with the option          |
 |                                    | `storeTrajectoryStepPoints`, the end point of the trajectory is    |
