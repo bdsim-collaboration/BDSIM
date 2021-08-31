@@ -94,13 +94,17 @@ public:
   void SetOutputFaceNormal(const G4ThreeVector& output);
   /// @}
   
+  /// Optional external geometry. An instance of this class may be based on one. In this
+  /// case, the is the full object. Could be nullptr.
+  BDSGeometryExternal* ExternalGeometry() const {return externalGeometry;}
+  
 protected:
   BDSGeometryComponent* magnetContainer;
   BDSSimpleComponent* endPieceBefore;
   BDSSimpleComponent* endPieceAfter;
-
   G4ThreeVector    inputFaceNormal;
   G4ThreeVector    outputFaceNormal;
+  BDSGeometryExternal* externalGeometry;
 };
 
 #endif
