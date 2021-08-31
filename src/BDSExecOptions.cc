@@ -40,6 +40,11 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
   beam(GMAD::Beam()),
   ignoreSIGINT(false)
 {
+  if (argc == 1)
+    {// require at least 1 executable option (--file) - else print help message
+      Usage();
+      exit(0);
+    }
   Parse(argc, argv);
 
   /// after parsing the absolute path can be reconstructed
