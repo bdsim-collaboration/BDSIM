@@ -47,19 +47,19 @@ class BDSMagnetOuter: public BDSGeometryComponent
 public:
   BDSMagnetOuter(G4VSolid*             containerSolidIn,
 		 G4LogicalVolume*      containerLVIn,
-		 BDSExtent             extent,
+		 const BDSExtent&      extent,
 		 BDSGeometryComponent* magnetContainerIn,
-		 G4ThreeVector         placementOffset    = G4ThreeVector(0,0,0),
+		 const G4ThreeVector&  placementOffset    = G4ThreeVector(0,0,0),
 		 BDSSimpleComponent*   endPieceBeforeIn   = nullptr,
 		 BDSSimpleComponent*   endPieceAfterIn    = nullptr,
-		 G4ThreeVector         inputFaceNormalIn  = G4ThreeVector(0,0,-1),
-		 G4ThreeVector         outputFaceNormalIn = G4ThreeVector(0,0, 1));
+		 const G4ThreeVector&  inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+		 const G4ThreeVector&  outputFaceNormalIn = G4ThreeVector(0,0, 1));
   BDSMagnetOuter(BDSGeometryComponent* component,
 		 BDSGeometryComponent* magnetContainerIn,
 		 BDSSimpleComponent*   endPieceBeforeIn   = nullptr,
 		 BDSSimpleComponent*   endPieceAfterIn    = nullptr,
-		 G4ThreeVector         inputFaceNormalIn  = G4ThreeVector(0,0,-1),
-		 G4ThreeVector         outputFaceNormalIn = G4ThreeVector(0,0, 1));
+		 const G4ThreeVector&  inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+		 const G4ThreeVector&  outputFaceNormalIn = G4ThreeVector(0,0, 1));
   BDSMagnetOuter(BDSGeometryExternal*  external,
 		 BDSGeometryComponent* magnetContainerIn);
   virtual ~BDSMagnetOuter();
@@ -78,10 +78,10 @@ public:
   void SetEndPieceBefore(BDSSimpleComponent* endPieceIn) {endPieceBefore = endPieceIn;}
   void SetEndPieceAfter(BDSSimpleComponent* endPieceIn)  {endPieceAfter = endPieceIn;}
   
-  /// Clear the memory of the now uneeded magnet container object.
+  /// Clear the memory of the now unneeded magnet container object.
   void ClearMagnetContainer();
 
-  /// Clear the memory of the possibly uneeded end piece objects.
+  /// Clear the memory of the possibly unneeded end piece objects.
   void ClearEndPieces();
 
   /// @{ Accessor.
@@ -90,8 +90,8 @@ public:
   /// @}
 
   /// @{ Setter for face normals.
-  void SetInputFaceNormal(const G4ThreeVector input);
-  void SetOutputFaceNormal(const G4ThreeVector output);
+  void SetInputFaceNormal(const G4ThreeVector& input);
+  void SetOutputFaceNormal(const G4ThreeVector& output);
   /// @}
   
 protected:
