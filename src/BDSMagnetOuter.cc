@@ -38,7 +38,8 @@ BDSMagnetOuter::BDSMagnetOuter(G4VSolid*             containerSolidIn,
   endPieceBefore(endPieceBeforeIn),
   endPieceAfter(endPieceAfterIn),
   inputFaceNormal(inputFaceNormalIn),
-  outputFaceNormal(outputFaceNormalIn)
+  outputFaceNormal(outputFaceNormalIn),
+  externalGeometry(nullptr)
 {;}
 
 BDSMagnetOuter::BDSMagnetOuter(BDSGeometryComponent* componentIn,
@@ -52,7 +53,8 @@ BDSMagnetOuter::BDSMagnetOuter(BDSGeometryComponent* componentIn,
   endPieceBefore(endPieceBeforeIn),
   endPieceAfter(endPieceAfterIn),
   inputFaceNormal(inputFaceNormalIn),
-  outputFaceNormal(outputFaceNormalIn)
+  outputFaceNormal(outputFaceNormalIn),
+  externalGeometry(nullptr)
 {;}
 
 BDSMagnetOuter::BDSMagnetOuter(BDSGeometryExternal*  external,
@@ -62,7 +64,8 @@ BDSMagnetOuter::BDSMagnetOuter(BDSGeometryExternal*  external,
   endPieceBefore(nullptr),
   endPieceAfter(nullptr),
   inputFaceNormal(G4ThreeVector(0,0,-1)),
-  outputFaceNormal(G4ThreeVector(0,0,1))
+  outputFaceNormal(G4ThreeVector(0,0,1)),
+  externalGeometry(external)
 {;}
 
 BDSMagnetOuter::~BDSMagnetOuter()
