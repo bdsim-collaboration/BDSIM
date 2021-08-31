@@ -608,11 +608,11 @@ void BDSMaterials::DefineScintillators()
   tmpMaterial->AddMaterial(GOS, 1.0);
   G4MaterialPropertiesTable* mptGOSLanexRi1 = CreatePropertiesTable();
   G4double rindexGOSLanexRi1Tab[]={1.0, 1.0};
-#if G4VERSION_NUMBER < 1039
+#if G4VERSION_NUMBER < 1079
   mptGOSLanexRi1->AddProperty("FASTCOMPONENT",energyGOSLanexTab, emitspecGOSLanex, nentGOSLanex);
   mptGOSLanexRi1->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
   mptGOSLanexRi1->AddConstProperty("YIELDRATIO", 1.0);
-  mptGOSLanexRi1->AddProperty("MIEHG", mieScatteringLengthGOSLanex);
+  mptGOSLanexRi1->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
 #endif
   mptGOSLanexRi1->AddConstProperty("SCINTILLATIONYIELD",8.9e4/CLHEP::MeV); //Intrinisic scintilation yield of GOS
   mptGOSLanexRi1->AddConstProperty("RESOLUTIONSCALE", 1.0);
