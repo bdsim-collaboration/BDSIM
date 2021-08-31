@@ -125,7 +125,7 @@ public:
 
   /// Register another geometry component as belonging to this one. This component will
   /// then own and delete it as necessary.
-  void RegisterDaughter(BDSGeometryComponent* anotherComponent);
+  void RegisterDaughter(BDSGeometryComponent* anotherComponent) {allDaughters.insert(anotherComponent);}
   
   /// Register a solid as belonging to this geometry component, which then becomes responsible
   /// for it. Note, the container solid given in the constructor is automatically registered.
