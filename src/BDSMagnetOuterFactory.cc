@@ -133,12 +133,23 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
     {
       outer = CreateExternal(name, outerInfo, outerLength, containerLength, beamPipe);
       G4double loadedLength = outer->GetExtent().DZ();
+
       if (loadedLength > outerLength)
 	{
-	  BDS::Warning(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
-		       + "m longer than magnet of length " + std::to_string(outerLength/CLHEP::m)
-		       + "m. This may be induced by an external geometry with pole face angles. "
-		       + "You should use the option checkOverlaps=1.", false);
+          if (beamPipe->InputFaceNormal() != -beamPipe->OutputFaceNormal())
+        {
+            BDS::Warning(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
+                                          + "m longer than magnet of length " + std::to_string(outerLength/CLHEP::m)
+                                          + "m. This may be induced by an external geometry with pole face angles. "
+                                          + "You should use the option checkOverlaps=1.", false);
+        }
+          else
+        {
+            BDS::Warning(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
+                                          + "m longer than magnet of length " + std::to_string(outerLength/CLHEP::m)
+                                          + "m. ");
+        }
+
 	}
       return outer;
     }
