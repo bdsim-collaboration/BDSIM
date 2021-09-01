@@ -27,6 +27,9 @@ New Features
 * New :code:`--versionGit` executable option to get the git SHA1 code as well as the version number.
 * new :code:`--E0=number`, :code:`--Ek0=number`, and :code:`--P0=number` executable options are
   introduced to permit overriding the energy of the beam.
+* New executable option :code:`--geant4PhysicsMacroFileName` to control the physics macro from the
+  command line. Useful when BDSIM is executed from a different directory from the main GMAD input
+  file and with a relatively complex model.
   
 General
 -------
@@ -34,6 +37,9 @@ General
 * Compatibility with Geant4 V11.
 * Optional dependency on Boost libraries (at least V1.71.0) for 4D histograms.
 * The option :code:`scintYieldFactor` has no effect from Geant4 V11 onwards.
+* The executable option :code:`--geant4Macro` (for a post-visualisation macro)
+  has been renamed to :code:`--geant4MacroFileName` to be the same as the option in
+  the input GMAD file. The old one is still accepted for backwards compatibility.
 
 Bug Fixes
 ---------
