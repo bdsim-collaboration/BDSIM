@@ -182,7 +182,7 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath, bool useC
       G4String prefixPath = useCWDForPrefix ? BDS::GetCurrentDir() : BDSGlobalConstants::Instance()->BDSIMPath();
       fullPath = prefixPath;
       if (inputFilepath != "./") // don't insert a ./ in path
-        {fullPath += inputFilepath;}
+        {fullPath += "/" + inputFilepath;}
     }
   
   if (fullPath.back() != '/') // ensure ends in '/'
