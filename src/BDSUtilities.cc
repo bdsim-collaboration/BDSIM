@@ -145,7 +145,7 @@ std::string BDS::GetBDSIMExecPath()
 #endif
   std::string bdsimPath(path);
   // remove executable from path
-  std::string::size_type found = bdsimPath.rfind("/"); // find the last '/'
+  std::string::size_type found = bdsimPath.rfind('/'); // find the last '/'
   if (found != std::string::npos)
     {bdsimPath = bdsimPath.substr(0,found+1);} // the path is the bit before that, including the '/'
   return bdsimPath;
