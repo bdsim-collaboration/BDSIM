@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Data.hh"
 
-#include "RTypes.h"
+#include "Rtypes.h"
 #include "TDirectory.h"
 #include "TFile.h"
 #include "TTree.h"
