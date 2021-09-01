@@ -1325,6 +1325,13 @@ Inside this file, the following commands were used: ::
 We recommend using the visualiser and interactively exploring the commands there to find suitable ones.
 
 
+.. warning:: If this option is defined in a GMAD file that is included in another GMAD file,
+	     it may not be found if BDSIM is executed from a different directory. By default,
+	     BDSIM and Geant4 look for the macro relative to the current working directory. This
+	     may occur when executing BDSIM on a computer cluster for example with a relatively
+	     complex model with many includes. In this case, you should use the executable option
+	     :code:`--geant4PhysicsMacroFileName=<filename>` as described in :ref:`running-bdsim`.
+
 .. _physics-modular-physics-lists:
   
 Modular Physics Lists
