@@ -291,7 +291,10 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	    else if ( !strcmp(optionName, "geant4Macro") || !strcmp(optionName, "genat4MacroFileName") )
 	      {options.set_value("geant4MacroFileName", std::string(optarg));}
 	    else if ( !strcmp(optionName, "geant4PhysicsMacroFileName") )
-	      {options.set_value("geant4PhysicsMacroFileName", std::string(optarg));}
+	      {
+		options.set_value("geant4PhysicsMacroFileName", std::string(optarg));
+		options.set_value("geant4PhysicsMacroFileNameFromExecOptions", true);
+	      }
 	    else if ( !strcmp(optionName, "colours") )
 	      {
 		BDSColours::Instance()->Print();

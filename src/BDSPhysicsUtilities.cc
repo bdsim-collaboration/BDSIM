@@ -189,7 +189,8 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
   G4String physicsMacro = BDSGlobalConstants::Instance()->Geant4PhysicsMacroFileName();
   if (!physicsMacro.empty())
     {
-      G4String physicsMacroFull = BDS::GetFullPath(physicsMacro, false, true);
+      G4bool setInExecOptions = BDSGlobalConstants::Instance()->Geant4PhysicsMacroFileNameFromExecOptions();
+      G4String physicsMacroFull = BDS::GetFullPath(physicsMacro, false, setInExecOptions);
       G4cout << "Applying geant4 physics macro file: " << physicsMacroFull << G4endl;
       UIManager->ApplyCommand("/control/execute " + physicsMacroFull);
     }
