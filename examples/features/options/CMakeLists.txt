@@ -42,6 +42,7 @@ simple_testing(option-executable-printFractionEvents     "--file=sm.gmad --print
 simple_testing(option-executable-printFractionTurns      "--file=sm.gmad --printFractionTurns=-1"      "")
 simple_testing(option-executable-printPhysicsProcesses   "--file=sm.gmad --printPhysicsProcesses"      "")
 simple_testing(option-executable-generatePrimariesOnly   "--file=sm.gmad --generatePrimariesOnly"      "")
+simple_testing(option-executable-genat4PhysicsMacroFileName "--file=../processes/macros/physics-em-geant4-macro.gmad --geant4PhysicsMacroFileName=../processes/macros/emextraphysics.mac" "")
 
 # Test that original teleporter approach does not crash bdsim
 simple_testing(option-originalTeleporterMethod "--file=originalTeleporterMethod.gmad --circular" "")
