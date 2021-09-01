@@ -104,7 +104,9 @@ void BDSExecOptions::Parse(int argc, char **argv)
                                         { "Ek0", 1, 0, 0},
 					{ "vis_debug", 0, 0, 0 },
 					{ "vis_mac", 1, 0, 0 },
-					{ "geant4Macro", 1, 0, 0 },
+					{ "geant4Macro", 1, 0, 0 }, // old
+					{ "geant4MacroFileName", 1, 0, 0 },
+                                        { "geant4PhysicsMacroFileName", 1, 0, 0 },
 					{ "output", 1, 0, 0 },
 					{ "outfile", 1, 0, 0 },
 					{ "batch", 0, 0, 0 },
@@ -282,12 +284,14 @@ void BDSExecOptions::Parse(int argc, char **argv)
 		conversion = BDS::IsNumber(optarg, result);
 		beam.set_value("Ek0", result);
 	      }
-	    else if ( !strcmp(optionName , "vis_debug") )
+	    else if ( !strcmp(optionName, "vis_debug") )
 	      {options.set_value("visDebug", true);}
-	    else if ( !strcmp(optionName , "vis_mac") )
+	    else if ( !strcmp(optionName, "vis_mac") )
 	      {options.set_value("visMacroFileName",  std::string(optarg));}
-	    else if ( !strcmp(optionName , "geant4Macro") )
+	    else if ( !strcmp(optionName, "geant4Macro") || !strcmp(optionName, "genat4MacroFileName") )
 	      {options.set_value("geant4MacroFileName", std::string(optarg));}
+	    else if ( !strcmp(optionName, "geant4PhysicsMacroFileName") )
+	      {options.set_value("geant4PhysicsMacroFileName", std::string(optarg));}
 	    else if ( !strcmp(optionName, "colours") )
 	      {
 		BDSColours::Instance()->Print();
@@ -420,6 +424,8 @@ void BDSExecOptions::Usage() const
 	<<"                               by default"                                        << G4endl
 	<<"--E0=N                       : set E0 for the bunch for this run (GeV only)"      << G4endl
     	<<"--Ek0=N                      : set Ek0 for the bunch for this run (GeV only)"     << G4endl
+	<<"--geant4MacroFileName=<filename>        : macro run after visualisation"          << G4endl
+	<<"--geant4PhysicsMacroFileName=<filename> : physics macro file name"                << G4endl
 	<<"--generatePrimariesOnly      : generate N primary particle coordinates"           << G4endl
 	<<"                               without simulation then quit"                      << G4endl
 	<<"--materials                  : list materials included in bdsim by default"       << G4endl
