@@ -104,9 +104,9 @@ int main(int argc, char* argv[])
     {std::cerr << error.what(); exit(1);}
   
   // copy the model tree over if it exists - expect the name to be ModelTree
-  TTree* oldModelTree = (TTree*)f->Get("ModelTree");
+  TTree* oldModelTree = dynamic_cast<TTree*>(f->Get("ModelTree"));
   if (!oldModelTree)
-    {oldModelTree = (TTree*)f->Get("Model");}
+    {oldModelTree = dynamic_cast<TTree*>(f->Get("Model"));}
   if (oldModelTree)
     {// TChain can be valid but TTree might not be in corrupt / bad file
       output->cd();
