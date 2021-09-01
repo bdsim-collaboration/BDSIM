@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldInfo.hh"
 #include "BDSIntegratorType.hh"
 #include "BDSMagnetGeometryType.hh"
+#include "BDSGeometryExternal.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetOuterFactory.hh"
@@ -361,15 +362,19 @@ void BDSMagnet::PlaceComponents()
 		  
                   RegisterPhysicalVolume(vv);
 		}
-	      
-              // register the vacuum field to the external logical volumes registered in namedVacuumVolumes
-              if (std::find(magnetOuterInfo->namedVacuumVolumes.begin(), magnetOuterInfo->namedVacuumVolumes.end(), pv->GetLogicalVolume()->GetName().substr(name.length()+7).c_str()) != magnetOuterInfo->namedVacuumVolumes.end())
-		{
-                  BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-                                                                            pv->GetLogicalVolume(),
-                                                                            true);
-		}
 	    }
+
+        // place the vacuum field inside the GDML logical volumes defined by namedVacuumVolumes
+        BDSGeometryExternal* outerGDML = outer->ExternalGeometry();
+        std::set<G4LogicalVolume*> vacuumVols;
+
+        if (outerGDML) // the dynamic cast will only work if it's loaded as GDML//
+        {
+            vacuumVols = outerGDML->VacuumVolumes();
+            BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+                                                                      vacuumVols,
+                                                                      true);
+        }
 	}
     }
 }

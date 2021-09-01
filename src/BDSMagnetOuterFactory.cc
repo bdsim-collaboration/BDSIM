@@ -228,7 +228,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
 						      BDSMagnetOuterInfo* info,
 						      G4double          /*length*/,
-                                                      G4double            magnetContainerLength,
+						      G4double            magnetContainerLength,
 						      BDSBeamPipe*        beampipe)
 {
   std::map<G4String, G4Colour*> defaultMap = {
@@ -240,10 +240,13 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
     {"oct",  BDSColours::Instance()->GetColour("octupole")},
     {"dec",  BDSColours::Instance()->GetColour("decapole")}
   };
+
+  std::vector<G4String> &vacuumVolumeNames = info->namedVacuumVolumes;
+
   BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name,
 									    info->geometryTypeAndPath,
 									    &defaultMap,
-									    info->autoColour);
+									    info->autoColour,0 ,0, &vacuumVolumeNames);
 
   BDSExtent bpExtent = beampipe->GetExtent();
   BDSExtent magInner = geom->GetInnerExtent();

@@ -122,6 +122,18 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
   containerLogicalVolume = container->GetContainerLogicalVolume();
   containerSolid    = container->GetContainerSolid()->Clone();
   G4ThreeVector contOffset = container->GetPlacementOffset();
+
+  BDSGeometryExternal* outerGDML = outer->ExternalGeometry();
+  std::set<G4LogicalVolume*> vacuumVols;
+
+  if (outerGDML) // the dynamic cast will only work if it's loaded as GDML//
+      {
+        vacuumVols = outerGDML->VacuumVolumes();
+        BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+                                                                  vacuumVols,
+                                                                  true);
+      }
+
   
   // set the main offset of the whole magnet which is placed w.r.t. the
   // zero coordinate of the container solid
@@ -219,14 +231,6 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 	      if (vv->CheckOverlaps() && checkOverlaps)
                 {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
 	      RegisterPhysicalVolume(vv);
-            }
-	  
-	  // register the vacuum field to the external logical volumes registered in namedVacuumVolumes
-	  if (std::find(namedVacuumVolumes.begin(), namedVacuumVolumes.end(), pv->GetLogicalVolume()->GetName().substr(9).c_str()) != namedVacuumVolumes.end())
-            {
-	      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-									pv->GetLogicalVolume(),
-									true);
             }
         }
     }
