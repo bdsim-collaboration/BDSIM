@@ -50,7 +50,7 @@ bool RBDS::GetFileType(TFile*       file,
     {return false;}
 
   // load header to get which type of file it is
-  TTree* headerTree = static_cast<TTree*>(file->Get("Header"));
+  TTree* headerTree = dynamic_cast<TTree*>(file->Get("Header"));
   if (!headerTree)
     {return false;} // no header -> definitely not a bdsim file
   Header* headerLocal = new Header();
