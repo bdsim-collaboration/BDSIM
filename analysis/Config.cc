@@ -146,7 +146,7 @@ void Config::ParseInputFile()
   std::ifstream f(fn.c_str());
 
   if(!f)
-    {throw RBDSException("Config::ParseInputFile>", "could not open file");}
+    {throw RBDSException("Config::ParseInputFile>", "could not open analysis configuration file \"" + fn + "\"");}
 
   lineCounter = 0;
   std::string line;
