@@ -44,7 +44,7 @@ Config* Config::instance = nullptr;
 std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Run.", "Event."};
 
 Config::Config(const std::string& inputFilePathIn,
-	           const std::string& outputFileNameIn):
+	       const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
   InitialiseOptions("");
@@ -59,8 +59,8 @@ Config::Config(const std::string& inputFilePathIn,
 }
 
 Config::Config(const std::string& fileNameIn,
-	           const std::string& inputFilePathIn,
-	           const std::string& outputFileNameIn):
+	       const std::string& inputFilePathIn,
+	       const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
   InitialiseOptions(fileNameIn);
