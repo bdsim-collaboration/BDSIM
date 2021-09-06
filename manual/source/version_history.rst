@@ -30,6 +30,7 @@ New Features
 * New executable option :code:`--geant4PhysicsMacroFileName` to control the physics macro from the
   command line. Useful when BDSIM is executed from a different directory from the main GMAD input
   file and with a relatively complex model.
+* rebdsim will now default to "intputfilename" + "_ana.root" if no outputfile name is specified.
   
 General
 -------
