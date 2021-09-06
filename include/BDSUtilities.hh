@@ -70,10 +70,10 @@ namespace BDS
   void EnsureInLimits(G4double& value, G4double lowerLimit, G4double upperLimit);
 
   /// Checks if filename exists
-  G4bool FileExists(G4String filename);
+  G4bool FileExists(const G4String& filename);
 
   /// Check if directory exists.
-  G4bool DirectoryExists(G4String path);
+  G4bool DirectoryExists(const G4String& path);
 
   /// Get the current dir the program was executed from.
   std::string GetCurrentDir();

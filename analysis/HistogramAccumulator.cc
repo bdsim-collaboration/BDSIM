@@ -34,8 +34,6 @@ HistogramAccumulator::HistogramAccumulator():
   nDimensions(1),
   n(0),
   terminated(false),
-  resultHistName(""),
-  resultHistTitle(""),
   mean(nullptr),
   variance(nullptr),
   result(nullptr)
@@ -327,9 +325,9 @@ TH1* HistogramAccumulator::Terminate()
       {break;}
     }
   if(nDimensions==4)
-    {dynamic_cast<BDSBH4DBase*>(result)->SetEntries_BDSBH4D(n);}
+    {dynamic_cast<BDSBH4DBase*>(result)->SetEntries_BDSBH4D((double)n);}
   else
-    {result->SetEntries(n);}
+    {result->SetEntries((double)n);}
 
   return result;
 }

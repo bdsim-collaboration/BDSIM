@@ -105,8 +105,8 @@ public:
   inline void SetPlacementOffset(const G4ThreeVector& offsetIn) {placementOffset = G4ThreeVector(offsetIn);}
 
   /// @{ Set extent
-  inline void SetExtent(BDSExtent extIn)      {outerExtent = extIn;}
-  inline void SetInnerExtent(BDSExtent extIn) {innerExtent = extIn;}
+  inline void SetExtent(const BDSExtent& extIn)      {outerExtent = extIn;}
+  inline void SetInnerExtent(const BDSExtent& extIn) {innerExtent = extIn;}
   /// @}
   
   /// Get the extent of the object in the positive direction in all dimensions
@@ -121,11 +121,11 @@ public:
   /// Update the extents of this object with those of another object
   /// whilst accounting for any offset.
   void InheritExtents(BDSGeometryComponent const * const anotherComponent,
-		      const G4ThreeVector &offset);
+		      const G4ThreeVector& offset);
 
   /// Register another geometry component as belonging to this one. This component will
   /// then own and delete it as necessary.
-  void RegisterDaughter(BDSGeometryComponent* anotherComponent);
+  void RegisterDaughter(BDSGeometryComponent* anotherComponent) {allDaughters.insert(anotherComponent);}
   
   /// Register a solid as belonging to this geometry component, which then becomes responsible
   /// for it. Note, the container solid given in the constructor is automatically registered.
