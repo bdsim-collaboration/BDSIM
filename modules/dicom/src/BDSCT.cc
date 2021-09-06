@@ -45,13 +45,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 BDSCT::BDSCT(const G4String& nameIn,
-             const G4String& dataFilePath):
+             const G4String& dataFilePath,
+             const G4String& dataFileName):
   BDSAcceleratorComponent(nameIn, 1, 0, "ct"),
-  dicomDataPath(dataFilePath)
+  dicomDataPath(dataFilePath),
+  dicomDataFile(dataFileName)
 {
     //--- As soon as the object is constructed, we retrieve data from the CT files
     theFileMgr = BDSDicomFileMgr::GetInstance();
-    theFileMgr->Convert(dicomDataPath, "data.dat");
+    theFileMgr->Convert(dicomDataPath, dicomDataFile);
     new BDSDicomIntersectVolume();
 }
 

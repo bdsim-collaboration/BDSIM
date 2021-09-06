@@ -57,7 +57,8 @@ class BDSCT: public BDSAcceleratorComponent
 {
 public:
   BDSCT(const G4String& nameIn,
-	const G4String& dataFileName);
+	const G4String& dicomDataPath,
+  const G4String& dicomDataFile);
   
   virtual ~BDSCT();
   
@@ -156,6 +157,7 @@ private:
   BDSDicomFileMgr* theFileMgr;
   
   G4String dicomDataPath;
+  G4String dicomDataFile;
 };
 
 #endif

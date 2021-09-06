@@ -152,6 +152,7 @@ Parameters::Parameters()
 
   setMap["geometryFile"]   = false;
   setMap["dicomDataPath"]  = false;
+  setMap["dicomDataFile"]  = false;
   setMap["autoColour"]     = false;
   setMap["material"]       = false;
   setMap["namedVacuumVolumes"] = false;

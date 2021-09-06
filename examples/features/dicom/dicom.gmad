@@ -1,4 +1,4 @@
-DICOM: ct, l=1*m, dicomDataPath="./";
+DICOM: ct, l=1*m, dicomDataPath="./", dicomDataFile="data.dat";
 
 l1: line = (DICOM);
 use,period=l1;

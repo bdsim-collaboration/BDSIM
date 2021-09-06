@@ -213,6 +213,7 @@ namespace GMAD
     std::string cavityModel; ///< model for rf cavities
 
     std::string dicomDataPath; ///< for CT, file for DICOM construction data
+    std::string dicomDataFile; ///< for CT, file for DICOM construction data
 
     /// Override colour for certain items
     std::string colour;
