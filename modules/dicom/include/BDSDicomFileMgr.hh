@@ -51,6 +51,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "BDSDicomFileStructure.hh"
 #include "BDSDicomFilePlan.hh"
+#include "G4PhysicsOrderedFreeVector.hh"
+#include "G4PhysicsVector.hh"
 
 #include "dcmtk/dcmdata/dcfilefo.h"
 class BDSDicomVFile;
@@ -85,7 +87,7 @@ public:
     void CheckNColumns(std::vector<G4String> wl, size_t vsizeTh );
     void ProcessFiles();
     void CheckCTSlices();
-    G4double Hounsfield2density(Uint32 Hval);
+    G4double Hounsfield2density(G4double Hval);
     size_t GetMaterialIndex( G4double Hval );
     size_t GetMaterialIndexByDensity( G4double density );
     void BuildCTMaterials();
@@ -129,6 +131,8 @@ private:
     std::map<G4double,G4String> theMaterials;
     std::map<G4double,G4String> theMaterialsDensity;
     std::map<G4int,G4double> theCT2Density;
+
+    G4PhysicsOrderedFreeVector* results;
 
     BDSDicomFileCT* theCTFileAll;
     G4int theStructureNCheck;

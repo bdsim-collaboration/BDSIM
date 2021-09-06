@@ -59,8 +59,7 @@ public:
     static G4String defaultColorFile;
 
 public:  // with description
-    BDSDicomPhantomParameterisationColour(G4String colorFile =
-    defaultColorFile);
+    BDSDicomPhantomParameterisationColour(G4String colorFile = defaultColorFile);
     virtual ~BDSDicomPhantomParameterisationColour();
 
     virtual G4Material* ComputeMaterial(const G4int repNo,

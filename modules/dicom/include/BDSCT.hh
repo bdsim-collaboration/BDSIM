@@ -42,11 +42,15 @@ class G4VPhysicalVolume;
  * @author Nathan Farber
  */
 
+//--- New data structure containing informations about a material
 struct matInfo
 {
-  G4double fSumdens;
-  G4int fNvoxels;
-  G4int fId;
+    // The sum of all densities of all the voxels containing this material
+    G4double fSumdens;
+    // The number of voxels that contain this material
+    G4int fNvoxels;
+    // This ID assoiated with thi material
+    G4int fId;
 };
 
 class BDSCT: public BDSAcceleratorComponent

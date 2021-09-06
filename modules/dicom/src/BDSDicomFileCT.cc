@@ -33,6 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "dcmtk/dcmdata/dcpixseq.h"
 #include "dcmtk/dcmrt/drtimage.h"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <cmath>
 #include <limits>
 #include <set>
@@ -350,7 +352,7 @@ void BDSDicomFileCT::BuildMaterials()
     }
   
   //  if( DicomVerb(debugVerb) ) G4cout << " BuildMaterials " << fFileName << G4endl;
-  double meanHV = 0.;
+  G4double meanHV = 0.;
   for( int ir = 0; ir < fNoVoxelY; ir += fCompress )
     {
       for( int ic = 0; ic < fNoVoxelX; ic += fCompress )
@@ -368,14 +370,20 @@ void BDSDicomFileCT::BuildMaterials()
 	    }
 	  meanHV /= (isumrMax-ir)*(isumcMax-ic);
 	  G4double meanDens = theFileMgr->Hounsfield2density(meanHV);
-	  //      G4cout << ir << " " << ic << " FINAL mean " << meanDens << G4endl;
-	  
+
 	  fDensities.push_back(meanDens);
 	  size_t mateID;
 	  if( theFileMgr->IsMaterialsDensity() )
-	    {mateID = theFileMgr->GetMaterialIndexByDensity(meanDens);}
+	    {
+	      // If keyword "MATE_DENS" was used in data.dat
+	      mateID = theFileMgr->GetMaterialIndexByDensity(meanDens);
+	    }
 	  else
-	    {mateID = theFileMgr->GetMaterialIndex(meanHV);}
+	    {
+	      // If keyword "MATE" was used in data.dat
+	      mateID = theFileMgr->GetMaterialIndex(meanHV);
+	      //if (ir < 20) std::cout << "(" << ic << ", " << ir << ") " << "Material ID = " << mateID << G4endl;
+	    }
 	  fMateIDs.push_back(mateID);
         }
     }

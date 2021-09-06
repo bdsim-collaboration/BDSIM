@@ -50,6 +50,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "dcmtk/dcmdata/dcdeftag.h"
 #include "G4tgrFileIn.hh"
 #include "G4UIcommand.hh"
+#include "G4PhysicsOrderedFreeVector.hh"
+#include "G4PhysicsVector.hh"
 
 BDSDicomFileMgr* BDSDicomFileMgr::theInstance = nullptr;
 int BDSDicomFileMgr::verbose = 1;
@@ -74,8 +76,12 @@ void BDSDicomFileMgr::Convert(G4String filePath, G4String fileName)
 {
     G4tgrFileIn fin = G4tgrFileIn::GetInstance(filePath + fileName);
     std::vector<G4String> wl;
+
+    std::vector<G4double> hUnits;
+    std::vector<G4double> dens;
+
     // Read each file in file list
-    theFileOutName = "test.g4dcm";
+    theFileOutName = "default.g4dcm";
     int ii;
     for( ii = 0;; ii++) {
         if( ! fin.GetWordsInLine(wl) ) break;
@@ -97,7 +103,9 @@ void BDSDicomFileMgr::Convert(G4String filePath, G4String fileName)
             AddMaterial(wl);
         } else if( wl[0] == ":CT2D" ) {
             CheckNColumns(wl,3);
-            AddCT2Density(wl);
+            //AddCT2Density(wl);
+            hUnits.push_back(G4UIcommand::ConvertToDouble(wl[1]));
+            dens.push_back(G4UIcommand::ConvertToDouble(wl[2]));
         } else {
             G4Exception("DICOM2G4",
                         "Wrong argument",
@@ -106,6 +114,9 @@ void BDSDicomFileMgr::Convert(G4String filePath, G4String fileName)
         }
 
     }
+
+    results = new G4PhysicsOrderedFreeVector(&hUnits[0], &dens[0], hUnits.size());
+
     //@@@@@@ Process files
     ProcessFiles();
 }
@@ -188,7 +199,9 @@ void BDSDicomFileMgr::AddMaterial( std::vector<G4String> wl )
                     "Trying to add a Material with :MATE and another with :MATE_DENS, check your input file");
     }
     bMaterialsDensity = false;
-    theMaterials[G4UIcommand::ConvertToDouble(wl[2])] = wl[1];
+    // Material (G4string) is associated with Hounsfield value (double???)
+    double inter = G4UIcommand::ConvertToDouble(wl[2]);
+    theMaterials[inter] = wl[1];
 }
 
 void BDSDicomFileMgr::AddMaterialDensity( std::vector<G4String> wl )
@@ -210,9 +223,9 @@ void BDSDicomFileMgr::AddCT2Density( std::vector<G4String> wl)
 
 }
 
-G4double BDSDicomFileMgr::Hounsfield2density(Uint32 Hval)
+G4double BDSDicomFileMgr::Hounsfield2density(G4double Hval)
 {
-    if( theCT2Density.size() == 0 ) {
+    /*if( theCT2Density.size() == 0 ) {
         G4Exception("Hounsfield2density",
                     "DCM004",
                     FatalException,
@@ -238,7 +251,7 @@ G4double BDSDicomFileMgr::Hounsfield2density(Uint32 Hval)
                      + std::to_string(maxHval)).c_str());
     }
 
-    G4float density = -1.;
+    G4double density = -1.;
     G4double deltaCT = 0;
     G4double deltaDensity = 0;
 
@@ -259,8 +272,13 @@ G4double BDSDicomFileMgr::Hounsfield2density(Uint32 Hval)
                              + std::to_string(Hval)).c_str());
     }
 
-    //  G4cout << " Hval2density " << Hval << " -> " << density << G4endl;//GDEB
-    return density;
+    G4cout << " Hval2density " << Hval << " -> " << density << G4endl;//GDEB
+    */
+    G4double densit = results ? results->Value(Hval) : 1.0;
+    // G4cout << " Hval2density " << Hval << " -> " << densit << G4endl;//GDEB
+
+    return densit;
+    // return density;
 
 }
 
@@ -272,7 +290,7 @@ size_t BDSDicomFileMgr::GetMaterialIndex( G4double Hval)
         G4Exception("DicomFileMgr::GetMaterialIndex",
                     "DFM004",
                     FatalException,
-                    ("Hounsfiled value too big, change input file "+std::to_string(Hval) + " > "
+                    ("Hounsfield value too big, change input file " + std::to_string(Hval) + " > "
                      + std::to_string((*ite).first)).c_str());
     }
 
