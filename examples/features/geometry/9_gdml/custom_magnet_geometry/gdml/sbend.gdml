@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define/>
+	<materials/>
+	<solids>
+		<box name="ws_1" x="199.1" y="199.1" z="995.5" lunit="mm"/>
+		<box name="all_box" x="170.1" y="170.1" z="996.0" lunit="mm"/>
+		<box name="inner_box" x="160.1" y="160.1" z="996.0" lunit="mm"/>
+		<subtraction name="box">
+			<first ref="all_box"/>
+			<second ref="inner_box"/>
+		</subtraction>
+		<tube name="all_pipe" rmin="0" rmax="25" z="996.0" startphi="0" deltaphi="6.283185307179586" lunit="mm" aunit="rad"/>
+		<tube name="inner_pipe" rmin="0" rmax="20" z="996.0" startphi="0" deltaphi="6.283185307179586" lunit="mm" aunit="rad"/>
+		<subtraction name="pipe">
+			<first ref="all_pipe"/>
+			<second ref="inner_pipe"/>
+		</subtraction>
+	</solids>
+	<structure>
+		<volume name="box_l">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="box"/>
+		</volume>
+		<volume name="pipe_l">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="pipe"/>
+		</volume>
+		<volume name="inner_pipe_l">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="inner_pipe"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws_1"/>
+			<physvol name="box_p">
+				<volumeref ref="box_l"/>
+			</physvol>
+			<physvol name="pipe_p">
+				<volumeref ref="pipe_l"/>
+				<position name="pipe_p_pos" x="-30.000000000000000" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+			<physvol name="inner_pipe_p">
+				<volumeref ref="inner_pipe_l"/>
+				<position name="inner_pipe_p_pos" x="-30.000000000000000" y="0.000000000000000" z="0.000000000000000" unit="mm"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>
