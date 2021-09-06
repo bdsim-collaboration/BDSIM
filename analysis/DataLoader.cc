@@ -162,9 +162,10 @@ void DataLoader::BuildInputFileList(std::string inputPath)
 	{fileNames.push_back(fn);} // don't check if header -> old files don't have this
       else if (RBDS::IsBDSIMOutputFile(fn, fileDataVersion))
 	{
-	  std::cout << "Loading> \"" << fn << "\" : data version " << *fileDataVersion << std::endl;
+	  int value = fileDataVersion ? *fileDataVersion : -1;
+	  std::cout << "Loading> \"" << fn << "\" : data version " << value << std::endl;
 	  fileNames.push_back(fn);
-	  dataVersion = std::min(dataVersion, *fileDataVersion);
+	  dataVersion = fileDataVersion ? std::min(dataVersion, *fileDataVersion) : dataVersion;
 	}
       else
 	{std::cout << fn << " is not a BDSIM output file - skipping!" << std::endl;}
