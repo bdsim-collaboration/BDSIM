@@ -201,6 +201,7 @@ void Element::PublishMembers()
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
   publish("dicomDataPath",&Element::dicomDataPath);
+  publish("dicomDataFile",&Element::dicomDataFile);
   publish("autoColour",          &Element::autoColour);
   publish("namedVacuumVolumes",  &Element::namedVacuumVolumes);
   publish("markAsCollimator",    &Element::markAsCollimator);
@@ -321,6 +322,7 @@ void Element::print(int ident)const{
     case ElementType::_CT:
       {
 	std::cout << "dicomDataPath: " << dicomDataPath << std::endl;
+  std::cout << "dicomDataFile: " << dicomDataFile << std::endl;
 	break;
       }
     case ElementType::_AWAKESCREEN:
@@ -535,6 +537,7 @@ void Element::flush()
 
   geometryFile = "";
   dicomDataPath = "";
+  dicomDataFile = "data.dat";
   autoColour   = true;
   material="";
   namedVacuumVolumes = "";
