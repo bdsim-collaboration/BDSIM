@@ -105,13 +105,9 @@ void BDSDicomPhantomParameterisationColour::ReadColourData(G4String colourFile)
 
 }
 
-G4Material* BDSDicomPhantomParameterisationColour::
-ComputeMaterial(const G4int copyNo, G4VPhysicalVolume * physVol,
-                const G4VTouchable *)
+G4Material* BDSDicomPhantomParameterisationColour::ComputeMaterial(const G4int copyNo, G4VPhysicalVolume * physVol, const G4VTouchable *)
 {
-    G4Material* mate = G4PhantomParameterisation::ComputeMaterial(
-            copyNo, physVol, nullptr);
-
+    G4Material* mate = G4PhantomParameterisation::ComputeMaterial(copyNo, physVol, nullptr);
     if(G4VVisManager::GetConcreteInstance() && physVol)
     {
         G4String mateName = mate->GetName();
@@ -129,8 +125,7 @@ ComputeMaterial(const G4int copyNo, G4VPhysicalVolume * physVol,
             {
                 G4String mat_color = itr.first;
                 auto len = mat_color.length();
-                if(mateName.find(mat_color) == 0 &&
-                   mateName.length() > len && mateName[len] == '_')
+                if(mateName.find(mat_color) == 0 && mateName.length() > len && mateName[len] == '_')
                 {
                     physVol->GetLogicalVolume()->SetVisAttributes(
                             fColours.find(mat_color)->second);
