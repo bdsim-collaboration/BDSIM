@@ -50,20 +50,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDicomROI.hh"
 class DcmDataSet;
 
-class BDSDicomFileStructure: public BDSDicomVFile
+class BDSDicomFileStructure : public BDSDicomVFile
 {
 public:
-    BDSDicomFileStructure(DcmDataset* dset);
+    BDSDicomFileStructure(DcmDataset *dset);
     virtual ~BDSDicomFileStructure(){};
 
 public:
-    std::vector<BDSDicomROI*> GetROIs() const {
+    std::vector<BDSDicomROI *> GetROIs() const
+    {
         return theROIs;
     }
     virtual void ReadData();
 
 private:
-    std::vector<BDSDicomROI*> theROIs;
+    std::vector<BDSDicomROI *> theROIs;
 };
 
 #endif

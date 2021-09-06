@@ -49,22 +49,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDicomVFile.hh"
 class DcmDataSet;
 
-class BDSDicomFilePlan: public BDSDicomVFile
+class BDSDicomFilePlan : public BDSDicomVFile
 {
 public:
-    BDSDicomFilePlan(DcmDataset* dset);
+    BDSDicomFilePlan(DcmDataset *dset);
     virtual ~BDSDicomFilePlan(){};
-    
+
     virtual void ReadData();
     void CheckData0(OFString title, Sint32 val);
 
-    void DumpToFile();
-
-    void SetControlPointMetersets();
+    void DumpToFile(){};
 
 private:
-    //std::vector<DicomBeam*> theBeams;
-    //Sint32 theNumberOfBeams;
 };
 
 #endif

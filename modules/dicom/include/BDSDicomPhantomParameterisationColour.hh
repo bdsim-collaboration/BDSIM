@@ -51,30 +51,30 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PhantomParameterisation.hh"
 class G4VisAttributes;
 
-class BDSDicomPhantomParameterisationColour: public G4PhantomParameterisation
+class BDSDicomPhantomParameterisationColour : public G4PhantomParameterisation
 {
 public:
-    typedef std::map<G4String,G4VisAttributes*> ColourMap_t;
+    typedef std::map<G4String, G4VisAttributes *> ColourMap_t;
 
     static G4String defaultColorFile;
 
-public:  // with description
+public: // with description
     BDSDicomPhantomParameterisationColour(G4String colorFile = defaultColorFile);
     virtual ~BDSDicomPhantomParameterisationColour();
 
-    virtual G4Material* ComputeMaterial(const G4int repNo,
+    virtual G4Material *ComputeMaterial(const G4int repNo,
                                         G4VPhysicalVolume *currentVol,
-                                        const G4VTouchable *parentTouch=0);
+                                        const G4VTouchable *parentTouch = 0);
 
-    const ColourMap_t& GetColourMap() const { return fColours; }
-    ColourMap_t& GetColourMap() { return fColours; }
+    const ColourMap_t &GetColourMap() const { return fColours; }
+    ColourMap_t &GetColourMap() { return fColours; }
 
 private:
     void ReadColourData(G4String colourFile);
 
 private:
     ColourMap_t fColours;
-    std::map<G4int, G4VisAttributes*> mColours;
+    std::map<G4int, G4VisAttributes *> mColours;
 };
 
 #endif

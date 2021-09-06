@@ -58,27 +58,32 @@ public:
     ~BDSDicomROIContour(){};
 
 public:
-    void AddImageIUID( OFString ima ) {
+    void AddImageIUID(OFString ima)
+    {
         theImageIUIDs.push_back(ima);
     }
-    OFString GetGeomType() const {
+    OFString GetGeomType() const
+    {
         return theGeomType;
     }
-    void SetGeomType( OFString gt ) {
+    void SetGeomType(OFString gt)
+    {
         theGeomType = gt;
     }
-    std::vector<G4ThreeVector> GetPoints() const {
+    std::vector<G4ThreeVector> GetPoints() const
+    {
         return thePoints;
     }
-    std::vector<G4ThreeVector> GetDirections() {
+    std::vector<G4ThreeVector> GetDirections()
+    {
         return theDirections;
     }
     G4double GetZ();
-    void SetData( std::vector<G4ThreeVector> data );
+    void SetData(std::vector<G4ThreeVector> data);
 
-    void AddPoints( std::vector<G4ThreeVector> points );
+    void AddPoints(std::vector<G4ThreeVector> points);
 
-    void Print(std::ostream& out);
+    void Print(std::ostream &out);
 
 private:
     std::vector<OFString> theImageIUIDs;
@@ -86,7 +91,6 @@ private:
     OFString theGeomType;
     std::vector<G4ThreeVector> thePoints;
     std::vector<G4ThreeVector> theDirections;
-
 };
 
 #endif

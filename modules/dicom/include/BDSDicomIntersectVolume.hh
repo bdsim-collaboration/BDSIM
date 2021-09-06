@@ -61,37 +61,36 @@ class G4VSolid;
 
 /// Manages intersections of DICOM files with volumes
 
-class BDSDicomIntersectVolume: public G4UImessenger
+class BDSDicomIntersectVolume : public G4UImessenger
 {
 public:
     BDSDicomIntersectVolume();
     ~BDSDicomIntersectVolume();
 
-    virtual void SetNewValue(G4UIcommand * command,
+    virtual void SetNewValue(G4UIcommand *command,
                              G4String newValues);
 
 private:
-
-    void BuildUserSolid( std::vector<G4String> params );
-    void BuildG4Solid( std::vector<G4String> params );
-    G4PhantomParameterisation* GetPhantomParam(G4bool bMustExist);
-    G4bool IsPhantomVolume( G4VPhysicalVolume* pv );
-    std::vector<G4VPhysicalVolume*> GetPhysicalVolumes( const G4String& name,
-                                                        G4bool exists, G4int nVols );
-    std::vector<G4LogicalVolume*> GetLogicalVolumes( const G4String& name,
-                                                     G4bool exists, G4int nVols );
-    std::vector<G4String> GetWordsInString( const G4String& stemp);
+    void BuildUserSolid(std::vector<G4String> params);
+    void BuildG4Solid(std::vector<G4String> params);
+    G4PhantomParameterisation *GetPhantomParam(G4bool bMustExist);
+    G4bool IsPhantomVolume(G4VPhysicalVolume *pv);
+    std::vector<G4VPhysicalVolume *> GetPhysicalVolumes(const G4String &name,
+                                                        G4bool exists, G4int nVols);
+    std::vector<G4LogicalVolume *> GetLogicalVolumes(const G4String &name,
+                                                     G4bool exists, G4int nVols);
+    std::vector<G4String> GetWordsInString(const G4String &stemp);
 
 private:
-    G4UIcmdWithAString* fUserVolumeCmd;
-    G4UIcmdWithAString* fG4VolumeCmd;
+    G4UIcmdWithAString *fUserVolumeCmd;
+    G4UIcmdWithAString *fG4VolumeCmd;
 
-    G4VSolid* fSolid;
+    G4VSolid *fSolid;
 
     std::ofstream fout;
 
     G4ThreeVector fPhantomMinusCorner;
 
-    G4bool* fVoxelIsInside;
+    G4bool *fVoxelIsInside;
 };
 #endif

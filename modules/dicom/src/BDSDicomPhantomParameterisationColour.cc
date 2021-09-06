@@ -67,21 +67,22 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4VVisManager.hh"
 
-BDSDicomPhantomParameterisationColour::BDSDicomPhantomParameterisationColour(G4String colourFile):
-  G4PhantomParameterisation()
+BDSDicomPhantomParameterisationColour::BDSDicomPhantomParameterisationColour(G4String colourFile) : G4PhantomParameterisation()
 {
-  ReadColourData(colourFile);
-  SetSkipEqualMaterials(false);
+    ReadColourData(colourFile);
+    SetSkipEqualMaterials(false);
 }
 
 BDSDicomPhantomParameterisationColour::~BDSDicomPhantomParameterisationColour()
-{;}
+{
+    ;
+}
 
 void BDSDicomPhantomParameterisationColour::ReadColourData(G4String colourFile)
 {
     //----- Add a G4VisAttributes for materials not defined in file;
-    G4VisAttributes* blankAtt = new G4VisAttributes;
-    blankAtt->SetVisibility( FALSE );
+    G4VisAttributes *blankAtt = new G4VisAttributes;
+    blankAtt->SetVisibility(FALSE);
     fColours["Default"] = blankAtt;
 
     //----- Read file
@@ -90,63 +91,62 @@ void BDSDicomPhantomParameterisationColour::ReadColourData(G4String colourFile)
     G4String mateName;
     G4double cred, cgreen, cblue, copacity;
     fin >> nMate;
-    for( G4int ii = 0; ii < nMate; ii++ )
+    for (G4int ii = 0; ii < nMate; ii++)
     {
         fin >> mateName;
-        if(fin.eof())
+        if (fin.eof())
             break;
         fin >> cred >> cgreen >> cblue >> copacity;
-        G4Colour colour( cred, cgreen, cblue, copacity );
-        G4VisAttributes* visAtt = new G4VisAttributes( colour );
+        G4Colour colour(cred, cgreen, cblue, copacity);
+        G4VisAttributes *visAtt = new G4VisAttributes(colour);
         visAtt->SetVisibility(true);
         fColours[mateName] = visAtt;
         mColours[ii] = new G4VisAttributes(*visAtt);
     }
-
 }
 
-G4Material* BDSDicomPhantomParameterisationColour::ComputeMaterial(const G4int copyNo, G4VPhysicalVolume * physVol, const G4VTouchable *)
+G4Material *BDSDicomPhantomParameterisationColour::ComputeMaterial(const G4int copyNo, G4VPhysicalVolume *physVol, const G4VTouchable *)
 {
-    G4Material* mate = G4PhantomParameterisation::ComputeMaterial(copyNo, physVol, nullptr);
-    if(G4VVisManager::GetConcreteInstance() && physVol)
+    G4Material *mate = G4PhantomParameterisation::ComputeMaterial(copyNo, physVol, nullptr);
+    if (G4VVisManager::GetConcreteInstance() && physVol)
     {
         G4String mateName = mate->GetName();
         std::string::size_type iuu = mateName.find("__");
-        if( iuu != std::string::npos )
-            mateName = mateName.substr( 0, iuu );
+        if (iuu != std::string::npos)
+            mateName = mateName.substr(0, iuu);
 
-        if(0 < fColours.count(mateName))
+        if (0 < fColours.count(mateName))
             physVol->GetLogicalVolume()->SetVisAttributes(
-                    fColours.find(mateName)->second);
+                fColours.find(mateName)->second);
         else
         {
             bool found = false;
-            for(const auto& itr : fColours)
+            for (const auto &itr : fColours)
             {
                 G4String mat_color = itr.first;
                 auto len = mat_color.length();
-                if(mateName.find(mat_color) == 0 && mateName.length() > len && mateName[len] == '_')
+                if (mateName.find(mat_color) == 0 && mateName.length() > len && mateName[len] == '_')
                 {
                     physVol->GetLogicalVolume()->SetVisAttributes(
-                            fColours.find(mat_color)->second);
+                        fColours.find(mat_color)->second);
                     found = true;
                 }
-                if(found)
+                if (found)
                     break;
             }
-            if(!found)
+            if (!found)
             {
                 G4int matIndex = G4int(GetMaterialIndex(copyNo));
                 static uintmax_t n = 0;
-                if(n++ < 100)
+                if (n++ < 100)
                     G4cout << "Unknown material name " << mateName
                            << " for index " << matIndex << G4endl;
-                if(mColours.find(matIndex) != mColours.end())
+                if (mColours.find(matIndex) != mColours.end())
                     physVol->GetLogicalVolume()->SetVisAttributes(
-                            mColours.find(matIndex)->second);
+                        mColours.find(matIndex)->second);
                 else
                     physVol->GetLogicalVolume()->SetVisAttributes(
-                            fColours.begin()->second);
+                        fColours.begin()->second);
             }
         }
     }

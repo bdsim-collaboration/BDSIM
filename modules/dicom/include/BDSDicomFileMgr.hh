@@ -59,61 +59,76 @@ class BDSDicomVFile;
 class BDSDicomFileCT;
 
 //typedef std::multimap<OFString,DicomVFile*> msd;
-typedef std::map<G4double,BDSDicomFileCT*> mdct;
-enum VerbLevel {silentVerb = -1, errorVerb = 0, warningVerb = 1, infoVerb=2, debugVerb=3,
-    testVerb=4};
+typedef std::map<G4double, BDSDicomFileCT *> mdct;
+enum VerbLevel
+{
+    silentVerb = -1,
+    errorVerb = 0,
+    warningVerb = 1,
+    infoVerb = 2,
+    debugVerb = 3,
+    testVerb = 4
+};
 
 class BDSDicomFileMgr
 {
 public:
-    static BDSDicomFileMgr* GetInstance();
+    static BDSDicomFileMgr *GetInstance();
     ~BDSDicomFileMgr(){};
 
 private:
     BDSDicomFileMgr();
 
 public:
-    std::vector<BDSDicomFileStructure*> GetStructFiles() const {
+    std::vector<BDSDicomFileStructure *> GetStructFiles() const
+    {
         return theStructFiles;
     }
 
-    void SetCompression( G4String fComp );
-    void AddFile( G4String fComp );
-    void AddMaterial( std::vector<G4String> data );
-    void AddMaterialDensity( std::vector<G4String> data );
-    void AddCT2Density( std::vector<G4String> data );
+    void SetCompression(G4String fComp);
+    void AddFile(G4String fComp);
+    void AddMaterial(std::vector<G4String> data);
+    void AddMaterialDensity(std::vector<G4String> data);
+    void AddCT2Density(std::vector<G4String> data);
 
     void Convert(G4String filePath, G4String fFileName);
-    void CheckNColumns(std::vector<G4String> wl, size_t vsizeTh );
+    void CheckNColumns(std::vector<G4String> wl, size_t vsizeTh);
     void ProcessFiles();
     void CheckCTSlices();
     G4double Hounsfield2density(G4double Hval);
-    size_t GetMaterialIndex( G4double Hval );
-    size_t GetMaterialIndexByDensity( G4double density );
+    size_t GetMaterialIndex(G4double Hval);
+    size_t GetMaterialIndexByDensity(G4double density);
     void BuildCTMaterials();
     void MergeCTFiles();
     void DumpToTextFile();
-    void SetStructureNCheck( G4int nsc ){
+    void SetStructureNCheck(G4int nsc)
+    {
         theStructureNCheck = nsc;
     }
-    G4int GetStructureNCheck() const {
+    G4int GetStructureNCheck() const
+    {
         return theStructureNCheck;
     }
-    void SetStructureNMaxROI( G4int nsc ){
+    void SetStructureNMaxROI(G4int nsc)
+    {
         theStructureNMaxROI = nsc;
     }
-    G4int GetStructureNMaxROI() const {
+    G4int GetStructureNMaxROI() const
+    {
         return theStructureNMaxROI;
     }
-    G4int GetCompression() const {
+    G4int GetCompression() const
+    {
         return fCompression;
     }
-    G4String GetFileOutName() const {
+    G4String GetFileOutName() const
+    {
         return theFileOutName;
     }
 
     void SetControlPointMetersets();
-    G4bool IsMaterialsDensity() const {
+    G4bool IsMaterialsDensity() const
+    {
         return bMaterialsDensity;
     }
 
@@ -121,20 +136,20 @@ protected:
     G4int fCompression;
 
 private:
-    static BDSDicomFileMgr* theInstance;
+    static BDSDicomFileMgr *theInstance;
 
     G4String theFileOutName;
     //  msd theFiles;
     mdct theCTFiles;
-    std::vector<BDSDicomFileStructure*> theStructFiles;
-    std::vector<BDSDicomFilePlan*> thePlanFiles;
-    std::map<G4double,G4String> theMaterials;
-    std::map<G4double,G4String> theMaterialsDensity;
-    std::map<G4int,G4double> theCT2Density;
+    std::vector<BDSDicomFileStructure *> theStructFiles;
+    std::vector<BDSDicomFilePlan *> thePlanFiles;
+    std::map<G4double, G4String> theMaterials;
+    std::map<G4double, G4String> theMaterialsDensity;
+    std::map<G4int, G4double> theCT2Density;
 
-    G4PhysicsOrderedFreeVector* results;
+    G4PhysicsOrderedFreeVector *results;
 
-    BDSDicomFileCT* theCTFileAll;
+    BDSDicomFileCT *theCTFileAll;
     G4int theStructureNCheck;
     G4int theStructureNMaxROI;
 
