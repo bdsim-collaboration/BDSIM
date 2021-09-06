@@ -59,15 +59,18 @@ public:
     ~BDSDicomROI(){};
 
 public:
-    void AddContour( BDSDicomROIContour* );
-    std::vector<BDSDicomROIContour*> GetContours() const {
+    void AddContour(BDSDicomROIContour *);
+    std::vector<BDSDicomROIContour *> GetContours() const
+    {
         return theContours;
     }
-    void Print(std::ostream& out);
-    int GetNumber() const {
+    void Print(std::ostream &out);
+    int GetNumber() const
+    {
         return theNumber;
     }
-    OFString GetName() const {
+    OFString GetName() const
+    {
         return theName;
     }
 
@@ -75,8 +78,7 @@ private:
     int theNumber;
     OFString theName;
 
-    std::vector<BDSDicomROIContour*> theContours;
-
+    std::vector<BDSDicomROIContour *> theContours;
 };
 
 #endif

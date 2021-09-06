@@ -53,23 +53,26 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "dcmtk/dcmdata/dcpxitem.h"
 #include "dcmtk/dcmdata/dcpixseq.h"
 #include "dcmtk/dcmrt/drtstrct.h"
-#include "dcmtk/dcmrt/seq/drtrfors.h"  // for ReferencedFrameOfReferenceSequence
-#include "dcmtk/dcmrt/seq/drtssrs.h"   // for StructureSetROISequence
-#include "dcmtk/dcmrt/seq/drtrcs.h"      // for ROIContourSequence
-#include "dcmtk/dcmrt/seq/drtcs.h"      // for ContourSequence
-#include "dcmtk/dcmrt/seq/drtcis.h"      // for ContourImageSequence
-#include "dcmtk/config/osconfig.h"   // make sure OS specific configuration is included
+#include "dcmtk/dcmrt/seq/drtrfors.h" // for ReferencedFrameOfReferenceSequence
+#include "dcmtk/dcmrt/seq/drtssrs.h"  // for StructureSetROISequence
+#include "dcmtk/dcmrt/seq/drtrcs.h"   // for ROIContourSequence
+#include "dcmtk/dcmrt/seq/drtcs.h"    // for ContourSequence
+#include "dcmtk/dcmrt/seq/drtcis.h"   // for ContourImageSequence
+#include "dcmtk/config/osconfig.h"    // make sure OS specific configuration is included
 #include "G4UIcommand.hh"
 
-BDSDicomFileStructure::BDSDicomFileStructure(DcmDataset* dset) : BDSDicomVFile(dset)
-{;}
+BDSDicomFileStructure::BDSDicomFileStructure(DcmDataset *dset) : BDSDicomVFile(dset)
+{
+    ;
+}
 
 void BDSDicomFileStructure::ReadData()
 {
     DRTStructureSetIOD rtstruct;
     OFCondition result = rtstruct.read(*theDataset);
     //  DCMRT_INFO("Read RT Structure Set: " << status.text());
-    if (!result.good()) {
+    if (!result.good())
+    {
         G4Exception("DicomFileStructure::ReadData",
                     "DFS001",
                     FatalException,
@@ -77,7 +80,8 @@ void BDSDicomFileStructure::ReadData()
     }
     //@@@@@@@@@@@@ DRTReferencedFrameOfReferenceSequence
     DRTReferencedFrameOfReferenceSequence refSeq = rtstruct.getReferencedFrameOfReferenceSequence();
-    if( refSeq.isEmpty() ) {
+    if (refSeq.isEmpty())
+    {
         G4Exception("DicomFileStructure::ReadData",
                     "DFS002",
                     JustWarning,
@@ -86,34 +90,38 @@ void BDSDicomFileStructure::ReadData()
 
     G4cout << "@@@@@ NUMBER OF ReferenceSequences " << refSeq.getNumberOfItems() << G4endl;
     refSeq.gotoFirstItem();
-    for( size_t i1 = 0; i1 < refSeq.getNumberOfItems(); i1++ ) {
+    for (size_t i1 = 0; i1 < refSeq.getNumberOfItems(); i1++)
+    {
         DRTReferencedFrameOfReferenceSequence::Item &item = refSeq.getCurrentItem();
         OFString uid;
         item.getFrameOfReferenceUID(uid);
         G4cout << " FrameOfReferenceUID " << uid << G4endl;
         DRTRTReferencedStudySequence &reference_study_sequence_ref =
-                item.getRTReferencedStudySequence();
+            item.getRTReferencedStudySequence();
         G4cout << "@@@@ NUMBER OF ReferenceStudySequences "
                << reference_study_sequence_ref.getNumberOfItems() << G4endl;
         reference_study_sequence_ref.gotoFirstItem();
-        for( size_t i2 = 0; i2 < reference_study_sequence_ref.getNumberOfItems(); i2++ ) {
+        for (size_t i2 = 0; i2 < reference_study_sequence_ref.getNumberOfItems(); i2++)
+        {
             DRTRTReferencedStudySequence::Item &rss_item = reference_study_sequence_ref.getCurrentItem();
             DRTRTReferencedSeriesSequence &series_seq_ref = rss_item.getRTReferencedSeriesSequence();
             G4cout << "@@@ NUMBER OF SeriesSequences " << series_seq_ref.getNumberOfItems() << G4endl;
             series_seq_ref.gotoFirstItem();
-            for( size_t i3 = 0; i3 < series_seq_ref.getNumberOfItems(); i3++ ) {
+            for (size_t i3 = 0; i3 < series_seq_ref.getNumberOfItems(); i3++)
+            {
                 DRTRTReferencedSeriesSequence::Item &ref_series_seq_item = series_seq_ref.getCurrentItem();
                 DRTContourImageSequence &image_sequence_seq_ref =
-                        ref_series_seq_item.getContourImageSequence();
+                    ref_series_seq_item.getContourImageSequence();
                 G4cout << "@@ NUMBER OF ContourImageSequences "
                        << image_sequence_seq_ref.getNumberOfItems() << G4endl;
                 image_sequence_seq_ref.gotoFirstItem();
-                for( size_t i4 = 0; i4 < image_sequence_seq_ref.getNumberOfItems(); i4++ ) {
+                for (size_t i4 = 0; i4 < image_sequence_seq_ref.getNumberOfItems(); i4++)
+                {
                     DRTContourImageSequence::Item &image_contour_item =
-                            image_sequence_seq_ref.getCurrentItem();
+                        image_sequence_seq_ref.getCurrentItem();
                     OFString refSOPInstUID;
                     image_contour_item.getReferencedSOPInstanceUID(refSOPInstUID);
-                    std::cout <<"ReferencedSOPInstanceUID= " << refSOPInstUID << std::endl;
+                    std::cout << "ReferencedSOPInstanceUID= " << refSOPInstUID << std::endl;
                     image_sequence_seq_ref.gotoNextItem().good();
                 } // end if image_sequence_seq_ref
                 series_seq_ref.gotoNextItem();
@@ -126,15 +134,17 @@ void BDSDicomFileStructure::ReadData()
     //@@@@@@@@@@@@   DRTROISequence
     DRTStructureSetROISequence ROISeq = rtstruct.getStructureSetROISequence();
     G4cout << "@@@@@ NUMBER OF ROISequences " << ROISeq.getNumberOfItems() << G4endl;
-    for( size_t i1 = 0; i1 < ROISeq.getNumberOfItems(); i1++ ) {
+    for (size_t i1 = 0; i1 < ROISeq.getNumberOfItems(); i1++)
+    {
         DRTStructureSetROISequence::Item &item = ROISeq.getCurrentItem();
         OFString ROIName, ROINumber, ROIGenerationAlgorithm;
         item.getROINumber(ROINumber);
         item.getROIName(ROIName);
         item.getROIGenerationAlgorithm(ROIGenerationAlgorithm);
-        if( ROINumber != "" ) {
-            BDSDicomROI* roi = new BDSDicomROI(G4UIcommand::ConvertToInt(ROINumber.c_str()), ROIName.c_str());
-            theROIs.push_back( roi );
+        if (ROINumber != "")
+        {
+            BDSDicomROI *roi = new BDSDicomROI(G4UIcommand::ConvertToInt(ROINumber.c_str()), ROIName.c_str());
+            theROIs.push_back(roi);
             G4cout << " ROI: " << roi->GetNumber() << " " << roi->GetName() << " "
                    << ROIGenerationAlgorithm << G4endl;
         }
@@ -142,20 +152,19 @@ void BDSDicomFileStructure::ReadData()
         ROISeq.gotoNextItem().good();
     } // end if ROISeq.first item
 
-
     //@@@@@@@@@@@@   DRTROIContourSequence
     DRTROIContourSequence ROIContourSeq = rtstruct.getROIContourSequence();
-    if( ROISeq.getNumberOfItems() != ROIContourSeq.getNumberOfItems() ) {
+    if (ROISeq.getNumberOfItems() != ROIContourSeq.getNumberOfItems())
+    {
         G4Exception("DicomFileStructure",
                     "DCS0001",
                     FatalException,
-                    ("Different number of ROIs and ROI Contours "
-                     + std::to_string(ROISeq.getNumberOfItems()) + " <> "
-                     + std::to_string(ROIContourSeq.getNumberOfItems())).c_str());
+                    ("Different number of ROIs and ROI Contours " + std::to_string(ROISeq.getNumberOfItems()) + " <> " + std::to_string(ROIContourSeq.getNumberOfItems())).c_str());
     }
 
     ROIContourSeq.gotoFirstItem();
-    for( size_t i1 = 0; i1 < ROIContourSeq.getNumberOfItems(); i1++ ) {
+    for (size_t i1 = 0; i1 < ROIContourSeq.getNumberOfItems(); i1++)
+    {
         DRTROIContourSequence::Item &item = ROIContourSeq.getCurrentItem();
         OFString displayColor;
         item.getROIDisplayColor(displayColor);
@@ -164,23 +173,26 @@ void BDSDicomFileStructure::ReadData()
         DRTContourSequence contour_seq = item.getContourSequence();
         //    G4cout << "@@@@ NUMBER OF ContourSequences " << contour_seq.getNumberOfItems() << G4endl;
         contour_seq.gotoFirstItem();
-        for( size_t i2 = 0; i2 < contour_seq.getNumberOfItems(); i2++ ) {
+        for (size_t i2 = 0; i2 < contour_seq.getNumberOfItems(); i2++)
+        {
             //      if (contour_seq.gotoFirstItem().good()) {
             //        do {
             DRTContourSequence::Item &cs_item = contour_seq.getCurrentItem();
 
-            BDSDicomROIContour* roiC = new BDSDicomROIContour();
+            BDSDicomROIContour *roiC = new BDSDicomROIContour();
 
             DRTContourImageSequence &contour_image_seq = cs_item.getContourImageSequence();
 
             contour_image_seq.gotoFirstItem();
-            for( size_t i3 = 0; i3 < contour_image_seq.getNumberOfItems(); i3++ ) {
+            for (size_t i3 = 0; i3 < contour_image_seq.getNumberOfItems(); i3++)
+            {
                 DRTContourImageSequence::Item cis_item = contour_image_seq.getCurrentItem();
                 OFString refSOPCUID;
                 cis_item.getReferencedSOPClassUID(refSOPCUID);
                 OFString refSOPIUID;
                 cis_item.getReferencedSOPInstanceUID(refSOPIUID);
-                if( refSOPIUID != "") roiC->AddImageIUID(refSOPIUID.c_str());
+                if (refSOPIUID != "")
+                    roiC->AddImageIUID(refSOPIUID.c_str());
                 contour_image_seq.gotoNextItem();
             } // end if contour_image_seq
 
@@ -193,8 +205,10 @@ void BDSDicomFileStructure::ReadData()
             OFVector<Float64> data;
             cs_item.getContourData(data);
             std::vector<G4ThreeVector> dataV;
-            for( Sint32 ii = 0; ii < nPoints*3; ii++ ) {
-                if( ii%3 == 2 ) dataV.push_back( G4ThreeVector( data[ii-2], data[ii-1], data[ii] ) );
+            for (Sint32 ii = 0; ii < nPoints * 3; ii++)
+            {
+                if (ii % 3 == 2)
+                    dataV.push_back(G4ThreeVector(data[ii - 2], data[ii - 1], data[ii]));
             }
             roiC->SetData(dataV);
             theROIs[i1]->AddContour(roiC);
@@ -206,7 +220,8 @@ void BDSDicomFileStructure::ReadData()
 
     //@@@@ Print ROIs
     G4cout << " @@@@@@@@@@@ ROIs " << G4endl;
-    for( size_t ii = 0; ii < theROIs.size(); ii++ ) {
+    for (size_t ii = 0; ii < theROIs.size(); ii++)
+    {
         theROIs[ii]->Print(G4cout);
     }
 }

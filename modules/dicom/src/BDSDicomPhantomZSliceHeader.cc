@@ -64,17 +64,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSDicomPhantomZSliceHeader.hh"
 
-BDSDicomPhantomZSliceHeader::BDSDicomPhantomZSliceHeader(const G4String& fname)
-        :   fNoVoxelX(0),fNoVoxelY(0),fNoVoxelZ(0),
-            fMinX(0),fMinY(0),fMinZ(0),
-            fMaxX(0),fMaxY(0),fMaxZ(0),
-            fFilename(fname),fSliceLocation(0)
-{;}
+BDSDicomPhantomZSliceHeader::BDSDicomPhantomZSliceHeader(const G4String &fname)
+    : fNoVoxelX(0), fNoVoxelY(0), fNoVoxelZ(0),
+      fMinX(0), fMinY(0), fMinZ(0),
+      fMaxX(0), fMaxY(0), fMaxZ(0),
+      fFilename(fname), fSliceLocation(0)
+{
+    ;
+}
 
 BDSDicomPhantomZSliceHeader::~BDSDicomPhantomZSliceHeader()
-{;}
+{
+    ;
+}
 
-BDSDicomPhantomZSliceHeader::BDSDicomPhantomZSliceHeader( std::ifstream& fin )
+BDSDicomPhantomZSliceHeader::BDSDicomPhantomZSliceHeader(std::ifstream &fin)
 {
     //----- Read material indices and names
     G4int nmate;
@@ -86,14 +90,16 @@ BDSDicomPhantomZSliceHeader::BDSDicomPhantomZSliceHeader( std::ifstream& fin )
            << nmate << G4endl;
 #endif
 
-    for( G4int im = 0; im < nmate; im++ ){
+    for (G4int im = 0; im < nmate; im++)
+    {
         fin >> mateindex >> matename;
 #ifdef G4VERBOSE
         //G4cout << " BDSDicomPhantomZSliceHeader reading material "
         // << im << " : "<< mateindex << "  " << matename << G4endl;
 #endif
 
-        if( ! CheckMaterialExists( matename ) ) {
+        if (!CheckMaterialExists(matename))
+        {
             G4Exception("BDSDicomPhantomZSliceHeader::DicomPhantomZSliceHeader",
                         "A material is found in file that is not built in the C++ code",
                         FatalErrorInArgument, matename.c_str());
@@ -119,36 +125,43 @@ BDSDicomPhantomZSliceHeader::BDSDicomPhantomZSliceHeader( std::ifstream& fin )
            << " Extension in Z " << fMinZ << " " << fMaxZ << G4endl;
 #endif
 
-    fSliceLocation = 0.5*(fMinZ + fMaxZ);
+    fSliceLocation = 0.5 * (fMinZ + fMaxZ);
 }
 
-G4bool BDSDicomPhantomZSliceHeader::CheckMaterialExists(const G4String& mateName)
+G4bool BDSDicomPhantomZSliceHeader::CheckMaterialExists(const G4String &mateName)
 {
-    const G4MaterialTable* matTab = G4Material::GetMaterialTable();
-    std::vector<G4Material*>::const_iterator matite;
-    for( matite = matTab->begin(); matite != matTab->end(); ++matite ) {
-        if( (*matite)->GetName() == mateName ) { return true; }
+    const G4MaterialTable *matTab = G4Material::GetMaterialTable();
+    std::vector<G4Material *>::const_iterator matite;
+    for (matite = matTab->begin(); matite != matTab->end(); ++matite)
+    {
+        if ((*matite)->GetName() == mateName)
+        {
+            return true;
+        }
     }
 
-    G4Material* g4mate = G4NistManager::Instance()->FindOrBuildMaterial(mateName);
-    if( g4mate ) {
+    G4Material *g4mate = G4NistManager::Instance()->FindOrBuildMaterial(mateName);
+    if (g4mate)
+    {
         return false;
-    } else {
+    }
+    else
+    {
         return true;
     }
 }
 
-void BDSDicomPhantomZSliceHeader::operator+=( const BDSDicomPhantomZSliceHeader& rhs)
+void BDSDicomPhantomZSliceHeader::operator+=(const BDSDicomPhantomZSliceHeader &rhs)
 {
     *this = *this + rhs;
 }
 
 BDSDicomPhantomZSliceHeader BDSDicomPhantomZSliceHeader::operator+(
-        const BDSDicomPhantomZSliceHeader& rhs )
+    const BDSDicomPhantomZSliceHeader &rhs)
 {
     //----- Check that both slices has the same dimensions
-    if( fNoVoxelX != rhs.GetNoVoxelX()
-        || fNoVoxelY != rhs.GetNoVoxelY() ) {
+    if (fNoVoxelX != rhs.GetNoVoxelX() || fNoVoxelY != rhs.GetNoVoxelY())
+    {
         G4cerr << "DicomPhantomZSliceHeader error adding two slice headers:\
         !!! Different number of voxels: "
                << "  X= " << fNoVoxelX << " =? " << rhs.GetNoVoxelX()
@@ -156,11 +169,11 @@ BDSDicomPhantomZSliceHeader BDSDicomPhantomZSliceHeader::operator+(
                << "  Z=  " << fNoVoxelZ << " =? " << rhs.GetNoVoxelZ()
                << G4endl;
         G4Exception("DicomPhantomZSliceHeader::DicomPhantomZSliceHeader",
-                    "",FatalErrorInArgument,"");
+                    "", FatalErrorInArgument, "");
     }
     //----- Check that both slices has the same extensions
-    if( fMinX != rhs.GetMinX() || fMaxX != rhs.GetMaxX()
-        || fMinY != rhs.GetMinY() || fMaxY != rhs.GetMaxY() ) {
+    if (fMinX != rhs.GetMinX() || fMaxX != rhs.GetMaxX() || fMinY != rhs.GetMinY() || fMaxY != rhs.GetMaxY())
+    {
         G4cerr << "DicomPhantomZSliceHeader error adding two slice headers:\
         !!! Different extensions: "
                << "  Xmin= " << fMinX << " =? " << rhs.GetMinX()
@@ -168,51 +181,57 @@ BDSDicomPhantomZSliceHeader BDSDicomPhantomZSliceHeader::operator+(
                << "  Ymin= " << fMinY << " =? " << rhs.GetMinY()
                << "  Ymax= " << fMaxY << " =? " << rhs.GetMaxY()
                << G4endl;
-        G4Exception("DicomPhantomZSliceHeader::operator+","",
-                    FatalErrorInArgument,"");
+        G4Exception("DicomPhantomZSliceHeader::operator+", "",
+                    FatalErrorInArgument, "");
     }
 
     //----- Check that both slices have the same materials
     std::vector<G4String> fMaterialNames2 = rhs.GetMaterialNames();
-    if( fMaterialNames.size() != fMaterialNames2.size() ) {
+    if (fMaterialNames.size() != fMaterialNames2.size())
+    {
         G4cerr << "DicomPhantomZSliceHeader error adding two slice headers:\
-        !!! Different number of materials: " << fMaterialNames.size() << " =? "
+        !!! Different number of materials: "
+               << fMaterialNames.size() << " =? "
                << fMaterialNames2.size() << G4endl;
-        G4Exception("DicomPhantomZSliceHeader::operator+","",
-                    FatalErrorInArgument,"");
+        G4Exception("DicomPhantomZSliceHeader::operator+", "",
+                    FatalErrorInArgument, "");
     }
-    for( unsigned int ii = 0; ii < fMaterialNames.size(); ii++ ) {
-        if( fMaterialNames[ii] != fMaterialNames2[ii] ) {
+    for (unsigned int ii = 0; ii < fMaterialNames.size(); ii++)
+    {
+        if (fMaterialNames[ii] != fMaterialNames2[ii])
+        {
             G4cerr << "DicomPhantomZSliceHeader error adding two slice headers:\
-            !!! Different material number " << ii << " : "
+            !!! Different material number "
+                   << ii << " : "
                    << fMaterialNames[ii] << " =? "
                    << fMaterialNames2[ii] << G4endl;
-            G4Exception("DicomPhantomZSliceHeader::operator+","",
-                        FatalErrorInArgument,"");
+            G4Exception("DicomPhantomZSliceHeader::operator+", "",
+                        FatalErrorInArgument, "");
         }
     }
 
     //----- Check that the slices are contiguous in Z
-    if( std::fabs( fMinZ - rhs.GetMaxZ() ) >
-        G4GeometryTolerance::GetInstance()->GetRadialTolerance() &&
-        std::fabs( fMaxZ - rhs.GetMinZ() ) >
-        G4GeometryTolerance::GetInstance()->GetRadialTolerance() ){
+    if (std::fabs(fMinZ - rhs.GetMaxZ()) >
+            G4GeometryTolerance::GetInstance()->GetRadialTolerance() &&
+        std::fabs(fMaxZ - rhs.GetMinZ()) >
+            G4GeometryTolerance::GetInstance()->GetRadialTolerance())
+    {
         G4cerr << "DicomPhantomZSliceHeader error adding two slice headers:!!!\
         Slices are not contiguous in Z "
                << "  Zmin= " << fMinZ << " & " << rhs.GetMinZ()
                << "  Zmax= " << fMaxZ << " & " << rhs.GetMaxZ()
                << G4endl;
-        G4Exception("DicomPhantomZSliceHeader::operator+","",
-                    FatalErrorInArgument,"");
+        G4Exception("DicomPhantomZSliceHeader::operator+", "",
+                    FatalErrorInArgument, "");
     }
 
     //----- Build slice header copying first one
-    BDSDicomPhantomZSliceHeader temp( *this );
+    BDSDicomPhantomZSliceHeader temp(*this);
 
     //----- Add data from second slice header
-    temp.SetMinZ( std::min( fMinZ, rhs.GetMinZ() ) );
-    temp.SetMaxZ( std::max( fMaxZ, rhs.GetMaxZ() ) );
-    temp.SetNoVoxelZ( fNoVoxelZ + rhs.GetNoVoxelZ() );
+    temp.SetMinZ(std::min(fMinZ, rhs.GetMinZ()));
+    temp.SetMaxZ(std::max(fMaxZ, rhs.GetMaxZ()));
+    temp.SetNoVoxelZ(fNoVoxelZ + rhs.GetNoVoxelZ());
 
     return temp;
 }
@@ -225,20 +244,23 @@ void BDSDicomPhantomZSliceHeader::DumpToFile()
 
     //  May seen counter-intuitive (dumping to file you are reading from), but
     //  the reason for this is modification slice spacing
-    if(fMateIDs.size() == 0 || fValues.size() == 0) { ReadDataFromFile(); }
-
+    if (fMateIDs.size() == 0 || fValues.size() == 0)
+    {
+        ReadDataFromFile();
+    }
 
     std::ofstream out;
     out.open(fFilename.c_str());
 
-    if(!out) {
-        G4String descript = "DicomPhantomZSliceHeader::DumpToFile: could not open "
-                            +fFilename;
-        G4Exception(descript.c_str(),"", FatalException, "");
+    if (!out)
+    {
+        G4String descript = "DicomPhantomZSliceHeader::DumpToFile: could not open " + fFilename;
+        G4Exception(descript.c_str(), "", FatalException, "");
     }
 
     out << fMaterialNames.size() << std::endl;
-    for(unsigned int i = 0; i < fMaterialNames.size(); ++i) {
+    for (unsigned int i = 0; i < fMaterialNames.size(); ++i)
+    {
         out << i << " " << fMaterialNames.at(i) << std::endl;
     }
 
@@ -247,14 +269,17 @@ void BDSDicomPhantomZSliceHeader::DumpToFile()
     out << fMinY << " " << fMaxY << std::endl;
     out << fMinZ << " " << fMaxZ << std::endl;
 
-    for(unsigned int i = 0; i < fMateIDs.size(); ++i)
-    { Print(out,fMateIDs.at(i)," "); }
+    for (unsigned int i = 0; i < fMateIDs.size(); ++i)
+    {
+        Print(out, fMateIDs.at(i), " ");
+    }
 
-    for(unsigned int i = 0; i < fValues.size(); ++i)
-    { Print(out,fValues.at(i)," ",6); }
+    for (unsigned int i = 0; i < fValues.size(); ++i)
+    {
+        Print(out, fValues.at(i), " ", 6);
+    }
 
     out.close();
-
 }
 
 void BDSDicomPhantomZSliceHeader::ReadDataFromFile()
@@ -262,29 +287,34 @@ void BDSDicomPhantomZSliceHeader::ReadDataFromFile()
     std::ifstream in;
     in.open(fFilename.c_str());
 
-    if(!in) {
-        G4String descript = "DicomPhantomZSliceHeader::DumpToFile: could not open "
-                            +fFilename;
-        G4Exception(descript.c_str(),"", FatalException, "");
+    if (!in)
+    {
+        G4String descript = "DicomPhantomZSliceHeader::DumpToFile: could not open " + fFilename;
+        G4Exception(descript.c_str(), "", FatalException, "");
     }
 
     G4int nMaterials;
     in >> nMaterials;
 
-    fMaterialNames.resize(nMaterials,"");
-    for(G4int i = 0; i < nMaterials; ++i) {
+    fMaterialNames.resize(nMaterials, "");
+    for (G4int i = 0; i < nMaterials; ++i)
+    {
         G4String str1, str2;
         in >> str1 >> str2;
-        if(!IsInteger(str1)) {
+        if (!IsInteger(str1))
+        {
             G4String descript = "String : " + str1 + " supposed to be integer";
             G4Exception("DicomPhantomZSliceHeader::ReadDataFromFile - error in \
-       formatting: missing material index","", FatalException,descript.c_str());
+       formatting: missing material index",
+                        "", FatalException, descript.c_str());
         }
         G4int index = G4s2n<G4int>(str1);
-        if(index > nMaterials || index < 0) {
+        if (index > nMaterials || index < 0)
+        {
             G4String descript = "Index : " + str1;
             G4Exception("DicomPhantomZSliceHeader::ReadDataFromFile - error:\
-            bad material index","", FatalException,descript.c_str());
+            bad material index",
+                        "", FatalException, descript.c_str());
         }
         fMaterialNames[index] = str2;
     }
@@ -298,42 +328,42 @@ void BDSDicomPhantomZSliceHeader::ReadDataFromFile()
     in >> tmpMinY >> tmpMaxY;
     in >> tmpMinZ >> tmpMaxZ;
 
-    fMinX = (CheckConsistency(tmpMinX,fMinX,"Min X value")) ?
-            fMinX : ((fMinX == 0) ? tmpMinX : fMinX);
-    fMaxX = (CheckConsistency(tmpMaxX,fMaxX,"Max X value")) ?
-            fMaxX : ((fMaxX == 0) ? tmpMaxX : fMaxX);
+    fMinX = (CheckConsistency(tmpMinX, fMinX, "Min X value")) ? fMinX : ((fMinX == 0) ? tmpMinX : fMinX);
+    fMaxX = (CheckConsistency(tmpMaxX, fMaxX, "Max X value")) ? fMaxX : ((fMaxX == 0) ? tmpMaxX : fMaxX);
 
-    fMinY = (CheckConsistency(tmpMinY,fMinY,"Min Y value")) ?
-            fMinY : ((fMinY == 0) ? tmpMinY : fMinY);
-    fMaxY = (CheckConsistency(tmpMaxY,fMaxY,"Max Y value")) ?
-            fMaxY : ((fMaxY == 0) ? tmpMaxY : fMaxY);
+    fMinY = (CheckConsistency(tmpMinY, fMinY, "Min Y value")) ? fMinY : ((fMinY == 0) ? tmpMinY : fMinY);
+    fMaxY = (CheckConsistency(tmpMaxY, fMaxY, "Max Y value")) ? fMaxY : ((fMaxY == 0) ? tmpMaxY : fMaxY);
 
-    fMinZ = (CheckConsistency(tmpMinZ,fMinZ,"Min Z value")) ?
-            fMinZ : ((fMinZ == 0) ? tmpMinZ : fMinZ);
-    fMaxZ = (CheckConsistency(tmpMaxZ,fMaxZ,"Max Z value")) ?
-            fMaxZ : ((fMaxZ == 0) ? tmpMaxZ : fMaxZ);
+    fMinZ = (CheckConsistency(tmpMinZ, fMinZ, "Min Z value")) ? fMinZ : ((fMinZ == 0) ? tmpMinZ : fMinZ);
+    fMaxZ = (CheckConsistency(tmpMaxZ, fMaxZ, "Max Z value")) ? fMaxZ : ((fMaxZ == 0) ? tmpMaxZ : fMaxZ);
 
     fMateIDs.clear();
     fValues.clear();
-    fMateIDs.resize(fNoVoxelY*fNoVoxelZ,std::vector<G4int>(fNoVoxelX,0));
-    fValues.resize(fNoVoxelY*fNoVoxelZ,std::vector<G4double>(fNoVoxelX,0.));
-    for(G4int k = 0; k < fNoVoxelZ; ++k) {
-        for(G4int j = 0; j < fNoVoxelY; ++j) {
-            for(G4int i = 0; i < fNoVoxelX; ++i) {
+    fMateIDs.resize(fNoVoxelY * fNoVoxelZ, std::vector<G4int>(fNoVoxelX, 0));
+    fValues.resize(fNoVoxelY * fNoVoxelZ, std::vector<G4double>(fNoVoxelX, 0.));
+    for (G4int k = 0; k < fNoVoxelZ; ++k)
+    {
+        for (G4int j = 0; j < fNoVoxelY; ++j)
+        {
+            for (G4int i = 0; i < fNoVoxelX; ++i)
+            {
                 G4int tmpMateID;
                 in >> tmpMateID;
-                G4int row = j*(k+1);
+                G4int row = j * (k + 1);
                 fMateIDs[row][i] = tmpMateID;
             }
         }
     }
 
-    for(G4int k = 0; k < fNoVoxelZ; ++k) {
-        for(G4int j = 0; j < fNoVoxelY; ++j) {
-            for(G4int i = 0; i < fNoVoxelX; ++i) {
+    for (G4int k = 0; k < fNoVoxelZ; ++k)
+    {
+        for (G4int j = 0; j < fNoVoxelY; ++j)
+        {
+            for (G4int i = 0; i < fNoVoxelX; ++i)
+            {
                 G4double tmpValue;
                 in >> tmpValue;
-                G4int row = j*(k+1);
+                G4int row = j * (k + 1);
                 fValues[row][i] = tmpValue;
             }
         }
