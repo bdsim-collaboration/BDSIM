@@ -120,7 +120,7 @@ void DataLoader::CommonCtor(const std::string& fileName)
 
 void DataLoader::BuildInputFileList(std::string inputPath)
 {
-  if(inputPath.empty())
+  if (inputPath.empty())
     {throw RBDSException("DataLoader::BuildInputFileList> no file specified");}
 
   // wild card
