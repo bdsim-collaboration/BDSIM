@@ -45,7 +45,7 @@ class TChain;
 class DataLoader
 {
 public:
-  DataLoader(std::string fileName,
+  DataLoader(const std::string& fileName,
 	     bool        debugIn           = false,
 	     bool        processSamplersIn = true,
 	     bool        allBranchesOn     = true,

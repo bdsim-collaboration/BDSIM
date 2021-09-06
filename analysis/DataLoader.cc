@@ -44,7 +44,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 ClassImp(DataLoader)
 
-DataLoader::DataLoader(std::string fileName,
+DataLoader::DataLoader(const std::string& fileName,
 		       bool        debugIn,
 		       bool        processSamplersIn,
 		       bool        allBranchesOnIn,
@@ -125,12 +125,12 @@ void DataLoader::BuildInputFileList(std::string inputPath)
 
   // wild card
   std::vector<std::string> fileNamesTemp;
-  if (inputPath.find("*") != std::string::npos)
+  if (inputPath.find('*') != std::string::npos)
     {
       glob_t glob_result;
       glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
       for(unsigned int i=0;i<glob_result.gl_pathc;++i)
-	{fileNamesTemp.push_back(glob_result.gl_pathv[i]);}
+	{fileNamesTemp.emplace_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
     }
   // single file
@@ -145,7 +145,7 @@ void DataLoader::BuildInputFileList(std::string inputPath)
       glob_t glob_result;
       glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
       for (unsigned int i=0; i<glob_result.gl_pathc; ++i)
-	{fileNamesTemp.push_back(glob_result.gl_pathv[i]);}
+	{fileNamesTemp.emplace_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
     }
 
@@ -184,7 +184,7 @@ void DataLoader::BuildTreeNameList()
   
   TList* kl = f->GetListOfKeys();
   for (int i = 0; i < kl->GetEntries(); ++i)
-    {treeNames.push_back(std::string(kl->At(i)->GetName()));}
+    {treeNames.emplace_back(std::string(kl->At(i)->GetName()));}
 
   f->Close();
   delete f;
