@@ -7,4 +7,5 @@ simple_root_test("root-options" optionsTest.C "Error")
 simple_root_test("root-model"   modelTest.C   "Error")
 simple_root_test("root-run"     runTest.C     "Error")
 simple_root_test("root-event"   eventTest.C   "Error")
+simple_root_test("root-empty-rebdsim-file"   dummyDataTest.C   "Error")
 
