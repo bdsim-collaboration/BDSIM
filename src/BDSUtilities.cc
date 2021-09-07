@@ -111,7 +111,7 @@ G4bool BDS::FileExists(const G4String& fileName)
 
 G4bool BDS::DirectoryExists(const G4String& path)
 {
-  struct stat sb{};
+  struct stat sb;
   bool result = (stat(path.c_str(), &sb) == 0) && S_ISDIR(sb.st_mode);
   return G4bool(result);
 }
