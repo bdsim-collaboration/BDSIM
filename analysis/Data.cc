@@ -84,10 +84,26 @@ std::map<std::string, TDirectory*> RBDS::CreateDirectories(TFile* outputFile,
   std::string perEntryDirName = "PerEntryHistograms";
   std::string simpleDirName   = "SimpleHistograms";
   std::string mergedDirName   = "MergedHistograms";
-  TDirectory* rebdsimDir  = outputFile->mkdir(cleanedName.c_str());
-  TDirectory* perEntryDir = rebdsimDir->mkdir(perEntryDirName.c_str());
-  TDirectory* simpleDir   = rebdsimDir->mkdir(simpleDirName.c_str());
-  TDirectory* mergedDir   = rebdsimDir->mkdir(mergedDirName.c_str());
+  // We have to pedantically check the existance of directories in the
+  // case we're overwriting a file, ROOT will segfault classically if
+  // the directory already exists ignoring the overwriting mode.
+  // Always more code to compensate for ROOT.
+  TDirectory* rebdsimDir = outputFile->GetDirectory(cleanedName.c_str());
+  if (!rebdsimDir)
+    {rebdsimDir  = outputFile->mkdir(cleanedName.c_str());}
+  rebdsimDir->cd();
+  
+  TDirectory* perEntryDir = rebdsimDir->GetDirectory(perEntryDirName.c_str());
+  if (!perEntryDir)
+    {rebdsimDir->mkdir(perEntryDirName.c_str());}
+  
+  TDirectory* simpleDir = rebdsimDir->GetDirectory(simpleDirName.c_str());
+  if (!simpleDir)
+    {rebdsimDir->mkdir(simpleDirName.c_str());}
+  
+  TDirectory* mergedDir = rebdsimDir->GetDirectory(mergedDirName.c_str());
+  if (!mergedDir)
+    {rebdsimDir->mkdir(mergedDirName.c_str());}
   
   std::map<std::string, TDirectory*> result = {{cleanedName, rebdsimDir},
                                                {perEntryDirName, perEntryDir},
