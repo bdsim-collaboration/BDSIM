@@ -51,7 +51,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4tgrFileIn.hh"
 #include "G4UIcommand.hh"
 #include "G4PhysicsOrderedFreeVector.hh"
-#include "G4PhysicsVector.hh"
 
 BDSDicomFileMgr *BDSDicomFileMgr::theInstance = nullptr;
 int BDSDicomFileMgr::verbose = 1;
@@ -69,8 +68,6 @@ BDSDicomFileMgr::BDSDicomFileMgr()
 {
     fCompression = 1.;
     theCTFileAll = nullptr;
-    theStructureNCheck = 4;
-    theStructureNMaxROI = 100;
 }
 
 void BDSDicomFileMgr::Convert(G4String filePath, G4String fileName)
@@ -140,9 +137,9 @@ void BDSDicomFileMgr::CheckNColumns(std::vector<G4String> wl, size_t vsizeTh)
     if (wl.size() != vsizeTh)
     {
         G4cerr << " Reading line " << G4endl;
-        for (size_t ii = 0; ii < wl.size(); ii++)
+        for (const auto & ii : wl)
         {
-            G4cerr << wl[ii] << " ";
+            G4cerr << ii << " ";
         }
         G4cerr << G4endl;
         G4Exception("DICOM2G4",
@@ -180,26 +177,12 @@ void BDSDicomFileMgr::AddFile(G4String fileName)
 
     if (dModality == "CT" || dModality == "OT")
     {
-        BDSDicomFileCT *df = new BDSDicomFileCT(dset);
+        auto *df = new BDSDicomFileCT(dset);
         df->ReadData();
         df->SetFileName(fileName);
         // reorder by location
         theCTFiles[df->GetMaxZ()] = df;
         G4cout << "Number of voxels: " << df->GetNoVoxels() << G4endl;
-    }
-    else if (dModality == "RTSTRUCT")
-    {
-        BDSDicomFileStructure *df = new BDSDicomFileStructure(dset);
-        df->ReadData();
-        df->SetFileName(fileName);
-        theStructFiles.push_back(df);
-    }
-    else if (dModality == "RTPLAN")
-    {
-        BDSDicomFilePlan *df = new BDSDicomFilePlan(dset);
-        df->ReadData();
-        df->SetFileName(fileName);
-        thePlanFiles.push_back(df);
     }
     else
     {
@@ -212,7 +195,7 @@ void BDSDicomFileMgr::AddFile(G4String fileName)
 
 void BDSDicomFileMgr::AddMaterial(std::vector<G4String> wl)
 {
-    if (theMaterials.size() > 0 && bMaterialsDensity)
+    if (!theMaterials.empty() && bMaterialsDensity)
     {
         G4Exception("DicomFileMgr::AddMaterial",
                     "DFM005",
@@ -227,7 +210,7 @@ void BDSDicomFileMgr::AddMaterial(std::vector<G4String> wl)
 
 void BDSDicomFileMgr::AddMaterialDensity(std::vector<G4String> wl)
 {
-    if (theMaterialsDensity.size() > 0 && !bMaterialsDensity)
+    if (!theMaterialsDensity.empty() && !bMaterialsDensity)
     {
         G4Exception("DicomFileMgr::AddMaterial",
                     "DFM005",
@@ -251,7 +234,7 @@ G4double BDSDicomFileMgr::Hounsfield2density(G4double Hval)
 
 size_t BDSDicomFileMgr::GetMaterialIndex(G4double Hval)
 {
-    std::map<G4double, G4String>::iterator ite = theMaterials.upper_bound(Hval);
+    auto ite = theMaterials.upper_bound(Hval);
     if (ite == theMaterials.end())
     {
         ite--;
@@ -268,7 +251,7 @@ size_t BDSDicomFileMgr::GetMaterialIndex(G4double Hval)
 
 size_t BDSDicomFileMgr::GetMaterialIndexByDensity(G4double density)
 {
-    std::map<G4double, G4String>::iterator ite = theMaterialsDensity.upper_bound(density);
+    auto ite = theMaterialsDensity.upper_bound(density);
     if (ite == theMaterialsDensity.end())
     {
         ite--;
@@ -285,7 +268,7 @@ size_t BDSDicomFileMgr::GetMaterialIndexByDensity(G4double density)
 
 void BDSDicomFileMgr::ProcessFiles()
 {
-    if (theCTFiles.size() == 0)
+    if (theCTFiles.empty())
     {
         G4Exception("CheckCTSlices",
                     "DCM004",
@@ -306,13 +289,11 @@ void BDSDicomFileMgr::CheckCTSlices()
     size_t nSlices = theCTFiles.size();
     G4cout << " DicomFileMgr::Checking CT slices: " << nSlices << G4endl;
 
-    G4bool uniformSliceThickness = true;
-
     if (nSlices > 1)
     {
         if (nSlices == 2)
         {
-            mdct::const_iterator ite = theCTFiles.begin();
+            auto ite = theCTFiles.begin();
             BDSDicomFileCT *one = (*ite).second;
             ite++;
             BDSDicomFileCT *two = (*ite).second;
@@ -323,25 +304,22 @@ void BDSDicomFileMgr::CheckCTSlices()
             {
                 one->SetMaxZ(one->GetLocation() + real_distance);
                 two->SetMinZ(two->GetLocation() - real_distance);
-                if (uniformSliceThickness)
-                {
-                    one->SetMinZ(one->GetLocation() - real_distance);
-                    two->SetMaxZ(two->GetLocation() + real_distance);
-                }
+                one->SetMinZ(one->GetLocation() - real_distance);
+                two->SetMaxZ(two->GetLocation() + real_distance);
             }
         }
         else
         {
-            mdct::iterator ite0 = theCTFiles.begin();
-            mdct::iterator ite1 = ite0;
+            auto ite0 = theCTFiles.begin();
+            auto ite1 = ite0;
             ite1++;
-            mdct::iterator ite2 = ite1;
+            auto ite2 = ite1;
             ite2++;
             for (; ite2 != theCTFiles.end(); ++ite0, ++ite1, ++ite2)
             {
-                BDSDicomFileCT *prev = (BDSDicomFileCT *)((*ite0).second);
-                BDSDicomFileCT *slice = (BDSDicomFileCT *)((*ite1).second);
-                BDSDicomFileCT *next = (BDSDicomFileCT *)((*ite2).second);
+                auto *prev = (BDSDicomFileCT *)((*ite0).second);
+                auto *slice = (BDSDicomFileCT *)((*ite1).second);
+                auto *next = (BDSDicomFileCT *)((*ite2).second);
                 G4double real_up_distance = (next->GetLocation() -
                                              slice->GetLocation()) /
                                             2.;
@@ -372,20 +350,14 @@ void BDSDicomFileMgr::CheckCTSlices()
                     {
                         prev->SetMaxZ(slice->GetMinZ());
                         // Using below would make all slice same thickness
-                        if (uniformSliceThickness)
-                        {
-                            prev->SetMinZ(prev->GetLocation() - real_down_distance);
-                        }
+                        prev->SetMinZ(prev->GetLocation() - real_down_distance);
                     }
                     if (static_cast<unsigned int>(std::distance(theCTFiles.begin(), ite2) + 1) ==
                         nSlices)
                     {
                         next->SetMinZ(slice->GetMaxZ());
                         // Using below would make all slice same thickness
-                        if (uniformSliceThickness)
-                        {
-                            next->SetMaxZ(next->GetLocation() + real_up_distance);
-                        }
+                        next->SetMaxZ(next->GetLocation() + real_up_distance);
                     }
                 }
             }
@@ -396,7 +368,7 @@ void BDSDicomFileMgr::CheckCTSlices()
 void BDSDicomFileMgr::BuildCTMaterials()
 {
     G4cout << " DicomFileMgr::Building Materials " << theCTFiles.size() << G4endl; //GDEB
-    mdct::const_iterator ite = theCTFiles.begin();
+    auto ite = theCTFiles.begin();
     for (; ite != theCTFiles.end(); ite++)
     {
         (*ite).second->BuildMaterials();
@@ -406,7 +378,7 @@ void BDSDicomFileMgr::BuildCTMaterials()
 void BDSDicomFileMgr::MergeCTFiles()
 {
     G4cout << " DicomFileMgr::Merging CT Files " << theCTFiles.size() << G4endl; //GDEB
-    mdct::const_iterator ite = theCTFiles.begin();
+    auto ite = theCTFiles.begin();
     theCTFileAll = new BDSDicomFileCT(*((*ite).second));
     ite++;
     for (; ite != theCTFiles.end(); ite++)
@@ -418,7 +390,7 @@ void BDSDicomFileMgr::MergeCTFiles()
 void BDSDicomFileMgr::DumpToTextFile()
 {
     G4cout << " DicomFileMgr::Dumping To Text File " << G4endl; //GDEB
-    if (theCTFiles.size() != 0)
+    if (!theCTFiles.empty())
     {
         std::ofstream fout(theFileOutName);
 
@@ -444,33 +416,14 @@ void BDSDicomFileMgr::DumpToTextFile()
         }
 
         theCTFileAll->DumpHeaderToTextFile(fout);
-        for (mdct::const_iterator itect = theCTFiles.begin(); itect != theCTFiles.end(); itect++)
+        for (auto & theCTFile : theCTFiles)
         {
-            (*itect).second->DumpMateIDsToTextFile(fout);
+            theCTFile.second->DumpMateIDsToTextFile(fout);
         }
-        for (mdct::const_iterator itect = theCTFiles.begin(); itect != theCTFiles.end(); itect++)
+        for (auto & theCTFile : theCTFiles)
         {
-            (*itect).second->DumpDensitiesToTextFile(fout);
-        }
-        for (mdct::const_iterator itect = theCTFiles.begin(); itect != theCTFiles.end(); itect++)
-        {
-            (*itect).second->BuildStructureIDs();
-            (*itect).second->DumpStructureIDsToTextFile(fout);
+            theCTFile.second->DumpDensitiesToTextFile(fout);
         }
 
-        std::vector<BDSDicomFileStructure *> dfs = GetStructFiles();
-        for (size_t i1 = 0; i1 < dfs.size(); i1++)
-        {
-            std::vector<BDSDicomROI *> rois = dfs[i1]->GetROIs();
-            for (size_t i2 = 0; i2 < rois.size(); i2++)
-            {
-                fout << rois[i2]->GetNumber() + 1 << " \"" << rois[i2]->GetName() << "\"" << G4endl;
-            }
-        }
-    }
-
-    for (size_t i1 = 0; i1 < thePlanFiles.size(); i1++)
-    {
-        thePlanFiles[i1]->DumpToFile();
     }
 }

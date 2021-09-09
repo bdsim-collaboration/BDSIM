@@ -64,7 +64,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
 
-#include "G4VisAttributes.hh"
 #include "G4VVisManager.hh"
 
 BDSDicomPhantomParameterisationColour::BDSDicomPhantomParameterisationColour(G4String colourFile) : G4PhantomParameterisation()
@@ -74,14 +73,12 @@ BDSDicomPhantomParameterisationColour::BDSDicomPhantomParameterisationColour(G4S
 }
 
 BDSDicomPhantomParameterisationColour::~BDSDicomPhantomParameterisationColour()
-{
-    ;
-}
+{}
 
 void BDSDicomPhantomParameterisationColour::ReadColourData(G4String colourFile)
 {
     //----- Add a G4VisAttributes for materials not defined in file;
-    G4VisAttributes *blankAtt = new G4VisAttributes;
+    auto *blankAtt = new G4VisAttributes;
     blankAtt->SetVisibility(FALSE);
     fColours["Default"] = blankAtt;
 
@@ -98,7 +95,7 @@ void BDSDicomPhantomParameterisationColour::ReadColourData(G4String colourFile)
             break;
         fin >> cred >> cgreen >> cblue >> copacity;
         G4Colour colour(cred, cgreen, cblue, copacity);
-        G4VisAttributes *visAtt = new G4VisAttributes(colour);
+        auto *visAtt = new G4VisAttributes(colour);
         visAtt->SetVisibility(true);
         fColours[mateName] = visAtt;
         mColours[ii] = new G4VisAttributes(*visAtt);
@@ -136,7 +133,7 @@ G4Material *BDSDicomPhantomParameterisationColour::ComputeMaterial(const G4int c
             }
             if (!found)
             {
-                G4int matIndex = G4int(GetMaterialIndex(copyNo));
+                auto matIndex = G4int(GetMaterialIndex(copyNo));
                 static uintmax_t n = 0;
                 if (n++ < 100)
                     G4cout << "Unknown material name " << mateName

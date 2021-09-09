@@ -64,7 +64,7 @@ public: // with description
 
     virtual G4Material *ComputeMaterial(const G4int repNo,
                                         G4VPhysicalVolume *currentVol,
-                                        const G4VTouchable *parentTouch = 0);
+                                        const G4VTouchable *parentTouch = nullptr);
 
     const ColourMap_t &GetColourMap() const { return fColours; }
     ColourMap_t &GetColourMap() { return fColours; }
