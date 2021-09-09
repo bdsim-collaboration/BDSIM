@@ -43,8 +43,6 @@ public:
   void BuildMaterials();
   void DumpMateIDsToTextFile(std::ofstream &fout);
   void DumpDensitiesToTextFile(std::ofstream &fout);
-  void BuildStructureIDs();
-  void DumpStructureIDsToTextFile(std::ofstream &fout);
 
   void operator+=(const BDSDicomFileCT &rhs);
   BDSDicomFileCT operator+(const BDSDicomFileCT &rhs);
@@ -81,22 +79,17 @@ public:
 
   const G4double &GetLocation() const { return fLocation; }
 
-  void SetLocation(const G4double &val) { fLocation = val; }
 
   G4ThreeVector GetOrientationRows() const { return fOrientationRows; }
   G4ThreeVector GetOrientationColumns() const { return fOrientationColumns; }
 
 private:
-  template <typename T>
-  inline bool CheckConsistency(const T &, const T &, G4String);
 
   void ReadPixelData();
   void Print(std::ostream &out);
 
   std::vector<size_t> fMateIDs;
   std::vector<G4double> fDensities;
-  std::vector<G4int> fStructure;
-  //  G4int* fStructure;
 
 protected:
   G4double fLocation;
@@ -117,17 +110,5 @@ protected:
   BDSDicomFileMgr *theFileMgr;
 };
 
-template <typename T>
-inline bool BDSDicomFileCT::CheckConsistency(const T &val1,
-                                             const T &val2,
-                                             G4String category)
-{
-  if (val1 != val2)
-  {
-    BDS::Warning(__METHOD_NAME__, "Consistency Mismatch : Keeping previous value if nonzero " + category);
-    return false;
-  }
-  return true;
-}
 
 #endif

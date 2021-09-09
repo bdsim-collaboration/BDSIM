@@ -84,13 +84,8 @@ private:
 private:
     G4UIcmdWithAString *fUserVolumeCmd;
     G4UIcmdWithAString *fG4VolumeCmd;
-
     G4VSolid *fSolid;
-
     std::ofstream fout;
-
-    G4ThreeVector fPhantomMinusCorner;
-
     G4bool *fVoxelIsInside;
 };
 #endif

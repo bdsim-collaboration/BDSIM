@@ -49,8 +49,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <map>
 #include "globals.hh"
-#include "BDSDicomFileStructure.hh"
-#include "BDSDicomFilePlan.hh"
 #include "G4PhysicsOrderedFreeVector.hh"
 #include "G4PhysicsVector.hh"
 
@@ -80,10 +78,6 @@ private:
     BDSDicomFileMgr();
 
 public:
-    std::vector<BDSDicomFileStructure *> GetStructFiles() const
-    {
-        return theStructFiles;
-    }
 
     void SetCompression(G4String fComp);
     void AddFile(G4String fComp);
@@ -101,22 +95,6 @@ public:
     void BuildCTMaterials();
     void MergeCTFiles();
     void DumpToTextFile();
-    void SetStructureNCheck(G4int nsc)
-    {
-        theStructureNCheck = nsc;
-    }
-    G4int GetStructureNCheck() const
-    {
-        return theStructureNCheck;
-    }
-    void SetStructureNMaxROI(G4int nsc)
-    {
-        theStructureNMaxROI = nsc;
-    }
-    G4int GetStructureNMaxROI() const
-    {
-        return theStructureNMaxROI;
-    }
     G4int GetCompression() const
     {
         return fCompression;
@@ -126,7 +104,6 @@ public:
         return theFileOutName;
     }
 
-    void SetControlPointMetersets();
     G4bool IsMaterialsDensity() const
     {
         return bMaterialsDensity;
@@ -141,8 +118,6 @@ private:
     G4String theFileOutName;
     //  msd theFiles;
     mdct theCTFiles;
-    std::vector<BDSDicomFileStructure *> theStructFiles;
-    std::vector<BDSDicomFilePlan *> thePlanFiles;
     std::map<G4double, G4String> theMaterials;
     std::map<G4double, G4String> theMaterialsDensity;
     std::map<G4int, G4double> theCT2Density;
@@ -150,8 +125,6 @@ private:
     G4PhysicsOrderedFreeVector *results;
 
     BDSDicomFileCT *theCTFileAll;
-    G4int theStructureNCheck;
-    G4int theStructureNMaxROI;
 
 public:
     static int verbose;

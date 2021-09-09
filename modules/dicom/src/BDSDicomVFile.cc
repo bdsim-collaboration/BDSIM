@@ -48,13 +48,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "dcmtk/dcmdata/dcfilefo.h"
 #include "dcmtk/dcmdata/dcdeftag.h"
 #include "dcmtk/dcmdata/dcpixel.h"
-#include "dcmtk/dcmdata/dcpxitem.h"
-#include "dcmtk/dcmdata/dcpixseq.h"
 
 BDSDicomVFile::BDSDicomVFile(DcmDataset *dset) : theDataset(dset)
-{
-    ;
-}
+{}
 
 std::vector<G4double> BDSDicomVFile::Read1Data(DcmDataset *dset, DcmTagKey tagKey, G4int nData)
 {
@@ -87,27 +83,4 @@ std::vector<G4double> BDSDicomVFile::Read1Data(DcmDataset *dset, DcmTagKey tagKe
     }
 
     return dataV;
-}
-
-OFString BDSDicomVFile::Read1DataStr(DcmDataset *dset, DcmTagKey tagKey)
-{
-    //  const char* data = "";
-    OFString data;
-    // see  http://support.dcmtk.org/docs/classDcmItem.html for types
-    if (dset->findAndGetOFString(tagKey, data).good())
-    {
-    }
-    else
-    {
-        G4cout << "ERROR  (" << std::showbase // show the 0x prefix
-               << std::internal               // fill between the prefix and the number
-               << std::setfill('0') << std::hex << std::setw(4) << tagKey.getGroup() << ","
-               << tagKey.getElement() << ") " << std::dec << std::endl;
-        G4Exception("DicomHandler::ReadData",
-                    "",
-                    JustWarning,
-                    (" Have not read (" + std::to_string(tagKey.getGroup()) + "," + std::to_string(tagKey.getElement()) + ")" + " : ").c_str());
-    }
-
-    return data.c_str();
 }

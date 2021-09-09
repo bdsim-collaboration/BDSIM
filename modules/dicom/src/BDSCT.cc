@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDicomFileMgr.hh"
 #include "BDSDicomIntersectVolume.hh"
 #include "BDSDicomPhantomParameterisationColour.hh"
-#include "BDSDicomPhantomZSliceHeader.hh"
 #include "BDSExtent.hh"
 
 #include "G4Box.hh"
@@ -30,11 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4LogicalVolume.hh"
 #include "G4MultiFunctionalDetector.hh"
 #include "G4NistManager.hh"
-#include "G4PSDoseDeposit.hh"
-#include "G4PSDoseDeposit3D.hh"
 #include "G4PVPlacement.hh"
 #include "G4PVParameterised.hh"
-#include "G4SDManager.hh"
 #include "G4String.hh"
 #include "G4Tubs.hh"
 #include "G4Types.hh"
@@ -1448,145 +1444,6 @@ void BDSCT::ReadVoxelDensities(std::ifstream &fin)
     for (auto ite = fMaterials.cbegin(); ite != fMaterials.cend(); ++ite)
     {
         std::cout << "The phantom will be built with material " << (*ite)->GetName() << " with density " << (*ite)->GetDensity() / (CLHEP::g / CLHEP::cm3) << " g/cm3" << std::endl;
-    }
-}
-
-void BDSCT::ReadPhantomDataFile(const G4String &fname)
-{
-    G4cout << " DicomDetectorConstruction::ReadPhantomDataFile opening file "
-           << fname << G4endl; //GDEB
-
-#ifdef G4VERBOSE
-    G4cout << " DicomDetectorConstruction::ReadPhantomDataFile opening file "
-           << fname << G4endl;
-#endif
-
-    std::ifstream fin(fname.c_str(), std::ios_base::in);
-    if (!fin.is_open())
-    {
-        G4Exception("DicomDetectorConstruction::ReadPhantomDataFile",
-                    "",
-                    FatalErrorInArgument,
-                    G4String("File not found " + fname).c_str());
-    }
-    //----- Define density differences (maximum density difference to create
-    // a new material)
-    char *part = std::getenv("DICOM_CHANGE_MATERIAL_DENSITY");
-    G4double densityDiff = -1.;
-    if (part)
-        densityDiff = G4UIcommand::ConvertToDouble(part);
-    if (densityDiff != -1.)
-    {
-        for (unsigned int ii = 0; ii < fOriginalMaterials.size(); ++ii)
-        {
-            fDensityDiffs[ii] = densityDiff; //currently all materials with
-            // same difference
-        }
-    }
-    else
-    {
-        if (fMaterials.size() == 0)
-        { // do it only for first slice
-            for (unsigned int ii = 0; ii < fOriginalMaterials.size(); ++ii)
-            {
-                fMaterials.push_back(fOriginalMaterials[ii]);
-            }
-        }
-    }
-
-    //----- Read data header
-    auto sliceHeader = new BDSDicomPhantomZSliceHeader(fin);
-    fZSliceHeaders.push_back(sliceHeader);
-
-    //----- Read material indices
-    G4int nVoxels = sliceHeader->GetNoVoxels();
-
-    //--- If first slice, initiliaze fMateIDs
-    if (fZSliceHeaders.size() == 1)
-    {
-        //fMateIDs = new unsigned int[fNoFiles*nVoxels];
-        fMateIDs = new size_t[fNoFiles * nVoxels];
-    }
-
-    unsigned int mateID;
-    // number of voxels from previously read slices
-    G4int voxelCopyNo = G4int((fZSliceHeaders.size() - 1) * nVoxels);
-    for (G4int ii = 0; ii < nVoxels; ++ii, voxelCopyNo++)
-    {
-        fin >> mateID;
-        fMateIDs[voxelCopyNo] = mateID;
-    }
-
-    //----- Read material densities and build new materials if two voxels have
-    //  same material but its density is in a different density interval
-    // (size of density intervals defined by densityDiff)
-    G4double density;
-    // number of voxels from previously read slices
-    voxelCopyNo = G4int((fZSliceHeaders.size() - 1) * nVoxels);
-    for (G4int ii = 0; ii < nVoxels; ++ii, voxelCopyNo++)
-    {
-        fin >> density;
-
-        //-- Get material from list of original materials
-        mateID = unsigned(fMateIDs[voxelCopyNo]);
-        G4Material *mateOrig = fOriginalMaterials[mateID];
-
-        //-- Get density bin: middle point of the bin in which the current
-        // density is included
-        G4String newMateName = mateOrig->GetName();
-        G4float densityBin = 0.;
-        if (densityDiff != -1.)
-        {
-            densityBin = G4float(fDensityDiffs[mateID]) *
-                         (G4int(density / fDensityDiffs[mateID]) + 0.5);
-            //-- Build the new material name
-            newMateName += G4UIcommand::ConvertToString(densityBin);
-        }
-
-        //-- Look if a material with this name is already created
-        //  because a previous voxel was already in this density bin
-        unsigned int im;
-        for (im = 0; im < fMaterials.size(); ++im)
-        {
-            if (fMaterials[im]->GetName() == newMateName)
-            {
-                break;
-            }
-        }
-        //-- If material is already created use index of this material
-        if (im != fMaterials.size())
-        {
-            fMateIDs[voxelCopyNo] = im;
-            //-- else, create the material
-        }
-        else
-        {
-            if (densityDiff != -1.)
-            {
-                fMaterials.push_back(BuildMaterialWithChangingDensity(mateOrig,
-                                                                      densityBin, newMateName));
-                fMateIDs[voxelCopyNo] = fMaterials.size() - 1;
-            }
-            else
-            {
-                G4cerr << " im " << im << " < " << fMaterials.size() << " name "
-                       << newMateName << G4endl;
-                G4Exception("DicomDetectorConstruction::ReadPhantomDataFile",
-                            "",
-                            FatalErrorInArgument,
-                            "Wrong index in material"); //it should never reach here
-            }
-        }
-    }
-}
-
-void BDSCT::MergeZSliceHeaders()
-{
-    //----- Images must have the same dimension ...
-    fZSliceHeaderMerged = new BDSDicomPhantomZSliceHeader(*fZSliceHeaders[0]);
-    for (unsigned int ii = 1; ii < fZSliceHeaders.size(); ++ii)
-    {
-        *fZSliceHeaderMerged += *fZSliceHeaders[ii];
     }
 }
 

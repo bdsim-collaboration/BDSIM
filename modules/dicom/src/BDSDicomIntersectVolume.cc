@@ -74,10 +74,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSDicomIntersectVolume::BDSDicomIntersectVolume()
     : G4UImessenger(),
-      fG4VolumeCmd(0),
-      fSolid(0),
-      fPhantomMinusCorner(),
-      fVoxelIsInside(0)
+      fG4VolumeCmd(nullptr),
+      fSolid(nullptr),
+      fVoxelIsInside(nullptr)
 {
     fUserVolumeCmd = new G4UIcmdWithAString("/dicom/intersectWithUserVolume", this);
     fUserVolumeCmd->SetGuidance("Intersects a phantom with a user-defined volume "
@@ -98,10 +97,8 @@ BDSDicomIntersectVolume::BDSDicomIntersectVolume()
 
 BDSDicomIntersectVolume::~BDSDicomIntersectVolume()
 {
-    if (fUserVolumeCmd)
-        delete fUserVolumeCmd;
-    if (fG4VolumeCmd)
-        delete fG4VolumeCmd;
+  delete fUserVolumeCmd;
+  delete fG4VolumeCmd;
 }
 
 void BDSDicomIntersectVolume::SetNewValue(G4UIcommand *command,
@@ -130,7 +127,7 @@ void BDSDicomIntersectVolume::SetNewValue(G4UIcommand *command,
         G4ThreeVector pos = G4ThreeVector(G4UIcommand::ConvertToDouble(params[0]),
                                           G4UIcommand::ConvertToDouble(params[1]),
                                           G4UIcommand::ConvertToDouble(params[2]));
-        G4RotationMatrix *rotmat = new G4RotationMatrix;
+        auto *rotmat = new G4RotationMatrix;
         std::vector<G4double> angles;
         rotmat->rotateX(G4UIcommand::ConvertToDouble(params[3]));
         rotmat->rotateY(G4UIcommand::ConvertToDouble(params[4]));
@@ -154,7 +151,7 @@ void BDSDicomIntersectVolume::SetNewValue(G4UIcommand *command,
         BuildG4Solid(params);
 
         //----- Calculate volume inverse 3D transform
-        G4VPhysicalVolume *pv = GetPhysicalVolumes(params[0], 1, 1)[0];
+        G4VPhysicalVolume *pv = GetPhysicalVolumes(params[0], true, 1)[0];
 
         theVolumeTransform =
             G4AffineTransform(pv->GetFrameRotation(), pv->GetFrameTranslation());
@@ -163,7 +160,7 @@ void BDSDicomIntersectVolume::SetNewValue(G4UIcommand *command,
     //----- Calculate relative phantom - volume 3D transform
     G4PhantomParameterisation *thePhantomParam = GetPhantomParam(true);
 
-    G4RotationMatrix *rotph = new G4RotationMatrix();
+    auto *rotph = new G4RotationMatrix();
     // assumes the phantom mother is not rotated !!!
     G4AffineTransform thePhantomTransform(rotph, G4ThreeVector());
     // assumes the phantom mother is not translated !!!
@@ -188,9 +185,9 @@ void BDSDicomIntersectVolume::SetNewValue(G4UIcommand *command,
     }
 
     //----- Loop to pantom voxels
-    G4int nx = G4int(thePhantomParam->GetNoVoxelX());
-    G4int ny = G4int(thePhantomParam->GetNoVoxelY());
-    G4int nz = G4int(thePhantomParam->GetNoVoxelZ());
+    auto nx = G4int(thePhantomParam->GetNoVoxelX());
+    auto ny = G4int(thePhantomParam->GetNoVoxelY());
+    auto nz = G4int(thePhantomParam->GetNoVoxelZ());
     G4int nxy = nx * ny;
     fVoxelIsInside = new G4bool[nx * ny * nz];
     G4double voxelHalfWidthX = thePhantomParam->GetVoxelHalfX();
@@ -211,7 +208,6 @@ void BDSDicomIntersectVolume::SetNewValue(G4UIcommand *command,
         for (G4int iy = 0; iy < ny; ++iy)
         {
 
-            G4bool bPrevVoxelInside = true;
             G4bool b1VoxelFoundInside = false;
             G4int firstVoxel = -1;
             G4int lastVoxel = -1;
@@ -234,9 +230,6 @@ void BDSDicomIntersectVolume::SetNewValue(G4UIcommand *command,
                                 bVoxelIsInside = false;
                                 break;
                             }
-                            else
-                            {
-                            }
                         }
                         if (!bVoxelIsInside)
                             break;
@@ -248,14 +241,6 @@ void BDSDicomIntersectVolume::SetNewValue(G4UIcommand *command,
                 G4int copyNo = ix + nx * iy + nxy * iz;
                 if (bVoxelIsInside)
                 {
-                    if (!bPrevVoxelInside)
-                    {
-                        G4Exception("DicomIntersectVolume::SetNewValue",
-                                    "",
-                                    FatalException,
-                                    "Volume cannot intersect phantom in discontiguous voxels, "
-                                    "please use other voxel");
-                    }
                     if (!b1VoxelFoundInside)
                     {
                         firstVoxel = ix;
@@ -322,30 +307,30 @@ void BDSDicomIntersectVolume::BuildUserSolid(std::vector<G4String> params)
     // take otu position and rotation angles
     params.insert(params.begin(), ":SOLID");
     params.insert(params.begin(), params[1]);
-    G4tgrSolid *tgrSolid = new G4tgrSolid(params);
-    G4tgbVolume *tgbVolume = new G4tgbVolume();
+    auto *tgrSolid = new G4tgrSolid(params);
+    auto *tgbVolume = new G4tgbVolume();
     fSolid = tgbVolume->FindOrConstructG4Solid(tgrSolid);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void BDSDicomIntersectVolume::BuildG4Solid(std::vector<G4String> params)
 {
-    fSolid = GetLogicalVolumes(params[0], 1, 1)[0]->GetSolid();
+    fSolid = GetLogicalVolumes(params[0], true, 1)[0]->GetSolid();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 G4PhantomParameterisation *
 BDSDicomIntersectVolume::GetPhantomParam(G4bool bMustExist)
 {
-    G4PhantomParameterisation *paramreg = 0;
+    G4PhantomParameterisation *paramreg = nullptr;
 
     G4PhysicalVolumeStore *pvs = G4PhysicalVolumeStore::GetInstance();
-    for (auto cite = pvs->cbegin(); cite != pvs->cend(); ++cite)
+    for (auto pv : *pvs)
     {
-        if (IsPhantomVolume(*cite))
+        if (IsPhantomVolume(pv))
         {
-            const G4PVParameterised *pvparam =
-                static_cast<const G4PVParameterised *>(*cite);
+            const auto *pvparam =
+                static_cast<const G4PVParameterised *>(pv);
             G4VPVParameterisation *param = pvparam->GetParameterisation();
             paramreg = static_cast<G4PhantomParameterisation *>(param);
         }
@@ -390,16 +375,16 @@ std::vector<G4VPhysicalVolume *> BDSDicomIntersectVolume::GetPhysicalVolumes(
     }
 
     G4PhysicalVolumeStore *pvs = G4PhysicalVolumeStore::GetInstance();
-    for (auto citepv = pvs->cbegin(); citepv != pvs->cend(); ++citepv)
+    for (auto pv : *pvs)
     {
-        if (volname == (*citepv)->GetName() && ((*citepv)->GetCopyNo() == volcopy || -1 == volcopy))
+        if (volname == pv->GetName() && (pv->GetCopyNo() == volcopy || -1 == volcopy))
         {
-            vvolu.push_back(*citepv);
+            vvolu.push_back(pv);
         }
     }
 
     //----- Check that at least one volume was found
-    if (vvolu.size() == 0)
+    if (vvolu.empty())
     {
         if (exists)
         {
@@ -451,7 +436,7 @@ std::vector<G4LogicalVolume *> BDSDicomIntersectVolume::GetLogicalVolumes(
     const G4String &name, G4bool exists, G4int nVols)
 {
     std::vector<G4LogicalVolume *> vvolu;
-    G4int ial = G4int(name.rfind(":"));
+    auto ial = G4int(name.rfind(":"));
     if (ial != -1)
     {
         G4Exception("BDSDicomIntersectVolume::GetLogicalVolumes",
@@ -461,16 +446,16 @@ std::vector<G4LogicalVolume *> BDSDicomIntersectVolume::GetLogicalVolumes(
     }
 
     G4LogicalVolumeStore *lvs = G4LogicalVolumeStore::GetInstance();
-    for (auto citelv = lvs->cbegin(); citelv != lvs->cend(); ++citelv)
+    for (auto lv : *lvs)
     {
-        if (name == (*citelv)->GetName())
+        if (name == lv->GetName())
         {
-            vvolu.push_back(*citelv);
+            vvolu.push_back(lv);
         }
     }
 
     //----- Check that at least one volume was found
-    if (vvolu.size() == 0)
+    if (vvolu.empty())
     {
         if (exists)
         {
@@ -507,7 +492,7 @@ std::vector<G4String> BDSDicomIntersectVolume::GetWordsInString(
     //----- Clear wordlist
     G4int ii;
     const char *cstr = stemp.c_str();
-    G4int siz = G4int(stemp.length());
+    auto siz = G4int(stemp.length());
     G4int istart = 0;
     G4int nQuotes = 0;
     G4bool lastIsBlank = false;
@@ -524,7 +509,7 @@ std::vector<G4String> BDSDicomIntersectVolume::GetWordsInString(
             if (nQuotes % 2 == 1)
             {
                 //close word
-                wordlist.push_back(stemp.substr(istart, ii - istart));
+                wordlist.emplace_back(stemp.substr(istart, ii - istart));
             }
             else
             {
@@ -540,7 +525,7 @@ std::vector<G4String> BDSDicomIntersectVolume::GetWordsInString(
             {
                 if (!lastIsBlank && !lastIsQuote)
                 {
-                    wordlist.push_back(stemp.substr(istart, ii - istart));
+                    wordlist.emplace_back(stemp.substr(istart, ii - istart));
                 }
 
                 istart = ii + 1;
@@ -552,7 +537,7 @@ std::vector<G4String> BDSDicomIntersectVolume::GetWordsInString(
         {
             if (ii == siz - 1)
             {
-                wordlist.push_back(stemp.substr(istart, ii - istart + 1));
+                wordlist.emplace_back(stemp.substr(istart, ii - istart + 1));
             }
             lastIsQuote = false;
             lastIsBlank = false;

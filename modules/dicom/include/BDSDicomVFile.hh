@@ -69,8 +69,6 @@ protected:
     virtual void ReadData() = 0;
 
     virtual std::vector<G4double> Read1Data(DcmDataset *dset, DcmTagKey tagKey, G4int nData);
-    virtual OFString Read1DataStr(DcmDataset *dset, DcmTagKey tagKey);
-
     DcmDataset *theDataset;
 
 protected:

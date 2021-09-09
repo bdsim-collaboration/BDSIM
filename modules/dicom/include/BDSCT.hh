@@ -29,8 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 class BDSDicomFileMgr;
-class BDSDicomPhantomZSliceHeader;
-class BDSDicomPhantomZSliceMerged;
 class G4Box;
 class G4LogicalVolume;
 class G4Material;
@@ -91,14 +89,6 @@ private:
   // read the DICOM files describing the phantom
   void ReadVoxelDensities(std::ifstream &fin);
 
-  void ReadPhantomDataFile(const G4String &fname);
-  // read one of the DICOM files describing the phantom
-  // (usually one per Z slice).
-  //  Build a DicomPhantomZSliceHeader for each file
-
-  void MergeZSliceHeaders();
-  // merge the slice headers of all the files
-
   G4Material *BuildMaterialWithChangingDensity(const G4Material *origMate,
                                                G4float density,
                                                G4String newMateName);
@@ -121,22 +111,15 @@ private:
   G4Box *fContainer_solid;
   G4VPhysicalVolume *fContainer_phys;
 
-  G4int fNoFiles;                               // number of DICOM files
   std::vector<G4Material *> fOriginalMaterials; // list of original materials
   std::vector<G4Material *> fMaterials;
   // list of new materials created to distinguish different density
   //  voxels that have the same original materials
   size_t *fMateIDs; // index of material of each voxel
-  //unsigned int* fMateIDs; // index of material of each voxel
 
   std::map<G4int, G4double> fDensityDiffs;
   // Density difference to distinguish material for each original
   // material (by index)
-
-  std::vector<BDSDicomPhantomZSliceHeader *> fZSliceHeaders;
-  // list of z slice header (one per DICOM files)
-  BDSDicomPhantomZSliceHeader *fZSliceHeaderMerged;
-  // z slice header resulted from merging all z slice headers
 
   G4int fNVoxelX, fNVoxelY, fNVoxelZ;
   G4double fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ;
@@ -148,11 +131,8 @@ private:
   // built from .geom file
 
   std::set<G4LogicalVolume *> fScorers;
-
   G4bool fConstructed;
-
   BDSDicomFileMgr *theFileMgr;
-
   G4String dicomDataPath;
   G4String dicomDataFile;
 };
