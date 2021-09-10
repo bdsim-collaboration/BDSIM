@@ -81,6 +81,9 @@ include(cmake/ROOT.cmake)
 # DCMTK
 include(cmake/DCMTK.cmake)
 
+# AWAKE
+include(modules/AWAKE.cmake)
+
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )
 if(USE_GDML)
