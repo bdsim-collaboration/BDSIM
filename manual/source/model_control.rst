@@ -937,7 +937,10 @@ particle coordinates from the beginning. A warning will be printed out in this c
   :math:`((Xp0 + xp)^2 + (Yp0 + yp)^2) < 1)`.
 * **Conflicting** parameters cannot be set. Exclusive column sets are `E`, `Ek`, `P`, and also
   `z` and `S`. The skip column symbol `-` can be used in `distrFileFormat` to skip the others.
-  
+* If the pdgid column is specified and the file contains exotic particles (e.g muons), the
+  **"all_particles"** process should be included in the physicsList (see `Beam Parameters`_
+  and `Modular Physics Lists`_) otherwise exotic events will be aborted.
+
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------------+-------------------------------------------------------+
