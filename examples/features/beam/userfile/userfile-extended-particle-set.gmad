@@ -5,7 +5,7 @@ use, l1;
 beam, particle="e-",
       energy=1*GeV,
       distrType="userfile",
-      distrFile="userbeamdata-unknown-particle.dat",
+      distrFile="userbeamdata-extended-particle-set.dat",
       distrFileFormat="pdgid:Ek[GeV]";
 
 ! without the physics list, we don't know the 211 PDG ID (eta meson)
