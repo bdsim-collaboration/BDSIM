@@ -928,7 +928,7 @@ particle coordinates from the beginning. A warning will be printed out in this c
 
 * **tar + gz** will not work. The file must be a single file compressed through gzip only.
 * Coordinates not specified are taken from the default `reference`_ distribution parameters.
-* Lines starting with `#` will be ignored.
+* Lines starting with `#` or `!` will be ignored.
 * Empty lines will also be ignored.
 * A warning will be printed if the line is shorter than the number of variables specified
   in `distrFileFormat` and the event aborted - the simulation safely proceeds to the next event.
