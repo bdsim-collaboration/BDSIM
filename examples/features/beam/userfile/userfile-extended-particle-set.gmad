@@ -6,7 +6,7 @@ beam, particle="e-",
       energy=1*GeV,
       distrType="userfile",
       distrFile="userbeamdata-unknown-particle.dat",
-      distrFileFormat="pdgid:E[GeV]:x[mum]";
+      distrFileFormat="pdgid:Ek[GeV]";
 
 ! without the physics list, we don't know the 211 PDG ID (eta meson)
 ! be default so we fail to construct that event but pass over
