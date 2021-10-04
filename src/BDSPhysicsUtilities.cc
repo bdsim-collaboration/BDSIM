@@ -300,7 +300,7 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
 
       G4IonTable* ionTable = particleTable->GetIonTable();
       /// cache this here in case the particle definition isn't available until during a run
-      G4int ionPDGID = ionTable->GetNucleusEncoding(ionDef->Z(), ionDef->A());
+      G4int ionPDGID  = G4IonTable::GetNucleusEncoding(ionDef->Z(), ionDef->A());
       G4double mass   = ionTable->GetIonMass(ionDef->Z(), ionDef->A());
       mass += ionDef->NElectrons()*G4Electron::Definition()->GetPDGMass();
       G4double charge = ionDef->Charge(); // correct even if overridden
