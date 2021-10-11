@@ -157,7 +157,7 @@ BDSFieldFactory::BDSFieldFactory()
 
 BDSFieldFactory::~BDSFieldFactory()
 {
-  for (auto info : parserDefinitions)
+  for (auto& info : parserDefinitions)
     {delete info.second;}
 }
 
