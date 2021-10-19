@@ -237,6 +237,15 @@ Examples::
   rebdsim analysisConfig.txt output.root
   rebdsim analysisConfig.txt output.root results.root
 
+* If the output filename is specified this will take precedence over the output file name
+  possibly specified in the analysis configuration text file.
+* If no output file name is given as an argument and no output file name is specified in the
+  analysis configuration text file, then the default will be the input file name + :code:`"_ana.root"`
+  and the file will be written to the current working directory.
+* Multiple output files can be given at once with a glob regular expression (detected by the character
+  :code:`*` in the input file name. To do this, put the pattern in quotes so it is expanded not by the
+  shell but by rebdsim. e.g. :code:`rebdsim analysisConfig.txt "*.root"`.
+
 .. _analysis-preparing-analysis-config:
 
 Preparing an Analysis Configuration File

@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "HistogramDef4D.hh"
 #include "HistogramFactory.hh"
 #include "HistogramMeanFromFile.hh"
 #include "PerEntryHistogram.hh"
@@ -33,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4DBase.hh"
 
 #include <iostream>
 #include <string>
@@ -69,6 +71,7 @@ void Analysis::Execute()
       TH1::AddDirectory(kTRUE);
       TH2::AddDirectory(kTRUE);
       TH3::AddDirectory(kTRUE);
+      BDSBH4DBase::AddDirectory(kTRUE);
       PreparePerEntryHistograms();
       Process();
     }
@@ -168,6 +171,8 @@ void Analysis::FillHistogram(HistogramDef* definition,
   TH1::AddDirectory(kTRUE);
   TH2::AddDirectory(kTRUE);
   TH3::AddDirectory(kTRUE);
+  BDSBH4DBase::AddDirectory(kTRUE);
+
   
   // pull out communal information in base class
   std::string name      = definition->histName;
@@ -175,12 +180,46 @@ void Analysis::FillHistogram(HistogramDef* definition,
   std::string selection = definition->selection;
 
   HistogramFactory factory;
-  TH1* h = factory.CreateHistogram(definition);
-  chain->Draw(command.c_str(), selection.c_str(),"goff");
-
-  if (outputHistograms)
-    {outputHistograms->push_back(h);}
-  else
-    {simpleHistograms.push_back(h);}
-
+  
+  switch (nDim)
+    {
+    case 1:
+      {
+	HistogramDef1D* d = static_cast<HistogramDef1D*>(definition);
+	TH1D* h = factory.CreateHistogram1D(d);
+	chain->Draw(command.c_str(), selection.c_str(),"goff");
+	histogramNames.push_back(name);
+	histograms1D[name] = h;
+	break;
+      }
+    case 2:
+      {
+	HistogramDef2D* d = static_cast<HistogramDef2D*>(definition);
+	TH2D* h = factory.CreateHistogram2D(d);
+	chain->Draw(command.c_str(), selection.c_str(),"goff");
+	histogramNames.push_back(name);
+	histograms2D[name] = h;
+	break;
+      }
+    case 3:
+      {
+	HistogramDef3D* d = static_cast<HistogramDef3D*>(definition);
+	TH3D* h = factory.CreateHistogram3D(d);
+	chain->Draw(command.c_str(), selection.c_str(),"goff");
+	histogramNames.push_back(name);
+	histograms3D[name] = h;
+	break;
+      }
+    case 4:
+      {
+    HistogramDef4D* d = static_cast<HistogramDef4D*>(definition);
+    BDSBH4DBase* h = factory.CreateHistogram4D(d);
+    chain->Draw(command.c_str(), selection.c_str(),"goff");
+    histogramNames.push_back(name);
+    histograms4D[name] = h;
+    break;
+      }
+    default:
+      {break;}
+    }
 }

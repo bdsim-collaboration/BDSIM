@@ -114,6 +114,7 @@ void EventAnalysis::Execute()
     TH1::AddDirectory(kTRUE);
     TH2::AddDirectory(kTRUE);
     TH3::AddDirectory(kTRUE);
+    BDSBH4DBase::AddDirectory(kTRUE);
     PreparePerEntryHistograms();
     PreparePerEntryHistogramSets();
     Process();

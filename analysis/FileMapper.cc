@@ -50,7 +50,7 @@ bool RBDS::GetFileType(TFile*       file,
     {return false;}
 
   // load header to get which type of file it is
-  TTree* headerTree = static_cast<TTree*>(file->Get("Header"));
+  TTree* headerTree = dynamic_cast<TTree*>(file->Get("Header"));
   if (!headerTree)
     {return false;} // no header -> definitely not a bdsim file
   Header* headerLocal = new Header();
@@ -205,11 +205,23 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	  TDirectory* subDir = static_cast<TDirectory*>(dirObject);
 	  MapDirectory(subDir, output, dirPath + "/" + objectName); // recursion!
 	}
-      else if (dirObject->InheritsFrom("TH1"))
+      else if (dirObject->InheritsFrom("TH1") or dirPath =="/Event/MergedHistograms" )
 	{
 	  TH1* h = static_cast<TH1*>(dirObject);
-	  int nDim = RBDS::DetermineDimensionality(h);
-
+	  int nDim;
+	  bool BDSBH4Dtype;
+	  
+	  if ((dirObject->InheritsFrom("BDSBH4DBase")))
+      {
+	      nDim=4;
+	      BDSBH4Dtype = true;
+	    }
+	  else
+	    {
+	      nDim = RBDS::DetermineDimensionality(h);
+	      BDSBH4Dtype = false;
+	    }
+	  
 	  if (debug)
 	    {gDirectory->pwd();}
 	  
@@ -245,7 +257,7 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	      {continue; break;}
 	    }
 	  
-	  RBDS::HistogramPath path = {histPath, histName, acc, outDir};
+	  RBDS::HistogramPath path = {histPath, histName, acc, outDir, BDSBH4Dtype};
 	  histograms.push_back(path);
 	  std::cout << "Found histogram> " << histPath << histName << std::endl;
 	}

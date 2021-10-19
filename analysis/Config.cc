@@ -46,7 +46,7 @@ Config* Config::instance = nullptr;
 std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Run.", "Event."};
 
 Config::Config(const std::string& inputFilePathIn,
-	           const std::string& outputFileNameIn):
+	       const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
   InitialiseOptions("");
@@ -61,8 +61,8 @@ Config::Config(const std::string& inputFilePathIn,
 }
 
 Config::Config(const std::string& fileNameIn,
-	           const std::string& inputFilePathIn,
-	           const std::string& outputFileNameIn):
+	       const std::string& inputFilePathIn,
+	       const std::string& outputFileNameIn):
   allBranchesActivated(false)
 {
   InitialiseOptions(fileNameIn);
@@ -72,6 +72,27 @@ Config::Config(const std::string& fileNameIn,
     {optionsString["inputfilepath"] = inputFilePathIn;}
   if (!outputFileNameIn.empty())
     {optionsString["outputfilename"] = outputFileNameIn;}
+  else
+    {
+      if (optionsString["outputfilename"].empty())
+	{// no argument supplied and also no output name in input file - default to filename+_ana.root
+	  std::string newOutputFilePath = optionsString["inputfilepath"];
+	  // get only the filename - ie just write the file to the cwd
+	  auto foundSlash = newOutputFilePath.rfind('/'); // find the last '/'
+	  if (foundSlash != std::string::npos)
+	    {newOutputFilePath = newOutputFilePath.substr(foundSlash+1);} // the rest
+	  std::string key = ".root";
+	  auto found = newOutputFilePath.rfind(key);
+	  if (found != std::string::npos)
+	    {
+	      newOutputFilePath.replace(found, key.length(), "_ana.root");
+	      optionsString["outputfilename"] = newOutputFilePath;
+	      std::cout << "Using default output file name with _ana.root suffix: " << optionsString.at("outputfilename") << std::endl;
+	    }
+	  else
+	    {throw RBDSException("filename does not contain \".root\"");}
+	}
+    }
 }
 
 Config::~Config()
@@ -109,10 +130,10 @@ void Config::InitialiseOptions(const std::string& analysisFile)
   optionsBool["perentrymodel"]     = false;
   optionsBool["backwardscompatible"] = false; // ignore file types for old data
 
-  optionsString["inputfilepath"]  = "./output.root";
-  optionsString["outputfilename"] = "./output_ana.root";
-  optionsString["opticsfilename"] = "./output_optics.dat";
-  optionsString["gdmlfilename"]   = "./model.gdml";
+  optionsString["inputfilepath"]  = "";
+  optionsString["outputfilename"] = "";
+  optionsString["opticsfilename"] = "";
+  optionsString["gdmlfilename"]   = "";
 
   optionsNumber["printmodulofraction"] = 0.01;
   optionsNumber["eventstart"]          = 0;
@@ -152,7 +173,7 @@ void Config::ParseInputFile()
   std::ifstream f(fn.c_str());
 
   if(!f)
-    {throw RBDSException("Config::ParseInputFile>", "could not open file");}
+    {throw RBDSException("Config::ParseInputFile>", "could not open analysis configuration file \"" + fn + "\"");}
 
   lineCounter = 0;
   std::string line;
