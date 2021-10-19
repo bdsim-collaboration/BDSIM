@@ -96,12 +96,6 @@ void BDSGeometryComponent::InheritExtents(BDSGeometryComponent const * const ano
   innerExtent = anotherComponent->GetInnerExtent().Translate(offset);
 }
 
-void BDSGeometryComponent::RegisterDaughter(BDSGeometryComponent* anotherComponent)
-{
-  if (std::find(allDaughters.begin(), allDaughters.end(), anotherComponent) == allDaughters.end())
-    {allDaughters.insert(anotherComponent);}
-}
-
 void BDSGeometryComponent::RegisterSolid(const std::set<G4VSolid*>& solids)
 {
   for (auto solid : solids)

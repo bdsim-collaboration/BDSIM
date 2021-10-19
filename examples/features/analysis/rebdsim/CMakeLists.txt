@@ -1,4 +1,5 @@
 rebdsim_test(analysis-rebdsim                    "analysisConfig.txt")
+rebdsim_test(analysis-rebdsim-default-name       "analysisConfigNoOutput.txt")
 rebdsim_test(analysis-rebdsim-multiple-files     "multipleFilesAnalysis.txt")
 rebdsim_test(analysis-rebdsim-selection          "selection.txt")
 rebdsim_test(analysis-rebdsim-event-range        "analysisConfigRange.txt")
@@ -13,6 +14,7 @@ rebdsim_test(analysis-spectra-top10              "spectra-top10.txt")
 rebdsim_test(analysis-spectra-top10ions          "spectra-top10ions.txt")
 rebdsim_test(analysis-spectra-top10particles     "spectra-top10particles.txt")
 rebdsim_test(analysis-spectra-rigidity           "spectra-rigidity.txt")
+rebdsim_test(analysis-rebdsim-uneven-binning     "unevenBinning.txt")
 
 rebdsim_test_fail(analysis-uneven-binning-bad1   "unevenBinning-bad1.txt")
 rebdsim_test_fail(analysis-uneven-binning-bad2   "unevenBinning-bad2.txt")

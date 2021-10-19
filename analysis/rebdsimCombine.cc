@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1.h"
 #include "TH2.h"
 #include "TH3.h"
+#include "BDSBH4D.hh"
 #include "TTree.h"
 
 #include <exception>
@@ -55,7 +56,10 @@ int main(int argc, char* argv[])
   // checks
   if (inputFiles.size() == 1)
     {
-      std::cout << "Only one input file provided \"" << inputFiles[0] << "\" - no point." << std::endl;
+      if (inputFiles[0].find('*') != std::string::npos) // glob didn't expand in shell - infer this
+        {std::cout << "Glob with * did not match any files" << std::endl;}
+      else
+        {std::cout << "Only one input file provided \"" << inputFiles[0] << "\" - no point." << std::endl;}
       exit(1);
     }
 
@@ -100,9 +104,9 @@ int main(int argc, char* argv[])
     {std::cerr << error.what(); exit(1);}
   
   // copy the model tree over if it exists - expect the name to be ModelTree
-  TTree* oldModelTree = (TTree*)f->Get("ModelTree");
+  TTree* oldModelTree = dynamic_cast<TTree*>(f->Get("ModelTree"));
   if (!oldModelTree)
-    {oldModelTree = (TTree*)f->Get("Model");}
+    {oldModelTree = dynamic_cast<TTree*>(f->Get("Model"));}
   if (oldModelTree)
     {// TChain can be valid but TTree might not be in corrupt / bad file
       output->cd();
@@ -128,7 +132,9 @@ int main(int argc, char* argv[])
 	  for (const auto& hist : histograms)
 	    {
 	      std::string histPath = hist.path + hist.name; // histPath has trailing '/'
+
 	      TH1* h = dynamic_cast<TH1*>(f->Get(histPath.c_str()));
+
 	      if (!h)
 		{RBDS::WarningMissingHistogram(histPath, file); continue;}
 	      hist.accumulator->Accumulate(h);
@@ -154,8 +160,8 @@ int main(int argc, char* argv[])
       result->SetDirectory(hist.outputDir);
       hist.outputDir->Add(result);
       delete hist.accumulator; // this removes temporary histograms from the file
-    }
-  
+	}
+
   headerOut->nOriginalEvents = nOriginalEvents;
   headerTree->Fill();
 

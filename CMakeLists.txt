@@ -69,15 +69,19 @@ if (NOT EXISTS ${CMAKE_SOURCE_DIR}/.git)
   set(GIT_FOUND FALSE)
 endif()
 
+# Boost - do before ROOT as may change the compilation flags and standard
+include(cmake/Boost.cmake)
+
 # CLHEP
 include(cmake/CLHEP.cmake)
 
-# ROOT
+# ROOT must be compiled in c++14 to be compatible with Boost
 include(cmake/ROOT.cmake)
 
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )
 if(USE_GDML)
+  include(cmake/XercesC.cmake)
   add_definitions("-DUSE_GDML")
   message(STATUS "GDML support ON")
 endif()
@@ -134,6 +138,11 @@ set(BDSIM_LIB_NAME_STATIC "bdsim-static")
 set(GMAD_LIB_NAME "gmad")
 set(GMAD_LIB_NAME_STATIC "gmad-static")
 
+# Configuration information - do this before collating sources as defines
+# some cmake variables for file configuration including git version
+add_subdirectory(configuration)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/configuration)
+
 # Source files
 string(TIMESTAMP CURRENT_YEAR %Y)
 configure_file(${PROJECT_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
@@ -167,10 +176,6 @@ if($ENV{VERBOSE})
   message(STATUS "BDSIM sources ${bdsim_sources}")
 endif()
 
-# Configuration information
-add_subdirectory(configuration)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/configuration)
-
 # Parser
 add_subdirectory(parser)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser)
@@ -194,6 +199,10 @@ endif()
 add_library(${BDSIM_LIB_NAME} SHARED ${root_dicts} ${bdsim_sources})
 target_link_libraries(${BDSIM_LIB_NAME} ${CLHEP_LIBRARIES})
 target_link_libraries(${BDSIM_LIB_NAME} ${Geant4_LIBRARIES})
+if (USE_GDML)
+  target_include_directories(${BDSIM_LIB_NAME} SYSTEM PUBLIC ${XercesC_INCLUDE_DIR})
+  target_link_libraries(${BDSIM_LIB_NAME} ${XercesC_LIBRARY_RELEASE})
+endif()
 target_link_libraries(${BDSIM_LIB_NAME} gmad)
 generate_export_header(${BDSIM_LIB_NAME})
 
@@ -209,6 +218,10 @@ if (USE_GZSTREAM)
 endif()
 if (USE_HEPMC3)
   target_link_libraries(${BDSIM_LIB_NAME} ${HEPMC3_LIBRARIES})
+endif()
+if (USE_BOOST)
+  target_include_directories(${BDSIM_LIB_NAME} SYSTEM PUBLIC ${Boost_INCLUDE_DIRS})
+  target_link_libraries(${BDSIM_LIB_NAME} ${Boost_LIBRARIES})
 endif()
 
 # link against ROOT
@@ -236,6 +249,9 @@ add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
 target_compile_definitions(bdsimRootEvent PRIVATE "-D__ROOTBUILD__")
 # link against ROOT
 target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
+if (USE_BOOST)
+  target_link_libraries(bdsimRootEvent ${BOOSE_LIB_NAME})
+endif()
 # Add dependency to make sure bdsimRootEvent is done first
 # This is done because the ROOT dictionary generation needs to be done separately for each of them
 # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
