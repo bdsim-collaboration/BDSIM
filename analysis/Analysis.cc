@@ -180,46 +180,12 @@ void Analysis::FillHistogram(HistogramDef* definition,
   std::string selection = definition->selection;
 
   HistogramFactory factory;
-  
-  switch (nDim)
-    {
-    case 1:
-      {
-	HistogramDef1D* d = static_cast<HistogramDef1D*>(definition);
-	TH1D* h = factory.CreateHistogram1D(d);
-	chain->Draw(command.c_str(), selection.c_str(),"goff");
-	histogramNames.push_back(name);
-	histograms1D[name] = h;
-	break;
-      }
-    case 2:
-      {
-	HistogramDef2D* d = static_cast<HistogramDef2D*>(definition);
-	TH2D* h = factory.CreateHistogram2D(d);
-	chain->Draw(command.c_str(), selection.c_str(),"goff");
-	histogramNames.push_back(name);
-	histograms2D[name] = h;
-	break;
-      }
-    case 3:
-      {
-	HistogramDef3D* d = static_cast<HistogramDef3D*>(definition);
-	TH3D* h = factory.CreateHistogram3D(d);
-	chain->Draw(command.c_str(), selection.c_str(),"goff");
-	histogramNames.push_back(name);
-	histograms3D[name] = h;
-	break;
-      }
-    case 4:
-      {
-    HistogramDef4D* d = static_cast<HistogramDef4D*>(definition);
-    BDSBH4DBase* h = factory.CreateHistogram4D(d);
-    chain->Draw(command.c_str(), selection.c_str(),"goff");
-    histogramNames.push_back(name);
-    histograms4D[name] = h;
-    break;
-      }
-    default:
-      {break;}
-    }
+  TH1* h = factory.CreateHistogram(definition);
+  chain->Draw(command.c_str(), selection.c_str(),"goff");
+
+  if (outputHistograms)
+    {outputHistograms->push_back(h);}
+  else
+    {simpleHistograms.push_back(h);}
+
 }
