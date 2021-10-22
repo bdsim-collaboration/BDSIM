@@ -328,7 +328,7 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
   if (nColons > nDim - 1)
     {
       std::string err = "Error: Histogram \"" + histName + "\" variable includes too many single\n";
-	  err += "colons specifying more dimensions than the number of specified dimensions.\n";
+      err += "colons specifying more dimensions than the number of specified dimensions.\n";
       err += "Declared dimensions: " + std::to_string(nDim) + "\n";
       err += "Number of dimensions in variables " + std::to_string(nColons + 1);
       throw RBDSException(err);
@@ -366,9 +366,9 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     {
       histoDefs[treeName].push_back(result);
       if (perEntry)
-	    {histoDefsPerEntry[treeName].push_back(result);}
+	{histoDefsPerEntry[treeName].push_back(result);}
       else
-	    {histoDefsSimple[treeName].push_back(result);}
+	{histoDefsSimple[treeName].push_back(result);}
       UpdateRequiredBranches(result);
     }
 }
