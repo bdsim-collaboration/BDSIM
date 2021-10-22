@@ -15,5 +15,5 @@ q1: query, nDimensions=4,
 	   nt = 50,
 	   tmin = -2*ns,
 	   tmax = 2*ns,
-	   outfile = "4d_interpolated_linear.dat",
+	   outfile = "4d_interpolated_linear_mag.dat",
 	   fieldObject = "f1";
