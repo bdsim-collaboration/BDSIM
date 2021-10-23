@@ -57,7 +57,7 @@ def Compare1D(original, nearest, linear, linearmag, cubic):
     plt.draw()
 
 def PlotOriginal():
-    a = pybdsim.Field.Load("1dexample.tar.gz")
+    a = pybdsim.Field.Load("1dexample.dat.gz").data
 
     plt.figure(figsize=(6,4))
     plt.plot(a[:,0], a[:,1], 'bo', label='X', mec='b')
@@ -73,8 +73,8 @@ def PlotOriginal():
 
 
 def PlotNearest():
-    a = pybdsim.Field.Load("1d_interpolated_nearest.dat")
-    o = pybdsim.Field.Load("1dexample.tar.gz")
+    a = pybdsim.Field.Load("1d_interpolated_nearest.dat").data
+    o = pybdsim.Field.Load("1dexample.dat.gz").data
 
     plt.figure(figsize=(6,4))
     plt.plot(o[:,0], o[:,1], 'bo', alpha=0.2, mec='b')
@@ -93,8 +93,8 @@ def PlotNearest():
     plt.savefig('1d_nearest_xyz.pdf')
 
 def PlotLinear():
-    a = pybdsim.Field.Load("1d_interpolated_linear.dat")
-    o = pybdsim.Field.Load("1dexample.tar.gz")
+    a = pybdsim.Field.Load("1d_interpolated_linear.dat").data
+    o = pybdsim.Field.Load("1dexample.dat.gz").data
 
     plt.figure(figsize=(6,4))
     plt.plot(o[:,0], o[:,1], 'bo', alpha=0.2, mec='b')
@@ -113,9 +113,9 @@ def PlotLinear():
     plt.savefig('1d_linear_xyz.pdf')
 
 def CompareLinearMagnitudes():
-    l  = pybdsim.Field.Load("1d_interpolated_linear.dat")
-    lm = pybdsim.Field.Load("1d_interpolated_linear_mag.dat")
-    o = pybdsim.Field.Load("1dexample.dat")
+    l  = pybdsim.Field.Load("1d_interpolated_linear.dat").data
+    lm = pybdsim.Field.Load("1d_interpolated_linear_mag.dat").data
+    o = pybdsim.Field.Load("1dexample.dat").data
 
     lmag  = np.sum((l[:,1:])**2, axis=1)
     lmmag = np.sum((lm[:,1:])**2, axis=1)
@@ -128,13 +128,13 @@ def CompareLinearMagnitudes():
     plt.ylabel('Field Component (T)')
     plt.legend(numpoints=1, loc=2)
     plt.xlim(-50,40)
-    plt.ylim(-1,20)
+    plt.ylim(-5,25)
     plt.tight_layout()
     plt.savefig('1d_linear_mag_comparison.pdf')
 
 def PlotLinearMag():
-    a = pybdsim.Field.Load("1d_interpolated_linear_mag.dat")
-    o = pybdsim.Field.Load("1dexample.dat")
+    a = pybdsim.Field.Load("1d_interpolated_linear_mag.dat").data
+    o = pybdsim.Field.Load("1dexample.dat").data
 
     plt.figure(figsize=(6,4))
     plt.plot(o[:,0], o[:,1], 'bo', alpha=0.2, mec='b')
@@ -153,8 +153,8 @@ def PlotLinearMag():
     plt.savefig('1d_linear_mag_xyz.pdf')
 
 def PlotCubic():
-    a = pybdsim.Field.Load("1d_interpolated_cubic.dat")
-    o = pybdsim.Field.Load("1dexample.tar.gz")
+    a = pybdsim.Field.Load("1d_interpolated_cubic.dat").data
+    o = pybdsim.Field.Load("1dexample.dat.gz").data
 
     plt.figure(figsize=(6,4))
     plt.plot(o[:,0], o[:,1], 'bo', alpha=0.2, mec='b')
@@ -174,6 +174,12 @@ def PlotCubic():
     
 
 if __name__ == "__main__":
+    PlotOriginal()
+    PlotNearest()
+    PlotLinear()
+    CompareLinearMagnitudes()
+    PlotLinearMag()
+    PlotCubic()
     Compare1D("1dexample.dat.gz",
               "1d_interpolated_nearest.dat",
               "1d_interpolated_linear.dat",
