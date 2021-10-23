@@ -111,12 +111,9 @@ void PerEntryHistogramSet::AccumulateCurrentEntry(long int entryNumber)
 
   if (dynamicallyStoreParticles || dynamicallyStoreIons)
     {
-      // for this event, loop over all pdgIDs and make a set of them
+      // for this event, form a set of pdgIDs and
       // then ensure we have all prepare histograms
-      const auto &partID = sampler->partID;
-      std::set<long long int> pdgIDSet;
-      for (const auto id : partID)
-        {pdgIDSet.insert(id);}
+      std::set<long long int> pdgIDSet(sampler->partID.begin(), sampler->partID.end());
 
       // use vector because set cannot be appended to for set_difference
       std::vector<long long int> missing;
