@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 
 import matplotlib.pyplot as _plt
 import numpy as _np
@@ -38,7 +38,7 @@ def main():
 
     # compress the result
     _check_call(['gzip', "2dexample.dat"])
-
+    
     #Plot(data)
     return data
 
