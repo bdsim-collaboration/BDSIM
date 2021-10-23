@@ -401,9 +401,9 @@ is given in the ROOT TTree class:
 Spectra
 -------
 
-Spectra is a conveninent way to make common energy or rigidity spectra **1D** histograms for a variety of
-particles types. Normally to make such a plot of the different particles, we are required to make
-1 histogram in energy with a selection of each particle type. This could be done manually as follows:
+The Spectra command is a conveninent way to make common energy or rigidity spectra (**1D**) histograms
+for a variety of particles species. Normally, we would need to make 1 histogram in energy with a
+selection for each particle species by PDG ID. This could be done manually as follows:
 ::
 
    # Object   Tree Name Histogram Name  # of Bins Binning Variable       Selection
@@ -413,7 +413,7 @@ particles types. Normally to make such a plot of the different particles, we are
    Histogram1D Event. Neutrons          {100} {1:10} samplerName.energy samplerName.partID==2112
    Histgoram1D Event. Electrons         {100} {1:10} samplerName.energy samplerName.partID==11
 
-This can be equivalently achieved with the Spectra command:
+However, this can be equivalently achieved with the Spectra command:
 ::
 
    #Object    Sampler Name # of Bins  Binning  Particles                  Selection
@@ -421,8 +421,8 @@ This can be equivalently achieved with the Spectra command:
 
 
 where `samplerName` is the name of the sampler in the data to be analysed. Here, the histograms
-in total energy are created with 100 bins from 1 to 10 GeV for all protons, primary protons,
-secondary protons, neutrons and electrons.
+in total energy (i.e. "TE" suffix) are created with 100 bins from 1 to 10 GeV for all protons,
+primary protons, secondary protons, neutrons and electrons.
 
 .. note:: The weight variable is always included in the spectra histograms.
 
@@ -439,7 +439,7 @@ The required columns are:
 +------------------------+--------------------------------------------+
 | Binning                | The binning range                          |
 +------------------------+--------------------------------------------+
-| Paricle specification  | A list of particles - see below            |
+| Particle specification | A list of particles - see below            |
 +------------------------+--------------------------------------------+
 | Selection              | '1' or a filter as in a regular histogram  |
 +------------------------+--------------------------------------------+
@@ -483,12 +483,12 @@ To make a set of logarithmically binned histograms from :math:`10^{-2}` GeV to :
 Spectra Particle Specification
 ------------------------------
 
-Paricles can be specified in several ways:
+Particles can be specified in several ways:
 
 +-------------------+-------------------------------------------------------------------------+
 | **Example**       | **Description**                                                         |
 +===================+=========================================================================+
-| {11,-11,22,2212}  | Histograms are made for the specified comma-spearated PDG IDs. The sign |
+| {11,-11,22,2212}  | Histograms are made for the specified comma-separated PDG IDs. The sign |
 |                   | of each is observed, so -11 is not the same as 11.                      |
 +-------------------+-------------------------------------------------------------------------+
 | {particles}       | A histogram for every unique particle that is not an ion encountered in |
@@ -510,7 +510,7 @@ Paricles can be specified in several ways:
 |                   | definition (or user bunch file or event generator file).                |
 +-------------------+-------------------------------------------------------------------------+
 | {top10ions}       | Similar to top10 but only for ions. The number may be a positive        |
-|                   | integer greater than 1.                                                 |
+|                   | integer greater than 1. e.g. {top5ions}                                 |
 +-------------------+-------------------------------------------------------------------------+
 | {top10particles}  | Similar to top10 but only for non-ions.                                 |
 +-------------------+-------------------------------------------------------------------------+
