@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def Compare2D(original, nearest, linear, linearmag, cubic):
-    a = pybdsim.Field.Load(original)
-    n = pybdsim.Field.Load(nearest)
-    l = pybdsim.Field.Load(linear)
-    lm = pybdsim.Field.Load(linearmag)
-    c = pybdsim.Field.Load(cubic)
+    a = pybdsim.Field.Load(original).data
+    n = pybdsim.Field.Load(nearest).data
+    l = pybdsim.Field.Load(linear).data
+    lm = pybdsim.Field.Load(linearmag).data
+    c = pybdsim.Field.Load(cubic).data
     _Plot(a, 'original', 'Original')
     _Plot(n, 'nearest',  'Nearest')
     _Plot(l, 'linear',   'Linear')
@@ -53,7 +53,7 @@ def _Plot(a, filename, title):
 
 if __name__ == "__main__":
     Compare2D("2dexample.dat.gz",
-              "2d_interpolated_nearest.dat.gz",
-              "2d_interpolated_linear.dat.gz",
-              "2d_interpolated_linear_mag.dat.gz",
-              "2d_interpolated_cubic.dat.gz")
+              "2d_interpolated_nearest.dat",
+              "2d_interpolated_linear.dat",
+              "2d_interpolated_linear_mag.dat",
+              "2d_interpolated_cubic.dat")
