@@ -957,7 +957,7 @@ the field vector is also linearly inteprolated. Imagine linear interpolation bet
 vectors pointing up and left with magnitude 1. The linearly interpolated vector exactly
 half way between would be at 45 degrees point to the top right. As the components of the
 vector are linearly interpolated, (0,1) to (1,0), then the components would be (0.5,0.5)
-with a magnitude of :math:`\sqrt{2 0.5^2} = 0.707`. This is shown in the figure below.
+with a magnitude of :math:`\sqrt{2 \times 0.5^2} = 0.707`. This is shown in the figure below.
 
 With this interpolator, the magnitude would be linearly interpolated betwen 1 and 1, so
 would remain 1.
