@@ -126,7 +126,7 @@ void EventAnalysis::Execute()
 
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
-  printModulo = (int)ceil((double)entries * fraction);
+  printModulo = (int)std::ceil((double)entries * fraction);
   if (printModulo <= 0)
     {printModulo = 1;}
 }
@@ -156,7 +156,7 @@ void EventAnalysis::Process()
       eventEnd = entries;
     }
   bool firstLoop = true;
-  for (long int i = eventStart; i < eventEnd; ++i)
+  for (auto i = (Long64_t)eventStart; i < (Long64_t)eventEnd; ++i)
     {
       chain->GetEntry(i);
       // event analysis feedback
