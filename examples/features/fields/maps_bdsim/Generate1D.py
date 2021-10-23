@@ -31,6 +31,7 @@ def main():
 
     # compress the result
     _check_call(['gzip', "1dexample.dat"])
+    f.Write('1dexample.dat') # write again to keep original
 
     #Plot(data[:,0],data[:,1],data[:,2],data[:,3])
     return data
