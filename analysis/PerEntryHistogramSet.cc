@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "SpectraParticles.hh"
 
 #include "BDSOutputROOTEventSampler.hh"
+#include "RBDSException.hh"
 
 #include <algorithm>
 #include <iterator>
@@ -94,14 +95,19 @@ PerEntryHistogramSet::~PerEntryHistogramSet()
     {delete kv;}
 }
 
-void PerEntryHistogramSet::AccumulateCurrentEntry(long int entryNumber)
+void PerEntryHistogramSet::CheckSampler()
 {
   if (!sampler)
     {
       sampler = event->GetSampler(branchName + "."); // cache sampler
       if (!sampler)
-        {return;}
+        {throw RBDSException("cannot find sampler \"" + branchName + "\" or Model tree was not stored");}
     }
+}
+
+void PerEntryHistogramSet::AccumulateCurrentEntry(long int entryNumber)
+{
+  CheckSampler();
 
   if (dynamicallyStoreParticles || dynamicallyStoreIons)
     {

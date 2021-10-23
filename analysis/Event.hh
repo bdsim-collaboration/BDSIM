@@ -149,6 +149,10 @@ public:
   std::vector<std::string> collimatorNames;
   std::map<std::string, BDSOutputROOTEventCollimator*> collimatorMap;
 
+  /// Relink samplers - i.e. set branch address again in case they might
+  /// have changed in memory location by adding another.
+  void RelinkSamplers();
+
   /// Utility method.
   RBDS::VectorString RemoveDuplicates(const RBDS::VectorString& namesIn) const;
   
@@ -171,10 +175,11 @@ private:
 					int i);
   /// @}
   
-  bool debug           = false;
-  bool processSamplers = false;
-  int  dataVersion     = 0;
-  bool usePrimaries    = false;
+  TTree* tree;
+  bool debug;
+  bool processSamplers;
+  int  dataVersion;
+  bool usePrimaries;
 
   ClassDef(Event, 2);
 };

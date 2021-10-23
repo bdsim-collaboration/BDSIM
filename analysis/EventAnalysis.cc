@@ -158,6 +158,9 @@ void EventAnalysis::Process()
   bool firstLoop = true;
   for (auto i = (Long64_t)eventStart; i < (Long64_t)eventEnd; ++i)
     {
+    if (firstLoop) // ensure samplers setup for spectra before we load data
+      {CheckSpectraBranches();}
+
       chain->GetEntry(i);
       // event analysis feedback
       if (i % printModulo == 0)
@@ -196,12 +199,18 @@ void EventAnalysis::Process()
 	    }
 	}
       
-      if(processSamplers)
+      if (processSamplers)
 	{ProcessSamplers(firstLoop);}
-	if (firstLoop)
-    {firstLoop = false;} // set to false on first pass of loop
+      if (firstLoop)
+	{firstLoop = false;} // set to false on first pass of loop
     }
   std::cout << "\rSampler analysis complete                           " << std::endl;
+}
+
+void EventAnalysis::CheckSpectraBranches()
+{
+  for (auto s : perEntryHistogramSets)
+    {s->CheckSampler();}
 }
 
 void EventAnalysis::Terminate()
