@@ -429,7 +429,7 @@ void Config::ParseSpectraLine(const std::string& line)
   // simple spectra using 'top' or 'ions' or 'particles' won't dynamically build up the pdg ids
   // per event so we should warn the user about this as it'll create no histograms
   if (particles.empty() && !perEntry)
-    {throw RBDSException("Simple spectra used but no specific particles named - only works for specific particles");}
+    {throw RBDSException("Simple spectra cannot be used with 'topN'- only works for specific particles");}
   
   HistogramDef1D* def = new HistogramDef1D("Event.", histogramName,
 					   xBinning,
