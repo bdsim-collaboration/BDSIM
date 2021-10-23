@@ -16,31 +16,31 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSHistBinMapper3D.hh"
+#include "BDSArray1DCoords.hh"
+#include "BDSFieldValue.hh"
+#include "BDSInterpolator1DLinearMag.hh"
+#include "BDSInterpolatorRoutines.hh"
 
 #include "globals.hh"
 
-BDSHistBinMapper3D::BDSHistBinMapper3D(G4int nBinsIIn,
-				       G4int nBinsJIn,
-				       G4int nBinsKIn):
-  nBinsI(nBinsIIn),
-  nBinsJ(nBinsJIn),
-  nBinsK(nBinsKIn)
+#include <cmath>
+
+BDSInterpolator1DLinearMag::BDSInterpolator1DLinearMag(BDSArray1DCoords* arrayIn):
+  BDSInterpolator1D(arrayIn)
 {;}
 
-G4int BDSHistBinMapper3D::GlobalFromIJKIndex(G4int iIndex,
-					     G4int jIndex,
-					     G4int kIndex) const
-{
-  return iIndex*nBinsJ*nBinsK + jIndex*nBinsK + kIndex;
-}
+BDSInterpolator1DLinearMag::~BDSInterpolator1DLinearMag()
+{;}
 
-void BDSHistBinMapper3D::IJKFromGlobal(G4int  globalBin,
-				       G4int& iIndex,
-				       G4int& jIndex,
-				       G4int& kIndex) const
+BDSFieldValue BDSInterpolator1DLinearMag::GetInterpolatedValueT(G4double x) const
 {
-  iIndex = globalBin / (nBinsK*nBinsJ);
-  jIndex = (globalBin - iIndex*nBinsK*nBinsJ) / nBinsK;
-  kIndex = globalBin - jIndex*nBinsK - iIndex*nBinsK*nBinsJ;
+  G4double xarr = array->ArrayCoordsFromX(x);
+  G4double x1 = std::floor(xarr);
+
+  BDSFieldValue values[2];
+  values[0] = array->GetConst((G4int)x1);
+  values[1] = array->GetConst((G4int)x1+1);
+  BDSFieldValue result = BDS::Linear1DMag(values, xarr-x1);
+  
+  return result;
 }

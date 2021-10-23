@@ -16,24 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSDUMP_H
-#define BDSDUMP_H 
-
-#include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-
-class BDSDump: public BDSAcceleratorComponent
-{
-public:
-  BDSDump(G4String aName,
-	  G4double aLength);
-  ~BDSDump();
-
-private:
-  virtual void BuildContainerLogicalVolume();
-
-  /// number of total Dumps
-  static int nDumps;
-};
-
-#endif
+// can't get these to work in root
+//#pragma link C++ namespace RBDS;
+//#pragma link C++ defined_in RBDS;
+//#pragma link C++ nestedclass;
+//#pragma link C++ function RBDS::CreateEmptyRebdsimFile(const std::string&, unsigned long long int)+;
+//#pragma link C++ function RBDS::CreateDirectories+;
+#pragma link C++ class DataDummyClass+;

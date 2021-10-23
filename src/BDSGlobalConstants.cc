@@ -37,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectoryOptions.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh"
 #include "G4Colour.hh"
@@ -44,6 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 #include "G4UserLimits.hh"
+#include "G4Version.hh"
 #include "G4VisAttributes.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -202,6 +204,10 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 	    {*no.second = false;}
 	}
     }
+#if G4VERSION_NUMBER > 1079
+  if (options.HasBeenSet("scintYieldFactor"))
+    {BDS::Warning("The option \"scintYieldFactor\" has no effect with Geant4 11.0 onwards");}
+#endif
 }
 
 void BDSGlobalConstants::InitialiseBeamlineTransform()
@@ -315,7 +321,7 @@ void BDSGlobalConstants::ProcessTrajectoryELossSRange()
   std::string tok;
   while (is >> tok)
     {
-      std::size_t loc = tok.find(":",0);
+      std::size_t loc = tok.find(':',0);
       if (loc == std::string::npos)
 	{throw BDSException(__METHOD_NAME__, "Error: no ':' character found in option storeTrajectoryELossSRange \"" + options.storeTrajectoryELossSRange + "\" - invalid range.");}
       G4double rstart = 0;
@@ -358,7 +364,8 @@ BDS::TrajectoryOptions BDSGlobalConstants::StoreTrajectoryOptions() const
 				   StoreTrajectoryTime(),
 				   StoreTrajectoryLocal(),
 				   StoreTrajectoryLinks(),
-				   StoreTrajectoryIon()};
+				   StoreTrajectoryIon(),
+				   StoreTrajectoryMaterial()};
   
   if (StoreTrajectoryAllVariables())
   {
@@ -369,6 +376,7 @@ BDS::TrajectoryOptions BDSGlobalConstants::StoreTrajectoryOptions() const
     result.storeLocal          = true;
     result.storeLinks          = true;
     result.storeIon            = true;
+    result.storeMaterial       = true;
   }
   return result;
 }
