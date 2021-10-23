@@ -971,6 +971,19 @@ is relatively sparse.
 
 	    Schematic of linear interpolation and linear + magnitude interpolation.
 
+
+.. figure:: dev_figures/field_linear_mag.pdf
+	    :width: 80%
+	    :align: center
+
+	    Example 1D field value components with linear mag interpolation.
+
+.. figure:: dev_figures/field_linear_mag2d.png
+	    :width: 70%
+	    :align: center
+
+	    Example 2D field value components with linear mag interpolation.
+
 Cubic
 -----
 
