@@ -14,9 +14,6 @@ option, physicsList="g4FTFP_BERT",
 option, seed=123;
 
 option, storeSamplerKineticEnergy=1;
-
-option, storeGeant4Data=0,
-	storeEloss=0,
-	storePrimaries=0;
+option, storeMinimalData=1;
 
 option, ngenerate=10;

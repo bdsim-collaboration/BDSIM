@@ -13,6 +13,7 @@ rebdsim_test(analysis-spectra-primary-secondary  "spectra-primary-secondary.txt"
 rebdsim_test(analysis-spectra-top10              "spectra-top10.txt")
 rebdsim_test(analysis-spectra-top10ions          "spectra-top10ions.txt")
 rebdsim_test(analysis-spectra-top10particles     "spectra-top10particles.txt")
+rebdsim_test(analysis-spectra-top10particles-log "spectra-top10particles-log.txt")
 rebdsim_test(analysis-spectra-rigidity           "spectra-rigidity.txt")
 rebdsim_test(analysis-rebdsim-uneven-binning     "unevenBinning.txt")
 
