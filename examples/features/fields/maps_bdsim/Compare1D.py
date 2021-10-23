@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def Compare1D(original, nearest, linear, linearmag, cubic):
-    a = pybdsim.Field.Load(original)
-    n = pybdsim.Field.Load(nearest)
-    l = pybdsim.Field.Load(linear)
-    lm = pybdsim.Field.Load(linearmag)
-    c = pybdsim.Field.Load(cubic)
+    a = pybdsim.Field.Load(original).data
+    n = pybdsim.Field.Load(nearest).data
+    l = pybdsim.Field.Load(linear).data
+    lm = pybdsim.Field.Load(linearmag).data
+    c = pybdsim.Field.Load(cubic).data
 
     plt.figure()
     plt.plot(a[:,0], a[:,1], 'bo', label='Original', mec='b', alpha=0.8)
@@ -172,3 +172,10 @@ def PlotCubic():
     plt.ylim(-4.8,5)
     plt.savefig('1d_cubic_xyz.pdf')
     
+
+if __name__ == "__main__":
+    Compare1D("1dexample.dat.gz",
+              "1d_interpolated_nearest.dat",
+              "1d_interpolated_linear.dat",
+              "1d_interpolated_linear_mag.dat",
+              "1d_interpolated_cubic.dat")
