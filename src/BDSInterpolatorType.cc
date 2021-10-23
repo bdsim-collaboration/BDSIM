@@ -80,15 +80,12 @@ BDSInterpolatorType BDS::DetermineInterpolatorType(G4String interpolatorType)
 
   auto result = types.find(interpolatorType);
   if (result == types.end())
-    {
-      // it's not a valid key
-      G4cerr << __METHOD_NAME__ << "\"" << interpolatorType
-	     << "\" is not a valid field type" << G4endl;
-
-      G4cout << "Available interpolator types are:" << G4endl;
+    {// it's not a valid key
+      G4String msg = "\"" + interpolatorType + "\" is not a valid field type\n";
+      msg += "Available interpolator types are:\n";
       for (const auto& it : types)
-	{G4cout << "\"" << it.first << "\"" << G4endl;}
-      exit(1);
+	{msg += "\"" + it.first + "\"\n";}
+      throw BDSException(__METHOD_NAME__, msg);
     }
 
 #ifdef BDSDEBUG
