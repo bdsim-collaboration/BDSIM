@@ -485,35 +485,39 @@ Spectra Particle Specification
 
 Particles can be specified in several ways:
 
-+-------------------+-------------------------------------------------------------------------+
-| **Example**       | **Description**                                                         |
-+===================+=========================================================================+
-| {11,-11,22,2212}  | Histograms are made for the specified comma-separated PDG IDs. The sign |
-|                   | of each is observed, so -11 is not the same as 11.                      |
-+-------------------+-------------------------------------------------------------------------+
-| {particles}       | A histogram for every unique particle that is not an ion encountered in |
-|                   | the data is made.                                                       |
-+-------------------+-------------------------------------------------------------------------+
-| {ions}            | A histogram for every unique ion encountered in the data is made.       |
-+-------------------+-------------------------------------------------------------------------+
-| {all}             | A histogram for every unique particle or ion encountered in the data is |
-|                   | made. Caution - this could be a lot.                                    |
-+-------------------+-------------------------------------------------------------------------+
-| {top10}           | A histogram is made for every unique particle and ion encountered in    |
-|                   | data but only the top N specified are saved as judged by the integral   |
-|                   | of each histogram including weights. Here 10 is used but any positive   |
-|                   | number above 1 can be used e.g. Top5 is valid.                          |
-+-------------------+-------------------------------------------------------------------------+
-| {p11,s11,-11,22}  | The letter 'p' or 's' can be prefixed to a PDG ID to specify primary    |
-|                   | or secondary versions of that particle species. This can be applied to  |
-|                   | any PDG ID however, it only makes sense for particle(s) in the beam     |
-|                   | definition (or user bunch file or event generator file).                |
-+-------------------+-------------------------------------------------------------------------+
-| {top10ions}       | Similar to top10 but only for ions. The number may be a positive        |
-|                   | integer greater than 1. e.g. {top5ions}                                 |
-+-------------------+-------------------------------------------------------------------------+
-| {top10particles}  | Similar to top10 but only for non-ions.                                 |
-+-------------------+-------------------------------------------------------------------------+
++---------------------+-------------------------------------------------------------------------+
+| **Example**         | **Description**                                                         |
++=====================+=========================================================================+
+| {11,-11,22,2212}    | Histograms are made for the specified comma-separated PDG IDs. The sign |
+|                     | of each is observed, so -11 is not the same as 11.                      |
++---------------------+-------------------------------------------------------------------------+
+| {particles}         | A histogram for every unique particle that is not an ion encountered in |
+|                     | the data is made.                                                       |
++---------------------+-------------------------------------------------------------------------+
+| {ions}              | A histogram for every unique ion encountered in the data is made.       |
++---------------------+-------------------------------------------------------------------------+
+| {all}               | A histogram for every unique particle or ion encountered in the data is |
+|                     | made. Caution - this could be a lot.                                    |
++---------------------+-------------------------------------------------------------------------+
+| {top10} \*          | A histogram is made for every unique particle and ion encountered in    |
+|                     | data but only the top N specified are saved as judged by the integral   |
+|                     | of each histogram including weights. Here 10 is used but any positive   |
+|                     | number above 1 can be used e.g. Top5 is valid.                          |
++---------------------+-------------------------------------------------------------------------+
+| {p11,s11,-11,22}    | The letter 'p' or 's' can be prefixed to a PDG ID to specify primary    |
+|                     | or secondary versions of that particle species. This can be applied to  |
+|                     | any PDG ID however, it only makes sense for particle(s) in the beam     |
+|                     | definition (or user bunch file or event generator file).                |
++---------------------+-------------------------------------------------------------------------+
+| {top10ions} \*      | Similar to top10 but only for ions. The number may be a positive        |
+|                     | integer greater than 1. e.g. {top5ions}                                 |
++---------------------+-------------------------------------------------------------------------+
+| {top10particles} \* | Similar to top10 but only for non-ions.                                 |
++---------------------+-------------------------------------------------------------------------+
+
+.. warning:: (\*) The `topN` syntax cannot be used with simple histograms (e.g. with the syntax
+	     SimpleSpectra) because we need to perform per-event analysis to build up a set of
+	     PDG IDs at each event and re-evaluate the top N.
 
 .. note:: No white space should be in the particle specification.
 
