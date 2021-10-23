@@ -69,6 +69,10 @@ public:
   virtual void AccumulateCurrentEntry(long int entryNumber);
   virtual void Terminate();
   virtual void Write(TDirectory* dir = nullptr);
+  
+  /// Ensure sampler is setup even if it wasn't on at the beginning when
+  /// we inspected the model tree.
+  void CheckSampler();
 
 protected:
   inline bool IsIon(long long int pdgID) const {return pdgID > 100000000;}

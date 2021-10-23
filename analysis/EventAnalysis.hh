@@ -83,6 +83,8 @@ protected:
   void PreparePerEntryHistogramSets();
   void AccumulatePerEntryHistogramSets(long int entryNumber);
   void TerminatePerEntryHistogramSets();
+  
+  void CheckSpectraBranches();
 
   /// Fill a set of simple histograms across all events.
   void FillHistogram(HistogramDefSet* definition);
