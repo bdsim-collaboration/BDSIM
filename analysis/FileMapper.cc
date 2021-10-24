@@ -147,8 +147,7 @@ int RBDS::DetermineDimensionality(TH1* h)
 void RBDS::WarningMissingHistogram(const std::string& histName,
 				   const std::string& fileName)
 {
-  std::cout << "No histogram \"" << histName << "\" in file "
-	    << fileName << std::endl;
+  std::cout << "No histogram \"" << histName << "\" in file " << fileName << std::endl;
 }
 
 HistogramMap::HistogramMap(TFile* file,
@@ -156,10 +155,6 @@ HistogramMap::HistogramMap(TFile* file,
 			   bool   debugIn):
   debug(debugIn)
 {
-  std::vector<std::string> trees = {"Beam", "Event", "Model", "Options", "Run"};
-  std::vector<std::string> means = {"PerEntryHistograms", "MergedHistograms"};
-  std::vector<std::string> sums  = {"SimpleHistograms"};
-
   TDirectory* rootDir = static_cast<TDirectory*>(file);
 
   std::string rootDirName = "";
@@ -234,8 +229,6 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	  RBDS::MergeType mergeType = RBDS::DetermineMergeType(dir->GetName());
 	  switch (mergeType)
 	    {
-	    case RBDS::MergeType::none:
-	      {continue; break;}
 	    case RBDS::MergeType::meanmerge:
 	      {
 		acc = new HistogramAccumulatorMerge(h, nDim, histName, histTitle);
@@ -246,6 +239,7 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 		acc = new HistogramAccumulatorSum(h, nDim, histName, histTitle);
 		break;
 	      }
+      case RBDS::MergeType::none:
 	    default:
 	      {continue; break;}
 	    }
