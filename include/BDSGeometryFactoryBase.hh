@@ -74,8 +74,6 @@ public:
   virtual void ApplyUserLimits(const std::set<G4LogicalVolume*>& lvsIn,
 			       G4UserLimits* userLimits);
 
-  virtual G4AssemblyVolume* ToAssemblyVolume(G4LogicalVolume* container);
-
 protected:
   /// Virtual clean up that derived classes can override that calls CleanUpBase().
   virtual void CleanUp();
