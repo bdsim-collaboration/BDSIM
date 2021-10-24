@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "HistSparse1D.hh"
 
+#include "TH1.h"
 #include "TH1D.h"
 
 #include <map>
@@ -38,14 +39,14 @@ public:
 
   const HistSparse& GetHistSparse1D() const {return data;}
   
-  Int_t Fill(const char*, Double_t) override {return 0;}
-  Int_t Fill(Double_t x) override {return this->Fill(x,1.0);}
+  Int_t Fill(const char*, Double_t)  override {return 0;}
+  Int_t Fill(Double_t x)             override {return this->Fill(x,1.0);}
   Int_t Fill(Double_t x, Double_t w) override;
-  void  DoFillN(Int_t ntimes, const Double_t *x, const Double_t *w, Int_t stride=1) override;
+  void  DoFillN(Int_t ntimes, const Double_t* x, const Double_t* w, Int_t stride=1) override;
   
   Int_t AddNewBin(long long int x);
   
-  Bool_t Add(const TH1 *h1, Double_t c1) override;
+  Bool_t Add(const TH1* h1, Double_t c1) override;
   
   Double_t GetBinContentByAbscissa(long long int x) const;
   Double_t GetBinErrorByAbscissa(long long int x) const;
