@@ -41,6 +41,7 @@ namespace GMAD
     std::string visMacroFileName;    ///< Visualisation filename.
     std::string geant4MacroFileName; ///< Geant4 macro to run.
     std::string geant4PhysicsMacroFileName; ///< Geant4 physics macro
+    bool        geant4PhysicsMacroFileNameFromExecOptions;
     bool        visDebug;            ///< Flag for visualisation debug.
   
     ///@{ Parameter for output format
@@ -343,6 +344,7 @@ namespace GMAD
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
     bool        storeTrajectoryIon;
+    bool        storeTrajectoryMaterial;
     bool        storeTrajectoryAllVariables;
 
     // filter logic
@@ -379,12 +381,15 @@ namespace GMAD
     int    nbinsx;
     int    nbinsy;
     int    nbinsz;
+    int    nbinse;
     double xmin;
     double xmax;
     double ymin;
     double ymax;
     double zmin;
     double zmax;
+    double emin;
+    double emax;
     bool   useScoringMap;
 
     /// print some properties
