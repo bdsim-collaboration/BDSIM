@@ -96,7 +96,8 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(const G4String&  componen
 						       G4double               suggestedHorizontalWidth,
 						       std::vector<G4String>* namedVacuumVolumes,
 						       G4bool                 makeSensitive,
-						       BDSSDType              sensitivityType)
+						       BDSSDType              sensitivityType,
+                                                       G4bool                 stripOuterVolumeAndMakeAssembly)
 {
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
   G4String fileName = BDS::GetFullPath(ff.second);
@@ -121,6 +122,8 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(const G4String&  componen
   
   if (result)
     {
+      if (stripOuterVolumeAndMakeAssembly)
+        {result->StripOuterAndMakeAssemblyVolume();}
       // Set all volumes to be sensitive.
       if (makeSensitive)
 	{result->MakeAllVolumesSensitive(sensitivityType);}
