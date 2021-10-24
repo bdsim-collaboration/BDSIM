@@ -56,8 +56,8 @@ Int_t TH1Set::Fill(Double_t x, Double_t w)
   AddBinContent(bin, w);
   if (bin == 0 || bin > fXaxis.GetNbins())
     {
-      if (!TH1::GetStatOverflowsBehaviour())
-	      {return -1;}
+      //if (!TH1::GetStatOverflowsBehaviour())
+      //      {return -1;}
     }
   Double_t z= w;
   fTsumw   += z;
