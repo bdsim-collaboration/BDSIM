@@ -19,6 +19,8 @@ V1.7.0 - 2021 / XX / XX
 New Features
 ------------
 
+* New Spectra command for rebsdim to make very flexible sets of spectra automatically. See
+  :ref:`spectra-definition` for more information.
 * The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
 * Scoring of the differential flux (3D mesh + energy spectrum per cell) following either a linear,
@@ -31,6 +33,7 @@ New Features
   command line. Useful when BDSIM is executed from a different directory from the main GMAD input
   file and with a relatively complex model.
 * rebdsim will now default to "intputfilename" + "_ana.root" if no outputfile name is specified.
+* "linearmag" experimental interpolation.
   
 General
 -------
@@ -41,6 +44,10 @@ General
 * The executable option :code:`--geant4Macro` (for a post-visualisation macro)
   has been renamed to :code:`--geant4MacroFileName` to be the same as the option in
   the input GMAD file. The old one is still accepted for backwards compatibility.
+* The userfile distribution will tolerate `!` to denote a comment line to match GMAD syntax now.
+  It will also tolerate any whitespace before either `#` or `!` to mark a comment line,
+  whereas previously it would only identify a comment if the very first character
+  of the line was `#`.
 
 Bug Fixes
 ---------
@@ -52,7 +59,7 @@ Bug Fixes
 * Fix the wrong value being stored in PrimaryFirstHist.postStepProcessType which was in fact SubType again.
 * When storing trajectories, it was possible if store transportation steps was
   purposively turned off that the first step point may not be stored. So, the pre-step
-  was the creation of the particle and the post step was an interaction (ie not
+  was the creation of the particle and the post step was an interaction (i.e. not
   transportation). Previously, this step would not be stored breaking the indexing
   for parent step index.
 * Materials are now stored for each trajectory step point (optionally) as described
@@ -61,10 +68,19 @@ Bug Fixes
 * Fix `distrFile` not being found when used as an executable option in the case where the
   current working directory, the main input gmad file and the distribution file were all in
   different places.
+* Fix userfile distribution not finding ions by pdgid.
 * "RINDEX" and "ABSLENGTH" optical parameters were fixed for the material properties
   definition of material "ups923a".
 * "FASTCOMPONENT", "FASTTIMECONSTANT", and "YIELDRATIO" material properties for various optical
   materials have no effect when BDSIM is compiled with respect to Geant4 V11 onwards.
+* GDML auto-colouring now works for G4 materials correctly. The name searching was broken. As a
+  reminder, any material without a specific colour will default to a shade of grey according to
+  its density.
+* Fix field interpolation manual figures. Z component was transposed.
+* Fixed example field map generation scripts to not use tar as we don't support loading
+  of tar.gz (only gzipped or uncompressed) files (historical hangover).
+* Fixed field map interpolation and plotting scripts as well as make use of improvements
+  in pybdsim.
 
 Output Changes
 --------------
