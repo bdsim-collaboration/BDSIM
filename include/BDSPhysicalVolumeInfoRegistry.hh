@@ -73,6 +73,12 @@ public:
 		    BDSPhysicalVolumeInfo* info,
 		    G4bool                 isReadOutVolume = false,
 		    G4bool                 isTunnel = false);
+  
+  /// Loop version of the same function above but for a set of pvs.
+  void RegisterInfo(const std::set<G4VPhysicalVolume*>& physicalVolumes,
+		    BDSPhysicalVolumeInfo* info,
+		    G4bool                 isReadOutVolume = false,
+		    G4bool                 isTunnel = false);
 
   /// Get the logical volume info for a particular logical volume (by address). Note,
   /// returns null pointer if none found. If isTunnel, gets only from tunnelRegistry.

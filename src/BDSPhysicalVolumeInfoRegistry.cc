@@ -82,6 +82,15 @@ void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physical
 #endif
 }
 
+void BDSPhysicalVolumeInfoRegistry::RegisterInfo(const std::set<G4VPhysicalVolume*>& physicalVolumes,
+                                                 BDSPhysicalVolumeInfo* info,
+                                                 G4bool                 isReadOutVolume,
+                                                 G4bool                 isTunnel)
+{
+  for (auto& pv : physicalVolumes)
+    {RegisterInfo(pv, info, isReadOutVolume, isTunnel);}
+}
+
 BDSPhysicalVolumeInfo* BDSPhysicalVolumeInfoRegistry::GetInfo(G4VPhysicalVolume* physicalVolume,
 							      G4bool             isTunnel)
 {
