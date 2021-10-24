@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BEAMBASE_H
 
 #include <string>
+#include <vector>
 
 namespace GMAD
 {
@@ -50,6 +51,7 @@ namespace GMAD
       std::string energyDistrType;
       std::string distrFile;
       std::string distrFileFormat;
+      bool        distrFileFromExecOptions; ///< Required to know how to build the absolute path properly
       bool        matchDistrFileLength;
       bool        removeUnstableWithoutDecay;
       ///@}
@@ -144,6 +146,9 @@ namespace GMAD
       std::string eventGeneratorParticles;
       bool   eventGeneratorWarnSkippedParticles;
       /// @}
+  
+      /// A list of all the keys that have been set in this instance.
+      std::vector<std::string> setKeys;
     };
 }
 

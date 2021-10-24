@@ -31,9 +31,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "G4Types.hh"
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <vector>
+#include <utility>
 #endif
 
 ClassImp(BDSOutputROOTEventModel)
@@ -48,32 +50,33 @@ BDSOutputROOTEventModel::BDSOutputROOTEventModel():
 BDSOutputROOTEventModel::~BDSOutputROOTEventModel()
 {;}
 
-int BDSOutputROOTEventModel::findNearestElement(TVector3 vPoint)
+int BDSOutputROOTEventModel::findNearestElement(const TVector3& point) const
 {
-  // TODO : Better search using lower
-  double dMin = 1e50;
-  int iMin = -1;
-  for (int i=0; i < (int)midRefPos.size(); i++)
-    {
-      const TVector3& vRef = midRefPos[i];
-      double d = (vRef-vPoint).Mag();
-      if(d < dMin)
-	{
-	  iMin = i;
-	  dMin = d;
-	}
-    } 
-  return iMin;
+  // we make a vector of pairs of the distance between the mid of each element
+  // and the specified point along with the index. We then sort this vector by
+  // the distance (first part of pair only). Could use a map as it's sorted but
+  // can't guarantee access with a double or float as a key due to binary representation.
+  std::vector<std::pair<float, int> > distanceAndIndex;
+  distanceAndIndex.reserve(midRefPos.size());
+  for (int i = 0; i < (int)midRefPos.size(); i++)
+    {distanceAndIndex.emplace_back(std::make_pair((midRefPos[i]-point).Mag(), i));}
+  
+  struct customLess
+  {bool operator()(std::pair<float, int>& a, std::pair<float, int>& b) const {return a.first < b.first;};};
+  std::sort(distanceAndIndex.begin(), distanceAndIndex.end(), customLess());
+  return distanceAndIndex[0].second;
 }
 
 void BDSOutputROOTEventModel::Flush()
 {
   n = 0;
   samplerNamesUnique.clear();
+  samplerSPosition.clear();
   componentName.clear();
   placementName.clear();
   componentType.clear();
   length.clear();
+  angle.clear();
   staPos.clear();
   midPos.clear();
   endPos.clear();
@@ -143,6 +146,9 @@ void BDSOutputROOTEventModel::Flush()
   scoringMeshTranslation.clear();
   scoringMeshRotation.clear();
   scoringMeshName.clear();
+
+  materialIDToName.clear();
+  materialNameToID.clear();
 }
 
 #ifndef __ROOTBUILD__
@@ -158,11 +164,11 @@ TRotation BDSOutputROOTEventModel::ConvertToROOT(const G4RotationMatrix* rm) con
   if (!rm)
     {return rr;}
   
-  double angle;
+  double rotAngle;
   CLHEP::Hep3Vector axis;
   
-  rm->getAngleAxis(angle, axis);
-  rr.Rotate(angle, TVector3(axis.x(), axis.y(), axis.z()));
+  rm->getAngleAxis(rotAngle, axis);
+  rr.Rotate(rotAngle, TVector3(axis.x(), axis.y(), axis.z()));
   return rr;
 }
 
@@ -180,10 +186,15 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 				   const std::map<G4String, G4int>&         collimatorIndicesByNameIn,
 				   const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn,
 				   const std::vector<G4String>&             collimatorBranchNamesIn,
-                                   const std::map<G4String, G4Transform3D>* scorerMeshPlacements)
-{  
-  for (const auto& name : BDSSamplerRegistry::Instance()->GetUniqueNames())
-    {samplerNamesUnique.push_back(std::string(name) + ".");}
+                                   const std::map<G4String, G4Transform3D>* scorerMeshPlacements,
+				   const std::map<short int, G4String>*     materialIDToNameUnique,
+				   G4bool storeTrajectory)
+{
+  for (const auto& nameSPos : BDSSamplerRegistry::Instance()->GetUniqueNamesAndSPosition())
+    {
+      samplerNamesUnique.push_back(std::string(nameSPos.first) + ".");
+      samplerSPosition.push_back((double) nameSPos.second / CLHEP::m);
+    }
 
   for (const auto& name : collimatorBranchNamesIn)
     {collimatorBranchNamesUnique.push_back(std::string(name) + ".");}
@@ -216,6 +227,15 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
       collimatorInfo = collimatorInfoIn;
     }
 
+  if (materialIDToNameUnique && storeTrajectory)
+    {
+      for (const auto& kv : *materialIDToNameUnique)
+	{
+	  materialIDToName[kv.first] = (std::string)kv.second;
+	  materialNameToID[(std::string)kv.second] = kv.first;
+	}
+    }
+
   n = (int)beamline->size();
   
   for (auto i = beamline->begin(); i != beamline->end(); ++i)
@@ -223,7 +243,8 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
       componentName.push_back((*i)->GetName());
       placementName.push_back((*i)->GetPlacementName());
       componentType.push_back((*i)->GetType());
-      length.push_back((float &&) (*i)->GetAcceleratorComponent()->GetArcLength() / CLHEP::m);
+      length.push_back((float)((*i)->GetAcceleratorComponent()->GetArcLength() / CLHEP::m));
+      angle.push_back((float)((*i)->GetAcceleratorComponent()->GetAngle() / CLHEP::radian));
       staPos.push_back(ConvertToROOT((*i)->GetPositionStart()));
       midPos.push_back(ConvertToROOT((*i)->GetPositionMiddle()));
       endPos.push_back(ConvertToROOT((*i)->GetPositionEnd()));
@@ -241,9 +262,9 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
       BDSTiltOffset* to = (*i)->GetTiltOffset();
       if (to)
 	{
-	  tilt.push_back((float)to->GetTilt() / CLHEP::rad);
-	  offsetX.push_back((float)to->GetXOffset() / CLHEP::m);
-	  offsetY.push_back((float)to->GetYOffset() / CLHEP::m);
+	  tilt.push_back((float)(to->GetTilt() / CLHEP::rad));
+	  offsetX.push_back((float)(to->GetXOffset() / CLHEP::m));
+	  offsetY.push_back((float)(to->GetYOffset() / CLHEP::m));
 	}
       else
 	{
@@ -253,9 +274,9 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 	}
       
       // S positions
-      staS.push_back((float &&) (*i)->GetSPositionStart()  / CLHEP::m);
-      midS.push_back((float &&) (*i)->GetSPositionMiddle() / CLHEP::m);
-      endS.push_back((float &&) (*i)->GetSPositionEnd()    / CLHEP::m);
+      staS.push_back((float)((*i)->GetSPositionStart()  / CLHEP::m));
+      midS.push_back((float)((*i)->GetSPositionMiddle() / CLHEP::m));
+      endS.push_back((float)((*i)->GetSPositionEnd()    / CLHEP::m));
       
       // beam pipe
       BDSBeamPipeInfo* beampipeinfo = (*i)->GetBeamPipeInfo();
@@ -311,14 +332,14 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 	  for (int j = 0; j < (int)localSkew.size(); j++)
 	    {localSkew[j]->push_back((float)skewComponents[j]);}
 	  
-	  ks.push_back((float)(*ms)["ks"]/BDSMagnetStrength::Unit("ks"));
-	  hkick.push_back((float)(*ms)["hkick"]/BDSMagnetStrength::Unit("hkick"));
-	  vkick.push_back((float)(*ms)["vkick"]/BDSMagnetStrength::Unit("vkick"));
-	  bField.push_back((float)(*ms)["field"]/BDSMagnetStrength::Unit("field"));
-	  eField.push_back((float)(*ms)["efield"]/BDSMagnetStrength::Unit("efield"));
-	  e1.push_back((float)(*ms)["e1"]/BDSMagnetStrength::Unit("e1"));
-	  e2.push_back((float)(*ms)["e2"]/BDSMagnetStrength::Unit("e2"));
-	  hgap.push_back((float)(*ms)["hgap"]/BDSMagnetStrength::Unit("hgap"));
+	  ks.push_back((float)((*ms)["ks"]/BDSMagnetStrength::Unit("ks")));
+	  hkick.push_back( (float)((*ms)["hkick"]/BDSMagnetStrength::Unit("hkick")));
+	  vkick.push_back( (float)((*ms)["vkick"]/BDSMagnetStrength::Unit("vkick")));
+	  bField.push_back((float)((*ms)["field"]/BDSMagnetStrength::Unit("field")));
+	  eField.push_back((float)((*ms)["efield"]/BDSMagnetStrength::Unit("efield")));
+	  e1.push_back((float)((*ms)["e1"]/BDSMagnetStrength::Unit("e1")));
+	  e2.push_back((float)((*ms)["e2"]/BDSMagnetStrength::Unit("e2")));
+	  hgap.push_back((float)((*ms)["hgap"]/BDSMagnetStrength::Unit("hgap")));
 	  fint.push_back((float)(*ms)["fint"]);
 	  fintx.push_back((float)(*ms)["fintx"]);
 	  fintk2.push_back((float)(*ms)["fintk2"]);

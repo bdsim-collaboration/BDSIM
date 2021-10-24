@@ -99,6 +99,19 @@ the :code:`Summary.index` variable in the data (i.e. the event index) for each e
 in the Event tree and without "Event" in them. ROOT typically prints a few at a time, with the
 return key printing out the next few and :code:`q` to quit this scanning mode.
 
+Print Variable From Data
+------------------------
+
+In ROOT terminology we can 'scan' a tree to see a variable. The option, :code:`colsize`
+(as a string for the 3rd argument) allows us to increase the precision printed out.
+
+::
+
+   root -l myfile.root
+   > TTree* evt = (TTree*)_file0->Get("Event")
+   > evt->Scan("Summary.index")
+   > evt->Scan("Summary.index", "", "colsize=20")
+
 
 Load Raw Data
 -------------
@@ -175,7 +188,7 @@ Notes:
 * Zombie files will be tolerated, but at least 1 valid file is required
 * The ParticleData, Beam, Options, Model and Run trees are copied from the 1st (valid) file
   and do not represent merged information from all files, i.e. the run histograms are not
-  reclaulated.
+  recalculated.
 * The Header contains the :code:`nOriginalEvents` which is added up in either case of an
   original or skimmed file being used. In the case of original files, this is commonly 0,
   but the data is inspected to provide an accurate total in the merged file.
@@ -189,6 +202,26 @@ Notes:
 .. note:: This tool is distinct from :ref:`rebdsim-combine` as this tool only handles
 	  raw BDSIM output data. `rebdsimCombine` handles output from the analysis
 	  tool `rebdsim`.
+
+To merge files together in small chunks to reduce a data size (e.g. every 10 files into 1), a small
+Python (3) script is available in :code:`bdsim/utils/chunkermp.py`. This allows us to reduce a data
+set into fewer files in parallel. Note, this may cause intensive disk usage, but usually using some
+parallel processes will be significantly faster than one.
+
+Example: ::
+
+  python
+  > import chunkermp
+  > chunkermp.ReduceRun("datafiles/*.root", 10, "outputdir/", nCPUs=4)
+
+This will combine the glob result of :code:`datafiles/*.root` in chunks of 10 files at a time to :code:`outputdir`
+using 4 processes. Note, the trailing "/" must be present if it is a directory.
+
+A single threaded version is included in :code:`bdsim/utils/chunker.py` that could be used potentially
+for Python2.
+
+This script simply builds and executes the system commands, so `bdsimCombine` must therefore be
+available as a command (i.e. :code:`source <bdsim-install-dir>/bin/bdsim.sh` before using).
 
 .. _rebdsim-analysis-tool:
 
@@ -217,6 +250,15 @@ Examples::
   rebdsim analysisConfig.txt output.root
   rebdsim analysisConfig.txt output.root results.root
 
+* If the output filename is specified this will take precedence over the output file name
+  possibly specified in the analysis configuration text file.
+* If no output file name is given as an argument and no output file name is specified in the
+  analysis configuration text file, then the default will be the input file name + :code:`"_ana.root"`
+  and the file will be written to the current working directory.
+* Multiple output files can be given at once with a glob regular expression (detected by the character
+  :code:`*` in the input file name. To do this, put the pattern in quotes so it is expanded not by the
+  shell but by rebdsim. e.g. :code:`rebdsim analysisConfig.txt "*.root"`.
+
 .. _analysis-preparing-analysis-config:
 
 Preparing an Analysis Configuration File
@@ -225,6 +267,15 @@ Preparing an Analysis Configuration File
 The analysis configuration file is a simple text file. This can be prepared by copying
 and editing an example. The text file acts as a thin interface to an analysis in ROOT
 that would commonly use the :code:`TTree->Draw()` method.
+
+The input text file has roughly two sections: options and histogram definitions.
+
+Examples can be found in:
+
+* `<bdsim>/examples/features/io/1_rootevent/analysisConfig.txt`
+* `<bdsim>/examples/features/analysis/simpleHistograms/analysisConfig.txt`
+* `<bdsim>/examples/features/analysis/perEntryHistograms/analysisConfig.txt`
+* `<bdsim>/examples/features/analysis/rebdsim/`
 
 We strongly recommend browsing the data in a TBrowser beforehand and double-clicking
 the variables. This gives you an idea of the range of the data. See :ref:`basic-data-inspection`
@@ -240,6 +291,8 @@ There are three types of histograms that `rebdsim` can produce:
    already in the output file. For example, there is an energy deposition histogram
    stored with each event. This would be merged into a per-event average.
 
+.. _analysis-per-entry-histograms-vs-simple:
+
 Per-Entry and Simple Histograms
 -------------------------------
 
@@ -254,12 +307,17 @@ number of entries in that bin. This, however, doesn't correctly represent the va
 from event to event. Using the per-event histograms, a single simple 1D histogram of energy
 deposition is created and these are averaged. The resultant histogram has the mean per-event
 (note the normalisation here versus the simple histograms) and the error on the bin is the
-standard error on the beam, i.e.
+standard error on the mean, i.e.
 
 .. math::
   \mathrm{bin~error} = \frac{\sigma}{\sqrt{n_{events}}}
 
 where :math:`\sigma` is the standard deviation of the values in that bin for all events.
+
+* When loading the resultant histograms with pybdsim (see :ref:`python-utilities`), functions
+  are provided in the pybdsim.Data.TH1 2 and 3 classes that wrap the ROOT TH1D, TH2D and TH3D
+  classes called :code:`ErrorsToSTD()` and :code:`ErrorsToErrorOnMean()` to easily convert
+  between error on the mean and the standard deviation.
 
 .. note:: Per-entry histograms will only be calculated where there exists two or more entries
 	  in the tree. In the case of the Event tree, this corresponds to more than two events.
@@ -279,17 +337,10 @@ See :ref:`numerical-methods` for a mathematical description of how the errors ar
 
 .. _output-analysis-configuration-file:
 	  
-Analysis Configuration File
----------------------------
+Histograms
+----------
 
-The input text file has roughly two sections: options and histogram definitions.
-
-Examples can be found in:
-
-* `<bdsim>/examples/features/io/1_rootevent/analysisConfig.txt`
-* `<bdsim>/examples/features/analysis/simpleHistograms/analysisConfig.txt`
-* `<bdsim>/examples/features/analysis/perEntryHistograms/analysisConfig.txt`
-
+Below is a complete of a rebdsim analysis configuration text file.
 ::
 
   InputFilePath    output.root
@@ -315,7 +366,11 @@ Examples can be found in:
 
 * :code:`HistogramND` defines an N-dimension per-entry histogram where `N` is 1,2 or 3.
 * :code:`SimpleHistogramND` defines an N-dimension simple histogram where `N` is 1,2 or 3.
-* Arguments in the histogram rows must not contain any white space!
+* :code:`Spectra`, :code:`SpectraTE` and :code:`SpectraRigidity` define a set of 1D histograms
+  for various particles for kinetic energy, total energy ("TE") or rigidity respectively. This
+  has slightly different syntax as described in :ref:`spectra-definition`.
+  
+* Each individual argument in the histogram rows must not contain any white space!
 * Columns in the histogram rows must be separated by any amount of white space (at least one space).
 * A line beginning with :code:`#` is ignored as a comment line.
 * Empty lines are also ignored.
@@ -326,11 +381,20 @@ Examples can be found in:
 * Variables must contain the full 'address' of a variable inside a Tree.
 * Variables can also contain a value manipulation, e.g. :code:`1000*(Primary.energy-0.938)` (to get
   the kinetic energy of proton primaries in MeV).
+
+Histogram Selections
+--------------------
+
+A selection is a weight that can be used as a filter to fill only desired information
+into the histogram. Conceptually, we loop over all data **always** and multiple by 0 if we
+want to filter it out.
+
+* If no selection or filtering is desired, use 1.
 * The selection is a weight. In the case of the Boolean expression, it is a weight of 1 or 0.
-* Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
+* The selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * Multiple Boolean operations can be used e.g. :code:`Primary.x>0&&samplername.ParentID!=0`.
 * If a Boolean and a weight is desired, multiply both with the Boolean in brackets, e.g.
-  :code:`Eloss.energy*(Eloss.S>145.3)`.
+  :code:`Eloss.energy*(Eloss.S>145.3)`.  So :code:`weight*(Boolean)`.
 * True or False, as well as 1 or 0, may be used for Boolean options at the top.
 * ROOT special variables can be used as well, such as :code:`Entry$` and :code:`Entries$`. See
   the documentation link immediately below.
@@ -340,8 +404,147 @@ Examples can be found in:
 	  Whilst the per-entry histograms will work for any tree in the output, they are primarily
 	  useful for per-event analysis on the Event tree.
 
-A full explanation on the combination of selection parameters is given in the ROOT TTree class:
+The variable and selection go directly into ROOT's TTree::Draw method and if you are familiar with
+these, any syntax it supports can be used.  A full explanation on the combination of selection parameters
+is given in the ROOT TTree class:
 `<https://root.cern.ch/doc/master/classTTree.html>`_.  See the "Draw" method and "selection".
+
+.. _spectra-definition:
+
+Spectra
+-------
+
+The Spectra command is a convenient way to make common energy or rigidity spectra (**1D**) histograms
+for a variety of particles species. Normally, we would need to make 1 histogram in energy with a
+selection for each particle species by PDG ID. This could be done manually as follows:
+::
+
+   # Object   Tree Name Histogram Name  # of Bins Binning Variable       Selection
+   Histogram1D Event. Protons           {100} {1:10} samplerName.energy samplerName.partID==2212
+   Histogram1D Event. ProtonsPrimary    {100} {1:10} samplerName.energy samplerName.partID==2212&&samplerName.parentID==0
+   Histogram1D Event. ProtonsSecondary  {100} {1:10} samplerName.energy samplerName.partID==2212&&samplerName.parentID>0
+   Histogram1D Event. Neutrons          {100} {1:10} samplerName.energy samplerName.partID==2112
+   Histgoram1D Event. Electrons         {100} {1:10} samplerName.energy samplerName.partID==11
+
+However, this can be equivalently achieved with the Spectra command:
+::
+
+   #Object    Sampler Name # of Bins  Binning  Particles                  Selection
+   SpectraTE  samplerName   100       {1:10}   {2212,p2212,s2212,2112,11} 1
+
+
+where `samplerName` is the name of the sampler in the data to be analysed. Here, the histograms
+in total energy (i.e. "TE" suffix) are created with 100 bins from 1 to 10 GeV for all protons,
+primary protons, secondary protons, neutrons and electrons.
+
+See examples in :code:`bdsim/examples/features/analysis/rebdsim/spectra*`.
+
+.. note:: The weight variable is always included in the spectra histograms.
+
+The required columns are:
+
++------------------------+--------------------------------------------+
+| **Column**             | **Description**                            |
++========================+============================================+
+| Command                | Which type of spectra to make              |
++------------------------+--------------------------------------------+
+| Sampler name           | Name of sampler in data to be analysed     |
++------------------------+--------------------------------------------+
+| Number of bins         | Number of bins in each histogram           |
++------------------------+--------------------------------------------+
+| Binning                | The binning range                          |
++------------------------+--------------------------------------------+
+| Particle specification | A list of particles - see below            |
++------------------------+--------------------------------------------+
+| Selection              | '1' or a filter as in a regular histogram  |
++------------------------+--------------------------------------------+
+
+These are made by default on a per-event basis, but can be made a set of simple
+histograms also by prefixing Spectra with "Simple". The set of histograms is always made on the
+Event tree in the BDSIM output data and uses kinetic energy by default. Note that kinetic
+energy is not stored by default in the output
+and the option :code:`option, storeSamplerKineticEnergy=1;` should be used at simulation time.
+Alternatively, the suffix "TE" can be used to use the total energy variable "energy" in the data.
+
+Spectra Commands
+----------------
+
+The following commands are accepted.
+
++------------------------+-------------------------------------------+
+| **Command**            | **Description**                           |
++========================+===========================================+
+| Spectra                | Per-event histograms in kinetic energy    |
++------------------------+-------------------------------------------+
+| SpectraTE              | Per-event histograms in total energy      |
++------------------------+-------------------------------------------+
+| SpectraRigidity        | Per-event histograms in rigidity          |
++------------------------+-------------------------------------------+
+| SimpleSpectra          | Total histograms in kinetic energy        |
++------------------------+-------------------------------------------+
+| SimpleSpectraTE        | Total histograms in total energy          |
++------------------------+-------------------------------------------+
+| SimpleSpectraRigidity  | Total histograms in rigidity              |
++------------------------+-------------------------------------------+
+
+Each of these can be suffixed with "Log" for logarithmic binning. Note as with the Histogram
+command, if logarithmic binning is used, the bin limits should be the power of 10 desired. e.g.
+::
+
+   SpectraLog  samplerName   100 {-2:4}   {2212,p2212,s2212,2112,11} 1
+
+To make a set of logarithmically binned histograms from :math:`10^{-2}` GeV to :math:`10^{4}` GeV.
+
+Spectra Particle Specification
+------------------------------
+
+Particles can be specified in several ways:
+
++---------------------+-------------------------------------------------------------------------+
+| **Example**         | **Description**                                                         |
++=====================+=========================================================================+
+| {11,-11,22,2212}    | Histograms are made for the specified comma-separated PDG IDs. The sign |
+|                     | of each is observed, so -11 is not the same as 11.                      |
++---------------------+-------------------------------------------------------------------------+
+| {particles}         | A histogram for every unique particle that is not an ion encountered in |
+|                     | the data is made.                                                       |
++---------------------+-------------------------------------------------------------------------+
+| {ions}              | A histogram for every unique ion encountered in the data is made.       |
++---------------------+-------------------------------------------------------------------------+
+| {all}               | A histogram for every unique particle or ion encountered in the data is |
+|                     | made. Caution - this could be a lot.                                    |
++---------------------+-------------------------------------------------------------------------+
+| {top10} \*          | A histogram is made for every unique particle and ion encountered in    |
+|                     | data but only the top N specified are saved as judged by the integral   |
+|                     | of each histogram including weights. Here 10 is used but any positive   |
+|                     | number above 1 can be used e.g. Top5 is valid.                          |
++---------------------+-------------------------------------------------------------------------+
+| {p11,s11,-11,22}    | The letter 'p' or 's' can be prefixed to a PDG ID to specify primary    |
+|                     | or secondary versions of that particle species. This can be applied to  |
+|                     | any PDG ID however, it only makes sense for particle(s) in the beam     |
+|                     | definition (or user bunch file or event generator file).                |
++---------------------+-------------------------------------------------------------------------+
+| {top10ions} \*      | Similar to top10 but only for ions. The number may be a positive        |
+|                     | integer greater than 1. e.g. {top5ions}                                 |
++---------------------+-------------------------------------------------------------------------+
+| {top10particles} \* | Similar to top10 but only for non-ions.                                 |
++---------------------+-------------------------------------------------------------------------+
+
+.. warning:: (\*) The `topN` syntax cannot be used with simple histograms (e.g. with the syntax
+	     SimpleSpectra) because we need to perform per-event analysis to build up a set of
+	     PDG IDs at each event and re-evaluate the top N.
+
+.. warning:: (\*) When using `rebdsimCombine` to merge multiple rebdsim output files, spectra
+	     will be merged too as expected. In the case of Top N histograms, the top (by integral)
+	     particle species may be different from file to file. The histograms are mapped in the
+	     first file loaded and any not matching these ones will be ignored, so you may end up
+	     with a subset of histograms and statistics. This is purposeful because adding 0 entries
+	     for a newly encountered histogram in the accumulation would result in a possibly lower
+	     than average true mean. Care should be taken to observe the number of entries in each
+	     merged histogram which is the number of events merged for that histogram. To avoid this,
+	     specific PDG IDs should be given.
+
+.. note:: No white space should be in the particle specification.
 
 Logarithmic Binning
 -------------------
@@ -582,7 +785,7 @@ Low-Data Volume
 ---------------
 
 If the overall output data volume is relatively low, we recommend analysing all of the
-output files at once with `rebdsim`. In the `Analysis Configuration File`_ file,
+output files at once with `rebdsim`. In the analysis configuration file,
 the `InputFilePath` should be specified as `"*.root"` to match all the root files
 in the current directory.
 
@@ -698,7 +901,7 @@ of the tools. After typing at the IPython prompt for example :code:`pybdsim.`, p
 the tab key and all of the available functions and objects inside `pybdsim` (in this
 case) will be shown.
 
-For any object, function or class, type a question mark after it to see the docstring
+For any object, function or class, type a question mark after it to see the doc-string
 associated with it. ::
   
   >>> import pybdsim
@@ -748,7 +951,7 @@ Event tree in the BDSIM output. See :ref:`basic-data-inspection` for more detail
 on how to browse the data.
 
 .. note:: The branch "Summary" in the Event and Run trees used to be called "Info"
-	  in BDSIM < V1.3. This conflicted with TOjbect::Info() so this looping in
+	  in BDSIM < V1.3. This conflicted with TObject::Info() so this looping in
 	  Python would work for any data in this branch, hence the change.
 
 Sampler Data
@@ -907,7 +1110,7 @@ a particular entry in the tree, which for the Event tree is an individual event:
 
 The event object now contains the data loaded from the file. ::
 
-  root> evt->Eloss.n
+  root> evt->Eloss->n
   (int_t) 430
 
 For our example, the file has 430 entries of energy loss for event \#10. The analysis loading
@@ -926,7 +1129,7 @@ One may manually loop over the events in a macro::
     for (int i = 0; i < nentries; ++i)
       {
         evtTree->GetEntry(i);
-        std::cout << evt->Eloss.n << std::endl;
+        std::cout << evt->Eloss->n << std::endl;
       }
   }
 

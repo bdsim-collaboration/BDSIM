@@ -87,7 +87,8 @@ BDSIM::BDSIM():
   bdsOutput(nullptr),
   bdsBunch(nullptr),
   runManager(nullptr),
-  userComponentFactory(nullptr)
+  userComponentFactory(nullptr),
+  userPhysicsList(nullptr)
 {;}
 
 BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
@@ -101,7 +102,8 @@ BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
   bdsOutput(nullptr),
   bdsBunch(nullptr),
   runManager(nullptr),
-  userComponentFactory(nullptr)
+  userComponentFactory(nullptr),
+  userPhysicsList(nullptr)
 {
   initialisationResult = Initialise();
 }
@@ -117,6 +119,12 @@ int BDSIM::Initialise(int argc, char** argv, bool usualPrintOutIn)
 
 int BDSIM::Initialise()
 {
+  /// Initialize executable command line options reader object
+  const BDSExecOptions* execOptions = new BDSExecOptions(argcCache,argvCache);
+  if (usualPrintOut)
+    {execOptions->Print();}
+  ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
+  
   /// Print header & program information
   G4cout<<"BDSIM : version @BDSIM_VERSION@"<<G4endl;
   G4cout<<"        (C) 2001-@CURRENT_YEAR@ Royal Holloway University London"  << G4endl;
@@ -126,12 +134,6 @@ int BDSIM::Initialise()
   G4cout<<"                   https://arxiv.org/abs/1808.10745"               << G4endl;
   G4cout<<"        Website:   http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
-
-  /// Initialize executable command line options reader object
-  const BDSExecOptions* execOptions = new BDSExecOptions(argcCache,argvCache);
-  if (usualPrintOut)
-    {execOptions->Print();}
-  ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "DEBUG mode is on." << G4endl;
@@ -157,7 +159,7 @@ int BDSIM::Initialise()
   BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   /// Initialize random number generator
-  BDSRandom::CreateRandomNumberGenerator();
+  BDSRandom::CreateRandomNumberGenerator(globalConstants->RandomEngine());
   BDSRandom::SetSeed(); // set the seed from options
 
   /// Construct output
@@ -174,7 +176,7 @@ int BDSIM::Initialise()
 
   /// Construct mandatory run manager (the G4 kernel) and
   /// register mandatory initialization classes.
-  runManager = new BDSRunManager;
+  runManager = new BDSRunManager();
 
   /// Register the geometry and parallel world construction methods with run manager.
   BDSDetectorConstruction* realWorld = new BDSDetectorConstruction(userComponentFactory);
@@ -207,7 +209,14 @@ int BDSIM::Initialise()
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto parallelWorldPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
   G4int physicsVerbosity = BDSGlobalConstants::Instance()->PhysicsVerbosity();
-  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);
+  G4VModularPhysicsList* physList;
+  if (userPhysicsList)
+    {
+      G4cout << "Using externally registered user defined physics list" << G4endl;
+      physList = userPhysicsList;
+    }
+  else
+    {physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);}
 
   // create geometry sampler and register importance sampling biasing. Has to be here
   // before physicsList is "initialised" in run manager.
@@ -256,6 +265,9 @@ int BDSIM::Initialise()
   /// We no longer need beamParticle so delete it to avoid confusion. The definition is
   /// held inside bdsBunch (can be updated dynamically).
   delete beamParticle;
+  /// Construct extra common particles for possible tracking if required without using a physics list.
+  if (bdsBunch->ExpectChangingParticleType())
+    {BDS::ConstructExtendedParticleSet();}
   
   /// Optionally generate primaries only and exit
   /// Unfortunately, this has to be here as we can't query the geant4 particle table
@@ -407,10 +419,10 @@ void BDSIM::BeamOn(int nGenerate)
   sigemptyset(&act.sa_mask);
   act.sa_flags = 0;
   if (!ignoreSIGINT)
-    {sigaction(SIGINT,  &act, 0);}
-  sigaction(SIGABRT, &act, 0);
-  sigaction(SIGTERM, &act, 0);
-  sigaction(SIGSEGV, &act, 0);
+    {sigaction(SIGINT,  &act, nullptr);}
+  sigaction(SIGABRT, &act, nullptr);
+  sigaction(SIGTERM, &act, nullptr);
+  sigaction(SIGSEGV, &act, nullptr);
   
   /// Run in either interactive or batch mode
   try
@@ -479,7 +491,7 @@ BDSIM::~BDSIM()
     {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
 }
 
-void BDSIM::RegisterUserComponent(G4String componentTypeName,
+void BDSIM::RegisterUserComponent(const G4String& componentTypeName,
 				  BDSComponentConstructor* componentConstructor)
 {
   if (initialised)

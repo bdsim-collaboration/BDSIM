@@ -44,12 +44,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectoryPoint.hh"
 
 #include "globals.hh"
+#include "G4Material.hh"
+#include "G4MaterialTable.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <vector>
+#include <utility>
 
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   nCollimators(0),
@@ -170,10 +174,44 @@ G4int BDSOutputStructures::Create3DHistogram(G4String name, G4String title,
   return result;
 }
 
+G4int BDSOutputStructures::Create4DHistogram(const G4String& name,
+					     const G4String& title,
+					     const G4String& eScale,
+					     const std::vector<double>& eBinsEdges,
+					     G4int nBinsX, G4double xMin, G4double xMax,
+					     G4int nBinsY, G4double yMin, G4double yMax,
+					     G4int nBinsZ, G4double zMin, G4double zMax,
+					     G4int nBinsE, G4double eMin, G4double eMax)
+{
+  G4int result = evtHistos->Create4DHistogram(name, title, eScale, eBinsEdges,
+					      nBinsX, xMin, xMax,
+					      nBinsY, yMin, yMax,
+					      nBinsZ, zMin, zMax,
+					      nBinsE, eMin, eMax);
+  
+  runHistos->Create4DHistogram(name, title, eScale, eBinsEdges,
+			       nBinsX, xMin, xMax,
+			       nBinsY, yMin, yMax,
+			       nBinsZ, zMin, zMax,
+			       nBinsE, eMin, eMax);
+  return result;
+}
+
 void BDSOutputStructures::InitialiseSamplers()
 {
   if (!localSamplersInitialised)
     {
+#ifdef USE_SIXTRACKLINK
+      // TODO hardcoded because of sixtrack dynamic buildup
+      // Sixtrack does lazy initialisation for collimators in link to Geant4 so we don't know
+      // a priori how many link elements there'll be. If we allow it to be dynamically built up
+      // we risk the vector expanding and moving in memory, therefore breaking all the && (address
+      // of pointer) links of TTree::SetBranchAddress in the output. Therefore, we reserve a size
+      // of 300 in the hope that this is less than the LHC 120 collimators for both beams. Ideally,
+      // the sixtrack interface should be rewritten so we know at construction time how many will
+      // be built.
+      samplerTrees.reserve(300);
+#endif
       localSamplersInitialised = true;
       for (const auto& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
         {// create sampler structure
@@ -188,6 +226,72 @@ void BDSOutputStructures::InitialiseSamplers()
     }
 }
 
+void BDSOutputStructures::InitialiseMaterialMap()
+{
+  materialToID.clear();
+  materialIDToNameUnique.clear();
+  
+  const auto materialTable = G4Material::GetMaterialTable(); // should be an std::vector<G4Material*>*
+  
+  // It's totally permitted to use degenerate material names as the geometry is done by pointer
+  // We need a way to sort the materials for a given input irrespective of pointer or memory
+  // location so the result is the same for multiple runs of bdsim.
+  // Use a pair of <name, density>. A c++ map will be internally sorted by keys and the various
+  // comparison operators are defined by pairs in <utility>.
+  // Once sorted, by a map, we then loop over that map and generate integer IDs for each
+  // material
+  // This is a little overkill really as we ensure in BDSMaterials we don't make materials
+  // with degenerate names and ultimately, we can't define degenerate materials in GMAD so
+  // this shouldn't happen. Perhaps it could from GDML.
+  std::map<std::pair<G4String, G4double>, G4Material*> sortingMap;
+  std::map<G4String, int> nameCount;
+  std::map<G4Material*, G4String> matToUniqueName;
+  for (const auto& mat : *materialTable)
+    {
+      G4String matName = mat->GetName();
+      sortingMap[std::make_pair(matName, mat->GetDensity())] = mat;
+      
+      auto search = nameCount.find(matName);
+      if (search != nameCount.end())
+	{
+	  search->second += 1;
+	  matToUniqueName[mat] = matName + std::to_string(search->second);
+	}
+      else
+	{
+	  nameCount[matName] = 0;
+	  matToUniqueName[mat] = matName;
+	}
+    }
+  short int i = 0;
+  for (const auto& kv : sortingMap)
+    {
+      materialToID[kv.second] = i;
+      materialIDToNameUnique[i] = matToUniqueName[kv.second];
+      i++;
+    }
+}
+
+G4int BDSOutputStructures::UpdateSamplerStructures()
+{
+  G4int result = 0;
+  for (auto const& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
+    {// only put it in if it doesn't exist already
+      if (std::find(samplerNames.begin(), samplerNames.end(), samplerName) == samplerNames.end())
+	{
+	  result++;
+#ifndef __ROOTDOUBLE__
+	  BDSOutputROOTEventSampler<float>* res = new BDSOutputROOTEventSampler<float>(samplerName);
+#else
+	  BDSOutputROOTEventSampler<double>* res = new BDSOutputROOTEventSampler<double>(samplerName);
+#endif
+	  samplerTrees.push_back(res);
+	  samplerNames.push_back(samplerName);
+	}
+    }
+  return result;
+}
+
 void BDSOutputStructures::PrepareCollimatorInformation()
 {
   const G4String collimatorPrefix = "COLL_";
@@ -199,7 +303,7 @@ void BDSOutputStructures::PrepareCollimatorInformation()
     {
       // prepare output structure name
       const BDSBeamlineElement* el = flatBeamline->at(index);
-      // use the 'placement' name for a unique name (with copynumer included)
+      // use the 'placement' name for a unique name (with copy number included)
       G4String collimatorName = collimatorPrefix + el->GetPlacementName();
       collimatorNames.push_back(collimatorName);
       collimatorIndicesByName[el->GetName()]          = index;

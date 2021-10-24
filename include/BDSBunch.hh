@@ -74,6 +74,9 @@ public:
   /// Main interface. Calls GetNextParticleLocal() and then applies the curvilinear
   /// transform if required.
   BDSParticleCoordsFullGlobal GetNextParticle();
+  
+  /// A hint of whether we expect to require and extended particle set (ie pions, kaons, muons).
+  virtual G4bool ExpectChangingParticleType() const {return false;}
 
   /// Interface to allow multiple calls until a safe particle is generated. This will
   /// repeatedly call GetNextParticle() until a particle is generated where the total
@@ -88,7 +91,7 @@ public:
   virtual void BeginOfRunAction(G4int numberOfEvents);
 
   /// Access the beam particle definition.
-  inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
+  inline virtual const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
 
   /// Set the flag to whether we're only generating primaries only. This sets the member
   /// variable generatePrimariesOnly which skips trying to perform a curvilinear transform
@@ -117,11 +120,14 @@ public:
   /// case it's an ion. This can only be done later one once the run has started. Since
   /// the particle definition is kept here in the bunch this interface allows control
   /// over it being updated.
-  void UpdateIonDefinition();
+  virtual void UpdateIonDefinition();
 
   /// Whether the particle definition has been updated since the last call to
   /// GetNextParticle() or GetNextParticleValid().
   inline G4bool ParticleDefinitionHasBeenUpdated() const {return particleDefinitionHasBeenUpdated;}
+
+  /// Calculate zp safely based on other components.
+  static G4double CalculateZp(G4double xp, G4double yp, G4double Zp0);
 
   /// Work out whether either the geometric or normalised emittances are set and update
   /// the variables by reference with the values. Can throw exception if more than
@@ -146,9 +152,6 @@ protected:
 
   /// Calculate the global coordinates from curvilinear coordinates of a beam line.
   BDSParticleCoordsFullGlobal ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const;
-
-  /// Calculate zp safely based on other components.
-  G4double CalculateZp(G4double xp, G4double yp, G4double Zp0) const;
 
   G4String name; ///< Name of distribution
   

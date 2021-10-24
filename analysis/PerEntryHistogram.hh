@@ -18,12 +18,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef PERENTRYHISTOGRAM_H
 #define PERENTRYHISTOGRAM_H
+#include "HistogramAccumulator.hh"
 
 #include <string>
 
 #include "Rtypes.h" // for classdef
 
-class HistogramAccumulator;
 class HistogramDef;
 
 class TChain;
@@ -33,7 +33,7 @@ class TH1;
 /**
  * @brief Holder for information to calculate per entry histograms.
  *
- * This creates a histogram per event and accumualtes the mean and variance
+ * This creates a histogram per event and accumulates the mean and variance
  * for every bin in a cloned histogram. In the case of 1 event, the bin error
  * is 0. 
  * 
@@ -46,7 +46,7 @@ class TH1;
 class PerEntryHistogram
 {
 public:
-  /// Public constructor only for compatibility with ROOT - not indended for use.
+  /// Public constructor only for compatibility with ROOT - not intended for use.
   PerEntryHistogram();
   
   /// Constructor with a histogram definition and the chain to operate on.
@@ -54,16 +54,23 @@ public:
 		    TChain*             chain);
   virtual ~PerEntryHistogram();
 
-  /// Create a histogram of the approprate dimensions for the currently loaded
+  /// Create a histogram of the appropriate dimensions for the currently loaded
   /// event then add it to the online (ie running) means and variances.
-  virtual void AccumulateCurrentEntry(const long int& entryNumber);
+  virtual void AccumulateCurrentEntry(long int entryNumber);
 
   /// Terminate the accumulator and save the result to the result member variable.
-  void Terminate();
+  virtual void Terminate();
 
   /// Forwarding function - call Write on result histograms on the currently
   /// open file. Optional directory to specify where the histogram should be moved to.
-  void Write(TDirectory* dir = nullptr);
+  virtual void Write(TDirectory* dir = nullptr);
+
+  /// Permit the number of recorded entries to be incremented with zero values,
+  /// ie just increment n.
+  inline void AddNEmptyEntries(unsigned long i){accumulator->AddNEmptyEntries(i);}
+
+  /// Get the Integral() from the result member histogram if it exists, otherwise 0.
+  double Integral() const;
 
 protected:
   HistogramAccumulator* accumulator;
