@@ -18,8 +18,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BINSPECIFICATION_H
 #define BINSPECIFICATION_H
+#include "Rtypes.h"
 
-#include <stdexcept>
 #include <vector>
 
 /**
@@ -38,65 +38,19 @@ class BinSpecification
 {
 public:
   /// Default constructor.
-  BinSpecification():
-    low(0),
-    high(1),
-    n(1),
-    edges(nullptr)
-  {;}
-
+  BinSpecification();
   /// Linearly spaced bins.
   BinSpecification(double lowIn,
 		   double highIn,
-		   int    nIn):
-    low(lowIn),
-    high(highIn),
-    n(nIn),
-    edges(nullptr)
-  {
-    if (high <= low)
-      {throw std::invalid_argument("high end of binning <= low end -> must be >");}
-    if (n < 1)
-      {throw std::invalid_argument("n bins < 1 -> must be >= 1");}
-  }
+		   int    nIn);
 
   /// Uneven binning - suitable for logarithmic etc.
-  explicit BinSpecification(const std::vector<double>& edgesIn):
-    low(0),
-    high(1),
-    n(1),
-    edges(new std::vector<double>(edgesIn))
-  {
-    if (edges->size() < 2)
-      {throw std::invalid_argument("too few bin edges -> must be at least 2 edges to define 1 bin");}
-    n    = (int)edges->size() - 1;
-    low  = (*edges)[0];
-    high = edges->back();
-  }
+  explicit BinSpecification(const std::vector<double>& edgesIn);
+
+  BinSpecification(const BinSpecification& other);
+  BinSpecification(BinSpecification&& other) noexcept;
   
-  ~BinSpecification()
-  {delete edges;}
-  
-  BinSpecification(const BinSpecification& other):
-  low(other.low),
-  high(other.high),
-  n(other.n),
-  edges(nullptr)
-  {
-    edges = other.edges ? new std::vector<double>(*other.edges) : nullptr;
-  }
-  
-  BinSpecification(BinSpecification&& other) noexcept:
-  low(other.low),
-  high(other.high),
-  n(other.n),
-  edges(other.edges)
-  {
-    other.low   = 0;
-    other.high  = 1;
-    other.n     = 1;
-    other.edges = nullptr;
-  }
+  ~BinSpecification();
   
   double low;
   double high;

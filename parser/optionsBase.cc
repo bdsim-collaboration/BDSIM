@@ -31,6 +31,7 @@ OptionsBase::OptionsBase()
   visMacroFileName      = "";
   geant4MacroFileName   = "";
   geant4PhysicsMacroFileName = "";
+  geant4PhysicsMacroFileNameFromExecOptions = false;
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "rootevent";
@@ -65,6 +66,7 @@ OptionsBase::OptionsBase()
   
   circular              = false;
   seed                  = -1;
+  randomEngine          = "hepjames";
   nGenerate             = 1;
   recreate              = false;
   recreateFileName      = "";
@@ -173,8 +175,10 @@ OptionsBase::OptionsBase()
   tunnelVisible       = true;
   tunnelOffsetX       = 0;
   tunnelOffsetY       = 0;
+  tunnelMaxSegmentLength = 50.0; // m
 
   removeTemporaryFiles = true;
+  temporaryDirectory = "";
   
   // samplers
   samplerDiameter     = 5; // m
@@ -211,6 +215,10 @@ OptionsBase::OptionsBase()
   // biasing options
   defaultBiasVacuum        = "";
   defaultBiasMaterial      = "";
+  biasForWorldVolume       = "";
+  biasForWorldContents     = "";
+  biasForWorldVacuum       = "";
+  worldVacuumVolumeNames   = "";
 
   // tracking options
   integratorSet            = "bdsimmatrix";
@@ -225,6 +233,7 @@ OptionsBase::OptionsBase()
   sampleElementsWithPoleface  = false;   // affects dipole tracking in certain integrator sets when true
   nominalMatrixRelativeMomCut = 0.05;  // be careful adjusting this as it affects dipolequadrupole tracking
   teleporterFullTransform  = true;
+  dEThresholdForScattering = 1e-11; // GeV
 
   // default value in Geant4, old value 0 - error must be greater than this
   minimumEpsilonStep       = 5e-25;
@@ -232,6 +241,7 @@ OptionsBase::OptionsBase()
   deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
   stopSecondaries          = false;
   killNeutrinos            = false;
+  killedParticlesMassAddedToEloss = false;
   minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
 
   // hit generation
@@ -276,6 +286,7 @@ OptionsBase::OptionsBase()
   storePrimaryHistograms     = true;
   
   storeTrajectory                = false;
+  
   storeTrajectoryDepth           = 0;
   storeTrajectoryStepPoints      = 0;
   storeTrajectoryStepPointLast   = false;
@@ -284,12 +295,20 @@ OptionsBase::OptionsBase()
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";
+  
   storeTrajectoryTransportationSteps = true;
   trajNoTransportation               = false; ///< kept only for backwards compatibility.
-  storeTrajectoryLocal           = false;
-  storeTrajectoryLinks           = false;
-  storeTrajectoryIon             = false;
-  trajectoryFilterLogicAND       = false;
+  storeTrajectoryKineticEnergy       = true;
+  storeTrajectoryMomentumVector      = false;
+  storeTrajectoryProcesses           = false;
+  storeTrajectoryTime                = false;
+  storeTrajectoryLocal               = false;
+  storeTrajectoryLinks               = false;
+  storeTrajectoryIon                 = false;
+  storeTrajectoryMaterial            = false;
+  storeTrajectoryAllVariables        = false;
+
+  trajectoryFilterLogicAND = false;
   
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;
@@ -304,6 +323,8 @@ OptionsBase::OptionsBase()
   trajConnect              = false; // connect disconnected trajectory trees
   
   storeModel               = true;
+
+  samplersSplitLevel       = 0;
 
   // circular options
   nturns                   = 1;
@@ -320,12 +341,15 @@ OptionsBase::OptionsBase()
   nbinsx = 1;
   nbinsy = 1;
   nbinsz = 1;
+  nbinse = 1;
   xmin   = -0.5;
   xmax   = 0.5;
   ymin   = -0.5;
   ymax   = 0.5;
   zmin   = 0;
   zmax   = 1;
+  emin   = 1e-12;
+  emax   = 1e4;
   useScoringMap = false;
 
   // tracker options

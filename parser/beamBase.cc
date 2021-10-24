@@ -33,8 +33,12 @@ BeamBase::BeamBase()
   xDistrType           = "reference";
   yDistrType           = "reference";
   zDistrType           = "reference";
+  spaceDistrType       = "reference";
+  directionDistrType   = "reference";
+  energyDistrType      = "reference";
   distrFile            = "";
   distrFileFormat      = "";
+  distrFileFromExecOptions = false;
   matchDistrFileLength = true;
   removeUnstableWithoutDecay = true;
   nlinesIgnore         = 0;
@@ -78,6 +82,8 @@ BeamBase::BeamBase()
   envelopeXp = 0.0;
   envelopeY  = 0.0;
   envelopeYp = 0.0;
+  envelopeZ  = 0.0;
+  envelopeZp = 0.0;
   envelopeT  = 0.0;
   envelopeE  = 0.0;
   envelopeR  = 0.0;

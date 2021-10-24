@@ -17,8 +17,10 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunch.hh"
+#include "BDSBunchBox.hh"
 #include "BDSBunchCircle.hh"
 #include "BDSBunchComposite.hh"
+#include "BDSBunchCompositeSDE.hh"
 #include "BDSBunchEShell.hh"
 #include "BDSBunchEventGenerator.hh"
 #include "BDSBunchFactory.hh"
@@ -50,9 +52,6 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
 				       G4double                     beamlineS,
 				       G4bool                       generatePrimariesOnlyIn)  
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "> Instantiating chosen bunch distribution." << G4endl;
-#endif
   G4String distrName = G4String(beam.distrType);
   if (distrName.contains(":")) // must be eventgeneratorfile:subtype
     {
@@ -100,6 +99,8 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
       {bdsBunch = new BDSBunchHalo(); break;}
     case BDSBunchType::composite:
       {bdsBunch = new BDSBunchComposite(); break;}
+    case BDSBunchType::compositesde:
+      {bdsBunch = new BDSBunchCompositeSDE(); break;}
     case BDSBunchType::userfile:
       {
 	G4String distrFile = G4String(beam.distrFile);
@@ -127,11 +128,10 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
       {bdsBunch = new BDSBunchSphere(); break;}
     case BDSBunchType::eventgeneratorfile:
       {bdsBunch = new BDSBunchEventGenerator(); break;}
+    case BDSBunchType::box:
+      {bdsBunch = new BDSBunchBox(); break;}
     default:
-      {
-	throw BDSException(__METHOD_NAME__, "distrType \"" + distrType.ToString() + "\" not found");
-	break;
-      }
+      {bdsBunch = new BDSBunch(); break;}
     }
 
   bdsBunch->SetOptions(beamParticle, beam, distrType, beamlineTransform, beamlineS);

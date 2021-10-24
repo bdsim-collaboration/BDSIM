@@ -30,6 +30,18 @@ Colour Coding
 The default colour coding of trajectories is the same as Geant4. This colour coding is
 green: neutral; blue: positively charged; red: negatively charged.
 
+BDSIM Visualisation Commands
+============================
+
+BDSIM provides some extra useful commands.
+
+* :code:`/bds/beamline/list` List all components in the beam line in the terminal.
+* :code:`/bds/beamline/goto <component pv name>` Centre the view at that name exactly. This
+  will only work for items in the main beam line. Note, bends may be split into sections and
+  therefore have a different name than expected - try a straight component.
+* :code:`/bds/samplers/list` List the names of all samplers in the terminal.
+* :code:`/bds/samplers/view` Issue all the right commands to make the samplers visible.
+
 Common Useful Commands
 ======================
 
@@ -171,10 +183,7 @@ command: ::
   bdsim --file=mylattice.gmad --vis_mac=othervis.mac
 
 where :code:`othervis.mac` is your visualisation macro. It is recommended to copy
-and edit the default BDSIM visualisation macro (vis.mac) that can be found in the
-bdsim source directory as follows: ::
-
-  bdsim/vis/*.mac
+and edit the default BDSIM visualisation macro (:code:`bdsim/vis/bdsim_default_vis.mac`).
 
 When running, BDSIM looks for the macros in the installation directory and then the
 build directory if it exists. The user can edit this files directly as a default

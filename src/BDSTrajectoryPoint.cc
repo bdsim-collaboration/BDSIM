@@ -35,7 +35,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4Allocator.hh"
-#include "G4NavigationHistory.hh"
 #include "G4ProcessType.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -45,7 +44,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ostream>
 
+class G4Material;
+
 G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
+
+G4double BDSTrajectoryPoint::dEThresholdForScattering = 1e-8;
 
 // Don't use transform caching in the aux navigator as it's used for all over the geometry here.
 BDSAuxiliaryNavigator* BDSTrajectoryPoint::auxNavigator = new BDSAuxiliaryNavigator();
@@ -83,6 +86,9 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
   postMomentum   = preMomentum;
   preGlobalTime  = track->GetGlobalTime();
   postGlobalTime = preGlobalTime;
+  // when we construct a trajectory from a track it hasn't taken a step yet,
+  // so we don't know the material
+  material       = nullptr;
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Process (main|sub) (" << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << ")" << G4endl;
@@ -110,7 +116,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
     {extraLocal = new BDSTrajectoryPointLocal(prePosLocal, localPosition.PostStepPoint());}
   
   if (storeExtrasLink)
-    {StoreExtrasLink(track, track->GetKineticEnergy());}
+    {StoreExtrasLink(track);}
 
   if (storeExtrasIon)
     {StoreExtrasIon(track);}
@@ -149,6 +155,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
   postMomentum   = postPoint->GetMomentum();
   preGlobalTime  = prePoint->GetGlobalTime();
   postGlobalTime = postPoint->GetGlobalTime();
+  material       = prePoint->GetMaterial();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
@@ -173,7 +180,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
 
   G4Track* track = step->GetTrack();
   if (storeExtrasLink)
-    {StoreExtrasLink(track, prePoint->GetKineticEnergy());}
+    {StoreExtrasLink(track);}
 
   if (storeExtrasIon)
     {StoreExtrasIon(track);}
@@ -205,6 +212,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const BDSTrajectoryPoint& other):
   beamline           = other.beamline;
   prePosLocal        = other.prePosLocal;
   postPosLocal       = other.postPosLocal;
+  material           = other.material;
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
@@ -235,21 +243,20 @@ void BDSTrajectoryPoint::InitialiseVariables()
   beamline           = nullptr;
   prePosLocal        = G4ThreeVector();
   postPosLocal       = G4ThreeVector();
+  material           = nullptr;
   extraLocal         = nullptr;
   extraLink          = nullptr;
   extraIon           = nullptr;
 }
 
-void BDSTrajectoryPoint::StoreExtrasLink(const G4Track* track,
-					 G4double       kineticEnergy)
+void BDSTrajectoryPoint::StoreExtrasLink(const G4Track* track)
 {
   const G4DynamicParticle* dynamicParticleDef = track->GetDynamicParticle();
   G4double charge   = dynamicParticleDef->GetCharge();
   G4double rigidity = 0;
   if (BDS::IsFinite(charge))
     {rigidity = BDS::Rigidity(track->GetMomentum().mag(), charge);}
-  extraLink = new BDSTrajectoryPointLink(charge,
-					 kineticEnergy,
+  extraLink = new BDSTrajectoryPointLink((G4int)charge,
 					 BDSGlobalConstants::Instance()->TurnsTaken(),
 					 dynamicParticleDef->GetMass(),
 					 rigidity);
@@ -287,6 +294,8 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint() const
 
 G4bool BDSTrajectoryPoint::NotTransportationLimitedStep() const
 {
+  // if prestep process doesn't exist it won't be set and will
+  // default to value in InitialiseVariables which is -1
   G4bool preStep = (preProcessType  != 1   /* transportation */ &&
 		    preProcessType  != 10 /* parallel world */);
   G4bool posStep = (postProcessType != 1   /* transportation */ &&
@@ -314,6 +323,12 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint(const G4Step* step)
 {
   const G4StepPoint* postPoint   = step->GetPostStepPoint();
   const G4VProcess*  postProcess = postPoint->GetProcessDefinedStep();
+  
+  G4double totalEnergyDeposit = step->GetTotalEnergyDeposit();
+  
+  G4Track* t = step->GetTrack();
+  if (t->GetCurrentStepNumber() == 1 && t->GetStepLength() < 1e-5 && totalEnergyDeposit < 1e-5)
+    {return false;} // ignore the first really small step
 
   G4int postProcessType    = -1;
   G4int postProcessSubType = -1;
@@ -322,8 +337,7 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint(const G4Step* step)
       postProcessType    = postProcess->GetProcessType();
       postProcessSubType = postProcess->GetProcessSubType();
     }
-
-  G4double totalEnergyDeposit = step->GetTotalEnergyDeposit();
+  
   return BDSTrajectoryPoint::IsScatteringPoint(postProcessType, postProcessSubType, totalEnergyDeposit);
 }
   
@@ -340,8 +354,9 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint(G4int postProcessType,
   G4bool notUndefined      = postProcessType != G4ProcessType::fNotDefined; // for crystal channelling
 
   // energy can change in transportation step (EM)
-  if (totalEnergyDeposit > 1e-9)
+  if (totalEnergyDeposit > dEThresholdForScattering)
     {return true;}
 
-  return initialised && notTransportation && notGeneral && notParallel && notUndefined;
+  G4bool result = initialised && notTransportation && notGeneral && notParallel && notUndefined;
+  return result;
 }

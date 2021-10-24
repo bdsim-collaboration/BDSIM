@@ -34,21 +34,17 @@ G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 
 BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
 			     G4bool         interactiveIn,
-			     G4bool         suppressTransportationStepsIn,
-			     G4bool         storeTrajectoryLocalIn,
-			     G4bool         storeTrajectoryLinksIn,
-			     G4bool         storeTrajectoryIonIn):
+			     const BDS::TrajectoryOptions& storageOptionsIn):
   G4Trajectory(aTrack),
   interactive(interactiveIn),
-  suppressTransportationSteps(suppressTransportationStepsIn),
-  storeTrajectoryLocal(storeTrajectoryLocalIn),
-  storeTrajectoryLinks(storeTrajectoryLinksIn),
-  storeTrajectoryIon(storeTrajectoryIonIn),
+  storageOptions(storageOptionsIn),
   parent(nullptr),
   trajIndex(0),
   parentIndex(0),
-  parentStepIndex(0)
+  parentStepIndex(0),
+  depth(-1)
 {
+  suppressTransportationAndNotInteractive = storageOptionsIn.suppressTransportationSteps && !interactiveIn;
   const G4VProcess* proc = aTrack->GetCreatorProcess();
   if (proc)
     {
@@ -66,9 +62,9 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
   fpBDSPointsContainer = new BDSTrajectoryPointsContainer();
   // this is for the first point of the track
   (*fpBDSPointsContainer).push_back(new BDSTrajectoryPoint(aTrack,
-							   storeTrajectoryLocal,
-							   storeTrajectoryLinks,
-							   storeTrajectoryIon));
+							   storageOptions.storeLocal,
+                                                           storageOptions.storeLinks,
+							   storageOptions.storeIon));
 }
 
 BDSTrajectory::~BDSTrajectory()
@@ -82,14 +78,14 @@ BDSTrajectory::~BDSTrajectory()
 
 void BDSTrajectory::AppendStep(const BDSTrajectoryPoint* pointIn)
 {
-  if (suppressTransportationSteps && !interactive)
+  if (suppressTransportationAndNotInteractive)
     {
       if (pointIn->NotTransportationLimitedStep())
-	      {
+	{
           auto r = new BDSTrajectoryPoint(*pointIn);
           CleanPoint(r);
           fpBDSPointsContainer->push_back(r);
-	      }
+	}
     }
   else
     {
@@ -101,11 +97,11 @@ void BDSTrajectory::AppendStep(const BDSTrajectoryPoint* pointIn)
 
 void BDSTrajectory::CleanPoint(BDSTrajectoryPoint* point) const
 {
-  if (!storeTrajectoryIon)
+  if (!storageOptions.storeIon)
     {point->DeleteExtraIon();}
-  if (!storeTrajectoryLinks)
+  if (!storageOptions.storeLinks)
     {point->DeleteExtraLinks();}
-  if (!storeTrajectoryLocal)
+  if (!storageOptions.storeLocal)
     {point->DeleteExtraLocal();}
 }
 
@@ -114,39 +110,38 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
   // we do not use G4Trajectory::AppendStep here as that would
   // duplicate position information in its own vector of positions
   // which we prevent access to be overriding GetPoint
-
-  if (suppressTransportationSteps && !interactive)
+  
+  // if the first step, we update the material of the 0th point which was
+  // constructed from the track before geometry tracking and we didn't know
+  // the material
+  if (fpBDSPointsContainer->size() == 1)
+    {(*fpBDSPointsContainer)[0]->SetMaterial(aStep->GetTrack()->GetMaterial());}
+  if (suppressTransportationAndNotInteractive)
     {
-      // decode aStep and if on storage.
-      auto preStepPoint  = aStep->GetPreStepPoint();
-      auto postStepPoint = aStep->GetPostStepPoint();
-      
-      // add step
-      const G4VProcess* preProcess  = preStepPoint->GetProcessDefinedStep();
+      // note for a first step of a track, the prestep point process
+      // may be nullptr, but if we're appending a step we really care
+      // about what the post process is - test on that
+      auto postStepPoint = aStep->GetPostStepPoint(); 
       const G4VProcess* postProcess = postStepPoint->GetProcessDefinedStep();
-      
-      if (preProcess && postProcess)
+      if (postProcess)
 	{
-	  G4int preProcessType = preProcess->GetProcessType();
 	  G4int postProcessType = postProcess->GetProcessType();
-	  if((preProcessType  != 1   /* transportation */ &&
-	      preProcessType  != 10 /* parallel world */) ||
-	     (postProcessType != 1   /* transportation */ &&
-	      postProcessType != 10 /* parallel world */) )
+	  if(postProcessType != 1   /* transportation */ &&
+	     postProcessType != 10 /* parallel world */ )
 	    {
 	      fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep,
-								     storeTrajectoryLocal,
-								     storeTrajectoryLinks,
-								     storeTrajectoryIon));
+								     storageOptions.storeLocal,
+								     storageOptions.storeLinks,
+								     storageOptions.storeIon));
 	    }
 	}
     }
   else
     {
       fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep,
-							     storeTrajectoryLocal,
-							     storeTrajectoryLinks,
-							     storeTrajectoryIon));
+                                                             storageOptions.storeLocal,
+                                                             storageOptions.storeLinks,
+                                                             storageOptions.storeIon));
     }
 }
 

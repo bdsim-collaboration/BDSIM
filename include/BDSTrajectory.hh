@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSTRAJECTORY_H
 #define BDSTRAJECTORY_H
-
+#include "BDSTrajectoryOptions.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "G4Trajectory.hh"
 
@@ -45,10 +45,7 @@ class BDSTrajectory: public G4Trajectory
 public:
   BDSTrajectory(const G4Track* aTrack,
 		G4bool         interactiveIn,
-		G4bool         suppressTransportationStepsIn,
-		G4bool         storeTrajectoryLocalIn,
-		G4bool         storeTrajectoryLinksIn,
-		G4bool         storeTrajectoryIonIn);
+		const BDS::TrajectoryOptions& storageOptionsIn);
   /// copy constructor is not needed
   BDSTrajectory(BDSTrajectory &) = delete;
 
@@ -84,7 +81,7 @@ public:
   virtual G4bool IsPrimary() const {return false;}
 
   /// The index of the trajectory assigned in the output from the reduced set of
-  /// indicies. This is why it will not be the same as the track ID.
+  /// indices. This is why it will not be the same as the track ID.
   inline void  SetTrajIndex(G4int trajIndexIn)                 {trajIndex = trajIndexIn;}
   inline G4int GetTrajIndex()                            const {return trajIndex;}
 
@@ -96,6 +93,10 @@ public:
   /// The index of the step along the parent trajectory from which this one was created.
   inline void  SetParentStepIndex(G4int parentStepIndexIn)     {parentStepIndex = parentStepIndexIn;}
   inline G4int GetParentStepIndex()                      const {return parentStepIndex;}
+  
+  /// Depth in the tree. Will be filled later once all trajectories are created and sorted.
+  inline G4int GetDepth() const {return depth;}
+  inline void SetDepth(G4int depthIn) {depth = depthIn;}
 
   /// Record the parent trajectory.
   inline void  SetParent(BDSTrajectory* parentIn)              {parent = parentIn;}
@@ -117,14 +118,13 @@ protected:
   G4int          creatorProcessSubType;
   G4double       weight;
   G4bool         interactive;
-  const G4bool   suppressTransportationSteps;
-  const G4bool   storeTrajectoryLocal;
-  const G4bool   storeTrajectoryLinks;
-  const G4bool   storeTrajectoryIon;
+  G4bool         suppressTransportationAndNotInteractive;
+  const BDS::TrajectoryOptions storageOptions;
   BDSTrajectory* parent;
   G4int          trajIndex;
   G4int          parentIndex;
   G4int          parentStepIndex;
+  G4int          depth;
 
   /// Container of all points. This is really a vector so all memory is dynamically
   /// allocated and there's no need to make this dynamically allocated itself a la

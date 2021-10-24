@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDMANAGER_H
 #define BDSSDMANAGER_H
 
+#include "BDSSDSamplerLink.hh"
 #include "BDSSDType.hh"
 
 #include "G4String.hh"
@@ -32,6 +33,7 @@ class BDSSDApertureImpacts;
 class BDSSDCollimator;
 class BDSSDEnergyDeposition;
 class BDSSDEnergyDepositionGlobal;
+class BDSLinkRegistry;
 class BDSMultiSensitiveDetectorOrdered;
 class BDSSDSampler;
 class BDSSDTerminator;
@@ -68,7 +70,7 @@ public:
   /// Access a sensitive detector by the class enum. Default is a nullptr and also
   /// in the case of Geant < 4.10.3 for world complete as requires multiple sensitive
   /// detector. It's safe to set a nullptr to the SD of a logical volume. If applyOptions
-  /// is used, the correct SD will only be returned if required accoring to the options
+  /// is used, the correct SD will only be returned if required according to the options
   /// in BDSGlobalConstants for storing hits. This way only hits are generated that are
   /// required (cpu and memory efficient).
   G4VSensitiveDetector* SensitiveDetector(const BDSSDType sdType,
@@ -79,6 +81,9 @@ public:
 
   /// SD for samplers (cylinder type).
   inline BDSSDSampler* SamplerCylinder() const {return samplerCylinder;}
+
+  /// SD for link samplers.
+  inline BDSSDSamplerLink* SamplerLink() const {return samplerLink;}
 
   /// SD for measuring turns around circular machine and terminating
   /// particles appropriately.
@@ -147,7 +152,12 @@ public:
 
   /// Access the map of units for primitive scorers.
   inline const std::map<G4String, G4double>& PrimitiveScorerUnits() const {return primitiveScorerNameToUnit;}
-  
+
+  /// If samplerLink member exists, set the registry to look up links for that SD.
+  void SetLinkRegistry(BDSLinkRegistry* registry);
+  inline void SetLinkMinimumEK(G4double minimumEKIn) {samplerLink->SetMinimumEK(minimumEKIn);}
+  inline void SetLinkProtonsAndIonsOnly(G4bool protonsAndIonsOnlyIn) {samplerLink->SetProtonsAndIonsOnly(protonsAndIonsOnlyIn);}
+
 private:
   /// Private default constructor for singleton.
   BDSSDManager();
@@ -160,6 +170,7 @@ private:
   /// @{ SD instance.
   BDSSDSampler*                samplerPlane;
   BDSSDSampler*                samplerCylinder;
+  BDSSDSamplerLink*            samplerLink;
   BDSSDTerminator*             terminator;
   BDSSDEnergyDeposition*       energyDeposition;
   BDSSDEnergyDeposition*       energyDepositionFull;
