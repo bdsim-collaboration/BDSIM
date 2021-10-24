@@ -65,8 +65,7 @@ void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physical
 #endif
   if (IsRegistered(physicalVolume))
     {//uh oh - we've found it somewhere - abort
-      G4cerr << __METHOD_NAME__ << physicalVolume->GetName()
-	     << " is already registered" << G4endl;
+      G4cerr << __METHOD_NAME__ << physicalVolume->GetName() << " is already registered" << G4endl;
       return;
     }
 

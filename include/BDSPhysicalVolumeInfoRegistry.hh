@@ -110,7 +110,7 @@ private:
   BDSPVInfoIterator tunnelSearch;
   /// @}
   
-  /// The singleton instane
+  /// The singleton instance
   static BDSPhysicalVolumeInfoRegistry* instance;
 
   /// Registry is a map - note 'register' is a protected keyword.
