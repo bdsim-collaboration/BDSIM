@@ -135,7 +135,7 @@ EventAnalysis::~EventAnalysis() noexcept
 {
   for (auto& sa : samplerAnalyses)
     {delete sa;}
-  for (auto hs : perEntryHistogramSets)
+  for (auto& hs : perEntryHistogramSets)
     {delete hs;}
 }
 
