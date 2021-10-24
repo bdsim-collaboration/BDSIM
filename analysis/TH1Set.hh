@@ -78,7 +78,7 @@ virtual void SetBinContent(Int_t bin, Double_t content);
 virtual void SetBinError(Int_t bin, Double_t error);
 virtual void GetStats(Double_t *stats) const;
 */
-  ClassDef(TH1Set,1)
+  ClassDefOverride(TH1Set,1)
 };
 
 #endif
