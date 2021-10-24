@@ -24,7 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TList.h"
 #include "TMath.h"
 
-ClassImp(TH1Set);
+ClassImp(TH1Set)
 
 TH1Set::TH1Set()
 {;}

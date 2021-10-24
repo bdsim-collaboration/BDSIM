@@ -37,14 +37,17 @@ public:
   virtual ~TH1Set();
 
   const HistSparse& GetHistSparse1D() const {return data;}
-
-  virtual Int_t Fill(Double_t x) {return Fill(x,1.0);}
+  
+  virtual Int_t Fill(const char*, Double_t){return 0;}
+  virtual Int_t Fill(Double_t x) {return this->Fill(x,1.0);}
   virtual Int_t Fill(Double_t x, Double_t w);
   virtual void  DoFillN(Int_t ntimes, const Double_t *x, const Double_t *w, Int_t stride=1);
+  
   
   Int_t AddNewBin(long long int x);
   
   virtual Bool_t Add(const TH1 *h1, Double_t c1);
+  virtual Bool_t Add(TF1*, Double_t, Option_t*){return false;}
   
   Double_t GetBinContentByAbscissa(long long int x) const;
   Double_t GetBinErrorByAbscissa(long long int x) const;
