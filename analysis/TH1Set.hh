@@ -36,7 +36,7 @@ public:
   TH1Set(const char* name, const char* title);
   virtual ~TH1Set();
 
-  const HistSparse& HistSparse1D() const {return data;}
+  const HistSparse& GetHistSparse1D() const {return data;}
 
   virtual Int_t Fill(Double_t x) {return Fill(x,1.0);}
   virtual Int_t Fill(Double_t x, Double_t w);
