@@ -119,15 +119,14 @@ void BDSGeometryFactoryBase::ApplyUserLimits(const std::set<G4LogicalVolume*>& l
 
 G4AssemblyVolume* BDSGeometryFactoryBase::ToAssemblyVolume(G4LogicalVolume* container)
 {
-  auto av = new G4AssemblyVolume;
-  auto ndaughters = container->GetNoDaughters();
-  for (decltype(ndaughters) i = 0; i < ndaughters; ++i)
+  auto av = new G4AssemblyVolume();
+  for (G4int i = 0; i < (G4int)container->GetNoDaughters(); i++)
     {
-      auto daughter_pv = container->GetDaughter(i);
-      auto daughter_lv = daughter_pv->GetLogicalVolume();
-      auto translation = daughter_pv->GetTranslation();
-      auto rotation = G4RotationMatrix(*(daughter_pv->GetFrameRotation()));
-      av->AddPlacedVolume(daughter_lv, translation, &rotation);
+      auto daughterPV = container->GetDaughter(i);
+      auto daughterLV = daughterPV->GetLogicalVolume();
+      auto translation = daughterPV->GetTranslation();
+      G4RotationMatrix* rotation = new G4RotationMatrix(*(daughterPV->GetFrameRotation()));
+      av->AddPlacedVolume(daughterLV, translation, rotation);
     }
   return av;
 }
