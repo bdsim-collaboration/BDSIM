@@ -118,6 +118,8 @@ private:
   std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> backupRegister;
   std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> tunnelRegister;
   std::set<G4VPhysicalVolume*> excludedVolumes;
+  
+  std::set<BDSPhysicalVolumeInfo*> pvInfosForDeletion;
 };
 
 

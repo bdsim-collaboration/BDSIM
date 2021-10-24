@@ -43,13 +43,8 @@ BDSPhysicalVolumeInfoRegistry::BDSPhysicalVolumeInfoRegistry()
 
 BDSPhysicalVolumeInfoRegistry::~BDSPhysicalVolumeInfoRegistry()
 {
-  BDSPVInfoIterator it = readOutRegister.begin();
-  for (; it != readOutRegister.end(); ++it)
-    {delete it->second;}
-  it = backupRegister.begin();
-  for (; it != backupRegister.end(); ++it)
-    {delete it->second;}
-  
+  for (auto& info : pvInfosForDeletion)
+    {delete info;}
   instance = nullptr;
 }
 
@@ -68,6 +63,8 @@ void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physical
       G4cerr << __METHOD_NAME__ << physicalVolume->GetName() << " is already registered" << G4endl;
       return;
     }
+  
+  pvInfosForDeletion.insert(info);
 
   // if it's a tunnel one, register and return
   if (isTunnel)
