@@ -489,7 +489,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	  G4IonTable* ionTable = particleTable->GetIonTable();
 	  G4int ionA, ionZ, ionLevel;
 	  G4double ionE;
-	  ionTable->GetNucleusByEncoding(type, ionZ, ionA, ionE, ionLevel);
+    G4IonTable::GetNucleusByEncoding(type, ionZ, ionA, ionE, ionLevel);
 	  ionDef = new BDSIonDefinition(ionA, ionZ, ionZ);
 	  particleDef = ionTable->GetIon(ionDef->Z(), ionDef->A(), ionDef->ExcitationEnergy());
 	}
