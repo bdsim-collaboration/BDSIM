@@ -148,6 +148,7 @@ void Options::PublishMembers()
   publish("visMacroFileName",      &Options::visMacroFileName);
   publish("geant4MacroFileName",   &Options::geant4MacroFileName);
   publish("geant4PhysicsMacroFileName", &Options::geant4PhysicsMacroFileName);
+  publish("geant4PhysicsMacroFileNameFromExecOptions", &Options::geant4PhysicsMacroFileNameFromExecOptions);
   publish("visDebug",              &Options::visDebug);
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);
@@ -454,6 +455,7 @@ void Options::PublishMembers()
   publish("storeTrajectoryLinks",               &Options::storeTrajectoryLinks);
   publish("storeTrajectoryIon",                 &Options::storeTrajectoryIon);
   publish("storeTrajectoryIons",                &Options::storeTrajectoryIon); ///< alternative for backwards compatibility.
+  publish("storeTrajectoryMaterial",            &Options::storeTrajectoryMaterial);
   publish("storeTrajectoryAllVariables",        &Options::storeTrajectoryAllVariables);
   publish("trajectoryFilterLogicAND",           &Options::trajectoryFilterLogicAND);
 
@@ -491,11 +493,14 @@ void Options::PublishMembers()
   publish("nbinsx", &Options::nbinsx);
   publish("nbinsy", &Options::nbinsy);
   publish("nbinsz", &Options::nbinsz);
+  publish("nbinse" , &Options::nbinse);
   publish("xmin",   &Options::xmin);
   publish("xmax",   &Options::xmax);
   publish("ymin",   &Options::ymin);
   publish("ymax",   &Options::ymax);
   publish("zmin",   &Options::zmin);
   publish("zmax",   &Options::zmax);
+  publish("emin", &Options::emin);
+  publish("emax", &Options::emax);
   publish("useScoringMap", &Options::useScoringMap);
 }
