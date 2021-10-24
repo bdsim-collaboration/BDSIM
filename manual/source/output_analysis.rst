@@ -414,7 +414,7 @@ is given in the ROOT TTree class:
 Spectra
 -------
 
-The Spectra command is a conveninent way to make common energy or rigidity spectra (**1D**) histograms
+The Spectra command is a convenient way to make common energy or rigidity spectra (**1D**) histograms
 for a variety of particles species. Normally, we would need to make 1 histogram in energy with a
 selection for each particle species by PDG ID. This could be done manually as follows:
 ::
@@ -531,6 +531,16 @@ Particles can be specified in several ways:
 .. warning:: (\*) The `topN` syntax cannot be used with simple histograms (e.g. with the syntax
 	     SimpleSpectra) because we need to perform per-event analysis to build up a set of
 	     PDG IDs at each event and re-evaluate the top N.
+
+.. warning:: (\*) When using `rebdsimCombine` to merge multiple rebdsim output files, spectra
+	     will be merged too as expected. In the case of Top N histograms, the top (by integral)
+	     particle species may be different from file to file. The histograms are mapped in the
+	     first file loaded and any not matching these ones will be ignored, so you may end up
+	     with a subset of histograms and statistics. This is purposeful because adding 0 entries
+	     for a newly encountered histogram in the accumulation would result in a possibly lower
+	     than average true mean. Care should be taken to observe the number of entries in each
+	     merged histogram which is the number of events merged for that histogram. To avoid this,
+	     specific PDG IDs should be given.
 
 .. note:: No white space should be in the particle specification.
 
