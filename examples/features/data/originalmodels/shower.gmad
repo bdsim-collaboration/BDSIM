@@ -1,11 +1,14 @@
-c1: rcol, l=0.5*m, material="Cu";
+c1: rcol, l=0.1*m, material="Cu";
 l1: line=(c1);
 use, l1;
 
 sample, all;
 
 beam, particle="proton",
-      energy=1*TeV;
+      energy=1*TeV,
+      distrType="userfile",
+      distrFileFormat="pdgid",
+      distrFile="particles.dat";
 
 option, physicsList="g4FTFP_BERT",
 	minimumKineticEnergy=1*GeV,
