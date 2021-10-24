@@ -7,4 +7,4 @@ beam,  particle="e-",
 include options.gmad
 include fodo.gmad;
 
-option, ngenerate=10;
+option, ngenerate=3;
