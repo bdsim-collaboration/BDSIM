@@ -696,7 +696,8 @@ Examples: ::
 
    OCTUPOLE1 : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 };
    QUADRUPOLE1: multipole, l=20*cm, knl={2.3};
-   
+
+.. note:: If a multipole has a length equal to zero, it will be converted in a `thinmultipole`_.
 
 thinmultipole
 ^^^^^^^^^^^^^

@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "HistogramDef4D.hh"
 #include "HistogramFactory.hh"
 #include "PerEntryHistogram.hh"
 #include "RBDSException.hh"
@@ -31,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4DBase.hh"
 
 #include <string>
 
@@ -86,6 +88,13 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
 	temp = dynamic_cast<TH3D*>(baseHist->Clone(tempName.c_str()));
 	break;
       }
+    case 4:
+      {
+	const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
+	baseHist = factory.CreateHistogram4D(d, baseName, baseName);
+	temp = dynamic_cast<BDSBH4DBase*>(baseHist->Clone(tempName.c_str()));
+	break;
+      }
     default:
       {throw RBDSException("Invalid number of dimensions"); break;}
     }
@@ -104,7 +113,7 @@ PerEntryHistogram::~PerEntryHistogram()
   delete accumulator;
 }
       
-void PerEntryHistogram::AccumulateCurrentEntry(const long int& entryNumber)
+void PerEntryHistogram::AccumulateCurrentEntry(long int entryNumber)
 {  
   // Fill the temporary histogram with 1 event - the current one
   // This is used as it doesn't matter if the variable is a vector
@@ -128,4 +137,12 @@ void PerEntryHistogram::Write(TDirectory* dir)
 	{dir->Add(result);}
       result->Write();
     }
+}
+
+double PerEntryHistogram::Integral() const
+{
+  if (!result)
+    {return 0;}
+  else
+    {return result->Integral();}
 }
