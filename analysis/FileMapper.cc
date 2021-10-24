@@ -260,9 +260,13 @@ RBDS::MergeType RBDS::DetermineMergeType(const std::string& parentDir)
 {
   if (parentDir == "PerEntryHistograms")
     {return RBDS::MergeType::meanmerge;}
+  else if (parentDir == "PerEntryHistogramSets")
+    {return RBDS::MergeType::meanmerge;}
   else if (parentDir == "MergedHistograms")
     {return RBDS::MergeType::meanmerge;}
   else if (parentDir == "SimpleHistograms")
+    {return RBDS::MergeType::sum;}
+  else if (parentDir == "SimpleHistogramSets")
     {return RBDS::MergeType::sum;}
   else
     {return RBDS::MergeType::none;}
