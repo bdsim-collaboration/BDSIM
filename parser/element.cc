@@ -136,6 +136,7 @@ void Element::PublishMembers()
 
   publish("offsetX",     &Element::offsetX);
   publish("offsetY",     &Element::offsetY);
+  
   publish("x",           &Element::xdir);
   alternativeNames["x"] = "xdir";
   publish("y",           &Element::ydir);
@@ -148,6 +149,11 @@ void Element::PublishMembers()
   publish("phi",         &Element::phi);
   publish("theta",       &Element::theta);
   publish("psi",         &Element::psi);
+  publish("axisX",       &Element::axisX);
+  publish("axisY",       &Element::axisY);
+  publish("axisZ",       &Element::axisZ);
+  publish("axisAngle",   &Element::axisAngle);
+  
   publish("region",      &Element::region);
   publish("fieldOuter",  &Element::fieldOuter);
   publish("fieldVacuum", &Element::fieldVacuum);
@@ -196,6 +202,7 @@ void Element::PublishMembers()
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
   publish("autoColour",          &Element::autoColour);
   publish("namedVacuumVolumes",  &Element::namedVacuumVolumes);
+  publish("markAsCollimator",    &Element::markAsCollimator);
   publish("material",            &Element::material);
   publish("outerMaterial",       &Element::material);
   alternativeNames["outerMaterial"] = "material";
@@ -483,6 +490,9 @@ void Element::flush()
   poleStartZ         = 0;
   screenWidth        = 0;
   awakeMagnetOffsetX = 0.13;
+  windowmaterial     = "vacuum";
+  mountmaterial      = "";
+  scintmaterial      = "";
 
   layerThicknesses.clear();
   layerMaterials.clear();
@@ -496,6 +506,10 @@ void Element::flush()
   phi = 0;
   theta = 0;
   psi = 0;
+  axisX = 0;
+  axisY = 0;
+  axisZ = 0;
+  axisAngle = false;
 
   bias         = "";
   biasMaterial = "";
@@ -517,9 +531,7 @@ void Element::flush()
   autoColour   = true;
   material="";
   namedVacuumVolumes = "";
-  windowmaterial = "vacuum";
-  mountmaterial="";
-  scintmaterial = "";
+  markAsCollimator = false;
   spec = "";
   cavityModel = "";
 

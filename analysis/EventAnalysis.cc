@@ -20,9 +20,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "Config.hh"
 #include "Event.hh"
 #include "EventAnalysis.hh"
 #include "HistogramMeanFromFile.hh"
+#include "PerEntryHistogramSet.hh"
+#include "RBDSException.hh"
 #include "SamplerAnalysis.hh"
 #include "rebdsim.hh"
 
@@ -95,7 +98,7 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
       else if (pa)
         {SamplerAnalysis::UpdateMass(pa);}
       else
-	{throw std::string("No samplers and no particle name - unable to calculate optics without mass of particle");}
+	{throw RBDSException("No samplers and no particle name - unable to calculate optics without mass of particle");}
     }
   
   SetPrintModuloFraction(printModuloFraction);
@@ -111,7 +114,9 @@ void EventAnalysis::Execute()
     TH1::AddDirectory(kTRUE);
     TH2::AddDirectory(kTRUE);
     TH3::AddDirectory(kTRUE);
+    BDSBH4DBase::AddDirectory(kTRUE);
     PreparePerEntryHistograms();
+    PreparePerEntryHistogramSets();
     Process();
   }
   SimpleHistograms();
@@ -121,7 +126,7 @@ void EventAnalysis::Execute()
 
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
-  printModulo = (int)ceil((double)entries * fraction);
+  printModulo = (int)std::ceil((double)entries * fraction);
   if (printModulo <= 0)
     {printModulo = 1;}
 }
@@ -130,6 +135,8 @@ EventAnalysis::~EventAnalysis() noexcept
 {
   for (auto& sa : samplerAnalyses)
     {delete sa;}
+  for (auto& hs : perEntryHistogramSets)
+    {delete hs;}
 }
 
 void EventAnalysis::Process()
@@ -149,13 +156,16 @@ void EventAnalysis::Process()
       eventEnd = entries;
     }
   bool firstLoop = true;
-  for (long int i = eventStart; i < eventEnd; ++i)
+  for (auto i = (Long64_t)eventStart; i < (Long64_t)eventEnd; ++i)
     {
+    if (firstLoop) // ensure samplers setup for spectra before we load data
+      {CheckSpectraBranches();}
+
       chain->GetEntry(i);
       // event analysis feedback
       if (i % printModulo == 0)
 	{
-	  std::cout << "\rEvent #" << std::setw(6) << i << " of " << entries;
+	  std::cout << "\rEvent #" << std::setw(8) << i << " of " << entries;
 	  if (!debug)
 	    {std::cout.flush();}
 	  else
@@ -170,6 +180,7 @@ void EventAnalysis::Process()
 
       // per event histograms
       AccumulatePerEntryHistograms(i);
+      AccumulatePerEntryHistogramSets(i);
 
       UserProcess();
 
@@ -188,17 +199,24 @@ void EventAnalysis::Process()
 	    }
 	}
       
-      if(processSamplers)
+      if (processSamplers)
 	{ProcessSamplers(firstLoop);}
-	if (firstLoop)
-    {firstLoop = false;} // set to false on first pass of loop
+      if (firstLoop)
+	{firstLoop = false;} // set to false on first pass of loop
     }
   std::cout << "\rSampler analysis complete                           " << std::endl;
+}
+
+void EventAnalysis::CheckSpectraBranches()
+{
+  for (auto s : perEntryHistogramSets)
+    {s->CheckSampler();}
 }
 
 void EventAnalysis::Terminate()
 {
   Analysis::Terminate();
+  TerminatePerEntryHistogramSets();
 
   if (processSamplers)
     {
@@ -212,10 +230,45 @@ void EventAnalysis::Terminate()
     }
 }
 
-void EventAnalysis::Write(TFile *outputFile)
+void EventAnalysis::SimpleHistograms()
+{
+  Analysis::SimpleHistograms();
+
+  auto setDefinitions = Config::Instance()->EventHistogramSetDefinitionsSimple();
+  for (auto definition : setDefinitions)
+    {FillHistogram(definition);}
+}
+
+void EventAnalysis::Write(TFile* outputFile)
 {
   // Write rebdsim histograms:
   Analysis::Write(outputFile);
+
+  // histogram sets done in this derived class because they only apply to the Event tree
+  std::string peSetsDirName = "PerEntryHistogramSets";
+  std::string siSetsDirName = "SimpleHistogramSets";
+  std::string cleanedName   = treeName;
+  TDirectory* treeDir       = outputFile->GetDirectory(cleanedName.c_str());
+  TDirectory* peSetsDir     = treeDir->mkdir(peSetsDirName.c_str());
+  TDirectory* siSetsDir     = treeDir->mkdir(siSetsDirName.c_str());
+  
+  // per entry histogram sets
+  peSetsDir->cd();
+  for (auto s : perEntryHistogramSets)
+    {s->Write(peSetsDir);}
+  outputFile->cd("/");
+
+  // simple histogram sets
+  siSetsDir->cd();
+  for (const auto& set : simpleSetHistogramOutputs)
+    {
+      for (auto h : set.second)
+        {
+          siSetsDir->Add(h);
+          h->Write();
+        }
+    }
+  outputFile->cd("/");
 
   // We don't need to write out the optics tree if we didn't process samplers
   // as there's no possibility of optical data.
@@ -288,7 +341,7 @@ void EventAnalysis::Write(TFile *outputFile)
 
   opticsTree->Branch("xyCorrelationCoefficent", &(xOpticsPoint[24]), "xyCorrelationCoefficent/D");
 
-  for(const auto entry : opticalFunctions)
+  for(const auto& entry : opticalFunctions)
     {
       xOpticsPoint = entry[0];
       yOpticsPoint = entry[1];
@@ -314,4 +367,35 @@ void EventAnalysis::Initialise()
       for (auto s : samplerAnalyses)
 	{s->Initialise();}
     }
+}
+
+void EventAnalysis::PreparePerEntryHistogramSets()
+{
+  auto c = Config::Instance();
+  if (c)
+    {
+      auto setDefinitions  = c->EventHistogramSetDefinitionsPerEntry();
+      for (const auto& def : setDefinitions)
+	{perEntryHistogramSets.push_back(new PerEntryHistogramSet(def, event, chain));}
+    }
+}
+
+void EventAnalysis::AccumulatePerEntryHistogramSets(long int entryNumber)
+{
+  for (auto& peSet : perEntryHistogramSets)
+    {peSet->AccumulateCurrentEntry(entryNumber);}
+}
+
+void EventAnalysis::TerminatePerEntryHistogramSets()
+{
+  for (auto& peSet : perEntryHistogramSets)
+    {peSet->Terminate();}
+}
+
+void EventAnalysis::FillHistogram(HistogramDefSet* definition)
+{
+  std::vector<TH1*> outputHistograms;
+  for (auto def : definition->definitionsV)
+    {Analysis::FillHistogram(def, &outputHistograms);}
+  simpleSetHistogramOutputs[definition] = outputHistograms;
 }

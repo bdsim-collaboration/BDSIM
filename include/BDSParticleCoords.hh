@@ -50,12 +50,18 @@ public:
 
   /// Apply a transform to the coordinates and return a copy of them transformed.
   BDSParticleCoords ApplyTransform(const G4Transform3D& transform) const;
+
+  /// Apply an offset to the spatial coordiantes only and return a copy.
+  BDSParticleCoords ApplyOffset(const G4ThreeVector& offset) const;
   
   /// Output stream
   friend std::ostream& operator<< (std::ostream& out, BDSParticleCoords const& p);
   
   /// Actual print out method so it can be called from a derived class.
   virtual void Print(std::ostream& out) const;
+  
+  inline G4ThreeVector Position() const {return G4ThreeVector(x,y,z);}
+  inline G4ThreeVector Momentum() const {return G4ThreeVector(xp,yp,zp);}
   
   G4double x;
   G4double y;

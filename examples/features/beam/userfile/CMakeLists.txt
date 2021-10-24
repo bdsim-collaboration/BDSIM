@@ -5,6 +5,8 @@ simple_testing(bunch-userfile-assumed-particle "--file=userfile-assumed-particle
 simple_testing(bunch-userfile-below-rest-mass  "--file=userfile-below-rest-mass.gmad"  "")
 simple_testing(bunch-userfile-blank-lines      "--file=userfile-blank-lines.gmad"      "")
 simple_testing(bunch-userfile-comment-line     "--file=userfile-comment.gmad"          "")
+simple_testing(bunch-userfile-extended-particle-set "--file=userfile-extended-particle-set.gmad" "")
+simple_testing(bunch-userfile-ions             "--file=userfile-ions.gmad"             "")
 simple_testing(bunch-userfile-incomplete-row   "--file=userfile-incomplete-row.gmad"   "")
 simple_testing(bunch-userfile-one-column       "--file=userfile-one-column.gmad"       "")
 simple_testing(bunch-userfile-neutral-particle "--file=userfile-neutral.gmad"          "")
@@ -14,8 +16,12 @@ simple_testing(bunch-userfile-unknown-particle "--file=userfile-unknown-particle
 simple_testing(bunch-userfile-ek               "--file=userfile-ek.gmad"               "")
 simple_testing(bunch-userfile-s                "--file=userfile-s.gmad"                "")
 simple_testing(bunch-userfile-p                "--file=userfile-p.gmad"                "")
-simple_testing(bunch-userfile-all-columns      "--file=userfile-all-columns.gmad"      "")
+simple_testing(bunch-userfile-all-columns1     "--file=userfile-all-columns.gmad"      "")
+simple_testing(bunch-userfile-all-columns2     "--file=userfile-all-columns2.gmad"     "")
+simple_testing(bunch-userfile-all-columns3     "--file=userfile-all-columns3.gmad"     "")
 simple_testing(bunch-userfile-xp0-yp0          "--file=userfile-xp0yp0.gmad"           "")
+
+simple_fail(bunch-userfile-bad-units   "--file=userfile-bad-units.gmad")
 
 if (USE_GZSTREAM)
   simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")

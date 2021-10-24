@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define OPTIONSBASE_H
 
 #include <string>
+#include <vector>
 
 namespace GMAD
 {
@@ -40,6 +41,7 @@ namespace GMAD
     std::string visMacroFileName;    ///< Visualisation filename.
     std::string geant4MacroFileName; ///< Geant4 macro to run.
     std::string geant4PhysicsMacroFileName; ///< Geant4 physics macro
+    bool        geant4PhysicsMacroFileNameFromExecOptions;
     bool        visDebug;            ///< Flag for visualisation debug.
   
     ///@{ Parameter for output format
@@ -85,6 +87,7 @@ namespace GMAD
   
     bool circular;                 ///< Flag for circular machine
     int  seed;                     ///< The seed value for the random number generator
+    std::string randomEngine;      ///< Name of random engine to use.
     int  nGenerate;                ///< The number of primary events to simulate
     bool recreate;                 ///< Whether to recreate from a file or not.
     std::string recreateFileName;  ///< The file path to recreate a run from.
@@ -207,9 +210,11 @@ namespace GMAD
     bool        tunnelVisible;
     double      tunnelOffsetX;
     double      tunnelOffsetY;
+    double      tunnelMaxSegmentLength;
     ///@}
-
+    
     bool removeTemporaryFiles;
+    std::string temporaryDirectory;
     
     // sampler options
     double   samplerDiameter;
@@ -250,6 +255,10 @@ namespace GMAD
     // biasing options
     std::string defaultBiasVacuum;
     std::string defaultBiasMaterial;
+    std::string biasForWorldVolume;
+    std::string biasForWorldContents;
+    std::string biasForWorldVacuum;
+    std::string worldVacuumVolumeNames;
 
     // tracking related parameters
     std::string integratorSet;
@@ -266,10 +275,12 @@ namespace GMAD
     double   deltaOneStep;
     bool     stopSecondaries;
     bool     killNeutrinos;
+    bool     killedParticlesMassAddedToEloss;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature.
     bool     sampleElementsWithPoleface;
     double   nominalMatrixRelativeMomCut; ///< Momentum threshold for nominal dipole matrix tracking.
     bool     teleporterFullTransform;     ///< Whether to use the new Transform3D method for the teleporter.
+    double   dEThresholdForScattering;
 
     // hit generation - only two parts that go in the same collection / branch
     bool      sensitiveOuter;
@@ -315,6 +326,7 @@ namespace GMAD
     bool        storeRunLevelHistograms;
     
     bool        storeTrajectory;
+    // filters
     int         storeTrajectoryDepth;
     int         storeTrajectoryStepPoints;
     bool        storeTrajectoryStepPointLast;
@@ -323,11 +335,21 @@ namespace GMAD
     double      storeTrajectoryEnergyThreshold;
     std::string storeTrajectorySamplerID;
     std::string storeTrajectoryELossSRange;
+
+    // for trajectories stored, what data is stored
     bool        storeTrajectoryTransportationSteps;
     bool        trajNoTransportation;  ///< kept only for backwards compatibility.
+    bool        storeTrajectoryKineticEnergy;
+    bool        storeTrajectoryMomentumVector;
+    bool        storeTrajectoryProcesses;
+    bool        storeTrajectoryTime;
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
     bool        storeTrajectoryIon;
+    bool        storeTrajectoryMaterial;
+    bool        storeTrajectoryAllVariables;
+
+    // filter logic
     bool        trajectoryFilterLogicAND;
 
     bool        storeSamplerAll;
@@ -344,6 +366,8 @@ namespace GMAD
     
     bool        storeModel;
 
+    int         samplersSplitLevel;
+
     // circular options
     int         nturns;
     std::string ptcOneTurnMapFileName;
@@ -359,18 +383,23 @@ namespace GMAD
     int    nbinsx;
     int    nbinsy;
     int    nbinsz;
+    int    nbinse;
     double xmin;
     double xmax;
     double ymin;
     double ymax;
     double zmin;
     double zmax;
+    double emin;
+    double emax;
     bool   useScoringMap;
 
     /// print some properties
     void print() const;
+  
+    /// A list of all the keys that have been set in this instance.
+    std::vector<std::string> setKeys;
   };
 }
 
-
-#endif //__OPTIONSBASE_H
+#endif

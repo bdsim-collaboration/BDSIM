@@ -32,14 +32,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSVisManager
 {
 public:
-  BDSVisManager(G4String visMacroFileNameIn,
-		G4String geant4MacroFileNameIn);
+  BDSVisManager(const G4String& visMacroFileNameIn,
+		const G4String& geant4MacroFileNameIn);
 
-  /// start interactive mode
-  void StartSession(G4int argc, char** argv);
+  /// Start interactive mode.
+  void StartSession(int argc, char** argv);
 
 private:
-
   G4String visMacroFileName;    ///< Full macro file path to run for visualisation.
   G4String geant4MacroFileName; ///< Full macro file path for optional macro to run afterwards.
 };

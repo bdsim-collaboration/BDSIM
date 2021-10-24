@@ -20,9 +20,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BinLoader.hh"
 #include "BinSpecification.hh"
 #include "Config.hh"
+#include "HistogramDefSet.hh"
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "RBDSException.hh"
+#include "SpectraParticles.hh"
 
 #include <algorithm>
 #include <fstream>
@@ -31,8 +34,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 #include <map>
 #include <regex>
-#include <sstream>
+#include <set>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 ClassImp(Config)
@@ -68,6 +72,27 @@ Config::Config(const std::string& fileNameIn,
     {optionsString["inputfilepath"] = inputFilePathIn;}
   if (!outputFileNameIn.empty())
     {optionsString["outputfilename"] = outputFileNameIn;}
+  else
+    {
+      if (optionsString["outputfilename"].empty())
+	{// no argument supplied and also no output name in input file - default to filename+_ana.root
+	  std::string newOutputFilePath = optionsString["inputfilepath"];
+	  // get only the filename - ie just write the file to the cwd
+	  auto foundSlash = newOutputFilePath.rfind('/'); // find the last '/'
+	  if (foundSlash != std::string::npos)
+	    {newOutputFilePath = newOutputFilePath.substr(foundSlash+1);} // the rest
+	  std::string key = ".root";
+	  auto found = newOutputFilePath.rfind(key);
+	  if (found != std::string::npos)
+	    {
+	      newOutputFilePath.replace(found, key.length(), "_ana.root");
+	      optionsString["outputfilename"] = newOutputFilePath;
+	      std::cout << "Using default output file name with _ana.root suffix: " << optionsString.at("outputfilename") << std::endl;
+	    }
+	  else
+	    {throw RBDSException("filename does not contain \".root\"");}
+	}
+    }
 }
 
 Config::~Config()
@@ -77,15 +102,19 @@ Config::~Config()
   for (auto& nameDefs : histoDefs)
     {
       for (auto& histoDef : nameDefs.second)
-	{delete histoDef;}
+	    {delete histoDef;}
     }
+  for (auto def : eventHistoDefSetsSimple)
+    {delete def;}
+  for (auto def : eventHistoDefSetsPerEntry)
+    {delete def;}
 }
 
-void Config::InitialiseOptions(std::string analysisFile)
+void Config::InitialiseOptions(const std::string& analysisFile)
 {
   optionsString["analysisfile"] = analysisFile;
   
-  // for backwards compatability / verbose names
+  // for backwards compatibility / verbose names
   alternateKeys["calculateopticalfunctions"]         = "calculateoptics";
   alternateKeys["calculateopticalfunctionsfilename"] = "opticsfilename";
   
@@ -101,17 +130,17 @@ void Config::InitialiseOptions(std::string analysisFile)
   optionsBool["perentrymodel"]     = false;
   optionsBool["backwardscompatible"] = false; // ignore file types for old data
 
-  optionsString["inputfilepath"]  = "./output.root";
-  optionsString["outputfilename"] = "./output_ana.root";
-  optionsString["opticsfilename"] = "./output_optics.dat";
-  optionsString["gdmlfilename"]   = "./model.gdml";
+  optionsString["inputfilepath"]  = "";
+  optionsString["outputfilename"] = "";
+  optionsString["opticsfilename"] = "";
+  optionsString["gdmlfilename"]   = "";
 
   optionsNumber["printmodulofraction"] = 0.01;
   optionsNumber["eventstart"]          = 0;
   optionsNumber["eventend"]            = -1;
 
   // ensure keys exist for all trees.
-  for (auto name : treeNames)
+  for (const auto& name : treeNames)
     {
       histoDefs[name]         = std::vector<HistogramDef*>();
       histoDefsSimple[name]   = std::vector<HistogramDef*>();
@@ -121,8 +150,8 @@ void Config::InitialiseOptions(std::string analysisFile)
 }
 
 Config* Config::Instance(const std::string& fileName,
-			 const std::string& inputFilePath,
-			 const std::string& outputFileName)
+			             const std::string& inputFilePath,
+			             const std::string& outputFileName)
 {
   if(!instance && !fileName.empty())
     {instance = new Config(fileName, inputFilePath, outputFileName);}
@@ -139,11 +168,12 @@ Config* Config::Instance(const std::string& fileName,
 }
 
 void Config::ParseInputFile()
-{ 
-  std::ifstream f(optionsString.at("analysisfile").c_str());
+{
+  std::string fn = optionsString.at("analysisfile");
+  std::ifstream f(fn.c_str());
 
   if(!f)
-    {throw std::string("Config::ParseInputFile> could not open file");}
+    {throw RBDSException("Config::ParseInputFile>", "could not open analysis configuration file \"" + fn + "\"");}
 
   lineCounter = 0;
   std::string line;
@@ -153,18 +183,34 @@ void Config::ParseInputFile()
   std::regex comment("^\\#.*");
   // match a line starting with 'histogram', ignoring case
   std::regex histogram("(?:simple)*histogram.*", std::regex_constants::icase);
+  // match a line starting with 'spectra', ignoring case - quite exact to avoid mismatching 'spectra' in file name in options
+  std::regex spectra("(?:simple)*spectra(?:TE|rigidity)*(?:log)*(?:\\s+)", std::regex_constants::icase);
+  // match particleset ignoring case
+  std::regex particleSet("(?:simple)*particleset", std::regex_constants::icase);
 
-  while(std::getline(f, line))
+  while (std::getline(f, line))
     {
       lineCounter++;
-      if (std::all_of(line.begin(), line.end(), isspace))
-	{continue;} // skip empty lines
-      else if (std::regex_search(line, comment))
-	{continue;} // skip lines starting with '#'
-      else if (std::regex_search(line, histogram))
-	{ParseHistogramLine(line);} // any histogram - must be before settings
-      else
-	{ParseSetting(line);} // any setting
+      try
+	{
+	  if (std::all_of(line.begin(), line.end(), isspace))
+	    {continue;} // skip empty lines
+	  else if (std::regex_search(line, comment))
+	    {continue;} // skip lines starting with '#'
+	  else if (std::regex_search(line, histogram))
+	    {ParseHistogramLine(line);} // any histogram - must be before settings
+	  else if (std::regex_search(line, spectra))
+	    {ParseSpectraLine(line);}
+	  else if (std::regex_search(line, particleSet))
+	    {ParseParticleSetLine(line);}
+	  else
+	    {ParseSetting(line);} // any setting
+	}
+      catch (RBDSException& e)
+	{
+	  e.AppendToMessage("\nProblem is on line " + std::to_string(lineCounter) + " of configuration file: " + fn + "\n");
+	  throw e;
+	}
     }
   
   f.close();
@@ -189,18 +235,14 @@ void Config::ParseInputFile()
   if (eE < 0) // default -1
     {eE = std::numeric_limits<double>::max();}
   if (eS < 0 || eS > eE)
-    {
-      std::cerr << "Invalid starting event number " << eS << std::endl;
-      exit(1);
-    }
+    {throw RBDSException("Invalid starting event number " + std::to_string(eS));}
 }
 
 void Config::ParseHistogramLine(const std::string& line)
 {
   // Settings with histogram in name can be misidentified - check here.
   // This is the easiest way to do it for now.
-  std::string copyLine = line;
-  std::transform(copyLine.begin(), copyLine.end(), copyLine.begin(), ::tolower); // convert to lower case
+  std::string copyLine = LowerCase(line);
   if (copyLine.find("mergehistograms") != std::string::npos)
     {
       ParseSetting(line);
@@ -216,21 +258,10 @@ void Config::ParseHistogramLine(const std::string& line)
   if (std::regex_search(line, match, histNDim))
     {
       int nDim = std::stoi(match[1]);
-      try
-	{ParseHistogram(line, nDim);}
-      catch(std::invalid_argument& e)
-	{
-	  std::string errString = "\nProblem with histogram definition on line #"
-	    + std::to_string(lineCounter) + ": \n\"" + line + "\"\n";
-	  throw std::invalid_argument(e.what() + errString);
-	}
+      ParseHistogram(line, nDim);
     }
   else
-    {
-      std::string errString = "\nInvalid histogram type on line #" + std::to_string(lineCounter)
-	+ ": \n\"" + line + "\"\n";
-      throw std::invalid_argument(errString);
-    }
+    {throw RBDSException("Invalid histogram type");}
 }
 
 void Config::ParseHistogram(const std::string& line, const int nDim)
@@ -239,8 +270,8 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
   // doesn't inspect words themselves
   // checks number of words, ie number of columns is correct
   std::vector<std::string> results;
-  std::regex wspace("\\s+"); // any whitepsace
-  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::regex wspace("\\s+"); // any whitespace
+  // -1 here makes it point to the suffix, ie the word rather than the whitespace
   std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
   std::sregex_token_iterator end;
   for (; iter != end; ++iter)
@@ -250,17 +281,9 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     }
   
   if (results.size() < 7)
-    {// ensure enough columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-	+ " - invalid number of columns (too few)";
-      throw std::string(errString);
-    }
+    {throw RBDSException("Too few columns in histogram definition.");}
   if (results.size() > 7)
-    {// ensure not too many columns
-      std::string errString = "Invalid line #" + std::to_string(lineCounter)
-      + " - too many columns - check no extra whitespace";
-      throw std::string(errString);
-    }
+    {throw RBDSException("Too many columns in histogram definition.");}
 
   bool xLog = false;
   bool yLog = false;
@@ -270,7 +293,7 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
   bool perEntry = true;
   ParsePerEntry(results[0], perEntry);
   
-  std::string treeName  = results[1];
+  std::string treeName = results[1];
   CheckValidTreeName(treeName);
 
   if (perEntry)
@@ -304,12 +327,11 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
 					       std::sregex_iterator()));
   if (nColons > nDim - 1)
     {
-      std::cerr << "Error: Histogram \"" << histName << "\" variable includes too many single\n"
-		<< "colons specifying more dimensions than the number of specified dimensions."
-		<< std::endl;
-      std::cerr << "Declared dimensions: " << nDim << std::endl;
-      std::cerr << "Number of dimensions in variables " << nColons + 1 << std::endl;
-      exit(1);
+      std::string err = "Error: Histogram \"" + histName + "\" variable includes too many single\n";
+      err += "colons specifying more dimensions than the number of specified dimensions.\n";
+      err += "Declared dimensions: " + std::to_string(nDim) + "\n";
+      err += "Number of dimensions in variables " + std::to_string(nColons + 1);
+      throw RBDSException(err);
     }
 
   HistogramDef1D* result = nullptr;
@@ -351,11 +373,114 @@ void Config::ParseHistogram(const std::string& line, const int nDim)
     }
 }
 
+void Config::ParseSpectraLine(const std::string& line)
+{
+  // split line on white space
+  std::vector<std::string> results = SplitOnWhiteSpace(line);
+  
+  if (results.size() < 6)
+    {throw RBDSException("Too few columns in spectra definition.");}
+  if (results.size() > 6)
+    {throw RBDSException("Too many columns in spectra definition - check there's no extra whitespace");}
+  
+  bool xLog = false;
+  bool yLog = false; // duff values to fulfill function
+  bool zLog = false;
+  ParseLog(results[0], xLog, yLog, zLog);
+  
+  bool perEntry = true;
+  ParsePerEntry(results[0], perEntry);
+  
+  std::string variable = ".kineticEnergy"; // kinetic energy by default
+  if (ContainsWordCI(results[0], "TE"))
+    {variable = ".energy";}
+  else if (ContainsWordCI(results[0], "Rigidity"))
+    {variable = ".rigidity";}
+    
+  std::string samplerName = results[1];
+  // because we can have multiple spectra on a branch and there are no user-specified names for this
+  int nSpectraThisBranch = 0;
+  auto search = spectraNames.find(samplerName);
+  if (search != spectraNames.end())
+    {// branch name already exists
+      nSpectraThisBranch = search->second;
+      search->second++;
+    }
+  else
+    {spectraNames[samplerName] = 1;}
+  std::string histogramName = samplerName + "_" + std::to_string(nSpectraThisBranch);
+  std::string selection = results[5];
+
+  BinSpecification xBinning;
+  BinSpecification yBinning;
+  BinSpecification zBinning;
+  ParseBins(results[2], 1, xBinning, yBinning, zBinning);
+  ParseBinning(results[3], 1, xBinning, yBinning, zBinning, xLog, yLog, zLog);
+    
+  std::set<ParticleSpec> particles;
+  try
+    {particles = ParseParticles(results[4]);}
+  catch (RBDSException& e)
+    {
+      e.AppendToMessage("\nError in spectra particle definition.");
+      throw RBDSException(e);
+    }
+  
+  // simple spectra using 'top' or 'ions' or 'particles' won't dynamically build up the pdg ids
+  // per event so we should warn the user about this as it'll create no histograms
+  if (particles.empty() && !perEntry)
+    {throw RBDSException("Simple spectra cannot be used with 'topN'- only works for specific particles");}
+  
+  HistogramDef1D* def = new HistogramDef1D("Event.", histogramName,
+					   xBinning,
+					   samplerName + variable,
+					   selection, perEntry);
+  
+  HistogramDefSet* result = new HistogramDefSet(samplerName,
+						def,
+						particles,
+						results[4]);
+  delete def; // no longer needed
+  
+  if (perEntry)
+    {eventHistoDefSetsPerEntry.push_back(result);}
+  else
+    {eventHistoDefSetsSimple.push_back(result);}
+  
+  SetBranchToBeActivated("Event.", samplerName);
+}
+
+void Config::ParseParticleSetLine(const std::string& line)
+{
+  std::vector<std::string> results = SplitOnWhiteSpace(line);
+  if (results.size() < 2)
+    {throw RBDSException("Too few columns in particle set definition.");}
+  if (results.size() > 2)
+    {throw RBDSException("Too many columns in particle set definition - check there's no extra whitespace");}
+  
+  std::string samplerName = results[1];
+  SetBranchToBeActivated("Event", samplerName);
+  
+  bool perEntry = true;
+  ParsePerEntry(results[0], perEntry);
+  if (perEntry)
+    {eventParticleSetBranches.push_back(samplerName);}
+  else
+    {eventParticleSetSimpleBranches.push_back(samplerName);}
+}
+
 void Config::ParsePerEntry(const std::string& name, bool& perEntry) const
 {
-  std::string res = name;
-  std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
+  std::string res = LowerCase(name);
   perEntry = res.find("simple") == std::string::npos;
+}
+
+bool Config::ContainsWordCI(const std::string& input,
+			    const std::string& word) const
+{
+  std::string il = LowerCase(input);
+  std::string wl = LowerCase(word);
+  return il.find(wl) != std::string::npos;
 }
 
 void Config::ParseLog(const std::string& definition,
@@ -371,8 +496,7 @@ void Config::ParseLog(const std::string& definition,
   int index = 0;
   for (; iter != end; ++iter, ++index)
     {
-      std::string res = (*iter).str();
-      std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
+      std::string res = LowerCase((*iter).str());
       *(results[index]) = res == "log";
     }
 }
@@ -384,14 +508,14 @@ void Config::UpdateRequiredBranches(const HistogramDef* def)
 }
 
 void Config::UpdateRequiredBranches(const std::string& treeName,
-				    const std::string& var)
+				                    const std::string& var)
 {
   // This won't work properly for the options Tree that has "::" in the class
   // as well as double splitting. C++ regex does not support lookahead / behind
   // which makes it nigh on impossible to correctly identify the single : with
   // regex. For now, only the Options tree has this and we turn it all on, so it
   // it shouldn't be a problem (it only ever has one entry).
-  // match word; '.'; word -> here we match the token rather than the bits inbetween
+  // match word; '.'; word -> here we match the token rather than the bits in-between
   std::regex branchLeaf("(\\w+)\\.(\\w+)");
   auto words_begin = std::sregex_iterator(var.begin(), var.end(), branchLeaf);
   auto words_end   = std::sregex_iterator();
@@ -403,7 +527,7 @@ void Config::UpdateRequiredBranches(const std::string& treeName,
 }
 
 void Config::SetBranchToBeActivated(const std::string& treeName,
-				    const std::string& branchName)
+				                    const std::string& branchName)
 {
   auto& v = branches.at(treeName);
   if (std::find(v.begin(), v.end(), branchName) == v.end())
@@ -421,8 +545,8 @@ void Config::CheckValidTreeName(std::string& treeName) const
       std::string err = "Invalid tree name \"" + treeName + "\"\n";
       err += "Tree names are one of: ";
       for (const auto& n : treeNames)
-	{err += "\"" + n + "\" ";}
-      throw(err);
+	    {err += "\"" + n + "\" ";}
+      throw RBDSException(err);
     }
 }
 
@@ -446,7 +570,7 @@ void Config::ParseBins(const std::string& bins,
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {(*binValues[counter]) = std::stoi((*i).str());}
   if (counter < nDim-1)
-    {throw std::string("Invalid bin specification on line #" + std::to_string(lineCounter));}
+    {throw RBDSException("Too few binning dimensions specified (N dimensions = " + std::to_string(nDim) + ") \"" + bins + "\"");}
 }
 
 void Config::ParseBinning(const std::string& binning,
@@ -496,9 +620,9 @@ void Config::ParseBinning(const std::string& binning,
 		  (*values[counter]).high = std::stod(matchR[2]);
 		}
 	      catch (std::invalid_argument&) // if stod can't convert number to double
-		{throw std::string("Invalid binning number: \"" + matchS + "\" on line #" + std::to_string(lineCounter));}
+		{throw RBDSException("Invalid binning number: \"" + matchS + "\"");}
 	      if ((*values[counter]).high <= (*values[counter]).low)
-		{throw std::invalid_argument("high bin edge is <= low bin edge \"" + binning + "\"");}
+		{throw RBDSException("high bin edge is <= low bin edge \"" + binning + "\"");}
 	      if (isLog[counter])
 		{
 		  std::vector<double> binEdges = RBDS::LogSpace((*values[counter]).low, (*values[counter]).high, (*values[counter]).n);
@@ -509,15 +633,97 @@ void Config::ParseBinning(const std::string& binning,
     }
   
   if (counter == 0)
-    {throw std::string("Invalid binning specification: \"" + binning + "\" on line #" + std::to_string(lineCounter));}
+    {throw RBDSException("Invalid binning specification: \"" + binning + "\"");}
   else if (counter < nDim)
     {
-      std::string errString = "Insufficient number of binning dimensions on line #"
-	+ std::to_string(lineCounter) + "\n"
+      std::string errString = "Insufficient number of binning dimensions: \n"
 	+ std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
 	+ binning + "\nDimension defined by \"low:high\" and comma separated";
-      throw std::string(errString);
+      throw RBDSException(errString);
     }
+  else if (counter > nDim)
+    {
+      std::string errString = "Too many binning dimension (i.e. commas) on line #"
+      + std::to_string(lineCounter) + "\n"
+      + std::to_string(nDim) + " dimension histogram, but the following was specified:\n"
+      + binning + "\nDimension defined by \"low:high\" and comma separated";
+      throw RBDSException(errString);
+    }
+}
+
+std::vector<std::string> Config::SplitOnWhiteSpace(const std::string& line) const
+{
+  std::vector<std::string> results;
+  std::regex wspace("\\s+"); // any whitespace
+  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      results.push_back(res);
+    }
+  return results;
+}
+
+std::set<ParticleSpec> Config::ParseParticles(const std::string& word) const
+{
+  std::string wordLower = LowerCase(word);
+  std::vector<std::string> specialKeys = {"top", "particles", "all", "ions"};
+  for (const auto& key : specialKeys)
+    {
+      if (wordLower.find(key) != std::string::npos)
+        {return std::set<ParticleSpec>();}
+    }
+
+  // some numbers in brackets -> try to split up
+  // detect brackets and strip off
+  std::regex inBrackets("^\\{(.+)\\}$");
+  std::smatch match;
+  auto firstSearch = std::regex_search(word, match, inBrackets);
+  if (!firstSearch)
+    {throw RBDSException("Invalid particle definition - no braces");}
+
+  // split up numbers inside brackets on commas
+  std::string numbers = match[1];
+  std::set<ParticleSpec> result;  
+  std::regex commas(",");
+  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::sregex_token_iterator iter(numbers.begin(), numbers.end(), commas, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      std::regex selection("^([a-zA-Z]){1}(\\d+)");
+      std::smatch matchSelection;
+      if (std::regex_search(res, matchSelection, selection))
+	{
+	  auto keySearch = RBDS::spectraParticlesKeys.find(matchSelection[1]);
+	  RBDS::SpectraParticles which;
+	  if (keySearch != RBDS::spectraParticlesKeys.end())
+	    {which = keySearch->second;}
+	  else
+	    {throw RBDSException("Invalid particle specifier \"" + matchSelection[1].str() + "\"");}
+	  try
+	    {
+	      long long int id = std::stoll(matchSelection[2].str());
+	      result.insert(ParticleSpec(id, which));
+	    }
+	  catch (const std::exception& e)
+	    {throw RBDSException(e.what());}
+	}
+      else
+	{
+	  try
+	    {
+	      long long int id = std::stoll(res);
+	      result.insert(ParticleSpec(id, RBDS::SpectraParticles::all));
+	    }
+	  catch (const std::exception& e)
+	    {throw RBDSException(e.what());}
+	}
+    }
+  return result;
 }
 
 std::string Config::LowerCase(const std::string& st) const
@@ -561,8 +767,8 @@ void Config::ParseSetting(const std::string& line)
       else if (optionsNumber.find(key) != optionsNumber.end())
 	{optionsNumber[key] = std::stod(value);}
       else
-      {throw std::string("Invalid option \"" + key + "\"");}
+      {throw RBDSException("Invalid option \"" + key + "\"");}
     }
   else
-    {throw std::string("Invalid line #" + std::to_string(lineCounter) + "\n" + line);}
+    {throw RBDSException("Invalid option line \"" + line + "\"");}
 }

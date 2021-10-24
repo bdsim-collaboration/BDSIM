@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSBeamPipeInfo.hh"
 #include "BDSBunchType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
@@ -24,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 #include <map>
+#include <string>
 
 // dictionary for BDSBunchType
 template<>
@@ -43,7 +43,9 @@ std::map<BDSBunchType, std::string>* BDSBunchType::dictionary =
       {BDSBunchType::ptc,         "ptc"},
       {BDSBunchType::sixtrack,    "sixtrack"},
       {BDSBunchType::eventgeneratorfile, "eventgeneratorfile"},
-      {BDSBunchType::sphere,      "sphere"}
+      {BDSBunchType::sphere,      "sphere"},
+      {BDSBunchType::compositesde,"compositespacedirectionenergy"},
+      {BDSBunchType::box,         "box"}
 });
 
 BDSBunchType BDS::DetermineBunchType(G4String distrType)
@@ -65,13 +67,15 @@ BDSBunchType BDS::DetermineBunchType(G4String distrType)
   types["sixtrack"]       = BDSBunchType::sixtrack;
   types["eventgeneratorfile"] = BDSBunchType::eventgeneratorfile;
   types["sphere"]         = BDSBunchType::sphere;
+  types["compositespacedirectionenergy"] = BDSBunchType::compositesde;
+  types["compositesde"]   = BDSBunchType::compositesde;
+  types["box"]            = BDSBunchType::box;
 
   distrType.toLower();
 
   auto result = types.find(distrType);
   if (result == types.end())
-    {
-      // it's not a valid key
+    {// it's not a valid key
       G4String message = "\"" + distrType + "\" is not a valid distribution\n";
       message += "Available distributions are:\n";
       for (const auto& it : types)

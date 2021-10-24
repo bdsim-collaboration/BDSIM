@@ -586,11 +586,9 @@ BDSIM Field Format
 The field should be in an ASCII text file with the extension :code:`.dat`. Below is an
 example of the required format in each 1D, 2D, 3D and 4D case.
 
-A compressed file using *gzip* may also be used (".gz" extension), or alternatively
-tar + gzip file (.tar.gz). In the case of a tar.gz file, the first item in the tar is
-read as the field map. It should also only have the field map in the tar.
+A compressed file using *gzip* may also be used (".gz" extension).
 
-The pybdsim utility may be used to prepare fields in the correct format in Python if a
+The `pybdsim` utility package may be used to prepare fields in the correct format in Python if a
 Python numpy array is provided.  If the user has a custom field format, it would be
 advisable to write a script to load this data into a Python numpy array and use the
 provided file writers in pybdsim.
@@ -950,6 +948,41 @@ further details for 2,3 and 4D interpolation.
 	    :align: center
 
 	    Example 2D field value components with linear interpolation.
+
+Linear Magnitude
+----------------
+
+in this case, the interpolation is also linear. However, additionally, the magnitude of
+the field vector is also linearly inteprolated. Imagine linear interpolation between two
+vectors pointing up and left with magnitude 1. The linearly interpolated vector exactly
+half way between would be at 45 degrees point to the top right. As the components of the
+vector are linearly interpolated, (0,1) to (1,0), then the components would be (0.5,0.5)
+with a magnitude of :math:`\sqrt{2 \times 0.5^2} = 0.707`. This is shown in the figure below.
+
+With this interpolator, the magnitude would be linearly interpolated betwen 1 and 1, so
+would remain 1.
+
+This interpolator is most useful when linear interpolation is desired, but the field map
+is relatively sparse.
+
+.. figure:: dev_figures/linear-mag.pdf
+	    :width: 80%
+	    :align: center
+
+	    Schematic of linear interpolation and linear + magnitude interpolation.
+
+
+.. figure:: dev_figures/field_linear_mag.pdf
+	    :width: 80%
+	    :align: center
+
+	    Example 1D field value components with linear mag interpolation.
+
+.. figure:: dev_figures/field_linear_mag2d.png
+	    :width: 70%
+	    :align: center
+
+	    Example 2D field value components with linear mag interpolation.
 
 Cubic
 -----
