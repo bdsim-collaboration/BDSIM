@@ -95,6 +95,7 @@ public:
   inline G4String VisMacroFileName()       const {return G4String(options.visMacroFileName);}
   inline G4String Geant4MacroFileName()    const {return G4String(options.geant4MacroFileName);}
   inline G4String Geant4PhysicsMacroFileName()    const {return G4String(options.geant4PhysicsMacroFileName);}
+  inline G4bool   Geant4PhysicsMacroFileNameFromExecOptions() const {return G4bool(options.geant4PhysicsMacroFileNameFromExecOptions);}
   inline G4bool   VisDebug()               const {return G4bool  (options.visDebug);}
   inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
   inline G4bool   OutputFileNameSet()      const {return G4bool  (options.HasBeenSet("outputFileName"));}
@@ -119,6 +120,7 @@ public:
   inline G4bool   Circular()               const {return G4bool  (options.circular);}
   inline G4int    Seed()                   const {return G4int   (options.seed);}
   inline G4bool   SeedSet()                const {return G4bool  (options.HasBeenSet("seed"));}
+  inline G4String RandomEngine()           const {return G4String(options.randomEngine);}
   inline G4bool   Recreate()               const {return G4bool  (options.recreate);}
   inline G4String RecreateFileName()       const {return G4String(options.recreateFileName);}
   inline G4int    StartFromEvent()         const {return G4int   (options.startFromEvent);}
@@ -254,6 +256,7 @@ public:
   inline G4bool   StoreTrajectoryLocal()     const {return G4bool  (options.storeTrajectoryLocal);}
   inline G4bool   StoreTrajectoryLinks()     const {return G4bool  (options.storeTrajectoryLinks);}
   inline G4bool   StoreTrajectoryIon()       const {return G4bool  (options.storeTrajectoryIon);}
+  inline G4bool   StoreTrajectoryMaterial()  const {return G4bool  (options.storeTrajectoryMaterial);}
   inline G4bool   StoreTrajectoryAllVariables()const{return G4bool (options.storeTrajectoryAllVariables);}
   inline G4String StoreTrajectorySamplerID() const {return G4String(options.storeTrajectorySamplerID);}
   inline std::vector<std::pair<G4double, G4double> > StoreTrajectoryELossSRange() const {return elossSRange;}
@@ -267,6 +270,7 @@ public:
   inline G4bool   StoreSamplerRigidity()     const {return G4bool  (options.storeSamplerRigidity);}
   inline G4bool   StoreSamplerIon()          const {return G4bool  (options.storeSamplerIon);}
   inline G4bool   StoreModel()               const {return G4bool  (options.storeModel);}
+  inline G4int    SamplersSplitLevel()       const {return G4int   (options.samplersSplitLevel);}
   inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ*CLHEP::m);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR*CLHEP::m);}

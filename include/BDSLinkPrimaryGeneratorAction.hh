@@ -29,9 +29,11 @@ class BDSOutputLoader;
 class BDSPTCOneTurnMap;
 class G4Event;
 class G4ParticleGun;
+
 /**
  * @brief Generates primary particle vertices using BDSBunch.
  *
+ * @author Laurie Nevay
  */
 
 class BDSLinkPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
@@ -39,7 +41,7 @@ class BDSLinkPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 public:
   /// Bunch must have a valid particle definition (ie not nullptr).
   BDSLinkPrimaryGeneratorAction(BDSBunch* bunchIn,
-					            int*      currentElementIndexIn,
+				int*      currentElementIndexIn,
                                 BDSLinkDetectorConstruction* constructionIn,
                                 G4bool    debugIn = false);
   virtual ~BDSLinkPrimaryGeneratorAction();

@@ -157,6 +157,7 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
     {rm2->rotate(-0.5 * component->GetAngle(), G4ThreeVector(0,1,0));}
   offsetToStart = G4ThreeVector(xy.x(), xy.y(), -0.5*component->GetChordLength());
   transformToStart = G4Transform3D(rm2->inverse(), offsetToStart);
+  delete rm2;
   G4cout << "Transform to start (local) " << transformToStart.getTranslation() << G4endl;
 }
 
@@ -172,10 +173,9 @@ G4int BDSLinkOpaqueBox::PlaceOutputSampler()
   BDSApertureInfo ap = BDSApertureInfo(apt, outputSamplerRadius, 0, 0, 0);
   sampler = new BDSSamplerCustom(samplerName, ap);
   sampler->GetContainerLogicalVolume()->SetSensitiveDetector(BDSSDManager::Instance()->SamplerLink());
-
-  G4double pl = BDSBeamline::PaddingLength();
+  
   auto z2 = component->GetExtent();
-  G4ThreeVector position = G4ThreeVector(0,0,0.5*component->GetChordLength() + pl + BDSSamplerPlane::ChordLength());
+  G4ThreeVector position = G4ThreeVector(0,0,0.5*component->GetChordLength() + 2*BDSSamplerCustom::ChordLength());
   G4RotationMatrix* rm = nullptr;
   if (BDS::IsFinite(component->GetAngle()))
     {
@@ -183,11 +183,11 @@ G4int BDSLinkOpaqueBox::PlaceOutputSampler()
       rm->rotateY(0.5 * component->GetAngle()); // rotate to output face
       RegisterRotationMatrix(rm);
       position = G4ThreeVector(component->Sagitta(), 0, 0.5*component->GetChordLength());
-      G4ThreeVector gap = G4ThreeVector(0,0,pl + BDSSamplerPlane::ChordLength());
+      G4ThreeVector gap = G4ThreeVector(0,0,2*BDSSamplerCustom::ChordLength());
       position += gap.transform(*rm);
     }
   // if there's finite angle, we ensure (in constructor) there's no tilt
-  G4RotationMatrix* rml = rm ? rm : new G4RotationMatrix();
+  G4RotationMatrix* rml = rm ? new G4RotationMatrix(*rm) : new G4RotationMatrix();
   BDSSamplerInfo info(samplerName, sampler, G4Transform3D(*rml, position));
   delete rml;
   

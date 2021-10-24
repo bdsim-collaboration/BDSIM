@@ -1,5 +1,5 @@
 # option to turn event display, and therefore dependency on ROOT EVE libraries off or on.
-option( USE_EVENTDISPLAY "Use event display - requires ROOT EVE libraries." OFF )
+option( USE_EVENT_DISPLAY "Use event display - requires ROOT EVE libraries." OFF )
 
 file(GLOB rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
@@ -15,7 +15,7 @@ list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/bdskim.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/bdsimCombine.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimCombineRun.cc)
 
-if (NOT USE_EVENTDISPLAY)
+if (NOT USE_EVENT_DISPLAY)
   list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplay.cc)
   list(REMOVE_ITEM rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplayLinkDef.hh)	
 endif()
@@ -23,10 +23,16 @@ endif()
 #message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}")
 #message(STATUS "ROOT DICTS : ${rebdsimLibLinkDefs}")
 
-if(ROOT_DOUBLE_OUTPUT)
+if(USE_ROOT_DOUBLE_OUTPUT)
   set(PREPROCESSOR_DEFS "-D__ROOTBUILD__;-D__ROOTDOUBLE__")
 else()
   set(PREPROCESSOR_DEFS "-D__ROOTBUILD__")
+endif()
+
+if (NOT USE_BOOST)
+  set(BOOSTINCLUDES "")
+else()
+  set(BOOSTINCLUDES "-I${Boost_INCLUDE_DIRS}")
 endif()
 
 # Add BDSIM label to original files
@@ -47,8 +53,8 @@ foreach(header ${rebdsimLibLinkDefs})
             OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
             COMMAND ${ROOTCINT_EXECUTABLE}
             ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc -noIncludePaths -inlineInputHeader
-            ${PREPROCESSOR_DEFS} -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include
-            -I${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+            ${PREPROCESSOR_DEFS} -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include -I${Boost_INCLUDE_DIRS}
+            -I${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${BOOSTINCLUDES} ${header}
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
             IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
             COMMENT "Generate ROOT Dictionary for ${className}"
@@ -67,7 +73,7 @@ endforeach()
 
 add_library(rebdsim SHARED ${rebdsimLibSources})
 target_link_libraries(rebdsim bdsimRootEvent)
-if (USE_EVENTDISPLAY)
+if (USE_EVENT_DISPLAY)
     target_link_libraries(rebdsim ${ROOT_EVELIBRARIES})
 endif()
 bdsim_install_targets(rebdsim)
@@ -77,7 +83,7 @@ set_target_properties(rebdsimExec PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDS
 target_link_libraries(rebdsimExec rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimExec)
 
-if (USE_EVENTDISPLAY)
+if (USE_EVENT_DISPLAY)
     add_executable(edbdsimExec edbdsim.cc)
     set_target_properties(edbdsimExec PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
     target_link_libraries(edbdsimExec rebdsim ${ROOT_EVELIBRARIES})
@@ -126,7 +132,7 @@ file(GLOB rebdsimHeaders ${CMAKE_CURRENT_SOURCE_DIR}/*.hh)
 foreach(header ${rebdsimLibLinkDefs})
   list(REMOVE_ITEM rebdsimHeaders ${header})
 endforeach()
-if (NOT USE_EVENTDISPLAY)
+if (NOT USE_EVENT_DISPLAY)
   list(REMOVE_ITEM rebdsimHeaders ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplay.hh)
   list(REMOVE_ITEM rebdsimHeaders ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplayLinkDef.hh)	
 endif()

@@ -101,6 +101,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
+G4bool BDSComponentFactory::coloursInitialised = false;
+
 BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
 					 BDSComponentFactoryUser*     userComponentFactoryIn,
                                          G4bool                       usualPrintOut):
@@ -205,8 +207,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	    {differentFromDefinition = true;}
 	}
     }
-  else if (element->type == ElementType::_THINMULT)
-    {// thinmultipole only uses one angle - so `angleIn`
+  else if (element->type == ElementType::_THINMULT || (element->type == ElementType::_MULT && !HasSufficientMinimumLength(element, false)) || (element->type == ElementType::_THINRMATRIX))
+    {
+    // thinmultipole only uses one angle - so `angleIn`
        if (prevElement && nextElement)
 	{// both exist
 	  ElementType prevType = prevElement->type;
@@ -303,7 +306,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     case ElementType::_DECAPOLE:
       {component = CreateDecapole(); break;}
     case ElementType::_MULT:
-      {component = CreateMultipole(); break;}
+      {
+        if(!BDS::IsFinite(element->l))
+        {
+          component = CreateThinMultipole(angleIn);
+          break;
+        }
+          component = CreateMultipole();
+        break;}
     case ElementType::_THINMULT:
       {component = CreateThinMultipole(angleIn); break;}
     case ElementType::_ELEMENT:
@@ -2130,7 +2140,7 @@ G4double BDSComponentFactory::PrepareHorizontalWidth(Element const* el,
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 {
   G4Material* result = nullptr;
-  if (el->vacuumMaterial == "")
+  if (el->vacuumMaterial.empty())
     {result = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
   else
     {result = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
@@ -2138,8 +2148,8 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 }
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
-							  const G4ThreeVector inputFaceNormalIn,
-							  const G4ThreeVector outputFaceNormalIn)
+							  const G4ThreeVector& inputFaceNormalIn,
+							  const G4ThreeVector& outputFaceNormalIn)
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   BDSBeamPipeInfo* result; 
@@ -2246,15 +2256,19 @@ void BDSComponentFactory::PrepareCavityModels()
 
 void BDSComponentFactory::PrepareColours()
 {
-  BDSColours* allColours = BDSColours::Instance();
-  for (const auto& colour : BDSParser::Instance()->GetColours())
+  if (!coloursInitialised)
     {
-      allColours->DefineColour(G4String(colour.name),
-			       (G4double)colour.red,
-			       (G4double)colour.green,
-			       (G4double)colour.blue,
-			       (G4double)colour.alpha);
-    }
+      BDSColours* allColours = BDSColours::Instance();
+      for (const auto& colour : BDSParser::Instance()->GetColours())
+	{
+	  allColours->DefineColour(G4String(colour.name),
+				   (G4double) colour.red,
+				   (G4double) colour.green,
+				   (G4double) colour.blue,
+				   (G4double) colour.alpha);
+	}
+      coloursInitialised = true;
+  }
 }
 
 void BDSComponentFactory::PrepareCrystals()
@@ -2554,7 +2568,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   G4double scaling = el->scaling;
   (*st)["length"] = el->l * CLHEP::m; // length needed for thin multipoles
   // component strength is only normalised by length for thick multipoles
-  if (el->type == ElementType::_THINMULT)
+  if (el->type == ElementType::_THINMULT || (el->type == ElementType::_MULT && !BDS::IsFinite(el->l)))
     {(*st)["length"] = 1*CLHEP::m;}
   auto kn = el->knl.begin();
   auto ks = el->ksl.begin();
