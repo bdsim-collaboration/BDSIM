@@ -65,12 +65,12 @@ typedef CLHEP::HepRotation G4RotationMatrix;
 class BDSGeometryComponent
 {
 public:
-  BDSGeometryComponent(G4VSolid*         containerSolidIn,
-		       G4LogicalVolume*  containerLVIn,
-		       BDSExtent         extentIn            = BDSExtent(),
-		       BDSExtent         innerExtentIn       = BDSExtent(),
-		       G4ThreeVector     placementOffsetIn   = G4ThreeVector(0,0,0),
-		       G4RotationMatrix* placementRotationIn = nullptr);
+  BDSGeometryComponent(G4VSolid*            containerSolidIn,
+		       G4LogicalVolume*     containerLVIn,
+		       const BDSExtent&     extentIn            = BDSExtent(),
+		       const BDSExtent&     innerExtentIn       = BDSExtent(),
+		       const G4ThreeVector& placementOffsetIn   = G4ThreeVector(0,0,0),
+		       G4RotationMatrix*    placementRotationIn = nullptr);
   
   /// Copy constructor (no copying of registered objects)
   BDSGeometryComponent(const BDSGeometryComponent& component);
@@ -105,8 +105,8 @@ public:
   inline void SetPlacementOffset(const G4ThreeVector& offsetIn) {placementOffset = G4ThreeVector(offsetIn);}
 
   /// @{ Set extent
-  inline void SetExtent(BDSExtent extIn)      {outerExtent = extIn;}
-  inline void SetInnerExtent(BDSExtent extIn) {innerExtent = extIn;}
+  inline void SetExtent(const BDSExtent& extIn)      {outerExtent = extIn;}
+  inline void SetInnerExtent(const BDSExtent& extIn) {innerExtent = extIn;}
   /// @}
   
   /// Get the extent of the object in the positive direction in all dimensions
@@ -121,11 +121,11 @@ public:
   /// Update the extents of this object with those of another object
   /// whilst accounting for any offset.
   void InheritExtents(BDSGeometryComponent const * const anotherComponent,
-		      const G4ThreeVector &offset);
+		      const G4ThreeVector& offset);
 
   /// Register another geometry component as belonging to this one. This component will
   /// then own and delete it as necessary.
-  void RegisterDaughter(BDSGeometryComponent* anotherComponent);
+  void RegisterDaughter(BDSGeometryComponent* anotherComponent) {allDaughters.insert(anotherComponent);}
   
   /// Register a solid as belonging to this geometry component, which then becomes responsible
   /// for it. Note, the container solid given in the constructor is automatically registered.
@@ -161,28 +161,28 @@ public:
   inline void RegisterPhysicalVolume(G4VPhysicalVolume* physicalVolume) {allPhysicalVolumes.insert(physicalVolume);}
 
   /// Apply RegisterPhysicalVolume() to a set of physical volumes.
-  void RegisterPhysicalVolume(std::set<G4VPhysicalVolume*> physicalVolumes);
+  void RegisterPhysicalVolume(const std::set<G4VPhysicalVolume*>& physicalVolumes);
 
   /// Register a rotation matrix as belonging to this geometry component, which then becomes
   /// responsible for it.
   inline void RegisterRotationMatrix(G4RotationMatrix* rotationMatrix) {allRotationMatrices.insert(rotationMatrix);}
 
   /// Apply Register RotationMatrix() to a set of rotation matrices
-  void RegisterRotationMatrix(std::set<G4RotationMatrix*> rotationMatrices);
+  void RegisterRotationMatrix(const std::set<G4RotationMatrix*>& rotationMatrices);
 
   /// Register a visualisation attribute object as belonging to this geometry component, which
   /// then becomes responsible for it.
   inline void RegisterVisAttributes(G4VisAttributes* visAttribute) {allVisAttributes.insert(visAttribute);}
 
   /// Apply RegisterVisAttribute() to a set of visualisation attributes
-  void RegisterVisAttributes(std::set<G4VisAttributes*> visAttributes);
+  void RegisterVisAttributes(const std::set<G4VisAttributes*>& visAttributes);
 
   /// Register a user limits object as belonging to this geometry component, which then
   /// becomes responsible for it
   inline void RegisterUserLimits(G4UserLimits* userLimit) {allUserLimits.insert(userLimit);}
 
   /// Apply RegisterUserLimit to a set of user limits.
-  void RegisterUserLimits(std::set<G4UserLimits*> userLimits);
+  void RegisterUserLimits(const std::set<G4UserLimits*>& userLimits);
   
   /// Utility method to copy all the logical & physical volumes plus rotation matrices from a
   /// BDSGeometryComponent instance to this one. Useful for example when prefabricated objects

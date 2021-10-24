@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Header.hh"
 #include "HistogramAccumulatorMerge.hh"
 #include "HistogramAccumulatorSum.hh"
+#include "RBDSException.hh"
 
 #include "BDSOutputROOTEventHeader.hh"
 
@@ -31,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1.h"
 #include "TH2.h"
 #include "TH3.h"
+#include "BDSBH4D.hh"
 #include "TTree.h"
 
 #include <exception>
@@ -49,17 +51,20 @@ int main(int argc, char* argv[])
   // build input file list
   std::vector<std::string> inputFiles;
   for (int i = 2; i < argc; ++i)
-    {inputFiles.push_back(std::string(argv[i]));}
+    {inputFiles.emplace_back(std::string(argv[i]));}
 
   // checks
   if (inputFiles.size() == 1)
     {
-      std::cout << "Only one input file provided \"" << inputFiles[0] << "\" - no point." << std::endl;
+      if (inputFiles[0].find('*') != std::string::npos) // glob didn't expand in shell - infer this
+        {std::cout << "Glob with * did not match any files" << std::endl;}
+      else
+        {std::cout << "Only one input file provided \"" << inputFiles[0] << "\" - no point." << std::endl;}
       exit(1);
     }
 
   std::string outputFile = std::string(argv[1]);
-  if (outputFile.find("*") != std::string::npos)
+  if (outputFile.find('*') != std::string::npos)
     {
       std::cerr << "First argument for output file \"" << outputFile << "\" contains an *." << std::endl;
       std::cerr << "Should only be a singular file - check order of arguments." << std::endl;
@@ -93,8 +98,23 @@ int main(int argc, char* argv[])
   HistogramMap* histMap = nullptr;
   try
     {histMap = new HistogramMap(f, output);} // map out first file
-  catch (const std::exception& e)
-    {std::cout << e.what() << std::endl; return 1;}
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
+  catch (const std::exception& error)
+    {std::cerr << error.what(); exit(1);}
+  
+  // copy the model tree over if it exists - expect the name to be ModelTree
+  TTree* oldModelTree = dynamic_cast<TTree*>(f->Get("ModelTree"));
+  if (!oldModelTree)
+    {oldModelTree = dynamic_cast<TTree*>(f->Get("Model"));}
+  if (oldModelTree)
+    {// TChain can be valid but TTree might not be in corrupt / bad file
+      output->cd();
+      auto newTree = oldModelTree->CloneTree();
+      newTree->SetName("ModelTree");
+      newTree->Write("", TObject::kOverwrite);
+    }
+  
   f->Close();
   delete f;
 
@@ -112,7 +132,9 @@ int main(int argc, char* argv[])
 	  for (const auto& hist : histograms)
 	    {
 	      std::string histPath = hist.path + hist.name; // histPath has trailing '/'
-	      TH1* h = static_cast<TH1*>(f->Get(histPath.c_str()));
+
+	      TH1* h = dynamic_cast<TH1*>(f->Get(histPath.c_str()));
+
 	      if (!h)
 		{RBDS::WarningMissingHistogram(histPath, file); continue;}
 	      hist.accumulator->Accumulate(h);
@@ -138,8 +160,8 @@ int main(int argc, char* argv[])
       result->SetDirectory(hist.outputDir);
       hist.outputDir->Add(result);
       delete hist.accumulator; // this removes temporary histograms from the file
-    }
-  
+	}
+
   headerOut->nOriginalEvents = nOriginalEvents;
   headerTree->Fill();
 

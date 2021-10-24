@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4DBase.hh"
 
 #include <map>
 #include <string>
@@ -44,7 +45,7 @@ class Analysis
 public:
   /// Requires the name of the tree to analyse, the chain of files to operate on,
   /// the name of the directory to create in the output root file for the combined
-  /// existing histrograms from that tree, whether to operate on each entry in the
+  /// existing histograms from that tree, whether to operate on each entry in the
   /// tree and whether or not we're in debug mode.
   Analysis(const std::string& treeNameIn,
 	   TChain*     chainIn,
@@ -56,7 +57,7 @@ public:
   /// Method which calls all other methods in order.
   virtual void Execute();
 
-  /// Operate on each entry in the tree. Pure virutal as it is not known what
+  /// Operate on each entry in the tree. Pure virtual as it is not known what
   /// analysis will be formed in any derived class. This is only called if
   /// perEntry is true (by default it is).
   virtual void Process() = 0;
@@ -71,40 +72,36 @@ public:
   void PreparePerEntryHistograms();
 
   /// Accumulate means and variances for per entry histograms.
-  void AccumulatePerEntryHistograms(const long int& entryNumber);
+  void AccumulatePerEntryHistograms(long int entryNumber);
 
   /// Prepare result of per entry histogram accumulation.
   void TerminatePerEntryHistograms();
 
   /// Optional final action after Process() and SimpleHistograms(). The version
-  /// in this base class termiantes the histogram merges if there are any in histoSum.
+  /// in this base class terminates the histogram merges if there are any in histoSum.
   virtual void Terminate();
 
   /// Write rebdsim histograms.
   virtual void Write(TFile* outputFile);
 
 protected:
+  /// Create an individual histogram based on a definition.
+  void FillHistogram(HistogramDef* definition,
+                     std::vector<TH1*>* outputHistograms = nullptr);
+
   std::string treeName;
   TChain*     chain;
   std::string                 mergedHistogramName; ///< Name of directory for merged histograms.
-  std::vector<std::string>    histogramNames; ///< Rebdsim generated histogram names.
-  std::map<std::string, TH1*> histograms1D;   ///< Rebdsim 1d histograms for each 
-  std::map<std::string, TH2*> histograms2D;   ///< Rebdsim 2d histograms.
-  std::map<std::string, TH3*> histograms3D;   ///< Rebdsim 3d histograms.
+  std::vector<TH1*>           simpleHistograms;
   std::vector<PerEntryHistogram*> perEntryHistograms;
-  HistogramMeanFromFile*      histoSum;       ///< Merge of per event stored histograms.
-  bool                        debug;          ///< Whether debug print out is used or not.
-  long int                    entries;        ///< Number of entries in the chain.
-
-  /// Whether to analyse each entry in the tree in a for loop or not.
-  bool                        perEntry;
+  HistogramMeanFromFile*      histoSum; ///< Merge of per event stored histograms.
+  bool                        debug;    ///< Whether debug print out is used or not.
+  long int                    entries;  ///< Number of entries in the chain.
+  bool                        perEntry; ///< Whether to analyse each entry in the tree in a for loop or not.
   
 private:
   /// No default constructor for this base class.
   Analysis() = delete;
-  
-  /// Create an individual histogram based on a definition.
-  void FillHistogram(HistogramDef* definition);
 };
 
 #endif

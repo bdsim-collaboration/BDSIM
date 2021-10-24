@@ -642,7 +642,7 @@ For :math:`\kappa > 0`, the focusing thick matrix is used (in the local curvilin
    \cos(rkh)                         & \frac{1}{rk}\sin(rkh)  & 0 & 0    \\
    -\|\kappa\|~\frac{1}{rk}\sin(rkh) & \cos(rkh)              & 0 & 0    \\
    0 & 0 & \cosh(rkh)                          &  \frac{1}{rk}\sinh(rkh) \\
-   0 & 0 & -\|\kappa\|~\frac{1}{rk}\sinh(rkh)  & \cosh(rkh)              \\
+   0 & 0 & \|\kappa\|~\frac{1}{rk}\sinh(rkh)   & \cosh(rkh)              \\
    \end{pmatrix}
 
 and for :math:`\kappa < 0`, the defocusing thick matrix is used (again, in the local
@@ -652,7 +652,7 @@ curvilinear frame):
    \mathbf{M_{quad, -\kappa}}~=~
    \begin{pmatrix}
    \cosh(rkh)                          &  \frac{1}{rk}\sinh(rkh) & 0 & 0 \\
-   -\|\kappa\|~\frac{1}{rk}\sinh(rkh)  & \cosh(rkh)              & 0 & 0 \\
+   \|\kappa\|~\frac{1}{rk}\sinh(rkh)   & \cosh(rkh)              & 0 & 0 \\
    0 & 0 & \cos(rkh)                         & \frac{1}{rk}\sin(rkh)     \\
    0 & 0 & -\|\kappa\|~\frac{1}{rk}\sin(rkh) & \cos(rkh)                 \\
    \end{pmatrix}

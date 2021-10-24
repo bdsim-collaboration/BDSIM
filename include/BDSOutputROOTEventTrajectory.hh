@@ -34,6 +34,7 @@ class BDSHitEnergyDeposition;
 class BDSTrajectory;
 template <class T> class G4THitsCollection;
 typedef G4THitsCollection<BDSHitEnergyDeposition> BDSHitsCollectionEnergyDeposition;
+class G4Material;
 namespace BDS
 {
   struct TrajectoryOptions;
@@ -119,7 +120,8 @@ public:
   void Fill(const BDSTrajectoriesToStore* t,
             int  storeStepPointsN,
             bool storeStepPointLast,
-            const BDS::TrajectoryOptions& storageOptions);
+            const BDS::TrajectoryOptions& storageOptions,
+            const std::map<G4Material*, short int>& materialToID);
   void Fill(const BDSHitsCollectionEnergyDeposition* phc);
 
   /// Temporary structure for an individual trajectory used to convert types.
@@ -148,13 +150,15 @@ public:
     std::vector<int>      ionZ;
     std::vector<int>      nElectrons;
     std::vector<int>      modelIndex;
+    std::vector<short int> materialID;
   };
 
   /// Fill an trajectory point with index 'i' into the IndividualTrajectory struct
   /// (basic C++ / ROOT types) from Geant4 types from 'traj' trajectory for 1 track.
   void FillIndividualTrajectory(IndividualTrajectory& itj,
 				BDSTrajectory*        traj,
-				int                   i);
+				int                   i,
+				const std::map<G4Material*, short int>& materialToID) const;
 #endif
 
   /// Required to find beamline index careful including in streamer.
@@ -172,6 +176,7 @@ public:
   std::vector<unsigned int>          parentIndex;
   std::vector<unsigned int>          parentStepIndex;
   std::vector<int>                   primaryStepIndex;
+  std::vector<int>                   depth;
 
   std::vector<std::vector<int>>      preProcessTypes;
   std::vector<std::vector<int>>      preProcessSubTypes;
@@ -206,25 +211,29 @@ public:
   std::vector<std::vector<int>>      ionZ;
   std::vector<std::vector<int>>      nElectrons;
   /// @}
+  
+  std::vector<std::vector<short int>> materialID;
 
   std::vector<std::vector<int>>      modelIndicies;
 
-  std::map<int, int>                 trackID_trackIndex;// trackID to trackIndex
+  std::map<int, int>                 trackID_trackIndex;// trackID to storage index
   
   //  std::map<int, std::pair<int,int>>  trackIndex_trackProcess;     // trackProcess pair<trackIndex,trackProcessIndex>
   //  std::map<int, int>                 trackIndex_modelIndex;       // trackIndex to model index map
   //  std::map<int, std::vector<int>>    modelIndex_trackIndex;       // modelIndex to track index map
   //  std::pair<int,int>                 findParentProcess(int trackIndex);
 
-  std::vector<BDSOutputROOTEventTrajectoryPoint> trackInteractions(int trackID);
-  BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackID);
-  std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackID);
-  void                                           printTrajectoryInfo(int trackID);
-  bool                                           parentIsPrimary(int trackID);
+  std::vector<BDSOutputROOTEventTrajectoryPoint> trackInteractions(int trackIDIn) const;
+  BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackIDIn) const;
+  BDSOutputROOTEventTrajectoryPoint              parentProcessPoint(int trackIDIn) const;
+  std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackIDIn) const;
+  void                                           printTrajectoryInfoByTrackID(int trackIDIn) const;
+  void                                           printTrajectoryInfo(int storageIndex) const;
+  bool                                           parentIsPrimary(int trackIDIn) const;
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
   
-  ClassDef(BDSOutputROOTEventTrajectory,4);
+  ClassDef(BDSOutputROOTEventTrajectory,5);
 };
 
 #endif

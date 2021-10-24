@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUT_H
 #define BDSOUTPUT_H 
 
-#include "BDSHistBinMapper3D.hh"
+#include "BDSHistBinMapper.hh"
 #include "BDSOutputStructures.hh"
 #include "BDSTrajectoryOptions.hh"
 
@@ -44,6 +44,8 @@ class BDSParticleCoordsFullGlobal;
 class BDSParticleDefinition;
 class BDSHitSampler;
 typedef G4THitsCollection<BDSHitSampler> BDSHitsCollectionSampler;
+class BDSHitSamplerLink;
+typedef G4THitsCollection<BDSHitSamplerLink> BDSHitsCollectionSamplerLink;
 class BDSTrajectory;
 class BDSTrajectoryPointHit;
 class BDSHitEnergyDepositionGlobal;
@@ -84,6 +86,9 @@ public:
   /// This also sets up histograms based along S now the beam line is known.
   virtual void InitialiseGeometryDependent();
   
+  /// Interface to allow updating samplers with dynamic construction. Only for link - not for regular use.
+  virtual void UpdateSamplers() {UpdateSamplerStructures();}
+  
   /// Fill the local structure header with information - updates time stamp.
   void FillHeader();
 
@@ -114,6 +119,7 @@ public:
 		 const G4PrimaryVertex*                         vertex,
 		 const BDSHitsCollectionSampler*                samplerHitsPlane,
 		 const BDSHitsCollectionSampler*                samplerHitsCylinder,
+		 const BDSHitsCollectionSamplerLink*            samplerHitsLink,
 		 const BDSHitsCollectionEnergyDeposition*       energyLoss,
 		 const BDSHitsCollectionEnergyDeposition*       energyLossFull,
 		 const BDSHitsCollectionEnergyDeposition*       energyLossVacuum,
@@ -213,6 +219,9 @@ private:
   /// Fill sampler hits into output structures.
   void FillSamplerHits(const BDSHitsCollectionSampler* hits,
 		       const HitsType hType);
+  
+  /// Fill sampler link hits into output structures.
+  void FillSamplerHitsLink(const BDSHitsCollectionSamplerLink* hits);
 
   /// Fill the hit where the primary particle impact.
   void FillPrimaryHit(const std::vector<const BDSTrajectoryPointHit*>& primaryHits);
@@ -323,13 +332,15 @@ private:
   /// @{ Map of histogram name (short) to index of histogram in output.
   std::map<G4String, G4int> histIndices1D;
   std::map<G4String, G4int> histIndices3D;
-  std::map<G4String, BDSHistBinMapper3D> scorerCoordinateMaps;
+  std::map<G4String, G4int> histIndices4D;
+  std::map<G4String, BDSHistBinMapper> scorerCoordinateMaps;
   /// @}
 
   /// Map containing some histogram units. Not all will be filled, so the utility
   /// function GetWithDef should be used.
   std::map<G4int, G4double> histIndexToUnits1D;
   std::map<G4int, G4double> histIndexToUnits3D;
+  std::map<G4int, G4double> histIndexToUnits4D;
 };
 
 #endif

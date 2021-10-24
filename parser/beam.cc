@@ -139,7 +139,7 @@ void Beam::Amalgamate(const Beam& beamIn, bool override, int startFromEvent)
     }
 }
 
-bool Beam::HasBeenSet(std::string name) const
+bool Beam::HasBeenSet(const std::string& name) const
 {
   auto result = std::find(setKeys.begin(), setKeys.end(), name);
   if (result == setKeys.end())
@@ -166,6 +166,7 @@ void Beam::PublishMembers()
   publish("energyDistrType",      &Beam::energyDistrType);
   publish("distrFile",            &Beam::distrFile);
   publish("distrFileFormat",      &Beam::distrFileFormat);
+  publish("distrFileFromExecOptions", &Beam::distrFileFromExecOptions);
   publish("matchDistrFileLength", &Beam::matchDistrFileLength);
   publish("removeUnstableWithoutDecay", &Beam::removeUnstableWithoutDecay);
   publish("nlinesIgnore",         &Beam::nlinesIgnore);

@@ -368,8 +368,11 @@ BDSIM uses the standard Particle Data Group identification numbers for each part
 similarly to Geant4. These are typically referred to as "partID". A table of the particles
 and explanation of the numbering scheme can be found online:
 
-* `<http://pdg.lbl.gov/2018/reviews/rpp2018-rev-monte-carlo-numbering.pdf>`_
+* `<https://pdg.lbl.gov/2021/web/viewer.html?file=%2F2021/reviews/rpp2020-rev-monte-carlo-numbering.pdf>`_.
 
+..
+    _Update the link in worked_example_target.rst also
+  
 Notes:
   
 * These are integers.
@@ -767,6 +770,8 @@ One entry in the model tree represents one beam line.
 
 Optional collimator information also store in the model.
 
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.3\textwidth}|p{0.4\textwidth}|
+
 +-----------------------------+----------------------------+----------------------------------------------------------+
 | **Variable Name**           | **Type**                   | **Description**                                          |
 +=============================+============================+==========================================================+
@@ -795,6 +800,17 @@ Information stored about any scoring meshes used.
 | scoringMeshRotation    | std::map<std::string, TRotation> | Global rotation of each scoring mesh by name.        |
 +------------------------+----------------------------------+------------------------------------------------------+
 | scoringMeshName        | std::vector<std::string>         | All names of scoring meshes in the model.            |
++------------------------+----------------------------------+------------------------------------------------------+
+
+Information stored about materials for trajectory storage.
+
++------------------------+----------------------------------+------------------------------------------------------+
+| **Variable Name**      | **Type**                         | **Description**                                      |
++========================+==================================+======================================================+
+| materialIDToName       | std::map<short int, std::string> | A map of the bdsim-assigned integer material ID to   |
+|                        |                                  | its real name as defined in the input / code.        |
++------------------------+----------------------------------+------------------------------------------------------+
+| materialNameToID       | std::map<std::string, short int> | The same map but the other way around.               |
 +------------------------+----------------------------------+------------------------------------------------------+
 
 
@@ -853,7 +869,7 @@ Event Tree
 This tree contains information on a per-event basis.  Everything shown in the above tree has a
 different value per-event run in BDSIM.
 
-.. tabularcolumns:: |p{0.15\textwidth}|p{0.35\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.18\textwidth}|p{0.32\textwidth}|p{0.4\textwidth}|
 
 +---------------------------+----------------------------------+--------------------------------------------------+
 | **Branch Name**           | **Type**                         | **Description**                                  |
@@ -942,7 +958,7 @@ The types and names of the contents of each class can be found in the header fil
 BDSOutputROOTEventAperture
 **************************
 
-.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.3\textwidth}|p{0.4\textwidth}|
 
 +------------------------+----------------------+-----------------------------------------------------------+
 |  **Variable**          | **Type**             |  **Description**                                          |
@@ -993,7 +1009,7 @@ BDSOutputROOTEventAperture
 BDSOutputROOTEventInfo
 **********************
 
-.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.2\textwidth}|p{0.4\textwidth}|
 
 +--------------------------------+-------------------+---------------------------------------------+
 |  **Variable**                  | **Type**          |  **Description**                            |
@@ -1147,6 +1163,8 @@ BDSOutputROOTEventLossWorld
 For the point where particles exit the world, there is no concept of a curvilinear coordinate
 system so there are only global coordinates recorded.
 
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+
 +-----------------------+-----------------------+-------------------------------------------------------------------+
 |  **Variable**         | **Type**              |  **Description**                                                  |
 +=======================+=======================+===================================================================+
@@ -1179,7 +1197,7 @@ system so there are only global coordinates recorded.
 BDSOutputROOTEventRunInfo
 *************************
 
-.. tabularcolumns:: |p{0.30\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.25\textwidth}|p{0.25\textwidth}|p{0.3\textwidth}|
 
 +-----------------------------+-------------------+---------------------------------------------+
 |  **Variable**               | **Type**          |  **Description**                            |
@@ -1196,6 +1214,7 @@ BDSOutputROOTEventRunInfo
 |                             |                   | start of the run as provided by CLHEP       |
 +-----------------------------+-------------------+---------------------------------------------+
 
+.. _output-structure-trajectory:
 
 BDSOutputROOTEventTrajectory
 ****************************
@@ -1235,7 +1254,7 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 	  in practice. Also, in practice most compilers will use a larger bit depth by default as
 	  it is more optimal on most hardware.
 
-.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{0.18\textwidth}|p{0.32\textwidth}|p{0.4\textwidth}|
 
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 |  **Variable**            | **Type**                            |  **Description**                                        |
@@ -1262,6 +1281,9 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | primaryStepIndex         | std::vector<int>                    | The index of the step along the primary trajectory that |
 |                          |                                     | that this current trajectory ultimately traces back to  |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| depth                    | std::vector<int>                    | The depth in the tree of the trajectory - i.e. the      |
+|                          |                                     | number of parent particles this one has.                |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | preProcessTypes (\+)     | std::vector<std::vector<int>>       | Geant4 enum of pre-step physics process - general       |
 |                          |                                     | category                                                |
@@ -1312,7 +1334,10 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | ionZ (\***)              | std::vector<std::vector<int>>       | Atomic number. 0 for non-nuclei                         |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| nElectrons (\****)       | std::vector<std::vector<int>>       | Number of bound electrons if an ion. 0 otherwise        |
+| nElectrons (\***)        | std::vector<std::vector<int>>       | Number of bound electrons if an ion. 0 otherwise        |
++--------------------------+-------------------------------------+---------------------------------------------------------+
+| materialID (\-)          | std::vector<sd::vector<short int>>  | Integer ID of material at that step point. See the      |
+|                          |                                     | Model tree for decoding this to material name.          |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | modelIndicies            | std::vector<std::vector<int>>       | Index in beam line of which element the trajectory is in|
 |                          |                                     | (-1 if not inside an accelerator component)             |
@@ -1327,17 +1352,18 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 	  as described in :ref:`bdsim-options-output`.
 .. note:: (\+) Not stored by default, but controlled by a specific option for this variable
 	  described in :ref:`bdsim-options-output`.
+.. note:: (\-) Not stored by default, but controlled by the option `storeTrajectoryMaterial`.
 
 
 In addition, some maps are stored to link the entries together conceptually.
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+--------------------------+-------------------------------------+---------------------------------------------------------+
-|  **Variable**            | **Type**                            |  **Description**                                        |
-+==========================+=====================================+=========================================================+
-| trackID_trackIndex       | std::map<int, int>                  | A map of all trackIDs to the index in this class        |
-+--------------------------+-------------------------------------+---------------------------------------------------------+
++--------------------------+---------------------+----------------------------------------------------------+
+|  **Variable**            | **Type**            |  **Description**                                         |
++==========================+=====================+==========================================================+
+| trackID_trackIndex       | std::map<int, int>  | A map of all trackIDs to the storage index in this class |
++--------------------------+---------------------+----------------------------------------------------------+
 
 These are currently not implemented.
 
@@ -1351,34 +1377,36 @@ These are currently not implemented.
 
 Functions are provided that allow exploration of the data through the connections stored.
 
-.. tabularcolumns:: |p{0.20\textwidth}|p{0.40\textwidth}|p{0.4\textwidth}|
+* Using the shorthand :code:`TP` = :code:`BDSOutputROOTEventTrajectoryPoint` for readability.
 
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| **Function**                      | **Return Type**                                 | **Description**                                         |
-+===================================+=================================================+=========================================================+
-| trackInteractions(int trackID)    | std::vector<BDSOutputROOTEventTrajectoryPoint>  | Return vector of points where this particle interacted  |
-|                                   |                                                 | all the way to the primary. Transportation steps are    |
-|                                   |                                                 | suppressed.                                             |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| primaryProcessPoint(int trackID)  | BDSOutputROOTEventTrajectoryPoint               | For a given track ID, return the point where the        |
-|                                   |                                                 | primary particle first interacted.                      |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| processHistory(int trackID)       | std::vector<BDSOutputROOTEventTrajectoryPoint>  | A full history up the trajectory table to the primary   |
-|                                   |                                                 | for a given track ID.                                   |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| printTrajectory(int trackID)      | void                                            | Print information and history.                          |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| parentIsPrimary(int trackID)      | bool                                            | Whether the creator of this track is a primary particle |
-|                                   |                                                 | This returns false for a primary itself.                |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
+.. tabularcolumns:: |p{0.3\textwidth}|p{0.2\textwidth}|p{0.4\textwidth}|
 
-Not implemented:
++---------------------------------------+--------------------+----------------------------------------------------------+
+| **Function**                          | **Return Type**    | **Description**                                          |
++=======================================+====================+==========================================================+
+| trackInteractions(int trackID)        | std::vector<TP>    | Return vector of points where this particle interacted   |
+|                                       |                    | all the way to the primary. Transportation steps are     |
+|                                       |                    | suppressed.                                              |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| primaryProcessPoint(int trackID)      | TP                 | For a given track ID, return the point on the primary    |
+|                                       |                    | trajectory where this track ultimately leads back to.    |
+|                                       |                    | Therefore, for a given trajectory, this function will    |
+|                                       |                    | recurse up the trajectory tree on to the primary one.    |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| parentProcessPoint(int trackID)       | TP                 | For a given track ID, return the point on the parent     |
+|                                       |                    | trajectory particle first interacted.                    |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| processHistory(int trackID)           | std::vector<TP>    | A full history up the trajectory table to the primary    |
+|                                       |                    | for a given track ID.                                    |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| printTrajectoryByTrackID(int trackID) | void               | Print information and history for a given track ID.      |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| printTrajectoryBy(int storageIndex)   | void               | Print information and history for a given storage index. |
++---------------------------------------+--------------------+----------------------------------------------------------+
+| parentIsPrimary(int trackID)          | bool               | Whether the creator of this track is a primary particle  |
+|                                       |                    | This returns false for a primary itself.                 |
++---------------------------------------+--------------------+----------------------------------------------------------+
 
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
-| findParentProcess(int trackIndex) | std::pair<int,int>                              | Find the parent track index and process index from      |
-|                                   |                                                 | the ultimate parent of this particle up the             |
-|                                   |                                                 | trajectory table.                                       |
-+-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
 
 BDSOutputROOTEventSampler
 *************************

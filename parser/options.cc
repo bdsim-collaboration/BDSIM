@@ -148,6 +148,7 @@ void Options::PublishMembers()
   publish("visMacroFileName",      &Options::visMacroFileName);
   publish("geant4MacroFileName",   &Options::geant4MacroFileName);
   publish("geant4PhysicsMacroFileName", &Options::geant4PhysicsMacroFileName);
+  publish("geant4PhysicsMacroFileNameFromExecOptions", &Options::geant4PhysicsMacroFileNameFromExecOptions);
   publish("visDebug",              &Options::visDebug);
   publish("outputFileName",        &Options::outputFileName);
   publish("outputFormat",          &Options::outputFormat);
@@ -193,6 +194,7 @@ void Options::PublishMembers()
   publish("verboseImportanceSampling", &Options::verboseImportanceSampling);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
+  publish("randomEngine",          &Options::randomEngine);
   publish("recreate",              &Options::recreate);
   publish("recreateFileName",      &Options::recreateFileName);
   publish("startFromEvent",        &Options::startFromEvent);
@@ -302,6 +304,7 @@ void Options::PublishMembers()
   publish("tunnelMaxSegmentLength", &Options::tunnelMaxSegmentLength);
 
   publish("removeTemporaryFiles", &Options::removeTemporaryFiles);
+  publish("temporaryDirectory",   &Options::temporaryDirectory);
 
   publish("samplerDiameter",&Options::samplerDiameter);
   
@@ -364,6 +367,7 @@ void Options::PublishMembers()
   publish("sampleElementsWithPoleface",  &Options::sampleElementsWithPoleface);
   publish("nominalMatrixRelativeMomCut", &Options::nominalMatrixRelativeMomCut);
   publish("teleporterFullTransform",  &Options::teleporterFullTransform);
+  publish("dEThresholdForScattering", &Options::dEThresholdForScattering);
 
   // hit generation
   publish("sensitiveOuter",              &Options::sensitiveOuter);
@@ -451,6 +455,7 @@ void Options::PublishMembers()
   publish("storeTrajectoryLinks",               &Options::storeTrajectoryLinks);
   publish("storeTrajectoryIon",                 &Options::storeTrajectoryIon);
   publish("storeTrajectoryIons",                &Options::storeTrajectoryIon); ///< alternative for backwards compatibility.
+  publish("storeTrajectoryMaterial",            &Options::storeTrajectoryMaterial);
   publish("storeTrajectoryAllVariables",        &Options::storeTrajectoryAllVariables);
   publish("trajectoryFilterLogicAND",           &Options::trajectoryFilterLogicAND);
 
@@ -470,6 +475,8 @@ void Options::PublishMembers()
   
   publish("storeModel",                     &Options::storeModel);
 
+  publish("samplersSplitLevel",             &Options::samplersSplitLevel);
+
   // circular options
   publish("nturns",                   &Options::nturns);
   publish("ptcOneTurnMapFileName",    &Options::ptcOneTurnMapFileName);
@@ -486,11 +493,14 @@ void Options::PublishMembers()
   publish("nbinsx", &Options::nbinsx);
   publish("nbinsy", &Options::nbinsy);
   publish("nbinsz", &Options::nbinsz);
+  publish("nbinse" , &Options::nbinse);
   publish("xmin",   &Options::xmin);
   publish("xmax",   &Options::xmax);
   publish("ymin",   &Options::ymin);
   publish("ymax",   &Options::ymax);
   publish("zmin",   &Options::zmin);
   publish("zmax",   &Options::zmax);
+  publish("emin", &Options::emin);
+  publish("emax", &Options::emax);
   publish("useScoringMap", &Options::useScoringMap);
 }

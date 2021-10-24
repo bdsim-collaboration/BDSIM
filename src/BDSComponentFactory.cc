@@ -101,6 +101,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
+G4bool BDSComponentFactory::coloursInitialised = false;
+
 BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
 					 BDSComponentFactoryUser*     userComponentFactoryIn,
                                          G4bool                       usualPrintOut):
@@ -205,8 +207,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	    {differentFromDefinition = true;}
 	}
     }
-  else if (element->type == ElementType::_THINMULT)
-    {// thinmultipole only uses one angle - so `angleIn`
+  else if (element->type == ElementType::_THINMULT || (element->type == ElementType::_MULT && !HasSufficientMinimumLength(element, false)) || (element->type == ElementType::_THINRMATRIX))
+    {
+    // thinmultipole only uses one angle - so `angleIn`
        if (prevElement && nextElement)
 	{// both exist
 	  ElementType prevType = prevElement->type;
@@ -303,7 +306,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     case ElementType::_DECAPOLE:
       {component = CreateDecapole(); break;}
     case ElementType::_MULT:
-      {component = CreateMultipole(); break;}
+      {
+        if(!BDS::IsFinite(element->l))
+        {
+          component = CreateThinMultipole(angleIn);
+          break;
+        }
+          component = CreateMultipole();
+        break;}
     case ElementType::_THINMULT:
       {component = CreateThinMultipole(angleIn); break;}
     case ElementType::_ELEMENT:
@@ -1162,7 +1172,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 			 element->geometryFile,
 			 element->angle * CLHEP::rad,
 			 &vacuumBiasVolumeNames,
-			 element->autoColour));
+			 element->autoColour,
+			 element->markAsCollimator));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
@@ -1356,8 +1367,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 {
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
-
-  BDSFieldInfo* vacuumField = nullptr;
+  
+  G4double elLength = element->l*CLHEP::m;
   BDSFieldInfo* outerField  = nullptr;
   if (BDS::IsFinite(element->B))
     {
@@ -1371,17 +1382,21 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 				    st,
 				    true,
 				    fieldTrans);
-      // if we have an outerField object in a BDSMagnet, we must have a vacuum field object too
-      vacuumField = new BDSFieldInfo();
+  
+      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+      G4double limit = elLength / 20.0;
+      auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+      if (ul != defaultUL)
+        {outerField->SetUserLimits(ul);}
     }
   auto bpInfo = PrepareBeamPipeInfo(element);
   
   return new BDSMagnet(BDSMagnetType::muonspoiler,
 		       elementName,
-		       element->l*CLHEP::m,
+                       elLength,
 		       bpInfo,
 		       PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInfo), // 0 angled face in and out
-		       vacuumField,
+		       nullptr,
 		       0,
 		       outerField);
 }
@@ -1728,9 +1743,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
                               element->xdir * CLHEP::m,
                               element->ydir * CLHEP::m,
                               element->zdir * CLHEP::m,
-                              element->phi * CLHEP::rad,
+                              element->phi   * CLHEP::rad,
                               element->theta * CLHEP::rad,
-                              element->psi * CLHEP::rad);
+                              element->psi   * CLHEP::rad);
   }
 }
 
@@ -2125,7 +2140,7 @@ G4double BDSComponentFactory::PrepareHorizontalWidth(Element const* el,
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 {
   G4Material* result = nullptr;
-  if (el->vacuumMaterial == "")
+  if (el->vacuumMaterial.empty())
     {result = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
   else
     {result = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
@@ -2133,8 +2148,8 @@ G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
 }
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
-							  const G4ThreeVector inputFaceNormalIn,
-							  const G4ThreeVector outputFaceNormalIn)
+							  const G4ThreeVector& inputFaceNormalIn,
+							  const G4ThreeVector& outputFaceNormalIn)
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   BDSBeamPipeInfo* result; 
@@ -2241,15 +2256,19 @@ void BDSComponentFactory::PrepareCavityModels()
 
 void BDSComponentFactory::PrepareColours()
 {
-  BDSColours* allColours = BDSColours::Instance();
-  for (const auto& colour : BDSParser::Instance()->GetColours())
+  if (!coloursInitialised)
     {
-      allColours->DefineColour(G4String(colour.name),
-			       (G4double)colour.red,
-			       (G4double)colour.green,
-			       (G4double)colour.blue,
-			       (G4double)colour.alpha);
-    }
+      BDSColours* allColours = BDSColours::Instance();
+      for (const auto& colour : BDSParser::Instance()->GetColours())
+	{
+	  allColours->DefineColour(G4String(colour.name),
+				   (G4double) colour.red,
+				   (G4double) colour.green,
+				   (G4double) colour.blue,
+				   (G4double) colour.alpha);
+	}
+      coloursInitialised = true;
+  }
 }
 
 void BDSComponentFactory::PrepareCrystals()
@@ -2549,7 +2568,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   G4double scaling = el->scaling;
   (*st)["length"] = el->l * CLHEP::m; // length needed for thin multipoles
   // component strength is only normalised by length for thick multipoles
-  if (el->type == ElementType::_THINMULT)
+  if (el->type == ElementType::_THINMULT || (el->type == ElementType::_MULT && !BDS::IsFinite(el->l)))
     {(*st)["length"] = 1*CLHEP::m;}
   auto kn = el->knl.begin();
   auto ks = el->ksl.begin();
