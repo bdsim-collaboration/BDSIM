@@ -48,7 +48,7 @@ typedef CLHEP::HepRotation G4RotationMatrix;
 
 namespace BDS
 {
-  /// Logical not for isalpha predictator as needed for string manipulations
+  /// Logical not for isalpha UnaryPredicate as needed for string manipulations
   struct non_alpha
   {
     G4bool operator()(char c);
@@ -59,7 +59,7 @@ namespace BDS
 
   /// Calculate the +- 1 orientation multiplier for absolute angles
   /// seems trivial, but used in a lot of places so put in one place
-  G4int    CalculateOrientation(G4double angle);
+  G4int CalculateOrientation(G4double angle);
 
   /// Calculate input and output normal vector
   std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
@@ -70,10 +70,10 @@ namespace BDS
   void EnsureInLimits(G4double& value, G4double lowerLimit, G4double upperLimit);
 
   /// Checks if filename exists
-  G4bool FileExists(G4String filename);
+  G4bool FileExists(const G4String& filename);
 
   /// Check if directory exists.
-  G4bool DirectoryExists(G4String path);
+  G4bool DirectoryExists(const G4String& path);
 
   /// Get the current dir the program was executed from.
   std::string GetCurrentDir();
@@ -82,13 +82,14 @@ namespace BDS
   /// supports linux/unix and mac OS
   std::string GetBDSIMExecPath();
 
-  /// get full absolute directory path where file can be found.
-  /// returns absolute path
-  ///
-  /// option to exclude the filename from path, such that
-  /// getFullPath(filename,true) + filename 
-  /// will return the absolute filename path
-  G4String GetFullPath(G4String filename, bool excludeNameFromPath=false);
+  /// Get the full absolute directory path where a file can be found.
+  /// Option excludeNameFromPath: if true will return only the path without
+  /// the filename appended to exclude the filename from path.
+  /// Option useCWDForPrefix: if the path is relative, then we would normally
+  /// prepend the absolute path of the main input file so it's relative to that
+  /// but with an absolute path. However, we may want to do this relative to the
+  /// executable directory of the program. If this option is on, it'll be CWD.
+  G4String GetFullPath(G4String filename, bool excludeNameFromPath=false, bool useCWDForPrefix=false);
 
   /// Split a full file path into the path and file components. The path
   /// ends with '/'.

@@ -41,6 +41,7 @@ namespace GMAD
     std::string visMacroFileName;    ///< Visualisation filename.
     std::string geant4MacroFileName; ///< Geant4 macro to run.
     std::string geant4PhysicsMacroFileName; ///< Geant4 physics macro
+    bool        geant4PhysicsMacroFileNameFromExecOptions;
     bool        visDebug;            ///< Flag for visualisation debug.
   
     ///@{ Parameter for output format
@@ -86,6 +87,7 @@ namespace GMAD
   
     bool circular;                 ///< Flag for circular machine
     int  seed;                     ///< The seed value for the random number generator
+    std::string randomEngine;      ///< Name of random engine to use.
     int  nGenerate;                ///< The number of primary events to simulate
     bool recreate;                 ///< Whether to recreate from a file or not.
     std::string recreateFileName;  ///< The file path to recreate a run from.
@@ -342,6 +344,7 @@ namespace GMAD
     bool        storeTrajectoryLocal;
     bool        storeTrajectoryLinks;
     bool        storeTrajectoryIon;
+    bool        storeTrajectoryMaterial;
     bool        storeTrajectoryAllVariables;
 
     // filter logic
@@ -361,6 +364,8 @@ namespace GMAD
     
     bool        storeModel;
 
+    int         samplersSplitLevel;
+
     // circular options
     int         nturns;
     std::string ptcOneTurnMapFileName;
@@ -376,12 +381,15 @@ namespace GMAD
     int    nbinsx;
     int    nbinsy;
     int    nbinsz;
+    int    nbinse;
     double xmin;
     double xmax;
     double ymin;
     double ymax;
     double zmin;
     double zmax;
+    double emin;
+    double emax;
     bool   useScoringMap;
 
     /// print some properties
