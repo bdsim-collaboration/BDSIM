@@ -36,6 +36,7 @@ int main(int /*argc*/, char** /*argv*/)
 
   TH1D* hist0 = new TH1D("histy", "histy", 1, 0, 10000);
   TH1Set* hist = new TH1Set("test1", "test1");
+  std::cout << hist0 << " " << hist << std::endl;
   /*
   hist->SetCanExtend(111);
   event->Draw("c1.partID >> test1", "", "goff");
@@ -51,6 +52,7 @@ int main(int /*argc*/, char** /*argv*/)
   
   //evtT->Draw("c1.partID");
   std::cout << evtT->GetEntries() << std::endl;
+
   
   
   //tf->Close();
