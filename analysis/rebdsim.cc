@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     }
 
   std::string configFilePath = std::string(argv[1]); //create a string from arguments so able to use find_last_of and substr  methods
-  std::string configFileExtension = configFilePath.substr(configFilePath.find_last_of(".") + 1) ;
+  std::string configFileExtension = configFilePath.substr(configFilePath.find_last_of('.') + 1) ;
   if (configFileExtension != "txt")
     {
       std::cerr << "Unrecognised extension for file: " << configFilePath << ".  Extension: " << configFileExtension << std::endl;
@@ -117,15 +117,21 @@ int main(int argc, char *argv[])
 						  dl->GetBeamTree(),
 						  config->PerEntryBeam(),
 						  debug);
-  EventAnalysis*   evtAnalysis = new EventAnalysis(dl->GetEvent(),
-                                                   dl->GetEventTree(),
-						   config->PerEntryEvent(),
-						   config->ProcessSamplers(),
-                                                   debug,
-                                                   config->PrintModuloFraction(),
-						   config->GetOptionBool("emittanceonthefly"),
-                                                   (long int)config->GetOptionNumber("eventstart"),
-                                                   (long int)config->GetOptionNumber("eventend"));
+  EventAnalysis*   evtAnalysis;
+  try
+    {
+      evtAnalysis = new EventAnalysis(dl->GetEvent(),
+				      dl->GetEventTree(),
+				      config->PerEntryEvent(),
+				      config->ProcessSamplers(),
+				      debug,
+				      config->PrintModuloFraction(),
+				      config->GetOptionBool("emittanceonthefly"),
+				      (long int) config->GetOptionNumber("eventstart"),
+				      (long int) config->GetOptionNumber("eventend"));
+    }
+  catch (const RBDSException& error)
+    {std::cerr << error.what(); exit(1);}
   RunAnalysis*     runAnalysis = new RunAnalysis(dl->GetRun(),
 						 dl->GetRunTree(),
 						 config->PerEntryRun(),

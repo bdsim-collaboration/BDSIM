@@ -46,6 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSLinkComponent.hh"
 #include "BDSLinkDetectorConstruction.hh"
 #include "BDSLinkEventAction.hh"
 #include "BDSLinkPrimaryGeneratorAction.hh"
@@ -82,7 +83,9 @@ BDSIMLink::BDSIMLink(BDSBunch* bunchIn):
   bdsBunch(bunchIn),
   runManager(nullptr),
   construction(nullptr),
-  runAction(nullptr)
+  runAction(nullptr),
+  currentElementIndex(0),
+  userPhysicsList(nullptr)
 {;}
 
 BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
@@ -97,7 +100,9 @@ BDSIMLink::BDSIMLink(int argc, char** argv, bool usualPrintOutIn):
   bdsBunch(nullptr),
   runManager(nullptr),
   construction(nullptr),
-  runAction(nullptr)
+  runAction(nullptr),
+  currentElementIndex(0),
+  userPhysicsList(nullptr)
 {
   initialisationResult = Initialise();
 }
@@ -160,7 +165,7 @@ int BDSIMLink::Initialise(double minimumKineticEnergy,
   BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   /// Initialize random number generator
-  BDSRandom::CreateRandomNumberGenerator();
+  BDSRandom::CreateRandomNumberGenerator(globalConstants->RandomEngine());
   BDSRandom::SetSeed(); // set the seed from options
 
   /// Construct output
@@ -206,7 +211,15 @@ int BDSIMLink::Initialise(double minimumKineticEnergy,
 #endif
   auto parallelWorldPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
   G4int physicsVerbosity = BDSGlobalConstants::Instance()->PhysicsVerbosity();
-  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);
+  G4VModularPhysicsList* physList;
+  if (userPhysicsList)
+    {
+      G4cout << "Using externally registered user defined physics list" << G4endl;
+      physList = userPhysicsList;
+    }
+  else
+    {physList = BDS::BuildPhysics(physicsListName, physicsVerbosity);}
+  
   BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);
   // Construction of the physics lists defines the necessary particles and therefore
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
@@ -430,15 +443,62 @@ BDSIMLink::~BDSIMLink()
     {G4cout << __METHOD_NAME__ << "End of Run. Thank you for using BDSIM!" << G4endl;}
 }
 
+int BDSIMLink::GetLinkIndex(const std::string& elementName) const
+{
+  int result = -1;
+  auto search = nameToElementIndex.find(elementName);
+  if (search != nameToElementIndex.end())
+    {result = search->second;}
+  return result;
+}
+
+const BDSLinkComponent* BDSIMLink::GetLinkComponent(int linkID) const
+{
+  const BDSBeamline* bl = construction->LinkBeamline();
+  if (!bl)
+    {return nullptr;}
+  if (linkID > (int)bl->size())
+    {return nullptr;}
+  const auto rawAccComponent = bl->at(linkID)->GetAcceleratorComponent();
+  const auto linkComponent = dynamic_cast<const BDSLinkComponent*>(rawAccComponent);
+  return linkComponent;
+}
+
+double BDSIMLink::GetChordLengthOfLinkElement(int beamlineIndex) const
+{
+  const BDSLinkComponent* component = GetLinkComponent(beamlineIndex);
+  if (!component)
+    {return -1.0;} // play it safe
+  return component->ComponentChordLength();
+}
+
+double BDSIMLink::GetChordLengthOfLinkElement(const std::string& elementName)
+{
+  int linkID = GetLinkIndex(elementName);
+  int beamlineIndex = linkIDToBeamlineIndex[linkID];
+  return GetChordLengthOfLinkElement(beamlineIndex);
+}
+
+double BDSIMLink::GetArcLengthOfLinkElement(int beamlineIndex) const
+{
+  const BDSLinkComponent* component = GetLinkComponent(beamlineIndex);
+  if (!component)
+    {return -1.0;} // play it safe
+  return component->ComponentArcLength();
+}
+
+double BDSIMLink::GetArcLengthOfLinkElement(const std::string& elementName)
+{
+  int linkID = GetLinkIndex(elementName);
+  int beamlineIndex = linkIDToBeamlineIndex[linkID];
+  return GetArcLengthOfLinkElement(beamlineIndex);
+}
+
 void BDSIMLink::SelectLinkElement(const std::string& elementName, G4bool debug)
 {
   if (debug)
     {G4cout << "Searching for " << elementName;}
-  auto search = nameToElementIndex.find(elementName);
-  if (search != nameToElementIndex.end())
-    {currentElementIndex = search->second;}
-  else
-    {currentElementIndex = -1;}
+  currentElementIndex = GetLinkIndex(elementName);
   if (debug)
     {G4cout << ", Index " << currentElementIndex << G4endl;}
 }
@@ -450,7 +510,7 @@ void BDSIMLink::SelectLinkElement(int index, G4bool debug)
   currentElementIndex = index;
 }
 
-void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
+int BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
 				     const std::string& materialName,
 				     double length,
 				     double halfApertureLeft,
@@ -468,7 +528,7 @@ void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
   if (gm->IsGeometryClosed())
     {gm->OpenGeometry();}
 
-  construction->AddLinkCollimatorJaw(collimatorName,
+  G4int linkID = construction->AddLinkCollimatorJaw(collimatorName,
 				     materialName,
 				     length,
 				     halfApertureLeft,
@@ -483,6 +543,7 @@ void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
 				     sampleIn);
   // update this class's nameToElementIndex map
   nameToElementIndex = construction->NameToElementIndex();
+  linkIDToBeamlineIndex = construction->LinkIDToBeamlineIndex();
   
   if (bdsOutput)
     {bdsOutput->UpdateSamplers();}
@@ -491,6 +552,7 @@ void BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
   G4bool bCloseGeometry = gm->CloseGeometry();
   if (!bCloseGeometry)
     {throw BDSException(__METHOD_NAME__, "error - geometry not closed.");}
+  return (int)linkID;
 }
 
 BDSHitsCollectionSamplerLink* BDSIMLink::SamplerHits() const

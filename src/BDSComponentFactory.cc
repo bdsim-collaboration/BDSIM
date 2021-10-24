@@ -207,8 +207,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	    {differentFromDefinition = true;}
 	}
     }
-  else if (element->type == ElementType::_THINMULT)
-    {// thinmultipole only uses one angle - so `angleIn`
+  else if (element->type == ElementType::_THINMULT || (element->type == ElementType::_MULT && !HasSufficientMinimumLength(element, false)) || (element->type == ElementType::_THINRMATRIX))
+    {
+    // thinmultipole only uses one angle - so `angleIn`
        if (prevElement && nextElement)
 	{// both exist
 	  ElementType prevType = prevElement->type;
@@ -305,7 +306,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     case ElementType::_DECAPOLE:
       {component = CreateDecapole(); break;}
     case ElementType::_MULT:
-      {component = CreateMultipole(); break;}
+      {
+        if(!BDS::IsFinite(element->l))
+        {
+          component = CreateThinMultipole(angleIn);
+          break;
+        }
+          component = CreateMultipole();
+        break;}
     case ElementType::_THINMULT:
       {component = CreateThinMultipole(angleIn); break;}
     case ElementType::_ELEMENT:
@@ -2560,7 +2568,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   G4double scaling = el->scaling;
   (*st)["length"] = el->l * CLHEP::m; // length needed for thin multipoles
   // component strength is only normalised by length for thick multipoles
-  if (el->type == ElementType::_THINMULT)
+  if (el->type == ElementType::_THINMULT || (el->type == ElementType::_MULT && !BDS::IsFinite(el->l)))
     {(*st)["length"] = 1*CLHEP::m;}
   auto kn = el->knl.begin();
   auto ks = el->ksl.begin();

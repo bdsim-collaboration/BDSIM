@@ -31,6 +31,7 @@ OptionsBase::OptionsBase()
   visMacroFileName      = "";
   geant4MacroFileName   = "";
   geant4PhysicsMacroFileName = "";
+  geant4PhysicsMacroFileNameFromExecOptions = false;
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "rootevent";
@@ -65,6 +66,7 @@ OptionsBase::OptionsBase()
   
   circular              = false;
   seed                  = -1;
+  randomEngine          = "hepjames";
   nGenerate             = 1;
   recreate              = false;
   recreateFileName      = "";
@@ -303,6 +305,7 @@ OptionsBase::OptionsBase()
   storeTrajectoryLocal               = false;
   storeTrajectoryLinks               = false;
   storeTrajectoryIon                 = false;
+  storeTrajectoryMaterial            = false;
   storeTrajectoryAllVariables        = false;
 
   trajectoryFilterLogicAND = false;
@@ -321,6 +324,8 @@ OptionsBase::OptionsBase()
   
   storeModel               = true;
 
+  samplersSplitLevel       = 0;
+
   // circular options
   nturns                   = 1;
   ptcOneTurnMapFileName    = "";
@@ -336,12 +341,15 @@ OptionsBase::OptionsBase()
   nbinsx = 1;
   nbinsy = 1;
   nbinsz = 1;
+  nbinse = 1;
   xmin   = -0.5;
   xmax   = 0.5;
   ymin   = -0.5;
   ymax   = 0.5;
   zmin   = 0;
   zmax   = 1;
+  emin   = 1e-12;
+  emax   = 1e4;
   useScoringMap = false;
 }
 

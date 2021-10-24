@@ -45,7 +45,15 @@ simple_testing(bunch-ring                     "--file=ring.gmad"                
 simple_testing(bunch-sphere                   "--file=sphere.gmad"                  "")
 simple_testing(bunch-sixtrack                 "--file=sixtrack.gmad"                "")
 simple_testing(bunch-square                   "--file=square.gmad"                  "")
+simple_testing(bunch-square-envelopeZ         "--file=square-envelopeZ.gmad"        "")
 simple_testing(bunch-tilt                     "--file=tilt.gmad"                    "")
 
 set(TESTING_ARGS --ngenerate=32)
 simple_testing(bunch-ptc-loop-file "--file=ptc.gmad" "")
+
+simple_testing(random-engine-hepjames   "--file=random-engine-hepjames.gmad"  "")
+if (CLHEP_HAS_MIXMAX)
+  simple_testing(random-engine-mixmax     "--file=random-engine-mixmax.gmad"    "")
+else()
+  simple_fail(random-engine-mixmax "--file=random-engine-mixmax.gmad")
+endif()
