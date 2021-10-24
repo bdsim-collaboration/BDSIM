@@ -1,5 +1,5 @@
 beam,  particle="e-",
-       energy = 1*GeV,
+       energy = 100*GeV,
        distrType  = "userfile",
        distrFile  = "userbeamdata-ions.dat",
        distrFileFormat = "pdgid";
