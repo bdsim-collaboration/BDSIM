@@ -44,6 +44,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectoryPoint.hh"
 
 #include "globals.hh"
+#include "G4Material.hh"
+#include "G4MaterialTable.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -51,6 +53,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <vector>
+#include <utility>
 
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   nCollimators(0),
@@ -171,6 +174,29 @@ G4int BDSOutputStructures::Create3DHistogram(G4String name, G4String title,
   return result;
 }
 
+G4int BDSOutputStructures::Create4DHistogram(const G4String& name,
+					     const G4String& title,
+					     const G4String& eScale,
+					     const std::vector<double>& eBinsEdges,
+					     G4int nBinsX, G4double xMin, G4double xMax,
+					     G4int nBinsY, G4double yMin, G4double yMax,
+					     G4int nBinsZ, G4double zMin, G4double zMax,
+					     G4int nBinsE, G4double eMin, G4double eMax)
+{
+  G4int result = evtHistos->Create4DHistogram(name, title, eScale, eBinsEdges,
+					      nBinsX, xMin, xMax,
+					      nBinsY, yMin, yMax,
+					      nBinsZ, zMin, zMax,
+					      nBinsE, eMin, eMax);
+  
+  runHistos->Create4DHistogram(name, title, eScale, eBinsEdges,
+			       nBinsX, xMin, xMax,
+			       nBinsY, yMin, yMax,
+			       nBinsZ, zMin, zMax,
+			       nBinsE, eMin, eMax);
+  return result;
+}
+
 void BDSOutputStructures::InitialiseSamplers()
 {
   if (!localSamplersInitialised)
@@ -197,6 +223,52 @@ void BDSOutputStructures::InitialiseSamplers()
 	  samplerTrees.push_back(res);
 	  samplerNames.push_back(samplerName);
         }
+    }
+}
+
+void BDSOutputStructures::InitialiseMaterialMap()
+{
+  materialToID.clear();
+  materialIDToNameUnique.clear();
+  
+  const auto materialTable = G4Material::GetMaterialTable(); // should be an std::vector<G4Material*>*
+  
+  // It's totally permitted to use degenerate material names as the geometry is done by pointer
+  // We need a way to sort the materials for a given input irrespective of pointer or memory
+  // location so the result is the same for multiple runs of bdsim.
+  // Use a pair of <name, density>. A c++ map will be internally sorted by keys and the various
+  // comparison operators are defined by pairs in <utility>.
+  // Once sorted, by a map, we then loop over that map and generate integer IDs for each
+  // material
+  // This is a little overkill really as we ensure in BDSMaterials we don't make materials
+  // with degenerate names and ultimately, we can't define degenerate materials in GMAD so
+  // this shouldn't happen. Perhaps it could from GDML.
+  std::map<std::pair<G4String, G4double>, G4Material*> sortingMap;
+  std::map<G4String, int> nameCount;
+  std::map<G4Material*, G4String> matToUniqueName;
+  for (const auto& mat : *materialTable)
+    {
+      G4String matName = mat->GetName();
+      sortingMap[std::make_pair(matName, mat->GetDensity())] = mat;
+      
+      auto search = nameCount.find(matName);
+      if (search != nameCount.end())
+	{
+	  search->second += 1;
+	  matToUniqueName[mat] = matName + std::to_string(search->second);
+	}
+      else
+	{
+	  nameCount[matName] = 0;
+	  matToUniqueName[mat] = matName;
+	}
+    }
+  short int i = 0;
+  for (const auto& kv : sortingMap)
+    {
+      materialToID[kv.second] = i;
+      materialIDToNameUnique[i] = matToUniqueName[kv.second];
+      i++;
     }
 }
 

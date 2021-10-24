@@ -39,6 +39,9 @@ set_target_properties(BDSModelTreeTester PROPERTIES OUTPUT_NAME "BDSModelTreeTes
 target_link_libraries(BDSModelTreeTester rebdsim bdsimRootEvent bdsim)
 add_test(NAME "tester-model-tree" COMMAND BDSModelTreeTester "../examples/features/data/sample1.root")
 
+add_executable(TH1SetTest TH1SetTest.cc)
+target_link_libraries(TH1SetTest ${BDSIM_LIB_NAME} ${ROOT_LIBRARIES} rebdsim)
+
 # add_executable(BDSTRKTest BDSTRKTest1.cc)
 # set_target_properties(BDSTRKTest PROPERTIES OUTPUT_NAME "BDSTRKTest" VERSION ${BDSIM_VERSION})
 # target_link_libraries(BDSTRKTest tracker)
