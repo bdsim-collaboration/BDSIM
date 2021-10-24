@@ -190,25 +190,26 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 
       if (className == "TDirectory" || className == "TDirectoryFile")
 	{
-	  TDirectory* subDir = static_cast<TDirectory*>(dirObject);
+	  TDirectory* subDir = dynamic_cast<TDirectory*>(dirObject);
+    if (!subDir)
+      {continue;} // shouldn't happen but protect against bad dynamic cast access
 	  MapDirectory(subDir, output, dirPath + "/" + objectName); // recursion!
 	}
-      else if (dirObject->InheritsFrom("TH1") or dirPath =="/Event/MergedHistograms" )
+      else if (dirObject->InheritsFrom("TH1") || dirObject->InheritsFrom("BDSBH4DBase"))
 	{
-	  TH1* h = static_cast<TH1*>(dirObject);
+	  TH1* h = dynamic_cast<TH1*>(dirObject);
+    if (!h)
+      {continue;} // shouldn't happen but protect against bad dynamic cast access
 	  int nDim;
-	  bool BDSBH4Dtype;
+	  bool BDSBH4Dtype = false;
 	  
-	  if ((dirObject->InheritsFrom("BDSBH4DBase")))
+	  if (dirObject->InheritsFrom("BDSBH4DBase"))
       {
-	      nDim=4;
+	      nDim = 4;
 	      BDSBH4Dtype = true;
 	    }
 	  else
-	    {
-	      nDim = RBDS::DetermineDimensionality(h);
-	      BDSBH4Dtype = false;
-	    }
+	    {nDim = RBDS::DetermineDimensionality(h);}
 	  
 	  if (debug)
 	    {gDirectory->pwd();}
