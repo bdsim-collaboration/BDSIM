@@ -437,6 +437,8 @@ where `samplerName` is the name of the sampler in the data to be analysed. Here,
 in total energy (i.e. "TE" suffix) are created with 100 bins from 1 to 10 GeV for all protons,
 primary protons, secondary protons, neutrons and electrons.
 
+See examples in :code:`bdsim/examples/features/analysis/rebdsim/spectra*`.
+
 .. note:: The weight variable is always included in the spectra histograms.
 
 The required columns are:

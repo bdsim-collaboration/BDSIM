@@ -19,6 +19,8 @@ V1.7.0 - 2021 / XX / XX
 New Features
 ------------
 
+* New Spectra command for rebsdim to make very flexible sets of spectra automatically. See
+  :ref:`spectra-definition` for more information.
 * The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
 * Scoring of the differential flux (3D mesh + energy spectrum per cell) following either a linear,
