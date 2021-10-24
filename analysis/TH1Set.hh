@@ -34,20 +34,18 @@ public:
   typedef HistSparse1D<long long int> HistSparse;
   TH1Set();
   TH1Set(const char* name, const char* title);
-  virtual ~TH1Set();
+  ~TH1Set() override;
 
   const HistSparse& GetHistSparse1D() const {return data;}
   
-  virtual Int_t Fill(const char*, Double_t){return 0;}
-  virtual Int_t Fill(Double_t x) {return this->Fill(x,1.0);}
-  virtual Int_t Fill(Double_t x, Double_t w);
-  virtual void  DoFillN(Int_t ntimes, const Double_t *x, const Double_t *w, Int_t stride=1);
-  
+  Int_t Fill(const char*, Double_t) override {return 0;}
+  Int_t Fill(Double_t x) override {return this->Fill(x,1.0);}
+  Int_t Fill(Double_t x, Double_t w) override;
+  void  DoFillN(Int_t ntimes, const Double_t *x, const Double_t *w, Int_t stride=1) override;
   
   Int_t AddNewBin(long long int x);
   
-  virtual Bool_t Add(const TH1 *h1, Double_t c1);
-  virtual Bool_t Add(TF1*, Double_t, Option_t*){return false;}
+  Bool_t Add(const TH1 *h1, Double_t c1) override;
   
   Double_t GetBinContentByAbscissa(long long int x) const;
   Double_t GetBinErrorByAbscissa(long long int x) const;

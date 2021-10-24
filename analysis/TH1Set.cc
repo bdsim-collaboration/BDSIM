@@ -17,8 +17,9 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "HistSparse1D.hh"
-
 #include "TH1Set.hh"
+
+#include "TH1.h"
 #include "TMultiGraph.h"
 #include "TClass.h"
 #include "TList.h"
@@ -55,8 +56,8 @@ Int_t TH1Set::Fill(Double_t x, Double_t w)
   AddBinContent(bin, w);
   if (bin == 0 || bin > fXaxis.GetNbins())
     {
-      if (!GetStatOverflowsBehaviour())
-	{return -1;}
+      if (!TH1::GetStatOverflowsBehaviour())
+	      {return -1;}
     }
   Double_t z= w;
   fTsumw   += z;
