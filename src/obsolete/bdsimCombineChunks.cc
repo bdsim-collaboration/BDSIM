@@ -39,6 +39,9 @@ int main(int argc, char* argv[])
   if (argc < 3)
     {
       std::cout << "usage: bdsimCombine result.root file1.root file2.root ..." << std::endl;
+      std::cout << "usage: bdsimCombine result.root 2GB file1.root file2.root ..." << std::endl;
+      std::cout << "Optional argument (e.g. 2GB) is file chunk size in GB. Must have \"GB\".";
+      std::cout << "File globbing can be done internally - use quotes around regex, e.g. \"raw_*.root\"" << std::endl;
       exit(1);
     }
 
@@ -46,6 +49,48 @@ int main(int argc, char* argv[])
   std::vector<std::string> inputFiles;
   for (int i = 2; i < argc; ++i)
     {inputFiles.emplace_back(std::string(argv[i]));}
+  
+  // check for optional file chunks size limit
+  Long64_t fileChunkSize = 100000000000LL;
+  std::size_t gbFound = inputFiles[0].find("GB");
+  std::size_t mbFound = inputFiles[0].find("MB");
+  if (gbFound != std::string::npos || mbFound != std::string::npos)
+    {
+      std::size_t unitPosition;
+      double unit = 1.0;
+      if (gbFound != std::string::npos)
+	{
+	  unitPosition = gbFound;
+	  unit = 1e9;
+	}
+      else
+	{
+	  unitPosition = mbFound;
+	  unit = 1e6;
+	}
+      std::string numberString = inputFiles[0].substr(0, unitPosition);
+      double fsize;
+      try
+	{fsize = std::stod(numberString);}
+      catch (const std::logic_error& e)
+	{
+	  std::cerr << "Invalid number for file chunk size \"" << numberString << "\"" << std::endl;
+	  exit(1);
+	}
+      
+      fileChunkSize = (Long64_t)  (fsize * unit);
+      if (fileChunkSize == 0)
+	{
+	  std::cerr << "File chunk size is 0 -> must be > 0" << std::endl;
+	  exit(1);
+	}
+      
+      // the file chunk size was specified to remove from list of files
+      inputFiles.erase(inputFiles.begin());
+      std::cout << "Result file will be in chunks of " << fileChunkSize / 1000000LL << " MB" << std::endl;
+      TTree::SetMaxTreeSize(fileChunkSize);
+    }
+  
   // see if we're globbing files
   if (inputFiles[0].find('*') != std::string::npos)
     {
