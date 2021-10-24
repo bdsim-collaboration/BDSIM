@@ -106,8 +106,8 @@ public:
 		    TFile*      output,
 		    const std::string& parentDir);
 
-  /// Access full map of histograms.
-  inline const std::vector<RBDS::HistogramPath> Histograms() const {return histograms;}
+  /// Access full vector of histograms.
+  inline const std::vector<RBDS::HistogramPath>& Histograms() const {return histograms;}
   
 private:
   bool debug;                                   ///< Debug flag.
