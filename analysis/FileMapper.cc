@@ -141,14 +141,7 @@ bool RBDS::IsREBDSIMOrCombineOutputFile(const std::string& filePath)
 
 int RBDS::DetermineDimensionality(TH1* h)
 {
-  if (dynamic_cast<TH1D*>(h))
-    {return 1;}
-  else if (dynamic_cast<TH2D*>(h))
-    {return 2;}
-  else if (dynamic_cast<TH3D*>(h))
-    {return 3;}
-  else
-    {return 1;}
+  return (int)h->GetDimension();
 }
 
 void RBDS::WarningMissingHistogram(const std::string& histName,
