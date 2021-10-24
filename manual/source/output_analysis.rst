@@ -99,6 +99,19 @@ the :code:`Summary.index` variable in the data (i.e. the event index) for each e
 in the Event tree and without "Event" in them. ROOT typically prints a few at a time, with the
 return key printing out the next few and :code:`q` to quit this scanning mode.
 
+Print Variable From Data
+------------------------
+
+In ROOT terminology we can 'scan' a tree to see a variable. The option, :code:`colsize`
+(as a string for the 3rd argument) allows us to increase the precision printed out.
+
+::
+
+   root -l myfile.root
+   > TTree* evt = (TTree*)_file0->Get("Event")
+   > evt->Scan("Summary.index")
+   > evt->Scan("Summary.index", "", "colsize=20")
+
 
 Load Raw Data
 -------------
