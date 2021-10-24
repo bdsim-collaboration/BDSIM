@@ -46,7 +46,11 @@ public:
   
   Int_t AddNewBin(long long int x);
   
-  Bool_t Add(const TH1* h1, Double_t c1) override;
+  // Have to implement these to prevent a warning in older GCC.
+  Bool_t Add(TF1*, Double_t, Option_t*) override {return false;}
+  Bool_t Add(const TH1*, const TH1*, Double_t, Double_t) override {return false;}
+  // The one we implement.
+  Bool_t Add(const TH1*, Double_t) override;
   
   Double_t GetBinContentByAbscissa(long long int x) const;
   Double_t GetBinErrorByAbscissa(long long int x) const;
