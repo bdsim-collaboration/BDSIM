@@ -272,3 +272,14 @@ void BDSGeometryComponent::StripOuterAndMakeAssemblyVolume()
       containerAssembly->AddPlacedVolume(daughterLV, translation, rotation);
     }
 }
+
+void BDSGeometryComponent::AttachUserLimitsToAssembly(G4AssemblyVolume* av,
+                                                      G4UserLimits* ul)
+{
+  std::set<G4LogicalVolume*> lvSet;
+  auto it = av->GetVolumesIterator();
+  for (G4int i = 0; i < (G4int)av->TotalImprintedVolumes(); i++, it++)
+    {lvSet.insert((*it)->GetLogicalVolume());}
+  for (auto& lv : lvSet)
+    {lv->SetUserLimits(ul);}
+}

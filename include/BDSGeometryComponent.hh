@@ -225,6 +225,10 @@ public:
   /// Change from a container logical volume to an assembly volume.
   void StripOuterAndMakeAssemblyVolume();
 
+  /// Utility function to apply user limits to an assembly volume as there's not interface.
+  static void AttachUserLimitsToAssembly(G4AssemblyVolume* av,
+                                         G4UserLimits* ul);
+
 protected:
   G4bool           containerIsAssembly; ///< True if the 'container' is really an assembly; false if an LV.
   G4VSolid*        containerSolid;
