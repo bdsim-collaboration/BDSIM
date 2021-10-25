@@ -61,9 +61,12 @@ void BDSSimpleComponent::Build()
   BuildContainerLogicalVolume();
   
   // set user limits for container & visual attributes
-  if (containerLogicalVolume)
+  if (containerLogicalVolume || containerAssembly)
     {
       BuildUserLimits();
-      containerLogicalVolume->SetUserLimits(userLimits);
+      if (containerIsAssembly)
+        {AttachUserLimitsToAssembly(containerAssembly, userLimits);}
+      else
+        {containerLogicalVolume->SetUserLimits(userLimits);}
     }
 }
