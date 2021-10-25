@@ -1628,6 +1628,8 @@ as required.
 An alternative strategy is to use the `gap`_ beam line element
 and make a placement at the appropriate point in global coordinates.
 
+.. tabularcolumns:: |p{4cm}|p{5cm}|p{2cm}|p{2cm}|
+
 +----------------------+----------------------------------+--------------+---------------+
 | **Parameter**        | **Description**                  | **Default**  | **Required**  |
 +======================+==================================+==============+===============+
@@ -1659,6 +1661,10 @@ and make a placement at the appropriate point in global coordinates.
 |                      | collimator so it appears in the  |              |               |
 |                      | collimator histograms and hits.  |              |               |
 +----------------------+----------------------------------+--------------+---------------+
+| `stripOuterVolume`   | 1 or 0. Whether to strip the     | 0            | No            |
+|                      | outermost volume from the loaded |              |               |
+|                      | geometry and make it an assembly |              |               |
++----------------------+----------------------------------+--------------+---------------+
 
 * `geometryFile` should be of the format `format:filename`, where `format` is the geometry
   format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
@@ -1669,6 +1675,11 @@ and make a placement at the appropriate point in global coordinates.
 * If marked as a collimator, the element will also appear in the collimator histograms
   and also have a collimator-specific branch made for it in the Event tree of the output
   as per the other collimators. The type in the output will be "element-collimator".
+* The outermost volume will be made invisible as it presumed this is a container of air
+  or vacuum. Note, the default world material in BDSIM is air, so ideally a container
+  should be filled with a similar material.
+* The outer volume can be stripped away and the geometry is made into an assembly volume
+  in Geant4 and placed in the world. Use the parameter :code:`stripOuterVolume=1` for this.
 
 .. note:: The length must be larger than the geometry so that it is contained within it and
 	  no overlapping geometry will be produced. However, care must be taken, as the length
@@ -1847,7 +1858,7 @@ beam line is produced by declaring a placement. The placement definition (see
 
 +------------------------+---------------------------------------------------------------+
 | **Parameter**          |  **Description**                                              |
-+------------------------+---------------------------------------------------------------+
++========================+===============================================================+
 | sequence               | Name of the sequence (with `line`) to use for the secondary   |
 |                        | beam line                                                     |
 +------------------------+---------------------------------------------------------------+
