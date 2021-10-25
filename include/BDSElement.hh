@@ -68,15 +68,20 @@ public:
   virtual void ExcludeLogicalVolumeFromBiasing(G4LogicalVolume* lv);
   virtual void AttachSensitiveDetectors();
   /// @}
+
+protected:
+  /// Specialise the method so as not to not overwrite the vis attributes
+  /// of the container volume that for external geometry are always made visible.
+  virtual void Build();
+
+  /// This does the full construction.  Loads the external geometry and field if there is one.
+  virtual void BuildContainerLogicalVolume();
    
 private:
   /// @{ Assignment and copy constructor not implemented nor used
   BDSElement& operator=(const BDSElement&) = delete;
   BDSElement(BDSElement&) = delete;
   /// @}
-  
-  /// This does the full construction.  Loads the external geometry and field if there is one.
-  virtual void BuildContainerLogicalVolume();
 
   G4double horizontalWidth;
   G4String geometryFileName;
