@@ -36,7 +36,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <set>
 
-class G4AssemblyVolume;
 class G4VSensitiveDetector;
 
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*            containerSolidIn,
@@ -267,10 +266,12 @@ void BDSGeometryComponent::StripOuterAndMakeAssemblyVolume()
     {
       auto daughterPV = containerLogicalVolume->GetDaughter(i);
       auto daughterLV = daughterPV->GetLogicalVolume();
-      auto translation = daughterPV->GetTranslation();
-      G4RotationMatrix* rotation = new G4RotationMatrix(*(daughterPV->GetFrameRotation()));
-      containerAssembly->AddPlacedVolume(daughterLV, translation, rotation);
+      auto translation = daughterPV->GetObjectTranslation();
+      auto rotation = daughterPV->GetObjectRotation(); // could be nullptr
+      G4RotationMatrix* rm = rotation ? new G4RotationMatrix(*(rotation)) : nullptr;
+      containerAssembly->AddPlacedVolume(daughterLV, translation, rm);
     }
+  containerIsAssembly = true;
 }
 
 void BDSGeometryComponent::AttachUserLimitsToAssembly(G4AssemblyVolume* av,
