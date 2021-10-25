@@ -87,6 +87,7 @@ Bug Fixes
   of tar.gz (only gzipped or uncompressed) files (historical hangover).
 * Fixed field map interpolation and plotting scripts as well as make use of improvements
   in pybdsim.
+* Fix visualisation of loaded GDML container volume.
 
 Output Changes
 --------------

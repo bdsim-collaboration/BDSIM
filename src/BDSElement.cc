@@ -52,6 +52,18 @@ BDSElement::BDSElement(const G4String& nameIn,
   geometry(nullptr)
 {;}
 
+void BDSElement::Build()
+{
+  BuildContainerLogicalVolume(); // pure virtual provided by derived class
+
+  // set user limits for container & visual attributes
+  if (containerLogicalVolume)
+    {
+      BuildUserLimits();
+      containerLogicalVolume->SetUserLimits(userLimits);
+    }
+}
+
 void BDSElement::BuildContainerLogicalVolume()
 {
   // The horizontalWidth here is a suggested horizontalWidth for the factory. Each subfactory may treat this

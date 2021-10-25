@@ -1,6 +1,7 @@
 d1: drift,l=67*cm;
 l1: line=(d1,d1,d1,d1,d1,ele,d1,d1);
-ele: element, l=1*m, geometryFile="gdml:ln.gdml", stripOuterVolume=1;
+ele: element, l=0.6*m, geometryFile="gdml:ln.gdml", stripOuterVolume=1;
+!ele: element, l=1.5*m, geometryFile="gdml:ln.gdml", stripOuterVolume=0;
 use, l1;
 
 ! reference placement off to the side without any rotation to compare to

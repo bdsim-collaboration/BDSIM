@@ -1675,9 +1675,6 @@ and make a placement at the appropriate point in global coordinates.
 * If marked as a collimator, the element will also appear in the collimator histograms
   and also have a collimator-specific branch made for it in the Event tree of the output
   as per the other collimators. The type in the output will be "element-collimator".
-* The outermost volume will be made invisible as it presumed this is a container of air
-  or vacuum. Note, the default world material in BDSIM is air, so ideally a container
-  should be filled with a similar material.
 * The outer volume can be stripped away and the geometry is made into an assembly volume
   in Geant4 and placed in the world. Use the parameter :code:`stripOuterVolume=1` for this.
 
