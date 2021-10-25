@@ -35,6 +35,8 @@ BDSSimpleComponent::BDSSimpleComponent(const G4String&       nameIn,
   InheritExtents(component);
   containerSolid = component->GetContainerSolid();
   containerLogicalVolume = component->GetContainerLogicalVolume();
+  containerAssembly = component->GetContainerAssemblyVolume();
+  containerIsAssembly = component->ContainerIsAssembly();
 }
 
 BDSSimpleComponent::BDSSimpleComponent(const G4String&       nameIn,
