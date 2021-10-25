@@ -200,6 +200,7 @@ void Element::PublishMembers()
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
+  publish("stripOuterVolume",    &Element::stripOuterVolume);
   publish("autoColour",          &Element::autoColour);
   publish("namedVacuumVolumes",  &Element::namedVacuumVolumes);
   publish("markAsCollimator",    &Element::markAsCollimator);
@@ -528,6 +529,7 @@ void Element::flush()
   fieldAll    = "";
 
   geometryFile = "";
+  stripOuterVolume = 0;
   autoColour   = true;
   material="";
   namedVacuumVolumes = "";
@@ -576,7 +578,7 @@ void Element::set(const Parameters& params)
 {
   for (auto& i : params.setMap)
     {
-      if(i.second == true)
+      if (i.second)
 	{
 	  std::string property = i.first;
 
