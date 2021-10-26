@@ -95,7 +95,7 @@ so that anyone could reproduce the build.
 
 Example usage: ::
 
-  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.5.1-g4v10.7.1.1.sh
+  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.6.0-g4v10.7.2.3.sh
   bdsim --help
 
 This may take some time the first time it is used (up to a minute or two), but CVMFS is highly efficient

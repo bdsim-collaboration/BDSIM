@@ -27,7 +27,7 @@ New Features
   logarithmic or user-defined energy axis scale (requires Boost).
 * New scorer type: cellflux4d
 * New :code:`--versionGit` executable option to get the git SHA1 code as well as the version number.
-* new :code:`--E0=number`, :code:`--Ek0=number`, and :code:`--P0=number` executable options are
+* New :code:`--E0=number`, :code:`--Ek0=number`, and :code:`--P0=number` executable options are
   introduced to permit overriding the energy of the beam.
 * New executable option :code:`--geant4PhysicsMacroFileName` to control the physics macro from the
   command line. Useful when BDSIM is executed from a different directory from the main GMAD input
