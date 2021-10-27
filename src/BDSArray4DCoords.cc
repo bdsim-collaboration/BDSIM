@@ -80,7 +80,7 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
     {tStep = 1;}
 }
 
-void BDSArray4DCoords::CheckStep(G4double step, const G4String& name) const
+void BDSArray4DCoords::CheckStep(G4double step, const G4String& name)
 {
   if (!BDS::IsFinite(step))
     {

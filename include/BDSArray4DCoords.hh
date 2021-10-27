@@ -181,7 +181,7 @@ protected:
   G4double smallestSpatialStep;
   
 private:
-  void CheckStep(G4double step, const G4String& name) const;
+  static void CheckStep(G4double step, const G4String& name);
 };
 
 #endif
