@@ -35,7 +35,7 @@ BDSInterpolator1DLinear::~BDSInterpolator1DLinear()
 BDSFieldValue BDSInterpolator1DLinear::GetInterpolatedValueT(G4double x) const
 {
   G4double xarr = array->ArrayCoordsFromX(x);
-  G4double x1 = std::floor(xarr);
+  G4int x1 = (G4int)std::floor(xarr);
 
   BDSFieldValue values[2];
   values[0] = array->GetConst(x1);
