@@ -42,24 +42,24 @@ BDSFieldValue BDSInterpolator4DCubic::GetInterpolatedValueT(G4double x,
   G4double zarr = array->ArrayCoordsFromZ(z);
   G4double tarr = array->ArrayCoordsFromT(t);
   
-  G4double x1 = std::floor(xarr);
-  G4double y1 = std::floor(yarr);
-  G4double z1 = std::floor(zarr);
-  G4double t1 = std::floor(tarr);
+  G4int x1 = (G4int)std::floor(xarr);
+  G4int y1 = (G4int)std::floor(yarr);
+  G4int z1 = (G4int)std::floor(zarr);
+  G4int t1 = (G4int)std::floor(tarr);
 
   BDSFieldValue localData[4][4][4][4];
-
-  G4double x0 = x1-1;
-  G4double y0 = y1-1;
-  G4double z0 = z1-1;
-  G4double t0 = t1-1;
-  for (int i = 0; i < 4; i++)
+  
+  G4int x0 = x1-1;
+  G4int y0 = y1-1;
+  G4int z0 = z1-1;
+  G4int t0 = t1-1;
+  for (G4int i = 0; i < 4; i++)
     {
-      for (int j = 0; j < 4; j++)
+      for (G4int j = 0; j < 4; j++)
 	{
-	  for (int k = 0; k < 4; k++)
+	  for (G4int k = 0; k < 4; k++)
 	    {
-	      for (int l = 0; l < 4; l++)
+	      for (G4int l = 0; l < 4; l++)
 		{localData[i][j][k][l] = array->GetConst(x0+i, y0+j, z0+k, t0+l);}
 	    }
 	}
