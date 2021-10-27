@@ -71,31 +71,31 @@ public:
   inline G4double SmallestSpatialStep() const {return smallestSpatialStep;}
 
   /// Whether the spatial coordinates lie outside the range of the array or not.
-  virtual G4bool OutsideCoords(const G4double x,
-			       const G4double y,
-			       const G4double z,
-			       const G4double t) const;
+  virtual G4bool OutsideCoords(G4double x,
+			       G4double y,
+			       G4double z,
+			       G4double t) const;
 
   /// Whether the spatial coordinates lie outside the range of the array or not and
   /// warn and exit if so. Uses OutsideCoords but warns and exits if the coordinates
   /// are outside the array.
-  virtual void OutsideCoordsWarn(const G4double x,
-				 const G4double y,
-				 const G4double z,
-				 const G4double t) const;
+  virtual void OutsideCoordsWarn(G4double x,
+				 G4double y,
+				 G4double z,
+				 G4double t) const;
 
   /// @{ Not much point in being both virtual and inline (in our use case) but has to be virtual.
-  virtual G4double ArrayCoordsFromX(const G4double x) const {return (x - xMin) / xStep;}
-  virtual G4double ArrayCoordsFromY(const G4double y) const {return (y - yMin) / yStep;}
-  virtual G4double ArrayCoordsFromZ(const G4double z) const {return (z - zMin) / zStep;}
-  virtual G4double ArrayCoordsFromT(const G4double t) const {return (t - tMin) / tStep;}
+  virtual G4double ArrayCoordsFromX(G4double x) const {return (x - xMin) / xStep;}
+  virtual G4double ArrayCoordsFromY(G4double y) const {return (y - yMin) / yStep;}
+  virtual G4double ArrayCoordsFromZ(G4double z) const {return (z - zMin) / zStep;}
+  virtual G4double ArrayCoordsFromT(G4double t) const {return (t - tMin) / tStep;}
   /// @}
 
   /// Convenience function to easily get array coords in all dimensions at once.
-  inline BDSFourVector<G4double> ArrayCoordsFromXYZT(const G4double x,
-						     const G4double y,
-						     const G4double z,
-						     const G4double t) const
+  inline BDSFourVector<G4double> ArrayCoordsFromXYZT(G4double x,
+						     G4double y,
+						     G4double z,
+						     G4double t) const
   {
     return BDSFourVector<G4double>(ArrayCoordsFromX(x),
 				   ArrayCoordsFromY(y),
@@ -104,18 +104,18 @@ public:
   }
 
   /// @{ Return spatial value from a continuous array coordinate in one dimension.
-  inline G4double XFromArrayCoords(const G4double xCoord) const {return xMin + xCoord*xStep;}
-  inline G4double YFromArrayCoords(const G4double yCoord) const {return yMin + yCoord*yStep;}
-  inline G4double ZFromArrayCoords(const G4double zCoord) const {return zMin + zCoord*zStep;}
-  inline G4double TFromArrayCoords(const G4double tCoord) const {return tMin + tCoord*tStep;}
+  inline G4double XFromArrayCoords(G4double xCoord) const {return xMin + xCoord*xStep;}
+  inline G4double YFromArrayCoords(G4double yCoord) const {return yMin + yCoord*yStep;}
+  inline G4double ZFromArrayCoords(G4double zCoord) const {return zMin + zCoord*zStep;}
+  inline G4double TFromArrayCoords(G4double tCoord) const {return tMin + tCoord*tStep;}
   /// @}
 
   /// Convenience function to get the spatial coordinates from continuous array coordinates
   /// for all dimensions at once.
-  inline BDSFourVector<G4double> XYZTFromArrayCoords(const G4double x,
-						     const G4double y,
-						     const G4double z,
-						     const G4double t) const
+  inline BDSFourVector<G4double> XYZTFromArrayCoords(G4double x,
+						     G4double y,
+						     G4double z,
+						     G4double t) const
   {
     return BDSFourVector<G4double>(XFromArrayCoords(x),
 				   YFromArrayCoords(y),
@@ -124,17 +124,17 @@ public:
   }
 
   /// @{ Not much point in being both virtual and inline (in our use case) but has to be virtual.
-  virtual G4int NearestX(const G4double x) const {return (G4int)round((x - xMin) / xStep);}
-  virtual G4int NearestY(const G4double y) const {return (G4int)round((y - yMin) / yStep);}
-  virtual G4int NearestZ(const G4double z) const {return (G4int)round((z - zMin) / zStep);}
-  virtual G4int NearestT(const G4double t) const {return (G4int)round((t - tMin) / tStep);}
+  virtual G4int NearestX(G4double x) const {return (G4int)round((x - xMin) / xStep);}
+  virtual G4int NearestY(G4double y) const {return (G4int)round((y - yMin) / yStep);}
+  virtual G4int NearestZ(G4double z) const {return (G4int)round((z - zMin) / zStep);}
+  virtual G4int NearestT(G4double t) const {return (G4int)round((t - tMin) / tStep);}
   /// @}
 
   /// Return the index of the nearest field value in space.
-  inline BDSFourVector<G4int> NearestXYZT(const G4double x,
-					  const G4double y,
-					  const G4double z,
-					  const G4double t) const
+  inline BDSFourVector<G4int> NearestXYZT(G4double x,
+					  G4double y,
+					  G4double z,
+					  G4double t) const
   {
     return BDSFourVector<G4int>(NearestX(x),
 				NearestY(y),
