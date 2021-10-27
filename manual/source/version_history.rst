@@ -27,13 +27,17 @@ New Features
   logarithmic or user-defined energy axis scale (requires Boost).
 * New scorer type: cellflux4d
 * New :code:`--versionGit` executable option to get the git SHA1 code as well as the version number.
-* new :code:`--E0=number`, :code:`--Ek0=number`, and :code:`--P0=number` executable options are
+* New :code:`--E0=number`, :code:`--Ek0=number`, and :code:`--P0=number` executable options are
   introduced to permit overriding the energy of the beam.
 * New executable option :code:`--geant4PhysicsMacroFileName` to control the physics macro from the
   command line. Useful when BDSIM is executed from a different directory from the main GMAD input
   file and with a relatively complex model.
 * rebdsim will now default to "intputfilename" + "_ana.root" if no outputfile name is specified.
 * "linearmag" experimental interpolation.
+* When loading geometry (e.g. a GDML file) to be used as a placement, you can now remove the
+  outermost volume (e.g. the 'world' of that file) and place all the contents in the BDSIM
+  world with the compound transforms: relative to the former outermost logical volume and also
+  the placements transform in the world.
   
 General
 -------
@@ -48,6 +52,8 @@ General
   It will also tolerate any whitespace before either `#` or `!` to mark a comment line,
   whereas previously it would only identify a comment if the very first character
   of the line was `#`.
+* BDSGeometryComponent class refactored to permit a G4AssemblyVolume as the container
+  for a piece of geometry. It's in addition to a logical volume.
 
 Bug Fixes
 ---------
@@ -81,6 +87,7 @@ Bug Fixes
   of tar.gz (only gzipped or uncompressed) files (historical hangover).
 * Fixed field map interpolation and plotting scripts as well as make use of improvements
   in pybdsim.
+* Fix visualisation of loaded GDML container volume.
 
 Output Changes
 --------------
