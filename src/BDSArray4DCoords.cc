@@ -89,10 +89,10 @@ void BDSArray4DCoords::CheckStep(G4double step, const G4String& name)
     }
 }
 
-G4bool BDSArray4DCoords::OutsideCoords(const G4double x,
-				       const G4double y,
-				       const G4double z,
-				       const G4double t) const
+G4bool BDSArray4DCoords::OutsideCoords(G4double x,
+				       G4double y,
+				       G4double z,
+				       G4double t) const
 {
   G4bool rx = x < xMin || x > xMax;
   G4bool ry = y < yMin || y > yMax;
@@ -101,10 +101,10 @@ G4bool BDSArray4DCoords::OutsideCoords(const G4double x,
   return rx || ry || rz || rt;
 }
 
-void BDSArray4DCoords::OutsideCoordsWarn(const G4double x,
-					 const G4double y,
-					 const G4double z,
-					 const G4double t) const
+void BDSArray4DCoords::OutsideCoordsWarn(G4double x,
+					 G4double y,
+					 G4double z,
+					 G4double t) const
 {
   if (OutsideCoords(x,y,z,t))
     {
