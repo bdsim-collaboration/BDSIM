@@ -202,6 +202,7 @@ void Element::PublishMembers()
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
   publish("dicomDataPath",&Element::dicomDataPath);
   publish("dicomDataFile",&Element::dicomDataFile);
+  publish("stripOuterVolume",    &Element::stripOuterVolume);
   publish("autoColour",          &Element::autoColour);
   publish("namedVacuumVolumes",  &Element::namedVacuumVolumes);
   publish("markAsCollimator",    &Element::markAsCollimator);
@@ -536,8 +537,6 @@ void Element::flush()
   fieldAll    = "";
 
   geometryFile = "";
-  dicomDataPath = "";
-  dicomDataFile = "data.dat";
   autoColour   = true;
   material="";
   namedVacuumVolumes = "";
@@ -586,7 +585,7 @@ void Element::set(const Parameters& params)
 {
   for (auto& i : params.setMap)
     {
-      if(i.second == true)
+      if (i.second)
 	{
 	  std::string property = i.first;
 
