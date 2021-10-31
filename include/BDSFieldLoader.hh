@@ -81,8 +81,8 @@ private:
   static BDSFieldLoader* instance;
   
   /// @{ Check file path isn't empty and throw exception if it is.
-  void BFilePathOK(const BDSFieldInfo& info) const;
-  void EFilePathOK(const BDSFieldInfo& info) const;
+  static void BFilePathOK(const BDSFieldInfo& info);
+  static void EFilePathOK(const BDSFieldInfo& info);
   /// @}
 
   /// @{ Return the cached array if there is one - may return nullptr.

@@ -247,7 +247,7 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadEMField(const BDSFieldInfo& info)
   return result;  
 }
 
-void BDSFieldLoader::BFilePathOK(const BDSFieldInfo& info) const
+void BDSFieldLoader::BFilePathOK(const BDSFieldInfo& info)
 {
   G4String filePath = info.MagneticFile();
   if (filePath.empty())
@@ -257,7 +257,7 @@ void BDSFieldLoader::BFilePathOK(const BDSFieldInfo& info) const
     }
 }
 
-void BDSFieldLoader::EFilePathOK(const BDSFieldInfo& info) const
+void BDSFieldLoader::EFilePathOK(const BDSFieldInfo& info)
 {
   G4String filePath = info.ElectricFile();
   if (filePath.empty())
