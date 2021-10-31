@@ -33,30 +33,11 @@ BDSInterpolator3DCubic::~BDSInterpolator3DCubic()
 {;}
 
 BDSFieldValue BDSInterpolator3DCubic::GetInterpolatedValueT(G4double x,
-							    G4double y,
-							    G4double z) const
+                                                            G4double y,
+                                                            G4double z) const
 {
-  G4double xarr = array->ArrayCoordsFromX(x);
-  G4double yarr = array->ArrayCoordsFromY(y);
-  G4double zarr = array->ArrayCoordsFromZ(z);
-  
-  G4int x1 = (G4int)std::floor(xarr);
-  G4int y1 = (G4int)std::floor(yarr);
-  G4int z1 = (G4int)std::floor(zarr);
-
   BDSFieldValue localData[4][4][4];
-
-  G4int x0 = x1-1;
-  G4int y0 = y1-1;
-  G4int z0 = z1-1;
-  for (G4int i = 0; i < 4; i++)
-    {
-      for (G4int j = 0; j < 4; j++)
-	{
-	  for (G4int k = 0; k < 4; k++)
-	    {localData[i][j][k] = array->GetConst(x0+i, y0+j, z0+k);}
-	}
-    }
-
-  return BDS::Cubic3D(localData, xarr-x1, yarr-y1, zarr-z1);
+  G4double xFrac, yFrac, zFrac;
+  array->ExtractSection4x4x4(x, y, z, localData, xFrac, yFrac, zFrac);
+  return BDS::Cubic3D(localData, xFrac, yFrac, zFrac);
 }

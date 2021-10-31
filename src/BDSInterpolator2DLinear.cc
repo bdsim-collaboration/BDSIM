@@ -34,20 +34,9 @@ BDSInterpolator2DLinear::~BDSInterpolator2DLinear()
 
 BDSFieldValue BDSInterpolator2DLinear::GetInterpolatedValueT(G4double x, G4double y) const
 {
-  G4double xarr = array->ArrayCoordsFromX(x);
-  G4double yarr = array->ArrayCoordsFromY(y);
-  
-  G4int x1 = (G4int)std::floor(xarr);
-  G4int y1 = (G4int)std::floor(yarr);
-
   BDSFieldValue localData[2][2];
-  for (G4int i = 0; i < 2; i++)
-    {
-      for (G4int j = 0; j < 2; j++)
-	{localData[i][j] = array->GetConst(x1+i, y1+j);}
-    }
-  
-  BDSFieldValue result = BDS::Linear2D(localData, xarr-x1, yarr-y1);
-  
+  G4double xFrac, yFrac;
+  array->ExtractSection2x2(x,y,localData, xFrac, yFrac);
+  BDSFieldValue result = BDS::Linear2D(localData, xFrac, yFrac);
   return result;
 }
