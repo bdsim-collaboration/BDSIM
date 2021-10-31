@@ -34,6 +34,9 @@ public:
   BDSArrayOperatorIndexFlip():
     xyzt{1,1,1,1}
   {;}
+  BDSArrayOperatorIndexFlip(G4bool xyzt[4]):
+    BDSArrayOperatorIndexFlip(xyzt[0], xyzt[1], xyzt[2], xyzt[3])
+  {;}
   BDSArrayOperatorIndexFlip(G4bool x,
                             G4bool y,
                             G4bool z,
