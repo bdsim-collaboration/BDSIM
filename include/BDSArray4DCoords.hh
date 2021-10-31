@@ -90,6 +90,21 @@ public:
   virtual G4double ArrayCoordsFromZ(G4double z) const {return (z - zMin) / zStep;}
   virtual G4double ArrayCoordsFromT(G4double t) const {return (t - tMin) / tStep;}
   /// @}
+  
+  /// @{ Utility version to forward to individual function.
+  void ArrayCoordsFromXY(G4double& x, G4double& xArr,
+                         G4double& y, G4double& yArr) const
+  {xArr = ArrayCoordsFromX(x); yArr = ArrayCoordsFromY(y);}
+  void ArrayCoordsFromXYZ(G4double& x, G4double& xArr,
+                          G4double& y, G4double& yArr,
+                          G4double& z, G4double& zArr) const
+  {xArr = ArrayCoordsFromX(x); yArr = ArrayCoordsFromY(y); zArr = ArrayCoordsFromZ(z);}
+  void ArrayCoordsFromXYZT(G4double& x, G4double& xArr,
+                           G4double& y, G4double& yArr,
+                           G4double& z, G4double& zArr,
+                           G4double& t, G4double& tArr) const
+  {xArr = ArrayCoordsFromX(x); yArr = ArrayCoordsFromY(y); zArr = ArrayCoordsFromZ(z); tArr = ArrayCoordsFromT(t);}
+  /// @}
 
   /// Convenience function to easily get array coords in all dimensions at once.
   inline BDSFourVector<G4double> ArrayCoordsFromXYZT(G4double x,
@@ -150,6 +165,31 @@ public:
 				NearestZ(pos[2]),
 				NearestT(pos[3]));
   }
+  
+  virtual void ExtractSection2x2x2x2(G4double x,
+                                     G4double y,
+                                     G4double z,
+                                     G4double t,
+                                     BDSFieldValue (&localData)[2][2][2][2],
+                                     G4double& xFrac,
+                                     G4double& yFrac,
+                                     G4double& zFrac,
+                                     G4double& tFrac) const;
+  
+  virtual void ExtractSection4x4x4x4(G4double x,
+                                     G4double y,
+                                     G4double z,
+                                     G4double t,
+                                     BDSFieldValue (&localData)[4][4][4][4],
+                                     G4double& xFrac,
+                                     G4double& yFrac,
+                                     G4double& zFrac,
+                                     G4double& tFrac) const;
+  
+  virtual BDSFieldValue ExtractNearest(G4double x,
+                                       G4double y = 0,
+                                       G4double z = 0,
+                                       G4double t = 0) const;
 
   /// Overloaded output function from BDSArray4D. Prints spatial map parameters, then
   /// underlying array.

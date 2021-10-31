@@ -39,6 +39,75 @@ BDSArray3DCoords::BDSArray3DCoords(G4int nXIn, G4int nYIn, G4int nZIn,
   zDimension(zDimensionIn)
 {;}
 
+void BDSArray3DCoords::ExtractSection2x2x2(G4double x,
+                                           G4double y,
+                                           G4double z,
+                                           BDSFieldValue (&localData)[2][2][2],
+                                           G4double& xFrac,
+                                           G4double& yFrac,
+                                           G4double& zFrac) const
+{
+  G4double xArrayCoords, yArrayCoords, zArrayCoords;
+  ArrayCoordsFromXYZ(x, xArrayCoords, y, yArrayCoords, z, zArrayCoords);
+  auto x1 = (G4int)std::floor(xArrayCoords);
+  auto y1 = (G4int)std::floor(yArrayCoords);
+  auto z1 = (G4int)std::floor(zArrayCoords);
+  
+  xFrac = x1 - xArrayCoords;
+  yFrac = y1 - yArrayCoords;
+  zFrac = z1 - zArrayCoords;
+  
+  for (G4int i = 0; i < 2; i++)
+    {
+      for (G4int j = 0; j < 2; j++)
+	{
+	  for (G4int k = 0; k < 2; k++)
+	    {localData[i][j][k] = GetConst(x1+i, y1+j, z1+k);}
+	}
+    }
+}
+
+void BDSArray3DCoords::ExtractSection4x4x4(G4double x,
+                                           G4double y,
+                                           G4double z,
+                                           BDSFieldValue (&localData)[4][4][4],
+                                           G4double& xFrac,
+                                           G4double& yFrac,
+                                           G4double& zFrac) const
+{
+  G4double xArrayCoords, yArrayCoords, zArrayCoords;
+  ArrayCoordsFromXYZ(x, xArrayCoords, y, yArrayCoords, z, zArrayCoords);
+  auto x1 = (G4int)std::floor(xArrayCoords);
+  auto y1 = (G4int)std::floor(yArrayCoords);
+  auto z1 = (G4int)std::floor(zArrayCoords);
+  xFrac = xArrayCoords - x1;
+  yFrac = yArrayCoords - y1;
+  zFrac = zArrayCoords - z1;
+  
+  for (G4int i : {x1-1, x1, x1+1, x1+2})
+    {
+      for (G4int j : {y1-1, y1, y1+1, y1+2})
+	{
+	  for (G4int k : {z1-1, z1, z1+1, z1+2})
+	    {
+	      localData[i][j][k] = GetConst(x1+i, y1+j, z1+k);
+	    }
+	}
+    }
+}
+
+BDSFieldValue BDSArray3DCoords::ExtractNearest(G4double x,
+                                               G4double y,
+                                               G4double z,
+                                               G4double /*t*/) const
+{
+  G4int xind = NearestX(x);
+  G4int yind = NearestY(y);
+  G4int zind = NearestZ(z);
+  BDSFieldValue result = GetConst(xind, yind, zind); // here we're constructing a copy on purpose
+  return result;
+}
+
 std::ostream& operator<< (std::ostream& out, BDSArray3DCoords const &a)
 {
   return a.Print(out);

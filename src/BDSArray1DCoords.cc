@@ -34,6 +34,36 @@ BDSArray1DCoords::BDSArray1DCoords(G4int            nXIn,
 		   dimensionIn)
 {;}
 
+void BDSArray1DCoords::ExtractSection2(G4double x,
+                                       BDSFieldValue (&localData)[2],
+                                       G4double& xFrac) const
+{
+  G4double xArrayCoords = ArrayCoordsFromX(x);
+  auto x1 = (G4int)std::floor(xArrayCoords);
+  xFrac = xArrayCoords - x1;
+  for (auto i : {x1, x1+1})
+    {localData[i] = GetConst(i);}
+}
+
+void BDSArray1DCoords::ExtractSection4(G4double x,
+                                       BDSFieldValue (&localData)[4],
+                                       G4double& xFrac) const
+{
+  G4double xArrayCoords = ArrayCoordsFromX(x);
+  auto x1 = (G4int)std::floor(xArrayCoords);
+  xFrac = xArrayCoords - x1;
+  for (auto i : {x1-1, x1, x1+1, x1+2})
+    {localData[i] = GetConst(i);}
+}
+
+BDSFieldValue BDSArray1DCoords::ExtractNearest(G4double x,
+                                               G4double /*y*/,
+                                               G4double /*z*/,
+                                               G4double /*t*/) const
+{
+  return GetConst(NearestX(x));
+}
+
 std::ostream& operator<< (std::ostream& out, BDSArray1DCoords const &a)
 {
   return a.Print(out);

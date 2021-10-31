@@ -47,6 +47,23 @@ public:
 		   BDSDimensionType xDimensionIn = BDSDimensionType::x,
 		   BDSDimensionType yDimensionIn = BDSDimensionType::y);
   virtual ~BDSArray2DCoords(){;}
+  
+  virtual void ExtractSection2x2(G4double x,
+                                 G4double y,
+                                 BDSFieldValue (&localData)[2][2],
+                                 G4double& xFrac,
+                                 G4double& yFrac) const;
+  
+  virtual void ExtractSection4x4(G4double x,
+                                 G4double y,
+                                 BDSFieldValue (&localData)[4][4],
+                                 G4double& xFrac,
+                                 G4double& yFrac) const;
+  
+  virtual BDSFieldValue ExtractNearest(G4double x,
+                                       G4double y = 0,
+                                       G4double z = 0,
+                                       G4double t = 0) const ;
 
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSArray2DCoords const &a);
