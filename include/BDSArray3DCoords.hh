@@ -51,6 +51,7 @@ public:
 		   BDSDimensionType zDimensionIn = BDSDimensionType::z);
   virtual ~BDSArray3DCoords(){;}
   
+  /// Extract 2x2x2 points lying around coordinate x.
   virtual void ExtractSection2x2x2(G4double x,
                                    G4double y,
                                    G4double z,
@@ -59,6 +60,7 @@ public:
                                    G4double& yFrac,
                                    G4double& zFrac) const;
   
+  /// Extract 4x4x4 points lying around coordinate x.
   virtual void ExtractSection4x4x4(G4double x,
                                    G4double y,
                                    G4double z,
@@ -67,6 +69,7 @@ public:
                                    G4double& yFrac,
                                    G4double& zFrac) const;
   
+  /// Extract nearest field value from array. t ignored but required for overload.
   virtual BDSFieldValue ExtractNearest(G4double x,
                                        G4double y = 0,
                                        G4double z = 0,

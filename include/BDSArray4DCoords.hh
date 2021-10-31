@@ -166,6 +166,7 @@ public:
 				NearestT(pos[3]));
   }
   
+  /// Extract 2x2x2x2 points lying around coordinate x.
   virtual void ExtractSection2x2x2x2(G4double x,
                                      G4double y,
                                      G4double z,
@@ -176,6 +177,7 @@ public:
                                      G4double& zFrac,
                                      G4double& tFrac) const;
   
+  /// Extract 4x4x4x4 points lying around coordinate x.
   virtual void ExtractSection4x4x4x4(G4double x,
                                      G4double y,
                                      G4double z,
@@ -186,6 +188,7 @@ public:
                                      G4double& zFrac,
                                      G4double& tFrac) const;
   
+  /// Extract nearest field value from array.
   virtual BDSFieldValue ExtractNearest(G4double x,
                                        G4double y = 0,
                                        G4double z = 0,
