@@ -16,35 +16,35 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSFIELDREFLECTIONTYPE_H
-#define BDSFIELDREFLECTIONTYPE_H
-
+#ifndef BDSARRAYREFLECTIONTYPE_H
+#define BDSARRAYREFLECTIONTYPE_H
 #include "BDSTypeSafeEnum.hh"
 #include "G4String.hh"
 
 /**
- * @brief Type definition for field reflections
+ * @brief Type definition for array reflections
  *
  * @author Laurie Nevay
  */
 
-struct fieldreflectiontypes_def
+struct arrayreflectiontypes_def
 {
   enum type {none,
-    vertical,
-    horizontal,
-    mirrorvertical,
-    mirrorhorizontal,
-    quadrantdipole,
-    quadrantquadrupole};
+             flipx, flipy, flipz, flipt,
+             reflectnone,
+             reflectx, reflecty, reflectz, reflectt,
+             reflectxydipole,
+             reflectxzdipole,
+             reflectyzdipole,
+             reflectxyquadrupole};
 };
 
-typedef BDSTypeSafeEnum<fieldreflectiontypes_def,int> BDSFieldReflectionType;
+typedef BDSTypeSafeEnum<arrayreflectiontypes_def,int> BDSArrayReflectionType;
 
 namespace BDS
 {
   /// Function that gives corresponding enum value for string (case-insensitive)
-  BDSFieldReflectionType DetermineFieldReflectionType(G4String fieldReflectionType);
+  BDSArrayReflectionType DetermineArrayReflectionType(G4String arrayReflectionType);
 }
 
 #endif
