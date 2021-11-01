@@ -34,7 +34,7 @@ BDSArray2DCoordsTransformed::BDSArray2DCoordsTransformed(BDSArray2DCoords* array
   valueOperator(valueOperatorIn),
   returnValue(BDSFieldValue())
 {
-  indexOperator->TransformLimits(xMin, xMax, yMin, yMax, zMin, zMax, tMin, tMax);
+  indexOperator->TransformLimits(xMin, xMax, yMin, yMax);
 }
 
 BDSArray2DCoordsTransformed::~BDSArray2DCoordsTransformed()
