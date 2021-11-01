@@ -21,9 +21,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 /**
- * @brief Interface for modifying by reference spatial coordinates.
+ * @brief Interface for modifying field values.
  *
- * Apply() method is pure virtual.
+ * Apply() method is pure virtual
  * 
  * @author Laurie Nevay
  */
@@ -35,8 +35,10 @@ public:
   virtual ~BDSArrayOperatorValue(){;}
   
   /// Return a name of the operator for feedback to the user in print out.
-  virtual G4String Name() const = 0;
+  virtual G4String Name() const {return "None";}
   
+  /// Index arguments are original coordinate space indices, i.e. allowed
+  /// to be negative. No action by default.
   virtual BDSFieldValue Apply(BDSFieldValue v,
                               G4int xInd,
                               G4int yInd = 0,

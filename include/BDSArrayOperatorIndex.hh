@@ -39,7 +39,8 @@ public:
   /// Supply a name of this operator for feedback to the user in print out.
   virtual G4String Name() const = 0;
 
-  /// Operation to modify the coordinates by reference.
+  /// Operation to modify the coordinates by reference. As we typically have
+  /// more than one return value, we therefore use references as a way of doing this.
   virtual void Apply(G4int& x,
                      G4int& y,
                      G4int& z,
@@ -64,7 +65,7 @@ public:
   void Apply(G4int& x, G4int& y, G4int& z) const
   {
     G4int t = 0;
-    Apply(x,y,z,t);
+    Apply(x, y, z, t);
   }
   
   virtual void TransformLimits(G4double& xMin, G4double& xMax,
