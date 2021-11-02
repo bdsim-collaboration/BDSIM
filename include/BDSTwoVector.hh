@@ -55,6 +55,8 @@ public:
   /// Assignment operator.
   BDSTwoVector& operator=(const BDSTwoVector& rhs)
   {
+    if (this == &rhs)
+      {return *this;}
     values[0] = rhs.values[0];
     values[1] = rhs.values[1];
     return *this;
