@@ -16,38 +16,53 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSARRAYOPERATORVALUE_H
-#define BDSARRAYOPERATORVALUE_H
+#ifndef BDSARRAYOPERATORVALUEREFLECT_H
+#define BDSARRAYOPERATORVALUEREFLECT_H
+#include "BDSArrayOperatorValue.hh"
+#include "BDSFieldValue.hh"
+
+#include "G4String.hh"
 #include "G4Types.hh"
 
 /**
- * @brief Interface for modifying field values.
- *
- * Apply() method is pure virtual
+ * @brief Reflect field component in individual dimensions.
  * 
  * @author Laurie Nevay
  */
 
-class BDSArrayOperatorValue
+class BDSArrayOperatorValueReflect: public BDSArrayOperatorValue
 {
 public:
-  BDSArrayOperatorValue(){;}
-  virtual ~BDSArrayOperatorValue(){;}
+  BDSArrayOperatorValueReflect():
+    multiplier(BDSFieldValue(1.0,1.0,1.0))
+  {;}
+  BDSArrayOperatorValueReflect(G4bool x,
+                               G4bool y,
+                               G4bool z):
+    BDSArrayOperatorValueReflect()
+  {
+    multiplier[0] = x ? -1.0 : 1.0;
+    multiplier[1] = y ? -1.0 : 1.0;
+    multiplier[2] = z ? -1.0 : 1.0;
+  }
+  virtual ~BDSArrayOperatorValueReflect(){;}
   
   /// Return a name of the operator for feedback to the user in print out.
-  virtual G4String Name() const {return "None";}
+  virtual G4String Name() const {return name;}
   
-  /// Index arguments are original coordinate space indices, i.e. allowed
-  /// to be negative. No action by default.
   virtual BDSFieldValue Apply(BDSFieldValue v,
                               G4int /*xInd*/,
                               G4int yInd = 0,
                               G4int zInd = 0,
                               G4int tInd = 0) const
   {
-    yInd = 2; zInd = 3; tInd = 4;// to retain default values and prevent compiler warnings
-    return v;
+    yInd = 2; zInd = 3; tInt = 4;// to retain default values and prevent compiler warnings
+    return v * multiplier;
   }
+  
+private:
+  G4String name;
+  BDSFieldValue multiplier;
 };
 
 #endif
