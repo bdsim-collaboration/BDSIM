@@ -53,6 +53,8 @@ public:
   /// Assignment operator.
   BDSFourVector& operator=(const BDSFourVector& rhs)
   {
+    if (this == &rhs)
+      {return *this;}
     for (const G4int& i : indices)
       {values[i] = rhs.values[i];}
     return *this;
