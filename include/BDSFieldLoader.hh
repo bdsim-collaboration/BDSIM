@@ -19,9 +19,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDLOADER_H
 #define BDSFIELDLOADER_H
 
+#include "BDSArrayReflectionType.hh"
 #include "BDSInterpolatorType.hh"
 #include "G4String.hh"
 #include "G4Transform3D.hh"
+
+#include <set>
 
 class BDSArray1DCoords;
 class BDSArray2DCoords;
@@ -99,6 +102,15 @@ private:
   BDSArray3DCoords* LoadBDSIM3D(const G4String& filePath);
   BDSArray4DCoords* LoadBDSIM4D(const G4String& filePath);
   /// @}
+  
+  BDSArray1DCoords* CreateArrayTransformWrapper(BDSArray1DCoords* existingArray,
+                                                const std::set<BDSArrayReflectionType>& reflectionType) const;
+  BDSArray2DCoords* CreateArrayTransformWrapper(BDSArray2DCoords* existingArray,
+                                                const std::set<BDSArrayReflectionType>& reflectionType) const;
+  BDSArray3DCoords* CreateArrayTransformWrapper(BDSArray3DCoords* existingArray,
+                                                const std::set<BDSArrayReflectionType>& reflectionType) const;
+  BDSArray4DCoords* CreateArrayTransformWrapper(BDSArray4DCoords* existingArray,
+                                                const std::set<BDSArrayReflectionType>& reflectionType) const;
 
   /// Create the appropriate 1D interpolator for an array.
   BDSInterpolator1D* CreateInterpolator1D(BDSArray1DCoords*   array,

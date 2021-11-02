@@ -17,11 +17,16 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSArray1DCoords.hh"
+#include "BDSArray1DCoordsTransformed.hh"
 #include "BDSArray2DCoords.hh"
+#include "BDSArray2DCoordsTransformed.hh"
 #include "BDSArray3DCoords.hh"
+#include "BDSArray3DCoordsTransformed.hh"
 #include "BDSArray4DCoords.hh"
+#include "BDSArray4DCoordsTransformed.hh"
 #include "BDSArray2DCoordsRDipole.hh"
 #include "BDSArray2DCoordsRQuad.hh"
+#include "BDSArrayReflectionType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSFieldEInterpolated.hh"
@@ -74,6 +79,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <set>
 
 #ifdef USE_GZSTREAM
 #include "src-external/gzstream/gzstream.h"
@@ -508,6 +514,30 @@ BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   arra
       {throw BDSException(__METHOD_NAME__, "Invalid interpolator type for 4D field: " + interpolatorType.ToString()); break;}
     }
   return result;	
+}
+
+
+BDSArray1DCoords* BDSFieldLoader::CreateArrayTransformWrapper(BDSArray1DCoords* existingArray,
+                                                              const std::set<BDSArrayReflectionType>& reflectionTypes) const
+{
+  if (reflectionTypes.empty())
+    {return existingArray;}
+  
+  BDSArray1DCoords* result = existingArray;
+  G4bool indexOperators[4] = {false, false, false, false};
+  G4bool valueOperators[4] = {false, false, false, false};
+  for (auto& reflectionType : reflectionTypes)
+  {
+    switch (reflectionType.underlying())
+    {
+      case BDSArrayReflectionType::flipx:
+      case BDSArrayReflectionType::none:
+      default:
+      {
+        break;
+      }
+    }
+  }
 }
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM1DB(const G4String&      filePath,
