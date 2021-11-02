@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSFOURVECTOR_H
 #define BDSFOURVECTOR_H
+#include "BDSException.hh"
 
 #include "globals.hh" // geant4 types / globals
 
@@ -61,7 +62,7 @@ public:
   Type& operator[](const G4int index)
   {
     if (index > (G4int)indices.size()-1)
-      {G4cerr << "index outside array" << G4endl; exit(1);}
+    {throw BDSException("BDSFourVector::operator[]> index outside array");}
     return values[index];
   }
 
@@ -69,7 +70,7 @@ public:
   const Type& operator[](const G4int index) const
   {
     if (index > (G4int)indices.size()-1)
-      {G4cerr << "index outside array" << G4endl; exit(1);}
+    {throw BDSException("BDSFourVector::operator[]> index outside array");}
     return values[index];
   }
 
