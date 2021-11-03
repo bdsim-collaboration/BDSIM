@@ -85,6 +85,12 @@ BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType           typeIn,
   vacuumFieldInfo = vacuumFieldInfoIn;
   outerFieldInfo  = outerFieldInfoIn;
   namedVacuumVolumes = BDS::GetWordsFromString(G4String(element->namedVacuumVolumes));
+
+  // Calculate number of sbends to split parent into
+  G4int nSBends = BDS::CalculateNSBendSegments(arcLength, angle, incomingFaceAngle,
+                                                 outgoingFaceAngle);
+
+  curvilinearSplitNumber = nSBends;
 }
 
 

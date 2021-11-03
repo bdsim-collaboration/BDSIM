@@ -118,6 +118,7 @@ public:
   inline G4Transform3D*    GetSamplerPlacementTransform() const {return samplerPlacementTransform;}
   inline G4int             GetIndex()                     const {return index;}
   inline G4String          GetMaterial()                  const {return component->Material();}
+  inline G4int             GetCurvilinearSplitNumber()    const {return component->CurvilinearSplitNumber();}
   ///@}
 
   /// Create a global extent object from the extent of the component.

@@ -99,9 +99,16 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
       G4double crRadius = std::min({CurvilinearRadius(pstEl),
                                     CurvilinearRadius(*element),
                                     CurvilinearRadius(nxtEl)});
-      BDSBeamlineElement* temp = CreateCurvilinearElement(name, element, element, i, crRadius);
-      if (temp)
-	{result->AddBeamlineElement(temp);}
+      G4int splitnumber = (*element)->GetCurvilinearSplitNumber();
+      if (splitnumber > 1)
+      {
+          CreateCurvilinearElementSplit(name, element, i, crRadius, splitnumber, result);
+      } else
+      {
+          BDSBeamlineElement* temp = CreateCurvilinearElement(name, element, element, i, crRadius);
+          if (temp)
+          {result->AddBeamlineElement(temp);}
+      }
     }
 
   if (bonusSections)
@@ -193,6 +200,33 @@ G4double BDSCurvilinearBuilder::CurvilinearRadius(const BDSBeamlineElement* el) 
   else // no finite bending angle
     {return curvilinearRadius;}
 }
+
+void BDSCurvilinearBuilder::CreateCurvilinearElementSplit(const G4String&             elementName,
+                                                                    BDSBeamline::const_iterator startElement,
+                                                                    G4int    index,
+                                                                    G4double crRadius,
+                                                                    G4int splitnumber,
+                                                                    BDSBeamline* beamline)
+{
+
+// BDSTiltOffset* to = nullptr;
+//      if (tilted)
+//	{to = (*startElement)->GetTiltOffset();}
+//
+// get total arc and angle then split
+//      arcLenghtSplit =
+//
+//      component = factory->CreateCurvilinearVolume(elementName,
+//						   arcLength,
+//						   chordLength,
+//						   crRadius,
+//						   angle,
+//						   to);
+// for loop with the one component
+//
+//      beamline->AddComponent(component);
+}
+
 
 BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(const G4String&             elementName,
 								    BDSBeamline::const_iterator startElement,

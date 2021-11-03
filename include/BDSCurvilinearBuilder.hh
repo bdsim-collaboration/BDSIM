@@ -62,6 +62,13 @@ private:
   /// of elements with the same tilt for the correct coordinate frame to be produced. The tilt
   /// is taken from the first element and assumed to be the same for all. The index is the
   /// index it'l have in the curvilinear beam line.
+  void CreateCurvilinearElementSplit(const G4String&             elementName,
+                                               BDSBeamline::const_iterator startElement,
+                                               G4int                       index,
+                                               G4double                    crRadius,
+                                               G4int splitnumber,
+                                               BDSBeamline* beamline);
+
   BDSBeamlineElement* CreateCurvilinearElement(const G4String&             elementName,
 					       BDSBeamline::const_iterator startElement,
 					       BDSBeamline::const_iterator finishElement,
