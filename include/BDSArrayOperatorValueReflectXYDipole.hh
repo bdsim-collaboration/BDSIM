@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSARRAYOPERATORVALUEREFLECT_H
-#define BDSARRAYOPERATORVALUEREFLECT_H
+#ifndef BDSARRAYOPERATORVALUEREFLECTDIPOLEXY_H
+#define BDSARRAYOPERATORVALUEREFLECTDIPOLEXY_H
 #include "BDSArrayOperatorValue.hh"
 #include "BDSFieldValue.hh"
 
@@ -25,44 +25,56 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 /**
- * @brief Reflect field component in individual dimensions.
+ * @brief Reflect field values for a dipolar field in the positive quadrant.
+ *
+ * Note this must work in combination with a coordinate relfection in x and y.
+ * Ultimately, the goal is this:
+ *
+ * \verbatim
+ *       y
+ *       ∧
+ *       |
+ *    ∧  |  ∧
+ *    |  |  | original
+ * <---  |  --->
+ *       |
+ * -------------------> x
+ * ∧     |     ∧
+ * |     |     |
+ * --->  |  <---
+ *       |
+ *       |
+ * \endverbatim
+ *
  * 
  * @author Laurie Nevay
  */
 
-class BDSArrayOperatorValueReflect: public BDSArrayOperatorValue
+class BDSArrayOperatorValueReflectDipoleXY: public BDSArrayOperatorValue
 {
 public:
-  BDSArrayOperatorValueReflect():
-    multiplier(BDSFieldValue(1.0,1.0,1.0))
+  BDSArrayOperatorValueReflectDipoleXY()
   {;}
-  BDSArrayOperatorValueReflect(G4bool x,
-                               G4bool y,
-                               G4bool z):
-    BDSArrayOperatorValueReflect()
-  {
-    multiplier[0] = x ? -1.0 : 1.0;
-    multiplier[1] = y ? -1.0 : 1.0;
-    multiplier[2] = z ? -1.0 : 1.0;
-  }
-  virtual ~BDSArrayOperatorValueReflect(){;}
+  virtual ~BDSArrayOperatorValueReflectDipoleXY(){;}
   
   /// Return a name of the operator for feedback to the user in print out.
   virtual G4String Name() const {return name;}
   
   virtual BDSFieldValue Apply(BDSFieldValue v,
-                              G4int /*xInd*/,
+                              G4int xInd,
                               G4int yInd = 0,
                               G4int zInd = 0,
                               G4int tInd = 0) const
   {
-    yInd = 2; zInd = 3; tInt = 4;// to retain default values and prevent compiler warnings
+    zInd = 3; tInt = 4;// to retain default values and prevent compiler warnings
+    // only top left or bottom right quadrant need the x-component flipped
+    if ( (xInd < 0 && yInd > 0) || (xInd > 0 && yIn < 0) )
+      {v[0] *= -1.0;}
     return v * multiplier;
   }
   
 private:
   G4String name;
-  BDSFieldValue multiplier;
 };
 
 #endif
