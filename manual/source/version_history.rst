@@ -19,6 +19,7 @@ V1.7.0 - 2021 / XX / XX
 New Features
 ------------
 
+* A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into voxelized geometries.
 * New Spectra command for rebsdim to make very flexible sets of spectra automatically. See
   :ref:`spectra-definition` for more information.
 * The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
