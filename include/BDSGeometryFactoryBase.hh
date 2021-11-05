@@ -30,7 +30,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 #include <vector>
 
-class G4AssemblyVolume;
 class G4Colour;
 class G4LogicalVolume;
 class G4UserLimits;
