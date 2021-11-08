@@ -32,66 +32,61 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class DcmDataset;
 class BDSDicomFileMgr;
 
-class BDSDicomFileCT : public BDSDicomVFile
+class BDSDicomFileCT: public BDSDicomVFile
 {
 public:
   BDSDicomFileCT();
-  BDSDicomFileCT(DcmDataset *dset);
+  explicit BDSDicomFileCT(DcmDataset* dset);
   virtual ~BDSDicomFileCT(){};
 
   virtual void ReadData();
   void BuildMaterials();
-  void DumpMateIDsToTextFile(std::ofstream &fout);
-  void DumpDensitiesToTextFile(std::ofstream &fout);
+  void DumpMateIDsToTextFile(std::ofstream& fout);
+  void DumpDensitiesToTextFile(std::ofstream& fout);
 
-  void operator+=(const BDSDicomFileCT &rhs);
-  BDSDicomFileCT operator+(const BDSDicomFileCT &rhs);
-  // add two slices that have the same dimensions, merging them in Z
+  void operator+=(const BDSDicomFileCT& rhs);
 
-  void DumpHeaderToTextFile(std::ofstream &fout);
+  /// Add two slices that have the same dimensions, merging them in Z.
+  BDSDicomFileCT operator+(const BDSDicomFileCT& rhs);
+
+  void DumpHeaderToTextFile(std::ofstream& fout);
 
   // Get and set methods
-  G4int GetNoVoxelX() const { return fNoVoxelX; };
-  G4int GetNoVoxelY() const { return fNoVoxelY; };
-  G4int GetNoVoxelZ() const { return fNoVoxelZ; };
-  G4int GetNoVoxels() const { return fNoVoxelX * fNoVoxelY * fNoVoxelZ; };
+  G4int GetNoVoxelX() const {return fNoVoxelX;};
+  G4int GetNoVoxelY() const {return fNoVoxelY;};
+  G4int GetNoVoxelZ() const {return fNoVoxelZ;};
+  G4int GetNoVoxels() const {return fNoVoxelX * fNoVoxelY * fNoVoxelZ; };
 
-  G4double GetMinX() const { return fMinX; };
-  G4double GetMinY() const { return fMinY; };
-  G4double GetMinZ() const { return fMinZ; };
-  G4double GetMaxX() const { return fMaxX; };
-  G4double GetMaxY() const { return fMaxY; };
-  G4double GetMaxZ() const { return fMaxZ; };
+  G4double GetMinX() const {return fMinX; };
+  G4double GetMinY() const {return fMinY; };
+  G4double GetMinZ() const {return fMinZ; };
+  G4double GetMaxX() const {return fMaxX; };
+  G4double GetMaxY() const {return fMaxY; };
+  G4double GetMaxZ() const {return fMaxZ; };
 
-  std::vector<G4double> GetDensities() const { return fDensities; }
-  std::vector<size_t> GetMateIDs() const { return fMateIDs; }
+  std::vector<G4double> GetDensities() const {return fDensities;}
+  std::vector<size_t> GetMateIDs() const {return fMateIDs;}
 
-  void SetNoVoxelX(const G4int &val) { fNoVoxelX = val; }
-  void SetNoVoxelY(const G4int &val) { fNoVoxelY = val; }
-  void SetNoVoxelZ(const G4int &val) { fNoVoxelZ = val; }
+  void SetNoVoxelX(const G4int& val) {fNoVoxelX = val;}
+  void SetNoVoxelY(const G4int& val) {fNoVoxelY = val;}
+  void SetNoVoxelZ(const G4int& val) {fNoVoxelZ = val;}
 
-  void SetMinX(const G4double &val) { fMinX = val; };
-  void SetMaxX(const G4double &val) { fMaxX = val; };
-  void SetMinY(const G4double &val) { fMinY = val; };
-  void SetMaxY(const G4double &val) { fMaxY = val; };
-  void SetMinZ(const G4double &val) { fMinZ = val; };
-  void SetMaxZ(const G4double &val) { fMaxZ = val; };
+  void SetMinX(const G4double& val) {fMinX = val;}
+  void SetMaxX(const G4double& val) {fMaxX = val;}
+  void SetMinY(const G4double& val) {fMinY = val;}
+  void SetMaxY(const G4double& val) {fMaxY = val;}
+  void SetMinZ(const G4double& val) {fMinZ = val;}
+  void SetMaxZ(const G4double& val) {fMaxZ = val;}
 
-  const G4double &GetLocation() const { return fLocation; }
-
-
-  G4ThreeVector GetOrientationRows() const { return fOrientationRows; }
-  G4ThreeVector GetOrientationColumns() const { return fOrientationColumns; }
-
-private:
-
-  void ReadPixelData();
-  void Print(std::ostream &out);
-
-  std::vector<size_t> fMateIDs;
-  std::vector<G4double> fDensities;
+  const G4double& GetLocation() const {return fLocation;}
+  
+  G4ThreeVector GetOrientationRows()    const {return fOrientationRows;}
+  G4ThreeVector GetOrientationColumns() const {return fOrientationColumns;}
 
 protected:
+  /// Initialisation of variables.
+  void InitialiseVariables();
+  
   G4double fLocation;
   G4double fBitAllocated;
   G4double fRescaleSlope;
@@ -107,7 +102,14 @@ protected:
 
   std::vector<int> fHounsfieldV;
 
-  BDSDicomFileMgr *theFileMgr;
+  BDSDicomFileMgr* theFileMgr;
+
+private:
+  void ReadPixelData();
+  void Print(std::ostream& out);
+
+  std::vector<size_t> fMateIDs;
+  std::vector<G4double> fDensities;
 };
 
 
