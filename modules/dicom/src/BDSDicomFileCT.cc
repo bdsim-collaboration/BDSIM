@@ -256,7 +256,7 @@ void BDSDicomFileCT::ReadPixelData()
       {
         for (int ic = 0; ic < fNoVoxelX; ic++)
         {
-          fHounsfieldV.push_back(pixData[ic + ir * fNoVoxelX] * fRescaleSlope + fRescaleIntercept);
+          fHounsfieldV.push_back((int)pixData[ic + ir * fNoVoxelX] * fRescaleSlope + fRescaleIntercept);
         }
       }
     }
@@ -274,7 +274,7 @@ void BDSDicomFileCT::ReadPixelData()
       {
         for (int ic = 0; ic < fNoVoxelX; ic++)
         {
-          fHounsfieldV.push_back(pixData[ic + ir * fNoVoxelX] * fRescaleSlope + fRescaleIntercept);
+          fHounsfieldV.push_back((int)pixData[ic + ir * fNoVoxelX] * fRescaleSlope + fRescaleIntercept);
         }
       }
     }
