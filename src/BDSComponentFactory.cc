@@ -1566,15 +1566,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
 #ifdef USE_DICOM
 BDSAcceleratorComponent* BDSComponentFactory::CreateCT()
 {
-    if (!HasSufficientMinimumLength(element))
+  if (!HasSufficientMinimumLength(element))
     {return nullptr;}
-
-    BDSCT* result = new BDSCT(elementName,
-                              element->dicomDataPath,
-                              element->dicomDataFile);
-    new BDSDicomIntersectVolume();
-
-    return result;
+  
+  BDSCT* result = new BDSCT(elementName,
+			    element->dicomDataPath,
+			    element->dicomDataFile);
+  new BDSDicomIntersectVolume(); // TBC
+   
+  return result;
 }
 #endif
 
