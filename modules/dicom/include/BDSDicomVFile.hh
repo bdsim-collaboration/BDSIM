@@ -46,8 +46,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSDICOMVFILE_H
 #define BDSDICOMVFILE_H
 
+#include "G4String.hh"
+#include "G4Types.hh"
+
 #include <vector>
-#include "globals.hh"
 
 #include "dcmtk/dcmdata/dcfilefo.h"
 
@@ -56,23 +58,22 @@ class DcmDataset;
 class BDSDicomVFile
 {
 public:
-    BDSDicomVFile(){};
-    BDSDicomVFile(DcmDataset *dset);
-    virtual ~BDSDicomVFile(){};
+  BDSDicomVFile();
+  BDSDicomVFile(DcmDataset* dset);
+  virtual ~BDSDicomVFile(){};
 
-    void SetFileName(G4String fName)
-    {
-        fFileName = fName;
-    }
+  inline void SetFileName(const G4String& fileNameIn) {fFileName = fileNameIn;}
 
 protected:
-    virtual void ReadData() = 0;
+  /// Pure virtual funciton to be implemented in derived class.
+  virtual void ReadData() = 0;
+  
+  virtual std::vector<G4double> Read1Data(DcmDataset* dset,
+					  DcmTagKey tagKey,
+					  G4int nData);
 
-    virtual std::vector<G4double> Read1Data(DcmDataset *dset, DcmTagKey tagKey, G4int nData);
-    DcmDataset *theDataset;
-
-protected:
-    G4String fFileName;
+  DcmDataset* theDataset;
+  G4String fFileName;
 };
 
 #endif
