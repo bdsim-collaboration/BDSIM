@@ -1380,11 +1380,11 @@ void BDSCT::ReadVoxelDensities(std::ifstream &fin)
                     // The material was found in the new material density, we retrieve it
                     matInfo *mi = (*mppite).second;
                     // We add the density
-                    mi->fSumdens += dens;
+                    mi->sumOfDensities += dens;
                     // Increase the number of voxels that are concerned by this material
-                    mi->fNvoxels++;
+                    mi->nVoxels++;
                     // Update the material ID of the voxel
-                    fMateIDs[copyNo] = thePhantomMaterialsOriginal.size() - 1 + mi->fId;
+                    fMateIDs[copyNo] = thePhantomMaterialsOriginal.size() - 1 + mi->materialID;
                 }
                 else
                 {
@@ -1392,14 +1392,14 @@ void BDSCT::ReadVoxelDensities(std::ifstream &fin)
                     // Initialisation of the data structure
                     matInfo *mi = new matInfo;
                     // As it is the first voxel to have this new material, we must initialise its density
-                    mi->fSumdens = dens;
+                    mi->sumOfDensities = dens;
                     // This is the first voxel that has this material
-                    mi->fNvoxels = 1;
-                    mi->fId = G4int(newMateDens.size() + 1);
+                    mi->nVoxels = 1;
+                    mi->materialID = G4int(newMateDens.size() + 1);
                     // The new material now appears in the new material densities
                     newMateDens[matdens] = mi;
                     // Update the material ID of the voxel
-                    fMateIDs[copyNo] = thePhantomMaterialsOriginal.size() - 1 + mi->fId;
+                    fMateIDs[copyNo] = thePhantomMaterialsOriginal.size() - 1 + mi->materialID;
                 }
             }
         }
@@ -1420,7 +1420,7 @@ void BDSCT::ReadVoxelDensities(std::ifstream &fin)
     for (auto mppite = newMateDens.cbegin(); mppite != newMateDens.cend(); ++mppite)
     {
         // We retrieve the average density for the new material considering all voxels that  contain this material
-        G4double averdens = (*mppite).second->fSumdens / (*mppite).second->fNvoxels;
+        G4double averdens = (*mppite).second->sumOfDensities / (*mppite).second->nVoxels;
 
         // Saving the average density in a format fit for naming
         G4double saverdens = G4int(1000.001 * averdens) / 1000.;
