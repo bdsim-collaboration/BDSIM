@@ -46,89 +46,83 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSDICOMFILEMGR_H
 #define BDSDICOMFILEMGR_H
 
-#include <vector>
-#include <map>
 #include "globals.hh"
 #include "G4PhysicsOrderedFreeVector.hh"
 #include "G4PhysicsVector.hh"
 
+#include <map>
+#include <vector>
+
 #include "dcmtk/dcmdata/dcfilefo.h"
+
 class BDSDicomVFile;
 class BDSDicomFileCT;
 
 //typedef std::multimap<OFString,DicomVFile*> msd;
-typedef std::map<G4double, BDSDicomFileCT *> mdct;
+typedef std::map<G4double, BDSDicomFileCT*> mdct;
 enum VerbLevel
-{
-    silentVerb = -1,
-    errorVerb = 0,
-    warningVerb = 1,
-    infoVerb = 2,
-    debugVerb = 3,
-    testVerb = 4
-};
+  {
+   silentVerb  = -1,
+   errorVerb   = 0,
+   warningVerb = 1,
+   infoVerb    = 2,
+   debugVerb   = 3,
+   testVerb    = 4
+  };
+
+/**
+ * @brief DICOM File Manager.
+ * 
+ */
 
 class BDSDicomFileMgr
 {
 public:
-    static BDSDicomFileMgr *GetInstance();
-    ~BDSDicomFileMgr(){};
+  static BDSDicomFileMgr* GetInstance();
+  ~BDSDicomFileMgr(){};
+  
+  void SetCompression(G4String fComp);
+  void AddFile(G4String fComp);
+  void AddMaterial(std::vector<G4String> data);
+  void AddMaterialDensity(std::vector<G4String> data);
+  void AddCT2Density(std::vector<G4String> data);
+  
+  void Convert(G4String filePath, G4String fFileName);
+  void CheckNColumns(std::vector<G4String> wl, size_t vsizeTh);
+  void ProcessFiles();
+  void CheckCTSlices();
+  G4double Hounsfield2density(G4double Hval);
+  size_t GetMaterialIndex(G4double Hval);
+  size_t GetMaterialIndexByDensity(G4double density);
+  void BuildCTMaterials();
+  void MergeCTFiles();
+  void DumpToTextFile();
 
-private:
-    BDSDicomFileMgr();
-
-public:
-
-    void SetCompression(G4String fComp);
-    void AddFile(G4String fComp);
-    void AddMaterial(std::vector<G4String> data);
-    void AddMaterialDensity(std::vector<G4String> data);
-    void AddCT2Density(std::vector<G4String> data);
-
-    void Convert(G4String filePath, G4String fFileName);
-    void CheckNColumns(std::vector<G4String> wl, size_t vsizeTh);
-    void ProcessFiles();
-    void CheckCTSlices();
-    G4double Hounsfield2density(G4double Hval);
-    size_t GetMaterialIndex(G4double Hval);
-    size_t GetMaterialIndexByDensity(G4double density);
-    void BuildCTMaterials();
-    void MergeCTFiles();
-    void DumpToTextFile();
-    G4int GetCompression() const
-    {
-        return fCompression;
-    }
-    G4String GetFileOutName() const
-    {
-        return theFileOutName;
-    }
-
-    G4bool IsMaterialsDensity() const
-    {
-        return bMaterialsDensity;
-    }
+  inline G4int    GetCompression()     const {return fCompression;}
+  inline G4String GetFileOutName()     const {return theFileOutName;}
+  inline G4bool   IsMaterialsDensity() const {return bMaterialsDensity;}
 
 protected:
     G4int fCompression;
 
 private:
-    static BDSDicomFileMgr *theInstance;
+  BDSDicomFileMgr();
+  
+  static BDSDicomFileMgr* theInstance; ///< Singleton instance.
 
-    G4String theFileOutName;
-    //  msd theFiles;
-    mdct theCTFiles;
-    std::map<G4double, G4String> theMaterials;
-    std::map<G4double, G4String> theMaterialsDensity;
-    std::map<G4int, G4double> theCT2Density;
-
-    G4PhysicsOrderedFreeVector *results;
-
-    BDSDicomFileCT *theCTFileAll;
-
+  G4String theFileOutName;
+  mdct theCTFiles;
+  std::map<G4double, G4String> theMaterials;
+  std::map<G4double, G4String> theMaterialsDensity;
+  std::map<G4int, G4double> theCT2Density;
+  
+  G4PhysicsOrderedFreeVector* results;
+  
+  BDSDicomFileCT* theCTFileAll;
+  
 public:
-    static int verbose;
-    G4bool bMaterialsDensity;
+  static int verbose;
+  G4bool bMaterialsDensity;
 };
 
 #endif

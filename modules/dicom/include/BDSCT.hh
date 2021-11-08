@@ -35,32 +35,32 @@ class G4Material;
 class G4VPhysicalVolume;
 
 /**
+ *  @brief Data structure containing information about a material used in a DICOM scan.
+ */
+struct matInfo
+{
+  G4double sumOfDensities; ///< The sum of all densities of all the voxels containing this material
+  G4int nVoxels;           ///< The number of voxels that contain this material
+  G4int materialID;        ///< This ID associated with this material
+};
+
+/**
  * @brief An object based on a DICOM X-ray Computed Tomograph (CT) scan.
  *
  * @author Nathan Farber
  */
 
-//--- New data structure containing informations about a material
-struct matInfo
-{
-  // The sum of all densities of all the voxels containing this material
-  G4double fSumdens;
-  // The number of voxels that contain this material
-  G4int fNvoxels;
-  // This ID assoiated with thi material
-  G4int fId;
-};
-
-class BDSCT : public BDSAcceleratorComponent
+class BDSCT: public BDSAcceleratorComponent
 {
 public:
-  BDSCT(const G4String &nameIn,
-        const G4String &dicomDataPath,
-        const G4String &dicomDataFile);
+  BDSCT() = delete; ///< No default constructor.
+  BDSCT(const G4String& nameIn,
+        const G4String& dicomDataPath,
+        const G4String& dicomDataFile);
 
   virtual ~BDSCT();
 
-  /// Override base class version and return beam pipe material if it exists.
+  /// Override base class version.
   virtual G4String Material() const override { return "infiniteabsorber"; }
 
 protected:
@@ -74,65 +74,61 @@ protected:
   virtual void BuildUserLimits() override;
 
 private:
-  /// No default constructor.
-  BDSCT() = delete;
-
   /// @{ Assignment and copy constructor not implemented nor used
   BDSCT &operator=(const BDSCT &) = delete;
   BDSCT(BDSCT &) = delete;
   /// @}
-
+  
+  /// Create the original materials.
   void InitialisationOfMaterials();
-  // create the original materials
-
+  
+  /// Read the DICOM files describing the phantom
   void ReadPhantomData();
-  // read the DICOM files describing the phantom
+  
   void ReadVoxelDensities(std::ifstream &fin);
-
-  G4Material *BuildMaterialWithChangingDensity(const G4Material *origMate,
+  
+  /// Build a new material if the density of the voxel is different to the other voxels.
+  G4Material* BuildMaterialWithChangingDensity(const G4Material* origMaterial,
                                                G4float density,
-                                               G4String newMateName);
-  // build a new material if the density of the voxel is different
-  // to the other voxels
-
+                                               G4String newMaterialName);
+  
+  
+  /// Construct the phantom volumes. This method should be implemented for each of the derived classes.
   void BuildPhantom();
-  // construct the phantom volumes.
-  //  This method should be implemented for each of the derived classes
 
-  void SetScorer(G4LogicalVolume *voxel_logic);
+  void SetScorer(G4LogicalVolume* voxel_logic);
 
-  G4Material *fAir;
+  G4Material* fAir;
 
   // World ...
-  G4Box *fWorld_solid;
-  G4LogicalVolume *fWorld_logic;
-  G4VPhysicalVolume *fWorld_phys;
+  G4Box* fWorld_solid;
+  G4LogicalVolume* fWorld_logic;
+  G4VPhysicalVolume* fWorld_phys;
 
-  G4Box *fContainer_solid;
-  G4VPhysicalVolume *fContainer_phys;
+  G4Box* fContainer_solid;
+  G4VPhysicalVolume* fContainer_phys;
 
-  std::vector<G4Material *> fOriginalMaterials; // list of original materials
-  std::vector<G4Material *> fMaterials;
-  // list of new materials created to distinguish different density
-  //  voxels that have the same original materials
-  size_t *fMateIDs; // index of material of each voxel
+  std::vector<G4Material*> fOriginalMaterials; ///< Record of original materials.
+  /// Record of new materials created to distinguish different density
+  ///  voxels that have the same original materials.
+  std::vector<G4Material*> fMaterials;
 
+  size_t* fMateIDs; ///< Index of material of each voxel.
+  
+  /// Density difference to distinguish material for each original material (by index).
   std::map<G4int, G4double> fDensityDiffs;
-  // Density difference to distinguish material for each original
-  // material (by index)
 
   G4int fNVoxelX, fNVoxelY, fNVoxelZ;
   G4double fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ;
   G4double fMinX, fMinY, fMinZ; // minimum extension of voxels (position wall)
   G4double fMaxX, fMaxY, fMaxZ; // maximum extension of voxels (position wall)
+  
+  /// Map numberOfMaterial to G4Material. They are the list of materials as built from .geom file
+  std::map<G4int, G4Material*> thePhantomMaterialsOriginal;
 
-  std::map<G4int, G4Material *> thePhantomMaterialsOriginal;
-  // map numberOfMaterial to G4Material. They are the list of materials as
-  // built from .geom file
-
-  std::set<G4LogicalVolume *> fScorers;
+  std::set<G4LogicalVolume*> fScorers;
   G4bool fConstructed;
-  BDSDicomFileMgr *theFileMgr;
+  BDSDicomFileMgr* theFileMgr;
   G4String dicomDataPath;
   G4String dicomDataFile;
 };
