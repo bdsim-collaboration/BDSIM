@@ -38,12 +38,36 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSDicomFileCT::BDSDicomFileCT()
 {
+  InitialiseVariables();
   theFileMgr = BDSDicomFileMgr::GetInstance();
 }
 
-BDSDicomFileCT::BDSDicomFileCT(DcmDataset *dset) : BDSDicomVFile(dset)
+BDSDicomFileCT::BDSDicomFileCT(DcmDataset* dset):
+  BDSDicomVFile(dset)
 {
+  InitialiseVariables();
   theFileMgr = BDSDicomFileMgr::GetInstance();
+}
+
+void BDSDicomFileCT::InitialiseVariables()
+{
+  fLocation = 0;
+  fBitAllocated = 0;
+  fRescaleSlope = 0;
+  fRescaleIntercept = 0;
+  fNoVoxelX = 0;
+  fNoVoxelY = 0;
+  fNoVoxelZ = 0;
+  fMinX = 0;
+  fMaxX = 0;
+  fMinY = 0;
+  fMaxY = 0;
+  fMinZ = 0;
+  fMaxZ = 0;
+  fVoxelDimX = 0;
+  fVoxelDimY = 0;
+  fVoxelDimZ = 0;
+  theFileMgr = nullptr;
 }
 
 void BDSDicomFileCT::ReadData()
@@ -232,7 +256,7 @@ void BDSDicomFileCT::ReadPixelData()
       {
         for (int ic = 0; ic < fNoVoxelX; ic++)
         {
-          fHounsfieldV.push_back(pixData[ic + ir * fNoVoxelX] * fRescaleSlope + fRescaleIntercept);
+          fHounsfieldV.push_back((int)pixData[ic + ir * fNoVoxelX] * fRescaleSlope + fRescaleIntercept);
         }
       }
     }
@@ -250,7 +274,7 @@ void BDSDicomFileCT::ReadPixelData()
       {
         for (int ic = 0; ic < fNoVoxelX; ic++)
         {
-          fHounsfieldV.push_back(pixData[ic + ir * fNoVoxelX] * fRescaleSlope + fRescaleIntercept);
+          fHounsfieldV.push_back((int)pixData[ic + ir * fNoVoxelX] * fRescaleSlope + fRescaleIntercept);
         }
       }
     }

@@ -42,45 +42,52 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-
 #include "BDSDicomVFile.hh"
+
+#include "globals.hh"
+#include "G4Types.hh"
 
 #include "dcmtk/dcmdata/dcfilefo.h"
 #include "dcmtk/dcmdata/dcdeftag.h"
 #include "dcmtk/dcmdata/dcpixel.h"
 
-BDSDicomVFile::BDSDicomVFile(DcmDataset *dset) : theDataset(dset)
+#include <vector>
+
+BDSDicomVFile::BDSDicomVFile():
+  theDataset(nullptr)
+{;}
+
+BDSDicomVFile::BDSDicomVFile(DcmDataset* dset):
+  theDataset(dset)
 {}
 
-std::vector<G4double> BDSDicomVFile::Read1Data(DcmDataset *dset, DcmTagKey tagKey, G4int nData)
+std::vector<G4double> BDSDicomVFile::Read1Data(DcmDataset* dset,
+					       DcmTagKey tagKey,
+					       G4int nData)
 {
-    std::vector<G4double> dataV;
-
-    for (int ii = 0; ii < nData; ++ii)
+  std::vector<G4double> dataV;
+  
+  for (int ii = 0; ii < nData; ++ii)
     {
-        G4double data;
-        Uint16 datai;
-        // see  http://support.dcmtk.org/docs/classDcmItem.html for types
-        if (dset->findAndGetFloat64(tagKey, data, ii).good())
+      G4double data;
+      Uint16 datai;
+      // see  http://support.dcmtk.org/docs/classDcmItem.html for types
+      if (dset->findAndGetFloat64(tagKey, data, ii).good())
+        {dataV.push_back(data);}
+      else if (dset->findAndGetUint16(tagKey, datai, ii).good())
+        {dataV.push_back(datai);}
+      else
         {
-            dataV.push_back(data);
-        }
-        else if (dset->findAndGetUint16(tagKey, datai, ii).good())
-        {
-            dataV.push_back(datai);
-        }
-        else
-        {
-            G4cout << "ERROR  (" << std::showbase // show the 0x prefix
-                   << std::internal               // fill between the prefix and the number
-                   << std::setfill('0') << std::hex << std::setw(4) << tagKey.getGroup()
-                   << "," << tagKey.getElement() << ") " << std::dec << ii << std::endl;
-            G4Exception("DicomHandler::ReadData",
-                        "",
-                        JustWarning,
-                        (std::to_string(data) + G4String(" Have not read (") + std::to_string(tagKey.getGroup()) + "," + std::to_string(tagKey.getElement()) + ")" + " : " + std::to_string(ii)).c_str());
+	  G4cout << "ERROR  (" << std::showbase // show the 0x prefix
+		 << std::internal               // fill between the prefix and the number
+		 << std::setfill('0') << std::hex << std::setw(4) << tagKey.getGroup()
+		 << "," << tagKey.getElement() << ") " << std::dec << ii << std::endl;
+	  G4Exception("DicomHandler::ReadData",
+		      "",
+		      JustWarning,
+		      (std::to_string(data) + G4String(" Have not read (") + std::to_string(tagKey.getGroup()) + "," + std::to_string(tagKey.getElement()) + ")" + " : " + std::to_string(ii)).c_str());
         }
     }
-
-    return dataV;
+  
+  return dataV;
 }
