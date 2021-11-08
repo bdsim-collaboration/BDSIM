@@ -39,616 +39,620 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-BDSCT::BDSCT(const G4String &nameIn,
-             const G4String &dataFilePath,
-             const G4String &dataFileName) : BDSAcceleratorComponent(nameIn, 1, 0, "ct"),
-                                             dicomDataPath(dataFilePath),
-                                             dicomDataFile(dataFileName)
+BDSCT::BDSCT(const G4String& nameIn,
+             const G4String& dataFilePath,
+             const G4String& dataFileName):
+  BDSAcceleratorComponent(nameIn, 1, 0, "ct"),
+  dicomDataPath(dataFilePath),
+  dicomDataFile(dataFileName)
 {
-    //--- As soon as the object is constructed, we retrieve data from the CT files
-    theFileMgr = BDSDicomFileMgr::GetInstance();
-    theFileMgr->Convert(dicomDataPath, dicomDataFile);
-    new BDSDicomIntersectVolume();
+  //--- As soon as the object is constructed, we retrieve data from the CT files
+  theFileMgr = BDSDicomFileMgr::GetInstance();
+  theFileMgr->Convert(dicomDataPath, dicomDataFile);
+  new BDSDicomIntersectVolume();
 }
 
 BDSCT::~BDSCT()
-{
-    ;
-}
+{;}
 
 void BDSCT::Build()
 {
-    if (!fConstructed || fWorld_phys == nullptr)
+  if (!fConstructed || fWorld_phys == nullptr)
     {
-        fConstructed = true;
-        InitialisationOfMaterials();
+      fConstructed = true;
+      InitialisationOfMaterials();
 
-        //----- Build world
-        G4double worldXDimension = 1. * CLHEP::m;
-        G4double worldYDimension = 1. * CLHEP::m;
-        G4double worldZDimension = 1. * CLHEP::m;
-
-        fWorld_solid = new G4Box("WorldSolid",
-                                 worldXDimension,
-                                 worldYDimension,
-                                 worldZDimension);
-
-        fWorld_logic = new G4LogicalVolume(fWorld_solid,
-                                           fAir,
-                                           "WorldLogical",
-                                           nullptr, nullptr, nullptr);
-
-        fWorld_phys = new G4PVPlacement(nullptr,
-                                        G4ThreeVector(0, 0, 0),
-                                        "World",
-                                        fWorld_logic,
-                                        nullptr,
-                                        false,
-                                        0);
-
-        //--- We retrieve data stored in out file and analyse it in order to convert it with vectors
-        ReadPhantomData();
-        BuildContainerLogicalVolume();
-        BuildPhantom();
+      //----- Build world
+      G4double worldXDimension = 1. * CLHEP::m;
+      G4double worldYDimension = 1. * CLHEP::m;
+      G4double worldZDimension = 1. * CLHEP::m;
+      
+      fWorld_solid = new G4Box("WorldSolid",
+			       worldXDimension,
+			       worldYDimension,
+			       worldZDimension);
+      
+      fWorld_logic = new G4LogicalVolume(fWorld_solid,
+					 fAir,
+					 "WorldLogical",
+					 nullptr, nullptr, nullptr);
+      
+      fWorld_phys = new G4PVPlacement(nullptr,
+				      G4ThreeVector(0, 0, 0),
+				      "World",
+				      fWorld_logic,
+				      nullptr,
+				      false,
+				      0);
+      
+      //--- We retrieve data stored in out file and analyse it in order to convert it with vectors
+      ReadPhantomData();
+      BuildContainerLogicalVolume();
+      BuildPhantom();
     }
 }
 
 void BDSCT::BuildPhantom()
 {
-    //----- Create parameterisation
-    BDSDicomPhantomParameterisationColour *param = new BDSDicomPhantomParameterisationColour(dicomDataPath + "ColourMap.dat");
+  //----- Create parameterisation
+  BDSDicomPhantomParameterisationColour* param = new BDSDicomPhantomParameterisationColour(dicomDataPath + "ColourMap.dat");
+  
+  //----- Set voxel dimensions
+  param->SetVoxelDimensions(fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ);
+  
+  //----- Set number of voxels
+  param->SetNoVoxel(fNVoxelX, fNVoxelY, fNVoxelZ);
 
-    //----- Set voxel dimensions
-    param->SetVoxelDimensions(fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ);
-
-    //----- Set number of voxels
-    param->SetNoVoxel(fNVoxelX, fNVoxelY, fNVoxelZ);
-
-    //----- Set list of materials
-    param->SetMaterials(fMaterials);
-
-    //----- Set list of material indices: for each voxel it is a number that
-    // correspond to the index of its material in the vector of materials
-    // defined above
-    param->SetMaterialIndices(fMateIDs);
-
-    //----- Define voxel logical volume
-    G4Box *voxel_solid = new G4Box("Voxel", fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ);
-    G4LogicalVolume *voxel_logic = new G4LogicalVolume(voxel_solid, fMaterials[0], "VoxelLogical", 0, 0, 0);
-    // material is not relevant for the moment, it will be changed later on by the
-    // ComputeMaterial method of the parameterisation
-
-    voxel_logic->SetVisAttributes(new G4VisAttributes(G4VisAttributes::GetInvisible()));
-
-    //--- Assign the fContainer volume of the parameterisation
-    param->BuildContainerSolid(fContainer_phys);
-
-    //--- Assure yourself that the voxels are completely filling the
-    // fContainer volume
-    param->CheckVoxelsFillContainer(fContainer_solid->GetXHalfLength(),
-                                    fContainer_solid->GetYHalfLength(),
-                                    fContainer_solid->GetZHalfLength());
-
-    //----- The G4PVParameterised object that uses the created parameterisation
-    // should be placed in the fContainer logical volume
-    G4PVParameterised *phantom_phys = new G4PVParameterised("phantom", voxel_logic, containerLogicalVolume, kXAxis, fNVoxelX * fNVoxelY * fNVoxelZ, param);
-    // if axis is set as kUndefined instead of kXAxis, GEANT4 will
-    // do a smart voxel optimisation
-    // (not needed if G4RegularNavigation is used)
-
-    //----- Set this physical volume as having a regular structure of type 1,
-    // so that G4RegularNavigation is used
-    phantom_phys->SetRegularStructureId(1); // if not set, G4VoxelNavigation
-    // will be used instead
-
-    SetScorer(voxel_logic);
+  //----- Set list of materials
+  param->SetMaterials(fMaterials);
+  
+  //----- Set list of material indices: for each voxel it is a number that
+  // correspond to the index of its material in the vector of materials
+  // defined above
+  param->SetMaterialIndices(fMateIDs);
+  
+  //----- Define voxel logical volume
+  G4Box *voxel_solid = new G4Box("Voxel", fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ);
+  G4LogicalVolume *voxel_logic = new G4LogicalVolume(voxel_solid, fMaterials[0], "VoxelLogical", 0, 0, 0);
+  // material is not relevant for the moment, it will be changed later on by the
+  // ComputeMaterial method of the parameterisation
+  
+  voxel_logic->SetVisAttributes(new G4VisAttributes(G4VisAttributes::GetInvisible()));
+  
+  //--- Assign the fContainer volume of the parameterisation
+  param->BuildContainerSolid(fContainer_phys);
+  
+  //--- Assure yourself that the voxels are completely filling the
+  // fContainer volume
+  param->CheckVoxelsFillContainer(fContainer_solid->GetXHalfLength(),
+				  fContainer_solid->GetYHalfLength(),
+				  fContainer_solid->GetZHalfLength());
+  
+  //----- The G4PVParameterised object that uses the created parameterisation
+  // should be placed in the fContainer logical volume
+  G4PVParameterised *phantom_phys = new G4PVParameterised("phantom",
+							  voxel_logic,
+							  containerLogicalVolume,
+							  kXAxis,
+							  fNVoxelX * fNVoxelY * fNVoxelZ,
+							  param);
+  // if axis is set as kUndefined instead of kXAxis, GEANT4 will
+  // do a smart voxel optimisation
+  // (not needed if G4RegularNavigation is used)
+  
+  //----- Set this physical volume as having a regular structure of type 1,
+  // so that G4RegularNavigation is used
+  phantom_phys->SetRegularStructureId(1); // if not set, G4VoxelNavigation
+  // will be used instead
+  
+  SetScorer(voxel_logic);
 }
 
 void BDSCT::InitialisationOfMaterials()
 {
-    // Creating elements :
-    G4double z, a, density;
-    G4String mname, symbol;
-
-    auto *elC = new G4Element(mname = "Carbon",
-                              symbol = "C",
-                              z = 6.0, a = 12.011 * CLHEP::g / CLHEP::mole);
-    auto *elH = new G4Element(mname = "Hydrogen",
-                              symbol = "H",
-                              z = 1.0, a = 1.008 * CLHEP::g / CLHEP::mole);
-    auto *elN = new G4Element(mname = "Nitrogen",
-                              symbol = "N",
-                              z = 7.0, a = 14.007 * CLHEP::g / CLHEP::mole);
-    auto *elO = new G4Element(mname = "Oxygen",
-                              symbol = "O",
-                              z = 8.0, a = 16.00 * CLHEP::g / CLHEP::mole);
-    auto *elNa = new G4Element(mname = "Sodium",
-                               symbol = "Na",
-                               z = 11.0, a = 22.98977 * CLHEP::g / CLHEP::mole);
-    auto *elMg = new G4Element(mname = "Magnesium",
-                               symbol = "Mg",
-                               z = 12.0, a = 24.3050 * CLHEP::g / CLHEP::mole);
-    auto *elP = new G4Element(mname = "Phosphorus",
-                              symbol = "P",
-                              z = 15.0, a = 30.973976 * CLHEP::g / CLHEP::mole);
-    auto *elS = new G4Element(mname = "Sulfur",
-                              symbol = "S",
-                              z = 16.0, a = 32.065 * CLHEP::g / CLHEP::mole);
-    auto *elCl = new G4Element(mname = "Chlorine",
-                               symbol = "P",
-                               z = 17.0, a = 35.453 * CLHEP::g / CLHEP::mole);
-    auto *elK = new G4Element(mname = "Potassium",
-                              symbol = "P",
-                              z = 19.0, a = 30.0983 * CLHEP::g / CLHEP::mole);
-
-    auto *elFe = new G4Element(mname = "Iron",
-                               symbol = "Fe",
-                               z = 26, a = 56.845 * CLHEP::g / CLHEP::mole);
-
-    auto *elCa = new G4Element(mname = "Calcium",
-                               symbol = "Ca",
-                               z = 20.0, a = 40.078 * CLHEP::g / CLHEP::mole);
-
-    auto *elZn = new G4Element(mname = "Zinc",
-                               symbol = "Zn",
-                               z = 30.0, a = 65.382 * CLHEP::g / CLHEP::mole);
-
-    // Creating Materials :
-    G4int numberofElements;
-
-    // Air
-    fAir = new G4Material("Air",
-                          0.001290 * CLHEP::g / CLHEP::cm3,
-                          numberofElements = 2);
-    fAir->AddElement(elN, 0.7);
-    fAir->AddElement(elO, 0.3);
-
-    // Soft tissue (ICRP - NIST)
-    auto *softTissue = new G4Material("SoftTissue", 1.00 * CLHEP::g / CLHEP::cm3,
-                                      numberofElements = 13);
-    softTissue->AddElement(elH, 10.4472 * CLHEP::perCent);
-    softTissue->AddElement(elC, 23.219 * CLHEP::perCent);
-    softTissue->AddElement(elN, 2.488 * CLHEP::perCent);
-    softTissue->AddElement(elO, 63.0238 * CLHEP::perCent);
-    softTissue->AddElement(elNa, 0.113 * CLHEP::perCent);
-    softTissue->AddElement(elMg, 0.0113 * CLHEP::perCent);
-    softTissue->AddElement(elP, 0.113 * CLHEP::perCent);
-    softTissue->AddElement(elS, 0.199 * CLHEP::perCent);
-    softTissue->AddElement(elCl, 0.134 * CLHEP::perCent);
-    softTissue->AddElement(elK, 0.199 * CLHEP::perCent);
-    softTissue->AddElement(elCa, 0.023 * CLHEP::perCent);
-    softTissue->AddElement(elFe, 0.005 * CLHEP::perCent);
-    softTissue->AddElement(elZn, 0.003 * CLHEP::perCent);
-
-    //  Lung Inhale
-    auto *lunginhale = new G4Material("LungInhale",
-                                      density = 0.217 * CLHEP::g / CLHEP::cm3,
-                                      numberofElements = 9);
-    lunginhale->AddElement(elH, 0.103);
-    lunginhale->AddElement(elC, 0.105);
-    lunginhale->AddElement(elN, 0.031);
-    lunginhale->AddElement(elO, 0.749);
-    lunginhale->AddElement(elNa, 0.002);
-    lunginhale->AddElement(elP, 0.002);
-    lunginhale->AddElement(elS, 0.003);
-    lunginhale->AddElement(elCl, 0.002);
-    lunginhale->AddElement(elK, 0.003);
-
-    // Lung exhale
-    G4Material *lungexhale = new G4Material("LungExhale",
-                                            density = 0.508 * CLHEP::g / CLHEP::cm3,
-                                            numberofElements = 9);
-    lungexhale->AddElement(elH, 0.103);
-    lungexhale->AddElement(elC, 0.105);
-    lungexhale->AddElement(elN, 0.031);
-    lungexhale->AddElement(elO, 0.749);
-    lungexhale->AddElement(elNa, 0.002);
-    lungexhale->AddElement(elP, 0.002);
-    lungexhale->AddElement(elS, 0.003);
-    lungexhale->AddElement(elCl, 0.002);
-    lungexhale->AddElement(elK, 0.003);
-
-    // Adipose tissue
-    auto *adiposeTissue = new G4Material("AdiposeTissue",
-                                         density = 0.967 * CLHEP::g / CLHEP::cm3,
-                                         numberofElements = 7);
-    adiposeTissue->AddElement(elH, 0.114);
-    adiposeTissue->AddElement(elC, 0.598);
-    adiposeTissue->AddElement(elN, 0.007);
-    adiposeTissue->AddElement(elO, 0.278);
-    adiposeTissue->AddElement(elNa, 0.001);
-    adiposeTissue->AddElement(elS, 0.001);
-    adiposeTissue->AddElement(elCl, 0.001);
-
-    // Brain (ICRP - NIST)
-    auto *brainTissue = new G4Material("BrainTissue", 1.03 * CLHEP::g / CLHEP::cm3,
-                                       numberofElements = 13);
-    brainTissue->AddElement(elH, 11.0667 * CLHEP::perCent);
-    brainTissue->AddElement(elC, 12.542 * CLHEP::perCent);
-    brainTissue->AddElement(elN, 1.328 * CLHEP::perCent);
-    brainTissue->AddElement(elO, 73.7723 * CLHEP::perCent);
-    brainTissue->AddElement(elNa, 0.1840 * CLHEP::perCent);
-    brainTissue->AddElement(elMg, 0.015 * CLHEP::perCent);
-    brainTissue->AddElement(elP, 0.356 * CLHEP::perCent);
-    brainTissue->AddElement(elS, 0.177 * CLHEP::perCent);
-    brainTissue->AddElement(elCl, 0.236 * CLHEP::perCent);
-    brainTissue->AddElement(elK, 0.31 * CLHEP::perCent);
-    brainTissue->AddElement(elCa, 0.009 * CLHEP::perCent);
-    brainTissue->AddElement(elFe, 0.005 * CLHEP::perCent);
-    brainTissue->AddElement(elZn, 0.001 * CLHEP::perCent);
-
-    // Breast
-    auto *breast = new G4Material("Breast",
-                                  density = 0.990 * CLHEP::g / CLHEP::cm3,
-                                  numberofElements = 8);
-    breast->AddElement(elH, 0.109);
-    breast->AddElement(elC, 0.506);
-    breast->AddElement(elN, 0.023);
-    breast->AddElement(elO, 0.358);
-    breast->AddElement(elNa, 0.001);
-    breast->AddElement(elP, 0.001);
-    breast->AddElement(elS, 0.001);
-    breast->AddElement(elCl, 0.001);
-
-    // Spinal Disc
-    auto *spinalDisc = new G4Material("SpinalDisc", 1.10 * CLHEP::g / CLHEP::cm3,
-                                      numberofElements = 8);
-    spinalDisc->AddElement(elH, 9.60 * CLHEP::perCent);
-    spinalDisc->AddElement(elC, 9.90 * CLHEP::perCent);
-    spinalDisc->AddElement(elN, 2.20 * CLHEP::perCent);
-    spinalDisc->AddElement(elO, 74.40 * CLHEP::perCent);
-    spinalDisc->AddElement(elNa, 0.50 * CLHEP::perCent);
-    spinalDisc->AddElement(elP, 2.20 * CLHEP::perCent);
-    spinalDisc->AddElement(elS, 0.90 * CLHEP::perCent);
-    spinalDisc->AddElement(elCl, 0.30 * CLHEP::perCent);
-
-    // Water
-    auto *water = new G4Material("Water",
-                                 density = 1.0 * CLHEP::g / CLHEP::cm3,
-                                 numberofElements = 2);
-    water->AddElement(elH, 0.112);
-    water->AddElement(elO, 0.888);
-
-    // Muscle
-    auto *muscle = new G4Material("Muscle",
-                                  density = 1.061 * CLHEP::g / CLHEP::cm3,
-                                  numberofElements = 9);
-    muscle->AddElement(elH, 0.102);
-    muscle->AddElement(elC, 0.143);
-    muscle->AddElement(elN, 0.034);
-    muscle->AddElement(elO, 0.710);
-    muscle->AddElement(elNa, 0.001);
-    muscle->AddElement(elP, 0.002);
-    muscle->AddElement(elS, 0.003);
-    muscle->AddElement(elCl, 0.001);
-    muscle->AddElement(elK, 0.004);
-
-    // Liver
-    auto *liver = new G4Material("Liver",
-                                 density = 1.071 * CLHEP::g / CLHEP::cm3,
-                                 numberofElements = 9);
-    liver->AddElement(elH, 0.102);
-    liver->AddElement(elC, 0.139);
-    liver->AddElement(elN, 0.030);
-    liver->AddElement(elO, 0.716);
-    liver->AddElement(elNa, 0.002);
-    liver->AddElement(elP, 0.003);
-    liver->AddElement(elS, 0.003);
-    liver->AddElement(elCl, 0.002);
-    liver->AddElement(elK, 0.003);
-
-    // Tooth Dentin
-    auto *toothDentin = new G4Material("ToothDentin", 2.14 * CLHEP::g / CLHEP::cm3,
-                                       numberofElements = 10);
-    toothDentin->AddElement(elH, 2.67 * CLHEP::perCent);
-    toothDentin->AddElement(elC, 12.77 * CLHEP::perCent);
-    toothDentin->AddElement(elN, 4.27 * CLHEP::perCent);
-    toothDentin->AddElement(elO, 40.40 * CLHEP::perCent);
-    toothDentin->AddElement(elNa, 0.65 * CLHEP::perCent);
-    toothDentin->AddElement(elMg, 0.59 * CLHEP::perCent);
-    toothDentin->AddElement(elP, 11.86 * CLHEP::perCent);
-    toothDentin->AddElement(elCl, 0.04 * CLHEP::perCent);
-    toothDentin->AddElement(elCa, 26.74 * CLHEP::perCent);
-    toothDentin->AddElement(elZn, 0.01 * CLHEP::perCent);
-
-    // Trabecular Bone
-    auto *trabecularBone = new G4Material("TrabecularBone",
-                                          density = 1.159 * CLHEP::g / CLHEP::cm3,
-                                          numberofElements = 12);
-    trabecularBone->AddElement(elH, 0.085);
-    trabecularBone->AddElement(elC, 0.404);
-    trabecularBone->AddElement(elN, 0.058);
-    trabecularBone->AddElement(elO, 0.367);
-    trabecularBone->AddElement(elNa, 0.001);
-    trabecularBone->AddElement(elMg, 0.001);
-    trabecularBone->AddElement(elP, 0.034);
-    trabecularBone->AddElement(elS, 0.002);
-    trabecularBone->AddElement(elCl, 0.002);
-    trabecularBone->AddElement(elK, 0.001);
-    trabecularBone->AddElement(elCa, 0.044);
-    trabecularBone->AddElement(elFe, 0.001);
-
-    // Trabecular bone used in the DICOM Head
-
-    auto *trabecularBone_head = new G4Material("TrabecularBone_HEAD",
-                                               1.18 * CLHEP::g / CLHEP::cm3,
-                                               numberofElements = 12);
-    trabecularBone_head->AddElement(elH, 8.50 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elC, 40.40 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elN, 2.80 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elO, 36.70 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elNa, 0.10 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elMg, 0.10 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elP, 3.40 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elS, 0.20 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elCl, 0.20 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elK, 0.10 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elCa, 7.40 * CLHEP::perCent);
-    trabecularBone_head->AddElement(elFe, 0.10 * CLHEP::perCent);
-
-    // Dense Bone
-    auto *denseBone = new G4Material("DenseBone",
-                                     density = 1.575 * CLHEP::g / CLHEP::cm3,
-                                     numberofElements = 11);
-    denseBone->AddElement(elH, 0.056);
-    denseBone->AddElement(elC, 0.235);
-    denseBone->AddElement(elN, 0.050);
-    denseBone->AddElement(elO, 0.434);
-    denseBone->AddElement(elNa, 0.001);
-    denseBone->AddElement(elMg, 0.001);
-    denseBone->AddElement(elP, 0.072);
-    denseBone->AddElement(elS, 0.003);
-    denseBone->AddElement(elCl, 0.001);
-    denseBone->AddElement(elK, 0.001);
-    denseBone->AddElement(elCa, 0.146);
-
-    // Cortical Bone 1 (ICRP - NIST)
-    auto *corticalBone1 = new G4Material("CorticalBone1", 1.85 * CLHEP::g / CLHEP::cm3,
-                                         numberofElements = 9);
-    corticalBone1->AddElement(elH, 4.7234 * CLHEP::perCent);
-    corticalBone1->AddElement(elC, 14.4330 * CLHEP::perCent);
-    corticalBone1->AddElement(elN, 4.199 * CLHEP::perCent);
-    corticalBone1->AddElement(elO, 44.6096 * CLHEP::perCent);
-    corticalBone1->AddElement(elMg, 0.22 * CLHEP::perCent);
-    corticalBone1->AddElement(elP, 10.497 * CLHEP::perCent);
-    corticalBone1->AddElement(elS, 0.315 * CLHEP::perCent);
-    corticalBone1->AddElement(elCa, 20.993 * CLHEP::perCent);
-    corticalBone1->AddElement(elZn, 0.01 * CLHEP::perCent);
-
-    // Tooth enamel
-    auto *toothEnamel = new G4Material("ToothEnamel", 2.89 * CLHEP::g / CLHEP::cm3,
-                                       numberofElements = 10);
-    toothEnamel->AddElement(elH, 0.95 * CLHEP::perCent);
-    toothEnamel->AddElement(elC, 1.11 * CLHEP::perCent);
-    toothEnamel->AddElement(elN, 0.23 * CLHEP::perCent);
-    toothEnamel->AddElement(elO, 41.66 * CLHEP::perCent);
-    toothEnamel->AddElement(elNa, 0.79 * CLHEP::perCent);
-    toothEnamel->AddElement(elMg, 0.23 * CLHEP::perCent);
-    toothEnamel->AddElement(elP, 18.71 * CLHEP::perCent);
-    toothEnamel->AddElement(elCl, 0.34 * CLHEP::perCent);
-    toothEnamel->AddElement(elCa, 35.97 * CLHEP::perCent);
-    toothEnamel->AddElement(elZn, 0.02 * CLHEP::perCent);
-
-    // Lung blood-filled (Schneider et al.)
-    auto *lungBloodFilled = new G4Material("LungBloodFilled", 0.26 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    lungBloodFilled->AddElement(elH, 10.3 * CLHEP::perCent);
-    lungBloodFilled->AddElement(elC, 10.5 * CLHEP::perCent);
-    lungBloodFilled->AddElement(elN, 3.1 * CLHEP::perCent);
-    lungBloodFilled->AddElement(elO, 74.9 * CLHEP::perCent);
-    lungBloodFilled->AddElement(elP, 0.2 * CLHEP::perCent);
-    lungBloodFilled->AddElement(elK, 1.0 * CLHEP::perCent);
-
-    // Adipose Tissue 1 (Schneider et al.)
-    auto *adiposeTissue1 = new G4Material("AdiposeTissue1", 0.97 * CLHEP::g / CLHEP::cm3, numberofElements = 5);
-    adiposeTissue1->AddElement(elH, 11.2 * CLHEP::perCent);
-    adiposeTissue1->AddElement(elC, 51.7 * CLHEP::perCent);
-    adiposeTissue1->AddElement(elN, 1.3 * CLHEP::perCent);
-    adiposeTissue1->AddElement(elO, 35.5 * CLHEP::perCent);
-    adiposeTissue1->AddElement(elK, 0.3 * CLHEP::perCent);
-
-    // Adipose Tissue 2 (Schneider et al.)
-    auto *adiposeTissue2 = new G4Material("AdiposeTissue2", 0.95 * CLHEP::g / CLHEP::cm3, numberofElements = 5);
-    adiposeTissue2->AddElement(elH, 11.4 * CLHEP::perCent);
-    adiposeTissue2->AddElement(elC, 59.8 * CLHEP::perCent);
-    adiposeTissue2->AddElement(elN, 0.7 * CLHEP::perCent);
-    adiposeTissue2->AddElement(elO, 27.8 * CLHEP::perCent);
-    adiposeTissue2->AddElement(elK, 0.3 * CLHEP::perCent);
-
-    // Adipose Tissue 3 (Schneider et al.)
-    auto *adiposeTissue3 = new G4Material("AdiposeTissue3", 0.93 * CLHEP::g / CLHEP::cm3, numberofElements = 5);
-    adiposeTissue3->AddElement(elH, 11.6 * CLHEP::perCent);
-    adiposeTissue3->AddElement(elC, 68.1 * CLHEP::perCent);
-    adiposeTissue3->AddElement(elN, 0.2 * CLHEP::perCent);
-    adiposeTissue3->AddElement(elO, 19.8 * CLHEP::perCent);
-    adiposeTissue3->AddElement(elK, 0.3 * CLHEP::perCent);
-
-    // Mammary gland 1 (Schneider et al.)
-    auto *mammaryGland1 = new G4Material("MammaryGland1", 0.99 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    mammaryGland1->AddElement(elH, 10.9 * CLHEP::perCent);
-    mammaryGland1->AddElement(elC, 50.6 * CLHEP::perCent);
-    mammaryGland1->AddElement(elN, 2.3 * CLHEP::perCent);
-    mammaryGland1->AddElement(elO, 35.8 * CLHEP::perCent);
-    mammaryGland1->AddElement(elP, 0.1 * CLHEP::perCent);
-    mammaryGland1->AddElement(elK, 0.3 * CLHEP::perCent);
-
-    // Mammary gland 2 (Schneider et al.)
-    auto *mammaryGland2 = new G4Material("MammaryGland2", 1.02 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    mammaryGland2->AddElement(elH, 10.6 * CLHEP::perCent);
-    mammaryGland2->AddElement(elC, 33.2 * CLHEP::perCent);
-    mammaryGland2->AddElement(elN, 3.0 * CLHEP::perCent);
-    mammaryGland2->AddElement(elO, 52.8 * CLHEP::perCent);
-    mammaryGland2->AddElement(elP, 0.1 * CLHEP::perCent);
-    mammaryGland2->AddElement(elK, 0.3 * CLHEP::perCent);
-
-    // Adrenal gland (Schneider et al.)
-    auto *adrenalGland = new G4Material("AdrenalGland", 1.03 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    adrenalGland->AddElement(elH, 10.6 * CLHEP::perCent);
-    adrenalGland->AddElement(elC, 28.4 * CLHEP::perCent);
-    adrenalGland->AddElement(elN, 2.6 * CLHEP::perCent);
-    adrenalGland->AddElement(elO, 57.8 * CLHEP::perCent);
-    adrenalGland->AddElement(elP, 0.1 * CLHEP::perCent);
-    adrenalGland->AddElement(elK, 0.5 * CLHEP::perCent);
-
-    // Small intestine wall (Schneider et al.)
-    auto *smallInstestineWall = new G4Material("SmallIntestineWall", 1.03 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    smallInstestineWall->AddElement(elH, 10.6 * CLHEP::perCent);
-    smallInstestineWall->AddElement(elC, 11.5 * CLHEP::perCent);
-    smallInstestineWall->AddElement(elN, 2.2 * CLHEP::perCent);
-    smallInstestineWall->AddElement(elO, 75.1 * CLHEP::perCent);
-    smallInstestineWall->AddElement(elP, 0.1 * CLHEP::perCent);
-    smallInstestineWall->AddElement(elK, 0.5 * CLHEP::perCent);
-
-    // Cerebrospinal fluid (Schneider et al.)
-    auto *cerebrospinalFluid = new G4Material("CerebrospinalFluid", 1.01 * CLHEP::g / CLHEP::cm3, numberofElements = 3);
-    cerebrospinalFluid->AddElement(elH, 11.1 * CLHEP::perCent);
-    cerebrospinalFluid->AddElement(elO, 88.0 * CLHEP::perCent);
-    cerebrospinalFluid->AddElement(elK, 0.9 * CLHEP::perCent);
-
-    // Urine (Schneider et al.)
-    auto *urine = new G4Material("Urine", 1.02 * CLHEP::g / CLHEP::cm3, numberofElements = 7);
-    urine->AddElement(elH, 11.0 * CLHEP::perCent);
-    urine->AddElement(elC, 0.5 * CLHEP::perCent);
-    urine->AddElement(elN, 1.0 * CLHEP::perCent);
-    urine->AddElement(elO, 86.2 * CLHEP::perCent);
-    urine->AddElement(elP, 0.1 * CLHEP::perCent);
-    urine->AddElement(elK, 0.2 * CLHEP::perCent);
-    urine->AddElement(elNa, 1.0 * CLHEP::perCent);
-
-    // Gallbladder bile (Schneider et al.)
-    auto *gallbladderBile = new G4Material("GallbladderBile", 1.03 * CLHEP::g / CLHEP::cm3, numberofElements = 5);
-    gallbladderBile->AddElement(elH, 10.8 * CLHEP::perCent);
-    gallbladderBile->AddElement(elC, 6.1 * CLHEP::perCent);
-    gallbladderBile->AddElement(elN, 0.1 * CLHEP::perCent);
-    gallbladderBile->AddElement(elO, 82.2 * CLHEP::perCent);
-    gallbladderBile->AddElement(elK, 0.8 * CLHEP::perCent);
-
-    // Lymph (Schneider et al.)
-    auto *lymph = new G4Material("Lymph", 1.03 * CLHEP::g / CLHEP::cm3, numberofElements = 5);
-    lymph->AddElement(elH, 10.8 * CLHEP::perCent);
-    lymph->AddElement(elC, 4.1 * CLHEP::perCent);
-    lymph->AddElement(elN, 1.1 * CLHEP::perCent);
-    lymph->AddElement(elO, 83.2 * CLHEP::perCent);
-    lymph->AddElement(elK, 0.8 * CLHEP::perCent);
-
-    // Pancreas (Schneider et al.)
-    auto *pancreas = new G4Material("Pancreas", 1.04 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    pancreas->AddElement(elH, 10.6 * CLHEP::perCent);
-    pancreas->AddElement(elC, 16.9 * CLHEP::perCent);
-    pancreas->AddElement(elN, 2.2 * CLHEP::perCent);
-    pancreas->AddElement(elO, 69.4 * CLHEP::perCent);
-    pancreas->AddElement(elP, 0.2 * CLHEP::perCent);
-    pancreas->AddElement(elK, 0.7 * CLHEP::perCent);
-
-    // Prostate (Schneider et al.)
-    auto *prostate = new G4Material("Prostate", 1.04 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    prostate->AddElement(elH, 10.5 * CLHEP::perCent);
-    prostate->AddElement(elC, 8.9 * CLHEP::perCent);
-    prostate->AddElement(elN, 2.5 * CLHEP::perCent);
-    prostate->AddElement(elO, 77.4 * CLHEP::perCent);
-    prostate->AddElement(elP, 0.1 * CLHEP::perCent);
-    prostate->AddElement(elK, 0.6 * CLHEP::perCent);
-
-    // White matter (Schneider et al.)
-    auto *whiteMatter = new G4Material("WhiteMatter", 1.04 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    whiteMatter->AddElement(elH, 10.6 * CLHEP::perCent);
-    whiteMatter->AddElement(elC, 19.4 * CLHEP::perCent);
-    whiteMatter->AddElement(elN, 2.5 * CLHEP::perCent);
-    whiteMatter->AddElement(elO, 66.1 * CLHEP::perCent);
-    whiteMatter->AddElement(elP, 0.4 * CLHEP::perCent);
-    whiteMatter->AddElement(elK, 1.0 * CLHEP::perCent);
-
-    // Testis (Schneider et al.)
-    auto *testis = new G4Material("Testis", 1.04 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    testis->AddElement(elH, 10.6 * CLHEP::perCent);
-    testis->AddElement(elC, 9.9 * CLHEP::perCent);
-    testis->AddElement(elN, 2.0 * CLHEP::perCent);
-    testis->AddElement(elO, 76.6 * CLHEP::perCent);
-    testis->AddElement(elP, 0.1 * CLHEP::perCent);
-    testis->AddElement(elK, 0.8 * CLHEP::perCent);
-
-    // Grey Matter (Schneider et al.)
-    auto *greyMatter = new G4Material("GreyMatter", 1.04 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    greyMatter->AddElement(elH, 10.7 * CLHEP::perCent);
-    greyMatter->AddElement(elC, 9.5 * CLHEP::perCent);
-    greyMatter->AddElement(elN, 1.8 * CLHEP::perCent);
-    greyMatter->AddElement(elO, 76.7 * CLHEP::perCent);
-    greyMatter->AddElement(elP, 0.3 * CLHEP::perCent);
-    greyMatter->AddElement(elK, 1.0 * CLHEP::perCent);
-
-    // Muscle Skeletal 1 (Schneider et al.)
-    auto *muscleSkeletal1 = new G4Material("MuscleSkeletal1", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    muscleSkeletal1->AddElement(elH, 10.1 * CLHEP::perCent);
-    muscleSkeletal1->AddElement(elC, 17.1 * CLHEP::perCent);
-    muscleSkeletal1->AddElement(elN, 3.6 * CLHEP::perCent);
-    muscleSkeletal1->AddElement(elO, 68.1 * CLHEP::perCent);
-    muscleSkeletal1->AddElement(elP, 0.2 * CLHEP::perCent);
-    muscleSkeletal1->AddElement(elK, 0.9 * CLHEP::perCent);
-
-    // Stomach (Schneider et al.)
-    auto *stomach = new G4Material("Stomach", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    stomach->AddElement(elH, 10.4 * CLHEP::perCent);
-    stomach->AddElement(elC, 13.9 * CLHEP::perCent);
-    stomach->AddElement(elN, 2.9 * CLHEP::perCent);
-    stomach->AddElement(elO, 72.1 * CLHEP::perCent);
-    stomach->AddElement(elP, 0.1 * CLHEP::perCent);
-    stomach->AddElement(elK, 0.6 * CLHEP::perCent);
-
-    // Heart 1 (Schneider et al.)
-    auto *heart1 = new G4Material("Heart1", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    heart1->AddElement(elH, 10.3 * CLHEP::perCent);
-    heart1->AddElement(elC, 17.5 * CLHEP::perCent);
-    heart1->AddElement(elN, 3.1 * CLHEP::perCent);
-    heart1->AddElement(elO, 68.1 * CLHEP::perCent);
-    heart1->AddElement(elP, 0.2 * CLHEP::perCent);
-    heart1->AddElement(elK, 0.8 * CLHEP::perCent);
-
-    // Kidney 1 (Schneider et al.)
-    auto *kidney1 = new G4Material("Kidney1", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 7);
-    kidney1->AddElement(elH, 10.2 * CLHEP::perCent);
-    kidney1->AddElement(elC, 16.0 * CLHEP::perCent);
-    kidney1->AddElement(elN, 3.4 * CLHEP::perCent);
-    kidney1->AddElement(elO, 69.3 * CLHEP::perCent);
-    kidney1->AddElement(elP, 0.2 * CLHEP::perCent);
-    kidney1->AddElement(elCa, 0.1 * CLHEP::perCent);
-    kidney1->AddElement(elK, 0.8 * CLHEP::perCent);
-
-    // Thyroid (Schneider et al.)
-    auto *thyroid = new G4Material("Thyroid", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    thyroid->AddElement(elH, 10.4 * CLHEP::perCent);
-    thyroid->AddElement(elC, 11.9 * CLHEP::perCent);
-    thyroid->AddElement(elN, 2.4 * CLHEP::perCent);
-    thyroid->AddElement(elO, 74.5 * CLHEP::perCent);
-    thyroid->AddElement(elP, 0.1 * CLHEP::perCent);
-    thyroid->AddElement(elK, 0.7 * CLHEP::perCent);
-
-    // Aorta (Schneider et al.)
-    auto *aorta = new G4Material("Aorta", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 7);
-    aorta->AddElement(elH, 9.9 * CLHEP::perCent);
-    aorta->AddElement(elC, 14.7 * CLHEP::perCent);
-    aorta->AddElement(elN, 4.2 * CLHEP::perCent);
-    aorta->AddElement(elO, 69.8 * CLHEP::perCent);
-    aorta->AddElement(elP, 0.4 * CLHEP::perCent);
-    aorta->AddElement(elCa, 0.4 * CLHEP::perCent);
-    aorta->AddElement(elK, 0.6 * CLHEP::perCent);
-
-    // Heart 2 (Schneider et al.)
-    auto *heart2 = new G4Material("Heart2", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
-    heart2->AddElement(elH, 10.4 * CLHEP::perCent);
-    heart2->AddElement(elC, 13.9 * CLHEP::perCent);
-    heart2->AddElement(elN, 2.9 * CLHEP::perCent);
-    heart2->AddElement(elO, 71.8 * CLHEP::perCent);
-    heart2->AddElement(elP, 0.2 * CLHEP::perCent);
-    heart2->AddElement(elK, 0.8 * CLHEP::perCent);
-
-    // Kidney 2 (Schneider et al.)
-    auto *kidney2 = new G4Material("Kidney2", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 7);
-    kidney2->AddElement(elH, 10.3 * CLHEP::perCent);
-    kidney2->AddElement(elC, 13.2 * CLHEP::perCent);
-    kidney2->AddElement(elN, 3.0 * CLHEP::perCent);
-    kidney2->AddElement(elO, 72.4 * CLHEP::perCent);
-    kidney2->AddElement(elP, 0.2 * CLHEP::perCent);
-    kidney2->AddElement(elCa, 0.1 * CLHEP::perCent);
-    kidney2->AddElement(elK, 0.8 * CLHEP::perCent);
+  // Creating elements :
+  G4double z, a, density;
+  G4String mname, symbol;
+  
+  auto *elC = new G4Element(mname = "Carbon",
+			    symbol = "C",
+			    z = 6.0, a = 12.011 * CLHEP::g / CLHEP::mole);
+  auto *elH = new G4Element(mname = "Hydrogen",
+			    symbol = "H",
+			    z = 1.0, a = 1.008 * CLHEP::g / CLHEP::mole);
+  auto *elN = new G4Element(mname = "Nitrogen",
+			    symbol = "N",
+			    z = 7.0, a = 14.007 * CLHEP::g / CLHEP::mole);
+  auto *elO = new G4Element(mname = "Oxygen",
+			    symbol = "O",
+			    z = 8.0, a = 16.00 * CLHEP::g / CLHEP::mole);
+  auto *elNa = new G4Element(mname = "Sodium",
+			     symbol = "Na",
+			     z = 11.0, a = 22.98977 * CLHEP::g / CLHEP::mole);
+  auto *elMg = new G4Element(mname = "Magnesium",
+			     symbol = "Mg",
+			     z = 12.0, a = 24.3050 * CLHEP::g / CLHEP::mole);
+  auto *elP = new G4Element(mname = "Phosphorus",
+			    symbol = "P",
+			    z = 15.0, a = 30.973976 * CLHEP::g / CLHEP::mole);
+  auto *elS = new G4Element(mname = "Sulfur",
+			    symbol = "S",
+			    z = 16.0, a = 32.065 * CLHEP::g / CLHEP::mole);
+  auto *elCl = new G4Element(mname = "Chlorine",
+			     symbol = "P",
+			     z = 17.0, a = 35.453 * CLHEP::g / CLHEP::mole);
+  auto *elK = new G4Element(mname = "Potassium",
+			    symbol = "P",
+			    z = 19.0, a = 30.0983 * CLHEP::g / CLHEP::mole);
+  
+  auto *elFe = new G4Element(mname = "Iron",
+			     symbol = "Fe",
+			     z = 26, a = 56.845 * CLHEP::g / CLHEP::mole);
+  
+  auto *elCa = new G4Element(mname = "Calcium",
+			     symbol = "Ca",
+			     z = 20.0, a = 40.078 * CLHEP::g / CLHEP::mole);
+  
+  auto *elZn = new G4Element(mname = "Zinc",
+			     symbol = "Zn",
+			     z = 30.0, a = 65.382 * CLHEP::g / CLHEP::mole);
+  
+  // Creating Materials :
+  G4int numberofElements;
+  
+  // Air
+  fAir = new G4Material("Air",
+			0.001290 * CLHEP::g / CLHEP::cm3,
+			numberofElements = 2);
+  fAir->AddElement(elN, 0.7);
+  fAir->AddElement(elO, 0.3);
+  
+  // Soft tissue (ICRP - NIST)
+  auto *softTissue = new G4Material("SoftTissue", 1.00 * CLHEP::g / CLHEP::cm3,
+				    numberofElements = 13);
+  softTissue->AddElement(elH, 10.4472 * CLHEP::perCent);
+  softTissue->AddElement(elC, 23.219 * CLHEP::perCent);
+  softTissue->AddElement(elN, 2.488 * CLHEP::perCent);
+  softTissue->AddElement(elO, 63.0238 * CLHEP::perCent);
+  softTissue->AddElement(elNa, 0.113 * CLHEP::perCent);
+  softTissue->AddElement(elMg, 0.0113 * CLHEP::perCent);
+  softTissue->AddElement(elP, 0.113 * CLHEP::perCent);
+  softTissue->AddElement(elS, 0.199 * CLHEP::perCent);
+  softTissue->AddElement(elCl, 0.134 * CLHEP::perCent);
+  softTissue->AddElement(elK, 0.199 * CLHEP::perCent);
+  softTissue->AddElement(elCa, 0.023 * CLHEP::perCent);
+  softTissue->AddElement(elFe, 0.005 * CLHEP::perCent);
+  softTissue->AddElement(elZn, 0.003 * CLHEP::perCent);
+  
+  //  Lung Inhale
+  auto *lunginhale = new G4Material("LungInhale",
+				    density = 0.217 * CLHEP::g / CLHEP::cm3,
+				    numberofElements = 9);
+  lunginhale->AddElement(elH, 0.103);
+  lunginhale->AddElement(elC, 0.105);
+  lunginhale->AddElement(elN, 0.031);
+  lunginhale->AddElement(elO, 0.749);
+  lunginhale->AddElement(elNa, 0.002);
+  lunginhale->AddElement(elP, 0.002);
+  lunginhale->AddElement(elS, 0.003);
+  lunginhale->AddElement(elCl, 0.002);
+  lunginhale->AddElement(elK, 0.003);
+  
+  // Lung exhale
+  G4Material *lungexhale = new G4Material("LungExhale",
+					  density = 0.508 * CLHEP::g / CLHEP::cm3,
+					  numberofElements = 9);
+  lungexhale->AddElement(elH, 0.103);
+  lungexhale->AddElement(elC, 0.105);
+  lungexhale->AddElement(elN, 0.031);
+  lungexhale->AddElement(elO, 0.749);
+  lungexhale->AddElement(elNa, 0.002);
+  lungexhale->AddElement(elP, 0.002);
+  lungexhale->AddElement(elS, 0.003);
+  lungexhale->AddElement(elCl, 0.002);
+  lungexhale->AddElement(elK, 0.003);
+  
+  // Adipose tissue
+  auto *adiposeTissue = new G4Material("AdiposeTissue",
+				       density = 0.967 * CLHEP::g / CLHEP::cm3,
+				       numberofElements = 7);
+  adiposeTissue->AddElement(elH, 0.114);
+  adiposeTissue->AddElement(elC, 0.598);
+  adiposeTissue->AddElement(elN, 0.007);
+  adiposeTissue->AddElement(elO, 0.278);
+  adiposeTissue->AddElement(elNa, 0.001);
+  adiposeTissue->AddElement(elS, 0.001);
+  adiposeTissue->AddElement(elCl, 0.001);
+  
+  // Brain (ICRP - NIST)
+  auto *brainTissue = new G4Material("BrainTissue", 1.03 * CLHEP::g / CLHEP::cm3,
+				     numberofElements = 13);
+  brainTissue->AddElement(elH, 11.0667 * CLHEP::perCent);
+  brainTissue->AddElement(elC, 12.542 * CLHEP::perCent);
+  brainTissue->AddElement(elN, 1.328 * CLHEP::perCent);
+  brainTissue->AddElement(elO, 73.7723 * CLHEP::perCent);
+  brainTissue->AddElement(elNa, 0.1840 * CLHEP::perCent);
+  brainTissue->AddElement(elMg, 0.015 * CLHEP::perCent);
+  brainTissue->AddElement(elP, 0.356 * CLHEP::perCent);
+  brainTissue->AddElement(elS, 0.177 * CLHEP::perCent);
+  brainTissue->AddElement(elCl, 0.236 * CLHEP::perCent);
+  brainTissue->AddElement(elK, 0.31 * CLHEP::perCent);
+  brainTissue->AddElement(elCa, 0.009 * CLHEP::perCent);
+  brainTissue->AddElement(elFe, 0.005 * CLHEP::perCent);
+  brainTissue->AddElement(elZn, 0.001 * CLHEP::perCent);
+  
+  // Breast
+  auto *breast = new G4Material("Breast",
+				density = 0.990 * CLHEP::g / CLHEP::cm3,
+				numberofElements = 8);
+  breast->AddElement(elH, 0.109);
+  breast->AddElement(elC, 0.506);
+  breast->AddElement(elN, 0.023);
+  breast->AddElement(elO, 0.358);
+  breast->AddElement(elNa, 0.001);
+  breast->AddElement(elP, 0.001);
+  breast->AddElement(elS, 0.001);
+  breast->AddElement(elCl, 0.001);
+  
+  // Spinal Disc
+  auto *spinalDisc = new G4Material("SpinalDisc", 1.10 * CLHEP::g / CLHEP::cm3,
+				    numberofElements = 8);
+  spinalDisc->AddElement(elH, 9.60 * CLHEP::perCent);
+  spinalDisc->AddElement(elC, 9.90 * CLHEP::perCent);
+  spinalDisc->AddElement(elN, 2.20 * CLHEP::perCent);
+  spinalDisc->AddElement(elO, 74.40 * CLHEP::perCent);
+  spinalDisc->AddElement(elNa, 0.50 * CLHEP::perCent);
+  spinalDisc->AddElement(elP, 2.20 * CLHEP::perCent);
+  spinalDisc->AddElement(elS, 0.90 * CLHEP::perCent);
+  spinalDisc->AddElement(elCl, 0.30 * CLHEP::perCent);
+  
+  // Water
+  auto *water = new G4Material("Water",
+			       density = 1.0 * CLHEP::g / CLHEP::cm3,
+			       numberofElements = 2);
+  water->AddElement(elH, 0.112);
+  water->AddElement(elO, 0.888);
+  
+  // Muscle
+  auto *muscle = new G4Material("Muscle",
+				density = 1.061 * CLHEP::g / CLHEP::cm3,
+				numberofElements = 9);
+  muscle->AddElement(elH, 0.102);
+  muscle->AddElement(elC, 0.143);
+  muscle->AddElement(elN, 0.034);
+  muscle->AddElement(elO, 0.710);
+  muscle->AddElement(elNa, 0.001);
+  muscle->AddElement(elP, 0.002);
+  muscle->AddElement(elS, 0.003);
+  muscle->AddElement(elCl, 0.001);
+  muscle->AddElement(elK, 0.004);
+  
+  // Liver
+  auto *liver = new G4Material("Liver",
+			       density = 1.071 * CLHEP::g / CLHEP::cm3,
+			       numberofElements = 9);
+  liver->AddElement(elH, 0.102);
+  liver->AddElement(elC, 0.139);
+  liver->AddElement(elN, 0.030);
+  liver->AddElement(elO, 0.716);
+  liver->AddElement(elNa, 0.002);
+  liver->AddElement(elP, 0.003);
+  liver->AddElement(elS, 0.003);
+  liver->AddElement(elCl, 0.002);
+  liver->AddElement(elK, 0.003);
+  
+  // Tooth Dentin
+  auto *toothDentin = new G4Material("ToothDentin", 2.14 * CLHEP::g / CLHEP::cm3,
+				     numberofElements = 10);
+  toothDentin->AddElement(elH, 2.67 * CLHEP::perCent);
+  toothDentin->AddElement(elC, 12.77 * CLHEP::perCent);
+  toothDentin->AddElement(elN, 4.27 * CLHEP::perCent);
+  toothDentin->AddElement(elO, 40.40 * CLHEP::perCent);
+  toothDentin->AddElement(elNa, 0.65 * CLHEP::perCent);
+  toothDentin->AddElement(elMg, 0.59 * CLHEP::perCent);
+  toothDentin->AddElement(elP, 11.86 * CLHEP::perCent);
+  toothDentin->AddElement(elCl, 0.04 * CLHEP::perCent);
+  toothDentin->AddElement(elCa, 26.74 * CLHEP::perCent);
+  toothDentin->AddElement(elZn, 0.01 * CLHEP::perCent);
+  
+  // Trabecular Bone
+  auto *trabecularBone = new G4Material("TrabecularBone",
+					density = 1.159 * CLHEP::g / CLHEP::cm3,
+					numberofElements = 12);
+  trabecularBone->AddElement(elH, 0.085);
+  trabecularBone->AddElement(elC, 0.404);
+  trabecularBone->AddElement(elN, 0.058);
+  trabecularBone->AddElement(elO, 0.367);
+  trabecularBone->AddElement(elNa, 0.001);
+  trabecularBone->AddElement(elMg, 0.001);
+  trabecularBone->AddElement(elP, 0.034);
+  trabecularBone->AddElement(elS, 0.002);
+  trabecularBone->AddElement(elCl, 0.002);
+  trabecularBone->AddElement(elK, 0.001);
+  trabecularBone->AddElement(elCa, 0.044);
+  trabecularBone->AddElement(elFe, 0.001);
+  
+  // Trabecular bone used in the DICOM Head
+  
+  auto *trabecularBone_head = new G4Material("TrabecularBone_HEAD",
+					     1.18 * CLHEP::g / CLHEP::cm3,
+					     numberofElements = 12);
+  trabecularBone_head->AddElement(elH, 8.50 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elC, 40.40 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elN, 2.80 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elO, 36.70 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elNa, 0.10 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elMg, 0.10 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elP, 3.40 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elS, 0.20 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elCl, 0.20 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elK, 0.10 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elCa, 7.40 * CLHEP::perCent);
+  trabecularBone_head->AddElement(elFe, 0.10 * CLHEP::perCent);
+  
+  // Dense Bone
+  auto *denseBone = new G4Material("DenseBone",
+				   density = 1.575 * CLHEP::g / CLHEP::cm3,
+				   numberofElements = 11);
+  denseBone->AddElement(elH, 0.056);
+  denseBone->AddElement(elC, 0.235);
+  denseBone->AddElement(elN, 0.050);
+  denseBone->AddElement(elO, 0.434);
+  denseBone->AddElement(elNa, 0.001);
+  denseBone->AddElement(elMg, 0.001);
+  denseBone->AddElement(elP, 0.072);
+  denseBone->AddElement(elS, 0.003);
+  denseBone->AddElement(elCl, 0.001);
+  denseBone->AddElement(elK, 0.001);
+  denseBone->AddElement(elCa, 0.146);
+  
+  // Cortical Bone 1 (ICRP - NIST)
+  auto *corticalBone1 = new G4Material("CorticalBone1", 1.85 * CLHEP::g / CLHEP::cm3,
+				       numberofElements = 9);
+  corticalBone1->AddElement(elH, 4.7234 * CLHEP::perCent);
+  corticalBone1->AddElement(elC, 14.4330 * CLHEP::perCent);
+  corticalBone1->AddElement(elN, 4.199 * CLHEP::perCent);
+  corticalBone1->AddElement(elO, 44.6096 * CLHEP::perCent);
+  corticalBone1->AddElement(elMg, 0.22 * CLHEP::perCent);
+  corticalBone1->AddElement(elP, 10.497 * CLHEP::perCent);
+  corticalBone1->AddElement(elS, 0.315 * CLHEP::perCent);
+  corticalBone1->AddElement(elCa, 20.993 * CLHEP::perCent);
+  corticalBone1->AddElement(elZn, 0.01 * CLHEP::perCent);
+  
+  // Tooth enamel
+  auto *toothEnamel = new G4Material("ToothEnamel", 2.89 * CLHEP::g / CLHEP::cm3,
+				     numberofElements = 10);
+  toothEnamel->AddElement(elH, 0.95 * CLHEP::perCent);
+  toothEnamel->AddElement(elC, 1.11 * CLHEP::perCent);
+  toothEnamel->AddElement(elN, 0.23 * CLHEP::perCent);
+  toothEnamel->AddElement(elO, 41.66 * CLHEP::perCent);
+  toothEnamel->AddElement(elNa, 0.79 * CLHEP::perCent);
+  toothEnamel->AddElement(elMg, 0.23 * CLHEP::perCent);
+  toothEnamel->AddElement(elP, 18.71 * CLHEP::perCent);
+  toothEnamel->AddElement(elCl, 0.34 * CLHEP::perCent);
+  toothEnamel->AddElement(elCa, 35.97 * CLHEP::perCent);
+  toothEnamel->AddElement(elZn, 0.02 * CLHEP::perCent);
+  
+  // Lung blood-filled (Schneider et al.)
+  auto *lungBloodFilled = new G4Material("LungBloodFilled", 0.26 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  lungBloodFilled->AddElement(elH, 10.3 * CLHEP::perCent);
+  lungBloodFilled->AddElement(elC, 10.5 * CLHEP::perCent);
+  lungBloodFilled->AddElement(elN, 3.1 * CLHEP::perCent);
+  lungBloodFilled->AddElement(elO, 74.9 * CLHEP::perCent);
+  lungBloodFilled->AddElement(elP, 0.2 * CLHEP::perCent);
+  lungBloodFilled->AddElement(elK, 1.0 * CLHEP::perCent);
+  
+  // Adipose Tissue 1 (Schneider et al.)
+  auto *adiposeTissue1 = new G4Material("AdiposeTissue1", 0.97 * CLHEP::g / CLHEP::cm3, numberofElements = 5);
+  adiposeTissue1->AddElement(elH, 11.2 * CLHEP::perCent);
+  adiposeTissue1->AddElement(elC, 51.7 * CLHEP::perCent);
+  adiposeTissue1->AddElement(elN, 1.3 * CLHEP::perCent);
+  adiposeTissue1->AddElement(elO, 35.5 * CLHEP::perCent);
+  adiposeTissue1->AddElement(elK, 0.3 * CLHEP::perCent);
+  
+  // Adipose Tissue 2 (Schneider et al.)
+  auto *adiposeTissue2 = new G4Material("AdiposeTissue2", 0.95 * CLHEP::g / CLHEP::cm3, numberofElements = 5);
+  adiposeTissue2->AddElement(elH, 11.4 * CLHEP::perCent);
+  adiposeTissue2->AddElement(elC, 59.8 * CLHEP::perCent);
+  adiposeTissue2->AddElement(elN, 0.7 * CLHEP::perCent);
+  adiposeTissue2->AddElement(elO, 27.8 * CLHEP::perCent);
+  adiposeTissue2->AddElement(elK, 0.3 * CLHEP::perCent);
+  
+  // Adipose Tissue 3 (Schneider et al.)
+  auto *adiposeTissue3 = new G4Material("AdiposeTissue3", 0.93 * CLHEP::g / CLHEP::cm3, numberofElements = 5);
+  adiposeTissue3->AddElement(elH, 11.6 * CLHEP::perCent);
+  adiposeTissue3->AddElement(elC, 68.1 * CLHEP::perCent);
+  adiposeTissue3->AddElement(elN, 0.2 * CLHEP::perCent);
+  adiposeTissue3->AddElement(elO, 19.8 * CLHEP::perCent);
+  adiposeTissue3->AddElement(elK, 0.3 * CLHEP::perCent);
+  
+  // Mammary gland 1 (Schneider et al.)
+  auto *mammaryGland1 = new G4Material("MammaryGland1", 0.99 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  mammaryGland1->AddElement(elH, 10.9 * CLHEP::perCent);
+  mammaryGland1->AddElement(elC, 50.6 * CLHEP::perCent);
+  mammaryGland1->AddElement(elN, 2.3 * CLHEP::perCent);
+  mammaryGland1->AddElement(elO, 35.8 * CLHEP::perCent);
+  mammaryGland1->AddElement(elP, 0.1 * CLHEP::perCent);
+  mammaryGland1->AddElement(elK, 0.3 * CLHEP::perCent);
+  
+  // Mammary gland 2 (Schneider et al.)
+  auto *mammaryGland2 = new G4Material("MammaryGland2", 1.02 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  mammaryGland2->AddElement(elH, 10.6 * CLHEP::perCent);
+  mammaryGland2->AddElement(elC, 33.2 * CLHEP::perCent);
+  mammaryGland2->AddElement(elN, 3.0 * CLHEP::perCent);
+  mammaryGland2->AddElement(elO, 52.8 * CLHEP::perCent);
+  mammaryGland2->AddElement(elP, 0.1 * CLHEP::perCent);
+  mammaryGland2->AddElement(elK, 0.3 * CLHEP::perCent);
+  
+  // Adrenal gland (Schneider et al.)
+  auto *adrenalGland = new G4Material("AdrenalGland", 1.03 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  adrenalGland->AddElement(elH, 10.6 * CLHEP::perCent);
+  adrenalGland->AddElement(elC, 28.4 * CLHEP::perCent);
+  adrenalGland->AddElement(elN, 2.6 * CLHEP::perCent);
+  adrenalGland->AddElement(elO, 57.8 * CLHEP::perCent);
+  adrenalGland->AddElement(elP, 0.1 * CLHEP::perCent);
+  adrenalGland->AddElement(elK, 0.5 * CLHEP::perCent);
+  
+  // Small intestine wall (Schneider et al.)
+  auto *smallInstestineWall = new G4Material("SmallIntestineWall", 1.03 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  smallInstestineWall->AddElement(elH, 10.6 * CLHEP::perCent);
+  smallInstestineWall->AddElement(elC, 11.5 * CLHEP::perCent);
+  smallInstestineWall->AddElement(elN, 2.2 * CLHEP::perCent);
+  smallInstestineWall->AddElement(elO, 75.1 * CLHEP::perCent);
+  smallInstestineWall->AddElement(elP, 0.1 * CLHEP::perCent);
+  smallInstestineWall->AddElement(elK, 0.5 * CLHEP::perCent);
+  
+  // Cerebrospinal fluid (Schneider et al.)
+  auto *cerebrospinalFluid = new G4Material("CerebrospinalFluid", 1.01 * CLHEP::g / CLHEP::cm3, numberofElements = 3);
+  cerebrospinalFluid->AddElement(elH, 11.1 * CLHEP::perCent);
+  cerebrospinalFluid->AddElement(elO, 88.0 * CLHEP::perCent);
+  cerebrospinalFluid->AddElement(elK, 0.9 * CLHEP::perCent);
+  
+  // Urine (Schneider et al.)
+  auto *urine = new G4Material("Urine", 1.02 * CLHEP::g / CLHEP::cm3, numberofElements = 7);
+  urine->AddElement(elH, 11.0 * CLHEP::perCent);
+  urine->AddElement(elC, 0.5 * CLHEP::perCent);
+  urine->AddElement(elN, 1.0 * CLHEP::perCent);
+  urine->AddElement(elO, 86.2 * CLHEP::perCent);
+  urine->AddElement(elP, 0.1 * CLHEP::perCent);
+  urine->AddElement(elK, 0.2 * CLHEP::perCent);
+  urine->AddElement(elNa, 1.0 * CLHEP::perCent);
+  
+  // Gallbladder bile (Schneider et al.)
+  auto *gallbladderBile = new G4Material("GallbladderBile", 1.03 * CLHEP::g / CLHEP::cm3, numberofElements = 5);
+  gallbladderBile->AddElement(elH, 10.8 * CLHEP::perCent);
+  gallbladderBile->AddElement(elC, 6.1 * CLHEP::perCent);
+  gallbladderBile->AddElement(elN, 0.1 * CLHEP::perCent);
+  gallbladderBile->AddElement(elO, 82.2 * CLHEP::perCent);
+  gallbladderBile->AddElement(elK, 0.8 * CLHEP::perCent);
+  
+  // Lymph (Schneider et al.)
+  auto *lymph = new G4Material("Lymph", 1.03 * CLHEP::g / CLHEP::cm3, numberofElements = 5);
+  lymph->AddElement(elH, 10.8 * CLHEP::perCent);
+  lymph->AddElement(elC, 4.1 * CLHEP::perCent);
+  lymph->AddElement(elN, 1.1 * CLHEP::perCent);
+  lymph->AddElement(elO, 83.2 * CLHEP::perCent);
+  lymph->AddElement(elK, 0.8 * CLHEP::perCent);
+  
+  // Pancreas (Schneider et al.)
+  auto *pancreas = new G4Material("Pancreas", 1.04 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  pancreas->AddElement(elH, 10.6 * CLHEP::perCent);
+  pancreas->AddElement(elC, 16.9 * CLHEP::perCent);
+  pancreas->AddElement(elN, 2.2 * CLHEP::perCent);
+  pancreas->AddElement(elO, 69.4 * CLHEP::perCent);
+  pancreas->AddElement(elP, 0.2 * CLHEP::perCent);
+  pancreas->AddElement(elK, 0.7 * CLHEP::perCent);
+  
+  // Prostate (Schneider et al.)
+  auto *prostate = new G4Material("Prostate", 1.04 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  prostate->AddElement(elH, 10.5 * CLHEP::perCent);
+  prostate->AddElement(elC, 8.9 * CLHEP::perCent);
+  prostate->AddElement(elN, 2.5 * CLHEP::perCent);
+  prostate->AddElement(elO, 77.4 * CLHEP::perCent);
+  prostate->AddElement(elP, 0.1 * CLHEP::perCent);
+  prostate->AddElement(elK, 0.6 * CLHEP::perCent);
+  
+  // White matter (Schneider et al.)
+  auto *whiteMatter = new G4Material("WhiteMatter", 1.04 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  whiteMatter->AddElement(elH, 10.6 * CLHEP::perCent);
+  whiteMatter->AddElement(elC, 19.4 * CLHEP::perCent);
+  whiteMatter->AddElement(elN, 2.5 * CLHEP::perCent);
+  whiteMatter->AddElement(elO, 66.1 * CLHEP::perCent);
+  whiteMatter->AddElement(elP, 0.4 * CLHEP::perCent);
+  whiteMatter->AddElement(elK, 1.0 * CLHEP::perCent);
+  
+  // Testis (Schneider et al.)
+  auto *testis = new G4Material("Testis", 1.04 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  testis->AddElement(elH, 10.6 * CLHEP::perCent);
+  testis->AddElement(elC, 9.9 * CLHEP::perCent);
+  testis->AddElement(elN, 2.0 * CLHEP::perCent);
+  testis->AddElement(elO, 76.6 * CLHEP::perCent);
+  testis->AddElement(elP, 0.1 * CLHEP::perCent);
+  testis->AddElement(elK, 0.8 * CLHEP::perCent);
+  
+  // Grey Matter (Schneider et al.)
+  auto *greyMatter = new G4Material("GreyMatter", 1.04 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  greyMatter->AddElement(elH, 10.7 * CLHEP::perCent);
+  greyMatter->AddElement(elC, 9.5 * CLHEP::perCent);
+  greyMatter->AddElement(elN, 1.8 * CLHEP::perCent);
+  greyMatter->AddElement(elO, 76.7 * CLHEP::perCent);
+  greyMatter->AddElement(elP, 0.3 * CLHEP::perCent);
+  greyMatter->AddElement(elK, 1.0 * CLHEP::perCent);
+  
+  // Muscle Skeletal 1 (Schneider et al.)
+  auto *muscleSkeletal1 = new G4Material("MuscleSkeletal1", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  muscleSkeletal1->AddElement(elH, 10.1 * CLHEP::perCent);
+  muscleSkeletal1->AddElement(elC, 17.1 * CLHEP::perCent);
+  muscleSkeletal1->AddElement(elN, 3.6 * CLHEP::perCent);
+  muscleSkeletal1->AddElement(elO, 68.1 * CLHEP::perCent);
+  muscleSkeletal1->AddElement(elP, 0.2 * CLHEP::perCent);
+  muscleSkeletal1->AddElement(elK, 0.9 * CLHEP::perCent);
+  
+  // Stomach (Schneider et al.)
+  auto *stomach = new G4Material("Stomach", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  stomach->AddElement(elH, 10.4 * CLHEP::perCent);
+  stomach->AddElement(elC, 13.9 * CLHEP::perCent);
+  stomach->AddElement(elN, 2.9 * CLHEP::perCent);
+  stomach->AddElement(elO, 72.1 * CLHEP::perCent);
+  stomach->AddElement(elP, 0.1 * CLHEP::perCent);
+  stomach->AddElement(elK, 0.6 * CLHEP::perCent);
+  
+  // Heart 1 (Schneider et al.)
+  auto *heart1 = new G4Material("Heart1", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  heart1->AddElement(elH, 10.3 * CLHEP::perCent);
+  heart1->AddElement(elC, 17.5 * CLHEP::perCent);
+  heart1->AddElement(elN, 3.1 * CLHEP::perCent);
+  heart1->AddElement(elO, 68.1 * CLHEP::perCent);
+  heart1->AddElement(elP, 0.2 * CLHEP::perCent);
+  heart1->AddElement(elK, 0.8 * CLHEP::perCent);
+  
+  // Kidney 1 (Schneider et al.)
+  auto *kidney1 = new G4Material("Kidney1", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 7);
+  kidney1->AddElement(elH, 10.2 * CLHEP::perCent);
+  kidney1->AddElement(elC, 16.0 * CLHEP::perCent);
+  kidney1->AddElement(elN, 3.4 * CLHEP::perCent);
+  kidney1->AddElement(elO, 69.3 * CLHEP::perCent);
+  kidney1->AddElement(elP, 0.2 * CLHEP::perCent);
+  kidney1->AddElement(elCa, 0.1 * CLHEP::perCent);
+  kidney1->AddElement(elK, 0.8 * CLHEP::perCent);
+  
+  // Thyroid (Schneider et al.)
+  auto *thyroid = new G4Material("Thyroid", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  thyroid->AddElement(elH, 10.4 * CLHEP::perCent);
+  thyroid->AddElement(elC, 11.9 * CLHEP::perCent);
+  thyroid->AddElement(elN, 2.4 * CLHEP::perCent);
+  thyroid->AddElement(elO, 74.5 * CLHEP::perCent);
+  thyroid->AddElement(elP, 0.1 * CLHEP::perCent);
+  thyroid->AddElement(elK, 0.7 * CLHEP::perCent);
+  
+  // Aorta (Schneider et al.)
+  auto *aorta = new G4Material("Aorta", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 7);
+  aorta->AddElement(elH, 9.9 * CLHEP::perCent);
+  aorta->AddElement(elC, 14.7 * CLHEP::perCent);
+  aorta->AddElement(elN, 4.2 * CLHEP::perCent);
+  aorta->AddElement(elO, 69.8 * CLHEP::perCent);
+  aorta->AddElement(elP, 0.4 * CLHEP::perCent);
+  aorta->AddElement(elCa, 0.4 * CLHEP::perCent);
+  aorta->AddElement(elK, 0.6 * CLHEP::perCent);
+  
+  // Heart 2 (Schneider et al.)
+  auto *heart2 = new G4Material("Heart2", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
+  heart2->AddElement(elH, 10.4 * CLHEP::perCent);
+  heart2->AddElement(elC, 13.9 * CLHEP::perCent);
+  heart2->AddElement(elN, 2.9 * CLHEP::perCent);
+  heart2->AddElement(elO, 71.8 * CLHEP::perCent);
+  heart2->AddElement(elP, 0.2 * CLHEP::perCent);
+  heart2->AddElement(elK, 0.8 * CLHEP::perCent);
+    
+  // Kidney 2 (Schneider et al.)
+  auto *kidney2 = new G4Material("Kidney2", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 7);
+  kidney2->AddElement(elH, 10.3 * CLHEP::perCent);
+  kidney2->AddElement(elC, 13.2 * CLHEP::perCent);
+  kidney2->AddElement(elN, 3.0 * CLHEP::perCent);
+  kidney2->AddElement(elO, 72.4 * CLHEP::perCent);
+  kidney2->AddElement(elP, 0.2 * CLHEP::perCent);
+  kidney2->AddElement(elCa, 0.1 * CLHEP::perCent);
+  kidney2->AddElement(elK, 0.8 * CLHEP::perCent);
 
     // Liver 1 (Schneider et al.)
     auto *liver1 = new G4Material("Liver1", 1.05 * CLHEP::g / CLHEP::cm3, numberofElements = 6);
@@ -1190,323 +1194,322 @@ void BDSCT::InitialisationOfMaterials()
 
 void BDSCT::ReadPhantomData()
 {
-    //---- We read data stored in the out file (.g4dcm) and treat it
-    G4String fileName = BDSDicomFileMgr::GetInstance()->GetFileOutName();
-
-    // Preparing the g4dcm file reading
-    std::ifstream fin(fileName);
-    std::vector<G4String> wl;
-    G4int nMaterials;
-
-    // The first line of the g4dcm file is the number of materials prompted by the user
-    fin >> nMaterials;
-    G4String mateName;
-    G4int nmate;
-
-    for (G4int ii = 0; ii < nMaterials; ++ii)
+  //---- We read data stored in the out file (.g4dcm) and treat it
+  G4String fileName = BDSDicomFileMgr::GetInstance()->GetFileOutName();
+  
+  // Preparing the g4dcm file reading
+  std::ifstream fin(fileName);
+  std::vector<G4String> wl;
+  G4int nMaterials;
+  
+  // The first line of the g4dcm file is the number of materials prompted by the user
+  fin >> nMaterials;
+  G4String mateName;
+  G4int nmate;
+  
+  for (G4int ii = 0; ii < nMaterials; ++ii)
     {
-
-        // Retrieving user-chosen Materials from data.dat
-        fin >> nmate;
-        fin >> mateName;
-        if (mateName[0] == '"' && mateName[mateName.length() - 1] == '"')
+      // Retrieving user-chosen Materials from data.dat
+      fin >> nmate;
+      fin >> mateName;
+      if (mateName[0] == '"' && mateName[mateName.length() - 1] == '"')
         {
-            mateName = mateName.substr(1, mateName.length() - 2);
+	  mateName = mateName.substr(1, mateName.length() - 2);
         }
-        G4cout << "GmReadPhantomG4Geometry::ReadPhantomData reading nmate "
-               << ii << " = " << nmate
-               << " mate " << mateName << G4endl;
-        if (ii != nmate)
-            G4Exception("GmReadPhantomG4Geometry::ReadPhantomData",
-                        "Wrong argument", FatalErrorInArgument,
-                        "Material number should be in increasing order:wrong material number");
-
-        // Finding corresponding material in Geant4 table from name
-        G4Material *mate = 0;
-        const G4MaterialTable *matTab = G4Material::GetMaterialTable();
-        for (auto matite = matTab->cbegin(); matite != matTab->cend(); ++matite)
+      G4cout << "GmReadPhantomG4Geometry::ReadPhantomData reading nmate "
+	     << ii << " = " << nmate
+	     << " mate " << mateName << G4endl;
+      if (ii != nmate)
+	G4Exception("GmReadPhantomG4Geometry::ReadPhantomData",
+		    "Wrong argument", FatalErrorInArgument,
+		    "Material number should be in increasing order:wrong material number");
+      
+      // Finding corresponding material in Geant4 table from name
+      G4Material *mate = 0;
+      const G4MaterialTable *matTab = G4Material::GetMaterialTable();
+      for (auto matite = matTab->cbegin(); matite != matTab->cend(); ++matite)
         {
-            if ((*matite)->GetName() == mateName)
-                mate = *matite;
+	  if ((*matite)->GetName() == mateName)
+	    mate = *matite;
         }
-
-        // If not found in Geant4 table, custom build this material from name
-        if (mate == 0)
-            mate = G4NistManager::Instance()->FindOrBuildMaterial(mateName);
-
-        if (!mate)
-            G4Exception("GmReadPhantomG4Geometry::ReadPhantomData",
-                        "Wrong argument",
-                        FatalErrorInArgument,
-                        ("Material not found" + mateName).c_str());
-        thePhantomMaterialsOriginal[nmate] = mate;
+      
+      // If not found in Geant4 table, custom build this material from name
+      if (mate == 0)
+	mate = G4NistManager::Instance()->FindOrBuildMaterial(mateName);
+      
+      if (!mate)
+	G4Exception("GmReadPhantomG4Geometry::ReadPhantomData",
+		    "Wrong argument",
+		    FatalErrorInArgument,
+		    ("Material not found" + mateName).c_str());
+      thePhantomMaterialsOriginal[nmate] = mate;
     }
-    // All materials required by the user are now ready for use
-    // Now it should be associated with voxels and densities
-
-    fin >> fNVoxelX >> fNVoxelY >> fNVoxelZ;
-    G4cout << "GmReadPhantomG4Geometry::ReadPhantomData fNVoxel X/Y/Z "
-           << fNVoxelX << " "
-           << fNVoxelY << " " << fNVoxelZ << G4endl;
-    fin >> fMinX >> fMaxX;
-    fin >> fMinY >> fMaxY;
-    fin >> fMinZ >> fMaxZ;
-    fVoxelHalfDimX = (fMaxX - fMinX) / fNVoxelX / 2.;
-    fVoxelHalfDimY = (fMaxY - fMinY) / fNVoxelY / 2.;
-    fVoxelHalfDimZ = (fMaxZ - fMinZ) / fNVoxelZ / 2.;
-
-    // Reading material IDs from g4dcm file
-    // The IDs are associated to materials
-    // Creating the iterator
-    fMateIDs = new size_t[fNVoxelX * fNVoxelY * fNVoxelZ];
-    // Loop scanning all voxels and retrieving the corresponding material
-    for (G4int iz = 0; iz < fNVoxelZ; ++iz)
+  // All materials required by the user are now ready for use
+  // Now it should be associated with voxels and densities
+  
+  fin >> fNVoxelX >> fNVoxelY >> fNVoxelZ;
+  G4cout << "GmReadPhantomG4Geometry::ReadPhantomData fNVoxel X/Y/Z "
+	 << fNVoxelX << " "
+	 << fNVoxelY << " " << fNVoxelZ << G4endl;
+  fin >> fMinX >> fMaxX;
+  fin >> fMinY >> fMaxY;
+  fin >> fMinZ >> fMaxZ;
+  fVoxelHalfDimX = (fMaxX - fMinX) / fNVoxelX / 2.;
+  fVoxelHalfDimY = (fMaxY - fMinY) / fNVoxelY / 2.;
+  fVoxelHalfDimZ = (fMaxZ - fMinZ) / fNVoxelZ / 2.;
+  
+  // Reading material IDs from g4dcm file
+  // The IDs are associated to materials
+  // Creating the iterator
+  fMateIDs = new size_t[fNVoxelX * fNVoxelY * fNVoxelZ];
+  // Loop scanning all voxels and retrieving the corresponding material
+  for (G4int iz = 0; iz < fNVoxelZ; ++iz)
     {
-        for (G4int iy = 0; iy < fNVoxelY; ++iy)
+      for (G4int iy = 0; iy < fNVoxelY; ++iy)
         {
-            for (G4int ix = 0; ix < fNVoxelX; ++ix)
+	  for (G4int ix = 0; ix < fNVoxelX; ++ix)
             {
-                G4int mateID;
-                // Getting material ID from out file
-                fin >> mateID;
-                G4int copyNo = ix + (iy)*fNVoxelX + (iz)*fNVoxelX * fNVoxelY;
-                if (mateID < 0 || mateID >= nMaterials)
+	      G4int mateID;
+	      // Getting material ID from out file
+	      fin >> mateID;
+	      G4int copyNo = ix + (iy)*fNVoxelX + (iz)*fNVoxelX * fNVoxelY;
+	      if (mateID < 0 || mateID >= nMaterials)
                 {
-                    G4Exception("GmReadPhantomG4Geometry::ReadPhantomData",
-                                "Wrong index in phantom file",
-                                FatalException,
-                                G4String("It should be between 0 and " + G4UIcommand::ConvertToString(nMaterials - 1) + ", while it is " + G4UIcommand::ConvertToString(mateID)).c_str());
+		  G4Exception("GmReadPhantomG4Geometry::ReadPhantomData",
+			      "Wrong index in phantom file",
+			      FatalException,
+			      G4String("It should be between 0 and " + G4UIcommand::ConvertToString(nMaterials - 1) + ", while it is " + G4UIcommand::ConvertToString(mateID)).c_str());
                 }
-                // Storing the IDs in a vector where indices are copy numbers and contents are the materials IDs
-                fMateIDs[copyNo] = mateID;
+	      // Storing the IDs in a vector where indices are copy numbers and contents are the materials IDs
+	      fMateIDs[copyNo] = mateID;
             }
         }
     }
-    // We now have a vector containing all material IDs. The index of this vector corresponds to the copy number of the voxel
-    ReadVoxelDensities(fin);
-
-    fin.close();
+  // We now have a vector containing all material IDs. The index of this vector corresponds to the copy number of the voxel
+  ReadVoxelDensities(fin);
+  
+  fin.close();
 }
 
-void BDSCT::ReadVoxelDensities(std::ifstream &fin)
+void BDSCT::ReadVoxelDensities(std::ifstream& fin)
 {
-    // We now retrieve densities from the out file
-    // G4String stemp;
-    std::map<G4int, std::pair<G4double, G4double>> densiMinMax;
-    std::map<G4int, std::pair<G4double, G4double>>::iterator mpite;
-    for (G4int ii = 0; ii < G4int(thePhantomMaterialsOriginal.size()); ++ii)
+  // We now retrieve densities from the out file
+  // G4String stemp;
+  std::map<G4int, std::pair<G4double, G4double>> densiMinMax;
+  std::map<G4int, std::pair<G4double, G4double>>::iterator mpite;
+  for (G4int ii = 0; ii < G4int(thePhantomMaterialsOriginal.size()); ++ii)
     {
-        // DBL_MAX is defined in float.h and is the value of the maximum representable finite floating-point number in C++
-        // Initialisation of the minimum and maximum densities
-        // Min and Max are inverted in this initialisation in order for the modification to take place systematically
-        densiMinMax[ii] = std::pair<G4double, G4double>(DBL_MAX, -DBL_MAX);
+      // DBL_MAX is defined in float.h and is the value of the maximum representable finite floating-point number in C++
+      // Initialisation of the minimum and maximum densities
+      // Min and Max are inverted in this initialisation in order for the modification to take place systematically
+      densiMinMax[ii] = std::pair<G4double, G4double>(DBL_MAX, -DBL_MAX);
     }
-
-    char *part = std::getenv("DICOM_CHANGE_MATERIAL_DENSITY");
-    G4double densityDiff = -1.;
-    if (part)
-        densityDiff = G4UIcommand::ConvertToDouble(part);
-
-    std::map<G4int, G4double> densityDiffs;
-    for (G4int ii = 0; ii < G4int(thePhantomMaterialsOriginal.size()); ++ii)
+  
+  char *part = std::getenv("DICOM_CHANGE_MATERIAL_DENSITY");
+  G4double densityDiff = -1.;
+  if (part)
+    densityDiff = G4UIcommand::ConvertToDouble(part);
+  
+  std::map<G4int, G4double> densityDiffs;
+  for (G4int ii = 0; ii < G4int(thePhantomMaterialsOriginal.size()); ++ii)
     {
-        // Currently all materials with same step = -1.
-        densityDiffs[ii] = densityDiff;
+      // Currently all materials with same step = -1.
+      densityDiffs[ii] = densityDiff;
     }
-    //  densityDiffs[0] = 0.0001; //air
-
-    //--- Calculate the average material density for each material/density bin
-    // First we create a map that will contain all new materials and their information
-    std::map<std::pair<G4Material *, G4int>, matInfo *> newMateDens;
-
-    //---- Read the material densities
-    G4double dens;
-    for (G4int iz = 0; iz < fNVoxelZ; ++iz)
+  //  densityDiffs[0] = 0.0001; //air
+  
+  //--- Calculate the average material density for each material/density bin
+  // First we create a map that will contain all new materials and their information
+  std::map<std::pair<G4Material *, G4int>, matInfo *> newMateDens;
+  
+  //---- Read the material densities
+  G4double dens;
+  for (G4int iz = 0; iz < fNVoxelZ; ++iz)
     {
-        for (G4int iy = 0; iy < fNVoxelY; ++iy)
+      for (G4int iy = 0; iy < fNVoxelY; ++iy)
         {
-            for (G4int ix = 0; ix < fNVoxelX; ++ix)
+	  for (G4int ix = 0; ix < fNVoxelX; ++ix)
             {
-                // Getting the density from file
-                fin >> dens;
-
-                // Computing the copy number from the position in the phantom
-                G4int copyNo = ix + (iy)*fNVoxelX + (iz)*fNVoxelX * fNVoxelY;
-
-                // If the statement is True, ignore the rest of this iteration (for all loops)
-                // In other words, if the user defines another density difference (variable part), this triple loop is ignored
-                if (densityDiff != -1.)
-                    continue;
-
-                //--- We retrieve the material ID for this voxel
-                G4int mateID = G4int(fMateIDs[copyNo]);
-
-                // First, find the entry of the map of density intervals that correspond to the material ID
-                mpite = densiMinMax.find(mateID);
-                // If the density is outside the density range of the voxel we set the limits of the range as equal to this density
-                // In other words, for a particular material, we extend the range of densities if we find a density outside of it
-                // Reminder: because of the way the initialisation was performed, this interval is automatically updated
-                if (dens < (*mpite).second.first)
-                    (*mpite).second.first = dens;
-                if (dens > (*mpite).second.second)
-                    (*mpite).second.second = dens;
-
-                //--- Get material from original list of material in file
-                std::map<G4int, G4Material *>::const_iterator imite = thePhantomMaterialsOriginal.find(mateID);
-
-                //--- Check if density is equal to the original material density (up to 1e-9 g/cm3), if it is, ignore this voxel
-                //--- as it is already at the right density
-                if (std::fabs(dens - (*imite).second->GetDensity() / (CLHEP::g / CLHEP::cm3)) < 1.e-9)
-                    continue;
-
-                //--- If the density is NOT equal to the original material density (up to 1e-9 g/cm3),
-                //--- Build material name with thePhantomMaterialsOriginal name+density
-                G4int densityBin = (G4int(dens / densityDiffs[mateID]));
-
-                // The new material name (unnecessary ???)
-                //G4String mateName = (*imite).second->GetName() + G4UIcommand::ConvertToString(densityBin);
-
-                //--- Look if it is the first voxel with this material/densityBin
-                // Create a pair that stores the material and the density bin associated
-                // This will serve as a new entry
-                std::pair<G4Material *, G4int> matdens((*imite).second, densityBin);
-
-                //--- Filling a map containing a new material with the corresponding ID, the density bin and all info about this material
-                // First, find if the material with this density bin already exists in the new material density
-                // If it is not, it will put it at the end of this map
-                auto mppite = newMateDens.find(matdens);
-                if (mppite != newMateDens.cend())
+	      // Getting the density from file
+	      fin >> dens;
+	      
+	      // Computing the copy number from the position in the phantom
+	      G4int copyNo = ix + (iy)*fNVoxelX + (iz)*fNVoxelX * fNVoxelY;
+	      
+	      // If the statement is True, ignore the rest of this iteration (for all loops)
+	      // In other words, if the user defines another density difference (variable part), this triple loop is ignored
+	      if (densityDiff != -1.)
+		{continue;}
+	      
+	      //--- We retrieve the material ID for this voxel
+	      G4int mateID = G4int(fMateIDs[copyNo]);
+	      
+	      // First, find the entry of the map of density intervals that correspond to the material ID
+	      mpite = densiMinMax.find(mateID);
+	      // If the density is outside the density range of the voxel we set the limits of the range as equal to this density
+	      // In other words, for a particular material, we extend the range of densities if we find a density outside of it
+	      // Reminder: because of the way the initialisation was performed, this interval is automatically updated
+	      if (dens < (*mpite).second.first)
+		(*mpite).second.first = dens;
+	      if (dens > (*mpite).second.second)
+		(*mpite).second.second = dens;
+	      
+	      //--- Get material from original list of material in file
+	      std::map<G4int, G4Material *>::const_iterator imite = thePhantomMaterialsOriginal.find(mateID);
+	      
+	      //--- Check if density is equal to the original material density (up to 1e-9 g/cm3), if it is, ignore this voxel
+	      //--- as it is already at the right density
+	      if (std::fabs(dens - (*imite).second->GetDensity() / (CLHEP::g / CLHEP::cm3)) < 1.e-9)
+		continue;
+	      
+	      //--- If the density is NOT equal to the original material density (up to 1e-9 g/cm3),
+	      //--- Build material name with thePhantomMaterialsOriginal name+density
+	      G4int densityBin = (G4int(dens / densityDiffs[mateID]));
+	      
+	      // The new material name (unnecessary ???)
+	      //G4String mateName = (*imite).second->GetName() + G4UIcommand::ConvertToString(densityBin);
+	      
+	      //--- Look if it is the first voxel with this material/densityBin
+	      // Create a pair that stores the material and the density bin associated
+	      // This will serve as a new entry
+	      std::pair<G4Material *, G4int> matdens((*imite).second, densityBin);
+	      
+	      //--- Filling a map containing a new material with the corresponding ID, the density bin and all info about this material
+	      // First, find if the material with this density bin already exists in the new material density
+	      // If it is not, it will put it at the end of this map
+	      auto mppite = newMateDens.find(matdens);
+	      if (mppite != newMateDens.cend())
                 {
-                    // The material was found in the new material density, we retrieve it
-                    matInfo *mi = (*mppite).second;
-                    // We add the density
-                    mi->sumOfDensities += dens;
-                    // Increase the number of voxels that are concerned by this material
-                    mi->nVoxels++;
-                    // Update the material ID of the voxel
-                    fMateIDs[copyNo] = thePhantomMaterialsOriginal.size() - 1 + mi->materialID;
+		  // The material was found in the new material density, we retrieve it
+		  matInfo *mi = (*mppite).second;
+		  // We add the density
+		  mi->sumOfDensities += dens;
+		  // Increase the number of voxels that are concerned by this material
+		  mi->nVoxels++;
+		  // Update the material ID of the voxel
+		  fMateIDs[copyNo] = thePhantomMaterialsOriginal.size() - 1 + mi->materialID;
                 }
-                else
+	      else
                 {
-                    // We are at the end of the map, therefore, the material is not yet in the new material density, thus we create the data structure that will include it
-                    // Initialisation of the data structure
-                    matInfo *mi = new matInfo;
-                    // As it is the first voxel to have this new material, we must initialise its density
-                    mi->sumOfDensities = dens;
-                    // This is the first voxel that has this material
-                    mi->nVoxels = 1;
-                    mi->materialID = G4int(newMateDens.size() + 1);
-                    // The new material now appears in the new material densities
-                    newMateDens[matdens] = mi;
-                    // Update the material ID of the voxel
-                    fMateIDs[copyNo] = thePhantomMaterialsOriginal.size() - 1 + mi->materialID;
+		  // We are at the end of the map, therefore, the material is not yet in the new material density, thus we create the data structure that will include it
+		  // Initialisation of the data structure
+		  matInfo *mi = new matInfo;
+		  // As it is the first voxel to have this new material, we must initialise its density
+		  mi->sumOfDensities = dens;
+		  // This is the first voxel that has this material
+		  mi->nVoxels = 1;
+		  mi->materialID = G4int(newMateDens.size() + 1);
+		  // The new material now appears in the new material densities
+		  newMateDens[matdens] = mi;
+		  // Update the material ID of the voxel
+		  fMateIDs[copyNo] = thePhantomMaterialsOriginal.size() - 1 + mi->materialID;
                 }
             }
         }
     }
+  
+  //----- Build the list of phantom materials that go to Parameterisation
+  //--- Add original materials
+  for (auto mimite = thePhantomMaterialsOriginal.cbegin(); mimite != thePhantomMaterialsOriginal.cend(); ++mimite)
+    {fMaterials.push_back((*mimite).second);}
 
-    //----- Build the list of phantom materials that go to Parameterisation
-    //--- Add original materials
-    for (auto mimite = thePhantomMaterialsOriginal.cbegin(); mimite != thePhantomMaterialsOriginal.cend(); ++mimite)
-    {
-        fMaterials.push_back((*mimite).second);
-    }
-
-    std::map<G4Material *, G4String> thePhantomMaterialsNew;
-    auto fMaterials_copy = fMaterials;
-
-    //---- Build and add new materials
+  std::map<G4Material*, G4String> thePhantomMaterialsNew;
+  auto fMaterials_copy = fMaterials;
+  
+  //---- Build and add new materials
     // The data structure that is used contains the average density of the new material
-    for (auto mppite = newMateDens.cbegin(); mppite != newMateDens.cend(); ++mppite)
+  for (auto mppite = newMateDens.cbegin(); mppite != newMateDens.cend(); ++mppite)
     {
-        // We retrieve the average density for the new material considering all voxels that  contain this material
-        G4double averdens = (*mppite).second->sumOfDensities / (*mppite).second->nVoxels;
-
-        // Saving the average density in a format fit for naming
-        G4double saverdens = G4int(1000.001 * averdens) / 1000.;
-        // Creating a new name for the new material
-        G4String mateName = ((*mppite).first).first->GetName() + "_" + G4UIcommand::ConvertToString(saverdens);
-        // Creating a new material using this average density
-        auto *newMate = BuildMaterialWithChangingDensity((*mppite).first.first, G4float(averdens), mateName);
-        thePhantomMaterialsNew.insert(std::pair<G4Material *, G4String>(newMate, ((*mppite).first).first->GetName()));
-        //fMaterials.push_back( newMate );
+      // We retrieve the average density for the new material considering all voxels that  contain this material
+      G4double averdens = (*mppite).second->sumOfDensities / (*mppite).second->nVoxels;
+      
+      // Saving the average density in a format fit for naming
+      G4double saverdens = G4int(1000.001 * averdens) / 1000.;
+      // Creating a new name for the new material
+      G4String mateName = ((*mppite).first).first->GetName() + "_" + G4UIcommand::ConvertToString(saverdens);
+      // Creating a new material using this average density
+      auto *newMate = BuildMaterialWithChangingDensity((*mppite).first.first, G4float(averdens), mateName);
+      thePhantomMaterialsNew.insert(std::pair<G4Material *, G4String>(newMate, ((*mppite).first).first->GetName()));
+      //fMaterials.push_back( newMate );
     }
-
-    for (auto ite = fMaterials_copy.cbegin(); ite != fMaterials_copy.cend(); ++ite)
+  
+  for (auto ite = fMaterials_copy.cbegin(); ite != fMaterials_copy.cend(); ++ite)
     {
-        for (auto ite1 = thePhantomMaterialsNew.cbegin(); ite1 != thePhantomMaterialsNew.cend(); ++ite1)
+      for (auto ite1 = thePhantomMaterialsNew.cbegin(); ite1 != thePhantomMaterialsNew.cend(); ++ite1)
         {
-            if ((*ite)->GetName() == (*ite1).second)
-                fMaterials.push_back((*ite1).first);
+	  if ((*ite)->GetName() == (*ite1).second)
+	    fMaterials.push_back((*ite1).first);
         }
     }
-
-    for (auto ite = fMaterials.cbegin(); ite != fMaterials.cend(); ++ite)
+  
+  for (auto ite = fMaterials.cbegin(); ite != fMaterials.cend(); ++ite)
     {
-        std::cout << "The phantom will be built with material " << (*ite)->GetName() << " with density " << (*ite)->GetDensity() / (CLHEP::g / CLHEP::cm3) << " g/cm3" << std::endl;
+      std::cout << "The phantom will be built with material " << (*ite)->GetName() << " with density " << (*ite)->GetDensity() / (CLHEP::g / CLHEP::cm3) << " g/cm3" << std::endl;
     }
 }
 
-G4Material *BDSCT::BuildMaterialWithChangingDensity(
-    const G4Material *origMate, G4float density, G4String newMateName)
+G4Material* BDSCT::BuildMaterialWithChangingDensity(const G4Material* origMate,
+						    G4float density,
+						    G4String newMateName)
 {
-    //----- Copy original material, but with new density
-    G4int nelem = G4int(origMate->GetNumberOfElements());
-    G4Material *mate = new G4Material(newMateName, density * CLHEP::g / CLHEP::cm3, nelem,
-                                      kStateUndefined, CLHEP::STP_Temperature);
-
-    for (G4int ii = 0; ii < nelem; ++ii)
+  //----- Copy original material, but with new density
+  G4int nelem = G4int(origMate->GetNumberOfElements());
+  G4Material *mate = new G4Material(newMateName,
+				    density * CLHEP::g / CLHEP::cm3,
+				    nelem,
+				    kStateUndefined,
+				    CLHEP::STP_Temperature);
+  
+  for (G4int ii = 0; ii < nelem; ++ii)
     {
-        G4double frac = origMate->GetFractionVector()[ii];
-        G4Element *elem = const_cast<G4Element *>(origMate->GetElement(ii));
-        mate->AddElement(elem, frac);
+      G4double frac = origMate->GetFractionVector()[ii];
+      G4Element *elem = const_cast<G4Element *>(origMate->GetElement(ii));
+      mate->AddElement(elem, frac);
     }
-
-    return mate;
+  
+  return mate;
 }
 
 void BDSCT::BuildContainerLogicalVolume()
 {
-    //---- Extract number of voxels and voxel dimensions
+  //---- Extract number of voxels and voxel dimensions
+  
+  //----- Define the volume that contains all the voxels
+  fContainer_solid = new G4Box("phantomContainer", fNVoxelX * fVoxelHalfDimX,
+			       fNVoxelY * fVoxelHalfDimY,
+			       fNVoxelZ * fVoxelHalfDimZ);
 
-    //----- Define the volume that contains all the voxels
-    fContainer_solid = new G4Box("phantomContainer", fNVoxelX * fVoxelHalfDimX,
-                                 fNVoxelY * fVoxelHalfDimY,
-                                 fNVoxelZ * fVoxelHalfDimZ);
-
-    containerLogicalVolume =
-        new G4LogicalVolume(fContainer_solid,
-                            //the material is not important, it will be fully filled by the voxels
-                            fMaterials[0],
-                            "phantomContainer",
-                            0, 0, 0);
-
-    G4ThreeVector posCentreVoxels((fMinX + fMaxX) / 2.,
-                                  (fMinY + fMaxY) / 2.,
-                                  (fMinZ + fMaxZ) / 2.);
-
-    fContainer_phys =
-        new G4PVPlacement(0, // rotation
-                          posCentreVoxels,
-                          containerLogicalVolume, // The logic volume
-                          "phantomContainer",     // Name
-                          fWorld_logic,           // Mother
-                          false,                  // No op. bool.
-                          1);                     // Copy number
+  //the material is not important, it will be fully filled by the voxels
+  containerLogicalVolume = new G4LogicalVolume(fContainer_solid,
+					       fMaterials[0],
+					       "phantomContainer",
+					       0, 0, 0);
+  
+  G4ThreeVector posCentreVoxels((fMinX + fMaxX) / 2.,
+				(fMinY + fMaxY) / 2.,
+				(fMinZ + fMaxZ) / 2.);
+  
+  fContainer_phys = new G4PVPlacement(0, // rotation
+				      posCentreVoxels,
+				      containerLogicalVolume, // The logic volume
+				      "phantomContainer",     // Name
+				      fWorld_logic,           // Mother
+				      false,                  // No op. bool.
+				      1);                     // Copy number
 }
 
 void BDSCT::BuildUserLimits()
 {
-    userLimits = new G4UserLimits(1, // max 1mm step into dump
-                                  0, // max track length
-                                  0, // max time
-                                  0, // max kinetic energy
-                                  std::numeric_limits<double>::max());
+  userLimits = new G4UserLimits(1, // max 1mm step into dump
+				0, // max track length
+				0, // max time
+				0, // max kinetic energy
+				std::numeric_limits<double>::max());
 
-    RegisterUserLimits(userLimits);
+  RegisterUserLimits(userLimits);
 }
 
 void BDSCT::SetScorer(G4LogicalVolume *voxel_logic)
 {
-    fScorers.insert(voxel_logic);
+  fScorers.insert(voxel_logic);
 }
