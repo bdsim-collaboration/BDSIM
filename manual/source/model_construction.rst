@@ -1235,7 +1235,7 @@ the beam.
 
 =================  ==================================  ===========  ===========
 Parameter          Description                         Default      Required
-`l`                Length [m]                          0            Yes
+`l`                Length [m]                          1 mm         No
 `horizontalWidth`  Outer full width [m]                global       No
 `apertureType`     Which shape                         rectangular  No
 =================  ==================================  ===========  ===========
@@ -1248,13 +1248,20 @@ necessary process is added automatically to enforce this.
 The dump may accept `apertureType` with the value of either `circular` or `rectangular` for
 the shape of the dump. By default it is rectangular.
 
+.. note:: Although the syntax is "rectangular", the shape for the dump will be square. This
+	  will be improved in future when any shape can be used.
+
 Examples: ::
 
-  d1: dump, l=0.2*m, horizontalWidth=20*cm;
-  d2: dump, l=0.4*m, horizontalWidth=30*cm, apertureType="circular";
+  d1: dump, horizontalWidth=20*cm;
+  d2: dump, horizontalWidth=30*cm, apertureType="circular";
   d3: dump, l=0.3*m, horizontalWidth=40*cm, apertureType="rectangular";
 
+Here, `d1` is a rectangular block 20 cm wide (full width) and 1 mm long in z. `d2` is a
+circular disk with diameter 30 cm and length of 1 mm in z. `d3` is 30 cm long in z and
+40 cm width (full width) in x and y with a square shape.
 
+  
 solenoid
 ^^^^^^^^
 
