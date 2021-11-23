@@ -3633,6 +3633,10 @@ The following are accepted scorer types.
 +---------------------------+-----------------+--------------------------------------------------+
 
 .. note:: (\*) It is possible to score the differential flux by using the scorer type cellflux4D which adds a binning along the energy axis.
+.. note:: (\*) To score quantities such as the ambient dose equivalent, the scorer type `cellfluxscaledperparticle`
+               should be used, however conversion factors must be supplied (see :ref:`scorer-conversion-factor-file`)
+               to ensure the ambient dose is calculated correctly and in the correct units.
+
 
 .. _scorer-conversion-factor-file:
 
@@ -3672,7 +3676,7 @@ Conversion factor files for :code:`cellfluxscaledperparticle` can be one of:
 * :code:`electrons.dat`
 * :code:`positrons.dat`
 
-At least 1 must be specified.  Any particles without a conversion factory are scored as 0.
+At least 1 must be specified.  Any particles without a conversion factor are scored as 0.
 
 Scoring Examples
 ^^^^^^^^^^^^^^^^
@@ -3694,7 +3698,7 @@ Example 2: ::
 
   neutronPopulation: scorer, type="population", particleName="neutron";
 
-  protonAmbient: scorer, type="ambientdose",
+  protonAmbient: scorer, type="cellfluxscaledperparticle",
 	    	         particleName="proton",
 		         minimumKineticEnergy=20*MeV,
 		         maximumKineticEnergy=1*GeV,
