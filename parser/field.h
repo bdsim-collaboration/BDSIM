@@ -71,6 +71,9 @@ namespace GMAD
 
     std::string magneticSubField;
     std::string electricSubField;
+
+    std::string magneticTransform;
+    std::string electricTransform;
     
     /// Constructor
     Field();
