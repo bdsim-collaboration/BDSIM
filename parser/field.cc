@@ -54,6 +54,8 @@ void Field::clear()
   maximumStepLength = -1;
   magneticSubField = "";
   electricSubField = "";
+  magneticTransform = "";
+  electricTransform = "";
 }
 
 void Field::PublishMembers()
@@ -84,6 +86,8 @@ void Field::PublishMembers()
   publish("maximumStepLength",    &Field::maximumStepLength);
   publish("magneticSubField",     &Field::magneticSubField);
   publish("electricSubField",     &Field::electricSubField);
+  publish("magneticTransform",    &Field::magneticTransform);
+  publish("electricTransform",    &Field::electricTransform);
 }
 
 void Field::print()const
@@ -104,5 +108,9 @@ void Field::print()const
 	    << "angle "                << angle                << std::endl
 	    << "axisAngle "            << axisAngle            << std::endl
 	    << "autoScale "            << autoScale            << std::endl
-	    << "maximumStepLength "    << maximumStepLength    << std::endl;
+	    << "maximumStepLength "    << maximumStepLength    << std::endl
+	    << "electricSubField "     << electricSubField     << std::endl
+	    << "magneticSubField "     << magneticSubField     << std::endl
+	    << "magneticTransform "    << magneticTransform    << std::endl
+	    << "electricTransform "    << electricTransform    << std::endl;
 }
