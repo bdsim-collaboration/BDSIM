@@ -304,8 +304,19 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    G4bool(definition.autoScale),
 					    fieldLimit);
       
-      info->SetMagneticSubField(G4String(definition.magneticSubField));
-      info->SetElectricSubField(G4String(definition.electricSubField));
+      if (!definition.magneticSubField.empty())
+	{
+	  if (definition.magneticSubField == definition.name)
+	    {throw BDSException(__METHOD_NAME__, "error in \"" + definition.name + "\": magneticSubField cannot be the field itself");}
+	  info->SetMagneticSubField(G4String(definition.magneticSubField));
+	}
+      if (!definition.electricSubField.empty())
+	{
+	  if (definition.electricSubField == definition.name)
+	    {throw BDSException(__METHOD_NAME__, "error in \"" + definition.name + "\": electricSubField cannot be the field itself");}
+	  info->SetElectricSubField(G4String(definition.electricSubField));
+	}
+      
       info->SetNameOfParserDefinition(G4String(definition.name));
       if (BDSGlobalConstants::Instance()->Verbose())
         {
