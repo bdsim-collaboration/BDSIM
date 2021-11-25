@@ -1546,8 +1546,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
 {
-  if (!HasSufficientMinimumLength(element))
-    {return nullptr;}
+  G4double chordLength = element->l*CLHEP::m;
+  if (!HasSufficientMinimumLength(element, false))
+    {
+      G4cout << __METHOD_NAME__ << "Using default length of 1 mm for dump" << G4endl;
+      chordLength = 1*CLHEP::mm;
+    }
 
   G4bool circular = false;
   G4String apertureType = G4String(element->apertureType);
@@ -1557,7 +1561,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
     {throw BDSException(__METHOD_NAME__, "unknown shape for dump: \"" + apertureType + "\"");}
 
   BDSDump* result = new BDSDump(elementName,
-				element->l*CLHEP::m,
+				chordLength,
 				PrepareHorizontalWidth(element),
 				circular);
   return result;
