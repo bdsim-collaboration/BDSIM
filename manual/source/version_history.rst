@@ -38,7 +38,7 @@ New Features
 * When loading geometry (e.g. a GDML file) to be used as a placement, you can now remove the
   outermost volume (e.g. the 'world' of that file) and place all the contents in the BDSIM
   world with the compound transforms: relative to the former outermost logical volume and also
-  the placements transform in the world.
+  the placements transform in the world. This works by making the outer volume into a G4AssemblyVolume.
   
 General
 -------
@@ -55,6 +55,7 @@ General
   of the line was `#`.
 * BDSGeometryComponent class refactored to permit a G4AssemblyVolume as the container
   for a piece of geometry. It's in addition to a logical volume.
+* A `dump` element may now be specified without a length and will by default be 1 mm long.
 
 Bug Fixes
 ---------
