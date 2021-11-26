@@ -54,8 +54,8 @@ void Field::clear()
   maximumStepLength = -1;
   magneticSubField = "";
   electricSubField = "";
-  magneticTransform = "";
-  electricTransform = "";
+  magneticReflection = "";
+  electricReflection = "";
 }
 
 void Field::PublishMembers()
@@ -86,8 +86,8 @@ void Field::PublishMembers()
   publish("maximumStepLength",    &Field::maximumStepLength);
   publish("magneticSubField",     &Field::magneticSubField);
   publish("electricSubField",     &Field::electricSubField);
-  publish("magneticTransform",    &Field::magneticTransform);
-  publish("electricTransform",    &Field::electricTransform);
+  publish("magneticReflection",   &Field::magneticReflection);
+  publish("electricReflection",   &Field::electricReflection);
 }
 
 void Field::print()const
@@ -111,6 +111,6 @@ void Field::print()const
 	    << "maximumStepLength "    << maximumStepLength    << std::endl
 	    << "electricSubField "     << electricSubField     << std::endl
 	    << "magneticSubField "     << magneticSubField     << std::endl
-	    << "magneticTransform "    << magneticTransform    << std::endl
-	    << "electricTransform "    << electricTransform    << std::endl;
+	    << "magneticReflection "   << magneticReflection   << std::endl
+	    << "electricReflection "   << electricReflection   << std::endl;
 }
