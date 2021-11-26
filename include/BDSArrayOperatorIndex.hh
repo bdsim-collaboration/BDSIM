@@ -37,18 +37,18 @@ public:
   virtual ~BDSArrayOperatorIndex(){;}
   
   /// Supply a name of this operator for feedback to the user in print out.
-  virtual G4String Name() const = 0;
+  virtual G4String Name() const {return "none";}
 
   /// Operation to modify the coordinates by reference. As we typically have
   /// more than one return value, we therefore use references as a way of doing this.
-  virtual void Apply(G4int& x,
-                     G4int& y,
-                     G4int& z,
-                     G4int& t) const = 0;
-  virtual void ApplyX(G4int& x) const = 0;
-  virtual void ApplyY(G4int& y) const = 0;
-  virtual void ApplyZ(G4int& z) const = 0;
-  virtual void ApplyT(G4int& t) const = 0;
+  virtual void Apply(G4int& /*x*/,
+                     G4int& /*y*/,
+                     G4int& /*z*/,
+                     G4int& /*t*/) const {;}
+  virtual void ApplyX(G4int& /*x*/) const {;}
+  virtual void ApplyY(G4int& /*y*/) const {;}
+  virtual void ApplyZ(G4int& /*z*/) const {;}
+  virtual void ApplyT(G4int& /*t*/) const {;}
   
   void Apply(G4int& x) const
   {
