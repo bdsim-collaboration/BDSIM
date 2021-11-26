@@ -1174,7 +1174,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 
   // we don't specify the field explicitly here - this is done generically
   // in the main CreateComponent method with SetFieldDefinitions.
-  std::vector<G4String> vacuumBiasVolumeNames = BDS::GetWordsFromString(G4String(element->namedVacuumVolumes));
+  std::vector<G4String> vacuumBiasVolumeNames = BDS::SplitOnWhiteSpace(G4String(element->namedVacuumVolumes));
   return (new BDSElement(elementName,
 			 element->l * CLHEP::m,
 			 PrepareHorizontalWidth(element),

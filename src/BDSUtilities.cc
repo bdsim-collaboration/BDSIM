@@ -402,7 +402,7 @@ G4String BDS::GetParameterValueString(G4String spec, G4String name)
   return value;
 }
 
-std::vector<G4String> BDS::GetWordsFromString(const G4String& input)
+std::vector<G4String> BDS::SplitOnWhiteSpace(const G4String& input)
 {
   std::vector<G4String> result;
   if (input.empty())
