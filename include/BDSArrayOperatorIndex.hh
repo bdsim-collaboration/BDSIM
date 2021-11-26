@@ -52,7 +52,7 @@ public:
   
   void Apply(G4int& x) const
   {
-    G4int v[3] = {0,0};
+    G4int v[3] = {0,0,0};
     return Apply(x, v[0], v[1], v[2]);
   }
   
