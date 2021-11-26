@@ -52,7 +52,7 @@ public:
   virtual void Apply(G4int& x,
                      G4int& y,
                      G4int& z,
-                     G4int& t)
+                     G4int& t) const
   {
     x = xyzt[0] ? std::abs(x) : x;
     y = xyzt[1] ? std::abs(y) : y;
