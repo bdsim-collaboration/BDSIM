@@ -19,12 +19,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArrayReflectionType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
 
 #include <map>
 #include <string>
+#include <vector>
 
 // dictionary for BDSArrayReflectionType for reflexivity
 template<>
@@ -80,4 +82,20 @@ BDSArrayReflectionType BDS::DetermineArrayReflectionType(G4String arrayReflectio
   G4cout << __METHOD_NAME__ << "determined array reflection type to be " << result->second << G4endl;
 #endif
   return result->second;
+}
+
+BDSArrayReflectionTypeSet BDS::DetermineArrayReflectionTypeSet(const G4String& arrayReflectionType)
+{
+  BDSArrayReflectionTypeSet result;
+  std::vector<G4String> words = BDS::SplitOnWhiteSpace(arrayReflectionType);
+  for (const auto& word : words)
+    {result.insert(BDS::DetermineArrayReflectionType(word));}
+  return result;
+}
+
+std::ostream& operator<< (std::ostream &out, BDSArrayReflectionTypeSet const& t)
+{
+  for (const auto& v : t)
+    {out << v;}
+  return out;
 }

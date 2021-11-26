@@ -21,6 +21,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTypeSafeEnum.hh"
 #include "G4String.hh"
 
+#include <ostream>
+#include <set>
+
 /**
  * @brief Type definition for array reflections
  *
@@ -41,11 +44,19 @@ struct arrayreflectiontypes_def
 
 typedef BDSTypeSafeEnum<arrayreflectiontypes_def,int> BDSArrayReflectionType;
 
+// We will commonly use a set of possible reflections, so we provide a convenient typedef.
+typedef std::set<BDSArrayReflectionType> BDSArrayReflectionTypeSet;
+
 namespace BDS
 {
   /// Function that gives corresponding enum value for string (case-insensitive)
   BDSArrayReflectionType DetermineArrayReflectionType(G4String arrayReflectionType);
+  
+  /// Return a std::set of reflection types. Split string on white space.
+  BDSArrayReflectionTypeSet DetermineArrayReflectionTypeSet(const G4String& arrayReflectionType);
 }
+
+std::ostream& operator<< (std::ostream &out, BDSArrayReflectionTypeSet const& t);
 
 #endif
 
