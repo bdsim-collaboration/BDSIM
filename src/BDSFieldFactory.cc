@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSArrayReflectionType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSPTCOneTurnMap.hh"
@@ -168,7 +169,8 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
     {
       if (definition.type.empty())
 	{
-	  G4String msg = "\"type\" not specified in field definition \"" + definition.name + "\", but required.";
+	  G4String msg = "\"type\" not specified in field definition \"";
+	  msg += definition.name + "\", but required.";
 	  throw BDSException(__METHOD_NAME__, msg);
 	}
       BDSFieldType    fieldType = BDS::DetermineFieldType(definition.type);
@@ -315,6 +317,18 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	  if (definition.electricSubField == definition.name)
 	    {throw BDSException(__METHOD_NAME__, "error in \"" + definition.name + "\": electricSubField cannot be the field itself");}
 	  info->SetElectricSubField(G4String(definition.electricSubField));
+	}
+      if (!definition.magneticReflection.empty())
+	{
+	  G4String magneticReflection = G4String(definition.magneticReflection);
+	  BDSArrayReflectionTypeSet mar = BDS::DetermineArrayReflectionTypeSet(magneticReflection);
+	  info->SetMagneticArrayReflectionType(mar);
+	}
+      if (!definition.electricReflection.empty())
+	{
+	  G4String electricReflection = G4String(definition.electricReflection);
+	  BDSArrayReflectionTypeSet ear = BDS::DetermineArrayReflectionTypeSet(electricReflection);
+	  info->SetElectricArrayReflectionType(ear);
 	}
       
       info->SetNameOfParserDefinition(G4String(definition.name));
