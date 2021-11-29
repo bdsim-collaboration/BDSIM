@@ -92,11 +92,15 @@ BDSArrayReflectionTypeSet BDS::DetermineArrayReflectionTypeSet(const G4String& a
 
 G4bool BDS::ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSet& setIn)
 {
+  // we permit flipxyzt with a reflection
+  // we permit reflectxyzt (any combination)
+  // we permit a special reflection but not with any one of reflectxyzt
+  // therefore we substitute flipxyzt and relfectxyzt to reflectsimple here
   std::map<BDSArrayReflectionType, BDSArrayReflectionType> substitutions = {
-    {BDSArrayReflectionType::flipx, BDSArrayReflectionType::flipgeneral},
-    {BDSArrayReflectionType::flipy, BDSArrayReflectionType::flipgeneral},
-    {BDSArrayReflectionType::flipz, BDSArrayReflectionType::flipgeneral},
-    {BDSArrayReflectionType::flipt, BDSArrayReflectionType::flipgeneral},
+    {BDSArrayReflectionType::flipx, BDSArrayReflectionType::reflectsimple},
+    {BDSArrayReflectionType::flipy, BDSArrayReflectionType::reflectsimple},
+    {BDSArrayReflectionType::flipz, BDSArrayReflectionType::reflectsimple},
+    {BDSArrayReflectionType::flipt, BDSArrayReflectionType::reflectsimple},
     {BDSArrayReflectionType::reflectx, BDSArrayReflectionType::reflectsimple},
     {BDSArrayReflectionType::reflecty, BDSArrayReflectionType::reflectsimple},
     {BDSArrayReflectionType::reflectz, BDSArrayReflectionType::reflectsimple},
