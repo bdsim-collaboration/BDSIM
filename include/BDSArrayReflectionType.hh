@@ -32,9 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct arrayreflectiontypes_def
 {
-  enum type {none,
-             flipx, flipy, flipz, flipt,
-             reflectnone,
+  enum type {flipx, flipy, flipz, flipt,
              reflectx, reflecty, reflectz, reflectt,
              reflectxydipole,
              reflectxzdipole,
