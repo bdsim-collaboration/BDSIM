@@ -161,7 +161,7 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
   }
   catch (BDSException& e)
   {
-    e.AppendToMessage(" error in field definition \"" + info.NameOfParserDefinition() + "\"");
+    e.AppendToMessage("\nError in field definition \"" + info.NameOfParserDefinition() + "\".");
     throw e;
   }
 
@@ -579,7 +579,7 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
   G4bool problem = BDS::ProblemWithArrayReflectionCombination(*reflectionTypes);
   if (problem)
   {
-    G4String msg = "Invalid combination of array transforms. Must contain only simple flips\n";
+    G4String msg = "Invalid combination of array transforms. Must contain only simple flips\n"; // TBC
     throw BDSException(__METHOD_NAME__, msg); // caught at a higher level to append name of definition
   }
   
@@ -641,15 +641,6 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
     {
       switch (reflectionType.underlying())
 	{
-	case BDSArrayReflectionType::reflectx:
-	case BDSArrayReflectionType::reflecty:
-	case BDSArrayReflectionType::reflectz:
-	case BDSArrayReflectionType::reflectt:
-	  {
-	    throw BDSException(__METHOD_NAME__, "cannot combine a basic \"reflect(x|y|z|t)\" with a special reflection \"" +
-			       reflectionType.ToString() + "\"");
-	    break;
-	  }
 	case BDSArrayReflectionType::reflectxydipole:
 	  {
 	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(true, true, false, false));
