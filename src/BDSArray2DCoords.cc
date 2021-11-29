@@ -49,8 +49,8 @@ void BDSArray2DCoords::ExtractSection2x2(G4double x,
   auto x1 = (G4int)std::floor(xarr);
   auto y1 = (G4int)std::floor(yarr);
   
-  xFrac = x1 - xarr;
-  yFrac = y1 - yarr;
+  xFrac = xarr - x1;
+  yFrac = yarr - y1;
   
   for (G4int i = 0; i < 2; i++)
     {
@@ -79,8 +79,8 @@ void BDSArray2DCoords::ExtractSection4x4(G4double x,
   auto x1 = (G4int)std::floor(xarr);
   auto y1 = (G4int)std::floor(yarr);
   
-  xFrac = x1 - xarr;
-  yFrac = y1 - yarr;
+  xFrac = xarr - x1;
+  yFrac = yarr - y1;
   
   G4int x0 = x1-1;
   G4int y0 = y1-1;
