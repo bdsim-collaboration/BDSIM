@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldValue.hh"
 #include "BDSInterpolator3DNearest.hh"
 
-
 BDSInterpolator3DNearest::BDSInterpolator3DNearest(BDSArray3DCoords* arrayIn):
   BDSInterpolator3D(arrayIn)
 {;}

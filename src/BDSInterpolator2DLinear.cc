@@ -21,9 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSInterpolator2DLinear.hh"
 #include "BDSInterpolatorRoutines.hh"
 
-#include "globals.hh"
-
-#include <cmath>
+#include "G4Types.hh"
 
 BDSInterpolator2DLinear::BDSInterpolator2DLinear(BDSArray2DCoords* arrayIn):
   BDSInterpolator2D(arrayIn)
