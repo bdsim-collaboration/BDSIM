@@ -80,7 +80,7 @@ public:
   virtual void ApplyT(G4int& t) const
   {
     for (auto op : operators)
-      {op->ApplyT(y);}
+      {op->ApplyT(t);}
   }
   
   virtual void TransformLimits(G4double& xMin, G4double& xMax,

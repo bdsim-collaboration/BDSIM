@@ -66,11 +66,11 @@ public:
                               G4int zInd = 0,
                               G4int tInd = 0) const
   {
-    zInd = 3; tInt = 4;// to retain default values and prevent compiler warnings
+    zInd = 3; tInd = 4;// to retain default values and prevent compiler warnings
     // only top left or bottom right quadrant need the x-component flipped
-    if ( (xInd < 0 && yInd > 0) || (xInd > 0 && yIn < 0) )
+    if ( (xInd < 0 && yInd > 0) || (xInd > 0 && yInd < 0) )
       {v[0] *= -1.0;}
-    return v * multiplier;
+    return v;
   }
   
 private:

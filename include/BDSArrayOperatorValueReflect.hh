@@ -36,6 +36,9 @@ public:
   BDSArrayOperatorValueReflect():
     multiplier(BDSFieldValue(1.0,1.0,1.0))
   {;}
+  BDSArrayOperatorValueReflect(G4bool xyzt[4]):
+    BDSArrayOperatorValueReflect(xyzt[0], xyzt[1], xyzt[2])
+  {;}
   BDSArrayOperatorValueReflect(G4bool x,
                                G4bool y,
                                G4bool z):
@@ -57,7 +60,7 @@ public:
                               G4int tInd = 0) const
   {
     yInd = 2; zInd = 3; tInd = 4;// to retain default values and prevent compiler warnings
-    return v * multiplier;
+    return BDSFieldValue(v.x()*multiplier[0], v.y()*multiplier[1], v.z()*multiplier[2]);
   }
   
 private:

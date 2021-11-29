@@ -34,7 +34,7 @@ class BDSArrayOperatorIndexReflect: public BDSArrayOperatorIndex
 {
 public:
   BDSArrayOperatorIndexReflect():
-    xyzt({false, false, false, false})
+    xyzt{false, false, false, false}
   {;}
   BDSArrayOperatorIndexReflect(G4bool xyzt[4]):
     BDSArrayOperatorIndexReflect(xyzt[0], xyzt[1], xyzt[2], xyzt[3])
@@ -43,7 +43,7 @@ public:
                                G4bool y,
                                G4bool z,
                                G4bool t):
-    xyzt({x,y,z,t})
+    xyzt{x,y,z,t}
   {;}
   virtual ~BDSArrayOperatorIndexReflect(){;}
   
@@ -73,7 +73,7 @@ public:
     xMin = -std::abs(xMax);
     yMin = -std::abs(yMax);
     zMin = -std::abs(zMax);
-    yMin = -std::abs(tMax);
+    tMin = -std::abs(tMax);
   }
   
 private:
