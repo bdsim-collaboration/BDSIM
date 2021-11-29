@@ -114,7 +114,7 @@ BDSFieldValue BDSArray2DCoordsTransformed::ExtractNearest(G4double x,
   G4int indexTransformedY = indexOriginalY;
   indexOperator->Apply(indexTransformedX, indexTransformedY);
   BDSFieldValue v = GetConst(indexTransformedX, indexTransformedY);
-  valueOperator->Apply(v, indexOriginalX, indexOriginalY);
+  v = valueOperator->Apply(v, indexOriginalX, indexOriginalY);
   return v;
 }
 
