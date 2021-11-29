@@ -32,12 +32,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template<>
 std::map<BDSArrayReflectionType, std::string>* BDSArrayReflectionType::dictionary =
   new std::map<BDSArrayReflectionType, std::string> ({
-      {BDSArrayReflectionType::none,                "none"},
       {BDSArrayReflectionType::flipx,               "flipx"},
       {BDSArrayReflectionType::flipy,               "flipy"},
       {BDSArrayReflectionType::flipz,               "flipz"},
       {BDSArrayReflectionType::flipt,               "flipt"},
-      {BDSArrayReflectionType::reflectnone,         "reflectnone"},
       {BDSArrayReflectionType::reflectx,            "reflectx"},
       {BDSArrayReflectionType::reflecty,            "reflecty"},
       {BDSArrayReflectionType::reflectz,            "reflectz"},
@@ -51,12 +49,10 @@ std::map<BDSArrayReflectionType, std::string>* BDSArrayReflectionType::dictionar
 BDSArrayReflectionType BDS::DetermineArrayReflectionType(G4String arrayReflectionType)
 {
   std::map<G4String, BDSArrayReflectionType> types;
-  types["none"]                = BDSArrayReflectionType::none;
   types["flipx"]               = BDSArrayReflectionType::flipx;
   types["flipy"]               = BDSArrayReflectionType::flipy;
   types["flipz"]               = BDSArrayReflectionType::flipz;
   types["flipt"]               = BDSArrayReflectionType::flipt;
-  types["reflectnone"]         = BDSArrayReflectionType::reflectnone;
   types["reflectx"]            = BDSArrayReflectionType::reflectx;
   types["reflecty"]            = BDSArrayReflectionType::reflecty;
   types["reflectz"]            = BDSArrayReflectionType::reflectz;
