@@ -34,19 +34,21 @@ class BDSArrayOperatorValueReflect: public BDSArrayOperatorValue
 {
 public:
   BDSArrayOperatorValueReflect():
-    multiplier(BDSFieldValue(1.0,1.0,1.0))
+    multiplier{1.0,1.0,1.0,1.0}
   {;}
-  BDSArrayOperatorValueReflect(G4bool xyzt[4]):
-    BDSArrayOperatorValueReflect(xyzt[0], xyzt[1], xyzt[2])
+  explicit BDSArrayOperatorValueReflect(G4bool xyzt[4]):
+    BDSArrayOperatorValueReflect(xyzt[0], xyzt[1], xyzt[2], xyzt[3])
   {;}
   BDSArrayOperatorValueReflect(G4bool x,
                                G4bool y,
-                               G4bool z):
+                               G4bool z,
+                               G4bool t):
     BDSArrayOperatorValueReflect()
   {
     multiplier[0] = x ? -1.0 : 1.0;
     multiplier[1] = y ? -1.0 : 1.0;
     multiplier[2] = z ? -1.0 : 1.0;
+    multiplier[3] = t ? -1.0 : 1.0;
   }
   virtual ~BDSArrayOperatorValueReflect(){;}
   
@@ -65,7 +67,9 @@ public:
   
 private:
   G4String name;
-  BDSFieldValue multiplier;
+  /// This has to match the type of the field value components (e.g. double or float) to avoid
+  /// a possible narrowing conversion.
+  FIELDTYPET multiplier[4];
 };
 
 #endif

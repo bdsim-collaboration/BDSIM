@@ -36,7 +36,7 @@ public:
   BDSArrayOperatorIndexReflect():
     xyzt{false, false, false, false}
   {;}
-  BDSArrayOperatorIndexReflect(G4bool xyzt[4]):
+  explicit BDSArrayOperatorIndexReflect(G4bool xyzt[4]):
     BDSArrayOperatorIndexReflect(xyzt[0], xyzt[1], xyzt[2], xyzt[3])
   {;}
   BDSArrayOperatorIndexReflect(G4bool x,
