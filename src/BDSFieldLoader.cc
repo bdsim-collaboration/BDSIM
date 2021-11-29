@@ -137,6 +137,8 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
   BDSArrayReflectionTypeSet* reflectionPointer = reflection.empty() ? nullptr : &reflection;
   
   BDSFieldMagInterpolated* result = nullptr;
+  try
+  {
   switch (format.underlying())
     {
     case BDSFieldFormat::bdsim1d:
@@ -156,6 +158,12 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
     default:
       {break;}
     }
+  }
+  catch (BDSException& e)
+  {
+    e.AppendToMessage(" error in field definition \"" + info.NameOfParserDefinition() + "\"");
+    throw e;
+  }
 
   if (result && info.AutoScale() && scalingStrength)
     {
@@ -211,6 +219,8 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadEField(const BDSFieldInfo& info)
   BDSArrayReflectionTypeSet* reflectionPointer = reflection.empty() ? nullptr : &reflection;
   
   BDSFieldEInterpolated* result = nullptr;
+  try
+  {
   switch (format.underlying())
     {
     case BDSFieldFormat::bdsim1d:
@@ -222,8 +232,14 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadEField(const BDSFieldInfo& info)
     case BDSFieldFormat::bdsim4d:
       {result = LoadBDSIM4DE(filePath, interpolatorType, transform, eScaling, reflectionPointer); break;}
     default:
-      break;
+      {break;}
     }
+  }
+  catch (BDSException& e)
+  {
+    e.AppendToMessage(" error in field definition \"" + info.NameOfParserDefinition() + "\"");
+    throw e;
+  }
   return result;
 }
 
@@ -253,6 +269,8 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadEMField(const BDSFieldInfo& info)
     {throw BDSException(__METHOD_NAME__, "different formats for E and B fields are not currently supported for an EM field");}
   
   BDSFieldEMInterpolated* result = nullptr;
+  try
+  {
   switch (eFormat.underlying())
     {
     case BDSFieldFormat::bdsim1d:
@@ -280,8 +298,14 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadEMField(const BDSFieldInfo& info)
         break;
       }
     default:
-      break;
+      {break;}
     }
+  }
+  catch (BDSException& e)
+  {
+    e.AppendToMessage(" error in field definition \"" + info.NameOfParserDefinition() + "\"");
+    throw e;
+  }
   return result;  
 }
 
@@ -552,6 +576,13 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
 				     BDSArrayOperatorIndex*& indexOperator,
 				     BDSArrayOperatorValue*& valueOperator) const
 {
+  G4bool problem = BDS::ProblemWithArrayReflectionCombination(*reflectionTypes);
+  if (problem)
+  {
+    G4String msg = "Invalid combination of array transforms. Must contain only simple flips\n";
+    throw BDSException(__METHOD_NAME__, msg); // caught at a higher level to append name of definition
+  }
+  
   std::vector<BDSArrayOperatorIndex*> indexOperators;
   std::vector<BDSArrayOperatorValue*> valueOperators;
   

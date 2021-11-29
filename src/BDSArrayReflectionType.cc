@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -87,6 +88,33 @@ BDSArrayReflectionTypeSet BDS::DetermineArrayReflectionTypeSet(const G4String& a
   for (const auto& word : words)
     {result.insert(BDS::DetermineArrayReflectionType(word));}
   return result;
+}
+
+G4bool BDS::ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSet& setIn)
+{
+  std::map<BDSArrayReflectionType, BDSArrayReflectionType> substitutions = {
+    {BDSArrayReflectionType::flipx, BDSArrayReflectionType::flipgeneral},
+    {BDSArrayReflectionType::flipy, BDSArrayReflectionType::flipgeneral},
+    {BDSArrayReflectionType::flipz, BDSArrayReflectionType::flipgeneral},
+    {BDSArrayReflectionType::flipt, BDSArrayReflectionType::flipgeneral},
+    {BDSArrayReflectionType::reflectx, BDSArrayReflectionType::reflectsimple},
+    {BDSArrayReflectionType::reflecty, BDSArrayReflectionType::reflectsimple},
+    {BDSArrayReflectionType::reflectz, BDSArrayReflectionType::reflectsimple},
+    {BDSArrayReflectionType::reflectt, BDSArrayReflectionType::reflectsimple}
+  };
+  
+  BDSArrayReflectionTypeSet test;
+  for (auto reflection : setIn)
+    {
+      auto search = substitutions.find(reflection);
+      if (search != substitutions.end())
+	{test.insert(search->second);}
+      else
+	{test.insert(reflection);}
+    }
+  // if there's more than one of the allowed unique types in the set
+  // then there's technically a problem
+  return test.size() > 1;
 }
 
 std::ostream& operator<< (std::ostream &out, BDSArrayReflectionTypeSet const& t)
