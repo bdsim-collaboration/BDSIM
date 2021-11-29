@@ -81,7 +81,7 @@ void BDSArray2DCoordsTransformed::ExtractSection4x4(G4double x,
   G4double xArrayCoords = ArrayCoordsFromX(x);
   G4double yArrayCoords = ArrayCoordsFromY(y);
   auto x1 = (G4int)std::floor(xArrayCoords);
-  auto y1 = (G4int)std::floor(xArrayCoords);
+  auto y1 = (G4int)std::floor(yArrayCoords);
   xFrac = xArrayCoords - x1;
   yFrac = yArrayCoords - y1;
   
