@@ -26,6 +26,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArray4DCoordsTransformed.hh"
 #include "BDSArray2DCoordsRDipole.hh"
 #include "BDSArray2DCoordsRQuad.hh"
+#include "BDSArrayOperatorIndex.hh"
+#include "BDSArrayOperatorIndexFlip.hh"
+#include "BDSArrayOperatorIndexReflect.hh"
+#include "BDSArrayOperatorIndexV.hh"
+#include "BDSArrayOperatorValue.hh"
+#include "BDSArrayOperatorValueReflect.hh"
+#include "BDSArrayOperatorValueReflectXYDipole.hh"
+#include "BDSArrayOperatorValueV.hh"
 #include "BDSArrayReflectionType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
@@ -544,24 +552,113 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
 				     BDSArrayOperatorIndex*& indexOperator,
 				     BDSArrayOperatorValue*& valueOperator) const
 {
-  // flips
-  G4bool indexOperators[4] = {false, false, false, false};
-  G4bool valueOperators[4] = {false, false, false, false};
+  std::vector<BDSArrayOperatorIndex*> indexOperators;
+  std::vector<BDSArrayOperatorValue*> valueOperators;
+  
+  // flips are combined into 1 operator
+  G4bool flipIndexOperators[4] = {false, false, false, false};
   for (auto& reflectionType : *reflectionTypes)
     {
       switch (reflectionType.underlying())
 	{
 	case BDSArrayReflectionType::flipx:
-	  {indexOperators[0] = true; break;}
+	  {flipIndexOperators[0] = true; break;}
 	case BDSArrayReflectionType::flipy:
-	  {indexOperators[1] = true; break;}
+	  {flipIndexOperators[1] = true; break;}
 	case BDSArrayReflectionType::flipz:
-	  {indexOperators[2] = true; break;}
+	  {flipIndexOperators[2] = true; break;}
 	case BDSArrayReflectionType::flipt:
-	  {indexOperators[3] = true; break;}
+	  {flipIndexOperators[3] = true; break;}
 	default:
 	  {break;}
 	}
+    }
+  G4bool anyFlipIndexOperators = std::any_of(std::begin(flipIndexOperators), std::end(flipIndexOperators), [](bool i){return i;});
+  if (anyFlipIndexOperators)
+    {//nIndexOperatorsRequired
+      indexOperators.emplace_back(new BDSArrayOperatorIndexFlip(flipIndexOperators));
+      valueOperators.emplace_back(new BDSArrayOperatorValue()); // no operation
+    }
+  
+  // basic reflections are combined into 1 operator
+  G4bool reflectIndexOperators[4] = {false, false, false, false};
+  for (auto& reflectionType : *reflectionTypes)
+    {
+      switch (reflectionType.underlying())
+	{
+	case BDSArrayReflectionType::reflectx:
+	  {reflectIndexOperators[0] = true; break;}
+	case BDSArrayReflectionType::reflecty:
+	  {reflectIndexOperators[1] = true; break;}
+	case BDSArrayReflectionType::reflectz:
+	  {reflectIndexOperators[2] = true; break;}
+	case BDSArrayReflectionType::reflectt:
+	  {reflectIndexOperators[3] = true; break;}
+	default:
+	  {break;}
+	}
+    }
+  G4bool anyReflectIndexOperators = std::any_of(std::begin(reflectIndexOperators), std::end(reflectIndexOperators), [](bool i){return i;});
+  if (anyReflectIndexOperators)
+    {//nIndexOperatorsRequired
+      indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(reflectIndexOperators));
+      valueOperators.emplace_back(new BDSArrayOperatorValueReflect(reflectIndexOperators));
+    }
+  
+  // special reflections
+  for (auto& reflectionType : *reflectionTypes)
+    {
+      switch (reflectionType.underlying())
+	{
+	case BDSArrayReflectionType::reflectx:
+	case BDSArrayReflectionType::reflecty:
+	case BDSArrayReflectionType::reflectz:
+	case BDSArrayReflectionType::reflectt:
+	  {
+	    throw BDSException(__METHOD_NAME__, "cannot combine a basic \"reflect(x|y|z|t)\" with a special reflection \"" +
+			       reflectionType.ToString() + "\"");
+	    break;
+	  }
+	case BDSArrayReflectionType::reflectxydipole:
+	  {
+	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true, true, false, false}));
+	    valueOperators.emplace_back(new BDSArrayOperatorValueReflectDipoleXY());
+	    break;
+	  }
+	case BDSArrayReflectionType::reflectxzdipole:
+	  {
+	    break;
+	  }
+	case BDSArrayReflectionType::reflectyzdipole:
+	  {
+	    break;
+	  }
+	case BDSArrayReflectionType::reflectxyquadrupole:
+	  {
+	    break;
+	  }
+	default:
+	  {
+	    break;
+	  }
+	}
+    }
+  
+  if (indexOperators.size() > 1)
+    {
+      auto indexResult = new BDSArrayOperatorIndexV();
+      for (auto io : indexOperators)
+        {indexResult->push_back(io);}
+      auto valueResult = new BDSArrayOperatorValueV();
+      for (auto vo : valueOperators)
+        {valueResult->push_back(vo);}
+      indexOperator = indexResult;
+      valueOperator = valueResult;
+    }
+  else
+    {
+      indexOperator = indexOperators[0];
+      valueOperator = valueOperators[0];
     }
 }
 
@@ -577,7 +674,6 @@ G4bool BDSFieldLoader::NeedToProvideTransform(const BDSArrayReflectionTypeSet* r
 	{return true;}
     }
 }
-
 
 BDSArray1DCoords* BDSFieldLoader::CreateArrayReflected(BDSArray1DCoords* existingArray,
                                                        const BDSArrayReflectionTypeSet* reflectionTypes) const

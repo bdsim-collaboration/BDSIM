@@ -106,7 +106,7 @@ private:
   /// @}
 
   /// Create the appropriate array operators (index and value) and assign to the pointers
-  /// given by reference.
+  /// given by reference. Assumes valid pointer for reflectionTypes argument.
   void CreateOperators(const BDSArrayReflectionTypeSet* reflectionTypes,
 		       BDSArrayOperatorIndex*& indexOperator,
 		       BDSArrayOperatorValue*& valueOperator) const;
