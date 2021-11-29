@@ -19,9 +19,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArray1DCoordsTransformed.hh"
 #include "BDSArrayOperatorIndex.hh"
 #include "BDSArrayOperatorValue.hh"
+#include "BDSFieldValue.hh"
 
 #include "globals.hh"
 
+#include <cmath>
 #include <ostream>
 
 BDSArray1DCoordsTransformed::BDSArray1DCoordsTransformed(BDSArray1DCoords* arrayIn,
@@ -31,9 +33,7 @@ BDSArray1DCoordsTransformed::BDSArray1DCoordsTransformed(BDSArray1DCoords* array
   indexOperator(indexOperatorIn),
   valueOperator(valueOperatorIn),
   returnValue(BDSFieldValue())
-{
-  indexOperator->TransformLimits(xMin, xMax);
-}
+{;}
 
 BDSArray1DCoordsTransformed::~BDSArray1DCoordsTransformed()
 {
@@ -97,7 +97,7 @@ BDSFieldValue BDSArray1DCoordsTransformed::ExtractNearest(G4double x,
 
 std::ostream& BDSArray1DCoordsTransformed::Print(std::ostream& out) const
 {
-  out << "Spatial limits are the transformed ones" << G4endl;
+  out << "Spatial limits are the original ones" << G4endl;
   out << "Array index operator: " << indexOperator->Name() << G4endl;
   out << "Array value operator: " << valueOperator->Name() << G4endl;
   return BDSArray1DCoords::Print(out);

@@ -19,9 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArray2DCoordsTransformed.hh"
 #include "BDSArrayOperatorIndex.hh"
 #include "BDSArrayOperatorValue.hh"
-#include "BDSExtent.hh"
+#include "BDSFieldValue.hh"
 
-#include <limits>
+#include <cmath>
 #include <ostream>
 
 #include "globals.hh"
@@ -33,9 +33,7 @@ BDSArray2DCoordsTransformed::BDSArray2DCoordsTransformed(BDSArray2DCoords* array
   indexOperator(indexOperatorIn),
   valueOperator(valueOperatorIn),
   returnValue(BDSFieldValue())
-{
-  indexOperator->TransformLimits(xMin, xMax, yMin, yMax);
-}
+{;}
 
 BDSArray2DCoordsTransformed::~BDSArray2DCoordsTransformed()
 {
@@ -65,7 +63,7 @@ void BDSArray2DCoordsTransformed::ExtractSection2x2(G4double x,
     {
       indexOriginalX = indexArrX[i];
       indexTransformedX = indexOriginalX;
-      indexOriginalY = indexArrY[i];
+      indexOriginalY = indexArrY[j];
       indexTransformedY = indexOriginalY;
       indexOperator->Apply(indexTransformedX, indexTransformedY);
       BDSFieldValue v = GetConst(indexTransformedX, indexTransformedY);
@@ -87,7 +85,6 @@ void BDSArray2DCoordsTransformed::ExtractSection4x4(G4double x,
   xFrac = xArrayCoords - x1;
   yFrac = yArrayCoords - y1;
   
-  
   G4int indexArrX[4] = {x1-1, x1, x1+1, x1+2};
   G4int indexArrY[4] = {y1-1, y1, y1+1, y1+2};
   G4int indexOriginalX, indexOriginalY, indexTransformedX, indexTransformedY;
@@ -97,7 +94,7 @@ void BDSArray2DCoordsTransformed::ExtractSection4x4(G4double x,
     {
       indexOriginalX = indexArrX[i];
       indexTransformedX = indexOriginalX;
-      indexOriginalY = indexArrY[i];
+      indexOriginalY = indexArrY[j];
       indexTransformedY = indexOriginalY;
       indexOperator->Apply(indexTransformedX, indexTransformedY);
       BDSFieldValue v = GetConst(indexTransformedX, indexTransformedY);
@@ -123,7 +120,7 @@ BDSFieldValue BDSArray2DCoordsTransformed::ExtractNearest(G4double x,
 
 std::ostream& BDSArray2DCoordsTransformed::Print(std::ostream& out) const
 {
-  out << "Spatial limits are the transformed ones" << G4endl;
+  out << "Spatial limits are the original ones" << G4endl;
   out << "Array index operator: " << indexOperator->Name() << G4endl;
   out << "Array value operator: " << valueOperator->Name() << G4endl;
   return BDSArray2DCoords::Print(out);
