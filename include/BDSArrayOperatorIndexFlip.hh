@@ -40,7 +40,7 @@ public:
   BDSArrayOperatorIndexFlip(G4bool x,
                             G4bool y,
                             G4bool z,
-                            G4bool t):
+                            G4bool t)
   {
     xyzt[0] = x ? -1 : 1;
     xyzt[1] = y ? -1 : 1;
