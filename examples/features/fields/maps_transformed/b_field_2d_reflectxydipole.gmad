@@ -1,10 +1,11 @@
 f1: field, type="bmap2d",
-    	   magneticFile="bdsim2d:2d_dipole_quadrant.dat";
-	   
-!f1: magneticReflection="reflectxydipole";
+    	   magneticFile="bdsim2d:2d_dipole_quadrant.dat",
+	   magneticInterpolator="cubic",
+	   magneticReflection="reflectxydipole";
 
+blueish: newcolour, red=0, green=123, blue=255, alpha=0.05;
 
-box: rcol, fieldAll="f1", l=10*cm, material="air";
+box: rcol, fieldAll="f1", l=10*cm, material="air", horizontalWidth=2*m, colour="blueish";
 l1: line=(box);
 use, l1;
 
@@ -21,10 +22,10 @@ option, ngenerate=10;
 
 q1: query, nDimensions=2,
     	   nx = 3,
-	   xmin = -30*cm,
-	   xmax = 30*cm,
+	   xmin = -75*cm,
+	   xmax = 75*cm,
 	   ny = 3,
-	   ymin = -50*cm,
-	   ymax = 50*cm,
+	   ymin = -80*cm,
+	   ymax = 80*cm,
 	   outfile = "2d_interpolated_cubic.dat",
 	   fieldObject = "f1";
