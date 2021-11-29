@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/PhysicalConstants.h"
 
 #include <algorithm>
+#include <cmath>
 #include <limits>
 #include <ostream>
 #include <string>
@@ -145,7 +146,7 @@ void BDSArray4DCoords::ExtractSection2x2x2x2(G4double x,
 	  for (G4int k = 0; k < 2; k++)
 	    {
 	      for (G4int l = 0; l < 2; l++)
-		{localData[i][j][k][l] = GetConst(x1 + i, y1 + j, z1 + k, t1 + l);}
+		{localData[i][j][k][l] = GetConst(x1+i, y1+j, z1+k, t1+l);}
 	    }
 	}
     }
@@ -173,14 +174,14 @@ void BDSArray4DCoords::ExtractSection4x4x4x4(G4double x,
   zFrac = zArrayCoords - z1;
   tFrac = tArrayCoords - t1;
   
-  for (G4int i : {x1-1, x1, x1+1, x1+2})
+  for (G4int i = 0; i < 4; i++)
     {
-      for (G4int j : {y1-1, y1, y1+1, y1+2})
+      for (G4int j = 0; j < 4; j++)
 	{
-	  for (G4int k : {z1-1, z1, z1+1, z1+2})
+	  for (G4int k = 0; k < 4; k++)
 	    {
-	      for (G4int l: {t1 - 1, t1, t1 + 1, t1 + 2})
-		{localData[i][j][k][l] = GetConst(x1 + i, y1 + j, z1 + k, t1 + l);}
+	      for (G4int l = 0; l < 4; l++)
+		{localData[i][j][k][l] = GetConst(x1-1+i, y1-1+j, z1-1+k, t1-1+l);}
 	    }
 	}
     }

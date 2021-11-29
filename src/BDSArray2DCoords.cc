@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArray2DCoords.hh"
 #include "BDSExtent.hh"
 
+#include <cmath>
 #include <limits>
 #include <ostream>
 
@@ -82,12 +83,10 @@ void BDSArray2DCoords::ExtractSection4x4(G4double x,
   xFrac = xarr - x1;
   yFrac = yarr - y1;
   
-  G4int x0 = x1-1;
-  G4int y0 = y1-1;
   for (G4int i = 0; i < 4; i++)
     {
       for (G4int j = 0; j < 4; j++)
-	{localData[i][j] = GetConst(x0+i, y0+j);}
+	{localData[i][j] = GetConst(x1-1+i, y1-1+j);}
     }
 }
 
