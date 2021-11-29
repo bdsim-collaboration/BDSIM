@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSArray3DCoords.hh"
 
+#include <cmath>
 #include <ostream>
 
 #include "globals.hh"
@@ -84,13 +85,13 @@ void BDSArray3DCoords::ExtractSection4x4x4(G4double x,
   yFrac = yArrayCoords - y1;
   zFrac = zArrayCoords - z1;
   
-  for (G4int i : {x1-1, x1, x1+1, x1+2})
+  for (G4int i = 0; i < 4; i++)
     {
-      for (G4int j : {y1-1, y1, y1+1, y1+2})
+      for (G4int j = 0; j < 4; j++)
 	{
-	  for (G4int k : {z1-1, z1, z1+1, z1+2})
+	  for (G4int k = 0; k < 4; k++)
 	    {
-	      localData[i][j][k] = GetConst(x1+i, y1+j, z1+k);
+	      localData[i][j][k] = GetConst(x1-1+i, y1-1+j, z1-1+k);
 	    }
 	}
     }

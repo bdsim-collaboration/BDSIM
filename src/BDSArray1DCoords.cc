@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include <cmath>
 #include <ostream>
 #include <limits>
 
@@ -41,8 +42,8 @@ void BDSArray1DCoords::ExtractSection2(G4double x,
   G4double xArrayCoords = ArrayCoordsFromX(x);
   auto x1 = (G4int)std::floor(xArrayCoords);
   xFrac = xArrayCoords - x1;
-  for (auto i : {x1, x1+1})
-    {localData[i] = GetConst(i);}
+  for (G4int i = 0; i < 2; i++)
+    {localData[i] = GetConst(x1+i);}
 }
 
 void BDSArray1DCoords::ExtractSection4(G4double x,
@@ -52,8 +53,8 @@ void BDSArray1DCoords::ExtractSection4(G4double x,
   G4double xArrayCoords = ArrayCoordsFromX(x);
   auto x1 = (G4int)std::floor(xArrayCoords);
   xFrac = xArrayCoords - x1;
-  for (auto i : {x1-1, x1, x1+1, x1+2})
-    {localData[i] = GetConst(i);}
+  for (G4int i = 0; i < 4; i++)
+    {localData[i] = GetConst(x1-1+i);}
 }
 
 BDSFieldValue BDSArray1DCoords::ExtractNearest(G4double x,
