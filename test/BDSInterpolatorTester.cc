@@ -45,7 +45,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSFieldLoaderBDSIM.hh"
 #include "BDSArray2DCoordsTransformed.hh"
-#include "BDSArrayCoordOperatorFlip.hh"
 
 void Query(BDSFieldMag* field,
 	   G4double ymin, G4double ymax, G4double xmin, G4double xmax,
@@ -214,8 +213,8 @@ int main(int /*argc*/, char** /*argv*/)
   const G4String exampleFile2DQuadrant = "../examples/features/fields/maps_bdsim/2d_dipole_quadrant.dat";
   BDSFieldLoaderBDSIM<std::ifstream> loader;
   BDSArray2DCoords* result = loader.Load2D(exampleFile2DQuadrant);
-  BDSArrayCoordOperatorFlip* transform = new BDSArrayCoordOperatorFlip(true, false, false, false);
-  auto transformed = new BDSArray2DCoordsTransformed(result, transform);
+  //BDSArrayCoordOperatorFlip* transform = new BDSArrayCoordOperatorFlip(true, false, false, false);
+  //auto transformed = new BDSArray2DCoordsTransformed(result, transform);
 
   return 0;
 }
