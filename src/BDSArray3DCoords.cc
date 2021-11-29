@@ -53,9 +53,9 @@ void BDSArray3DCoords::ExtractSection2x2x2(G4double x,
   auto y1 = (G4int)std::floor(yArrayCoords);
   auto z1 = (G4int)std::floor(zArrayCoords);
   
-  xFrac = x1 - xArrayCoords;
-  yFrac = y1 - yArrayCoords;
-  zFrac = z1 - zArrayCoords;
+  xFrac = xArrayCoords - x1;
+  yFrac = yArrayCoords - y1;
+  zFrac = zArrayCoords - z1;
   
   for (G4int i = 0; i < 2; i++)
     {

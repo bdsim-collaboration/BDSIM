@@ -133,10 +133,10 @@ void BDSArray4DCoords::ExtractSection2x2x2x2(G4double x,
   auto z1 = (G4int)std::floor(zArrayCoords);
   auto t1 = (G4int)std::floor(tArrayCoords);
   
-  xFrac = x1 - xArrayCoords;
-  yFrac = y1 - yArrayCoords;
-  zFrac = z1 - zArrayCoords;
-  tFrac = t1 - tArrayCoords;
+  xFrac = xArrayCoords - x1;
+  yFrac = yArrayCoords - y1;
+  zFrac = zArrayCoords - z1;
+  tFrac = tArrayCoords - t1;
   
   for (G4int i = 0; i < 2; i++)
     {
@@ -168,10 +168,10 @@ void BDSArray4DCoords::ExtractSection4x4x4x4(G4double x,
   auto z1 = (G4int)std::floor(zArrayCoords);
   auto t1 = (G4int)std::floor(tArrayCoords);
   
-  xFrac = x1 - xArrayCoords;
-  yFrac = y1 - yArrayCoords;
-  zFrac = z1 - zArrayCoords;
-  tFrac = t1 - tArrayCoords;
+  xFrac = xArrayCoords - x1;
+  yFrac = yArrayCoords - y1;
+  zFrac = zArrayCoords - z1;
+  tFrac = tArrayCoords - t1;
   
   for (G4int i : {x1-1, x1, x1+1, x1+2})
     {
