@@ -1,9 +1,10 @@
 f1: field, type="bmap2d",
-    	   magneticFile="bdsim2d:2d_dipole_quadrant.dat",
-	   transform="reflectxydipole";
+    	   magneticFile="bdsim2d:2d_dipole_quadrant.dat";
+	   
+!f1: magneticReflection="reflectxydipole";
 
 
-box: element, fieldAll="f1", l=1.1*m, geometry="gdml:abox.gdml";
+box: rcol, fieldAll="f1", l=10*cm, material="air";
 l1: line=(box);
 use, l1;
 
@@ -17,3 +18,13 @@ beam, particle="e-",
 
 
 option, ngenerate=10;
+
+q1: query, nDimensions=2,
+    	   nx = 3,
+	   xmin = -30*cm,
+	   xmax = 30*cm,
+	   ny = 3,
+	   ymin = -50*cm,
+	   ymax = 50*cm,
+	   outfile = "2d_interpolated_cubic.dat",
+	   fieldObject = "f1";
