@@ -34,7 +34,7 @@ BDSFieldValue BDSInterpolator2DLinear::GetInterpolatedValueT(G4double x, G4doubl
 {
   BDSFieldValue localData[2][2];
   G4double xFrac, yFrac;
-  array->ExtractSection2x2(x,y,localData, xFrac, yFrac);
+  array->ExtractSection2x2(x, y, localData, xFrac, yFrac);
   BDSFieldValue result = BDS::Linear2D(localData, xFrac, yFrac);
   return result;
 }
