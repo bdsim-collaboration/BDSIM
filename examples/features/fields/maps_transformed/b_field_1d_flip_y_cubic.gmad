@@ -6,8 +6,8 @@ f1: field, type="bmap1d",
 include commonboxforfield.gmad;
 
 q1: query, nDimensions=1,
-    	   nx = 100,
-	   xmin = -75*cm,
-	   xmax = 75*cm,
+    	   ny = 100,
+	   ymin = -75*cm,
+	   ymax = 75*cm,
 	   outfile = "interp_out_1d_b_flipy_cubic.dat",
 	   fieldObject = "f1";
