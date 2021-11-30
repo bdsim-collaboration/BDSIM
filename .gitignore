@@ -11,6 +11,7 @@
 *.bak
 *.root
 interp_out*
+raw_interp_out*
 
 # Temporary editor files #
 ##########################
