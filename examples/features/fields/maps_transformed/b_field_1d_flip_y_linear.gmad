@@ -1,0 +1,13 @@
+f1: field, type="bmap1d",
+    	   magneticFile="bdsim1d:1dexample-along-y.dat",
+	   magneticReflection="flipy",
+	   magneticInterpolator="linear";
+
+include commonboxforfield.gmad;
+
+q1: query, nDimensions=1,
+    	   nx = 100,
+	   xmin = -75*cm,
+	   xmax = 75*cm,
+	   outfile = "interp_out_1d_b_flipy_linear.dat",
+	   fieldObject = "f1";

@@ -1,0 +1,5 @@
+f1: field, type="bmap1d",
+    	   magneticFile="bdsim1d:1dexample-along-x.dat",
+	   magneticInterpolator="cubic";
+
+include commonboxforfield.gmad;
