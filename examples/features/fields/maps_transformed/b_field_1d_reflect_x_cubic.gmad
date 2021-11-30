@@ -9,5 +9,5 @@ q1: query, nDimensions=1,
     	   nx = 100,
 	   xmin = -75*cm,
 	   xmax = 75*cm,
-	   outfile = "1d_interpolated_reflectx-cubic.dat",
+	   outfile = "interp_out_1d_b_reflectx_cubic.dat",
 	   fieldObject = "f1";

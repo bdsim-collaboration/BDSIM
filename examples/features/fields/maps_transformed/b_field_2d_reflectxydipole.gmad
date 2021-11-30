@@ -12,5 +12,5 @@ q1: query, nDimensions=2,
 	   ny = 3,
 	   ymin = -80*cm,
 	   ymax = 80*cm,
-	   outfile = "2d_interpolated_cubic.dat",
+	   outfile = "interp_out_2d_b_reflectxydipole_cubic.dat",
 	   fieldObject = "f1";
