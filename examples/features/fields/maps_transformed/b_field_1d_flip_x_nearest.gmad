@@ -1,0 +1,13 @@
+f1: field, type="bmap1d",
+    	   magneticFile="bdsim1d:1dexample-along-x.dat",
+	   magneticReflection="flipx",
+	   magneticInterpolator="nearest";
+
+include commonboxforfield.gmad;
+
+q1: query, nDimensions=1,
+    	   nx = 100,
+	   xmin = -75*cm,
+	   xmax = 75*cm,
+	   outfile = "interp_out_1d_b_flipx_nearest.dat",
+	   fieldObject = "f1";
