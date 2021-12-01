@@ -40,7 +40,7 @@ RUN yum -y install python3-pip python3.x86_64
 RUN yum -y install qt5-qtbase-devel.x86_64 
 
 # ROOT
-RUN yum -y install root
+RUN yum -y install root python36-root
 
 # HEPMC3
 RUN yum -y install HepMC3-rootIO-devel.x86_64
@@ -62,9 +62,11 @@ RUN mkdir bdsim-build && cd bdsim-build && source scl_source enable devtoolset-7
     rm -rfv bdsim-build bdsim && echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc
 
 # Python
-RUN yum -y install tkinter python36-pillow
-#RUN python -m pip install -U --force-reinstall pip
-RUN pip3 install numpy scipy matplotlib ipython 
+RUN yum -y install tkinter python36-pillow python36-qt5
+RUN pip3 install numpy scipy matplotlib ipython
+RUN mkdir -p ~/.config/matplotlib && \
+    cp /usr/local/lib64/python3.6/site-packages/matplotlib/mpl-data/matplotlibrc ~/.config/matplotlib/. && \
+    sed -i -e 's/#backend: Agg/backend: Qt5Agg/g' ~/.config/matplotlib/matplotlibrc
 
 # Python support tools (pybdsim, pymadx, pymad8, pytransport, pyg4ometry)
 RUN ln -s /usr/bin/pip3 /usr/bin/pip
