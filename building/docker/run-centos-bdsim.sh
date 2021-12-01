@@ -6,5 +6,11 @@
 
 # maybe required to run this to allow incoming network connections
 # xhost +
+# this works on mac / unix - adapt for windows
 DV=`ipconfig getifaddr en0`
-docker run -t -i -e DISPLAY=$DV:0 --rm bdsim bash
+# for windows, the command would roughly be:
+# ifconfig /all
+
+# the docker command should have -v <host_dir_abs_path>:<container_dir_abs_path>
+# for unix we use `pwd` as a shortcut
+docker run -t -i -v `pwd`:/hostfs -e DISPLAY=$DV:0 --rm bdsim bash
