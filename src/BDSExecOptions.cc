@@ -74,6 +74,9 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
 void BDSExecOptions::Parse(int argc, char **argv)
 {
   static struct option LongOptions[] = {{ "help" , 0, 0, 0 },
+                                        { "licence", 0, 0, 0},
+					{ "license", 0, 0, 0},
+					{ "lisence", 0, 0, 0},
                                         { "version", 0, 0, 0 },
                                         { "versionGit", 0, 0, 0 },
 					{ "verbose", 0, 0, 0 },
@@ -164,6 +167,11 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	    if ( !strcmp(optionName , "help") )
 	      {
 		Usage();
+		exit(0);
+	      }
+	    else if ( !strcmp(optionName, "licence") || !strcmp(optionName, "license") || !strcmp(optionName, "lisense") )
+	      {
+		PrintLicence();
 		exit(0);
 	      }
 	    else if ( !strcmp(optionName, "version") )
@@ -431,6 +439,7 @@ void BDSExecOptions::Usage() const
 	<<"--geant4PhysicsMacroFileName=<filename> : physics macro file name"                << G4endl
 	<<"--generatePrimariesOnly      : generate N primary particle coordinates"           << G4endl
 	<<"                               without simulation then quit"                      << G4endl
+	<<"--licence                    : print the licence information then quit"           << G4endl
 	<<"--materials                  : list materials included in bdsim by default"       << G4endl
 	<<"--ngenerate=N                : the number of primary events to simulate:"         << G4endl
 	<<"                               overrides ngenerate option in the input gmad file" << G4endl
@@ -470,6 +479,19 @@ void BDSExecOptions::Usage() const
 	<<"--vis_mac=<file>             : file with the visualisation macro script, default" << G4endl
 	<<"                               provided by BDSIM openGL (OGLSQt))"                << G4endl
 	<<"--writeseedstate             : write an ASCII file seed state for each event"     << G4endl;
+}
+
+void BDSExecOptions::PrintLicence() const
+{
+  // Print header & program information
+  G4cout<<"BDSIM : version @BDSIM_VERSION@"<<G4endl;
+  G4cout<<"        (C) 2001-@CURRENT_YEAR@ Royal Holloway University London"  << G4endl;
+  G4cout<<G4endl;
+  G4cout<<"        Reference: Computer Physics Communications, 107200 (2020)" << G4endl;
+  G4cout<<"                   https://doi.org/10.1016/j.cpc.2020.107200"      << G4endl;
+  G4cout<<"                   https://arxiv.org/abs/1808.10745"               << G4endl;
+  G4cout<<"        Website:   http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
+  G4cout<<G4endl;
 }
 
 void BDSExecOptions::Print() const
