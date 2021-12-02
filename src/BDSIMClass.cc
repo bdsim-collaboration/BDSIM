@@ -125,7 +125,7 @@ int BDSIM::Initialise()
     {execOptions->Print();}
   ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
 
-  execOptions->PrintLicence();  
+  execOptions->PrintCopyright();  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "DEBUG mode is on." << G4endl;
 #endif

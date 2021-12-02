@@ -16,6 +16,9 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.7.0 - 2021 / XX / XX
 =======================
 
+* New executable options :code:`--reference` and :code:`--citation` to display the citation
+  in bibtex to cite BDSIM easily.
+
 New Features
 ------------
 
