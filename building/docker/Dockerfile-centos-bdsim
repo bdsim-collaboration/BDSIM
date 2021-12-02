@@ -62,7 +62,7 @@ RUN mkdir bdsim-build && cd bdsim-build && source scl_source enable devtoolset-7
     rm -rfv bdsim-build bdsim && echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc
 
 # Python
-RUN yum -y install tkinter python36-pillow python36-qt5
+RUN yum -y install tkinter python36-pillow python36-qt5 --skip-broken
 RUN pip3 install numpy scipy matplotlib ipython
 RUN mkdir -p ~/.config/matplotlib && \
     cp /usr/local/lib64/python3.6/site-packages/matplotlib/mpl-data/matplotlibrc ~/.config/matplotlib/. && \
