@@ -46,8 +46,8 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
 							   {"depositedenergy", "depositedenergy3d"},
 							   {"population",      "population3d"},
 							   {"cellflux",        "cellflux3d"},
-                               {"cellfluxscaled",  "cellfluxscaled3d"},
-                               {"cellfluxscaledperparticle", "cellfluxscaledperparticle3d"}
+							   {"cellfluxscaled",  "cellfluxscaled3d"},
+							   {"cellfluxscaledperparticle", "cellfluxscaledperparticle3d"}
   };
   
   std::string scorerTypeNameOriginal = scorer.type;
