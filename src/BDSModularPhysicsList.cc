@@ -245,7 +245,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   // prepare vector of valid names for searching when parsing physics list string
   for (const auto& constructor : physicsConstructors)
     {
-      physicsLists.push_back(constructor.first);
+      physicsLists.emplace_back(constructor.first);
       physicsActivated[constructor.first] = false;
     }
 
