@@ -66,7 +66,7 @@ BDSMySQLVariable* BDSMySQLTable::GetVariable(G4String aVarName)
   for (G4int i=0; i<(G4int)itsVar.size(); i++)
     {
 #if G4VERSION_NUMBER > 1099
-      if (G4StrUtil::icompare(itsVar[i]->GetName(), aVarName))
+      if (G4StrUtil::icompare(itsVar[i]->GetName(), aVarName) == 0)
 #else
       G4String::caseCompare cmpmode = G4String::ignoreCase;
       if( (itsVar[i])->GetName().compareTo(aVarName,cmpmode)==0)
