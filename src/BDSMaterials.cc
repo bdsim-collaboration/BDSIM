@@ -1007,6 +1007,8 @@ void BDSMaterials::AddMaterial(G4String name,
 
 G4Material* BDSMaterials::GetMaterial(G4String material) const
 {
+  if (material.empty())
+    {throw BDSException(__METHOD_NAME__, "empty material name");}
   G4String materialOriginal = material;
   // for short names we assume they're elements so we prefix with G4_ and
   // get them from NIST
