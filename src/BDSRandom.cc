@@ -60,12 +60,11 @@ BDSRandomEngineType BDSRandom::DetermineRandomEngineType(G4String engineType)
   auto result = types.find(engineType);
   if (result == types.end())
     {// it's not a valid key
-      G4cerr << __METHOD_NAME__ << "\"" << engineType << "\" is not a valid random engine" << G4endl;
-
-      G4cout << "Available random engines are:" << G4endl;
+      G4String msg = "\"" + engineType + "\" is not a valid random engine\n";
+      msg += "Available random engines are:\n";
       for (auto& it : types)
-	{G4cout << "\"" << it.first << "\"" << G4endl;}
-      throw BDSException(__METHOD_NAME__, "");
+	{msg += "\"" + it.first + "\"\n";}
+      throw BDSException(__METHOD_NAME__, msg);
     }
   return result->second;
 }
