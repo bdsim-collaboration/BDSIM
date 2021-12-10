@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSMagnetGeometryType.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
@@ -45,11 +46,7 @@ std::map<BDSMagnetGeometryType, std::string>* BDSMagnetGeometryType::dictionary 
 BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
 {
   // If it contains a colon ":" it must be external geometry format format:filepath
-#if G4VERSION_NUMBER > 1099
-  if (G4StrUtil::contains(geometryType, ":"))
-#else
-  if (geometryType.contains(":"))
-#endif
+  if (BDS::StrContains(geometryType, ":"))
     {return BDSMagnetGeometryType::external;}
   
   std::map<G4String, BDSMagnetGeometryType> types;
