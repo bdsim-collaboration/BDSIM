@@ -59,7 +59,6 @@ BDSGeometryFactory::BDSGeometryFactory()
 BDSGeometryFactory::~BDSGeometryFactory()
 {
   delete gdml;
-  delete gmad;
   delete sql;
   for (auto& geom : storage)
     {delete geom;}
