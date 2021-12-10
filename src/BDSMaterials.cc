@@ -1276,7 +1276,7 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
 	{
 	  std::list<G4String> tempComponents;
 	  for (const auto& jt : it.components)
-	    {tempComponents.push_back(G4String(jt));}
+	    {tempComponents.emplace_back(G4String(jt));}
 	  
 	  if(it.componentsWeights.size()==it.components.size())
 	    {

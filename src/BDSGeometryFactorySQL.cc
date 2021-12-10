@@ -323,7 +323,7 @@ void BDSGeometryFactorySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k)
   AssignVariable(aSQLTable,k,"NAME",Name);
   if(Name=="_SQL")
     {Name = TableName+std::to_string(k) + "_SQL";}
-  if(Name=="")
+  if(Name.empty())
     {Name = TableName+std::to_string(k);}
   Name = itsMarkerVol->GetName()+"_"+Name;
 #ifdef BDSDEBUG
@@ -377,7 +377,7 @@ void BDSGeometryFactorySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k
   AssignVariable(aSQLTable,k,"NAME",Name);
   if(Name=="_SQL")
     {Name = TableName+std::to_string(k) + "_SQL";}
-  if(Name=="")
+  if(Name.empty())
     {Name = TableName+std::to_string(k);}
 
   Name = itsMarkerVol->GetName()+"_"+Name;
@@ -1074,7 +1074,7 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 #ifdef BDSDEBUG
 	  G4cout << "BDSGeometryFactorySQL> volume " << PhysiComp->GetName() << " has the following uniform field: " << FieldX << " " << FieldY << " " << FieldZ << " " << G4endl;
 #endif
-	  UniformField.push_back(G4ThreeVector(FieldX*CLHEP::tesla,
+	  UniformField.emplace_back(G4ThreeVector(FieldX*CLHEP::tesla,
 					       FieldY*CLHEP::tesla,
 					       FieldZ*CLHEP::tesla));
 	  Fieldvol.push_back(PhysiComp->GetName());
