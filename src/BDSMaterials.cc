@@ -1018,7 +1018,7 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
     {material.prepend(nistString);}
 #endif
 
-  G4String start (material, 3);
+  G4String start = material.substr(0,3);
   if (nistString == start)
     {
 #ifdef BDSDEBUG
