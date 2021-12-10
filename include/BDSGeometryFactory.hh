@@ -87,7 +87,6 @@ private:
 
   /// @{ Factory instance.
   BDSGeometryFactoryBase* gdml;
-  BDSGeometryFactoryBase* gmad;
   BDSGeometryFactoryBase* sql;
   /// @}
 };
