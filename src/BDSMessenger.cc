@@ -16,22 +16,22 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <iostream>
-#include <ostream>
-#include <iomanip>
-
-#include "BDSMessenger.hh"
+#include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
-#include "BDSAcceleratorModel.hh"
+#include "BDSMessenger.hh"
 #include "BDSSamplerRegistry.hh"
+#include "BDSUtilities.hh"
 
+#include "globals.hh"
 #include "G4UImanager.hh"
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithAString.hh"
 
-#include "globals.hh"
+#include <iostream>
+#include <ostream>
+#include <iomanip>
 
 BDSMessenger::BDSMessenger()
 {
@@ -125,7 +125,7 @@ void BDSMessenger::ElementNameSearch(std::string name)
   int j=0;
   for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j)
     {
-      if((*i)->GetName().contains(name))
+      if(BDS::StrContains((*i)->GetName(), name))
 	{G4cout << (*i)->GetName() << G4endl;}
     }
 }
@@ -146,7 +146,7 @@ void BDSMessenger::GoToElement(const std::string& name)
     {// search the beam line for any element containing the name at all
       for (const auto& el : *beamline)
 	{
-	  if (el->GetName().contains(name))
+	  if (BDS::StrContains(el->GetName(), name))
 	    {e = el; break;}
 	}
     }

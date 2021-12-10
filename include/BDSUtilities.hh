@@ -54,6 +54,9 @@ namespace BDS
     G4bool operator()(char c);
   };
 
+  /// Utility function to simplify lots of syntax changes for pedantic g4 changes.
+  G4bool StrContains(const G4String& str, const G4String& test);
+
   /// Remove white space and special characters in the name
   G4String PrepareSafeName(G4String name);
 
