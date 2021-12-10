@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
+#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -43,7 +45,11 @@ BDSDimensionType BDS::DetermineDimensionType(G4String dimensionType)
   types["z"] = BDSDimensionType::z;
   types["t"] = BDSDimensionType::t;
 
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(dimensionType);
+#else
   dimensionType.toLower();
+#endif
 
   auto result = types.find(dimensionType);
   if (result == types.end())

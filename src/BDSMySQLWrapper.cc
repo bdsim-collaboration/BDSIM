@@ -23,6 +23,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMySQLVariable.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
+#include "G4Version.hh"
+
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <cstdlib>
@@ -160,8 +163,12 @@ void BDSMySQLWrapper::CreateTable()
   ProceedToEndOfLine();
   table.push_back(new BDSMySQLTable(CurrentTableName));
   tableN++;
-  
-  while((!varname.contains(";")) && (!vartype.contains(";"))){
+#if G4VERSION_NUMBER > 1099
+  while(!G4StrUtil::contains(varname,";") && (!G4StrUtil::contains(vartype,";")))
+#else
+  while((!varname.contains(";")) && (!vartype.contains(";")))
+#endif
+  {
     //Get next variable, skipping blanks.
     do{
       _NEXTINPUT

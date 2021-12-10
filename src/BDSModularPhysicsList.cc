@@ -41,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
+#include "G4String.hh"
 #include "G4Version.hh"
 
 // physics processes / builders (assumed Geant4.10.0 and upwards)
@@ -344,7 +345,11 @@ void BDSModularPhysicsList::ParsePhysicsList(const G4String& physListName)
   for (const auto& physicsListName : physicsListNamesS)
     {
       G4String name = G4String(physicsListName); // convert string to G4String.
+#if G4VERSION_NUMBER > 1099
+      G4StrUtil::to_lower(name);
+#else
       name.toLower(); // change to lower case - physics lists are case insensitive
+#endif
 
       temporaryName = name; // copy to temporary variable
       

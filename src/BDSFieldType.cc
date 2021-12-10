@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
+#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -136,8 +138,12 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["multipoleouterdipolelhc"]      = BDSFieldType::multipoleouterdipolelhc;
   types["multipoleouterquadrupolelhc"]  = BDSFieldType::multipoleouterquadrupolelhc;
   types["multipoleoutersextupolelhc"]   = BDSFieldType::multipoleoutersextupolelhc;
-  
+
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(bType);
+#else
   bType.toLower();
+#endif
 
   auto result = types.find(bType);
   if (result == types.end())

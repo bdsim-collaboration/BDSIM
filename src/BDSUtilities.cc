@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4Track.hh"
 #include "G4TwoVector.hh"
@@ -60,6 +61,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 G4bool BDS::non_alpha::operator()(char c)
 {
   return !isalpha(c);
+}
+
+G4bool BDS::StrContains(const G4String& str, const G4String& test)
+{
+#if G4VERSION_NUMBER > 1099
+  return G4StrUtil::contains(str, test);
+#else
+  return str.contains(test);
+#endif
 }
 
 G4String BDS::PrepareSafeName(G4String name)

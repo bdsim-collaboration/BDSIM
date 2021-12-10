@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4String.hh"
 #include "G4Version.hh"
 
 #include <map>
@@ -139,7 +140,12 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
   types["g4rk547feq3"]          = BDSIntegratorType::g4rk547feq3;
 #endif
 
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(integratorType);
+#else
   integratorType.toLower();
+#endif
+  
   auto result = types.find(integratorType);
   if (result == types.end())
     {

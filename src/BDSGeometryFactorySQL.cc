@@ -42,12 +42,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Polycone.hh"
 #include "G4PVPlacement.hh"
 #include "G4RotationMatrix.hh"
+#include "G4String.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4Torus.hh"
 #include "G4Trap.hh"
 #include "G4Tubs.hh"
 #include "G4UnionSolid.hh"
 #include "G4UserLimits.hh"
+#include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
@@ -185,7 +187,7 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
   char buffer[1000];
   while (ifs >> fileListLine)
     {
-      if(fileListLine.contains("#"))
+      if (BDS::StrContains(fileListLine, "#"))
 	{ifs.getline(buffer,1000);} // a comment or info line - store it
       else
 	{BuildSQLObjects(containingDir + fileListLine);} // a line with file to be parsed
@@ -236,30 +238,30 @@ void BDSGeometryFactorySQL::BuildSQLObjects(G4String file)
       G4cout << __METHOD_NAME__ << " i = " << i << ", TableName = " << TableName << G4endl;
 #endif
       G4int pos = TableName.find("_");
-      G4String ObjectType = TableName.substr(pos+1,TableName.length() - pos);
-      G4String::caseCompare cmpmode = G4String::ignoreCase;
+      std::string ObjectType = TableName.substr(pos+1,TableName.length() - pos);
+      //G4String::caseCompare cmpmode = G4String::ignoreCase;
       NVariables = itsSQLTable[i]->GetVariable(0)->GetNVariables();
       for (G4int k=0; k<NVariables; k++)
 	{
 	  SetCommonParams(itsSQLTable[i], k);
 	  G4LogicalVolume* logVol;
-	  if(ObjectType.compareTo("CONE",cmpmode)==0)
+	  if(ObjectType.compare("CONE")==0)
 	    {logVol = BuildCone(itsSQLTable[i],k);}
-	  else if(ObjectType.compareTo("ELLIPTICALCONE",cmpmode)==0)
+	  else if(ObjectType.compare("ELLIPTICALCONE")==0)
 	    {logVol = BuildEllipticalCone(itsSQLTable[i],k);}
-	  else if(ObjectType.compareTo("POLYCONE",cmpmode)==0)
+	  else if(ObjectType.compare("POLYCONE")==0)
 	    {logVol = BuildPolyCone(itsSQLTable[i],k);}
-	  else if(ObjectType.compareTo("BOX",cmpmode)==0)
+	  else if(ObjectType.compare("BOX")==0)
 	    {logVol = BuildBox(itsSQLTable[i],k);}
-	  else if(ObjectType.compareTo("TRAP",cmpmode)==0)
+	  else if(ObjectType.compare("TRAP")==0)
 	    {logVol =  BuildTrap(itsSQLTable[i],k);}
-	  else if(ObjectType.compareTo("TORUS",cmpmode)==0)
+	  else if(ObjectType.compare("TORUS")==0)
 	    {logVol = BuildTorus(itsSQLTable[i],k);}
-	  else if(ObjectType.compareTo("SAMPLER",cmpmode)==0)
+	  else if(ObjectType.compare("SAMPLER")==0)
 	    {logVol = BuildSampler(itsSQLTable[i],k);}
-	  else if(ObjectType.compareTo("TUBE",cmpmode)==0)
+	  else if(ObjectType.compare("TUBE")==0)
 	    {logVol =  BuildTube(itsSQLTable[i],k);}
-	  else if(ObjectType.compareTo("ELLIPTICALTUBE",cmpmode)==0)
+	  else if(ObjectType.compare("ELLIPTICALTUBE")==0)
 	    {logVol =  BuildEllipticalTube(itsSQLTable[i],k);}
 	  //else if(ObjectType.compareTo("PCLTUBE",cmpmode)==0)
 	  //  {logVol =  BuildPCLTube(itsSQLTable[i],k);}
@@ -387,7 +389,8 @@ void BDSGeometryFactorySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k
 G4VisAttributes* BDSGeometryFactorySQL::VisAtt()
 {
   G4VisAttributes* va = new G4VisAttributes(G4Colour(VisRed, VisGreen, VisBlue, VisAlpha));
-  switch (VisType(0))
+  char testChar = VisType[0];
+  switch (testChar)
     {
     case 'W': va->SetForceWireframe(true); break;
     case 'I': va->SetVisibility(false); break;
@@ -886,17 +889,21 @@ G4RotationMatrix* BDSGeometryFactorySQL::RotateComponent(G4double psi,G4double p
 void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 					    std::vector<G4LogicalVolume*> VOL_LISTIn)
 {
-  G4String::caseCompare cmpmode = G4String::ignoreCase;
   for (G4int k=0; k<NVariables; k++) // Now run through and place according to
     { 
       SetPlacementParams(aSQLTable, k);
       G4int PARENTID=0;
-      if(PARENTNAME!="")
+      if(!PARENTNAME.empty())
 	{
 	  PARENTNAME+="_LogVol";
 	  for (G4int i=0; i<(G4int)VOL_LISTIn.size(); i++)
 	    {
+#if G4VERSION_NUMBER > 1099
+	      if (G4StrUtil::icompare(PARENTNAME, VOL_LISTIn[i]->GetName()) == 0)
+#else
+	      G4String::caseCompare cmpmode = G4String::ignoreCase;
 	      if(PARENTNAME.compareTo(VOL_LISTIn[i]->GetName(),cmpmode)==0)
+#endif
 		{
 		  PARENTID = i;
 		  continue;
@@ -909,7 +916,11 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
       G4int ID=0;
       for (G4int i=0; i<(G4int)VOL_LISTIn.size(); i++)
 	{
+#if G4VERSION_NUMBER > 1099
+    if (G4StrUtil::icompare(tmpname, VOL_LISTIn[i]->GetName()) == 0)
+#else
 	  if(tmpname.compareTo(VOL_LISTIn[i]->GetName(),cmpmode)==0)
+#endif
 	    {
 	      ID = i;
 	      continue;
@@ -920,9 +931,13 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 	{sensitiveComponents.insert(VOL_LISTIn[ID]);}
       G4ThreeVector PlacementPoint(PosX,PosY,PosZ);
 
-      if(InheritStyle.compareTo("",cmpmode))
+    if(!InheritStyle.empty())
 	{ //True if InheritStyle is set
+#if G4VERSION_NUMBER > 1099
+      if (G4StrUtil::icompare(InheritStyle, "SUBTRACT") == 0)
+#else
 	  if(InheritStyle.compareTo("SUBTRACT",cmpmode)==0)
+#endif
 	    {
 	      G4VSolid* original = VOL_LISTIn[PARENTID]->GetSolid();
 	      G4VSolid* sub = VOL_LISTIn[ID]->GetSolid();
@@ -933,7 +948,11 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 								  PlacementPoint));
 	      
 	    }
+#if G4VERSION_NUMBER > 1099
+      if (G4StrUtil::icompare(InheritStyle, "INTERSECT") == 0)
+#else
 	  else if(InheritStyle.compareTo("INTERSECT",cmpmode)==0)
+#endif
 	    {
 	      G4VSolid* original = VOL_LISTIn[PARENTID]->GetSolid();
 	      G4VSolid* sub = VOL_LISTIn[ID]->GetSolid();
@@ -944,7 +963,11 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 								   PlacementPoint));
 	      
 	    }
+#if G4VERSION_NUMBER > 1099
+      if (G4StrUtil::icompare(InheritStyle, "UNION") == 0)
+#else
 	  else if(InheritStyle.compareTo("UNION",cmpmode)==0)
+#endif
 	    {
 	      G4VSolid* original = VOL_LISTIn[PARENTID]->GetSolid();
 	      G4VSolid* sub = VOL_LISTIn[ID]->GetSolid();
@@ -1007,8 +1030,11 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 
       // magnetic rigidity brho
       G4double brho = defaultRigidity;
-
+#if G4VERSION_NUMBER > 1099
+    if (G4StrUtil::icompare(MagType, "QUAD") == 0)
+#else
       if(MagType.compareTo("QUAD",cmpmode)==0)
+#endif
 	{
 	  //hasFields = true;
 	  //nPoleField = 1;
@@ -1016,8 +1042,11 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 	  Quadvol.push_back(PhysiComp->GetName());
 	  quadVolBgrad[PhysiComp->GetName()]=(- brho * K1 / CLHEP::m2);
 	}
-
+#if G4VERSION_NUMBER > 1099
+    if (G4StrUtil::icompare(MagType, "SEXT") == 0)
+#else
       if(MagType.compareTo("SEXT",cmpmode)==0)
+#endif
 	{
 	  //hasFields = true;
 	  //nPoleField = 2;
@@ -1025,8 +1054,11 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 	  Sextvol.push_back(PhysiComp->GetName());
 	  sextVolBgrad[PhysiComp->GetName()]=(- brho * K2 / CLHEP::m3);
 	}
-
+#if G4VERSION_NUMBER > 1099
+    if (G4StrUtil::icompare(MagType, "OCT") == 0)
+#else
       if(MagType.compareTo("OCT",cmpmode)==0)
+#endif
 	{
 	  //hasFields = true;
 	  //nPoleField = 3;

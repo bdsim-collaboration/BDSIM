@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSScorerType.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
+#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -64,8 +66,12 @@ BDSScorerType BDS::DetermineScorerType(G4String scorerType)
   types["cellfluxscaledperparticle"]   = BDSScorerType::cellfluxscaledperparticle;
   types["cellfluxscaledperparticle3d"] = BDSScorerType::cellfluxscaledperparticle3d;
   types["cellflux4d"] = BDSScorerType::cellflux4d;
-  
+
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(scorerType);
+#else
   scorerType.toLower();
+#endif
   
   auto result = types.find(scorerType);
   if (result == types.end())
