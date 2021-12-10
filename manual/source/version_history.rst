@@ -16,6 +16,9 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.7.0 - 2021 / XX / XX
 =======================
 
+* GGMAD Geometry format is now deprecated. This was not maintained for a long time and with
+  pyg4ometry and GDML we support much better geometry. The code is old and hard to maintain
+  and really needs to be rewritten.
 * New executable options :code:`--reference` and :code:`--citation` to display the citation
   in bibtex to cite BDSIM easily.
 
