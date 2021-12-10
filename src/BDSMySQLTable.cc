@@ -24,6 +24,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMySQLTable.hh"
 #include "BDSMySQLVariable.hh"
 
+#include "G4String.hh"
+#include "G4Version.hh"
+
 BDSMySQLTable::BDSMySQLTable (G4String aTableName)
 {
 #ifdef BDSDEBUG
@@ -61,10 +64,13 @@ BDSMySQLVariable* BDSMySQLTable::GetVariable(G4String aVarName)
 {
   for (G4int i=0; i<(G4int)itsVar.size(); i++)
     {
+#if G4VERSION_NUMBER > 1099
+      if (G4StrUtil::icompare(itsVar[i]->GetName(), aVarName))
+#else
       G4String::caseCompare cmpmode = G4String::ignoreCase;
-      if( (itsVar[i])->GetName().compareTo(aVarName,cmpmode)==0) {
-	return itsVar[i];
-      }
+      if( (itsVar[i])->GetName().compareTo(aVarName,cmpmode)==0)
+#endif
+	{return itsVar[i];}
     }
   return nullptr; //if does not exist return null
 }

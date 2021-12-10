@@ -1041,21 +1041,21 @@ void BDSModularPhysicsList::DNA()
   if (!physicsActivated["dna"])
     {
       // only one DNA physics list possible
-      if (temporaryName.contains("option"))
+      if (BDS::StrContains(temporaryName, "option"))
 	{
-	  if (temporaryName.contains("1"))
+	  if (BDS::StrContains(temporaryName, "1"))
 	    {constructors.push_back(new G4EmDNAPhysics_option1());}
-	  if (temporaryName.contains("2"))
+	  if (BDS::StrContains(temporaryName, "2"))
 	    {constructors.push_back(new G4EmDNAPhysics_option2());}
-	  if (temporaryName.contains("3"))
+	  if (BDS::StrContains(temporaryName, "3"))
 	    {constructors.push_back(new G4EmDNAPhysics_option3());}
-	  if (temporaryName.contains("4"))
+	  if (BDS::StrContains(temporaryName, "4"))
 	    {constructors.push_back(new G4EmDNAPhysics_option4());}
-	  if (temporaryName.contains("5"))
+	  if (BDS::StrContains(temporaryName, "5"))
 	    {constructors.push_back(new G4EmDNAPhysics_option5());}
-	  if (temporaryName.contains("6"))
+	  if (BDS::StrContains(temporaryName, "6"))
 	    {constructors.push_back(new G4EmDNAPhysics_option6());}
-	  if (temporaryName.contains("7"))
+	  if (BDS::StrContains(temporaryName, "7"))
 	    {constructors.push_back(new G4EmDNAPhysics_option7());}
 	}
       else

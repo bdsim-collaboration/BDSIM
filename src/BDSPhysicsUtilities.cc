@@ -159,14 +159,14 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
     }
   else if (completePhysics)
     {// we test one by one for the exact name of very specific physics lists
-      if (physicsListNameLower.contains("channelling"))
+      if (BDS::StrContains(physicsListNameLower, "channelling"))
 	{
 	  G4cout << "Constructing \"" << physicsListNameLower << "\" complete physics list" << G4endl;
 #if G4VERSION_NUMBER > 1039
-	  G4bool useEMD  = physicsListNameLower.contains("emd");
-	  G4bool regular = physicsListNameLower.contains("regular");
-	  G4bool em4     = physicsListNameLower.contains("em4");
-	  G4bool emss    = physicsListNameLower.contains("emss");
+	  G4bool useEMD  = BDS::StrContains(physicsListNameLower, "emd");
+	  G4bool regular = BDS::StrContains(physicsListNameLower, "regular");
+	  G4bool em4     = BDS::StrContains(physicsListNameLower, "em4");
+	  G4bool emss    = BDS::StrContains(physicsListNameLower, "emss");
 	  // we don't assign 'result' variable or proceed as that would result in the
 	  // range cuts being set for a complete physics list that we wouldn't use
 	  auto r = BDS::ChannellingPhysicsComplete(useEMD, regular, em4, emss);
@@ -303,7 +303,7 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
 #endif
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  if (particleName.contains("ion"))
+  if (BDS::StrContains(particleName, "ion"))
     {
       G4GenericIon::GenericIonDefinition(); // construct general ion particle
       auto ionDef = new BDSIonDefinition(particleName); // parse the ion definition
