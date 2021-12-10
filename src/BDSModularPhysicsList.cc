@@ -449,7 +449,7 @@ void BDSModularPhysicsList::ConfigureOptical()
   opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kBoundary), globals->TurnOnOpticalSurface());
   opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kWLS), true);
   if (maxPhotonsPerStep >= 0)
-    {opticalParameters->SetCerenkovMaxPhotonsPerStep(maxPhotonsPerStep);}
+    {opticalParameters->SetCerenkovMaxPhotonsPerStep((G4int)maxPhotonsPerStep);}
 #endif
 }
 
