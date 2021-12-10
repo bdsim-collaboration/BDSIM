@@ -16,16 +16,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <cstdlib>
-#include <string>
-#include <vector>
-
 #include "BDSDebug.hh"
 #include "BDSMySQLTable.hh"
 #include "BDSMySQLVariable.hh"
 
 #include "G4String.hh"
 #include "G4Version.hh"
+
+#include <cstdlib>
+#include <string>
+#include <vector>
 
 BDSMySQLTable::BDSMySQLTable (G4String aTableName)
 {
@@ -37,7 +37,8 @@ BDSMySQLTable::BDSMySQLTable (G4String aTableName)
   itsNVariables = 0;
 }
 
-void BDSMySQLTable::AddVariable(G4String aName, G4String aType){
+void BDSMySQLTable::AddVariable(G4String aName, G4String aType)
+{
   if(aName.empty())
     {return;}
     
