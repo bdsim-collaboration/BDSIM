@@ -71,6 +71,18 @@ G4bool BDS::StrContains(const G4String& str, const G4String& test)
   return str.contains(test);
 #endif
 }
+#if G4VERSION_NUMBER > 1099
+G4int BDS::StrCompare(const G4String& str, const G4String& test, G4String::caseCompare)
+#else
+G4int BDS::StrCompare(const G4String& str, const G4String& test, G4String::caseCompare mode)
+#endif
+{
+#if G4VERSION_NUMBER > 1099
+  return G4StrUtil::icompare(str, test);
+#else
+  return str.compareTo(test, mode);
+#endif
+}
 
 G4String BDS::PrepareSafeName(G4String name)
 {
