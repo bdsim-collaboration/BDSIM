@@ -101,6 +101,8 @@ Bug Fixes
 * Fixed field map interpolation and plotting scripts as well as make use of improvements
   in pybdsim.
 * Fix visualisation of loaded GDML container volume.
+* Fix uncaught Geant4 exceptions by introducing our own exception handler to intercept
+  the Geant4 one and throw our own, safely handled exceptions a la standard C++.
 
 Output Changes
 --------------

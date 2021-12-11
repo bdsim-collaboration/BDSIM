@@ -16,40 +16,25 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSRUNMANAGER_H
-#define BDSRUNMANAGER_H
+#ifndef BDSLINKRUNMANAGER_H
+#define BDSLINKRUNMANAGER_H
 #include "G4RunManager.hh"
 #include "G4Types.hh"
 
 class BDSExceptionHandler;
 
 /**
- * @brief Wrapper from G4RunManager that provides more output.
+ * @brief Wrapper from G4RunManager that provides our exception handler.
  *
+ *  Our exception handler prevents Geant4 from calling abort() and instead
+ *  throws a BDSException which is expected to be caught.
  */
 
-class BDSRunManager: public G4RunManager
+class BDSLinkRunManager: public G4RunManager
 {
 public:
-  BDSRunManager();
-
-  virtual ~BDSRunManager();
-
-  /// Run G4RunManager::Initialise() and update BDSPrimaryGeneratorAction with knowledge
-  /// of the world extent for coordinate checking.
-  virtual void Initialize();
-
-  /// For additional output.
-  virtual void DoEventLoop(G4int n_event,const char* macroFile=nullptr,G4int n_select=-1);
-  
-  /// Altered BeamOn function to account for Placet synchronisation.
-  virtual void BeamOn(G4int n_event,const char* macroFile=nullptr,G4int n_select=-1);
-  
-  /// For additional output.
-  virtual void ProcessOneEvent(G4int i_event);
-
-  /// Run G4RunManager:AbortRun(), but give some print out feedback for the user.
-  virtual void AbortRun(G4bool);
+  BDSLinkRunManager();
+  virtual ~BDSLinkRunManager();
 
 protected:
   BDSExceptionHandler* exceptionHandler;
