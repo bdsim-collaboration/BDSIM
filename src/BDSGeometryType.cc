@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
+#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -30,7 +32,6 @@ template<>
 std::map<BDSGeometryType, std::string>* BDSGeometryType::dictionary =
   new std::map<BDSGeometryType, std::string> ({
    {BDSGeometryType::mokka,  "mokka"},
-   {BDSGeometryType::gmad,   "gmad"},
    {BDSGeometryType::gdml,   "gdml"}
 });	
 
@@ -38,10 +39,13 @@ BDSGeometryType BDS::DetermineGeometryType(G4String geometryType)
 {
   std::map<G4String, BDSGeometryType> types;
   types["mokka"]  = BDSGeometryType::mokka;
-  types["gmad"]   = BDSGeometryType::gmad;
   types["gdml"]   = BDSGeometryType::gdml;
 
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(geometryType);
+#else
   geometryType.toLower();
+#endif
 
   auto result = types.find(geometryType);
   if (result == types.end())

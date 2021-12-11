@@ -25,7 +25,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef USE_GDML
 #include "BDSGeometryFactoryGDML.hh"
 #endif
-#include "BDSGeometryFactoryGMAD.hh"
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryType.hh"
 #include "BDSSDType.hh"
@@ -54,14 +53,12 @@ BDSGeometryFactory::BDSGeometryFactory()
 #else
   gdml = nullptr;
 #endif
-  gmad = new BDSGeometryFactoryGMAD();
   sql  = new BDSGeometryFactorySQL();
 }
 
 BDSGeometryFactory::~BDSGeometryFactory()
 {
   delete gdml;
-  delete gmad;
   delete sql;
   for (auto& geom : storage)
     {delete geom;}
@@ -76,8 +73,6 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
     case BDSGeometryType::gdml:
       {return gdml; break;}
 #endif
-    case BDSGeometryType::gmad:
-      {return gmad; break;}
     case BDSGeometryType::mokka:
       {return sql; break;}
     default:

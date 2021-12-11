@@ -86,6 +86,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPrimitiveScorer.hh"
 #include "G4Region.hh"
 #include "G4ScoringManager.hh"
+#include "G4String.hh"
 #include "G4Transform3D.hh"
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"
@@ -898,7 +899,11 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
 {
   G4ThreeVector result = G4ThreeVector();
   G4String side = G4String(placement.side);
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(side);
+#else
   side.toLower();
+#endif
   
   // Get the iterators pointing to the first and last elements
   // that the placement lines up with.

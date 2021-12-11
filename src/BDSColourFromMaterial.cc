@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PhysicsFreeVector.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
+#include "G4Version.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -90,7 +91,11 @@ BDSColourFromMaterial::BDSColourFromMaterial()
 G4Colour* BDSColourFromMaterial::GetColour(const G4Material* material)
 {
   G4String materialName = material->GetName();
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(materialName);
+#else
   materialName.toLower();
+#endif
 
   // strip off g4 so we don't have to define duplicates of everything
   std::string toErase = "g4_";
@@ -133,7 +138,11 @@ G4Colour* BDSColourFromMaterial::GetColourWithDefault(const G4Material* material
                                                       G4Colour* defaultIn) const
 {
   G4String materialName = material->GetName();
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(materialName);
+#else
   materialName.toLower();
+#endif
   
   // strip off g4 so we don't have to define duplicates of everything
   std::string toErase = "g4_";

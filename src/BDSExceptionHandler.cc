@@ -16,30 +16,27 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSGEOMETRYTYPE_H
-#define BDSGEOMETRYTYPE_H
+#include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSExceptionHandler.hh"
 
-#include "BDSTypeSafeEnum.hh"
-#include "globals.hh"         // geant4 globals / types
+BDSExceptionHandler::BDSExceptionHandler()
+{;}
 
-/**
- * @brief Type definition for external geometry formats - 
- * used for comparison in factory methods.
- * 
- * @author Laurie Nevay
- */
+BDSExceptionHandler::~BDSExceptionHandler()
+{;}
 
-struct geometrytypes_def
+G4bool BDSExceptionHandler::Notify(const char* originOfException,
+				   const char* exceptionCode,
+				   G4ExceptionSeverity severity,
+				   const char* description)
 {
-  enum type {mokka, gdml};
-};
+  G4bool underlyingResult = G4ExceptionHandler::Notify(originOfException,
+						       exceptionCode,
+						       severity,
+						       description);
 
-typedef BDSTypeSafeEnum<geometrytypes_def,int> BDSGeometryType;
-
-namespace BDS
-{
-  /// function that gives corresponding enum value for string (case-insensitive)
-  BDSGeometryType DetermineGeometryType(G4String geometryType);
+  if (underlyingResult)
+    {throw BDSException(__METHOD_NAME__, "Geant4 exception thrown");}
+  return false;
 }
-
-#endif
