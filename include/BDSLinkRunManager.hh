@@ -16,30 +16,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSGEOMETRYTYPE_H
-#define BDSGEOMETRYTYPE_H
+#ifndef BDSLINKRUNMANAGER_H
+#define BDSLINKRUNMANAGER_H
+#include "G4RunManager.hh"
+#include "G4Types.hh"
 
-#include "BDSTypeSafeEnum.hh"
-#include "globals.hh"         // geant4 globals / types
+class BDSExceptionHandler;
 
 /**
- * @brief Type definition for external geometry formats - 
- * used for comparison in factory methods.
- * 
- * @author Laurie Nevay
+ * @brief Wrapper from G4RunManager that provides our exception handler.
+ *
+ *  Our exception handler prevents Geant4 from calling abort() and instead
+ *  throws a BDSException which is expected to be caught.
  */
 
-struct geometrytypes_def
+class BDSLinkRunManager: public G4RunManager
 {
-  enum type {mokka, gdml};
+public:
+  BDSLinkRunManager();
+  virtual ~BDSLinkRunManager();
+
+protected:
+  BDSExceptionHandler* exceptionHandler;
 };
-
-typedef BDSTypeSafeEnum<geometrytypes_def,int> BDSGeometryType;
-
-namespace BDS
-{
-  /// function that gives corresponding enum value for string (case-insensitive)
-  BDSGeometryType DetermineGeometryType(G4String geometryType);
-}
-
 #endif
+

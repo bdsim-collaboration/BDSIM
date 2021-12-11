@@ -68,6 +68,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
 #include "G4Proton.hh"
+#include "G4String.hh"
 #include "G4UImanager.hh"
 #if G4VERSION_NUMBER > 1049
 #include "G4ParticleDefinition.hh"
@@ -112,9 +113,13 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
   
   BDS::ConstructMinimumParticleSet();
   G4String physicsListNameLower = physicsList; // make lower case copy
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(physicsListNameLower);
+#else
   physicsListNameLower.toLower();
-  G4bool useGeant4Physics = physicsListNameLower.contains("g4");
-  G4bool completePhysics  = physicsListNameLower.contains("complete");
+#endif
+  G4bool useGeant4Physics = BDS::StrContains(physicsListNameLower, "g4");
+  G4bool completePhysics  = BDS::StrContains(physicsListNameLower, "complete");
   if (useGeant4Physics)
     {
       // strip off G4_ prefix - from original as G4 factory case sensitive
@@ -154,14 +159,14 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
     }
   else if (completePhysics)
     {// we test one by one for the exact name of very specific physics lists
-      if (physicsListNameLower.contains("channelling"))
+      if (BDS::StrContains(physicsListNameLower, "channelling"))
 	{
 	  G4cout << "Constructing \"" << physicsListNameLower << "\" complete physics list" << G4endl;
 #if G4VERSION_NUMBER > 1039
-	  G4bool useEMD  = physicsListNameLower.contains("emd");
-	  G4bool regular = physicsListNameLower.contains("regular");
-	  G4bool em4     = physicsListNameLower.contains("em4");
-	  G4bool emss    = physicsListNameLower.contains("emss");
+	  G4bool useEMD  = BDS::StrContains(physicsListNameLower, "emd");
+	  G4bool regular = BDS::StrContains(physicsListNameLower, "regular");
+	  G4bool em4     = BDS::StrContains(physicsListNameLower, "em4");
+	  G4bool emss    = BDS::StrContains(physicsListNameLower, "emss");
 	  // we don't assign 'result' variable or proceed as that would result in the
 	  // range cuts being set for a complete physics list that we wouldn't use
 	  auto r = BDS::ChannellingPhysicsComplete(useEMD, regular, em4, emss);
@@ -291,10 +296,14 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
 {
   BDSParticleDefinition* particleDefB = nullptr; // result
   G4String particleName = particleNameIn; // copy the name
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(particleName);
+#else
   particleName.toLower();
+#endif
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  if (particleName.contains("ion"))
+  if (BDS::StrContains(particleName, "ion"))
     {
       G4GenericIon::GenericIonDefinition(); // construct general ion particle
       auto ionDef = new BDSIonDefinition(particleName); // parse the ion definition

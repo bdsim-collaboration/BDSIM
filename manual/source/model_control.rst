@@ -3244,7 +3244,7 @@ Output at an Arbitrary Plane - User Placed Sampler
 The user may place a sampler anywhere in the model with any orientation. This is called a
 `samplerplacement`. The sampler may have either a circular or rectangular (including
 square) shape and be placed with any orientation. A `samplerplacement` will record all
-particles travelling in any direction through it. A branch in the Event output will be
+particles travelling in **any direction** through it. A branch in the Event output will be
 create with the name of the `samplerplacement`. The user may define an arbitrary number of
 `samplerplacement` s.  A `samplerplacement` is defined with the following syntax::
 
@@ -3263,6 +3263,8 @@ about the unit Y axis of :math:`\pi / 4`.
 
 Shape
 *****
+
+* Default `circular`. Control the radius with :code:`aper1`.
 
 To control the sampler shape, the variable :code:`shape` should be specified. Currently,
 either `circular` or `rectangular` are accepted. The parameters `aper1` and `aper2` can
