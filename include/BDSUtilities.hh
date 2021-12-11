@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSUTILITIES_H
 
 #include "globals.hh"   // geant4 globals / types
+#include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
@@ -56,6 +57,9 @@ namespace BDS
 
   /// Utility function to simplify lots of syntax changes for pedantic g4 changes.
   G4bool StrContains(const G4String& str, const G4String& test);
+
+  /// Utility function to simplify lots of syntax changes for pedantic g4 changes.
+  G4int StrCompare(const G4String& str, const G4String&, G4String::caseCompare mode=G4String::ignoreCase);
 
   /// Remove white space and special characters in the name
   G4String PrepareSafeName(G4String name);

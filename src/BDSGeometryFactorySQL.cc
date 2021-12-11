@@ -244,25 +244,25 @@ void BDSGeometryFactorySQL::BuildSQLObjects(G4String file)
 	{
 	  SetCommonParams(itsSQLTable[i], k);
 	  G4LogicalVolume* logVol;
-	  if(ObjectType.compare("CONE")==0)
+	  if(BDS::StrCompare(ObjectType, "CONE") == 0)
 	    {logVol = BuildCone(itsSQLTable[i],k);}
-	  else if(ObjectType.compare("ELLIPTICALCONE")==0)
+	  else if(BDS::StrCompare(ObjectType, "ELLIPTICALCONE") == 0)
 	    {logVol = BuildEllipticalCone(itsSQLTable[i],k);}
-	  else if(ObjectType.compare("POLYCONE")==0)
+	  else if(BDS::StrCompare(ObjectType, "POLYCONE") == 0)
 	    {logVol = BuildPolyCone(itsSQLTable[i],k);}
-	  else if(ObjectType.compare("BOX")==0)
+	  else if(BDS::StrCompare(ObjectType, "BOX") == 0)
 	    {logVol = BuildBox(itsSQLTable[i],k);}
-	  else if(ObjectType.compare("TRAP")==0)
+	  else if(BDS::StrCompare(ObjectType, "TRAP") == 0)
 	    {logVol =  BuildTrap(itsSQLTable[i],k);}
-	  else if(ObjectType.compare("TORUS")==0)
+	  else if(BDS::StrCompare(ObjectType, "TORUS") == 0)
 	    {logVol = BuildTorus(itsSQLTable[i],k);}
-	  else if(ObjectType.compare("SAMPLER")==0)
+	  else if(BDS::StrCompare(ObjectType, "SAMPLER") == 0)
 	    {logVol = BuildSampler(itsSQLTable[i],k);}
-	  else if(ObjectType.compare("TUBE")==0)
+	  else if(BDS::StrCompare(ObjectType, "TUBE") == 0)
 	    {logVol =  BuildTube(itsSQLTable[i],k);}
-	  else if(ObjectType.compare("ELLIPTICALTUBE")==0)
+	  else if(BDS::StrCompare(ObjectType, "ELLIPTICALTUBE") == 0)
 	    {logVol =  BuildEllipticalTube(itsSQLTable[i],k);}
-	  //else if(ObjectType.compareTo("PCLTUBE", G4String::ignoreCase)==0)
+	  //else if(BDS::StrCompare(ObjectType, "PCLTUBE", G4String::ignoreCase)==0)
 	  //  {logVol =  BuildPCLTube(itsSQLTable[i],k);}
 	  else
 	    {throw BDSException(__METHOD_NAME__ + ObjectType + " not known.");}
