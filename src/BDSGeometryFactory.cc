@@ -92,7 +92,8 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(const G4String&  componen
 						       std::vector<G4String>* namedVacuumVolumes,
 						       G4bool                 makeSensitive,
 						       BDSSDType              sensitivityType,
-                                                       G4bool                 stripOuterVolumeAndMakeAssembly)
+                                                       G4bool                 stripOuterVolumeAndMakeAssembly,
+                                                       G4UserLimits*          userLimitsToAttachToAllLVs)
 {
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
   G4String fileName = BDS::GetFullPath(ff.second);
@@ -118,9 +119,14 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(const G4String&  componen
   if (!factory)
     {return nullptr;}
   
-  BDSGeometryExternal* result = factory->Build(componentName, fileName, colourMapping, autoColour,
-					       suggestedLength, suggestedHorizontalWidth,
-					       namedVacuumVolumes);
+  BDSGeometryExternal* result = factory->Build(componentName,
+					       fileName,
+					       colourMapping,
+					       autoColour,
+					       suggestedLength,
+					       suggestedHorizontalWidth,
+					       namedVacuumVolumes,
+					       userLimitsToAttachToAllLVs);
   
   if (result)
     {
