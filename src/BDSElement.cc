@@ -67,7 +67,7 @@ void BDSElement::BuildContainerLogicalVolume()
   BDSSDType sensitivityToAttach = markAsCollimator ? BDSSDType::collimatorcomplete : BDSSDType::energydep;
   geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr, autoColourGeometry,
 							   chordLength, horizontalWidth,
-							   &namedVacuumVolumes, true, sensitivityToAttach, stripOuterVolume);
+							   &namedVacuumVolumes, true, sensitivityToAttach, stripOuterVolume, userLimits);
   
   if (!geometry)
     {throw BDSException(__METHOD_NAME__, "Error loading geometry in component \"" + name + "\"");}

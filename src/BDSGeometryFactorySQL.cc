@@ -149,7 +149,8 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
 						  G4bool                   autoColour,
 						  G4double                 suggestedLength,
 						  G4double                 suggestedHorizontalWidth,
-						  std::vector<G4String>* /*vacuumBiasVolumeNames*/)
+						  std::vector<G4String>* /*vacuumBiasVolumeNames*/,
+						  G4UserLimits*          /*userLimitsToAttachToAllLVs*/)
 {
   CleanUp();
   
