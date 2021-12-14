@@ -103,6 +103,8 @@ Bug Fixes
 * Fix visualisation of loaded GDML container volume.
 * Fix uncaught Geant4 exceptions by introducing our own exception handler to intercept
   the Geant4 one and throw our own, safely handled exceptions a la standard C++.
+* Fix lack of user limits for RF cavity geometry.
+* Fix maximum step length user limit for externally loaded geometry.
 
 Output Changes
 --------------
