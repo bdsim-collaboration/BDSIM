@@ -54,14 +54,10 @@ BDSElement::BDSElement(const G4String& nameIn,
 
 void BDSElement::Build()
 {
+  BuildUserLimits();
   BuildContainerLogicalVolume(); // pure virtual provided by derived class
-
-  // set user limits for container & visual attributes
-  if (containerLogicalVolume)
-    {
-      BuildUserLimits();
-      containerLogicalVolume->SetUserLimits(userLimits);
-    }
+  AttachUserLimits();
+  // we purposively don't attach vis attributes to the container here as it would overwrite ones from geometry laoding
 }
 
 void BDSElement::BuildContainerLogicalVolume()
