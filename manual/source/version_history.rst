@@ -50,6 +50,7 @@ New Features
   outermost volume (e.g. the 'world' of that file) and place all the contents in the BDSIM
   world with the compound transforms: relative to the former outermost logical volume and also
   the placements transform in the world. This works by making the outer volume into a G4AssemblyVolume.
+* New type of scorermesh geometry: cylindrical.
   
 General
 -------
