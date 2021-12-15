@@ -19,27 +19,26 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSHistBinMapper.hh"
-#include "BDSScoringMeshBox.hh"
+#include "BDSScoringMeshCylinder.hh"
 #include "BDSScorerMeshInfo.hh"
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
 
-BDSScoringMeshBox::BDSScoringMeshBox(const G4String&          name,
+BDSScoringMeshCylinder::BDSScoringMeshCylinder(const G4String&          name,
                                      const BDSScorerMeshInfo& recipe,
                                      const G4Transform3D&     placementTransform):
-    BDSScoringMeshBox(name, placementTransform.getTranslation(), placementTransform.getRotation())
+    BDSScoringMeshCylinder(name, placementTransform.getTranslation(), placementTransform.getRotation())
 {
   // size of the scoring mesh
-  scorerSize[0] = recipe.ScoringMeshX();
-  scorerSize[1] = recipe.ScoringMeshY();
-  scorerSize[2] = recipe.ScoringMeshZ();
+  scorerSize[0] = recipe.ScoringMeshR();
+  scorerSize[1] = recipe.ScoringMeshZ();
   SetSize(scorerSize);
 
   // divisions of the scoring mesh
-  nSegment[0] = recipe.nBinsX;
-  nSegment[1] = recipe.nBinsY;
-  nSegment[2] = recipe.nBinsZ;
+  nSegment[0] = recipe.nBinsZ;
+  nSegment[1] = recipe.nBinsPhi;
+  nSegment[2] = recipe.nBinsR;
   nEnergySegments = recipe.nBinsE;
   SetNumberOfSegments(nSegment);
 
@@ -50,26 +49,27 @@ BDSScoringMeshBox::BDSScoringMeshBox(const G4String&          name,
 #endif
 }
 
-BDSScoringMeshBox::BDSScoringMeshBox(const G4String&         name,
+
+BDSScoringMeshCylinder::BDSScoringMeshCylinder(const G4String&         name,
                                      const G4ThreeVector&    translation,
                                      const G4RotationMatrix& rotation):
-  G4ScoringBox(name),
+  G4ScoringCylinder(name),
   mapper(nullptr)
 {
   fRotationMatrix = new G4RotationMatrix(rotation.inverse());
   fCenterPosition = translation;
 }
 
-const BDSHistBinMapper* BDSScoringMeshBox::Mapper() const
+const BDSHistBinMapper* BDSScoringMeshCylinder::Mapper() const
 {
   if (!sizeIsSet)
     {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" size not set but queried");}
   if (!mapper)
-    {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" mapper has mysteriously disapeared");}
+    {throw BDSException(__METHOD_NAME__, "mesh \"" + fWorldName + "\" mapper has mysteriously disappeared");}
   return mapper;
 }
 
-BDSScoringMeshBox::~BDSScoringMeshBox()
+BDSScoringMeshCylinder::~BDSScoringMeshCylinder()
 {
   delete mapper;
 }
