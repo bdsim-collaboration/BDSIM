@@ -626,11 +626,11 @@ void BDSOutput::CreateHistograms()
       std::map<G4String, G4String> psFullNameToPS;
       for (const auto& scorerNameComplete : psnamesc)
         {	  
-          if (scorerNameComplete.contains("blm_"))
+          if (BDS::StrContains(scorerNameComplete, "blm_"))
             {
               for (const auto& scorerName : psnames)
                 {
-                  if (scorerNameComplete.contains("/"+scorerName)) // only match end of full name with '/'
+                  if (BDS::StrContains(scorerNameComplete, "/"+scorerName)) // only match end of full name with '/'
                     {
                       blmHistoNames.insert(scorerName);
                       psFullNameToPS[scorerNameComplete] = scorerName;
@@ -1040,7 +1040,7 @@ void BDSOutput::FillScorerHits(const std::map<G4String, G4THitsMap<G4double>*>& 
 void BDSOutput::FillScorerHitsIndividual(const G4String& histogramDefName,
 					 const G4THitsMap<G4double>* hitMap)
 {
-  if (histogramDefName.contains("blm_"))
+  if (BDS::StrContains(histogramDefName, "blm_"))
     {return FillScorerHitsIndividualBLM(histogramDefName, hitMap);}
 
   if (!(histIndices3D.find(histogramDefName) == histIndices3D.end()))

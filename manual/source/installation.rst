@@ -5,26 +5,39 @@ Installation
 Supported Systems
 =================
 
-BDSIM is developed and used on Mac OSX and (Scientific) Linux.
+BDSIM is developed and used on Mac OSX and (Scientific) Linux. It can be used
+on Windows through some virtualisation technology (e.g. a virtual machine, docker,
+or Cygwin, X11 and CVMFS access).
 
 Tested systems:
 
-* Mac OS 11.3 (Big Sur), XCode 12.5 (Apple clang version 12.0.5 (clang-1205.0.22.9)), Geant4 10.7.1, ROOT 6.24/00, CLHEP 2.4.4.1, Qt 5.15.2
+* Mac OS 11.6.1 M1 (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 10.7.3, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* Mac OS 11.6.1 Intel (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 10.7.3, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* CERN CentOS 7, GCC 9.2.0, Geant4 10.7.2, 10.6, 10.4.3, ROOT 6.24.00, CLHEP 2.4.4.0 (i.e. lxplus at CERN with LCG100)
+* SLC6, GCC 4.9.3, Geant4 10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt 5.7.0
+* SLC6 as above with Geant4 10.4.p02, Geant4 10.3.p03, Geant4 10.2.p03, Geant4 10.1.p03
+
+Recently tested:
+
+* Mac OS 11.6.1 (Big Sur), XCode 12.5 (Apple clang version 12.0.5 (clang-1205.0.22.9)), Geant4 10.7.1, ROOT 6.24/00, CLHEP 2.4.4.1, Qt 5.15.2
 * Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4 10.7, ROOT 6.18/04, CLHEP 2.4.4.0, Qt 5.14.2
 * Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4 10.6.p02, ROOT 6.18/04, CLHEP 2.4.1.0, Qt 5.14.2
 * Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4 10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt 5.12.0
 * Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4 10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt 5.12.0
-* SLC6, GCC 4.9.3, Geant4 10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt 5.7.0
-* SLC6 as above with Geant4 10.4.p02, Geant4 10.3.p03, Geant4 10.2.p03, Geant4 10.1.p03
-* CERN CentOS 7, GCC 8.3, Geant4 10.7.1, 10.6, 10.4.3, ROOT 6.22.06, CLHEP 2.4.4.0 (i.e. lxplus at CERN)
 
-  
+
+
+Solutions
+=========
+
 BDSIM on Windows
 ----------------
 
 BDSIM is available on Windows 10 through installation on the Windows Subsystem for Linux (WSL) which is downloadable
 from the Windows store. We currently advise that you should only install BDSIM on WSL 1 as difficulties have been
 encountered in installing BDSIM's dependencies and visualising GUIs with X servers on WSL 2.
+
+An alternative is to use DockerDesktop and build a docker image - instructions below - see :ref:`docker-build`.
 
 A number of Linux distributions are available, however BDSIM installation has only been tested
 on the Ubuntu distribution at present. Please note that we do not regularly test BDSIM on the Windows subsystems.
@@ -38,7 +51,7 @@ The command should be added to your ``.bashrc`` or profile so that it's loaded a
 .. _cvmfs-build:
 	  
 CentOS 7 with CVMFS Access
-==========================
+--------------------------
 
 If you have a machine running CERN CentOS 7 and with access to the CVMFS file system (CERN Virtual Machine
 File System), you can access an installation of bdsim at: ::
@@ -89,6 +102,72 @@ at caching files and it will subsequently be much faster.
 	  This should be re-enabled. Instructions to come, but search for Mac OpenGL over X11. A test is the simple
 	  command :code:`glxgears`, which should launch a small X-window with 3 rotating cogs. If this works, then
 	  the visualiser will too.
+
+.. _docker-build:
+	  
+Docker
+------
+
+Docker is a virtualisation tool that puts software and all libraries in a 'container'. This can be run
+independently on an operating system and requires fewer resources than a virtual machine. It therefore
+allows us to use say a Centos container on a Mac or Windows machine.
+
+The initial setup takes about 30 minutes, but after that it is nearly instantaneous to start.
+
+Included with BDSIM we have a 'docker file' that docker can follow to build an image on your computer.
+This contains instructions about getting Centos, installing various packages and compiling Geant4 and
+BDSIM. The docker file is a text file that one can read and use as a set of instructions to follow
+on your own system should you wish - of course not a literal set of copy-and-paste instructions as it
+uses some docker commands.
+
+To use this, do the following:
+
+1) Download the DockerDesktop application (e.g. `<https://www.docker.com/products/docker-desktop>`_).
+2) Clone the BDSIM git repository: :code:`git clone https://bitbucket.org/jairhul/bdsim`.
+3) In a terminal (unix or Cygwin), go to :code:`bdsim/building/docker`.
+4) Use the docker build script :code:`source build-centos-bdsim.sh` - this may take 20 mins. (\*)
+5) Adapt and use the run script :code:`run-centos-bdsim.sh` which is made for Mac / unix.
+
+
+The last step can commonly be made into an alias in your profile. On the developer's Mac, this is: ::
+
+  alias bdsimdocker="docker run -t -i -v `pwd`:/hostfs -e DISPLAY=`ipconfig getifaddr en0`:0 --rm bdsim bash
+
+This will start a terminal prompt that is a BASH shell 'inside' the container, so Centos7, with
+everything ready to go and the command :code:`bdsim` available.
+
+.. note:: (\*) The command in this script is a docker command and can be used in Windows.
+
+Some explanation of the contents of the run script. For a Mac, this reduces (removing the comments) to: ::
+
+  DV=`ipconfig getifaddr en0`
+  docker run -t -i -v `pwd`:/hostfs -e DISPLAY=$DV:0 --rm bdsim bash
+
+For docker to send an xwindow to the host operating system, it uses the IP address of the computer. The
+first command gets this (on a Mac). The second command runs docker and links the display. The image is
+called "bdsim" here as per the build script, but it may also be referred to by its docker hexadecimal
+image name.
+
+The :code:`-v` syntax work as :code:`-v <host_dir_abs_path>:<container_dir_abs_path>`.
+
+Basic Docker Commands
+*********************
+
+* :code:`docker image ls`
+* :code:`docker container ls`
+* :code:`docker run -t -i --rm <image_name> bash`
+
+   
+X11 Notes
+*********
+
+Whilst the docker image will almost certainly work without problem, it is more common to have
+some issues with the visualiser, which requires sending the window by X11 ('xwindows'). A few
+notes:
+
+* On a Mac, you may have to do :code:`xhost +` to allow X11 connections over the network.
+* On a Mac, you may have to set once :code:`defaults write org.xquartz.X11 enable_iglx -bool true`.
+
 
 
 Obtaining  BDSIM
