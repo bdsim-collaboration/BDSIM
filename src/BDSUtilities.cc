@@ -84,6 +84,17 @@ G4int BDS::StrCompare(const G4String& str, const G4String& test, G4String::caseC
 #endif
 }
 
+G4String BDS::LowerCase(const G4String& str)
+{
+  G4String result = str;
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(result);
+#else
+  result.toLower();
+#endif
+  return result;
+}
+
 G4String BDS::PrepareSafeName(G4String name)
 {
   //remove white space
