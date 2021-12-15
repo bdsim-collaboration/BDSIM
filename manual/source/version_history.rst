@@ -16,9 +16,20 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.7.0 - 2021 / XX / XX
 =======================
 
+* GGMAD Geometry format is now deprecated. This was not maintained for a long time and with
+  pyg4ometry and GDML we support much better geometry. The code is old and hard to maintain
+  and really needs to be rewritten.
+* New executable options :code:`--reference` and :code:`--citation` to display the citation
+  in bibtex to cite BDSIM easily.
+
 New Features
 ------------
 
+* New Docker script in :code:`bdsim/building/docker/build-centos-bdsim.sh` and updated
+  instructions on how to run Docker. This is a container system where a complete
+  environment build on Centos7 will be built locally and works on Mac, Linux, Windows. It
+  typically takes about 6Gb of space and is a great alternative to a virtual machine. An
+  XWindows server is required for the visualiser. See :ref:`docker-build`.
 * A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into voxelized geometries.
 * New Spectra command for rebsdim to make very flexible sets of spectra automatically. See
   :ref:`spectra-definition` for more information.
@@ -39,6 +50,7 @@ New Features
   outermost volume (e.g. the 'world' of that file) and place all the contents in the BDSIM
   world with the compound transforms: relative to the former outermost logical volume and also
   the placements transform in the world. This works by making the outer volume into a G4AssemblyVolume.
+* New type of scorermesh geometry: cylindrical.
   
 General
 -------
@@ -90,6 +102,10 @@ Bug Fixes
 * Fixed field map interpolation and plotting scripts as well as make use of improvements
   in pybdsim.
 * Fix visualisation of loaded GDML container volume.
+* Fix uncaught Geant4 exceptions by introducing our own exception handler to intercept
+  the Geant4 one and throw our own, safely handled exceptions a la standard C++.
+* Fix lack of user limits for RF cavity geometry.
+* Fix maximum step length user limit for externally loaded geometry.
 
 Output Changes
 --------------
