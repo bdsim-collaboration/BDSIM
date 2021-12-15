@@ -19,10 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSInterpolatorType.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
-#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -78,11 +78,7 @@ BDSInterpolatorType BDS::DetermineInterpolatorType(G4String interpolatorType)
   types["cubic3d"]     = BDSInterpolatorType::cubic3d;
   types["cubic4d"]     = BDSInterpolatorType::cubic4d;
 
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(interpolatorType);
-#else
-  interpolatorType.toLower();
-#endif
+  interpolatorType = BDS::LowerCase(interpolatorType);
 
   auto result = types.find(interpolatorType);
   if (result == types.end())

@@ -20,10 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSRandom.hh"
+#include "BDSUtilities.hh"
 
+#include "globals.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
-#include "G4Version.hh"
 
 #include "CLHEP/Random/Random.h"
 #include "CLHEP/Random/JamesRandom.h"
@@ -51,11 +52,7 @@ BDSRandomEngineType BDSRandom::DetermineRandomEngineType(G4String engineType)
   types["hepjames"] = BDSRandomEngineType::hepjames;
   types["mixmax"]   = BDSRandomEngineType::mixmax;
 
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(engineType);
-#else
-  engineType.toLower();
-#endif
+  engineType = BDS::LowerCase(engineType);
   
   auto result = types.find(engineType);
   if (result == types.end())

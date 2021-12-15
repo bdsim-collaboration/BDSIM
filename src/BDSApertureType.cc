@@ -19,10 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
-#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -58,11 +58,7 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
   types["circularvacuum"] = BDSApertureType::circularvacuum;
   types["clicpcl"]        = BDSApertureType::clicpcl;
 
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(apertureType);
-#else
-  apertureType.toLower();
-#endif
+  apertureType = BDS::LowerCase(apertureType);
 
   auto result = types.find(apertureType);
   if (result == types.end())

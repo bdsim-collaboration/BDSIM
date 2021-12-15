@@ -19,10 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCrystalType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
-#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -43,11 +43,7 @@ BDSCrystalType BDS::DetermineCrystalType(G4String crystalType)
   types["cylinder"] = BDSCrystalType::cylinder;
   types["torus"]    = BDSCrystalType::torus;
 
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(crystalType);
-#else
-  crystalType.toLower();
-#endif
+  crystalType = BDS::LowerCase(crystalType);
 
   auto result = types.find(crystalType);
   if (result == types.end())

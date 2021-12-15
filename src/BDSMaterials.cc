@@ -912,11 +912,7 @@ void BDSMaterials::DefineVacuums()
 
 void BDSMaterials::AddMaterial(G4Material* material, G4String name)
 {
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(name);
-#else
-  name.toLower();
-#endif
+  name = BDS::LowerCase(name);
   if (materials.insert(make_pair(name, material)).second)
     {
 #ifdef BDSDEBUG
@@ -930,11 +926,7 @@ void BDSMaterials::AddMaterial(G4Material* material, G4String name)
 void BDSMaterials::AddExistingMaterialAlias(const G4String &existingMaterialName,
                                             G4String alias)
 {
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(alias);
-#else
-  alias.toLower();
-#endif
+  alias = BDS::LowerCase(alias);
   G4Material* material = GetMaterial(existingMaterialName);
   aliases[alias] = material; // store in lower case as that's how we search
 }
@@ -948,11 +940,7 @@ void BDSMaterials::AddMaterial(G4String name,
 			       G4double pressure)
 {
   // convention: material name in small letters (to be able to find materials regardless of capitalisation)
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(name);
-#else
-  name.toLower();
-#endif
+  name = BDS::LowerCase(name);
   DensityCheck(density, name);
   
   G4Material* tmpMaterial = new G4Material(name,
@@ -974,11 +962,7 @@ void BDSMaterials::AddMaterial(G4String name,
 			       const std::list<G4String>& components,
 			       const std::list<Type>&     componentFractions)
 {
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(name);
-#else
-  name.toLower();
-#endif
+  name = BDS::LowerCase(name);
   DensityCheck(density, name);
   
   G4Material* tmpMaterial = new G4Material(name,
@@ -1034,11 +1018,7 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
   else
     {
       // find material regardless of capitalisation
-#if G4VERSION_NUMBER > 1099
-      G4StrUtil::to_lower(material);
-#else
-      material.toLower();
-#endif
+      material = BDS::LowerCase(material);
       auto search = possibleDuplicates.find(material);
       if (search != possibleDuplicates.end())
         {
@@ -1075,12 +1055,7 @@ void BDSMaterials::CacheMaterialsFromGDML(const std::map<G4String, G4Material*>&
   // do this for ones loaded in GDML. Therefore, avoid double deletion.
   for (const auto& kv : materialsGDML)
     {
-      G4String nameLower = kv.first;
-#if G4VERSION_NUMBER > 1099
-    G4StrUtil::to_lower(nameLower);
-#else
-      nameLower.toLower();
-#endif
+      G4String nameLower = BDS::LowerCase(kv.first);
       //G4bool startsWithPrepend = prependExists ? BDS::StartsWith(kv.first, prepend) : false;
       if (BDS::StartsWith(nameLower, "g4_") || materials.find(nameLower) != materials.end())
         {continue;} // a Geant4 material or a BDSIM one
@@ -1090,11 +1065,7 @@ void BDSMaterials::CacheMaterialsFromGDML(const std::map<G4String, G4Material*>&
         {// cache without prefix
           G4String nameCopy = kv.first;
           nameCopy.erase(0, prepend.size() + 1);
-#if G4VERSION_NUMBER > 1099
-        G4StrUtil::to_lower(nameCopy);
-#else
-          nameCopy.toLower();
-#endif
+          nameCopy = BDS::LowerCase(nameCopy);
           aliases[nameCopy] = kv.second;
           possibleDuplicates[nameCopy]++;
         }
