@@ -899,11 +899,7 @@ G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& 
 {
   G4ThreeVector result = G4ThreeVector();
   G4String side = G4String(placement.side);
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(side);
-#else
-  side.toLower();
-#endif
+  side = BDS::LowerCase(side);
   
   // Get the iterators pointing to the first and last elements
   // that the placement lines up with.

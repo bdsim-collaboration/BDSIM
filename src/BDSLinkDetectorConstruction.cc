@@ -196,12 +196,7 @@ G4int BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& colli
      {"tcpch.a4l7.b1", "stf75"},// b1 h new name
      {"tcpcv.a6l7.b1", "tcp76"} // b2 v new name
     };
-  G4String collimatorLower = collimatorName;
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(collimatorLower);
-#else
-  collimatorLower.toLower();
-#endif
+  G4String collimatorLower = BDS::LowerCase(collimatorName);
   auto searchC = collimatorToCrystal.find(collimatorLower); // will use later if needed
   G4bool isACrystal = searchC != collimatorToCrystal.end();
   if (!isACrystal && isACrystalIn)

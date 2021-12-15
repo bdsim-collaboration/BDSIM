@@ -19,10 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSIntegratorSetType.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
-#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -54,11 +54,7 @@ BDSIntegratorSetType BDS::DetermineIntegratorSetType(G4String integratorSet)
   types["geant4dp"]    = BDSIntegratorSetType::geant4dp;
 #endif
 
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(integratorSet);
-#else
-  integratorSet.toLower();
-#endif
+  integratorSet = BDS::LowerCase(integratorSet);
 
   auto result = types.find(integratorSet);
   if (result == types.end())

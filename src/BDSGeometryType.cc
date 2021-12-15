@@ -19,10 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
-#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -41,11 +41,7 @@ BDSGeometryType BDS::DetermineGeometryType(G4String geometryType)
   types["mokka"]  = BDSGeometryType::mokka;
   types["gdml"]   = BDSGeometryType::gdml;
 
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(geometryType);
-#else
-  geometryType.toLower();
-#endif
+  geometryType = BDS::LowerCase(geometryType);
 
   auto result = types.find(geometryType);
   if (result == types.end())
