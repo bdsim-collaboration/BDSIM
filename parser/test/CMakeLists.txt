@@ -194,7 +194,6 @@ add_test(gmad-region                    ${gmadBinary} region.gmad)
 add_test(gmad-samplerplacement          ${gmadBinary} samplerplacement.gmad)
 add_test(gmad-scorer                    ${gmadBinary} scorer.gmad)
 add_test(gmad-scorermesh                ${gmadBinary} scorermesh.gmad)
-add_test(gmad-scorermesh-cylindrical    ${gmadBinary} scorermesh_cylindrical.gmad)
 add_test(gmad-tunnel                    ${gmadBinary} tunnel.gmad)
 
 # test object extensions

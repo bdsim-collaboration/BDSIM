@@ -1248,18 +1248,20 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
       BDSScoringMeshCylinder* scorerCylindrical = nullptr;
       const BDSHistBinMapper* mapper = nullptr;
 
-      if (mesh.geometryType == "Box") {
+      G4String geometryType = BDS::LowerCase(G4String(mesh.geometryType));
+
+      if (geometryType == "box") {
       // create a scoring box
         scorerBox = new BDSScoringMeshBox(meshName, meshRecipe, placement);
         mapper = scorerBox->Mapper();}
 
-      else if (mesh.geometryType == "Cylindrical") {
+      else if (geometryType == "cylindrical") {
       // create a scoring cylinder
         scorerCylindrical = new BDSScoringMeshCylinder(meshName, meshRecipe, placement);
         mapper = scorerCylindrical->Mapper();}
 
       else {
-          throw BDSException(__METHOD_NAME__, "mesh geometry type \"" + mesh.geometryType + "\" is not correct. The possible options are \"Box\" and \"Cylindrical\"");}
+          throw BDSException(__METHOD_NAME__, "mesh geometry type \"" + geometryType + "\" is not correct. The possible options are \"box\" and \"cylindrical\"");}
 
       // add the scorer(s) to the scoring mesh
       std::vector<G4String> meshPrimitiveScorerNames; // final vector of unique mesh + ps names
@@ -1284,9 +1286,9 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
 	  meshPrimitiveScorerNames.push_back(uniqueName);
 	  meshPrimitiveScorerUnits.push_back(psUnit);
 
-      if (mesh.geometryType == "Box"){
+      if (geometryType == "box"){
           scorerBox->SetPrimitiveScorer(ps);} // sets the current ps but appends to list of multiple
-      else if (mesh.geometryType == "Cylindrical"){
+      else if (geometryType == "cylindrical"){
           scorerCylindrical->SetPrimitiveScorer(ps);}// sets the current ps but appends to list of multiple
 
 	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
@@ -1294,9 +1296,9 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
 	  BDSAcceleratorModel::Instance()->RegisterScorerPlacement(meshName, placement);
 	}
 
-      if (mesh.geometryType == "Box"){
+      if (geometryType == "box"){
           scManager->RegisterScoringMesh(scorerBox);} // sets the current ps but appends to list of multiple
-      else if (mesh.geometryType == "Cylindrical"){
+      else if (geometryType == "cylindrical"){
           scManager->RegisterScoringMesh(scorerCylindrical);}// sets the current ps but appends to list of multiple
 
       // register it with the sd manager as this is where we get all collection IDs from

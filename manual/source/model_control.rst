@@ -3470,8 +3470,8 @@ example parameter and value pairs. The following parameters may be specified.
 +=========================+===============+================================================+
 | scoreQuantity           | Yes           | The name of the scorer object(s) to be used    |
 +-------------------------+---------------+------------------------------------------------+
-| geometryType            | No            | Scorer mesh geometry type (Box or Cylindrical) |
-|                         |               | (default Box)                                  |
+| geometryType            | No            | Scorer mesh geometry type (box or cylindrical) |
+|                         |               | (default box)                                  |
 +-------------------------+---------------+------------------------------------------------+
 | nx                      | Yes           | Number of cells in local x dimension           |
 +-------------------------+---------------+------------------------------------------------+
@@ -3535,7 +3535,7 @@ example parameter and value pairs. The following parameters may be specified.
 |                         |               | scheme (default false)                         |
 +-------------------------+---------------+------------------------------------------------+
 
-.. note:: (\*) Those options are required if the geometryType "Cylindrical" has been chosen.
+.. note:: (\*) Those options are required if the geometryType "cylindrical" has been chosen.
 
 .. note:: (\**) The option eScale is required when defining a scorermesh for a cellflux4d scorer.
                 If the eScale types "linear" or "log" are used, the options ne, eLow and eHigh are required.

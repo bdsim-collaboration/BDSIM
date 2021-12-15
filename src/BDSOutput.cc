@@ -572,12 +572,12 @@ void BDSOutput::CreateHistograms()
 	  if (def.nBinsE <=1)
 	    {
 
-          if (def.geometryType == "Box"){
+          if (def.geometryType == "box"){
               histID = Create3DHistogram(def.outputName, def.outputName,
                                          def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
                                          def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
                                          def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);}
-          else if (def.geometryType == "Cylindrical"){
+          else if (def.geometryType == "cylindrical"){
               histID = Create3DHistogram(def.outputName, def.outputName,
                                          def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
                                          def.nBinsPhi, 0, 2*M_PI,
@@ -590,13 +590,13 @@ void BDSOutput::CreateHistograms()
 	  else
 	    {
 
-          if (def.geometryType == "Box"){
+          if (def.geometryType == "box"){
                 histID = Create4DHistogram(def.outputName+"-"+def.eScale,def.outputName,def.eScale,def.eBinsEdges,
                                            def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
                                            def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
                                            def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
                                            def.nBinsE, def.eLow/CLHEP::GeV, def.eHigh/CLHEP::GeV);}
-          else if (def.geometryType == "Cylindrical"){
+          else if (def.geometryType == "cylindrical"){
                 histID = Create4DHistogram(def.outputName+"-"+def.eScale, def.outputName, def.eScale,def.eBinsEdges,
                                            def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
                                            def.nBinsPhi, 0, 2*M_PI,
