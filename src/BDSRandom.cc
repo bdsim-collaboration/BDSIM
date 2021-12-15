@@ -144,7 +144,7 @@ G4String BDSRandom::GetSeedState()
   return G4String(currentState.str());
 }
 
-void BDSRandom::LoadSeedState(G4String inSeedFilename)
+void BDSRandom::LoadSeedState(const G4String& inSeedFilename)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "loading file: " << inSeedFilename << G4endl;
@@ -161,7 +161,7 @@ void BDSRandom::LoadSeedState(G4String inSeedFilename)
 #endif
 }
 
-void BDSRandom::SetSeedState(G4String seedState)
+void BDSRandom::SetSeedState(const G4String& seedState)
 {
   if (seedState.empty())
     {G4cout << __METHOD_NAME__ << "empty seed state supplied - no seed state set" << G4endl; return;}
