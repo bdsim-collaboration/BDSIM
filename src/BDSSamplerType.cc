@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4String.hh"
+#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -41,7 +43,11 @@ BDSSamplerType BDS::DetermineSamplerType(G4String samplerType)
   types["plane"]    = BDSSamplerType::plane;
   types["cylinder"] = BDSSamplerType::cylinder;
 
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(samplerType);
+#else
   samplerType.toLower();
+#endif
 
   auto result = types.find(samplerType);
   if (result == types.end())

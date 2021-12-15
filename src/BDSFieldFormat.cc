@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
+#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -50,8 +52,12 @@ BDSFieldFormat BDS::DetermineFieldFormat(G4String bFormat)
   formats["poisson2d"]     = BDSFieldFormat::poisson2d;
   formats["poisson2dquad"] = BDSFieldFormat::poisson2dquad;
   formats["poisson2ddipole"] = BDSFieldFormat::poisson2ddipole;
-  
+
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(bFormat);
+#else
   bFormat.toLower();
+#endif
 
   auto result = formats.find(bFormat);
   if (result == formats.end())

@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4String.hh"
 #include "G4Types.hh"
+#include "G4Version.hh"
 
 #include "CLHEP/Random/Random.h"
 #include "CLHEP/Random/JamesRandom.h"
@@ -50,16 +51,20 @@ BDSRandomEngineType BDSRandom::DetermineRandomEngineType(G4String engineType)
   types["hepjames"] = BDSRandomEngineType::hepjames;
   types["mixmax"]   = BDSRandomEngineType::mixmax;
 
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(engineType);
+#else
   engineType.toLower();
+#endif
+  
   auto result = types.find(engineType);
   if (result == types.end())
     {// it's not a valid key
-      G4cerr << __METHOD_NAME__ << "\"" << engineType << "\" is not a valid random engine" << G4endl;
-
-      G4cout << "Available random engines are:" << G4endl;
+      G4String msg = "\"" + engineType + "\" is not a valid random engine\n";
+      msg += "Available random engines are:\n";
       for (auto& it : types)
-	{G4cout << "\"" << it.first << "\"" << G4endl;}
-      throw BDSException(__METHOD_NAME__, "");
+	{msg += "\"" + it.first + "\"\n";}
+      throw BDSException(__METHOD_NAME__, msg);
     }
   return result->second;
 }

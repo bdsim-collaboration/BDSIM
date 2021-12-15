@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
+#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -41,7 +43,11 @@ BDSBLMType BDS::DetermineBLMType(G4String blmType)
   types["cube"]     = BDSBLMType::cube;
   types["sphere"]   = BDSBLMType::sphere;
 
+#if G4VERSION_NUMBER > 1099
+  G4StrUtil::to_lower(blmType);
+#else
   blmType.toLower();
+#endif
 
   auto result = types.find(blmType);
   if (result == types.end())
