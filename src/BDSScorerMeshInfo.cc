@@ -39,7 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
 {
   name = G4String(mesh.name);
-  geometryType = G4String(mesh.geometryType);
+  geometryType = BDS::LowerCase(G4String(mesh.geometryType));
   nBinsX = mesh.nx;
   nBinsY = mesh.ny;
   nBinsZ = mesh.nz;
@@ -47,7 +47,7 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
   nBinsPhi = mesh.nphi;
   nBinsE = mesh.ne;
 
-  if (mesh.geometryType == "Box")
+  if (geometryType == "box")
     {
         if (!BDS::IsFinite(mesh.xsize)) {
             throw BDSException(__METHOD_NAME__, "xsize must be finite in mesh \"" + mesh.name + "\"");
@@ -70,7 +70,7 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
         }
 
     }
-  else if (mesh.geometryType == "Cylindrical")
+  else if (geometryType == "cylindrical")
    {
        if (!BDS::IsFinite(mesh.zsize)) {
            throw BDSException(__METHOD_NAME__, "zsize must be finite in mesh \"" + mesh.name + "\"");

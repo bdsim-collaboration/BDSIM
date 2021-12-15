@@ -30,7 +30,7 @@ void ScorerMesh::clear()
 {
   name          = "";
   scoreQuantity = "";
-  geometryType  = "Box";
+  geometryType  = "box";
 
   nx    = 0;
   ny    = 0;
