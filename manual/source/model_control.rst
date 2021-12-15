@@ -3244,7 +3244,7 @@ Output at an Arbitrary Plane - User Placed Sampler
 The user may place a sampler anywhere in the model with any orientation. This is called a
 `samplerplacement`. The sampler may have either a circular or rectangular (including
 square) shape and be placed with any orientation. A `samplerplacement` will record all
-particles travelling in any direction through it. A branch in the Event output will be
+particles travelling in **any direction** through it. A branch in the Event output will be
 create with the name of the `samplerplacement`. The user may define an arbitrary number of
 `samplerplacement` s.  A `samplerplacement` is defined with the following syntax::
 
@@ -3263,6 +3263,8 @@ about the unit Y axis of :math:`\pi / 4`.
 
 Shape
 *****
+
+* Default `circular`. Control the radius with :code:`aper1`.
 
 To control the sampler shape, the variable :code:`shape` should be specified. Currently,
 either `circular` or `rectangular` are accepted. The parameters `aper1` and `aper2` can
@@ -3468,13 +3470,20 @@ example parameter and value pairs. The following parameters may be specified.
 +=========================+===============+================================================+
 | scoreQuantity           | Yes           | The name of the scorer object(s) to be used    |
 +-------------------------+---------------+------------------------------------------------+
+| geometryType            | No            | Scorer mesh geometry type (box or cylindrical) |
+|                         |               | (default box)                                  |
++-------------------------+---------------+------------------------------------------------+
 | nx                      | Yes           | Number of cells in local x dimension           |
 +-------------------------+---------------+------------------------------------------------+
 | ny                      | Yes           | Number of cells in local y dimension           |
 +-------------------------+---------------+------------------------------------------------+
 | nz                      | Yes           | Number of cells in local z dimension           |
 +-------------------------+---------------+------------------------------------------------+
-| ne                      | Yes(*)        | Number of cells in energy dimension            |
+| nr                      | Yes(*)        | Number of cells in local r                     |
++-------------------------+---------------+------------------------------------------------+
+| nphi                    | Yes(*)        | Number of cells in local phi                   |
++-------------------------+---------------+------------------------------------------------+
+| ne                      | Yes(**)       | Number of cells in energy dimension            |
 +-------------------------+---------------+------------------------------------------------+
 | xsize                   | Yes           | Full width in local x dimension (m)            |
 +-------------------------+---------------+------------------------------------------------+
@@ -3482,13 +3491,15 @@ example parameter and value pairs. The following parameters may be specified.
 +-------------------------+---------------+------------------------------------------------+
 | zsize                   | Yes           | Full width in local z dimension (m)            |
 +-------------------------+---------------+------------------------------------------------+
-| eScale                  | Yes(*)        | Energy axis scoring type (linear, log, user)   |
+| rsize                   | Yes(*)        | Full width in local r dimension (m)            |
 +-------------------------+---------------+------------------------------------------------+
-| eLow                    | Yes(*)        | Low limit value for the energy axis binning    |
+| eScale                  | Yes(**)       | Energy axis scoring type (linear, log, user)   |
 +-------------------------+---------------+------------------------------------------------+
-| eHigh                   | Yes(*)        | High limit value for the energy axis binning   |
+| eLow                    | Yes(**)       | Low limit value for the energy axis binning    |
 +-------------------------+---------------+------------------------------------------------+
-| eBinsEdgesFilenamePath  | Yes(*)        | Path to the energy bin edges .txt file(**)     |
+| eHigh                   | Yes(**)       | High limit value for the energy axis binning   |
++-------------------------+---------------+------------------------------------------------+
+| eBinsEdgesFilenamePath  | Yes(**)       | Path to the energy bin edges .txt file(***)    |
 +-------------------------+---------------+------------------------------------------------+
 | referenceElement        | No            | Name of beam line element to place with        |
 |                         |               | respect to                                     |
@@ -3524,11 +3535,13 @@ example parameter and value pairs. The following parameters may be specified.
 |                         |               | scheme (default false)                         |
 +-------------------------+---------------+------------------------------------------------+
 
-.. note:: (\*) The option eScale is required when defining a scorermesh for a cellflux4d scorer.
+.. note:: (\*) Those options are required if the geometryType "cylindrical" has been chosen.
+
+.. note:: (\**) The option eScale is required when defining a scorermesh for a cellflux4d scorer.
                 If the eScale types "linear" or "log" are used, the options ne, eLow and eHigh are required.
                 If the eScale type "user" is used, the option eBinsEdgesFilenamePath is required.
 
-.. note:: (\**) Each energy bin edge value must be written on a separate line in a .txt file in GeV.
+.. note:: (\***) Each energy bin edge value must be written on a separate line in a .txt file in GeV.
                 An example can be found in :code:`bdsim/examples/features/scoring`.
 
 

@@ -54,14 +54,10 @@ BDSElement::BDSElement(const G4String& nameIn,
 
 void BDSElement::Build()
 {
+  BuildUserLimits();
   BuildContainerLogicalVolume(); // pure virtual provided by derived class
-
-  // set user limits for container & visual attributes
-  if (containerLogicalVolume)
-    {
-      BuildUserLimits();
-      containerLogicalVolume->SetUserLimits(userLimits);
-    }
+  AttachUserLimits();
+  // we purposively don't attach vis attributes to the container here as it would overwrite ones from geometry laoding
 }
 
 void BDSElement::BuildContainerLogicalVolume()
@@ -71,7 +67,7 @@ void BDSElement::BuildContainerLogicalVolume()
   BDSSDType sensitivityToAttach = markAsCollimator ? BDSSDType::collimatorcomplete : BDSSDType::energydep;
   geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr, autoColourGeometry,
 							   chordLength, horizontalWidth,
-							   &namedVacuumVolumes, true, sensitivityToAttach, stripOuterVolume);
+							   &namedVacuumVolumes, true, sensitivityToAttach, stripOuterVolume, userLimits);
   
   if (!geometry)
     {throw BDSException(__METHOD_NAME__, "Error loading geometry in component \"" + name + "\"");}
