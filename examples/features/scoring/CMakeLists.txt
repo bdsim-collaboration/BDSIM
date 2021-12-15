@@ -1,5 +1,6 @@
 simple_testing(scoring-ambient-dose                      "--file=ambient-dose.gmad"                             "")
 simple_testing(scoring-arbitrary-mesh                    "--file=arbitrary-mesh.gmad"                           "")
+simple_testing(scoring-cylindrical-mesh                  "--file=cylindrical-mesh.gmad"                         "")
 simple_testing(scoring-population                        "--file=scoring-population.gmad"                       "")
 simple_testing(scoring-cellcharge                        "--file=scoring-cellcharge.gmad"                       "")
 simple_testing(scoring-cellflux                          "--file=scoring-cellflux.gmad"                         "")
