@@ -987,7 +987,7 @@ sample_options: RANGE '=' VARIABLE
                     element_type=ElementType::_NONE;
                   }
               }
-	            | component
+	      | component
               {
                 if(ECHO_GRAMMAR) std::cout << "sample_opt, all " << typestr(static_cast<ElementType>($1)) << std::endl;
                 if(execute) {
