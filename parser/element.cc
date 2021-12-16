@@ -543,6 +543,11 @@ void Element::flush()
   markAsCollimator = false;
   spec = "";
   cavityModel = "";
+  
+  dicomDataFile = "";
+  dicomDataPath = "";
+  
+  stripOuterVolume = false;
 
   colour = "";
 
