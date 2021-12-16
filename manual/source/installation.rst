@@ -11,7 +11,9 @@ or Cygwin, X11 and CVMFS access).
 
 Tested systems:
 
+* Mac OS 11.6.1 M1 (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 11.0.0, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
 * Mac OS 11.6.1 M1 (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 10.7.3, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* Mac OS 11.6.1 Intel (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 11.0.0, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
 * Mac OS 11.6.1 Intel (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 10.7.3, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
 * CERN CentOS 7, GCC 9.2.0, Geant4 10.7.2, 10.6, 10.4.3, ROOT 6.24.00, CLHEP 2.4.4.0 (i.e. lxplus at CERN with LCG100)
 * SLC6, GCC 4.9.3, Geant4 10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt 5.7.0
