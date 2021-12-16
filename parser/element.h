@@ -39,7 +39,8 @@ namespace GMAD
    * @author I. Agapov
    */
 
-  struct Element : public Published<Element>{
+  struct Element: public Published<Element>
+  {
     ElementType type; ///< element enum
     std::string name;
     std::string userTypeName; ///< User component element type name.
@@ -154,13 +155,12 @@ namespace GMAD
     double zdir;
     ///@}
     double waveLength; ///< for laser wire and 3d transforms
-    
     double phi, theta, psi; ///< for 3d transforms
     double axisX, axisY, axisZ;
     bool   axisAngle;
 
     ///@{ for degrader
-    int numberWedges;
+    int    numberWedges;
     double wedgeLength;
     double degraderHeight;
     double materialThickness;
@@ -231,7 +231,7 @@ namespace GMAD
     bool   angleSet;
 
     /// in case the element is a list itself (line)
-    std::list <Element> *lst;
+    std::list<Element>* lst;
 
     /// print method
     void print(int ident=0)const;

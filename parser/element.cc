@@ -54,6 +54,7 @@ void Element::PublishMembers()
 {
   publish("userTypeName",   &Element::userTypeName);
   publish("userParameters", &Element::userParameters);
+  
   publish("l",         &Element::l);
   publish("scaling",   &Element::scaling);
   publish("ks",        &Element::ks);
@@ -83,6 +84,7 @@ void Element::PublishMembers()
   publish("phase",     &Element::phase);
   publish("tOffset",   &Element::tOffset);
 
+  // rmatrix elements, only 4x4
   publish("kick1",     &Element::kick1);
   publish("kick2",     &Element::kick2);
   publish("kick3",     &Element::kick3);
@@ -104,6 +106,7 @@ void Element::PublishMembers()
   publish("rmat43",     &Element::rmat43);
   publish("rmat44",     &Element::rmat44);
 
+  // beampipe information, new aperture model
   publish("beampipeThickness",&Element::beampipeThickness);
   publish("aper1",            &Element::aper1);
   publish("aper",             &Element::aper1);
@@ -123,46 +126,31 @@ void Element::PublishMembers()
   publish("aper4",            &Element::aper4);
   publish("aperture4",        &Element::aper4);
   alternativeNames["aperture4"] = "aper4";
-  publish("horizontalWidth",  &Element::horizontalWidth);
-  publish("outerDiameter",    &Element::horizontalWidth);
+  publish("apertureType",        &Element::apertureType);
+  publish("beampipeMaterial",    &Element::beampipeMaterial);
+  publish("vacuumMaterial",      &Element::vacuumMaterial);
+
+  // magnet geometry
+  publish("magnetGeometryType",  &Element::magnetGeometryType);
+  publish("horizontalWidth",     &Element::horizontalWidth);
+  publish("outerDiameter",       &Element::horizontalWidth);
   alternativeNames["outerDiameter"] = "horizontalWidth";
+  publish("yokeOnInside",        &Element::yokeOnInside);
+  publish("hStyle",              &Element::hStyle);
+  publish("vhRatio",             &Element::vhRatio);
+  publish("coilWidthFraction",   &Element::coilWidthFraction);
+  publish("coilHeightFraction",  &Element::coilHeightFraction);
+  publish("tilt",             &Element::tilt);
   publish("xsize",            &Element::xsize);
   publish("ysize",            &Element::ysize);
   publish("xsizeOut",         &Element::xsizeOut);
   publish("ysizeOut",         &Element::ysizeOut);
   publish("xsizeLeft",        &Element::xsizeLeft);
   publish("xsizeRight",       &Element::xsizeRight);
-  publish("tilt",             &Element::tilt);
-
   publish("offsetX",     &Element::offsetX);
   publish("offsetY",     &Element::offsetY);
-  
-  publish("x",           &Element::xdir);
-  alternativeNames["x"] = "xdir";
-  publish("y",           &Element::ydir);
-  alternativeNames["y"] = "ydir";
-  publish("z",           &Element::zdir);
-  alternativeNames["z"] = "zdir";
-  publish("xdir",        &Element::xdir);
-  publish("ydir",        &Element::ydir);
-  publish("zdir",        &Element::zdir);
-  publish("phi",         &Element::phi);
-  publish("theta",       &Element::theta);
-  publish("psi",         &Element::psi);
-  publish("axisX",       &Element::axisX);
-  publish("axisY",       &Element::axisY);
-  publish("axisZ",       &Element::axisZ);
-  publish("axisAngle",   &Element::axisAngle);
-  
-  publish("region",      &Element::region);
-  publish("fieldOuter",  &Element::fieldOuter);
-  publish("fieldVacuum", &Element::fieldVacuum);
-  publish("fieldAll",    &Element::fieldAll);
-  publish("bmap",        &Element::fieldAll);
-  alternativeNames["bmap"] = "fieldAll";
-  publish("waveLength",  &Element::waveLength);
 
-  // screen
+  // screen parameters
   publish("tscint",          &Element::tscint);
   publish("twindow",         &Element::twindow);
   publish("tmount",          &Element::tmount);
@@ -179,17 +167,37 @@ void Element::PublishMembers()
   publish("poleStartZ",         &Element::poleStartZ);
   publish("screenWidth",        &Element::screenWidth);
   publish("awakeMagnetOffsetX", &Element::awakeMagnetOffsetX);
+  publish("windowmaterial",      &Element::windowmaterial);
+  publish("scintmaterial",       &Element::scintmaterial);
+  publish("mountmaterial",       &Element::mountmaterial);
 
+  // for 3d transform and laser
+  publish("x",           &Element::xdir);
+  alternativeNames["x"] = "xdir";
+  publish("y",           &Element::ydir);
+  alternativeNames["y"] = "ydir";
+  publish("z",           &Element::zdir);
+  alternativeNames["z"] = "zdir";
+  publish("xdir",        &Element::xdir);
+  publish("ydir",        &Element::ydir);
+  publish("zdir",        &Element::zdir);
+  publish("waveLength",  &Element::waveLength);
+  publish("phi",         &Element::phi);
+  publish("theta",       &Element::theta);
+  publish("psi",         &Element::psi);
+  publish("axisX",       &Element::axisX);
+  publish("axisY",       &Element::axisY);
+  publish("axisZ",       &Element::axisZ);
+  publish("axisAngle",   &Element::axisAngle);
+
+  // for degrader
   publish("numberWedges",      &Element::numberWedges);
   publish("wedgeLength",       &Element::wedgeLength);
   publish("degraderHeight",    &Element::degraderHeight);
   publish("materialThickness", &Element::materialThickness);
   publish("degraderOffset",    &Element::degraderOffset);
 
-  publish("undulatorPeriod",       &Element::undulatorPeriod);
-  publish("undulatorGap",          &Element::undulatorGap);
-  publish("undulatorMagnetHeight", &Element::undulatorMagnetHeight);
-
+  // for wirescanner
   publish("wireDiameter",      &Element::wireDiameter);
   publish("wireLength",        &Element::wireLength);
   publish("wireOffsetX",       &Element::wireOffsetX);
@@ -197,44 +205,49 @@ void Element::PublishMembers()
   publish("wireOffsetZ",       &Element::wireOffsetZ);
   publish("wireAngle",         &Element::wireAngle);
 
-  publish("geometryFile",&Element::geometryFile);
-  publish("geometry",    &Element::geometryFile);
-  alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
-  publish("dicomDataPath",&Element::dicomDataPath);
-  publish("dicomDataFile",&Element::dicomDataFile);
-  publish("stripOuterVolume",    &Element::stripOuterVolume);
-  publish("autoColour",          &Element::autoColour);
-  publish("namedVacuumVolumes",  &Element::namedVacuumVolumes);
-  publish("markAsCollimator",    &Element::markAsCollimator);
-  publish("material",            &Element::material);
-  publish("outerMaterial",       &Element::material);
-  alternativeNames["outerMaterial"] = "material";
-  publish("yokeOnInside",        &Element::yokeOnInside);
-  publish("hStyle",              &Element::hStyle);
-  publish("vhRatio",             &Element::vhRatio);
-  publish("coilWidthFraction",   &Element::coilWidthFraction);
-  publish("coilHeightFraction",  &Element::coilHeightFraction);
-  publish("apertureType",        &Element::apertureType);
-  publish("magnetGeometryType",  &Element::magnetGeometryType);
-  publish("beampipeMaterial",    &Element::beampipeMaterial);
-  publish("vacuumMaterial",      &Element::vacuumMaterial);
-  publish("scintmaterial",       &Element::scintmaterial);
-  publish("windowmaterial",      &Element::windowmaterial);
-  publish("mountmaterial",       &Element::mountmaterial);
-  publish("spec",                &Element::spec);
-  publish("cavityModel",         &Element::cavityModel);
+  // for undulator
+  publish("undulatorPeriod",       &Element::undulatorPeriod);
+  publish("undulatorGap",          &Element::undulatorGap);
+  publish("undulatorMagnetHeight", &Element::undulatorMagnetHeight);
+
+  // bias
   publish("bias",                &Element::bias);
   publish("biasMaterial",        &Element::biasMaterial);
   publish("biasVacuum",          &Element::biasVacuum);
+
   publish("minimumKineticEnergy",&Element::minimumKineticEnergy);
+
   publish("samplerName",         &Element::samplerName);
   publish("samplerType",         &Element::samplerType);
   publish("r",                   &Element::samplerRadius); // historic
   publish("samplerRadius",       &Element::samplerRadius);
   alternativeNames["r"] ="samplerRadius";
-  
-  publish("colour", &Element::colour);
 
+  publish("region",      &Element::region);
+  publish("fieldOuter",  &Element::fieldOuter);
+  publish("fieldVacuum", &Element::fieldVacuum);
+  publish("fieldAll",    &Element::fieldAll);
+  publish("bmap",        &Element::fieldAll);
+  alternativeNames["bmap"] = "fieldAll";
+  
+  publish("geometryFile",        &Element::geometryFile);
+  publish("geometry",            &Element::geometryFile);
+  alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
+  publish("stripOuterVolume",    &Element::stripOuterVolume);
+  publish("autoColour",          &Element::autoColour);
+  publish("material",            &Element::material);
+  publish("outerMaterial",       &Element::material);
+  alternativeNames["outerMaterial"] = "material";
+  publish("namedVacuumVolumes",  &Element::namedVacuumVolumes);
+  publish("markAsCollimator",    &Element::markAsCollimator);
+  publish("spec",                &Element::spec);
+  publish("cavityModel",         &Element::cavityModel);
+
+  publish("dicomDataPath",       &Element::dicomDataPath);
+  publish("dicomDataFile",       &Element::dicomDataFile);
+
+  publish("colour",              &Element::colour);
+  
   publish("crystalLeft",            &Element::crystalLeft);
   publish("crystalRight",           &Element::crystalRight);
   publish("crystalBoth",            &Element::crystalBoth);
@@ -439,26 +452,6 @@ void Element::flush()
   rmat43= 0;
   rmat44= 1.0;
 
-  // degrader
-  numberWedges = 1;
-  wedgeLength = 0;
-  degraderHeight = 0;
-  materialThickness = 0;
-  degraderOffset = 0;
-
-  // wirescanner
-  wireDiameter = 0;
-  wireLength   = 0;
-  wireOffsetX  = 0;
-  wireOffsetY  = 0;
-  wireOffsetZ  = 0;
-  wireAngle    = 0;
-
-  // undulator
-  undulatorPeriod = 1;
-  undulatorGap = 0;
-  undulatorMagnetHeight = 0;
-
   // new aperture model
   beampipeThickness = 0;
   aper1 = 0;
@@ -477,7 +470,6 @@ void Element::flush()
   vhRatio            = -1;
   coilWidthFraction  = -1;
   coilHeightFraction = -1; // signifies use default in factory
-  
   tilt = 0;
   xsize = 0;
   ysize = 0;
@@ -487,26 +479,29 @@ void Element::flush()
   xsizeRight = 0;
   offsetX = 0;
   offsetY = 0;
+
+  // screen parameters
   tscint = 0.0003;
   twindow = 0;
   tmount = 0;
   windowScreenGap = 0;
   screenXSize = 0;
   screenYSize = 0;
+  layerThicknesses.clear();
+  layerMaterials.clear();
+  layerIsSampler.clear();
 
+  // for AWAKE spectrometer
   screenPSize        = 0;
   screenEndZ         = 0;
   poleStartZ         = 0;
   screenWidth        = 0;
   awakeMagnetOffsetX = 0.13;
   windowmaterial     = "vacuum";
-  mountmaterial      = "";
   scintmaterial      = "";
+  mountmaterial      = "";
 
-  layerThicknesses.clear();
-  layerMaterials.clear();
-  layerIsSampler.clear();
-  
+  // for 3d transform and laser
   xdir = 0;
   ydir = 0;
   zdir = 0;
@@ -520,11 +515,33 @@ void Element::flush()
   axisZ = 0;
   axisAngle = false;
 
+  // for degrader
+  numberWedges = 1;
+  wedgeLength = 0;
+  degraderHeight = 0;
+  materialThickness = 0;
+  degraderOffset = 0;
+
+  // for wirescanner
+  wireDiameter = 0;
+  wireLength   = 0;
+  wireOffsetX  = 0;
+  wireOffsetY  = 0;
+  wireOffsetZ  = 0;
+  wireAngle    = 0;
+
+  // undulator
+  undulatorPeriod = 1;
+  undulatorGap = 0;
+  undulatorMagnetHeight = 0;
+
+  // bias
   bias         = "";
   biasMaterial = "";
   biasVacuum   = "";
   biasMaterialList.clear();
   biasVacuumList.clear();
+  
   minimumKineticEnergy = 0;
 
   samplerName = "";
@@ -537,6 +554,7 @@ void Element::flush()
   fieldAll    = "";
 
   geometryFile = "";
+  stripOuterVolume = false;
   autoColour   = true;
   material="";
   namedVacuumVolumes = "";
@@ -547,8 +565,6 @@ void Element::flush()
   dicomDataFile = "";
   dicomDataPath = "";
   
-  stripOuterVolume = false;
-
   colour = "";
 
   crystalLeft            = "";
@@ -558,6 +574,8 @@ void Element::flush()
   crystalAngleYAxisRight = 0;
   
   angleSet = false;
+
+  lst = nullptr;
 }
 
 double Element::property_lookup(std::string property_name) const
