@@ -234,16 +234,16 @@ namespace GMAD
     std::list<Element>* lst;
 
     /// print method
-    void print(int ident=0)const;
+    void print(int ident=0) const;
 
     /// flush method
     void flush();
 
     /// check if element is of a special type
-    bool isSpecial()const;
+    bool isSpecial() const;
     /// property lookup by name (slow method)
     /// only for properties with type int/double!
-    double property_lookup(std::string property_name)const;
+    double property_lookup(std::string property_name) const;
 
     /// set sampler info
     void setSamplerInfo(std::string samplerType, std::string samplerName, double samplerRadius);
@@ -267,7 +267,7 @@ namespace GMAD
 
   protected:
     /// returns 'official' member name for property
-    std::string getPublishedName(std::string name)const;
+    std::string getPublishedName(const std::string& name) const;
   };
 
   template <typename T>
