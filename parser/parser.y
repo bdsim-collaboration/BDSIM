@@ -40,7 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
     extern int line_num;
     extern std::string yyfilename;
   
-    const int ECHO_GRAMMAR = 1; ///< print grammar rule expansion (for debugging)
+    const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
     const int INTERACTIVE = 0; ///< print output of commands (like in interactive mode)
     /* for more debug with parser:
        1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
