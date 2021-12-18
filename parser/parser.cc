@@ -18,8 +18,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "parser.h"
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <list>
+#include <set>
 
 // for getpwuid: http://linux.die.net/man/3/getpwuid
 #include <unistd.h>
@@ -457,10 +460,11 @@ const FastList<Element>& Parser::get_sequence(const std::string& name)
 }
 
 void Parser::set_sampler(const std::string& name,
-			 int count,
-			 ElementType type,
+			 int                count,
+			 ElementType        type,
 			 const std::string& samplerType,
-			 double samplerRadius)
+			 double             samplerRadius,
+			 int                particleSetID)
 {
   // if count equal to -2 add to all elements regardless of name
   // typically used for output elements like samplers
@@ -475,7 +479,7 @@ void Parser::set_sampler(const std::string& name,
 	  if (type != ElementType::_NONE && type != (*it).type)
 	    {continue;}
 	  
-	  (*it).setSamplerInfo(samplerType,(*it).name,samplerRadius);
+	  (*it).setSamplerInfo(samplerType,(*it).name,samplerRadius,particleSetID);
 	}
     }
   // if count equal to -1 add sampler to all element instances
@@ -509,7 +513,7 @@ void Parser::set_sampler(const std::string& name,
 		  continue;
 		}
 	    }
-	  (*elementIt).setSamplerInfo(samplerType,samplerName,samplerRadius);
+	  (*elementIt).setSamplerInfo(samplerType,samplerName,samplerRadius,particleSetID);
 	}
     }
   else
@@ -536,19 +540,27 @@ void Parser::set_sampler(const std::string& name,
 		}
 	    }
 	}
-      (*it).setSamplerInfo(samplerType,samplerName,samplerRadius);
+      (*it).setSamplerInfo(samplerType,samplerName,samplerRadius,particleSetID);
     }
 }
 
-void Parser::add_sampler(const std::string& name, int count, ElementType type)
+void Parser::add_sampler(const std::string& name, int count, ElementType type, std::list<int>* samplerPartIDListIn)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting sampler "<<name;
   if (count>=0) std::cout<<"["<< count <<"]";
   std::cout<<std::endl;
 #endif
-
-  set_sampler(name,count,type,"plane");
+  std::set<int> partIDs;
+  int particleSetID = -1;
+  if (samplerPartIDListIn)
+  {
+    partIDs = std::set<int>(std::begin(*samplerPartIDListIn), std::end(*samplerPartIDListIn));
+    particleSetID = (int)samplerFilterIDToSet.size();
+    samplerFilterIDToSet[particleSetID] = partIDs;
+    samplerFilters.insert(partIDs);
+  }
+  set_sampler(name,count,type,"plane",0,particleSetID);
 }
 
 void Parser::add_csampler(const std::string& name, int count, ElementType type)
@@ -704,6 +716,7 @@ void Parser::FillString(Array* array)
 void Parser::ClearParams()
 {
   params.flush();
+  samplerFilters.clear();
 }
 
 void Parser::Overwrite(const std::string& objectName)

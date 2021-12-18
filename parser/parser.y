@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <cstring>
 #include <iostream>
+#include <list>
 #include <string>
   
   using namespace GMAD;
@@ -39,7 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
     extern int line_num;
     extern std::string yyfilename;
   
-    const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
+    const int ECHO_GRAMMAR = 1; ///< print grammar rule expansion (for debugging)
     const int INTERACTIVE = 0; ///< print output of commands (like in interactive mode)
     /* for more debug with parser:
        1) set yydebug to 1 in parser.tab.cc (needs to be reset as this file gets overwritten from time to time!) 
@@ -53,6 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
     bool execute = true;
     int element_count = -1; // for samplers , ranges etc. -1 means add to all
     ElementType element_type = ElementType::_NONE; // for samplers, ranges etc.
+    std::list<int>* samplerPartIDList = nullptr;
 
     /// helper method for undeclared variables
     void undeclaredVariable(std::string s)
@@ -790,9 +792,10 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> SAMPLE" << std::endl;
-              Parser::Instance()->add_sampler(*($3), element_count, element_type);
+              Parser::Instance()->add_sampler(*($3), element_count, element_type, samplerPartIDList);
               element_count = -1;
               Parser::Instance()->ClearParams();
+              delete samplerPartIDList; samplerPartIDList = nullptr;
             }
         }
         | CSAMPLE ',' csample_options // cylindrical sampler
@@ -965,17 +968,24 @@ use_parameters :  VARIABLE
                    }
                }
 
-sample_options: RANGE '=' VARIABLE
+sample_options_extend : /* nothing */
+                      | ',' sample_options
+
+sample_options: RANGE '=' VARIABLE sample_options_extend
               {
                 if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << *($3) << std::endl;
                 if(execute) $$ = $3;
               }
-              | RANGE '=' VARIABLE '[' NUMBER ']'
+              | RANGE '=' VARIABLE '[' NUMBER ']' sample_options_extend
               {
                 if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << *($3) << " [" << $5 << "]" << std::endl;
-                if(execute) { $$ = $3; element_count = (int)$5; }
+                if(execute)
+                  {
+                    $$ = $3;
+                    element_count = (int)$5;
+                  }
               }
-              | ALL
+              | ALL sample_options_extend
               {
                 if(ECHO_GRAMMAR) std::cout << "sample_opt, all" << std::endl;
                 // -2: convention to add to all elements
@@ -987,15 +997,28 @@ sample_options: RANGE '=' VARIABLE
                     element_type=ElementType::_NONE;
                   }
               }
-	      | component
+	      | component sample_options_extend
               {
-                if(ECHO_GRAMMAR) std::cout << "sample_opt, all " << typestr(static_cast<ElementType>($1)) << std::endl;
-                if(execute) {
-                  element_type = static_cast<ElementType>($1);
-                  element_count = -2;
-                  $$ = new std::string("");
-                }
+                if(ECHO_GRAMMAR) std::cout << "sample_opt, component " << typestr(static_cast<ElementType>($1)) << std::endl;
+                if(execute)
+                  {
+                    element_type = static_cast<ElementType>($1);
+                    element_count = -2;
+                    $$ = new std::string("");
+                  }
               }
+              | paramassign '=' vecexpr
+              {//not extend in this rule as it should come last
+                if(ECHO_GRAMMAR) std::cout << "sample_opt, vecexpr " << std::endl;
+                if(execute)
+                  {
+                    std::string parameterName = std::string(*$1);
+                    if (parameterName != "partID")
+                      {throw std::invalid_argument("invalid sampler parameter " + parameterName);}
+                    samplerPartIDList = Parser::Instance()->ArrayToList<int>($3);
+                  }
+              }
+
 
 csample_options_extend : /* nothing */
                        | ',' csample_options
