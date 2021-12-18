@@ -195,9 +195,13 @@ namespace GMAD
     /// minimum kinetic energy for user limits - respected on element by element basis
     double minimumKineticEnergy;
 
-    std::string samplerName; ///< name of sampler (default empty)
-    std::string samplerType; ///< element has a sampler of this type (default "none")
-    double samplerRadius; ///< radius for cylindrical sampler
+    std::string samplerName;      ///< name of sampler (default empty)
+    std::string samplerType;      ///< element has a sampler of this type (default "none")
+    double samplerRadius;         ///< radius for cylindrical sampler
+    /// ID to a map for a set of which partIDs to store for a sampler. We use an integer
+    /// to a map we keep in the parser to save memory, so we don't copy a set to every
+    /// beam line element.
+    int    samplerParticleSetID;  
     
     std::string region;      ///< region with range cuts
     std::string fieldOuter;  ///< Outer field.
@@ -246,7 +250,10 @@ namespace GMAD
     double property_lookup(std::string property_name) const;
 
     /// set sampler info
-    void setSamplerInfo(std::string samplerType, std::string samplerName, double samplerRadius);
+    void setSamplerInfo(std::string samplerType,
+                        std::string samplerName,
+                        double samplerRadius,
+                        int samplerParticleSetIDIn = -1);
 
     ///@{ set method from Parameters structure
     void set(const Parameters& params);

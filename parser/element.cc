@@ -281,8 +281,11 @@ void Element::print(int ident) const
   if (l>0.0)
     {std::cout << "l     = " << l << "m" << std::endl;}
   if (samplerType != "none")
-    {std::cout << "samplerType = " << samplerType << std::endl;}
-  std::cout << "Scaling = " << scaling << std::endl;
+    {
+      std::cout << "samplerType = " << samplerType << "\n"
+                << "samplerRadius = " << samplerRadius << "\n"
+                << "samplerarticleSetID = " << samplerParticleSetID << std::endl;
+    }
 
   switch(type)
     {
@@ -550,6 +553,7 @@ void Element::flush()
   samplerName = "";
   samplerType = "none"; // allowed "none", "plane", "cylinder"
   samplerRadius = 0;
+  samplerParticleSetID = -1;   // -1 is code for none
   
   region      = "";
   fieldOuter  = "";
@@ -652,7 +656,10 @@ void Element::set(const Parameters& params)
     }
 }
 
-void Element::setSamplerInfo(std::string samplerTypeIn, std::string samplerNameIn, double samplerRadiusIn)
+void Element::setSamplerInfo(std::string samplerTypeIn,
+                             std::string samplerNameIn,
+                             double samplerRadiusIn,
+                             int particleSetIDIn)
 {
   if (samplerType != "none")
     {std::cout << "WARNING: overwriting already defined sampler info for element: " << name << std::endl;}
@@ -660,4 +667,5 @@ void Element::setSamplerInfo(std::string samplerTypeIn, std::string samplerNameI
   samplerType   = samplerTypeIn;
   samplerName   = samplerNameIn;
   samplerRadius = samplerRadiusIn;
+  samplerParticleSetID = particleSetIDIn;
 }
