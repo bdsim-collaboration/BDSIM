@@ -74,7 +74,7 @@ add_test(gmad-duplicate-name ${gmadBinary} duplicateName.gmad)
 set_tests_properties(gmad-duplicate-name PROPERTIES WILL_FAIL 1)
 
 # add sampler to undefined element
-add_test(gmad-add-sampler-undefined-element ${gmadBinary} addSamplerUndefinedElement.gmad)
+add_test(gmad-add-sampler-undefined-element ${gmadBinary} addsampler_undefined_element.gmad)
 set_tests_properties(gmad-add-sampler-undefined-element PROPERTIES WILL_FAIL 1)
 
 # element with no options
@@ -152,12 +152,21 @@ add_test(gmad-test-add-sampler ${gmadBinary} addsampler.gmad)
 set_tests_properties(gmad-test-add-sampler PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test add all samplers
-add_test(gmad-test-add-all-samplers ${gmadBinary} addallsamplers.gmad)
-set_tests_properties(gmad-test-add-all-samplers PROPERTIES PASS_REGULAR_EXPRESSION plane)
+add_test(gmad-test-add-sampler-all ${gmadBinary} addsampler_all.gmad)
+set_tests_properties(gmad-test-add-sampler-all PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test add samplers at all quadrupoles
-add_test(gmad-test-add-quad-samplers ${gmadBinary} addquadsamplers.gmad)
-set_tests_properties(gmad-test-add-quad-samplers PROPERTIES PASS_REGULAR_EXPRESSION plane)
+add_test(gmad-test-add-sampler-element-type ${gmadBinary} addsamplers_element_type.gmad)
+set_tests_properties(gmad-test-add-sampler-element-type PROPERTIES PASS_REGULAR_EXPRESSION plane)
+
+add_test(gmad-test-add-sampler-partID-filter-multiple ${gmadBinary} addsampler_multiple_partID_filter.gmad)
+set_tests_properties(gmad-test-add-sampler-partID-filter-multiple PROPERTIES PASS_REGULAR_EXPRESSION 13)
+
+add_test(gmad-test-add-sampler-partID-filter ${gmadBinary} addsampler_partID_filter.gmad)
+set_tests_properties(gmad-test-add-sampler-partID-filter PROPERTIES PASS_REGULAR_EXPRESSION 11)
+
+add_test(gmad-test-add-sampler-partID-filter-all ${gmadBinary} addsampler_all_partID_filter.gmad)
+set_tests_properties(gmad-test-add-sampler-partID-filter-all PROPERTIES PASS_REGULAR_EXPRESSION 11)
 
 # test inheritance declaration
 add_test(gmad-inherit ${gmadBinary} inherit.gmad)
