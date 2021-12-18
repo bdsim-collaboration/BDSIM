@@ -255,7 +255,7 @@ void Element::PublishMembers()
   publish("crystalAngleYAxisRight", &Element::crystalAngleYAxisRight);
 }
 
-std::string Element::getPublishedName(std::string nameIn)const
+std::string Element::getPublishedName(const std::string& nameIn) const
 {
   auto it = alternativeNames.find(nameIn);
   if (it != alternativeNames.end())
@@ -264,14 +264,16 @@ std::string Element::getPublishedName(std::string nameIn)const
   return nameIn;
 }
 
-bool Element::isSpecial()const {
+bool Element::isSpecial() const
+{
   return (type == ElementType::_TRANSFORM3D ||
 	  type == ElementType::_MARKER ||
 	  type == ElementType::_LINE ||
 	  type == ElementType::_REV_LINE);
 }
 
-void Element::print(int ident)const{
+void Element::print(int ident) const
+{
   for(int i=0;i<ident;i++)
     {std::cout << "--";}
 
@@ -292,6 +294,7 @@ void Element::print(int ident)const{
 	std::cout << "B     = " << B     << std::endl
 		  << "angle = " << angle << std::endl
 		  << "k1    = " << k1    << std::endl;
+        std::cout << "Scaling = " << scaling << std::endl;
 	break;
       }
     case ElementType::_QUAD:
@@ -308,11 +311,11 @@ void Element::print(int ident)const{
     case ElementType::_THINMULT:
       {
 	std::cout << " , knl={";
-	for(auto it=knl.begin();it!=knl.end();++it)
-	  {std::cout << (*it);}
+  for (auto value : knl)
+    {std::cout << value;}
+  for (auto value : ksl)
+    {std::cout << value;}
 	std::cout << "},  ksl={";
-	for(auto it=ksl.begin();it!=ksl.end();++it)
-	  {std::cout << (*it);}
 	std::cout << "}" << std::endl;
 	break;
       }
