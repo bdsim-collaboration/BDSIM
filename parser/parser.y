@@ -98,7 +98,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR SAMPLERPLACEMENT
 %token SCORER SCORERMESH BLM
 %token CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL APERTURE
-%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
+%token BEAM OPTION PRINT RANGE STOP USE SAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
 %type <dval> aexpr expr
@@ -108,7 +108,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %type <str> use_parameters
 %type <ival> component component_with_params newinstance
 %type <str> sample_options
-%type <str> csample_options
 %type <str> paramassign string
 
 /* printout format for debug output */
@@ -798,16 +797,6 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
               delete samplerPartIDList; samplerPartIDList = nullptr;
             }
         }
-        | CSAMPLE ',' csample_options // cylindrical sampler
-        {
-          if(execute)
-            {
-              if(ECHO_GRAMMAR) std::cout << "command -> CSAMPLE" << std::endl;
-              Parser::Instance()->add_csampler(*($3), element_count, element_type);
-              element_count = -1;
-              Parser::Instance()->ClearParams();
-            }
-        }
         | ATOM ',' atom_options // atom
         {
           if(execute)
@@ -1007,7 +996,7 @@ sample_options: RANGE '=' VARIABLE sample_options_extend
                     $$ = new std::string("");
                   }
               }
-              | paramassign '=' vecexpr
+              | paramassign '=' vecexpr sample_options_extend
               {//not extend in this rule as it should come last
                 if(ECHO_GRAMMAR) std::cout << "sample_opt, vecexpr " << std::endl;
                 if(execute)
@@ -1018,22 +1007,6 @@ sample_options: RANGE '=' VARIABLE sample_options_extend
                     samplerPartIDList = Parser::Instance()->ArrayToList<int>($3);
                   }
               }
-
-
-csample_options_extend : /* nothing */
-                       | ',' csample_options
-
-csample_options : paramassign '=' aexpr csample_options_extend
-                  {
-                    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
-                    if(execute)
-                      Parser::Instance()->SetValue<Parameters>(*($1),$3);
-                  }
-                | sample_options csample_options_extend
-                  {
-                    if(ECHO_GRAMMAR) std::cout << "csample_opt -> sopt, csopt" << std::endl;
-                    $$ = $1;
-                  }
 
 cavitymodel_options_extend : /* nothing */
                            | ',' cavitymodel_options

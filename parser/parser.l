@@ -172,7 +172,6 @@ print { return PRINT; }
 stop {return STOP;}
 use { return USE; }
 sample { return SAMPLE; }
-csample { return CSAMPLE; }
 
 \"[^",\n]*\" {
   //strip quotes and return string
