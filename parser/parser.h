@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <list>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -117,7 +118,7 @@ namespace GMAD
     const FastList<Element>& get_sequence(const std::string& name);
     
     /// insert a sampler into beamline_list
-    void add_sampler(const std::string& name, int count, ElementType type);
+    void add_sampler(const std::string& name, int count, ElementType type, std::list<int>* samplerPartIDListIn = nullptr);
     /// insert a cylindrical sampler into beamline_list
     void add_csampler(const std::string& name, int count, ElementType type);
     /// Insert global object of parser class C in Container class
@@ -166,6 +167,9 @@ namespace GMAD
     /// Get value for parser class (only for doubles)
     template <class C>
     double GetValue(std::string property);
+    
+    template<typename T>
+    std::list<T>* ArrayToList(Array*);
 
     /// Add value to be extended to object
     template <typename T>
@@ -191,10 +195,13 @@ namespace GMAD
     
   private:
     /// Set sampler
-    void set_sampler(const std::string& name, int count, ElementType type, const std::string& samplerType, double samplerRadius=0.0);
+    void set_sampler(const std::string& name,
+                     int count, ElementType type,
+                     const std::string& samplerType,
+                     double samplerRadius=0,
+                     int particleSetID = -1);
     /// Add function to parser
     void add_func(std::string name, double (*func)(double));
-    /// Add reserved variable to parser
     void add_var(std::string name, double value, int is_reserved = 0);
 
     /// Expand all sequences define with 'line' into FastLists.
@@ -319,6 +326,11 @@ namespace GMAD
     SymbolMap symtab_map;
     /// Variable vector for memory storage
     std::vector<std::string*> var_list;
+    
+    /// Set of unique sets of particle IDs. This will allow us to build up unique
+    /// Sensitive detectors for particles later on.
+    std::set<std::set<int>> samplerFilters;
+    std::map<int, std::set<int>> samplerFilterIDToSet;
   };
 
   template <class C, typename T>
@@ -331,6 +343,21 @@ namespace GMAD
   double Parser::GetValue(std::string property)
   {
     return GetGlobal<C>().get_value(property);
+  }
+  
+  template<typename T>
+  std::list<T>* Parser::ArrayToList(Array* arrayIn)
+  {
+    if (!arrayIn)
+      {return nullptr;}
+    else
+    {
+      std::list<T>* result = new std::list<T>();
+      const auto& doubleData = arrayIn->GetDataList();
+      for (auto& value : doubleData)
+      {result->push_back((T)value);}
+      return result;
+    }
   }
 }
 
