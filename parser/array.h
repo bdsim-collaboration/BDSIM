@@ -83,11 +83,10 @@ namespace GMAD
     
     /// Copy STL string containers into symbols
     template<template <typename, typename> class Container>
-      void Copy(Container<std::string, std::allocator<std::string>>& cpy)
+    void Copy(Container<std::string, std::allocator<std::string>>& cpy)
     {
-      for(std::string name : cpy){
-	symbols.push_back(name);
-      }
+      for (const std::string& name : cpy)
+        {symbols.push_back(name);}
     }
 
     /// Copy STL numerical containers into data
