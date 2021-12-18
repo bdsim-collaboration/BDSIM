@@ -156,17 +156,17 @@ add_test(gmad-test-add-sampler-all ${gmadBinary} addsampler_all.gmad)
 set_tests_properties(gmad-test-add-sampler-all PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test add samplers at all quadrupoles
-add_test(gmad-test-add-sampler-element-type ${gmadBinary} addsamplers_element_type.gmad)
+add_test(gmad-test-add-sampler-element-type ${gmadBinary} addsampler_element_type.gmad)
 set_tests_properties(gmad-test-add-sampler-element-type PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 add_test(gmad-test-add-sampler-partID-filter-multiple ${gmadBinary} addsampler_multiple_partID_filter.gmad)
-set_tests_properties(gmad-test-add-sampler-partID-filter-multiple PROPERTIES PASS_REGULAR_EXPRESSION 13)
+set_tests_properties(gmad-test-add-sampler-partID-filter-multiple PROPERTIES PASS_REGULAR_EXPRESSION "samplerarticleSetID = 1")
 
 add_test(gmad-test-add-sampler-partID-filter ${gmadBinary} addsampler_partID_filter.gmad)
-set_tests_properties(gmad-test-add-sampler-partID-filter PROPERTIES PASS_REGULAR_EXPRESSION 11)
+set_tests_properties(gmad-test-add-sampler-partID-filter PROPERTIES PASS_REGULAR_EXPRESSION "samplerarticleSetID = 0")
 
 add_test(gmad-test-add-sampler-partID-filter-all ${gmadBinary} addsampler_all_partID_filter.gmad)
-set_tests_properties(gmad-test-add-sampler-partID-filter-all PROPERTIES PASS_REGULAR_EXPRESSION 11)
+set_tests_properties(gmad-test-add-sampler-partID-filter-all PROPERTIES PASS_REGULAR_EXPRESSION "samplerarticleSetID = 0")
 
 # test inheritance declaration
 add_test(gmad-inherit ${gmadBinary} inherit.gmad)
