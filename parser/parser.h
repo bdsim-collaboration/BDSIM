@@ -130,6 +130,9 @@ namespace GMAD
     /// Get list for parser class C
     template <class C, class Container=std::vector<C>>
     Container& GetList();
+  
+    const std::set<std::set<int>>& GetSamplerFilters() const {return samplerFilters;}
+    const std::map<int, std::set<int>>& GetSamplerFilterIDToSet() const {return samplerFilterIDToSet;}
 
     /// find element
     Element& find_element(const std::string& element_name);
