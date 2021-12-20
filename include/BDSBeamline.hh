@@ -84,10 +84,10 @@ public:
   /// in which case, loop over it and apply
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
   /// Returns vector of components added
-  void AddComponent(BDSAcceleratorComponent* component,
-		    BDSTiltOffset* tiltOffset  = nullptr,
-		    BDSSamplerType samplerType = BDSSamplerType::none,
-		    G4String       samplerNameIn = "");
+  void AddComponent(BDSAcceleratorComponent*  component,
+		    BDSTiltOffset*  tiltOffset  = nullptr,
+		    BDSSamplerType  samplerType = BDSSamplerType::none,
+		    const G4String& samplerNameIn = "");
 
   /// Apply a Transform3D rotation and translation to the reference
   /// coordinates. Special method for the special case of unique component
@@ -240,12 +240,11 @@ public:
   
 private:
   /// Add a single component and calculate its position and rotation with respect
-  /// to the beginning of the beamline
-  /// Returns pointer to component added
+  /// to the beginning of the beamline. Returns pointer to the component added.
   void AddSingleComponent(BDSAcceleratorComponent* component,
 			  BDSTiltOffset*           tiltOffset  = nullptr,
 			  BDSSamplerType           samplerType = BDSSamplerType::none,
-			  G4String                 samplerNameIn = "");
+			  const G4String&          samplerNameIn = "");
   
   /// Register the fully created element to a map of names vs element pointers. Used to
   /// look up transforms by name.
