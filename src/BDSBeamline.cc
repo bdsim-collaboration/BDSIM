@@ -120,7 +120,7 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 			       BDSTiltOffset*           tiltOffset,
 			       BDSSamplerType           samplerType,
-			       G4String                 samplerName)
+			       const G4String&          samplerName)
 {
   if (!component)
     {throw BDSException(__METHOD_NAME__, "invalid accelerator component " + samplerName);}
@@ -153,7 +153,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 				     BDSTiltOffset*           tiltOffset,
 				     BDSSamplerType           samplerType,
-				     G4String                 samplerName)
+				     const G4String&          samplerName)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
