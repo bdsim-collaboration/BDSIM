@@ -208,23 +208,36 @@ void BDSCurvilinearBuilder::CreateCurvilinearElementSplit(const G4String&       
                                                                     G4int splitnumber,
                                                                     BDSBeamline* beamline)
 {
+    // we'll take the tilt from the first element - they should only ever be the same when used here
+    G4bool tilted = BDS::IsFinite((*startElement)->GetTilt());
 
-// BDSTiltOffset* to = nullptr;
-//      if (tilted)
-//	{to = (*startElement)->GetTiltOffset();}
-//
-// get total arc and angle then split
-//      arcLenghtSplit =
-//
-//      component = factory->CreateCurvilinearVolume(elementName,
-//						   arcLength,
-//						   chordLength,
-//						   crRadius,
-//						   angle,
-//						   to);
-// for loop with the one component
-//
-//      beamline->AddComponent(component);
+     BDSTiltOffset* to = nullptr;
+          if (tilted)
+        {to = (*startElement)->GetTiltOffset();}
+
+    // get total arc and angle then split
+    G4double chordLength = (*startElement)->GetChordLength() + paddingLength;
+    G4double arcLength = (*startElement)->GetArcLength() + paddingLength;
+    G4double angle       = (*startElement)->GetAngle();
+
+    G4double chordLengthSplit = chordLength/splitnumber;
+    G4double arcLengthSplit = arcLength/splitnumber;
+    G4double angleSplit = angle/splitnumber;
+
+    BDSSimpleComponent* component = factory->CreateCurvilinearVolume(elementName+ std::to_string(index),
+                                                                     arcLengthSplit,
+                                                                     chordLengthSplit,
+                                                                     crRadius,
+                                                                     angleSplit,
+                                                                     to);
+//    for loop with the one component
+
+    for (int it = 0; it < splitnumber; it++)
+    {
+        beamline->AddComponent(component);
+        BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
+    }
+
 }
 
 
