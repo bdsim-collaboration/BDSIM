@@ -138,6 +138,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
         BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
                                                                   vacuumVols,
                                                                   true);
+        BuildOuterField();
       }
 
   
@@ -246,9 +247,5 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 void BDSMagnetNonSplitOuter::Build()
 {
   SBendWithSingleOuter(element->name);
-  
-  if (!(element->fieldOuter.empty()) && !(element->extractOuterContainer)) // check when to build the outer field
-    {
-      BuildOuterField(); // must be done when the containerLV exists
-    }
+
 }
