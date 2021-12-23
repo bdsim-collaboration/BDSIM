@@ -154,6 +154,10 @@ private:
   BDSDetectorConstruction& operator=(const BDSDetectorConstruction&) = delete;
   BDSDetectorConstruction(BDSDetectorConstruction&) = delete;
   
+  /// Prepare extra sampler sensitive detector classes required if we have any particle
+  /// filters created for samplers.
+  void PrepareExtraSamplerSDs();
+  
   /// Count number of fields required for placements.
   void CountPlacementFields();
   

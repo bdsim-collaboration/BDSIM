@@ -140,6 +140,7 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
     }
 
   UpdateSamplerDiameterAndCountSamplers();
+  PrepareExtraSamplerSDs();
   CountPlacementFields();
 }
 
@@ -186,6 +187,12 @@ void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
 
   // add number of sampler placements to count of samplers
   nSamplers += (G4int)BDSParser::Instance()->GetSamplerPlacements().size();
+}
+
+void BDSDetectorConstruction::PrepareExtraSamplerSDs()
+{
+  const auto& samplerFilterIDtoPDGSet = BDSParser::Instance()->GetSamplerFilterIDToSet();
+  BDSSDManager::Instance()->ConstructSamplerSDsForParticleSets(samplerFilterIDtoPDGSet);
 }
 
 void BDSDetectorConstruction::CountPlacementFields()

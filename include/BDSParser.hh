@@ -75,6 +75,10 @@ public:
   /// we re-expose this function as public for use in BDSIM, without redefining it
   /// or reimplementing it. const FastList<Element>& GMAD::Parser::GetBeamline() const;
   using GMAD::Parser::GetBeamline;
+  
+  /// Import privately inherited function to access sampler filter map.
+  /// const std::map<int, std::set<int>>& GetSamplerFilterIDToSet() const {return samplerFilterIDToSet;}
+  using GMAD::Parser::GetSamplerFilterIDToSet;
 
   /// Return sequence.
   inline const GMAD::FastList<GMAD::Element>& GetSequence(const std::string& name) {return get_sequence(name);}
