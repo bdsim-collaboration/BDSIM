@@ -193,8 +193,8 @@ namespace GMAD
     std::string current_start;
     std::string current_end;
     ///@}
-    /// Beamline Access (for pybdsim)
-    const FastList<Element>& GetBeamline()const;
+    /// Beamline Access.
+    const FastList<Element>& GetBeamline() const;
     
   private:
     /// Set sampler
