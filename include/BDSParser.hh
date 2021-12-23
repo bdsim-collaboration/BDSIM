@@ -71,8 +71,10 @@ public:
   /// Return the vector of region objects.
   inline const std::vector<GMAD::Atom>& GetAtoms() const {return atom_list;}
   
-  /// Return beamline.
-  inline const GMAD::FastList<GMAD::Element>& GetBeamline() const {return beamline_list;}
+  /// Return the beamline. See GMAD::Parser. Our inheritance here is private, so
+  /// we re-expose this function as public for use in BDSIM, without redefining it
+  /// or reimplementing it. const FastList<Element>& GMAD::Parser::GetBeamline() const;
+  using GMAD::Parser::GetBeamline;
 
   /// Return sequence.
   inline const GMAD::FastList<GMAD::Element>& GetSequence(std::string name) {return get_sequence(name);}
