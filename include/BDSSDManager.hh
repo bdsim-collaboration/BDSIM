@@ -66,7 +66,9 @@ class BDSSDManager
 {
 public:
   static BDSSDManager* Instance(); /// Singleton accessor.
-
+  
+  BDSSDManager(const BDSSDManager&) = delete;
+  BDSSDManager& operator=(const BDSSDManager&) = delete;
   ~BDSSDManager();
 
   /// Access a sensitive detector by the class enum. Default is a nullptr and also
@@ -171,9 +173,6 @@ public:
 private:
   /// Private default constructor for singleton.
   BDSSDManager();
-
-  BDSSDManager(const BDSSDManager&) = delete;
-  BDSSDManager& operator=(const BDSSDManager&) = delete;
  
   static BDSSDManager* instance;
 
