@@ -13,3 +13,5 @@ beam, particle="proton",
       distrFileFormat="pt";
 
 option, physicsList="all_particles";
+
+option, matchDistrFileLength=1;
