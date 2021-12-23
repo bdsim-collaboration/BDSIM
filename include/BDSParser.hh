@@ -77,7 +77,7 @@ public:
   using GMAD::Parser::GetBeamline;
 
   /// Return sequence.
-  inline const GMAD::FastList<GMAD::Element>& GetSequence(std::string name) {return get_sequence(name);}
+  inline const GMAD::FastList<GMAD::Element>& GetSequence(const std::string& name) {return get_sequence(name);}
   
   /// Return an element definition. Returns nullptr if not found. Note the element_list is
   /// emptied after parsing.

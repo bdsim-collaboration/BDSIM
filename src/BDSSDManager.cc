@@ -61,7 +61,7 @@ BDSSDManager* BDSSDManager::Instance()
 
 BDSSDManager::~BDSSDManager()
 {
-  // no need to delete SD's as they are all registered in G4SDManager
+  // no need to delete SDs as they are all registered in G4SDManager
   instance = nullptr;
 
   for (auto kv : filters)
