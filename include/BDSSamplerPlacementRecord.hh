@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSSAMPLERINFO_H
-#define BDSSAMPLERINFO_H
+#ifndef BDSSAMPLERPLACEMENTRECORD_H
+#define BDSSAMPLERPLACEMENTRECORD_H
 
 #include "BDSBeamlineElement.hh"
 
@@ -43,17 +43,17 @@ class BDSSampler;
  * @author Laurie Nevay
  */
 
-class BDSSamplerInfo
+class BDSSamplerPlacementRecord
 {
 public:
-  BDSSamplerInfo(const G4String&           nameIn,
-		 BDSSampler*               samplerIn,
-		 const G4Transform3D&      transformIn,
-		 G4double                  sPositionIn  = -1000,
-		 const BDSBeamlineElement* elementIn    = nullptr,
-		 const G4String&           uniqueNameIn = "");
+  BDSSamplerPlacementRecord(const G4String&           nameIn,
+                            BDSSampler*               samplerIn,
+                            const G4Transform3D&      transformIn,
+                            G4double                  sPositionIn  = -1000,
+                            const BDSBeamlineElement* elementIn    = nullptr,
+                            const G4String&           uniqueNameIn = "");
 
-  ~BDSSamplerInfo(){;}
+  ~BDSSamplerPlacementRecord(){;}
 
   /// @{ Accessor
   inline G4String      Name()             const {return name;}
@@ -68,7 +68,7 @@ public:
   
 private:
   /// Private default constructor to force use of provided one.
-  BDSSamplerInfo();
+  BDSSamplerPlacementRecord();
 
   /// The name of the sampler
   G4String name;
@@ -93,7 +93,7 @@ private:
 
 };
 
-G4int BDSSamplerInfo::BeamlineIndex() const
+G4int BDSSamplerPlacementRecord::BeamlineIndex() const
 {
   if (element)
     {return element->GetIndex();}

@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutput.hh"
 #include "BDSNavigatorPlacements.hh"
 #include "BDSSamplerRegistry.hh"
-#include "BDSSamplerInfo.hh"
+#include "BDSSamplerPlacementRecord.hh"
 #include "BDSSDApertureImpacts.hh"
 #include "BDSSDCollimator.hh"
 #include "BDSSDEnergyDeposition.hh"
@@ -577,7 +577,7 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	  for (G4int i = 0; i < nHits; i++)
 	    {
 	      G4int samplerIndex = (*SampHC)[i]->samplerID;
-	      BDSSamplerInfo info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
+	      BDSSamplerPlacementRecord info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
 	      if (std::find(trajectorySamplerID.begin(), trajectorySamplerID.end(), samplerIndex) != trajectorySamplerID.end())
 		{
 		  BDSTrajectory* trajToStore = trackIDMap[(*SampHC)[i]->trackID];
