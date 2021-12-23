@@ -46,6 +46,8 @@ class BDSSampler;
 class BDSSamplerPlacementRecord
 {
 public:
+  /// No default constructor.
+  BDSSamplerPlacementRecord() = delete;
   BDSSamplerPlacementRecord(const G4String&           nameIn,
                             BDSSampler*               samplerIn,
                             const G4Transform3D&      transformIn,
@@ -67,9 +69,6 @@ public:
   /// @}
   
 private:
-  /// Private default constructor to force use of provided one.
-  BDSSamplerPlacementRecord();
-
   /// The name of the sampler
   G4String name;
   
@@ -95,10 +94,7 @@ private:
 
 G4int BDSSamplerPlacementRecord::BeamlineIndex() const
 {
-  if (element)
-    {return element->GetIndex();}
-  else
-    {return -1;}
+  return element ? element->GetIndex() : -1;
 }
 
 #endif
