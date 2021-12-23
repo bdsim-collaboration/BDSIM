@@ -416,8 +416,8 @@ void BDSSDManager::ConstructSamplerSDsForParticleSets(const std::map<int, std::s
       auto aSampler = new BDSSDSampler(samplerName);
       auto filter = new BDSSDFilterPDGIDSet("pdgid_set_number_"+std::to_string(IDAndSet.first), IDAndSet.second);
       aSampler->SetFilter(filter);
-      extraSamplersWithFilters[IDAndSet.first] = aSampler;
-      extraSamplerFilters[IDAndSet.first] = filter; // keep a map of them for deleting later
+      extraSamplersWithFilters[(G4int)IDAndSet.first] = aSampler;
+      extraSamplerFilters[(G4int)IDAndSet.first] = filter; // keep a map of them for deleting later
       SDMan->AddNewDetector(aSampler);
     }
 }
