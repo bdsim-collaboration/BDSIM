@@ -149,7 +149,7 @@ public:
   /// @}
   
   /// Convenience accessor.
-  inline G4double          GetTilt() const {return tiltOffset ? tiltOffset->GetTilt() : 0.0;}
+  inline G4double GetTilt() const {return tiltOffset ? tiltOffset->GetTilt() : 0.0;}
   
   ///@{ Reassign the end variable as required when applying a transform
   inline void SetReferencePositionEnd(G4ThreeVector     newReferencePositionEnd);
@@ -208,11 +208,11 @@ private:
   ///@}
 
   /// The tilt and offset this element was constructed with. Default is nullptr.
-  BDSTiltOffset*    tiltOffset;
+  BDSTiltOffset* tiltOffset;
 
   /// Transform made from positionMiddle and rotationMiddle. By using them as
   /// a transform, the rotation matrix is the correct way around (inversion).
-  G4Transform3D*    placementTransform;
+  G4Transform3D* placementTransform;
 
   /// Transform made from the referencePositionMiddle and referenceRottationMiddle.
   /// The read out (curvilinear) geometry should always align with the reference
@@ -231,7 +231,7 @@ private:
   /// accelerator component are valid. This transform places the sampler just at the
   /// end of the element overlapping with the outgoing boundary as defined by the
   /// reference position at the end and the reference rotation at the end.
-  G4Transform3D*    samplerPlacementTransform;
+  G4Transform3D* samplerPlacementTransform;
 
   /// Index of this item in the beamline - saves keeping track of iterators and conversion.
   G4int index;

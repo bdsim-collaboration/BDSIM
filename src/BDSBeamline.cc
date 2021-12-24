@@ -45,9 +45,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 G4double BDSBeamline::paddingLength = -1;
 
-BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
-			 G4RotationMatrix* initialGlobalRotation,
-			 G4double          initialS):
+BDSBeamline::BDSBeamline(const G4ThreeVector& initialGlobalPosition,
+			 G4RotationMatrix*    initialGlobalRotation,
+			 G4double             initialS):
   totalChordLength(0),
   totalArcLength(0),
   totalAngle(0),
@@ -86,8 +86,8 @@ BDSBeamline::BDSBeamline(G4Transform3D initialTransform,
 
 BDSBeamline::~BDSBeamline()
 {
-  for (iterator it = begin(); it != end(); ++it)
-    {delete (*it);}
+  for (auto it : *this)
+    {delete it;}
   // special case, if empty then previousReferenceRotationEnd is not used in the first element
   if (size()==0)
     {delete previousReferenceRotationEnd;}
