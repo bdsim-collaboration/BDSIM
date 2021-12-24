@@ -65,7 +65,11 @@ private:
   /// Vector of beam line elements - the data.
   BeamlineVector beamline;
   
-public:
+public:  
+  /// assignment and copy constructor not implemented nor used.
+  BDSBeamline& operator=(const BDSBeamline&) = delete;
+  BDSBeamline(BDSBeamline&) = delete;
+  
   /// Versatile basic constructor that allows a finite position and rotation to be applied
   /// at the beginning of the beamline in global coordinates. Remember the maximum
   /// extents of the beamline will also be displaced. The default constructor is in effect
@@ -284,10 +288,6 @@ private:
   /// index for the beamline element in the main BDSBeamlineVector element.
   /// This is filled in order so it's sorted by design.
   std::vector<G4double> sEnd;
-  
-  /// assignment and copy constructor not implemented nor used
-  BDSBeamline& operator=(const BDSBeamline&);
-  BDSBeamline(BDSBeamline&);
 };
 
 #endif
