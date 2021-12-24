@@ -121,11 +121,11 @@ std::set<G4VPhysicalVolume*> BDSBeamlineElement::GetPVsFromAssembly(G4AssemblyVo
   return result;
 }
 
-std::set<G4VPhysicalVolume*> BDSBeamlineElement::PlaceElement(const G4String& pvName,
-                                                    G4VPhysicalVolume* motherPV,
-                                                    G4bool             useCLPlacementTransform,
-                                                    G4int              pvCopyNumber,
-                                                    G4bool             checkOverlaps) const
+std::set<G4VPhysicalVolume*> BDSBeamlineElement::PlaceElement(const G4String&    pvName,
+							      G4VPhysicalVolume* motherPV,
+							      G4bool             useCLPlacementTransform,
+							      G4int              pvCopyNumber,
+							      G4bool             checkOverlaps) const
 {
   G4Transform3D* pvTransform = GetPlacementTransform();
   if (useCLPlacementTransform)

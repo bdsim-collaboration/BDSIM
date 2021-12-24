@@ -71,7 +71,7 @@ BDSParallelWorldSampler::~BDSParallelWorldSampler()
 void BDSParallelWorldSampler::Construct()
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  G4VPhysicalVolume* samplerWorld   = GetWorld();
+  G4VPhysicalVolume* samplerWorld = GetWorld();
   samplerWorldLV = samplerWorld->GetLogicalVolume();
 
   samplerWorldVis = new G4VisAttributes(*(globals->VisibleDebugVisAttr()));
