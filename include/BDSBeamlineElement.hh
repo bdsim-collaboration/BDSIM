@@ -62,6 +62,9 @@ class G4VPhysicalVolume;
 class BDSBeamlineElement
 {
 public:
+  BDSBeamlineElement() = delete;
+  BDSBeamlineElement(const BDSBeamlineElement&) = delete;
+  BDSBeamlineElement& operator=(const BDSBeamlineElement&) = delete;
   BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 		     const G4ThreeVector&     positionStartIn,
 		     const G4ThreeVector&     positionMiddleIn,
@@ -156,15 +159,10 @@ public:
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &element);
 
-  /// Whether this beam line element will oerlaps in 3D Cartesian coordinates with another.
+  /// Whether this beam line element will overlaps in 3D Cartesian coordinates with another.
   G4bool Overlaps(const BDSBeamlineElement* otherElement) const;
   
 private:
-  /// Private default constructor to force use of provided constructor
-  BDSBeamlineElement() = delete;
-  BDSBeamlineElement(const BDSBeamlineElement&) = delete;
-  BDSBeamlineElement& operator=(const BDSBeamlineElement&) = delete;
-    
   /// The accelerator component
   BDSAcceleratorComponent* component;
 
