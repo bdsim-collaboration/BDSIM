@@ -16,3 +16,5 @@ mesh: scorermesh, nx=100, ny=20, nz=30, nr=20, nphi=30,
       axisZ = 0.2,
       angle = pi,
       axisAngle = 1;
+
+print, mesh;
