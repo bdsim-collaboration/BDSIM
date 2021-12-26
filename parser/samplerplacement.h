@@ -66,6 +66,7 @@ namespace GMAD
     // This should be std::list<int> but the parser only supports double for numerical types in a list.
     /// List of PDG IDs of which particles to record for - default is empty, so all particles.
     std::list<double> partID;
+    int partIDSetID; ///< The unique ID of the particle set given by the parser.
     
     /// constructor
     SamplerPlacement();

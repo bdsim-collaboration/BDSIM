@@ -20,5 +20,5 @@ s1: samplerplacement, referenceElement="d1",
 		      aper1=10*cm,
 		      partID={12,-12,13,-13};
 
-s2: samplerplacement, x=-40*cm, aper=10*cm,
+s2: samplerplacement, x=-40*cm, aper1=10*cm,
     		      partID={12,-12,13,-13};
