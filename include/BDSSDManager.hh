@@ -80,7 +80,7 @@ public:
   G4VSensitiveDetector* SensitiveDetector(const BDSSDType sdType,
 					  G4bool applyOptions = false) const;
 
-  /// SD for samplers (plane type).
+  /// SD for samplers (plane type). See also SamplerPlaneWithFilter below.
   inline BDSSDSampler* SamplerPlane() const {return samplerPlane;}
 
   /// SD for samplers (cylinder type).
