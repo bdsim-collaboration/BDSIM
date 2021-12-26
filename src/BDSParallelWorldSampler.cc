@@ -67,6 +67,9 @@ BDSParallelWorldSampler::~BDSParallelWorldSampler()
   //for (auto placement : placements)
   //  {delete placement;}
   delete samplerWorldVis;
+  //delete generalPlane; // <- included in map we delete the contents of next - avoid double deletion
+  for (auto kv : samplerInstances)
+    {delete kv.second;}
 }
 
 void BDSParallelWorldSampler::Construct()
