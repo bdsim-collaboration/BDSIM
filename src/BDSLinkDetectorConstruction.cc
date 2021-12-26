@@ -36,8 +36,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh"
 #include "BDSSampler.hh"
+#include "BDSSamplerInfo.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
+#include "BDSSamplerType.hh"
 #include "BDSSDManager.hh"
 #include "BDSTiltOffset.hh"
 
@@ -161,7 +163,9 @@ G4VPhysicalVolume* BDSLinkDetectorConstruction::Construct()
   for (auto element : *linkBeamline)
     {
       BDSLinkComponent* lc = dynamic_cast<BDSLinkComponent*>(element->GetAcceleratorComponent());
-      G4String name = lc ? lc->LinkName() : element->GetSamplerName();
+      BDSSamplerInfo* samplerInfo = element->GetSamplerInfo();
+      G4String samplerName = samplerInfo ? samplerInfo->name : "unknown";
+      G4String name = lc ? lc->LinkName() : samplerName;
       G4int linkID = PlaceOneComponent(element, name);
       nameToElementIndex[name] = linkID;
     }
@@ -303,7 +307,8 @@ G4int BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& colli
 						opaqueBox,
 						opaqueBox->GetExtent().DZ());
   BDSAcceleratorModel::Instance()->RegisterLinkComponent(comp);
-  linkBeamline->AddComponent(comp, nullptr, BDSSamplerType::plane, comp->GetName() + "_out");
+  BDSSamplerInfo* samplerInfo = new BDSSamplerInfo(comp->GetName() + "_out", BDSSamplerType::plane);
+  linkBeamline->AddComponent(comp, nullptr, samplerInfo);
 
   // update world extents and world solid
   UpdateWorldSolid();
