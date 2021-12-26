@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iomanip>
 #include <iostream>
+#include <list>
 #include <string>
 
 #include "published.h"
@@ -61,6 +62,10 @@ namespace GMAD
     double aper2;
     double aper3;
     double aper4;
+    
+    // This should be std::list<int> but the parser only supports double for numerical types in a list.
+    /// List of PDG IDs of which particles to record for - default is empty, so all particles.
+    std::list<double> partID;
     
     /// constructor
     SamplerPlacement();
