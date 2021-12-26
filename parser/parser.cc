@@ -779,7 +779,7 @@ void Parser::Overwrite(const std::string& objectName)
 template <class C>
 bool Parser::FindAndExtend(const std::string& objectName)
 {
-  auto vec = GetList<C>();
+  auto& vec = GetList<C>();
   for (auto it = vec.begin(); it!=vec.end(); ++it)
     {
       if ((*it).name == objectName)

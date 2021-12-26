@@ -72,6 +72,8 @@ General
 Bug Fixes
 ---------
 
+* Fix extension of all parser objects (i.e. not beam line elements), which was broken. Extension
+  is the access and update of a variable inside a defined object such as a field or scorer.
 * Fix parser :code:``print` command for all objects in the parser. Previously, only beam line elements
   would work with this command or variables in the input GMAD.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
