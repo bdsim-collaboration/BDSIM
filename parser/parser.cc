@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <list>
 #include <set>
+#include <string>
+#include <vector>
 
 // for getpwuid: http://linux.die.net/man/3/getpwuid
 #include <unistd.h>
@@ -818,6 +820,62 @@ void Parser::PrintElements()const
 void Parser::PrintOptions()const
 {
   options.print();
+}
+
+bool Parser::TryPrintingObject(const std::string& objectName) const
+{
+  // We just don't know the type of the object, only the name, so we must
+  // search each member vector. Try to optimise by returning once done.
+  // This is a cpu-heavy solution vs a memory-heavy one that would have to
+  // keep a duplicate copy of all objects for printing.
+  
+  const std::string& on = objectName; // shortcut
+
+  // we use a lambda to compare against obj.name instead of obj itself
+  auto searchAtom = std::find_if(atom_list.begin(), atom_list.end(), [&on](const Atom& obj) {return obj.name == on;});
+  if (searchAtom != atom_list.end())
+    {searchAtom->print(); return true;}
+  auto searchNewColour = std::find_if(colour_list.begin(), colour_list.end(), [&on](const NewColour& obj) {return obj.name == on;});
+  if (searchNewColour != colour_list.end())
+    {searchNewColour->print(); return true;}
+  auto searchCrystal = std::find_if(crystal_list.begin(), crystal_list.end(), [&on](const Crystal& obj) {return obj.name == on;});
+  if (searchCrystal != crystal_list.end())
+    {searchCrystal->print(); return true;}
+  auto searchField = std::find_if(field_list.begin(), field_list.end(), [&on](const Field& obj) {return obj.name == on;});
+  if (searchField != field_list.end())
+    {searchField->print(); return true;}
+  auto searchMaterial = std::find_if(material_list.begin(), material_list.end(), [&on](const Material& obj) {return obj.name == on;});
+  if (searchMaterial != material_list.end())
+    {searchMaterial->print(); return true;}
+  auto searchQuery = std::find_if(query_list.begin(), query_list.end(), [&on](const Query& obj) {return obj.name == on;});
+  if (searchQuery != query_list.end())
+    {searchQuery->print(); return true;}
+  auto searchRegion = std::find_if(region_list.begin(), region_list.end(), [&on](const Region& obj) {return obj.name == on;});
+  if (searchRegion != region_list.end())
+    {searchRegion->print(); return true;}
+  auto searchTunnel = std::find_if(tunnel_list.begin(), tunnel_list.end(), [&on](const Tunnel& obj) {return obj.name == on;});
+  if (searchTunnel != tunnel_list.end())
+    {searchTunnel->print(); return true;}
+  auto searchXsecbias = std::find_if(xsecbias_list.begin(), xsecbias_list.end(), [&on](const PhysicsBiasing& obj) {return obj.name == on;});
+  if (searchXsecbias != xsecbias_list.end())
+    {searchXsecbias->print(); return true;}
+  auto searchPlacement = std::find_if(placement_list.begin(), placement_list.end(), [&on](const Placement& obj) {return obj.name == on;});
+  if (searchPlacement != placement_list.end())
+    {searchPlacement->print(); return true;}
+  auto searchCavityModel = std::find_if(cavitymodel_list.begin(), cavitymodel_list.end(), [&on](const CavityModel& obj) {return obj.name == on;});
+  if (searchCavityModel != cavitymodel_list.end())
+    {searchCavityModel->print(); return true;}
+  auto searchSamplerPlacement = std::find_if(samplerplacement_list.begin(), samplerplacement_list.end(), [&on](const SamplerPlacement& obj) {return obj.name == on;});
+  if (searchSamplerPlacement != samplerplacement_list.end())
+    {searchSamplerPlacement->print(); return true;}
+  auto searchScorerMesh = std::find_if(scorermesh_list.begin(), scorermesh_list.end(), [&on](const ScorerMesh& obj) {return obj.name == on;});
+  if (searchScorerMesh != scorermesh_list.end())
+    {searchScorerMesh->print(); return true;}
+  auto searchAperture = std::find_if(aperture_list.begin(), aperture_list.end(), [&on](const Aperture& obj) {return obj.name == on;});
+  if (searchAperture != aperture_list.end())
+    {searchAperture->print(); return true;}
+  
+  return false;
 }
 
 const FastList<Element>& Parser::GetBeamline()const
