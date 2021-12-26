@@ -41,6 +41,7 @@ class BDSSampler;
 class BDSParallelWorldSampler: public G4VUserParallelWorld
 {
 public:
+  BDSParallelWorldSampler() = delete; ///< No default constructor.
   explicit BDSParallelWorldSampler(const G4String& name);
   virtual ~BDSParallelWorldSampler();
 
@@ -58,9 +59,6 @@ public:
 	     G4double                  samplerRadius);
 
 private:
-  /// No default constructor.
-  BDSParallelWorldSampler() = delete;
-  
   /// Cache of the placements to clean up at the end.
   std::vector<G4VPhysicalVolume*> placements;
 
