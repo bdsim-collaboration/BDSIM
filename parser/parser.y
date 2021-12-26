@@ -767,17 +767,22 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
         | print OPTION { if(execute) Parser::Instance()->PrintOptions(); }
         | print VARIABLE
           {
-            if(execute) {
-              Symtab *sp = Parser::Instance()->symlook(*($2));
-              if (!sp) {
-                // variable not defined, maybe an element? (will exit if not)
-                const Element& element = Parser::Instance()->find_element(*($2));
-                element.print();
-              }
-              else {
-                sp->Print();
-              }
-            }
+            if(execute)
+	      {
+		Symtab* sp = Parser::Instance()->symlook(*($2));
+		if (!sp)
+		  {
+		    bool printedObjectOk = Parser::Instance()->TryPrintingObject(*($2));
+		    if (!printedObjectOk)
+		      {
+			// variable not defined, maybe an element? (will exit if not)
+			const Element& element = Parser::Instance()->find_element(*($2));
+			element.print();
+		      }
+		  }
+		else
+		  {sp->Print();}
+	      }
           }
         | print STR    { if(execute) std::cout << *($2) << std::endl;}
         | print symbol { if(execute) $2->Print();}
@@ -1057,6 +1062,8 @@ samplerplacement_options : paramassign '=' aexpr samplerplacement_options_extend
                     { if(execute) Parser::Instance()->SetValue<SamplerPlacement>((*$1),$3);}
                   | paramassign '=' string samplerplacement_options_extend
                     { if(execute) Parser::Instance()->SetValue<SamplerPlacement>(*$1,*$3);}
+                  | paramassign '=' vecexpr samplerplacement_options_extend
+                    { if(execute) Parser::Instance()->SetValue<SamplerPlacement>(*($1),$3);}
 
 scorer_options_extend : /* nothing */
                   | ',' scorer_options

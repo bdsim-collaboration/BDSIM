@@ -187,6 +187,9 @@ namespace GMAD
     void PrintElements()const;
     void PrintOptions()const;
     ///@}
+    /// Search each member vector for an object with the matching name.
+    /// Return true if successfully printed.
+    bool TryPrintingObject(const std::string& objectName) const;
     
     ///@{ Name of beamline
     std::string current_line;
