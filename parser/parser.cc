@@ -874,6 +874,9 @@ bool Parser::TryPrintingObject(const std::string& objectName) const
   auto searchAperture = std::find_if(aperture_list.begin(), aperture_list.end(), [&on](const Aperture& obj) {return obj.name == on;});
   if (searchAperture != aperture_list.end())
     {searchAperture->print(); return true;}
+  auto searchBLMPlacement = std::find_if(blm_list.begin(), blm_list.end(), [&on](const BLMPlacement& obj) {return obj.name == on;});
+  if (searchBLMPlacement != blm_list.end())
+    {searchBLMPlacement->print(); return true;}
   
   return false;
 }
