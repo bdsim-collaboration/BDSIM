@@ -22,11 +22,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSExtent.hh"
 #include "BDSExtentGlobal.hh"
+#include "BDSSamplerInfo.hh"
 #include "BDSSamplerType.hh"
+#include "BDSTiltOffset.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4ThreeVector.hh"
-#include "BDSTiltOffset.hh"
 
 #include <ostream>
 #include <set>
@@ -82,8 +83,7 @@ public:
 		     G4double                 sPositionMiddleIn,
 		     G4double                 sPositionEndIn,
 		     BDSTiltOffset*           tiltOffsetIn  = nullptr,
-		     BDSSamplerType           samplerTypeIn = BDSSamplerType::none,
-		     const G4String&          samplerNameIn = "",
+		     BDSSamplerInfo*          samplerInfoIn = nullptr,
 		     G4int                    indexIn       = -1);
 
   ~BDSBeamlineElement();
@@ -128,8 +128,8 @@ public:
   inline BDSTiltOffset*    GetTiltOffset()                const {return tiltOffset;}
   inline G4Transform3D*    GetPlacementTransform()        const {return placementTransform;}
   inline G4Transform3D*    GetPlacementTransformCL()      const {return placementTransformCL;}
-  inline BDSSamplerType    GetSamplerType()               const {return samplerType;}
-  inline G4String          GetSamplerName()               const {return samplerName;}
+  inline BDSSamplerInfo*   GetSamplerInfo()               const {return samplerInfo;}
+  inline BDSSamplerType    GetSamplerType()               const {return samplerInfo ? samplerInfo->samplerType : BDSSamplerType::none;}
   inline G4Transform3D*    GetSamplerPlacementTransform() const {return samplerPlacementTransform;}
   inline G4int             GetIndex()                     const {return index;}
   inline G4String          GetMaterial()                  const {return component->Material();}
@@ -218,12 +218,9 @@ private:
   /// The read out (curvilinear) geometry should always align with the reference
   /// trajectory and not the possibly offset position of the mass geometry, hence
   /// have a separate transform for it.
-  G4Transform3D*    placementTransformCL;
+  G4Transform3D* placementTransformCL;
 
-  /// The type of sampler to attach to this element - could be none as well.
-  const BDSSamplerType samplerType;
-
-  const G4String samplerName;
+  BDSSamplerInfo* samplerInfo;
 
   /// The transform for where the sampler 'attached' to this element should be placed.
   /// Note this would normally overlap in the real 'mass' world, but this will be used

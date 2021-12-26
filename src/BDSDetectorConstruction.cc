@@ -53,6 +53,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSRegion.hh"
+#include "BDSSamplerInfo.hh"
 #include "BDSSamplerType.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
@@ -357,6 +358,17 @@ void BDSDetectorConstruction::BuildBeamlines()
     }
 }
 
+BDSSamplerInfo* BDSDetectorConstruction::BuildSamplerInfo(const GMAD::Element* element)
+{
+  BDSSamplerType sType = BDS::DetermineSamplerType(element->samplerType);
+  if (sType == BDSSamplerType::none)
+    {return nullptr;}
+  BDSSamplerInfo* result = new BDSSamplerInfo(element->samplerName,
+                                              sType,
+                                              (G4int)element->samplerParticleSetID);
+  return result;
+}
+
 BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD::Element>& beamLine,
 						      const G4String&      name,
 						      const G4Transform3D& initialTransform,
@@ -425,15 +437,16 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 									   currentArcLength);
       if(temp)
 	{
-          BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
+          G4bool forceNoSamplerOnThisElement = false;
           if ((!canSampleAngledFaces) && (BDS::IsFinite((*elementIt).e2)))
-            {sType = BDSSamplerType::none;}
+            {forceNoSamplerOnThisElement = true;}
           if ((!canSampleAngledFaces) && (BDS::IsFinite(nextElementInputFace)))
-            {sType = BDSSamplerType::none;}
+            {forceNoSamplerOnThisElement = true;}
           if (temp->GetType() == "dump") // don't sample after a dump as there'll be nothing
-            {sType = BDSSamplerType::none;}
+            {forceNoSamplerOnThisElement = true;}
+          BDSSamplerInfo* samplerInfo = forceNoSamplerOnThisElement ? nullptr : BuildSamplerInfo(&(*elementIt));
           BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
-          massWorld->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
+          massWorld->AddComponent(temp, tiltOffset, samplerInfo);
 	}
     }
 

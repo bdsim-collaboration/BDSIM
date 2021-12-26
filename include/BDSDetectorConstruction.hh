@@ -51,6 +51,7 @@ class BDSBeamlineSet;
 class BDSComponentFactoryUser;
 class BDSFieldObjects;
 class BDSParticleDefinition;
+class BDSSamplerInfo;
 
 #if G4VERSION_NUMBER > 1009
 class BDSBOptrMultiParticleChangeCrossSection;
@@ -142,6 +143,10 @@ public:
   static G4ThreeVector SideToLocalOffset(const GMAD::Placement& placement,
 					 const BDSBeamline*     beamLine,
 					 const BDSExtent&       placementExtent);
+  
+  /// Construct sampler specifications from a GMAD element. May return nullptr if
+  /// none type is specified.
+  static BDSSamplerInfo* BuildSamplerInfo(const GMAD::Element* element);
 
   /// Whether to build a sampler world or not. If we've counted more than one sampler we
   /// should build the world in the end.
