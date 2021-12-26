@@ -30,7 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class G4VisAttributes;
 class G4VPhysicalVolume;
 class BDSBeamlineElement;
-class BDSSampler;
+class BDSSamplerPlane;
 
 /**
  * @brief A parallel world for sampler planes.
@@ -50,7 +50,7 @@ public:
   virtual void Construct();
 
   /// @{ Accessor.
-  BDSSampler* GeneralPlane() const {return generalPlane;}
+  BDSSamplerPlane* GeneralPlane() const {return generalPlane;}
   G4LogicalVolume* WorldLV() const {return samplerWorldLV;}
   /// @}
   
