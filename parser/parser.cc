@@ -868,6 +868,9 @@ bool Parser::TryPrintingObject(const std::string& objectName) const
   auto searchSamplerPlacement = std::find_if(samplerplacement_list.begin(), samplerplacement_list.end(), [&on](const SamplerPlacement& obj) {return obj.name == on;});
   if (searchSamplerPlacement != samplerplacement_list.end())
     {searchSamplerPlacement->print(); return true;}
+  auto searchScorer = std::find_if(scorer_list.begin(), scorer_list.end(), [&on](const Scorer& obj) {return obj.name == on;});
+  if (searchScorer != scorer_list.end())
+  {searchScorer->print(); return true;}
   auto searchScorerMesh = std::find_if(scorermesh_list.begin(), scorermesh_list.end(), [&on](const ScorerMesh& obj) {return obj.name == on;});
   if (searchScorerMesh != scorermesh_list.end())
     {searchScorerMesh->print(); return true;}
