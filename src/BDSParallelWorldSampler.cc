@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDSampler.hh"
+#include "BDSSamplerInfo.hh"
 #include "BDSSamplerType.hh"
 #include "BDSUtilities.hh"
 #include "BDSWarning.hh"
@@ -82,8 +83,18 @@ void BDSParallelWorldSampler::Construct()
   const BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->BeamlineMain();
   const G4bool checkOverlaps   = globals->CheckOverlaps();
 
-  // Construct the one sampler typically used for a general sampler
+  // Construct the one sampler typically used for a general sampler.
   generalPlane = new BDSSamplerPlane("Plane_sampler", samplerRadius);
+  samplerInstances[-1] = generalPlane;
+  // Construct any others we need.
+  std::map<int, std::set<int>> filterIDToSet = BDSParser::Instance()->GetSamplerFilterIDToSet();
+  for (const auto& kv : filterIDToSet)
+    {
+      BDSSamplerPlane* samp = new BDSSamplerPlane("Plane_sampler_w_filter_set_" + std::to_string(kv.first),
+						  samplerRadius,
+						  kv.first);
+      samplerInstances[kv.first] = samp;
+    }
 
   // For each element in the beamline (if a beamline has been defined) construct and place the
   // appropriate type of sampler if required. Info encoded in BDSBeamlineElement instance
@@ -124,7 +135,7 @@ void BDSParallelWorldSampler::Construct()
       else
 	{shape = BDSAcceleratorModel::Instance()->Aperture(samplerPlacement.apertureModel);}
       
-      BDSSampler* sampler = new BDSSamplerCustom(samplerName, *shape);
+      BDSSampler* sampler = new BDSSamplerCustom(samplerName, *shape, samplerPlacement.partIDSetID);
       G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,
 									sampler,
 									transform);
@@ -147,23 +158,26 @@ void BDSParallelWorldSampler::Construct()
 void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
 				    G4double samplerRadius)
 {
-  BDSSamplerType samplerType = element->GetSamplerType();
+  BDSSamplerInfo* samplerInfo = element->GetSamplerInfo();
+  if (!samplerInfo)
+    {return;}
+  BDSSamplerType samplerType = samplerInfo->samplerType;
   if (samplerType == BDSSamplerType::none)
     {return;}
   // else must be a valid sampler
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Sampler type: " << element->GetSamplerType() << G4endl;
 #endif
-  G4String name = element->GetSamplerName();
+  G4String name = samplerInfo->name;
   G4double sEnd = element->GetSPositionEnd();
   
   BDSSampler* sampler = nullptr;
   switch (samplerType.underlying())
     {
     case BDSSamplerType::plane:
-      {sampler = generalPlane; break;}
+      {sampler = samplerInstances[samplerInfo->pdgSetID]; break;}
     case BDSSamplerType::cylinder:
-      {
+      {// TBC - why is this uniquely built for each one?
 	G4double length = element->GetAcceleratorComponent()->GetChordLength();
 	sampler = new BDSSamplerCylinder(name,
 					 length,
