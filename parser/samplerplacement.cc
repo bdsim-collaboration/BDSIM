@@ -50,6 +50,7 @@ void SamplerPlacement::clear()
   aper3 = 0;
   aper4 = 0;
   partID.clear();
+  partIDSetID = -1;
 }
 
 void SamplerPlacement::PublishMembers()
@@ -77,6 +78,7 @@ void SamplerPlacement::PublishMembers()
   publish("aper3",         &SamplerPlacement::aper3);
   publish("aper4",         &SamplerPlacement::aper4);
   publish("partID",        &SamplerPlacement::partID);
+  // partIDSetID is for internal use only - not published
 }
 
 void SamplerPlacement::print()const
@@ -106,5 +108,6 @@ void SamplerPlacement::print()const
 	    << "partID list {";
   for (auto v : partID)
     {std::cout << v << ", ";}
-  std::cout << "}" << std::endl;
+  std::cout << "}" << std::endl
+  << "partIDSet ID " << partIDSetID << std::endl;
 }
