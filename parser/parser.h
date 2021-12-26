@@ -116,7 +116,10 @@ namespace GMAD
     /// Find the sequence defined in the parser and expand it if not already
     /// done so. Cache result in map of fastlists.
     const FastList<Element>& get_sequence(const std::string& name);
-    
+  
+    /// Add a particle set for a sampler and return a unique integer ID for that set. If no list
+    /// or empty list given, returns -1, the default for 'no filter'.
+    int add_sampler_partIDSet(std::list<int>* samplerPartIDListIn);
     /// insert a sampler into beamline_list
     void add_sampler(const std::string& name, int count, ElementType type, std::list<int>* samplerPartIDListIn = nullptr);
     /// insert a cylindrical sampler into beamline_list
@@ -337,6 +340,7 @@ namespace GMAD
     /// Sensitive detectors for particles later on.
     std::set<std::set<int>> samplerFilters;
     std::map<int, std::set<int>> samplerFilterIDToSet;
+    std::map<std::set<int>, int> setToSamplerFilterID;
   };
 
   template <class C, typename T>

@@ -1063,8 +1063,19 @@ samplerplacement_options : paramassign '=' aexpr samplerplacement_options_extend
                   | paramassign '=' string samplerplacement_options_extend
                     { if(execute) Parser::Instance()->SetValue<SamplerPlacement>(*$1,*$3);}
                   | paramassign '=' vecexpr samplerplacement_options_extend
-                    { if(execute) Parser::Instance()->SetValue<SamplerPlacement>(*($1),$3);}
-
+                    {
+		      if(execute)
+                        {
+                          Parser::Instance()->SetValue<SamplerPlacement>(*($1),$3);
+                          if (*($1) == "partID")
+                          {// manually register the particle filter set
+                             std::list<int>* partIDSet = Parser::Instance()->ArrayToList<int>($3);
+                             int setID = Parser::Instance()->add_sampler_partIDSet(partIDSet);
+                             Parser::Instance()->GetGlobal<SamplerPlacement>().partIDSetID = setID;
+                             //Parser::Instance()->SetValue<SamplerPlacement>("partIDSetID", setID);
+                          }
+                        }
+                   }
 scorer_options_extend : /* nothing */
                   | ',' scorer_options
 

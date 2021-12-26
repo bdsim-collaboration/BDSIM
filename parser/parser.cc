@@ -546,6 +546,24 @@ void Parser::set_sampler(const std::string& name,
     }
 }
 
+int Parser::add_sampler_partIDSet(std::list<int>* samplerPartIDListIn)
+{
+  if (!samplerPartIDListIn)
+    {return -1;}
+  std::set<int> partIDs = std::set<int>(std::begin(*samplerPartIDListIn), std::end(*samplerPartIDListIn));
+  auto alreadyExists = samplerFilters.count(partIDs);
+  if (alreadyExists > 0)
+    {return setToSamplerFilterID[partIDs];}
+  else
+    {
+      int particleSetID = (int) samplerFilterIDToSet.size();
+      samplerFilterIDToSet[particleSetID] = partIDs;
+      setToSamplerFilterID[partIDs] = particleSetID;
+      samplerFilters.insert(partIDs);
+      return particleSetID;
+    }
+}
+
 void Parser::add_sampler(const std::string& name, int count, ElementType type, std::list<int>* samplerPartIDListIn)
 {
 #ifdef BDSDEBUG 
@@ -553,15 +571,7 @@ void Parser::add_sampler(const std::string& name, int count, ElementType type, s
   if (count>=0) std::cout<<"["<< count <<"]";
   std::cout<<std::endl;
 #endif
-  std::set<int> partIDs;
-  int particleSetID = -1;
-  if (samplerPartIDListIn)
-  {
-    partIDs = std::set<int>(std::begin(*samplerPartIDListIn), std::end(*samplerPartIDListIn));
-    particleSetID = (int)samplerFilterIDToSet.size();
-    samplerFilterIDToSet[particleSetID] = partIDs;
-    samplerFilters.insert(partIDs);
-  }
+  int particleSetID = add_sampler_partIDSet(samplerPartIDListIn);
   set_sampler(name,count,type,"plane",0,particleSetID);
 }
 
