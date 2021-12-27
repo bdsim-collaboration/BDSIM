@@ -38,7 +38,7 @@ BDSSamplerCustom::BDSSamplerCustom(const G4String& nameIn,
   // BDSIM strictly controls the layout.
   BDSApertureFactory fac;
   containerSolid = fac.CreateSolid(name + "_aperture",
-				      BDSSamplerPlane::chordLength,
+				      BDSSamplerCustom::chordLength,
 				      shape);
   
   // We make the sampler 10x bigger than normal as it's still really small
@@ -47,7 +47,7 @@ BDSSamplerCustom::BDSSamplerCustom(const G4String& nameIn,
   // extra length for optical tracking.
 
   BDSExtent ae = shape->Extent();
-  G4double  dz = BDSSamplerPlane::chordLength * 0.5;
+  G4double  dz = BDSSamplerCustom::chordLength * 0.5;
   SetExtent(BDSExtent(ae.XNeg(), ae.XPos(), ae.YNeg(), ae.YPos(), -dz, dz));
 
   CommonConstruction();

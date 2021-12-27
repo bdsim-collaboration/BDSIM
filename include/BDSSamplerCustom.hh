@@ -38,7 +38,7 @@ class BDSSamplerCustom: public BDSSampler
 public:
   BDSSamplerCustom() = delete; ///< No default constructor.
   BDSSamplerCustom(const G4String& name,
-		   BDSApertrue*    shape,
+		   BDSAperture*    shape,
                    G4int filterSetIDIn = -1);
   
   /// @{ Assignment and copy constructor not implemented nor used.
