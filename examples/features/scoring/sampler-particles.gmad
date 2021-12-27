@@ -10,8 +10,9 @@ sample, range=d1, partID={11,-11,12,-12,13,-13};
 beam, particle="proton",
       kineticEnergy=20*GeV,
       distrType="userfile",
-      distrFileFormat="pt";
+      distrFileFormat="pdgid",
+      distrFile="varied-particles.dat";
+
+beam, matchDistrFileLength=1;
 
 option, physicsList="all_particles";
-
-option, matchDistrFileLength=1;
