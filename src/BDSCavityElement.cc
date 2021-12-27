@@ -79,6 +79,9 @@ void BDSCavityElement::Build()
 
   // field
   BuildField();
+
+  BuildUserLimits();
+  AttachUserLimits();
 }
 
 void BDSCavityElement::BuildField()

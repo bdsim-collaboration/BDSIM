@@ -79,6 +79,7 @@ BDSCollimatorCrystal::~BDSCollimatorCrystal()
 
 void BDSCollimatorCrystal::Build()
 {
+  // we don't need to set user limits because that is done in the beam pipe factory
   BDSBeamPipeFactory factory;
   BDSBeamPipe* pipe = factory.CreateBeamPipe(name,
 					     chordLength,

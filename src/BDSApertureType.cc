@@ -19,8 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
 
 #include <map>
 #include <string>
@@ -54,7 +56,7 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
   // alternatives
   types["lhc"]          = BDSApertureType::rectcircle;
   
-  apertureType.toLower();
+  apertureType = BDS::LowerCase(apertureType);
 
   auto result = types.find(apertureType);
   if (result == types.end())

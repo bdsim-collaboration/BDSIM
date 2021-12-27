@@ -21,18 +21,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSSamplerCustom.hh"
-#include "BDSSamplerPlane.hh"
-#include "BDSSDSampler.hh"
-#include "BDSSDManager.hh"
 
 #include "G4String.hh"
 #include "G4Tubs.hh"
 
 G4double BDSSamplerCustom::chordLength = -1;
 
-BDSSamplerCustom::BDSSamplerCustom(const G4String&         nameIn,
-				   BDSAperture* shape):
-  BDSSampler(nameIn)
+
+BDSSamplerCustom::BDSSamplerCustom(const G4String& nameIn,
+				   BDSAperture*    shape,
+                                   G4int           filterSetIDIn):
+  BDSSampler(nameIn, filterSetIDIn)
 {
   // Make general samplers thicker to be more tolerant on possible
   // problems with overlapping faces - unlike normal samplers were
@@ -52,6 +51,4 @@ BDSSamplerCustom::BDSSamplerCustom(const G4String&         nameIn,
   SetExtent(BDSExtent(ae.XNeg(), ae.XPos(), ae.YNeg(), ae.YPos(), -dz, dz));
 
   CommonConstruction();
-
-  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->SamplerPlane());
 }
