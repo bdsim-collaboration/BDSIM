@@ -121,9 +121,7 @@ namespace GMAD
     /// or empty list given, returns -1, the default for 'no filter'.
     int add_sampler_partIDSet(std::list<int>* samplerPartIDListIn);
     /// insert a sampler into beamline_list
-    void add_sampler(const std::string& name, int count, ElementType type, std::list<int>* samplerPartIDListIn = nullptr);
-    /// insert a cylindrical sampler into beamline_list
-    void add_csampler(const std::string& name, int count, ElementType type);
+    void add_sampler(const std::string& name, int count, ElementType type, std::string samplerType, std::list<int>* samplerPartIDListIn = nullptr);
     /// Insert global object of parser class C in Container class
     template <class C, class Container=std::vector<C>>
     void Add();

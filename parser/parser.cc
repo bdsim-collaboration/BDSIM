@@ -564,7 +564,7 @@ int Parser::add_sampler_partIDSet(std::list<int>* samplerPartIDListIn)
     }
 }
 
-void Parser::add_sampler(const std::string& name, int count, ElementType type, std::list<int>* samplerPartIDListIn)
+void Parser::add_sampler(const std::string& name, int count, ElementType type, std::string samplerType, std::list<int>* samplerPartIDListIn)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting sampler "<<name;
@@ -572,18 +572,7 @@ void Parser::add_sampler(const std::string& name, int count, ElementType type, s
   std::cout<<std::endl;
 #endif
   int particleSetID = add_sampler_partIDSet(samplerPartIDListIn);
-  set_sampler(name,count,type,"plane",0,particleSetID);
-}
-
-void Parser::add_csampler(const std::string& name, int count, ElementType type)
-{
-#ifdef BDSDEBUG 
-  std::cout<<"inserting csampler "<<name;
-  if (count>=0) std::cout<<"["<<count<<"]";
-  std::cout<<std::endl;
-#endif
-
-  set_sampler(name,count,type,"cylinder", params.samplerRadius);
+  set_sampler(name,count,type,samplerType,0,particleSetID);
 }
 
 Element& Parser::find_element(const std::string& element_name)

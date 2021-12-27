@@ -98,7 +98,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR SAMPLERPLACEMENT
 %token SCORER SCORERMESH BLM
 %token CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL APERTURE
-%token BEAM OPTION PRINT RANGE STOP USE SAMPLE
+%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
 %type <dval> aexpr expr
@@ -796,12 +796,23 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> SAMPLE" << std::endl;
-              Parser::Instance()->add_sampler(*($3), element_count, element_type, samplerPartIDList);
+              Parser::Instance()->add_sampler(*($3), element_count, element_type, "plane", samplerPartIDList);
               element_count = -1;
               Parser::Instance()->ClearParams();
               delete samplerPartIDList; samplerPartIDList = nullptr;
             }
         }
+        | CSAMPLE ',' sample_options
+        {
+	  if(execute)
+	    {
+	      if(ECHO_GRAMMAR) std::cout << "command -> CSAMPLE" << std::endl;
+	      Parser::Instance()->add_sampler(*($3), element_count, element_type, "cylinder", samplerPartIDList);
+	      element_count = -1;
+	      Parser::Instance()->ClearParams();
+	      delete samplerPartIDList; samplerPartIDList = nullptr;
+	    }
+	}
         | ATOM ',' atom_options // atom
         {
           if(execute)
