@@ -10,7 +10,7 @@ sample, all, partID={11,-11,12,-12,13,-13};
 beam, particle="proton",
       kineticEnergy=20*GeV,
       distrType="userfile",
-      distrFileFormat="pt";
+      distrFileFormat="pdgid";
 
 option, physicsList="all_particles";
 
