@@ -281,7 +281,7 @@ void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
 
 void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 			  const G4PrimaryVertex*                         vertex,
-			  const BDSHitsCollectionSampler*                samplerHitsPlane,
+			  const std::vector<BDSHitsCollectionSampler*>&  samplerHitsPlane,
 			  const BDSHitsCollectionSampler*                samplerHitsCylinder,
                           const BDSHitsCollectionSamplerLink*            samplerHitsLink,
 			  const BDSHitsCollectionEnergyDeposition*       energyLoss,
@@ -314,8 +314,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
   
   if (vertex && storePrimaries)
     {FillPrimary(vertex, turnsTaken);}
-  if (samplerHitsPlane)
-    {FillSamplerHits(samplerHitsPlane, BDSOutput::HitsType::plane);}
+  FillSamplerHitsVector(samplerHitsPlane);
   if (samplerHitsCylinder)
     {FillSamplerHits(samplerHitsCylinder, BDSOutput::HitsType::cylinder);}
   if (samplerHitsLink)
@@ -680,6 +679,31 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
     + ek;
 
   evtInfo->nCollimatorsInteracted = nCollimatorsInteracted;
+}
+
+void BDSOutput::FillSamplerHitsVector(const std::vector<BDSHitsCollectionSampler*>& hits)
+{
+  for (const auto& hc : hits)
+    {
+      if (!hc)
+	{continue;} // could be nullptr
+      if (!(hc->entries() > 0))
+	{continue;}
+      for (int i = 0; i < (int) hc->entries(); i++)
+	{
+	  const BDSHitSampler* hit = (*hc)[i];
+	  G4int samplerID = hit->samplerID;
+	  samplerTrees[samplerID]->Fill(hit, storeSamplerMass, storeSamplerCharge,
+					storeSamplerPolarCoords, storeSamplerIon,
+					storeSamplerRigidity, storeSamplerKineticEnergy);
+	}
+    }
+  // extra information - do only once at the end
+  if (storeSamplerIon)
+    {
+      for (auto& sampler : samplerTrees)
+	{sampler->FillIon();}
+    }
 }
 
 void BDSOutput::FillSamplerHits(const BDSHitsCollectionSampler* hits,

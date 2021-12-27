@@ -167,6 +167,9 @@ public:
   /// it with an integer ID we can use to match up to a set. The IDs are given by the parser and we
   /// follow those in BDSIM consistently.
   void ConstructSamplerSDsForParticleSets(const std::map<int, std::set<int>>& samplerFilterIDtoPDGSetIn);
+
+  /// Access a vector of names of extra samplers so we can identify the hits collections.
+  inline const std::vector<G4String>& ExtraSamplerWithFilterNamesComplete() const {return extraSamplerWithFilterNamesComplete;}
   
   /// Access the relevant SD for a given particle filter set ID. It will return nullptr if the ID is invalid.
   BDSSDSampler* SamplerPlaneWithFilter(G4int ID) const;
@@ -214,6 +217,7 @@ private:
   
   std::map<G4int, BDSSDSampler*> extraSamplersWithFilters;
   std::map<G4int, BDSSDFilterPDGIDSet*> extraSamplerFilters;
+  std::vector<G4String> extraSamplerWithFilterNamesComplete;
 
   /// @{ Cache of global constant option.
   G4bool   storeCollimatorHitsAll;
