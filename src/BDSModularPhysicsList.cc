@@ -42,6 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
+#include "G4String.hh"
 #include "G4Version.hh"
 
 // physics processes / builders (assumed Geant4.10.0 and upwards)
@@ -246,7 +247,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   // prepare vector of valid names for searching when parsing physics list string
   for (const auto& constructor : physicsConstructors)
     {
-      physicsLists.push_back(constructor.first);
+      physicsLists.emplace_back(constructor.first);
       physicsActivated[constructor.first] = false;
     }
 
@@ -346,8 +347,7 @@ void BDSModularPhysicsList::ParsePhysicsList(const G4String& physListName)
   for (const auto& physicsListName : physicsListNamesS)
     {
       G4String name = G4String(physicsListName); // convert string to G4String.
-      name.toLower(); // change to lower case - physics lists are case insensitive
-
+      name = BDS::LowerCase(name);
       temporaryName = name; // copy to temporary variable
       
       // search aliases
@@ -446,7 +446,7 @@ void BDSModularPhysicsList::ConfigureOptical()
   opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kBoundary), globals->TurnOnOpticalSurface());
   opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kWLS), true);
   if (maxPhotonsPerStep >= 0)
-    {opticalParameters->SetCerenkovMaxPhotonsPerStep(maxPhotonsPerStep);}
+    {opticalParameters->SetCerenkovMaxPhotonsPerStep((G4int)maxPhotonsPerStep);}
 #endif
 }
 
@@ -1047,21 +1047,21 @@ void BDSModularPhysicsList::DNA()
   if (!physicsActivated["dna"])
     {
       // only one DNA physics list possible
-      if (temporaryName.contains("option"))
+      if (BDS::StrContains(temporaryName, "option"))
 	{
-	  if (temporaryName.contains("1"))
+	  if (BDS::StrContains(temporaryName, "1"))
 	    {constructors.push_back(new G4EmDNAPhysics_option1());}
-	  if (temporaryName.contains("2"))
+	  if (BDS::StrContains(temporaryName, "2"))
 	    {constructors.push_back(new G4EmDNAPhysics_option2());}
-	  if (temporaryName.contains("3"))
+	  if (BDS::StrContains(temporaryName, "3"))
 	    {constructors.push_back(new G4EmDNAPhysics_option3());}
-	  if (temporaryName.contains("4"))
+	  if (BDS::StrContains(temporaryName, "4"))
 	    {constructors.push_back(new G4EmDNAPhysics_option4());}
-	  if (temporaryName.contains("5"))
+	  if (BDS::StrContains(temporaryName, "5"))
 	    {constructors.push_back(new G4EmDNAPhysics_option5());}
-	  if (temporaryName.contains("6"))
+	  if (BDS::StrContains(temporaryName, "6"))
 	    {constructors.push_back(new G4EmDNAPhysics_option6());}
-	  if (temporaryName.contains("7"))
+	  if (BDS::StrContains(temporaryName, "7"))
 	    {constructors.push_back(new G4EmDNAPhysics_option7());}
 	}
       else
