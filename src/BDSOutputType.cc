@@ -19,10 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSOutputType.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
-#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -40,11 +40,7 @@ BDSOutputType BDS::DetermineOutputType(G4String outputType)
   types["none"]      = BDSOutputType::none;
   types["rootevent"] = BDSOutputType::rootevent;
 
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(outputType);
-#else
-  outputType.toLower();
-#endif
+  outputType = BDS::LowerCase(outputType);
 
   auto result = types.find(outputType);
   if (result == types.end())

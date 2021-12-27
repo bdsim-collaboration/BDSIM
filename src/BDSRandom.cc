@@ -20,10 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSRandom.hh"
+#include "BDSUtilities.hh"
 
+#include "globals.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
-#include "G4Version.hh"
 
 #include "CLHEP/Random/Random.h"
 #include "CLHEP/Random/JamesRandom.h"
@@ -51,11 +52,7 @@ BDSRandomEngineType BDSRandom::DetermineRandomEngineType(G4String engineType)
   types["hepjames"] = BDSRandomEngineType::hepjames;
   types["mixmax"]   = BDSRandomEngineType::mixmax;
 
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(engineType);
-#else
-  engineType.toLower();
-#endif
+  engineType = BDS::LowerCase(engineType);
   
   auto result = types.find(engineType);
   if (result == types.end())
@@ -147,7 +144,7 @@ G4String BDSRandom::GetSeedState()
   return G4String(currentState.str());
 }
 
-void BDSRandom::LoadSeedState(G4String inSeedFilename)
+void BDSRandom::LoadSeedState(const G4String& inSeedFilename)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "loading file: " << inSeedFilename << G4endl;
@@ -164,7 +161,7 @@ void BDSRandom::LoadSeedState(G4String inSeedFilename)
 #endif
 }
 
-void BDSRandom::SetSeedState(G4String seedState)
+void BDSRandom::SetSeedState(const G4String& seedState)
 {
   if (seedState.empty())
     {G4cout << __METHOD_NAME__ << "empty seed state supplied - no seed state set" << G4endl; return;}

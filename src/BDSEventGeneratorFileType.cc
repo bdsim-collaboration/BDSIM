@@ -19,10 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSEventGeneratorFileType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4String.hh"
-#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -50,11 +50,7 @@ BDSEventGeneratorFileType BDS::DetermineEventGeneratorFileType(G4String distrTyp
   types["treeroot"]     = BDSEventGeneratorFileType::treeroot;
   types["lhef"]         = BDSEventGeneratorFileType::lhef;
 
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(distrType);
-#else
-  distrType.toLower();
-#endif
+  distrType = BDS::LowerCase(distrType);
 
   auto result = types.find(distrType);
   if (result == types.end())
