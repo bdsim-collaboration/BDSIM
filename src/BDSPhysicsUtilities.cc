@@ -112,12 +112,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
   BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   
   BDS::ConstructMinimumParticleSet();
-  G4String physicsListNameLower = physicsList; // make lower case copy
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(physicsListNameLower);
-#else
-  physicsListNameLower.toLower();
-#endif
+  G4String physicsListNameLower = BDS::LowerCase(physicsList);
   G4bool useGeant4Physics = BDS::StrContains(physicsListNameLower, "g4");
   G4bool completePhysics  = BDS::StrContains(physicsListNameLower, "complete");
   if (useGeant4Physics)
@@ -295,12 +290,7 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
                                                         G4double ffact)
 {
   BDSParticleDefinition* particleDefB = nullptr; // result
-  G4String particleName = particleNameIn; // copy the name
-#if G4VERSION_NUMBER > 1099
-  G4StrUtil::to_lower(particleName);
-#else
-  particleName.toLower();
-#endif
+  G4String particleName = BDS::LowerCase(particleNameIn);
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   if (BDS::StrContains(particleName, "ion"))

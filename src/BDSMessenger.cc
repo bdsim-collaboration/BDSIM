@@ -191,7 +191,7 @@ std::string BDSMessenger::BDSSamplerToString(int iSampler)
 {
   std::stringstream ss;
 
-  BDSSamplerInfo sInfo = BDSSamplerRegistry::Instance()->GetInfo(iSampler);
+  BDSSamplerPlacementRecord sInfo = BDSSamplerRegistry::Instance()->GetInfo(iSampler);
 
   ss << std::setfill('0') << std::right << std::setw(4) << iSampler << " " << std::setfill(' ')
      << std::right << std::setw(20) << sInfo.Name() << " "

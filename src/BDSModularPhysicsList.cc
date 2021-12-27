@@ -345,12 +345,7 @@ void BDSModularPhysicsList::ParsePhysicsList(const G4String& physListName)
   for (const auto& physicsListName : physicsListNamesS)
     {
       G4String name = G4String(physicsListName); // convert string to G4String.
-#if G4VERSION_NUMBER > 1099
-      G4StrUtil::to_lower(name);
-#else
-      name.toLower(); // change to lower case - physics lists are case insensitive
-#endif
-
+      name = BDS::LowerCase(name);
       temporaryName = name; // copy to temporary variable
       
       // search aliases

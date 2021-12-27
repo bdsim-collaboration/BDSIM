@@ -61,6 +61,9 @@ namespace BDS
   /// Utility function to simplify lots of syntax changes for pedantic g4 changes.
   G4int StrCompare(const G4String& str, const G4String&, G4String::caseCompare mode=G4String::ignoreCase);
 
+  /// Utility function to simplify lots of syntax changes for pedantic g4 changes.
+  G4String LowerCase(const G4String& str);
+
   /// Remove white space and special characters in the name
   G4String PrepareSafeName(G4String name);
 
