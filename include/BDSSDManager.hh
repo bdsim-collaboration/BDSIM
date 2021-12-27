@@ -114,6 +114,7 @@ public:
   /// SD for world exit hits.
   inline BDSSDVolumeExit* WorldExit() const {return worldExit;}
 
+  /// SD for aperture impact hits.
   inline BDSSDApertureImpacts* ApertureImpacts() const {return apertureImpacts;}
 
 #if G4VERSION_NUMBER > 1029

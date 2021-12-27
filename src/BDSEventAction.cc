@@ -154,7 +154,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   // Unfortunately the interfaces to G4TransportationManager aren't great which makes this a bit
   // pedantic. Also, the GetNavigator creates an exception if it doesn't find what it's looking
   // for rather than just return a nullptr
-  G4bool samplerWorldExists =  false;
+  G4bool samplerWorldExists = false;
   std::vector<G4VPhysicalVolume*>::iterator worldIterator = tm->GetWorldsIterator();
   for (G4int iw = 0; iw < (G4int)tm->GetNoWorlds(); iw++)
     {
