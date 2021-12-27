@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Colour.hh"
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
+#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
@@ -56,7 +57,8 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 						   G4bool                 autoColour,
 						   G4double             /*suggestedLength*/,
 						   G4double             /*suggestedHorizontalWidth*/,
-						   std::vector<G4String>* namedVacuumVolumes)
+						   std::vector<G4String>* namedVacuumVolumes,
+						   G4UserLimits*          userLimitsToAttachToAllLVs)
 {
   CleanUp();
 
@@ -114,16 +116,9 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
   G4cout << pvsGDML.size() << " physical volumes, and " << lvsGDML.size() << " logical volumes" << G4endl;
 
-  std::set<G4VisAttributes*> visesGDML;
-  if (gdmlColours.empty())
-    {visesGDML = ApplyColourMapping(lvsGDML, mapping, autoColour);}
-  else
-    {
-      G4cout << "Loaded " << gdmlColours.size() << " logical volume colours from GDML auxiliary tags" << G4endl;
-      visesGDML = ApplyColourMapping(lvsGDML, &gdmlColours, false);
-    }
-  
-  ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
+  auto visesGDML = ApplyColourMapping(lvsGDML, mapping, autoColour);
+  G4UserLimits* ul = userLimitsToAttachToAllLVs ? userLimitsToAttachToAllLVs : BDSGlobalConstants::Instance()->DefaultUserLimits();
+  ApplyUserLimits(lvsGDML, ul);
   
   // make sure container is visible - Geant4 always makes the container invisible.
   G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(containerLV->GetMaterial());
