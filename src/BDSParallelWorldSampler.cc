@@ -49,6 +49,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPhysicalVolume.hh"
 #include "G4VUserParallelWorld.hh"
 
+#include <map>
+#include <set>
 #include <vector>
 
 
@@ -67,9 +69,7 @@ BDSParallelWorldSampler::~BDSParallelWorldSampler()
   //for (auto placement : placements)
   //  {delete placement;}
   delete samplerWorldVis;
-  //delete generalPlane; // <- included in map we delete the contents of next - avoid double deletion
-  for (auto kv : samplerInstances)
-    {delete kv.second;}
+  // samplers are deleted by the sampler registry
 }
 
 void BDSParallelWorldSampler::Construct()
@@ -94,9 +94,9 @@ void BDSParallelWorldSampler::Construct()
   for (const auto& kv : filterIDToSet)
     {
       BDSSamplerPlane* samp = new BDSSamplerPlane("Plane_sampler_w_filter_set_" + std::to_string(kv.first),
-						  samplerRadius,
-						  kv.first);
-      samplerInstances[kv.first] = samp;
+                                                  samplerRadius,
+                                                  (G4int)kv.first);
+      samplerInstances[(G4int)kv.first] = samp;
     }
 
   // For each element in the beamline (if a beamline has been defined) construct and place the
