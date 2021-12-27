@@ -35,6 +35,5 @@ BDSSamplerPlane::BDSSamplerPlane(const G4String& nameIn,
 			     chordLength*0.5);
 
   SetExtent(BDSExtent(boxHalfWidth, boxHalfWidth, chordLength*0.5));
-
   CommonConstruction();
 }
