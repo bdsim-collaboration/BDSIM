@@ -12,6 +12,6 @@ beam, particle="proton",
       distrType="userfile",
       distrFileFormat="pdgid";
 
-option, physicsList="all_particles";
+beam, matchDistrFileLength=1;
 
-option, matchDistrFileLength=1;
+option, physicsList="all_particles";
