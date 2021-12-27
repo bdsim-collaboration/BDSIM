@@ -119,7 +119,7 @@ public:
   /// Copy event information from Geant4 simulation structures to output structures.
   void FillEvent(const BDSEventInfo*                            info,
 		 const G4PrimaryVertex*                         vertex,
-		 const BDSHitsCollectionSampler*                samplerHitsPlane,
+		 const std::vector<BDSHitsCollectionSampler*>&  samplerHitsPlane,
 		 const BDSHitsCollectionSampler*                samplerHitsCylinder,
 		 const BDSHitsCollectionSamplerLink*            samplerHitsLink,
 		 const BDSHitsCollectionEnergyDeposition*       energyLoss,
@@ -228,7 +228,10 @@ private:
   
   /// Fill event summary information.
   void FillEventInfo(const BDSEventInfo* info);
-
+  
+  /// Fill sampler hits from a vector<sampler hits collection>.
+  void FillSamplerHitsVector(const std::vector<BDSHitsCollectionSampler*>& hits);
+  
   /// Fill sampler hits into output structures.
   void FillSamplerHits(const BDSHitsCollectionSampler* hits,
 		       const HitsType hType);

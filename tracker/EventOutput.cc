@@ -32,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 namespace trk
 {
 
-EventOutput::EventOutput(std::string file) :
+EventOutput::EventOutput(std::string file):
   filename(file),
   nevents(0)
 {
@@ -106,7 +106,7 @@ void EventOutput::FillEventOutputStructures()
       const std::map<G4String, G4THitsMap<G4double>*> scorerhits;
       output->FillEvent(nullptr, // EventInfo
 			nullptr, // vertex
-			nullptr, // sampler hits plane
+			std::vector<BDSHitsCollectionSampler*>(), // sampler hits plane
 			nullptr, // sampler hits cylinder
 			nullptr, // sampler hits link
 			nullptr, // energy loss
