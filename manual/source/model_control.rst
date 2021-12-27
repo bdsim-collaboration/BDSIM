@@ -113,6 +113,8 @@ A few minimal examples of beam definition are::
 Other parameters, such as the beam distribution type, :code:`distrType`, are optional and can
 be specified as described in the following sections.
 
+.. _beam-particle-type:
+
 Beam Particle Type
 ^^^^^^^^^^^^^^^^^^
 
@@ -3202,7 +3204,33 @@ e.g. ::
 	     resemble a sampler but it is just a record of the initial coordinates. It is
 	     not a sampler and cannot record other secondary particles.
 
+.. _sampler-filtering:
 
+Filtering Particles To Record
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+It is possible to only record certain particles in a sampler. These are specified via their
+Particle Data Group ("PDG") integer ID number. PDG IDs are discussed here :ref:`beam-particle-type`. An
+example is: ::
+
+  sample, range=<element_name>, partID={11,12,13,14};
+
+Anti-particles must be explicitly specified: ::
+
+  sample, range=<element_name>, partID={11,-11};
+
+This can be applied to all samplers as well. ::
+
+  sample, all, partID={13,-13};
+
+Any sampler specified after this will be overwritten. ::
+
+  sample, all, partID={13,-13};
+  sample, range=partID={11,-11};
+
+Here, all samplers apart from the one attached to "d1" would record only particles
+with PDG ID 13 and -13. The sampler attached to "d1" would record only 11 and -11 PDG ID
+particles.
 
 .. _sampler-dimensions:
 	  
@@ -3367,6 +3395,9 @@ information from the `placements`. The full list of accepted parameters is given
 +-------------------------+--------------------------------------------------------------------+
 | aper4                   | Aperture parameter #4.                                             |
 +-------------------------+--------------------------------------------------------------------+
+| partID                  | List of integers for PDG IDs for which particles to record only.   |
++-------------------------+--------------------------------------------------------------------+
+
 
 Examples
 ********
@@ -3483,7 +3514,7 @@ example parameter and value pairs. The following parameters may be specified.
 +-------------------------+---------------+------------------------------------------------+
 | nphi                    | Yes(*)        | Number of cells in local phi                   |
 +-------------------------+---------------+------------------------------------------------+
-| ne                      | Yes(**)       | Number of cells in energy dimension            |
+| ne                      | Yes(\*\*)     | Number of cells in energy dimension            |
 +-------------------------+---------------+------------------------------------------------+
 | xsize                   | Yes           | Full width in local x dimension (m)            |
 +-------------------------+---------------+------------------------------------------------+
@@ -3493,13 +3524,13 @@ example parameter and value pairs. The following parameters may be specified.
 +-------------------------+---------------+------------------------------------------------+
 | rsize                   | Yes(*)        | Full width in local r dimension (m)            |
 +-------------------------+---------------+------------------------------------------------+
-| eScale                  | Yes(**)       | Energy axis scoring type (linear, log, user)   |
+| eScale                  | Yes(\*\*)     | Energy axis scoring type (linear, log, user)   |
 +-------------------------+---------------+------------------------------------------------+
-| eLow                    | Yes(**)       | Low limit value for the energy axis binning    |
+| eLow                    | Yes(\*\*)     | Low limit value for the energy axis binning    |
 +-------------------------+---------------+------------------------------------------------+
-| eHigh                   | Yes(**)       | High limit value for the energy axis binning   |
+| eHigh                   | Yes(\*\*)     | High limit value for the energy axis binning   |
 +-------------------------+---------------+------------------------------------------------+
-| eBinsEdgesFilenamePath  | Yes(**)       | Path to the energy bin edges .txt file(***)    |
+| eBinsEdgesFilenamePath  | Yes(\*\*)     | Path to the energy bin edges .txt file(\*\*\*) |
 +-------------------------+---------------+------------------------------------------------+
 | referenceElement        | No            | Name of beam line element to place with        |
 |                         |               | respect to                                     |
