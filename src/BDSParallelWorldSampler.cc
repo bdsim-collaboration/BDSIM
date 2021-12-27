@@ -180,11 +180,13 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
     case BDSSamplerType::plane:
       {sampler = samplerInstances[samplerInfo->pdgSetID]; break;}
     case BDSSamplerType::cylinder:
-      {// TBC - why is this uniquely built for each one?
+      {// these are built uniquely for each instance so the length matches exactly
+        // TBC - could include angled faces
 	G4double length = element->GetAcceleratorComponent()->GetChordLength();
 	sampler = new BDSSamplerCylinder(name,
 					 length,
-					 samplerRadius);
+					 samplerRadius,
+                                   samplerInfo->pdgSetID);
 	break;
       }
     default:
@@ -194,11 +196,7 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
   if (sampler)
     {
       G4Transform3D* pt = new G4Transform3D(*element->GetSamplerPlacementTransform());
-
-#ifdef BDSDEBUG
-      G4cout << "Translation: " << pt->getTranslation() << G4endl;
-      G4cout << "Rotation:    " << pt->getRotation()    << G4endl;
-#endif
+      
       G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(name,
 									sampler,
 									*pt,
