@@ -1286,10 +1286,9 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
       std::vector<G4String> meshPrimitiveScorerNames; // final vector of unique mesh + ps names
       std::vector<G4double> meshPrimitiveScorerUnits;
       std::vector<G4String> scorerNames;
-      std::stringstream sqss(mesh.scoreQuantity);
-      G4String word;
 
-        while (sqss >> word) // split by white space - process word at a time
+      std::vector<G4String> words = BDS::GetWordsFromString(mesh.scoreQuantity);
+      for (const auto& word : words)
 	{
 	  auto search = scorerRecipes.find(word);
 	  if (search == scorerRecipes.end())
