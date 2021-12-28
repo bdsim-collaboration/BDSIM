@@ -53,13 +53,13 @@ void BDSArray1DCoordsTransformed::ExtractSection2(G4double x,
   G4int indexArr[2] = {x1, x1+1};
   G4int indexOriginal, indexTransformed;
   for (G4int i = 0; i < 2; i++)
-  {
-    indexOriginal = indexArr[i];
-    indexTransformed = indexOriginal;
-    indexOperator->Apply(indexTransformed);
-    BDSFieldValue v = GetConst(indexTransformed);
-    localData[i] = valueOperator->Apply(v, indexOriginal);
-  }
+    {
+      indexOriginal = indexArr[i];
+      indexTransformed = indexOriginal;
+      indexOperator->Apply(indexTransformed);
+      BDSFieldValue v = GetConst(indexTransformed);
+      localData[i] = valueOperator->Apply(v, indexOriginal);
+    }
 }
 
 void BDSArray1DCoordsTransformed::ExtractSection4(G4double x,
@@ -73,13 +73,13 @@ void BDSArray1DCoordsTransformed::ExtractSection4(G4double x,
   G4int indexArr[4] = {x1-1, x1, x1+1, x1+2};
   G4int indexOriginal, indexTransformed;
   for (G4int i = 0; i < 4; i++)
-  {
-    indexOriginal = indexArr[i];
-    indexTransformed = indexOriginal;
-    indexOperator->Apply(indexTransformed);
-    BDSFieldValue v = GetConst(indexTransformed);
-    localData[i] = valueOperator->Apply(v, indexOriginal);
-  }
+    {
+      indexOriginal = indexArr[i];
+      indexTransformed = indexOriginal;
+      indexOperator->Apply(indexTransformed);
+      BDSFieldValue v = GetConst(indexTransformed);
+      localData[i] = valueOperator->Apply(v, indexOriginal);
+    }
 }
 
 BDSFieldValue BDSArray1DCoordsTransformed::ExtractNearest(G4double x,
