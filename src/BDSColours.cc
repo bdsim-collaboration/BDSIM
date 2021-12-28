@@ -151,8 +151,7 @@ void BDSColours::DefineColour(const G4String& name,
 {
   if (colours.find(name) != colours.end())
     {
-      G4cerr << "Colour \"" << name
-	     << "\" is already defined - clashing definitions" << G4endl;
+      G4cerr << "Colour \"" << name << "\" is already defined - clashing definitions" << G4endl;
       G4cout << "Already defined colours are " << G4endl;
       Print();
       throw BDSException(__METHOD_NAME__, "duplicate colour definition");
