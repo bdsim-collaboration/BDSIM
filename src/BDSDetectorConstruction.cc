@@ -1266,18 +1266,21 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
 
       G4String geometryType = BDS::LowerCase(G4String(mesh.geometryType));
 
-      if (geometryType == "box") {
-      // create a scoring box
-        scorerBox = new BDSScoringMeshBox(meshName, meshRecipe, placement);
-        mapper = scorerBox->Mapper();}
-
-      else if (geometryType == "cylindrical") {
-      // create a scoring cylinder
-        scorerCylindrical = new BDSScoringMeshCylinder(meshName, meshRecipe, placement);
-        mapper = scorerCylindrical->Mapper();}
-
-      else {
-          throw BDSException(__METHOD_NAME__, "mesh geometry type \"" + geometryType + "\" is not correct. The possible options are \"box\" and \"cylindrical\"");}
+      if (geometryType == "box")
+	{// create a scoring box
+	  scorerBox = new BDSScoringMeshBox(meshName, meshRecipe, placement);
+	  mapper = scorerBox->Mapper();
+	}
+      else if (geometryType == "cylindrical")
+	{// create a scoring cylinder
+	  scorerCylindrical = new BDSScoringMeshCylinder(meshName, meshRecipe, placement);
+	  mapper = scorerCylindrical->Mapper();
+	}
+      else
+	{
+	  G4String msg = "mesh geometry type \"" + geometryType + "\" is not correct. The possible options are \"box\" and \"cylindrical\"";
+          throw BDSException(__METHOD_NAME__, msg);
+	}
 
       // add the scorer(s) to the scoring mesh
       std::vector<G4String> meshPrimitiveScorerNames; // final vector of unique mesh + ps names
@@ -1302,20 +1305,21 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
 	  meshPrimitiveScorerNames.push_back(uniqueName);
 	  meshPrimitiveScorerUnits.push_back(psUnit);
 
-      if (geometryType == "box"){
-          scorerBox->SetPrimitiveScorer(ps);} // sets the current ps but appends to list of multiple
-      else if (geometryType == "cylindrical"){
-          scorerCylindrical->SetPrimitiveScorer(ps);}// sets the current ps but appends to list of multiple
-
+	  // sets the current ps but appends to list of multiple
+	  if (geometryType == "box")
+	    {scorerBox->SetPrimitiveScorer(ps);} 
+	  else if (geometryType == "cylindrical")
+	    {scorerCylindrical->SetPrimitiveScorer(ps);}
+	  
 	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
 	  BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
 	  BDSAcceleratorModel::Instance()->RegisterScorerPlacement(meshName, placement);
 	}
-
-      if (geometryType == "box"){
-          scManager->RegisterScoringMesh(scorerBox);} // sets the current ps but appends to list of multiple
-      else if (geometryType == "cylindrical"){
-          scManager->RegisterScoringMesh(scorerCylindrical);}// sets the current ps but appends to list of multiple
+      
+      if (geometryType == "box")
+	{scManager->RegisterScoringMesh(scorerBox);} // sets the current ps but appends to list of multiple
+      else if (geometryType == "cylindrical")
+	{scManager->RegisterScoringMesh(scorerCylindrical);}// sets the current ps but appends to list of multiple
 
       // register it with the sd manager as this is where we get all collection IDs from
       // in the end of event action. This must come from the mesh as it creates the
