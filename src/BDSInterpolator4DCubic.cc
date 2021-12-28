@@ -38,6 +38,5 @@ BDSFieldValue BDSInterpolator4DCubic::GetInterpolatedValueT(G4double x,
   BDSFieldValue localData[4][4][4][4];
   G4double xFrac, yFrac, zFrac, tFrac;
   array->ExtractSection4x4x4x4(x, y, z, t, localData, xFrac, yFrac, zFrac, tFrac);
-  BDSFieldValue result = BDS::Cubic4D(localData, xFrac, yFrac, zFrac, tFrac);
-  return result;
+  return BDS::Cubic4D(localData, xFrac, yFrac, zFrac, tFrac);
 }

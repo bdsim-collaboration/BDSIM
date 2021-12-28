@@ -37,6 +37,5 @@ BDSFieldValue BDSInterpolator3DLinearMag::GetInterpolatedValueT(G4double x,
   BDSFieldValue localData[2][2][2];
   G4double xFrac, yFrac, zFrac;
   array->ExtractSection2x2x2(x, y, z, localData, xFrac, yFrac, zFrac);
-  BDSFieldValue result = BDS::Linear3DMag(localData, xFrac, yFrac, zFrac);
-  return result;
+  return BDS::Linear3DMag(localData, xFrac, yFrac, zFrac);
 }
