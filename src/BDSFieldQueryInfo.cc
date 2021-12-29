@@ -1,0 +1,44 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2021.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#include "BDSFieldQueryInfo.hh"
+
+BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
+                                     const G4String& outfileMagneticIn,
+                                     const G4String& outfileElectricIn,
+                                     G4bool queryMagneticIn,
+                                     G4bool queryElectricIn,
+                                     QueryDimensionInfo xInfoIn,
+                                     QueryDimensionInfo yInfoIn,
+                                     QueryDimensionInfo zInfoIn,
+                                     QueryDimensionInfo tInfoIn,
+                                     const G4Transform3D& globalTransformIn):
+  name(nameIn),
+  outfileMagnetic(outfileMagneticIn),
+  outfileElectric(outfileElectricIn),
+  queryMagnetic(queryMagneticIn),
+  queryElectric(queryElectricIn),
+  xInfo(xInfoIn),
+  yInfo(yInfoIn),
+  zInfo(zInfoIn),
+  tInfo(tInfoIn),
+  globalTransform(globalTransformIn)
+{;}
+
+BDSFieldQueryInfo::~BDSFieldQueryInfo()
+{;}
