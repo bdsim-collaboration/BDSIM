@@ -19,8 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDQUERYINFO_H
 #define BDSFIELDQUERYINFO_H
 
+#include "G4AffineTransform.hh"
 #include "G4String.hh"
-#include "G4Transform3D.hh"
 #include "G4Types.hh"
 
 /**
@@ -48,7 +48,8 @@ public:
                     QueryDimensionInfo yInfoIn,
                     QueryDimensionInfo zInfoIn,
                     QueryDimensionInfo tInfoIn,
-                    const G4Transform3D& globalTransformIn = G4Transform3D::Identity);
+                    const G4AffineTransform& globalTransformIn = G4AffineTransform(),
+                    G4bool overwriteExistingFilesIn = false);
   ~BDSFieldQueryInfo();
   
   G4String name;
@@ -61,7 +62,9 @@ public:
   QueryDimensionInfo zInfo;
   QueryDimensionInfo tInfo;
   
-  G4Transform3D globalTransform;
+  G4AffineTransform globalTransform;
+  
+  G4bool overwriteExistingFiles;
 };
 
 #endif

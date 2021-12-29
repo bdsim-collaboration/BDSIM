@@ -27,7 +27,8 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
                                      QueryDimensionInfo yInfoIn,
                                      QueryDimensionInfo zInfoIn,
                                      QueryDimensionInfo tInfoIn,
-                                     const G4Transform3D& globalTransformIn):
+                                     const G4AffineTransform& globalTransformIn,
+                                     G4bool overwriteExistingFilesIn):
   name(nameIn),
   outfileMagnetic(outfileMagneticIn),
   outfileElectric(outfileElectricIn),
@@ -37,7 +38,8 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
   yInfo(yInfoIn),
   zInfo(zInfoIn),
   tInfo(tInfoIn),
-  globalTransform(globalTransformIn)
+  globalTransform(globalTransformIn),
+  overwriteExistingFiles(overwriteExistingFilesIn)
 {;}
 
 BDSFieldQueryInfo::~BDSFieldQueryInfo()

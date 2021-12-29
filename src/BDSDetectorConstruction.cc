@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
+#include "BDSFieldQuery.hh"
 #include "BDSFieldQueryInfo.hh"
 #include "BDSGap.hh"
 #include "BDSGeometryComponent.hh"
@@ -81,6 +82,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/scorermesh.h"
 
 #include "globals.hh"
+#include "G4AffineTransform.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
@@ -688,7 +690,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   // fields know which geometry to navigate to get local / global transforms.
   // This is the regular world used as a backup to the curvilinear world.
   BDSAuxiliaryNavigator::AttachWorldVolumeToNavigator(worldPV);
-
+  BDSFieldQuery::AttachWorldVolumeToNavigator(worldPV);
+  
   /// Give the pv info registry a heads up that these volumes don't have info (optimisation).
   BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(worldPV);
   
@@ -1347,7 +1350,8 @@ void BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamlin
       if (!def.queryMagneticField && !def.queryElectricField)
 	{throw BDSException(__METHOD_NAME__, "neither \"queryMagneticField\" nor \"queryElectricField\" are true (=1) - one must be turned on.");}
       
-      G4Transform3D globalTransform = CreatePlacementTransform(def, mainBeamline);
+      G4Transform3D globalTransform3D = CreatePlacementTransform(def, mainBeamline);
+      G4AffineTransform globalTransform(globalTransform3D.getRotation(), globalTransform3D.getTranslation());
       
       fieldQueries.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
 						      G4String(def.outfileMagnetic),
@@ -1357,7 +1361,8 @@ void BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamlin
 						      {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
 						      {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
 						      {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
-						      {def.nt, def.tmin*CLHEP::ns, def.xmax*CLHEP::ns},
-						      globalTransform));
+						      {def.nt, def.tmin*CLHEP::s, def.xmax*CLHEP::s},
+						      globalTransform,
+						      G4bool(def.overwriteExistingFiles)));
     }
 }
