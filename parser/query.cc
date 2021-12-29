@@ -119,12 +119,12 @@ void Query::print()const
     	    << "t: (" << tmin << ", " << tmax << ")" << std::endl
 	    << "outfileMagnetic: " << outfileMagnetic << std::endl
 	    << "outfileElectric: " << outfileElectric << std::endl
-    	    << "fieldObject " << fieldObject << std::endl
-	    << "queryMagneticField: " << queryMagneticField << std::endl
-	    << "queryElectricField: " << queryElectricField << std::endl
-	    << "referenceElement" << referenceElement << std::endl
-	    << "referenceElementNumber" << referenceElementNumber << std::endl
-	    << "s"              << s             << std::endl
+    	    << "fieldObject "            << fieldObject << std::endl
+	    << "queryMagneticField: "    << queryMagneticField     << std::endl
+	    << "queryElectricField: "    << queryElectricField     << std::endl
+	    << "referenceElement "       << referenceElement       << std::endl
+	    << "referenceElementNumber " << referenceElementNumber << std::endl
+	    << "s "             << s             << std::endl
 	    << "x "             << x             << std::endl
     	    << "y "             << y             << std::endl
     	    << "z "             << z             << std::endl
