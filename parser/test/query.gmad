@@ -33,5 +33,7 @@ q1: query, nDimensions = 2,
 	   phi=1,theta=2,psi=3,
 	   axisX=1, axisY=0.5, axisZ=0.01, angle=0.003,
 	   axisAngle=1,
+	   queryMagneticField=1,
+	   queryElectricField=1;
 
 print, q1;

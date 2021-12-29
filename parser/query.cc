@@ -43,7 +43,11 @@ void Query::clear()
   zmax = 1;
   tmin = 0;
   tmax = 0;
-  outfile = "";
+  outfileMagnetic = "";
+  outfileElectric = "";
+
+  queryMagneticField = true;
+  queryElectricField = false;
 
   referenceElement = "";
   referenceElementNumber = 0;
@@ -78,7 +82,11 @@ void Query::PublishMembers()
   publish("ymax",        &Query::ymax);
   publish("zmax",        &Query::zmax);
   publish("tmax",        &Query::tmax);
-  publish("outfile",     &Query::outfile);
+  publish("outfileMagnetic", &Query::outfileMagnetic);
+  publish("outfileElectric", &Query::outfileElectric);
+
+  publish("queryMagneticField", &Query::queryMagneticField);
+  publish("queryElectricField", &Query::queryElectricField);
 
   publish("referenceElement", &Query::referenceElement);
   publish("referenceElementNumber", &Query::referenceElementNumber);
@@ -100,7 +108,6 @@ void Query::print()const
 {
   std::cout << "query: "
 	    << "name "        << name        << std::endl
-	    << "fieldObject " << fieldObject << std::endl
 	    << "nDimensions " << nDimensions << std::endl
 	    << "nx "  << nx   << std::endl
     	    << "ny "  << ny   << std::endl
@@ -110,6 +117,11 @@ void Query::print()const
     	    << "y: (" << ymin << ", " << ymax << ")" << std::endl
     	    << "z: (" << zmin << ", " << zmax << ")" << std::endl
     	    << "t: (" << tmin << ", " << tmax << ")" << std::endl
+	    << "outfileMagnetic: " << outfileMagnetic << std::endl
+	    << "outfileElectric: " << outfileElectric << std::endl
+    	    << "fieldObject " << fieldObject << std::endl
+	    << "queryMagneticField: " << queryMagneticField << std::endl
+	    << "queryElectricField: " << queryElectricField << std::endl
 	    << "referenceElement" << referenceElement << std::endl
 	    << "referenceElementNumber" << referenceElementNumber << std::endl
 	    << "s"              << s             << std::endl

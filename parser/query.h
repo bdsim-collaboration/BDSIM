@@ -50,8 +50,12 @@ namespace GMAD
     double zmax;        ///< Z finish.
     double tmin;        ///< T start.
     double tmax;        ///< T finish.
-    std::string outfile;     ///< Output file name.
+    std::string outfileMagnetic; ///< Output file name.
+    std::string outfileElectric;
     std::string fieldObject; ///< Name of field to query.
+
+    bool queryMagneticField; ///< Whether to query the magnetic field.
+    bool queryElectricField; ///< Whether to query the electric field.
 
     // For 3d query in a real model - all the possible transform information required
     std::string referenceElement; ///< Name of reference element w.r.t. to place to.
