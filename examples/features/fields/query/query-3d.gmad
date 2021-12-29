@@ -1,27 +1,10 @@
-f1: field, type="bmap3d",
-                 magneticFile = "bdsim3d:3dexample.dat.gz",
-		 magneticInterpolator = "cubic";
+include query-common.gmad;
 
-d1: drift, l=1*m;
-sb1: sbend, l=1.2*m, angle=pi/6;
-q1: quadrupole, l=20*cm, k1=-0.1;
-e1: element, l=100*mm, geometryFile="gdml:abox.gdml", fieldAll="f1";
-
-l1: line=(d1,sb1,d1,q1,d1,e1,d1);
-use, l1;
-
-beam, particle="proton",
-      kineticEnergy=10*GeV;
-
-q1: query, nDimensions=3,
-    	   nx = 100,
-	   xmin = -30*cm,
-	   xmax = 30*cm,
-	   ny = 100,
-	   ymin = -50*cm,
-	   ymax = 50*cm,
-	   nz = 100,
-	   zmin = -50*cm,
-	   zmax = 50*cm,
-	   outfile = "3d_interpolated_cubic.dat",
-	   fieldObject = "f1";
+! query w.r.t. an element in the beam line
+quQuad: query, nx=9, xmin=-50*cm, xmax=50*cm,
+	       ny=9, ymin=-50*cm, ymax=50*cm,
+	       nz=5, zmin=-20*cm, zmax=20*cm,
+	       queryMagneticField=1,
+	       outfileMagnetic="out_query_3d_bfield_quad.dat",
+	       referenceElement="q1",
+	       overwriteExistingFiles=1;
