@@ -56,6 +56,8 @@ namespace GMAD
 
     bool queryMagneticField; ///< Whether to query the magnetic field.
     bool queryElectricField; ///< Whether to query the electric field.
+    
+    bool overwriteExistingFiles;
 
     // For 3d query in a real model - all the possible transform information required
     std::string referenceElement; ///< Name of reference element w.r.t. to place to.
