@@ -16,20 +16,61 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAuxiliaryNavigator.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSFieldQuery.hh"
 #include "BDSFieldQueryInfo.hh"
+#include "BDSUtilities.hh"
 
+#include "globals.hh"
+#include "G4Field.hh"
+#include "G4FieldManager.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Navigator.hh"
 #include "G4String.hh"
-#include "G4Transform3D.hh"
+#include "G4ThreeVector.hh"
 #include "G4Types.hh"
+#include "G4VPhysicalVolume.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
+#include <fstream>
+#include <iomanip>
 #include <vector>
 
-BDSFieldQuery::BDSFieldQuery()
-{;}
+G4Navigator* BDSFieldQuery::navigator = new G4Navigator();
+
+BDSFieldQuery::BDSFieldQuery():
+  queryMagnetic(false),
+  queryElectric(false),
+  writeX(false),
+  writeY(false),
+  writeZ(false),
+  writeT(false)
+{
+  CleanUp();
+}
 
 BDSFieldQuery::~BDSFieldQuery()
 {;}
+
+void BDSFieldQuery::AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPVIn)
+{
+  navigator->SetWorldVolume(worldPVIn);
+}
+
+void BDSFieldQuery::CleanUp()
+{
+  CloseFiles();
+  queryMagnetic = false;
+  queryElectric = false;
+  writeX = false;
+  writeY = false;
+  writeZ = false;
+  writeT = false;
+  navigator->ResetStackAndState();
+}
 
 void BDSFieldQuery::QueryFields(const std::vector<BDSFieldQueryInfo*>& fieldQueries)
 {
@@ -39,60 +80,214 @@ void BDSFieldQuery::QueryFields(const std::vector<BDSFieldQueryInfo*>& fieldQuer
 
 void BDSFieldQuery::QueryField(const BDSFieldQueryInfo* query)
 {
-  G4double xLocal = query->xInfo.min;
-  G4double xStep  = (query->xInfo.max - query->xInfo.min) / (G4double)query->xInfo.n;
-  G4double yLocal = query->yInfo.min;
-  G4double yStep  = (query->yInfo.max - query->yInfo.min) / (G4double)query->yInfo.n;
-  G4double zLocal = query->zInfo.min;
-  G4double zStep  = (query->zInfo.max - query->zInfo.min) / (G4double)query->zInfo.n;
-  G4double tLocal = query->tInfo.min;
-  G4double tStep  = (query->tInfo.max - query->tInfo.min) / (G4double)query->tInfo.n;
-  G4double xGlobal, yGlobal, zGlobal, tGlobal = 0;
-  const G4Transform3D& globalTransform = query->globalTransform;
+  CleanUp();
+  
+  if (!query)
+    {return;} // protection - now we assume this pointer is always valid in the rest of this class
+  
+  G4cout << "FieldQuery> \"" << query->name << "\" with N (x,y,z,t) points: ("
+         << query->xInfo.n << ", " << query->yInfo.n << ", " << query->zInfo.n << ", " << query->tInfo.n
+         << ") writing to file";
+  if (query->queryMagnetic && query->queryElectric)
+    {G4cout << "s B: \"" << query->outfileMagnetic << "\" and E: \"" << query->outfileElectric << "\"" << G4endl;}
+  else if (query->queryMagnetic)
+    {G4cout << " B: \"" << query->outfileMagnetic << "\"" << G4endl;}
+  else
+    {G4cout << " E: \"" << query->outfileElectric << "\"" << G4endl;}
+
+  /// Ensure field transform navigator is in a completely clean state.
+  BDSAuxiliaryNavigator::ResetNavigatorStates();
+  
+  G4double xMin    = query->xInfo.min;
+  G4double nStepsX = query->xInfo.n == 1 ? 1 : (G4double)query->xInfo.n-1;
+  G4double xStep   = (query->xInfo.max - query->xInfo.min) / nStepsX;
+  
+  G4double yMin    = query->yInfo.min;
+  G4double nStepsY = query->yInfo.n == 1 ? 1 : (G4double)query->yInfo.n-1;
+  G4double yStep   = (query->yInfo.max - query->yInfo.min) / nStepsY;
+  
+  G4double zMin    = query->zInfo.min;
+  G4double nStepsZ = query->zInfo.n == 1 ? 1 : (G4double)query->zInfo.n-1;
+  G4double zStep   = (query->zInfo.max - query->zInfo.min) / nStepsZ;
+  
+  G4double tMin    = query->tInfo.min;
+  G4double nStepsT = query->yInfo.n == 1 ? 1 : (G4double)query->tInfo.n-1;
+  G4double tStep   = (query->tInfo.max - query->tInfo.min) / nStepsT;
+  
+  G4ThreeVector xyzGlobal = G4ThreeVector();
+  const G4AffineTransform& globalTransform = query->globalTransform;
+  
+  G4ThreeVector generalUnitZ(0,0,1);
+  globalTransform.ApplyAxisTransform(generalUnitZ);
   
   OpenFiles(query);
   
   G4double fieldValue[6];
-  for (G4int i = 0; i < query->xInfo.n; i++)
+  
+  G4double tLocal = tMin;
+  for (G4int i = 0; i < query->tInfo.n; i++)
     {
-      for (G4int j = 0; j < query->yInfo.n; j++)
-	{
-	  for (G4int k = 0; k < query->zInfo.n; k++)
-	    {
-	      for (G4int l = 0; l < query->tInfo.n; l++)
-		{
-		  ApplyTransform(globalTransform, xLocal, yLocal, zLocal, tLocal,
-				 xGlobal, yGlobal, zGlobal, tGlobal);
-		  GetFieldValue(xGlobal, yGlobal, zGlobal, tGlobal, fieldValue);
-		  WriteFieldValue(xGlobal, yGlobal, zGlobal, tGlobal, fieldValue);
-		  
-		  tLocal += tStep;
-		}
-	      zLocal += zStep;
-	    }
-	  yLocal += yStep;
-	}
-      xLocal += xStep;
+      G4double zLocal = zMin;
+      for (G4int j = 0; j < query->zInfo.n; j++)
+        {
+          G4double yLocal = yMin;
+          for (G4int k = 0; k < query->yInfo.n; k++)
+            {
+              G4double xLocal = xMin;
+              for (G4int l = 0; l < query->xInfo.n; l++)
+                {
+                  xyzGlobal = ApplyTransform(globalTransform, xLocal, yLocal, zLocal);
+                  GetFieldValue(xyzGlobal, generalUnitZ, tLocal, fieldValue);
+                  WriteFieldValue({xLocal, yLocal, zLocal}, tLocal, fieldValue);
+                  xLocal += xStep;
+                }
+              yLocal += yStep;
+            }
+          zLocal += zStep;
+        }
+      tLocal += tStep;
     }
   
   CloseFiles();
+  G4cout << "FieldQuery> Complete" << G4endl;
 }
 
 void BDSFieldQuery::OpenFiles(const BDSFieldQueryInfo* query)
-{;}
+{
+  writeX = query->xInfo.n > 1;
+  writeY = query->yInfo.n > 1;
+  writeZ = query->zInfo.n > 1;
+  writeT = query->tInfo.n > 1;
+  if (query->queryMagnetic)
+    {
+      if (BDS::FileExists(query->outfileMagnetic) && !(query->overwriteExistingFiles))
+	{
+	  G4String msg = "\"" + query->outfileMagnetic + "\" file already exists and \"overwriteExistingFiles\" in query \"";
+	  msg += query->name + "\" is false";
+	  throw BDSException(__METHOD_NAME__, msg);
+	}
+      queryMagnetic = true;
+      oFileMagnetic.open(query->outfileMagnetic);
+      WriteHeader(oFileMagnetic, query);
+    }
+  if (query->queryElectric)
+    {
+      if (BDS::FileExists(query->outfileElectric) && !(query->overwriteExistingFiles))
+	{
+	  G4String msg = "\"" + query->outfileElectric + "\" file already exists and \"overwriteExistingFiles\" in query \"";
+	  msg += query->name + "\" is false";
+	  throw BDSException(__METHOD_NAME__, msg);
+	}
+      queryElectric = true;
+      oFileElectric.open(query->outfileElectric);
+      WriteHeader(oFileElectric, query);
+    }
+}
+
+void BDSFieldQuery::WriteHeader(std::ofstream& out,
+                                const BDSFieldQueryInfo* query) const
+{
+  G4String columns = "!    ";
+  if (writeX)
+    {
+      out << "nx> "   << query->xInfo.n << "\n";
+      out << "xmin> " << query->xInfo.min/CLHEP::cm << "\n";
+      out << "xmax> " << query->xInfo.max/CLHEP::cm << "\n";
+      columns += "    X      ";
+    }
+  if (writeY)
+    {
+      out << "ny> "   << query->yInfo.n << "\n";
+      out << "ymin> " << query->yInfo.min/CLHEP::cm << "\n";
+      out << "ymax> " << query->yInfo.max/CLHEP::cm << "\n";
+      columns += "    Y      ";
+    }
+  if (writeZ)
+    {
+      out << "nz> "   << query->zInfo.n << "\n";
+      out << "zmin> " << query->zInfo.min/CLHEP::cm << "\n";
+      out << "zmax> " << query->zInfo.max/CLHEP::cm << "\n";
+      columns += "    Z      ";
+    }
+  if (writeT)
+    {
+      out << "nt> "   << query->tInfo.n << "\n";
+      out << "tmin> " << query->tInfo.min/CLHEP::s << "\n";
+      out << "tmax> " << query->tInfo.max/CLHEP::s << "\n";
+      columns += "    T      ";
+    }
+  columns += "          Fx            Fy            Fz\n";
+  out << columns;
+}
 
 void BDSFieldQuery::CloseFiles()
-{;}
+{
+  if (oFileMagnetic.is_open())
+    {oFileMagnetic.close();}
+  if (oFileElectric.is_open())
+    {oFileElectric.close();}
+}
 
-void BDSFieldQuery::ApplyTransform(const G4Transform3D& globalTransform,
-				   G4double xLocal, G4double yLocal, G4double zLocal, G4double tLocal,
-				   G4double& xGlobal, G4double& yGlobal, G4double& zGlobal, G4double& tGlobal)
-{;}
+G4ThreeVector BDSFieldQuery::ApplyTransform(const G4AffineTransform& globalTransform,
+                                            G4double xLocal, G4double yLocal, G4double zLocal) const
+{
+  G4ThreeVector xyzGlobal = G4ThreeVector(xLocal, yLocal, zLocal);
+  globalTransform.ApplyPointTransform(xyzGlobal);
+  return xyzGlobal;
+}
 
-void BDSFieldQuery::GetFieldValue(G4double xGlobal, G4double yGlobal, G4double zGlobal, G4double tGlobal,
-				  G4double fieldValue[6])
-{;}
+void BDSFieldQuery::GetFieldValue(const G4ThreeVector& globalXYZ,
+                                  const G4ThreeVector& globalDirection,
+                                  G4double tGlobal,
+                                  G4double fieldValue[6])
+{
+  // always update as 0 as can't predict behaviour of Geant4 - takes fieldValue* as
+  // variable array length, so we rely on it definitely writing E field as well as B??
+  for (G4int i = 0; i < 6; i++)
+    {fieldValue[i] = 0;}
+  G4VPhysicalVolume* pv = navigator->LocateGlobalPointAndSetup(globalXYZ, &globalDirection, /*relativeSearch*/false);
+  if (!pv)
+    {return;} // this would happen if we query a point outside the world
+  G4LogicalVolume* lv = pv->GetLogicalVolume();
+  G4FieldManager* fm = lv->GetFieldManager();
+  if (fm)
+    {
+      const G4Field* field = fm->GetDetectorField();
+      G4double position[4] = {globalXYZ.x(), globalXYZ.y(),globalXYZ.z(), tGlobal};
+      field->GetFieldValue(position, fieldValue);
+    }
+}
 
-void BDSFieldQuery::WriteFieldValue(G4double xGlobal, G4double yGlobal, G4double zGlobal, G4double tGlobal,
-				    G4double fieldValue[6])
-{;}
+void BDSFieldQuery::WriteFieldValue(const G4ThreeVector& xyzLocal,
+                                    G4double tLocal,
+                                    const G4double fieldValue[6])
+{
+  if (queryMagnetic)
+    {
+      if (writeX)
+        {oFileMagnetic << std::setprecision(6) << std::setw(10) << xyzLocal.x() / CLHEP::cm << "  ";}
+      if (writeY)
+        {oFileMagnetic << std::setprecision(6) << std::setw(10) << xyzLocal.y() / CLHEP::cm << "  ";}
+      if (writeZ)
+        {oFileMagnetic << std::setprecision(6) << std::setw(10) << xyzLocal.z() / CLHEP::cm << "  ";}
+      if (writeT)
+        {oFileMagnetic << std::setprecision(6) << std::setw(10) << tLocal / CLHEP::s << "  ";}
+      for (G4int i = 0; i < 3; i++)
+        {oFileMagnetic << std::setprecision(6) << std::setw(15) << fieldValue[i] / CLHEP::tesla << "  ";}
+      oFileMagnetic << "\n";
+    }
+  if (queryElectric)
+    {
+      if (writeX)
+        {oFileElectric << std::setprecision(6) << std::setw(10) << xyzLocal.x() / CLHEP::cm << "  ";}
+      if (writeY)
+        {oFileElectric << std::setprecision(6) << std::setw(10) << xyzLocal.y() / CLHEP::cm << "  ";}
+      if (writeZ)
+        {oFileElectric << std::setprecision(6) << std::setw(10) << xyzLocal.z() / CLHEP::cm << "  ";}
+      if (writeT)
+        {oFileElectric << std::setprecision(6) << std::setw(10) << tLocal / CLHEP::s << "  ";}
+      for (G4int i = 3; i < 6; i++)
+        {oFileElectric << std::setprecision(6) << std::setw(15) << fieldValue[i] / (CLHEP::volt/CLHEP::m) << "  ";}
+      oFileElectric << "\n";
+   }
+}
