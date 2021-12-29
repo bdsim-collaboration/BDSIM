@@ -48,6 +48,8 @@ void Query::clear()
 
   queryMagneticField = true;
   queryElectricField = false;
+  
+  overwriteExistingFiles = false;
 
   referenceElement = "";
   referenceElementNumber = 0;
@@ -87,6 +89,8 @@ void Query::PublishMembers()
 
   publish("queryMagneticField", &Query::queryMagneticField);
   publish("queryElectricField", &Query::queryElectricField);
+  
+  publish("overwriteExistingFiles", &Query::overwriteExistingFiles);
 
   publish("referenceElement", &Query::referenceElement);
   publish("referenceElementNumber", &Query::referenceElementNumber);
