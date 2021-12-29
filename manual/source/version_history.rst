@@ -113,6 +113,8 @@ Bug Fixes
   the Geant4 one and throw our own, safely handled exceptions a la standard C++.
 * Fix lack of user limits for RF cavity geometry.
 * Fix maximum step length user limit for externally loaded geometry.
+* Fix missing magnet coil end pieces despite being available space when the sequence
+  is a magnet, drift, element, or the reverse.
 
 Output Changes
 --------------
