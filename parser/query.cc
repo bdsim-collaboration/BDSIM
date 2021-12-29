@@ -44,6 +44,21 @@ void Query::clear()
   tmin = 0;
   tmax = 0;
   outfile = "";
+
+  referenceElement = "";
+  referenceElementNumber = 0;
+  s     = 0;
+  x     = 0;
+  y     = 0;
+  z     = 0;
+  phi   = 0;
+  theta = 0;
+  psi   = 0;
+  axisX = 0;
+  axisY = 0;
+  axisZ = 0;
+  angle = 0;
+  axisAngle = false;
 }
 
 void Query::PublishMembers()
@@ -64,6 +79,21 @@ void Query::PublishMembers()
   publish("zmax",        &Query::zmax);
   publish("tmax",        &Query::tmax);
   publish("outfile",     &Query::outfile);
+
+  publish("referenceElement", &Query::referenceElement);
+  publish("referenceElementNumber", &Query::referenceElementNumber);
+  publish("s",             &Query::s);
+  publish("x",             &Query::x);
+  publish("y",             &Query::y);
+  publish("z",             &Query::z);
+  publish("phi",           &Query::phi);
+  publish("theta",         &Query::theta);
+  publish("psi",           &Query::psi);
+  publish("axisX",         &Query::axisX);
+  publish("axisY",         &Query::axisY);
+  publish("axisZ",         &Query::axisZ);
+  publish("angle",         &Query::angle);
+  publish("axisAngle",     &Query::axisAngle);
 }
 
 void Query::print()const
@@ -79,5 +109,19 @@ void Query::print()const
 	    << "x: (" << xmin << ", " << xmax << ")" << std::endl
     	    << "y: (" << ymin << ", " << ymax << ")" << std::endl
     	    << "z: (" << zmin << ", " << zmax << ")" << std::endl
-    	    << "t: (" << tmin << ", " << tmax << ")" << std::endl;
+    	    << "t: (" << tmin << ", " << tmax << ")" << std::endl
+	    << "referenceElement" << referenceElement << std::endl
+	    << "referenceElementNumber" << referenceElementNumber << std::endl
+	    << "s"              << s             << std::endl
+	    << "x "             << x             << std::endl
+    	    << "y "             << y             << std::endl
+    	    << "z "             << z             << std::endl
+    	    << "phi "           << phi           << std::endl
+    	    << "theta "         << theta         << std::endl
+    	    << "psi "           << psi           << std::endl
+    	    << "axisX "         << axisX         << std::endl
+    	    << "axisY "         << axisY         << std::endl
+    	    << "axisZ "         << axisZ         << std::endl
+    	    << "angle "         << angle         << std::endl
+	    << "axisAngle "     << axisAngle     << std::endl;
 }
