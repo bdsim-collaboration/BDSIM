@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
+#include "BDSFieldQueryInfo.hh"
 #include "BDSGap.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGeometryExternal.hh"
@@ -248,6 +249,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   
   if (verbose || debug)
     {G4cout << __METHOD_NAME__ << "detector Construction done" << G4endl;}
+  
+  PrepareFieldQueries(mainBeamLine);
 
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
@@ -264,6 +267,8 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
   for (auto i : biasObjects)
     {delete i;}
 #endif
+  for (auto q : fieldQueries)
+    {delete q;}
 }
 
 void BDSDetectorConstruction::InitialiseRegions()
@@ -913,6 +918,13 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMP
   return CreatePlacementTransform(convertedPlacement, beamLine, S, blmExtent);
 }
 
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Query& queryPlacement,
+                                                                const BDSBeamline* beamLine,
+                                                                G4double* S)
+{
+  GMAD::Placement convertedPlacement(queryPlacement);
+  return CreatePlacementTransform(convertedPlacement, beamLine, S);
+}
 
 G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& placement,
 							 const BDSBeamline*     beamLine,
@@ -1324,5 +1336,28 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
       // in the end of event action. This must come from the mesh as it creates the
       // multifunctionaldetector and therefore has the complete name of the scorer collection
       BDSSDManager::Instance()->RegisterPrimitiveScorerNames(meshPrimitiveScorerNames, &meshPrimitiveScorerUnits);
+    }
+}
+
+void BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamline)
+{
+  const std::vector<GMAD::Query>& parserQueries = BDSParser::Instance()->GetQuery();
+  for (const auto& def : parserQueries)
+    {
+      if (!def.queryMagneticField && !def.queryElectricField)
+	{throw BDSException(__METHOD_NAME__, "neither \"queryMagneticField\" nor \"queryElectricField\" are true (=1) - one must be turned on.");}
+      
+      G4Transform3D globalTransform = CreatePlacementTransform(def, mainBeamline);
+      
+      fieldQueries.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
+						      G4String(def.outfileMagnetic),
+						      G4String(def.outfileElectric),
+						      G4bool(def.queryMagneticField),
+						      G4bool(def.queryElectricField),
+						      {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
+						      {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
+						      {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
+						      {def.nt, def.tmin*CLHEP::ns, def.xmax*CLHEP::ns},
+						      globalTransform));
     }
 }

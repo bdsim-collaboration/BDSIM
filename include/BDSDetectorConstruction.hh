@@ -41,6 +41,7 @@ namespace GMAD {
   struct Element;
   template<typename T> class FastList;
   class Placement;
+  class Query;
   class SamplerPlacement;
   class ScorerMesh;
 }
@@ -50,6 +51,7 @@ class BDSBeamline;
 class BDSBeamlineSet;
 class BDSComponentFactoryUser;
 class BDSFieldObjects;
+class BDSFieldQueryInfo;
 class BDSParticleDefinition;
 class BDSSamplerInfo;
 
@@ -95,6 +97,9 @@ public:
 
   /// Public access to the world extent.
   BDSExtent WorldExtent() const {return worldExtent;}
+  
+  /// Access vector of query objects.
+  const std::vector<BDSFieldQueryInfo*>& FieldQueries() const {return fieldQueries;}
 
   /// Loop over a beam line and place elements in a container (world). If a sensitive
   /// detector is specified in each component, this is applied to each volume. If regions
@@ -133,11 +138,16 @@ public:
 						const BDSBeamline*            beamLine,
 						G4double*                     S = nullptr);
 
-  /// Create a sampler placement from a blm plcement.
+  /// Create a blm placement from a blm placement.
   static G4Transform3D CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
 						const BDSBeamline*        beamLine,
 						G4double*                 S         = nullptr,
 						BDSExtent*                blmExtent = nullptr);
+  
+  /// Create a query placement from a query placement.
+  static G4Transform3D CreatePlacementTransform(const GMAD::Query& queryPlacement,
+                                                const BDSBeamline* beamLine,
+                                                G4double* S = nullptr);
 
   ///  Attach component with extent2 to component with extent1 with placement.
   static G4ThreeVector SideToLocalOffset(const GMAD::Placement& placement,
@@ -221,6 +231,9 @@ private:
 
   /// Construct scoring meshes.
   void ConstructScoringMeshes();
+  
+  /// Prepare field queries from parser information.
+  void PrepareFieldQueries(const BDSBeamline* mainBeamline);
 
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;
@@ -259,6 +272,8 @@ private:
   std::set<G4LogicalVolume*> worldContentsLogicalVolumes;
   std::set<G4LogicalVolume*> worldVacuumLogicalVolumes;
   G4LogicalVolume* worldLogicalVolume;
+  
+  std::vector<BDSFieldQueryInfo*> fieldQueries;
 };
 
 #endif

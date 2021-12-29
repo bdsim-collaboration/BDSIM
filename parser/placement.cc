@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "blmplacement.h"
 #include "placement.h"
+#include "query.h"
 #include "samplerplacement.h"
 #include "scorermesh.h"
 
@@ -194,4 +195,27 @@ Placement::Placement(const BLMPlacement& bp):
   sideOffset = bp.sideOffset;
   autoColour = false;
   stripOuterVolume = false;
+}
+
+Placement::Placement(const Query& qu):
+  geometryFile(""),
+  sequence(""),
+  sensitive(false),
+  fieldAll("")
+{
+  name      = qu.name;
+  referenceElement       = qu.referenceElement;
+  referenceElementNumber = qu.referenceElementNumber;
+  s          = qu.s;
+  x          = qu.x;
+  y          = qu.y;
+  z          = qu.z;
+  phi        = qu.phi;
+  theta      = qu.theta;
+  psi        = qu.psi;
+  axisX      = qu.axisX;
+  axisY      = qu.axisY;
+  axisZ      = qu.axisZ;
+  angle      = qu.angle;
+  axisAngle  = qu.axisAngle;
 }
