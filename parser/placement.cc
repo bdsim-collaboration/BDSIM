@@ -117,12 +117,8 @@ void Placement::print()const
 }
 
 Placement::Placement(const SamplerPlacement& sp):
-  geometryFile(""),
-  sequence(""),
   sensitive(false),
-  side(""),
-  sideOffset(0),
-  fieldAll("")
+  sideOffset(0)
 {
   name      = sp.name;
   referenceElement       = sp.referenceElement;
@@ -144,11 +140,8 @@ Placement::Placement(const SamplerPlacement& sp):
 }
 
 Placement::Placement(const ScorerMesh& sm):
-  geometryFile(""),
   sensitive(false),
-  side(""),
-  sideOffset(0),
-  fieldAll("")
+  sideOffset(0)
 {
   name      = sm.name;
   sequence  = sm.sequence;
@@ -171,10 +164,7 @@ Placement::Placement(const ScorerMesh& sm):
 }
 
 Placement::Placement(const BLMPlacement& bp):
-  geometryFile(""),
-  sequence(""),
-  sensitive(false),
-  fieldAll("")
+  sensitive(false)
 {
   name      = bp.name;
   referenceElement       = bp.referenceElement;
@@ -198,10 +188,10 @@ Placement::Placement(const BLMPlacement& bp):
 }
 
 Placement::Placement(const Query& qu):
-  geometryFile(""),
-  sequence(""),
   sensitive(false),
-  fieldAll("")
+  sideOffset(0),
+  autoColour(false),
+  stripOuterVolume(false)
 {
   name      = qu.name;
   referenceElement       = qu.referenceElement;
