@@ -1351,7 +1351,9 @@ void BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamlin
 	{throw BDSException(__METHOD_NAME__, "neither \"queryMagneticField\" nor \"queryElectricField\" are true (=1) - one must be turned on.");}
       
       G4Transform3D globalTransform3D = CreatePlacementTransform(def, mainBeamline);
-      G4AffineTransform globalTransform(globalTransform3D.getRotation(), globalTransform3D.getTranslation());
+      auto rot = globalTransform3D.getRotation();
+      rot = rot.inverse();
+      G4AffineTransform globalTransform(rot, globalTransform3D.getTranslation());
       
       fieldQueries.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
 						      G4String(def.outfileMagnetic),
