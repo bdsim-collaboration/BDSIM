@@ -280,12 +280,15 @@ void Element::print(int ident) const
   std::cout << name << " : " << type << std::endl;
   if (l>0.0)
     {std::cout << "l     = " << l << "m" << std::endl;}
+  if (horizontalWidth > 0)
+    {std::cout << "horizontalWidth = " << horizontalWidth << "m" << std::endl;}
   if (samplerType != "none")
     {
       std::cout << "samplerType = " << samplerType << "\n"
                 << "samplerRadius = " << samplerRadius << "\n"
                 << "samplerarticleSetID = " << samplerParticleSetID << std::endl;
     }
+  
 
   switch(type)
     {
@@ -297,7 +300,7 @@ void Element::print(int ident) const
 	std::cout << "B     = " << B     << std::endl
 		  << "angle = " << angle << std::endl
 		  << "k1    = " << k1    << std::endl;
-        std::cout << "Scaling = " << scaling << std::endl;
+        std::cout << "scaling = " << scaling << std::endl;
 	break;
       }
     case ElementType::_QUAD:
@@ -314,11 +317,11 @@ void Element::print(int ident) const
     case ElementType::_THINMULT:
       {
 	std::cout << " , knl={";
-  for (auto value : knl)
-    {std::cout << value;}
-  for (auto value : ksl)
-    {std::cout << value;}
+	for (auto value : knl)
+	  {std::cout << value << ", ";}
 	std::cout << "},  ksl={";
+	for (auto value : ksl)
+	  {std::cout << value << ", ";}
 	std::cout << "}" << std::endl;
 	break;
       }
@@ -334,15 +337,14 @@ void Element::print(int ident) const
     case ElementType::_ELEMENT:
       {
 	std::cout << "horizontalWidth: " << horizontalWidth << "m" << std::endl
-		  << "region:          " << region       << std::endl
 		  << "geometryFile:    " << geometryFile << std::endl
-		  << "Field object :   " << fieldAll     << std::endl;
+		  << "fieldAll:        " << fieldAll     << std::endl;
 	break;
       }
     case ElementType::_CT:
       {
 	std::cout << "dicomDataPath: " << dicomDataPath << std::endl;
-  std::cout << "dicomDataFile: " << dicomDataFile << std::endl;
+	std::cout << "dicomDataFile: " << dicomDataFile << std::endl;
 	break;
       }
     case ElementType::_AWAKESCREEN:
@@ -368,37 +370,35 @@ void Element::print(int ident) const
       }
     case ElementType::_LASER:
       {
-	std::cout << "lambda = " << waveLength << "m" << std::endl
-		  << "xSigma = " << xsize << "m" << std::endl
-		  << "ySigma = " << ysize << "m" << std::endl
-		  << "xdir = "   << xdir << std::endl
-		  << "ydir = "   << ydir << std::endl
-		  << "zdir = "   << zdir << std::endl;
+	std::cout << "lambda= " << waveLength << "m" << std::endl
+		  << "xSigma= " << xsize << "m" << std::endl
+		  << "ySigma= " << ysize << "m" << std::endl
+		  << "xdir= "   << xdir << std::endl
+		  << "ydir= "   << ydir << std::endl
+		  << "zdir= "   << zdir << std::endl;
 	break;
       }
     case ElementType::_SCREEN:
       {
-	std::cout << "angle=" << angle <<"rad" << std::endl;
+	std::cout << "angle= " << angle <<"rad" << std::endl;
 	break;
       }
     case ElementType::_TRANSFORM3D:
       {
-	std::cout << "xdir= "  << xdir    << "m" << std::endl
-		  << "ydir= "  << ydir    << "m" << std::endl
-		  << "zdir= "  << zdir    << "m" << std::endl
-		  << "phi= "   << phi   << "rad" << std::endl
+	std::cout << "xdir=  " << xdir  << "m" << std::endl
+		  << "ydir=  " << ydir  << "m" << std::endl
+		  << "zdir=  " << zdir  << "m" << std::endl
+		  << "phi=   " << phi   << "rad" << std::endl
 		  << "theta= " << theta << "rad" << std::endl
-		  << "psi= "   << psi   << "rad" << std::endl;
+		  << "psi=   " << psi   << "rad" << std::endl;
 	break;
       }
     default:
       {break;}
     }
   
-  if (lst != nullptr)
-    {
-      ::print(*lst,++ident);
-    }
+  if (lst)
+    {::print(*lst,++ident);}
 }
 
 void Element::flush()
