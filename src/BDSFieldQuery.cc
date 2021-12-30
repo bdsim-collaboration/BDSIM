@@ -115,14 +115,16 @@ void BDSFieldQuery::QueryField(const BDSFieldQueryInfo* query)
   G4double tStep   = (query->tInfo.max - query->tInfo.min) / nStepsT;
   
   G4ThreeVector xyzGlobal = G4ThreeVector();
-  const G4AffineTransform& globalTransform = query->globalTransform;
+  const G4AffineTransform& localToGlobalTransform = query->globalTransform;
+  G4AffineTransform globalToLocalTransform = localToGlobalTransform.Inverse();
   
   G4ThreeVector generalUnitZ(0,0,1);
-  globalTransform.ApplyAxisTransform(generalUnitZ);
+  localToGlobalTransform.ApplyAxisTransform(generalUnitZ);
   
   OpenFiles(query);
   
-  G4double fieldValue[6];
+  G4double globalFieldValue[6];
+  G4double localFieldValue[6];
   
   G4double tLocal = tMin;
   for (G4int i = 0; i < query->tInfo.n; i++)
@@ -136,9 +138,13 @@ void BDSFieldQuery::QueryField(const BDSFieldQueryInfo* query)
               G4double xLocal = xMin;
               for (G4int l = 0; l < query->xInfo.n; l++)
                 {
-                  xyzGlobal = ApplyTransform(globalTransform, xLocal, yLocal, zLocal);
-                  GetFieldValue(xyzGlobal, generalUnitZ, tLocal, fieldValue);
-                  WriteFieldValue({xLocal, yLocal, zLocal}, tLocal, fieldValue);
+                  xyzGlobal = LocalToGlobalPoint(localToGlobalTransform, xLocal, yLocal, zLocal);
+                  GetFieldValue(xyzGlobal, generalUnitZ, tLocal, globalFieldValue);
+                  GlobalToLocalAxisField(globalToLocalTransform,
+                                         globalFieldValue,
+                                         localFieldValue);
+                  WriteFieldValue({xLocal, yLocal, zLocal}, tLocal, localFieldValue);
+                  
                   xLocal += xStep;
                 }
               yLocal += yStep;
@@ -228,12 +234,29 @@ void BDSFieldQuery::CloseFiles()
     {oFileElectric.close();}
 }
 
-G4ThreeVector BDSFieldQuery::ApplyTransform(const G4AffineTransform& globalTransform,
-                                            G4double xLocal, G4double yLocal, G4double zLocal) const
+G4ThreeVector BDSFieldQuery::LocalToGlobalPoint(const G4AffineTransform& localToGlobalTransform,
+                                                G4double xLocal,
+						G4double yLocal,
+						G4double zLocal) const
 {
   G4ThreeVector xyzGlobal = G4ThreeVector(xLocal, yLocal, zLocal);
-  globalTransform.ApplyPointTransform(xyzGlobal);
+  localToGlobalTransform.ApplyPointTransform(xyzGlobal);
   return xyzGlobal;
+}
+
+void BDSFieldQuery::GlobalToLocalAxisField(const G4AffineTransform& globalToLocalTransform,
+                                           const G4double globalBEField[6],
+                                           G4double localBEField[6])
+{
+  G4ThreeVector B(globalBEField[0], globalBEField[1], globalBEField[2]);
+  G4ThreeVector E(globalBEField[3], globalBEField[4], globalBEField[5]);
+  globalToLocalTransform.ApplyAxisTransform(B);
+  globalToLocalTransform.ApplyAxisTransform(E);
+  for (G4int i = 0; i < 3; i++)
+    {
+      localBEField[i]   = B[i];
+      localBEField[i+3] = E[i];
+    }
 }
 
 void BDSFieldQuery::GetFieldValue(const G4ThreeVector& globalXYZ,
