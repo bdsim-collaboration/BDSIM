@@ -67,8 +67,14 @@ private:
   void CloseFiles();
   
   /// Apply a transform to the coordinates. Does not apply to time.
-  G4ThreeVector ApplyTransform(const G4AffineTransform& globalTransform,
-                               G4double xLocal, G4double yLocal, G4double zLocal) const;
+  G4ThreeVector LocalToGlobalPoint(const G4AffineTransform& localToGlobalTransform,
+                                   G4double xLocal,
+				   G4double yLocal,
+				   G4double zLocal) const;
+  
+  void GlobalToLocalAxisField(const G4AffineTransform& globalToLocalTransform,
+                              const G4double globalBEField[6],
+                              G4double localBEField[6]);
   
   /// Get the electric and magnetic field at the specified coordinates. The navigator requires
   /// a direction for safe hierarchy searching. The output is written to array argument, where
