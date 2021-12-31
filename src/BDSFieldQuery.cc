@@ -35,6 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <vector>
@@ -101,19 +102,26 @@ void BDSFieldQuery::QueryField(const BDSFieldQueryInfo* query)
   G4double xMin    = query->xInfo.min;
   G4double nStepsX = query->xInfo.n == 1 ? 1 : (G4double)query->xInfo.n-1;
   G4double xStep   = (query->xInfo.max - query->xInfo.min) / nStepsX;
+  if (std::isnan(xStep))
+    {xStep = 1.0;}
   
   G4double yMin    = query->yInfo.min;
   G4double nStepsY = query->yInfo.n == 1 ? 1 : (G4double)query->yInfo.n-1;
   G4double yStep   = (query->yInfo.max - query->yInfo.min) / nStepsY;
+  if (std::isnan(yStep))
+    {yStep = 1.0;}
   
   G4double zMin    = query->zInfo.min;
   G4double nStepsZ = query->zInfo.n == 1 ? 1 : (G4double)query->zInfo.n-1;
   G4double zStep   = (query->zInfo.max - query->zInfo.min) / nStepsZ;
+  if (std::isnan(zStep))
+    {zStep = 1.0;}
   
   G4double tMin    = query->tInfo.min;
   G4double nStepsT = query->yInfo.n == 1 ? 1 : (G4double)query->tInfo.n-1;
   G4double tStep   = (query->tInfo.max - query->tInfo.min) / nStepsT;
-  
+  if (std::isnan(tStep))
+    {tStep = 1.0;}
   G4ThreeVector xyzGlobal = G4ThreeVector();
   const G4AffineTransform& localToGlobalTransform = query->globalTransform;
   G4AffineTransform globalToLocalTransform = localToGlobalTransform.Inverse();
