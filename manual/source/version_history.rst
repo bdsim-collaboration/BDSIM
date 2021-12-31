@@ -71,6 +71,9 @@ General
 * BDSGeometryComponent class refactored to permit a G4AssemblyVolume as the container
   for a piece of geometry. It's in addition to a logical volume.
 * A `dump` element may now be specified without a length and will by default be 1 mm long.
+* The visualiser command :code:`/bds/beamline/goto` now accepts an optional integer as a second
+  argument to specify the instance of a beam line element in the line to go to. i.e. if the same
+  beam line element is reused, you can select an individual one to go to.
 
 Bug Fixes
 ---------
