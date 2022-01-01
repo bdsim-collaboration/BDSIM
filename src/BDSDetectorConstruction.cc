@@ -1363,7 +1363,7 @@ void BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamlin
 						      {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
 						      {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
 						      {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
-						      {def.nt, def.tmin*CLHEP::s, def.tmax*CLHEP::s},
+						      {def.nt, def.tmin*CLHEP::ns, def.tmax*CLHEP::ns},
 						      globalTransform,
 						      G4bool(def.overwriteExistingFiles)));
     }
