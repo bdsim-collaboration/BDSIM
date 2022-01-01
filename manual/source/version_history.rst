@@ -18,13 +18,17 @@ V1.7.0 - 2021 / XX / XX
 
 * GGMAD Geometry format is now deprecated. This was not maintained for a long time and with
   pyg4ometry and GDML we support much better geometry. The code is old and hard to maintain
-  and really needs to be rewritten.
+  and really needs to be rewritten. The functionality was broken in making BDSIM compatible
+  with all the changes to string handling in Geant4 V11.
 * New executable options :code:`--reference` and :code:`--citation` to display the citation
   in bibtex to cite BDSIM easily.
 
 New Features
 ------------
 
+* New ability to query a 3D model for the field and export a field map.
+* New program bdsinterpolator to interpolate a field map and export it without
+  any handling by Geant4.
 * Samplers now have the parameter :code:`partID={11,-11}`, which for example can be used
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
@@ -33,7 +37,8 @@ New Features
   environment build on Centos7 will be built locally and works on Mac, Linux, Windows. It
   typically takes about 6Gb of space and is a great alternative to a virtual machine. An
   XWindows server is required for the visualiser. See :ref:`docker-build`.
-* A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into voxelized geometries.
+* A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into
+  voxelized geometries.
 * New Spectra command for rebsdim to make very flexible sets of spectra automatically. See
   :ref:`spectra-definition` for more information.
 * The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
