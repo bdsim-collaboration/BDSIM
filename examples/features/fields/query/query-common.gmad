@@ -13,4 +13,4 @@ use, l1;
 beam, particle="proton",
       kineticEnergy=10*GeV;
 
-option, beampipeRadius=5*cm;
+option, beampipeRadius=7.5*cm;
