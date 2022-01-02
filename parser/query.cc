@@ -30,7 +30,6 @@ void Query::clear()
 {
   name        = "";
   fieldObject = "";
-  nDimensions = 1;
   nx   = 1;
   ny   = 1;
   nz   = 1;
@@ -73,7 +72,6 @@ void Query::PublishMembers()
 {
   publish("name",        &Query::name);
   publish("fieldObject", &Query::fieldObject);
-  publish("nDimensions", &Query::nDimensions);
   publish("nx",          &Query::nx);
   publish("ny",          &Query::ny);
   publish("nz",          &Query::nz);
@@ -116,7 +114,6 @@ void Query::print()const
 {
   std::cout << "query: "
 	    << "name "        << name        << std::endl
-	    << "nDimensions " << nDimensions << std::endl
 	    << "nx "  << nx   << std::endl
     	    << "ny "  << ny   << std::endl
     	    << "nz "  << nz   << std::endl
