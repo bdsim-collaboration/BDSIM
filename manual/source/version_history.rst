@@ -123,6 +123,8 @@ Bug Fixes
 * Fix maximum step length user limit for externally loaded geometry.
 * Fix missing magnet coil end pieces despite being available space when the sequence
   is a magnet, drift, element, or the reverse.
+* Fix a bug in field map loading where a space was before the "!" character the columns
+  wouldn't be parsed correctly.
 
 Output Changes
 --------------
