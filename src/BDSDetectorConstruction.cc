@@ -42,6 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldObjects.hh"
 #include "BDSFieldQuery.hh"
 #include "BDSFieldQueryInfo.hh"
+#include "BDSFieldQueryPointsLoader.hh"
 #include "BDSGap.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGeometryExternal.hh"
@@ -1349,22 +1350,36 @@ void BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamlin
     {
       if (!def.queryMagneticField && !def.queryElectricField)
 	{throw BDSException(__METHOD_NAME__, "neither \"queryMagneticField\" nor \"queryElectricField\" are true (=1) - one must be turned on.");}
-      
-      G4Transform3D globalTransform3D = CreatePlacementTransform(def, mainBeamline);
-      auto rot = globalTransform3D.getRotation();
-      rot = rot.inverse();
-      G4AffineTransform globalTransform(rot, globalTransform3D.getTranslation());
-      
-      fieldQueries.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
-						      G4String(def.outfileMagnetic),
-						      G4String(def.outfileElectric),
-						      G4bool(def.queryMagneticField),
-						      G4bool(def.queryElectricField),
-						      {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
-						      {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
-						      {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
-						      {def.nt, def.tmin*CLHEP::ns, def.tmax*CLHEP::ns},
-						      globalTransform,
-						      G4bool(def.overwriteExistingFiles)));
+
+      if (!def.pointsFile.empty())
+	{
+	  auto points = BDS::LoadFieldQueryPoints(G4String(def.pointsFile));
+	  fieldQueries.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
+							  G4String(def.outfileMagnetic),
+							  G4String(def.outfileElectric),
+							  G4bool(def.queryMagneticField),
+							  G4bool(def.queryElectricField),
+							  points,
+							  G4bool(def.overwriteExistingFiles)));
+	}
+      else
+	{
+	  G4Transform3D globalTransform3D = CreatePlacementTransform(def, mainBeamline);
+	  auto rot = globalTransform3D.getRotation();
+	  rot = rot.inverse();
+	  G4AffineTransform globalTransform(rot, globalTransform3D.getTranslation());
+	  
+	  fieldQueries.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
+							  G4String(def.outfileMagnetic),
+							  G4String(def.outfileElectric),
+							  G4bool(def.queryMagneticField),
+							  G4bool(def.queryElectricField),
+							  {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
+							  {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
+							  {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
+							  {def.nt, def.tmin*CLHEP::ns, def.tmax*CLHEP::ns},
+							  globalTransform,
+							  G4bool(def.overwriteExistingFiles)));
+	}
     }
 }
