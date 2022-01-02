@@ -253,7 +253,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   if (verbose || debug)
     {G4cout << __METHOD_NAME__ << "detector Construction done" << G4endl;}
   
-  PrepareFieldQueries(mainBeamLine);
+  fieldQueries = BDSDetectorConstruction::PrepareFieldQueries(mainBeamLine);
 
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
@@ -866,6 +866,8 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
     }
   else if (BDS::IsFinite(placement.s))
     {// scenario 2
+      if (!beamLine)
+        {throw BDSException(__METHOD_NAME__, "no valid beam line yet placement w.r.t. a beam line.");}
       G4ThreeVector offset = G4ThreeVector();
       if (placementExtent)
 	{offset = SideToLocalOffset(placement, beamLine, *placementExtent);}
@@ -1343,8 +1345,9 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
     }
 }
 
-void BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamline)
+std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamline)
 {
+  std::vector<BDSFieldQueryInfo*> result;
   const std::vector<GMAD::Query>& parserQueries = BDSParser::Instance()->GetQuery();
   for (const auto& def : parserQueries)
     {
@@ -1355,14 +1358,15 @@ void BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamlin
 	{
 	  std::vector<G4String> columnNames;
 	  auto points = BDS::LoadFieldQueryPoints(G4String(def.pointsFile), &columnNames);
-	  fieldQueries.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
-							  G4String(def.outfileMagnetic),
-							  G4String(def.outfileElectric),
-							  G4bool(def.queryMagneticField),
-							  G4bool(def.queryElectricField),
-							  points,
-							  columnNames,
-							  G4bool(def.overwriteExistingFiles)));
+	  result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
+						    G4String(def.outfileMagnetic),
+						    G4String(def.outfileElectric),
+						    G4bool(def.queryMagneticField),
+						    G4bool(def.queryElectricField),
+						    points,
+						    columnNames,
+						    G4bool(def.overwriteExistingFiles),
+						    G4String(def.fieldObject)));
 	}
       else
 	{
@@ -1371,17 +1375,19 @@ void BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamlin
 	  rot = rot.inverse();
 	  G4AffineTransform globalTransform(rot, globalTransform3D.getTranslation());
 	  
-	  fieldQueries.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
-							  G4String(def.outfileMagnetic),
-							  G4String(def.outfileElectric),
-							  G4bool(def.queryMagneticField),
-							  G4bool(def.queryElectricField),
-							  {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
-							  {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
-							  {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
-							  {def.nt, def.tmin*CLHEP::ns, def.tmax*CLHEP::ns},
-							  globalTransform,
-							  G4bool(def.overwriteExistingFiles)));
+	  result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
+						    G4String(def.outfileMagnetic),
+						    G4String(def.outfileElectric),
+						    G4bool(def.queryMagneticField),
+						    G4bool(def.queryElectricField),
+						    {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
+						    {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
+						    {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
+						    {def.nt, def.tmin*CLHEP::ns, def.tmax*CLHEP::ns},
+						    globalTransform,
+						    G4bool(def.overwriteExistingFiles),
+						    G4String(def.fieldObject)));
 	}
     }
+  return result;
 }
