@@ -1353,13 +1353,15 @@ void BDSDetectorConstruction::PrepareFieldQueries(const BDSBeamline* mainBeamlin
 
       if (!def.pointsFile.empty())
 	{
-	  auto points = BDS::LoadFieldQueryPoints(G4String(def.pointsFile));
+	  std::vector<G4String> columnNames;
+	  auto points = BDS::LoadFieldQueryPoints(G4String(def.pointsFile), &columnNames);
 	  fieldQueries.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
 							  G4String(def.outfileMagnetic),
 							  G4String(def.outfileElectric),
 							  G4bool(def.queryMagneticField),
 							  G4bool(def.queryElectricField),
 							  points,
+							  columnNames,
 							  G4bool(def.overwriteExistingFiles)));
 	}
       else

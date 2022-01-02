@@ -48,6 +48,7 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
 				     G4bool queryMagneticIn,
 				     G4bool queryElectricIn,
 				     const std::vector<BDSFourVector<G4double>>& pointsToQueryIn,
+                                     const std::vector<G4String>& pointsColumnNamesIn,
 				     G4bool overwriteExistingFilesIn):
   name(nameIn),
   outfileMagnetic(outfileMagneticIn),
@@ -55,6 +56,7 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
   queryMagnetic(queryMagneticIn),
   queryElectric(queryElectricIn),
   pointsToQuery(pointsToQueryIn),
+  pointsColumnNames(pointsColumnNamesIn),
   overwriteExistingFiles(overwriteExistingFilesIn)
 {;}
 

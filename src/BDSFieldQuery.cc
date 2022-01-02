@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldQuery.hh"
 #include "BDSFieldQueryInfo.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh"
 #include "G4Field.hh"
@@ -94,7 +95,7 @@ void BDSFieldQuery::QueryField(const BDSFieldQueryInfo* query)
   
   G4cout << "FieldQuery> \"" << query->name << "\" with N (x,y,z,t) points: ("
          << query->xInfo.n << ", " << query->yInfo.n << ", " << query->zInfo.n << ", " << query->tInfo.n
-         << ") writing to file";
+         << "), writing to file";
   PrintBAndEInfo(query);
 
   /// Ensure field transform navigator is in a completely clean state.
@@ -171,8 +172,8 @@ void BDSFieldQuery::QuerySpecificPoints(const BDSFieldQueryInfo* query)
 {
   const std::vector<BDSFourVector<G4double>> points = query->pointsToQuery;
   
-  G4cout << "FieldQuery> \"" << query->name << "\" with N (x,y,z,t) points: ("
-         << points.size() << ") writing to file";
+  G4cout << "FieldQuery> \"" << query->name << "\" with N points: "
+         << points.size() << ", writing to file";
   PrintBAndEInfo(query);
   
   OpenFiles(query);
@@ -203,10 +204,24 @@ void BDSFieldQuery::PrintBAndEInfo(const BDSFieldQueryInfo* query) const
 
 void BDSFieldQuery::OpenFiles(const BDSFieldQueryInfo* query)
 {
-  writeX = query->xInfo.n > 1;
-  writeY = query->yInfo.n > 1;
-  writeZ = query->zInfo.n > 1;
-  writeT = query->tInfo.n > 1;
+  if (!(query->pointsColumnNames.empty()))
+    {
+      std::map<G4String, G4bool*> columnNamesToFlag = { {"x", &writeX},
+							{"y", &writeY},
+							{"z", &writeZ},
+							{"t", &writeT} };
+      for (const auto& columnName : query->pointsColumnNames)
+	{ *(columnNamesToFlag[columnName]) = true;}
+      BDS::Warning(__METHOD_NAME__, "the number of points and min max values in the output header will not be correct when using points");
+    }
+  else
+    {
+      writeX = query->xInfo.n > 1;
+      writeY = query->yInfo.n > 1;
+      writeZ = query->zInfo.n > 1;
+      writeT = query->tInfo.n > 1;
+    }
+  
   if (query->queryMagnetic)
     {
       if (BDS::FileExists(query->outfileMagnetic) && !(query->overwriteExistingFiles))
@@ -219,6 +234,7 @@ void BDSFieldQuery::OpenFiles(const BDSFieldQueryInfo* query)
       oFileMagnetic.open(query->outfileMagnetic);
       WriteHeader(oFileMagnetic, query);
     }
+  
   if (query->queryElectric)
     {
       if (BDS::FileExists(query->outfileElectric) && !(query->overwriteExistingFiles))

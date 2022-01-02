@@ -63,6 +63,7 @@ public:
                     G4bool queryMagneticIn,
                     G4bool queryElectricIn,
 		    const std::vector<BDSFourVector<G4double>>& pointsToQueryIn,
+		    const std::vector<G4String>& pointsColumnNamesIn,
 		    G4bool overwriteExistingFilesIn = false);
   ~BDSFieldQueryInfo();
   
@@ -77,6 +78,7 @@ public:
   QueryDimensionInfo tInfo;
 
   std::vector<BDSFourVector<G4double>> pointsToQuery;
+  std::vector<G4String> pointsColumnNames;
   
   G4AffineTransform globalTransform;
   
