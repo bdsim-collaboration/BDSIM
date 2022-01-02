@@ -164,7 +164,7 @@ std::vector<BDSFourVector<G4double>> BDSFieldQueryPointsLoader<T>::Load(const G4
 	  (*values[i]) = coord * units[i];
 	}
       
-      result.emplace_back(BDSFourVector(x,y,z,t));
+      result.emplace_back(BDSFourVector<G4double>(x,y,z,t));
 
       lineNo += 1;
     }
