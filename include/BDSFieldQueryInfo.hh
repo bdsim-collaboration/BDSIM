@@ -19,9 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDQUERYINFO_H
 #define BDSFIELDQUERYINFO_H
 
+#include "BDSFourVector.hh"
+
 #include "G4AffineTransform.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
+
+#include <vector>
 
 /**
  * @brief Holder class for all information required for a field query.
@@ -38,7 +42,8 @@ public:
     G4double min = 0;
     G4double max = 0;
   };
-  
+
+  /// Usual constructor with number of points to query in each dimension.
   BDSFieldQueryInfo(const G4String& nameIn,
                     const G4String& outfileMagneticIn,
                     const G4String& outfileElectricIn,
@@ -50,6 +55,15 @@ public:
                     QueryDimensionInfo tInfoIn,
                     const G4AffineTransform& globalTransformIn = G4AffineTransform(),
                     G4bool overwriteExistingFilesIn = false);
+
+  /// Alternative constructor with list of exact points to query.
+  BDSFieldQueryInfo(const G4String& nameIn,
+                    const G4String& outfileMagneticIn,
+                    const G4String& outfileElectricIn,
+                    G4bool queryMagneticIn,
+                    G4bool queryElectricIn,
+		    const std::vector<BDSFourVector<G4double>>& pointsToQueryIn,
+		    G4bool overwriteExistingFilesIn = false);
   ~BDSFieldQueryInfo();
   
   G4String name;
@@ -61,10 +75,15 @@ public:
   QueryDimensionInfo yInfo;
   QueryDimensionInfo zInfo;
   QueryDimensionInfo tInfo;
+
+  std::vector<BDSFourVector<G4double>> pointsToQuery;
   
   G4AffineTransform globalTransform;
   
   G4bool overwriteExistingFiles;
+  
+  /// Whether to query a specific set of points.
+  G4bool SpecificPoints() const {return !pointsToQuery.empty();}
 };
 
 #endif

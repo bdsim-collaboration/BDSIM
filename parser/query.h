@@ -58,6 +58,8 @@ namespace GMAD
     bool queryElectricField; ///< Whether to query the electric field.
     
     bool overwriteExistingFiles;
+    
+    std::string pointsFile; ///< File with 3D points to use
 
     // For 3d query in a real model - all the possible transform information required
     std::string referenceElement; ///< Name of reference element w.r.t. to place to.

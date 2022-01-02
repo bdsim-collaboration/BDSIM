@@ -57,6 +57,12 @@ private:
   /// Reset any member variables used during a query. Closes any files if open.
   void CleanUp();
   
+  /// Different algorithm where we query a specific list of points defined in the query info object.
+  void QuerySpecificPoints(const BDSFieldQueryInfo* query);
+
+  /// Print out whether B and E files are being generated and which ones.
+  void PrintBAndEInfo(const BDSFieldQueryInfo* query) const;
+  
   /// Open potentially both electric and magnetic field map files.
   void OpenFiles(const BDSFieldQueryInfo* query);
   
@@ -71,7 +77,8 @@ private:
                                    G4double xLocal,
 				   G4double yLocal,
 				   G4double zLocal) const;
-  
+
+  /// Convert a global field axis to a local one.
   void GlobalToLocalAxisField(const G4AffineTransform& globalToLocalTransform,
                               const G4double globalBEField[6],
                               G4double localBEField[6]);
