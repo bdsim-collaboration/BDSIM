@@ -12,8 +12,7 @@ uniformfield: field, type="ebmap2d",
 		     axisX=0, axisY=0, axisZ=0, angle=0,
 		     axisAngle=0;
 
-q1: query, nDimensions = 2,
-    	   nx = 100,
+q1: query, nx = 100,
 	   ny = 200,
 	   nz = 5,
 	   nt = 10,

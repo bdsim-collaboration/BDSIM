@@ -15,4 +15,5 @@ q1: query, nx = 20,
 	   tmin = -2*ns,
 	   tmax = 2*ns,
 	   outfileMagnetic = "4d_interpolated_linear_mag.dat",
+	   overwriteExistingFiles=1,
 	   fieldObject = "f1";
