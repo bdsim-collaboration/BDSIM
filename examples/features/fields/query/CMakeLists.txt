@@ -1,0 +1,5 @@
+if (USE_GDML)
+  simple_testing(field-query-1d-b    "--file=query-1d-b.gmad --output=none"  "")
+  simple_testing(field-query-2d-b    "--file=query-2d-b.gmad --output=none"  "")
+  simple_testing(field-query-3d-b    "--file=query-3d-b.gmad --output=none"  "")
+endif()
