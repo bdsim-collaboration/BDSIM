@@ -130,6 +130,8 @@ std::vector<BDSFourVector<G4double>> BDSFieldQueryPointsLoader<T>::Load(const G4
 		    }
 		  values.push_back(search->second);
 		  units.push_back(columnNameToUnits[search->first]);
+		  if (std::find(columnNamesToPrint.begin(), columnNamesToPrint.end(), search->first) != columnNamesToPrint.end())
+		    {throw BDSException(functionName, "duplicate column name");}
 		  columnNamesToPrint.push_back(search->first);
 		}
 	      nCoordinates = (G4int)values.size();
