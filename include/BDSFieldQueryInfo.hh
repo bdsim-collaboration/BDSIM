@@ -38,6 +38,12 @@ class BDSFieldQueryInfo
 public:
   struct QueryDimensionInfo
   {
+    /// Because we initialise the values in the declaration here, we must provide
+    /// a constructor for C++ 11 only (as the initialisation means it's non-aggregate).
+    QueryDimensionInfo(G4int nIn, G4double minIn, G4double maxIn):
+      n(nIn), min(minIn), max(maxIn)
+    {;}
+    QueryDimensionInfo(): n(1), min(0), max(0) {;}
     G4int n = 1;
     G4double min = 0;
     G4double max = 0;
