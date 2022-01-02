@@ -8,5 +8,5 @@ quQuad: query, nx=31, xmin=-50*cm, xmax=50*cm,
 	       queryMagneticField=1,
 	       outfileMagnetic="out_query_3d_bfield_xyz.dat",
 	       referenceElement="q1",
-	       referenceElementInstance=1,
+	       referenceElementNumber=1,
 	       overwriteExistingFiles=1;
