@@ -9,6 +9,7 @@ q1: query, nx = 50,
 	   ymin = -300*cm,
 	   ymax = 300*cm,
 	   outfileMagnetic = "muon-field-interpolated-linear.dat",
+	   overwriteExistingFiles=1,
 	   fieldObject = "f1";
 
 
@@ -23,4 +24,5 @@ q1: query, nx = 50,
 	   ymin = -300*cm,
 	   ymax = 300*cm,
 	   outfileMagnetic = "muon-field-interpolated-linearmag.dat",
+	   overwriteExistingFiles=1,
 	   fieldObject = "f2";
