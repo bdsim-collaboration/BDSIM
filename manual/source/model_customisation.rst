@@ -499,7 +499,7 @@ To validate a field map loaded by BDSIM, we can *query* what is loaded and gener
 output field map that we can then inspect or numerically compare in Python (e.g. using pybdsim).
 To query a field map, we have a 2 options:
 
-1. Query the field *object* as loaded by BDSIM - no 3D model is actually built
+1. Query the field *object* as loaded by BDSIM - no 3D model is actually built.
 2. Query a set of coordinates in the full BDSIM model and note the field found at each position.
 
 In both cases, a BDSIM-format field map file is written out.
@@ -514,7 +514,7 @@ only loads the field map into memory. This provides a class that BDSIM would nor
 Geant4 model, however, without any 3D transforms from local (such as curvilinear) to global frames.
 
 **Case 2** uses BDSIM itself and a regular input file and the querying is done after construction
-of the model but before a *Run* where events are simulated.
+of the model but before a *Run* where *Events* are simulated.
 
 In both cases, an input GMAD file is used that defines a :code:`query` object. The appropriate program
 (`bdsim` or `bdsinterpolator`) is then executed with that as an argument. If we have a file
@@ -564,16 +564,20 @@ The following parameters can be used in a query object:
 | fieldObject             | Name of the field object in the input to query |
 +-------------------------+------------------------------------------------+
 | queryMagneticField      | (1 or 0) whether to query the magnetic field   |
+|                         | - default is True (1)                          |
 +-------------------------+------------------------------------------------+
 | queryElectricField      | (1 or 0) whether to query the electric field   |
+|                         | - default is False (0)                         |
 +-------------------------+------------------------------------------------+
 | overwriteExistingFiles  | Whether to overwrite existing output files     |
+|                         | - default is False (0)                         |
 +-------------------------+------------------------------------------------+
 | referenceElement        | Element with respect to which the coordinates  |
 |                         | are desired to be queried.                     |
 +-------------------------+------------------------------------------------+
 | referenceElementNumber  | Instance of the reference element in the beam  |
 |                         | line if it is used more than once (0-counting) |
+|                         | - default is 0                                 |
 +-------------------------+------------------------------------------------+
 | s                       | Curvilinear S coordinate (global | local       |
 |                         | depending on parameters)                       |
@@ -601,11 +605,15 @@ The following parameters can be used in a query object:
 | axisAngle               | (1 or 0) use axis angle rotation instead of    |
 |                         | the Euler angle.                               |
 +-------------------------+------------------------------------------------+
+| pointsFile              | Name of a file listing points to be queried    |
+|                         | instead of the linear range. See below.        |
++-------------------------+------------------------------------------------+
 
 .. note:: The transforms are made using the same variable names and logic as that of geometry
 	  or sampler placements - see :ref:`placements` for a full description of the possible
 	  combination of parameters for the 3 ways of specifying a transform. 
 
+* The default is to query the magnetic field only and to not overwrite files.
 * The ranges defined will be queried in global frame if no transform is specified,
   otherwise they will be about the point / frame of the transform.
 * If you don't wish to query a dimension, then the number of points should be
@@ -614,8 +622,56 @@ The following parameters can be used in a query object:
 * One of `queryMagneticField` or `queryElectricField` must be true.
 
 
-Examples can be found in :code:`bdsim/examples/features/fields/query`.
+Examples can be found in :code:`bdsim/examples/features/fields/query/query*`.
 
+An example: ::
+
+  quA: query, nx=51, xmin=-30*cm, xmax=30*cm,
+     	      ny=51, ymin=-30*cm, ymax=30*cm,
+	      queryMagneticField=1,
+	      outfileMagnetic="out_query_2d_bfield_xy.dat",
+	      z=1.1*m,
+	      overwriteExistingFiles=1;
+
+
+
+
+Query By Points File
+********************
+
+A specific set of points can be queried also. These should be listed in a text
+file (file extension not important) with one set of coordinates per line.
+
+File rules:
+
+* lines with only white-space will be ignored
+* no comments are permitted
+* There should be a line at the top starting with '!' and listing the dimensions (x,y,z,t)
+* The column names and coordinates should be separated by white-space
+* Any combination of x,y,z,t may be used
+* The units are fixed in metres for x,y,z and nanoseconds for t.
+* The file extension is ignored
+* The output field map is not usable in BDSIM as the header information will be incorrect
+
+Example file contents: ::
+
+  ! X Y Z
+  0 0 1
+  0 1 1
+  1 0 1
+  0 0 0
+  0 1 0
+  1 0 0
+
+Or: ::
+
+  ! Z
+  1.1
+  1.2
+  1.3
+  1.4
+  
+More examples can be found in :code:`bdsim/examples/features/fields/query/query-points*`.
 
 .. _field-map-interpolation:
 
@@ -659,6 +715,22 @@ Usage: ::
 * If fewer points are requested in the query in a dimension than are in the original
   field map, we are still interpolating values in the field map, but we are just
   reducing the 'resolution' of the field map.
+
+Example in one gmad file called :code:`bdsim/examples/features/fields/maps_bdsim/2d_cubic.gmad`: ::
+
+  f1: field, type="bmap2d",
+                 magneticFile = "bdsim2d:2dexample.dat",
+		 magneticInterpolator = "cubic";
+
+  q1: query, nx = 200,
+             xmin = -30*cm,
+	     xmax = 30*cm,
+	     ny = 200,
+	     ymin = -50*cm,
+	     ymax = 50*cm,
+	     outfileMagnetic = "2d_interpolated_linear.dat",
+	     fieldObject = "f1";
+
 
 .. _materials-and-atoms:
 	  
