@@ -2,7 +2,6 @@ from math import sqrt
 import matplotlib.pyplot as _plt
 import numpy as _np
 import pybdsim
-from subprocess import check_call as _check_call
 
 def main():
     GenerateBoxField("field-1T-unitY")
@@ -12,9 +11,9 @@ def main():
 def GenerateBoxField(filename, fx=0, fy=1, fz=0, xmax=20, ymax=20, plot=False):
     data = []
     # loop over and build up 3d lists of lists of lists
-    for xi in [-xmax,xmax]:
+    for yi in [-ymax, ymax]:
         v = []
-        for yi in [-ymax,ymax]:
+        for xi in [-xmax, xmax]:
             v.append([xi,yi,fx,fy,fz])
         data.append(v)
 
