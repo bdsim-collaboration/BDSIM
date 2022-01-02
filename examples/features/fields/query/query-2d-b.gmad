@@ -26,7 +26,7 @@ quC: query, nx=51, xmin=-30*cm, xmax=30*cm,
      	    ny=51, ymin=-30*cm, ymax=30*cm,
 	    queryMagneticField=1,
 	    outfileMagnetic="out_query_1d_bfield_xy_element.dat",
-	    referenceElement="e1"
+	    referenceElement="e1",
 	    overwriteExistingFiles=1;
 
 ! XZ
@@ -35,5 +35,5 @@ quD: query, nx=51, xmin=-30*cm, xmax=30*cm,
 	    nz=51, zmin=-30*cm, zmax=30*cm,
 	    queryMagneticField=1,
 	    outfileMagnetic="out_query_2d_bfield_xz.dat",
-	    s=2.8*m
+	    s=2.8*m,
 	    overwriteExistingFiles=1;
