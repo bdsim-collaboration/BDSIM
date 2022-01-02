@@ -163,6 +163,9 @@ public:
   G4bool BuildSamplerWorld() const {return nSamplers > 0;}
   
   G4bool BuildPlacementFieldsWorld() const {return buildPlacementFieldsWorld;}
+
+  /// Prepare field queries from parser information.
+  static std::vector<BDSFieldQueryInfo*> PrepareFieldQueries(const BDSBeamline* mainBeamline);
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -232,8 +235,6 @@ private:
   /// Construct scoring meshes.
   void ConstructScoringMeshes();
   
-  /// Prepare field queries from parser information.
-  void PrepareFieldQueries(const BDSBeamline* mainBeamline);
 
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;

@@ -54,7 +54,8 @@ public:
                     QueryDimensionInfo zInfoIn,
                     QueryDimensionInfo tInfoIn,
                     const G4AffineTransform& globalTransformIn = G4AffineTransform(),
-                    G4bool overwriteExistingFilesIn = false);
+                    G4bool overwriteExistingFilesIn = false,
+		    const G4String& fieldObjectIn = "");
 
   /// Alternative constructor with list of exact points to query.
   BDSFieldQueryInfo(const G4String& nameIn,
@@ -64,7 +65,8 @@ public:
                     G4bool queryElectricIn,
 		    const std::vector<BDSFourVector<G4double>>& pointsToQueryIn,
 		    const std::vector<G4String>& pointsColumnNamesIn,
-		    G4bool overwriteExistingFilesIn = false);
+		    G4bool overwriteExistingFilesIn = false,
+		    const G4String& fieldObjectIn = "");
   ~BDSFieldQueryInfo();
   
   G4String name;
@@ -83,6 +85,8 @@ public:
   G4AffineTransform globalTransform;
   
   G4bool overwriteExistingFiles;
+
+  G4String fieldObject; ///< Optional for use in interpolator.
   
   /// Whether to query a specific set of points.
   G4bool SpecificPoints() const {return !pointsToQuery.empty();}
