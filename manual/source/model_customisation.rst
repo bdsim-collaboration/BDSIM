@@ -29,37 +29,60 @@ Fields
 BDSIM provides the facility to overlay magnetic, electric, or combined electromagnetic fields
 on an element, as defined by an externally provided field map. A field map is an array of evenly
 space points in **Cartesian** coordinates that define the field as a 3-vector at that point.
-A field can be applied to an element of piece of geometry for
+A field can be applied to an element or a piece of geometry for:
 
-1) only the "vacuum" volume
-2) only the volume outside the vacuum (i.e. the yoke)
-3) or one full map for the whole element.
+1) only the "vacuum" volume(s) ("fieldVacuum")
+2) only the "outer" volume(s) outside the vacuum (i.e. the yoke) ("fieldOuter")
+3) or one full map for the whole element. ("fieldAll")
 
 BDSIM allows any Geant4 integrator to be used to calculate the motion of the particle, which
 can be chosen given knowledge of the smoothness of the field or the application (default is
-a 4th order Runge Kutta). BDSIM also provides
-a selection of 1-4D interpolators that are used to provide the field value in between the data points
-in the supplied field map.
+a 4th order Runge Kutta). BDSIM also provides a selection of 1-4D interpolators that are used
+to provide the field value in between the data points in the supplied field map.
 
-To overlay a field, one must define a field 'object' in the parser and then 'attach' it to an element.
+To overlay a field, one must define a field 'object' in the parser and then 'attach' it to an element. ::
+
+  f1: field, type="bmap3d", magneticFile="bdsim3d:fieldmap.dat.gz";
+  e1: element, geometryFile="gdml:aPieceOfGeometry.gdml", fieldAll="f1";
+  q1: quadrupole, l=20*cm, k1=0.1, fieldOuter="f1";
+  h1: hkicker, l=1*m, fieldVacuum="f1";
+
+
+These are all different uses of the same field map. `e1` uses a generic element with externally
+provided geometry with a field map for all of the geometry. `q1` uses a BDSIM-generated quadrupole
+with a perfect quadrupolar field in the beam pipe and vacuum and the field map for the yoke and surrounding
+air in between the yoke and beam pipe. `h1` uses a BDSIM-generated horizontal kicker magnet and
+BDSIM multipolar yoke field (the default) but with a custom field map for inside the vacuum only.
+The field map is a 3D field map in BDSIM file format and uses cubic interpolation by default.
+
+
+* :code:`field` objects are described below at: :ref:`field-map-definition`.
+* Accepted file formats for a field object are described below at: :ref:`field-map-file-formats`.
+* Specific field map file descriptions are described here: :ref:`field-map-formats`.
+* Allowable different combinations of dimension are described here: :ref:`fields-different-dimensions`.
+
+Field General Notes
+^^^^^^^^^^^^^^^^^^^
+
+Some notes on field maps in BDSIM:
 
 * Fields are in a local Cartesian coordinate system with respect to the origin of the
   element they are attached to.
-* The field may be attached to everything "fieldAll"; the vacuum volume "fieldVacuum", or the yoke "fieldOuter".
+* The field may be attached to everything **"fieldAll"**; the vacuum volume **"fieldVacuum"**, or the
+  yoke **"fieldOuter"**.
 * Magnetic and electric field maps are specified in separate files and may have different interpolators.
 * Fields may have up to four dimensions.
 * The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
   :math:`x,y,z` and a 2D field :math:`x,y`.
+* Fields with different dimensions (e.g. :math:`x,z` and constant :math:`y`) can be used.
 * Cubic interpolation is used by default unless otherwise specified.
 * Geant4's classical 4th order Runge Kutta is used as the default numerical integrator.
 
-For BDSIM format fields (see :ref:`model-description-field-formats`, :ref:`field-map-formats` and
-:ref:`fields-different-dimensions`),
-the user can however specify different dimension with the other dimensions being assumed constant.
-For example, a field that varies in :math:`x,z` is possible (assumed constant in :math:`y`). For
-BDSIM format fields, this is detected automatically by the column labelling and the keys in the
-header of the file that specify the ranges in each dimension. The dimensions must however be in
-ascending or descending order.
+For BDSIM format fields, the user can specify different dimension with the other dimensions
+being assumed constant. For example, a field that varies in :math:`x,z` is possible
+(assumed constant in :math:`y`). For BDSIM format fields, this is detected automatically by
+the column labelling and the keys in the header of the file that specify the ranges in each
+dimension. The dimensions must however be in ascending or descending order.
 
 .. Note:: Currently only **regular** (evenly spaced) grids are supported with field maps. It would
 	  require significant development to extend this to irregular grids. It's strongly
@@ -79,7 +102,10 @@ ascending or descending order.
 	     user may wish to reduce this further with the parameter :code:`maximumStepLength`
 	     below in the field definition. You may also wish to visualise the individual points
 	     as described in :ref:`visualisation-step-points`.
-	  
+
+Minimal Example
+^^^^^^^^^^^^^^^
+	     
 Here is a minimal example of a magnetic field in BDSIM format::
 
   detfield: field, type="bmap3d",
@@ -103,6 +129,7 @@ a drift pipe where it covers the full volume of the drift (not outside it though
   d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
 
 Each beam line element will allow "fieldAll", "fieldVacuum" and "fieldOuter" to be specified.
+
 
 .. _field-map-definition:
 
@@ -205,7 +232,7 @@ for the spatial distance calculated from this.
 .. Note:: A right-handed coordinate system is used in Geant4, so positive x is out of a ring.
 
 Field Types
-^^^^^^^^^^^
+***********
 
 * These are not case sensitive.
 
@@ -239,50 +266,10 @@ Field Types
 | ebmap4d          | 4D electric-magnetic field map   |
 +------------------+----------------------------------+
 
-.. _model-description-field-formats:
-
-File Formats
-^^^^^^^^^^^^
-
-.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
-
-.. note:: BDSIM field maps by default have units :math:`cm,s`.
-
-+------------------+--------------------------------------------+
-| **Format**       | **Description**                            |
-+==================+============================================+
-| bdsim1d          | 1D BDSIM format file  (Units :math:`cm,s`) |
-+------------------+--------------------------------------------+
-| bdsim2d          | 2D BDSIM format file  (Units :math:`cm,s`) |
-+------------------+--------------------------------------------+
-| bdsim3d          | 3D BDSIM format file  (Units :math:`cm,s`) |
-+------------------+--------------------------------------------+
-| bdsim4d          | 4D BDSIM format file  (Units :math:`cm,s`) |
-+------------------+--------------------------------------------+
-| poisson2d        | 2D Poisson Superfish SF7 file              |
-+------------------+--------------------------------------------+
-| poisson2dquad    | 2D Poisson Superfish SF7 file              |
-|                  | for 1/8th of quadrupole                    |
-+------------------+--------------------------------------------+
-| poisson2ddipole  | 2D Poisson Superfish SF7 file for positive |
-|                  | quadrant that's reflected to produce a     |
-|                  | full windowed dipole field                 |
-+------------------+--------------------------------------------+
-
-Field maps in the following formats are accepted:
-
-  * BDSIM's own format (both uncompressed :code:`.dat` and gzip compressed files. :code:`gz` must be
-    in the file name for this to load correctly.)
-  * Superfish Poisson 2D SF7
-
-These are described in detail below. More field formats can be added
-relatively easily - see :ref:`feature-request`. A detailed description
-of the formats is given in :ref:`field-map-formats`. A preparation guide
-for BDSIM format files is provided here :ref:`field-map-file-preparation`.
 
 
 Integrators
-^^^^^^^^^^^
+***********
 
 An integrator is an algorithm that calculates the particle motion in a field. There
 are many algorithms - some fast, some more precise, some work only with certain fields.
@@ -354,7 +341,7 @@ be found in `<geant4-source-dir>/source/geometry/magneticfield/include`.
 
 
 Interpolators
-^^^^^^^^^^^^^
+*************
 
 The field may be queried at any point inside the volume, so an interpolator is required
 to provide a value of the field in between specified points in the field map.
@@ -378,6 +365,48 @@ is shown in :ref:`field-interpolators`.
 
 Internally there is a different implementation for different numbers of dimensions and this
 is automatically chosen based on the number of dimensions in the field map type.
+
+.. _field-map-file-formats:
+
+File Formats
+^^^^^^^^^^^^
+
+.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
+
+.. note:: BDSIM field maps by default have units :math:`cm,s`.
+
++------------------+--------------------------------------------+
+| **Format**       | **Description**                            |
++==================+============================================+
+| bdsim1d          | 1D BDSIM format file  (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| bdsim2d          | 2D BDSIM format file  (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| bdsim3d          | 3D BDSIM format file  (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| bdsim4d          | 4D BDSIM format file  (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| poisson2d        | 2D Poisson Superfish SF7 file              |
++------------------+--------------------------------------------+
+| poisson2dquad    | 2D Poisson Superfish SF7 file              |
+|                  | for 1/8th of quadrupole                    |
++------------------+--------------------------------------------+
+| poisson2ddipole  | 2D Poisson Superfish SF7 file for positive |
+|                  | quadrant that's reflected to produce a     |
+|                  | full windowed dipole field                 |
++------------------+--------------------------------------------+
+
+Field maps in the following formats are accepted:
+
+  * BDSIM's own format (both uncompressed :code:`.dat` and gzip compressed files. :code:`gz` must be
+    in the file name for this to load correctly.)
+  * Superfish Poisson 2D SF7
+
+These are described in detail below. More field formats can be added
+relatively easily - see :ref:`feature-request`. A detailed description
+of the formats is given in :ref:`field-map-formats`. A preparation guide
+for BDSIM format files is provided here :ref:`field-map-file-preparation`.
+
 
 .. _fields-sub-fields:
 
@@ -448,6 +477,260 @@ This may take some time as particles are being tracked to determine the field di
 sets a density of points. If few useful arrows appear, then this number can be increased. Note, the time taken
 will go with the cube (i.e. N^3) of this number. Suggested values are 10, 30, 40. An example can be seen above
 in the :ref:`fields-sub-fields` section.
+
+Field Map Preparation
+^^^^^^^^^^^^^^^^^^^^^
+
+It is not recommended to write a field map file by hand. This can create very hard to identify
+subtle problems that may lead to unintended behaviour. It is recommended to use our Python
+utility `pybdsim`. See the pybdsim manual for details on creating, converting and plotting
+field maps in Python: `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_.
+
+.. note:: The order of looping over dimensions is important and must be correct otherwise, the
+	  loaded field map may not be as intended. Use of a field map should be validated.
+	  BDSIM actually ignores the coordinates in each line of the field map and assumes
+	  the looping order and dimension based on the header information.
+
+
+Field Map Validation
+^^^^^^^^^^^^^^^^^^^^
+
+To validate a field map loaded by BDSIM, we can *query* what is loaded and generate a new
+output field map that we can then inspect or numerically compare in Python (e.g. using pybdsim).
+To query a field map, we have a 2 options:
+
+1. Query the field *object* as loaded by BDSIM - no 3D model is actually built.
+2. Query a set of coordinates in the full BDSIM model and note the field found at each position.
+
+In both cases, a BDSIM-format field map file is written out.
+
+.. note:: Magnetic and Electric fields are handled independently and written to separate files,
+	  in the same way they are loaded into BDSIM in separate files.
+
+**Case 1** uses an extra program provided with BDSIM called :code:`bdsinterpolator`. This can also
+be used to re-interpolate a field map as described in :ref:`field-map-interpolation`, but we
+can use it to simply query the same points again. This program has no concept of a 3D model and
+only loads the field map into memory. This provides a class that BDSIM would normally use in the
+Geant4 model, however, without any 3D transforms from local (such as curvilinear) to global frames.
+
+**Case 2** uses BDSIM itself and a regular input file and the querying is done after construction
+of the model but before a *Run* where *Events* are simulated.
+
+In both cases, an input GMAD file is used that defines a :code:`query` object. The appropriate program
+(`bdsim` or `bdsinterpolator`) is then executed with that as an argument. If we have a file
+called :code:`test-field-map.gmad`, then we could do: ::
+
+  bdsim --file=test-field-map.gmad --batch
+
+or: ::
+
+  bdsinterpolator --file=test-file-map.gmad
+
+The following parameters can be used in a query object:
+
+.. tabularcolumns:: |p{3cm}|p{7cm}|
+
++-------------------------+------------------------------------------------+
+| **Parameter**           | **Description**                                |
++=========================+================================================+
+| nx                      | Number of points to query in x (1 -> N)        |
++-------------------------+------------------------------------------------+
+| ny                      | Number of points to query in y (1 -> N)        |
++-------------------------+------------------------------------------------+
+| nz                      | Number of points to query in z (1 -> N)        |
++-------------------------+------------------------------------------------+
+| nt                      | Number of points to query in t (1 -> N)        |
++-------------------------+------------------------------------------------+
+| xmin                    | Start of x values to use                       |
++-------------------------+------------------------------------------------+
+| xmax                    | Finish of x values to use                      |
++-------------------------+------------------------------------------------+
+| ymin                    | Start of y values to use                       |
++-------------------------+------------------------------------------------+
+| ymax                    | Finish of y values to use                      |
++-------------------------+------------------------------------------------+
+| zmin                    | Start of z values to use                       |
++-------------------------+------------------------------------------------+
+| zmax                    | Finish of z values to use                      |
++-------------------------+------------------------------------------------+
+| tmin                    | Start of t values to use                       |
++-------------------------+------------------------------------------------+
+| tmax                    | Finish of t values to use                      |
++-------------------------+------------------------------------------------+
+| outfileMagnetic         | Name of output file to write field map to (B)  |
++-------------------------+------------------------------------------------+
+| outfileElectric         | Name of output file to write field map to (E)  |
++-------------------------+------------------------------------------------+
+| fieldObject             | Name of the field object in the input to query |
++-------------------------+------------------------------------------------+
+| queryMagneticField      | (1 or 0) whether to query the magnetic field   |
+|                         | - default is True (1)                          |
++-------------------------+------------------------------------------------+
+| queryElectricField      | (1 or 0) whether to query the electric field   |
+|                         | - default is False (0)                         |
++-------------------------+------------------------------------------------+
+| overwriteExistingFiles  | Whether to overwrite existing output files     |
+|                         | - default is False (0)                         |
++-------------------------+------------------------------------------------+
+| referenceElement        | Element with respect to which the coordinates  |
+|                         | are desired to be queried.                     |
++-------------------------+------------------------------------------------+
+| referenceElementNumber  | Instance of the reference element in the beam  |
+|                         | line if it is used more than once (0-counting) |
+|                         | - default is 0                                 |
++-------------------------+------------------------------------------------+
+| s                       | Curvilinear S coordinate (global | local       |
+|                         | depending on parameters)                       |
++-------------------------+------------------------------------------------+
+| x                       | Offset in x                                    |
++-------------------------+------------------------------------------------+
+| y                       | Offset in y                                    |
++-------------------------+------------------------------------------------+
+| z                       | Offset in z                                    |
++-------------------------+------------------------------------------------+
+| phi                     | Euler angle phi for rotation                   |
++-------------------------+------------------------------------------------+
+| theta                   | Euler angle theta for rotation                 |
++-------------------------+------------------------------------------------+
+| psi                     | Euler angle psi for rotation                   |
++-------------------------+------------------------------------------------+
+| axisX                   | Axis angle rotation x-component of unit vector |
++-------------------------+------------------------------------------------+
+| axisY                   | Axis angle rotation y-component of unit vector |
++-------------------------+------------------------------------------------+
+| axisZ                   | Axis angle rotation z-component of unit vector |
++-------------------------+------------------------------------------------+
+| angle                   | Axis angle, angle to rotate about unit vector  |
++-------------------------+------------------------------------------------+
+| axisAngle               | (1 or 0) use axis angle rotation instead of    |
+|                         | the Euler angle.                               |
++-------------------------+------------------------------------------------+
+| pointsFile              | Name of a file listing points to be queried    |
+|                         | instead of the linear range. See below.        |
++-------------------------+------------------------------------------------+
+
+.. note:: The transforms are made using the same variable names and logic as that of geometry
+	  or sampler placements - see :ref:`placements` for a full description of the possible
+	  combination of parameters for the 3 ways of specifying a transform. 
+
+* The default is to query the magnetic field only and to not overwrite files.
+* The ranges defined will be queried in global frame if no transform is specified,
+  otherwise they will be about the point / frame of the transform.
+* If you don't wish to query a dimension, then the number of points should be
+  1, which is the default and need not be specified.
+* Units are **m** and **ns** by default, the same as BDSIM.
+* One of `queryMagneticField` or `queryElectricField` must be true.
+
+
+Examples can be found in :code:`bdsim/examples/features/fields/query/query*`.
+
+An example: ::
+
+  quA: query, nx=51, xmin=-30*cm, xmax=30*cm,
+     	      ny=51, ymin=-30*cm, ymax=30*cm,
+	      queryMagneticField=1,
+	      outfileMagnetic="out_query_2d_bfield_xy.dat",
+	      z=1.1*m,
+	      overwriteExistingFiles=1;
+
+
+
+
+Query By Points File
+********************
+
+A specific set of points can be queried also. These should be listed in a text
+file (file extension not important) with one set of coordinates per line.
+
+File rules:
+
+* lines with only white-space will be ignored
+* no comments are permitted
+* There should be a line at the top starting with '!' and listing the dimensions (x,y,z,t)
+* The column names and coordinates should be separated by white-space
+* Any combination of x,y,z,t may be used
+* The units are fixed in metres for x,y,z and nanoseconds for t.
+* The file extension is ignored
+* The output field map is not usable in BDSIM as the header information will be incorrect
+
+Example file contents: ::
+
+  ! X Y Z
+  0 0 1
+  0 1 1
+  1 0 1
+  0 0 0
+  0 1 0
+  1 0 0
+
+Or: ::
+
+  ! Z
+  1.1
+  1.2
+  1.3
+  1.4
+  
+More examples can be found in :code:`bdsim/examples/features/fields/query/query-points*`.
+
+.. _field-map-interpolation:
+
+Field Map Interpolation
+^^^^^^^^^^^^^^^^^^^^^^^
+
+A field map can be loaded and interpolated to generate a new field map. This can be done
+with the exact same number and range of points as a way of validating the field map
+was correctly prepared for BDSIM (by seeing the output file is the same as the input).
+
+We could also interpolate the field map with different interpolation methods to compare,
+or we could increase the density of points and then use a simpler interpolation (more memory,
+but slightly faster simulation), although this is quite an optimisation step.
+
+A tool, :code:`bdsinterpolator`, will load a GMAD file and obey only the :code:`query`
+objects defined to generate output field maps.
+
+This **does not** build a Geant4 model. It simply loads the field map and wraps it
+in an interpolator. The interpolator is queried for a set of coordinates the resultant
+field values written out as a field map in BDSIM format. This output file, if desired,
+can be used in BDSIM subsequently.
+
+This program takes an input GMAD file with a minimum of:
+
+1. 1x field object defined
+2. 1x query object defined
+
+Any parameters that are used for the placement transform ("referenceElement" onwards
+in the table of `query` parameters in the above section) will be completely ignored.
+The field is only queried in its own 'local' coordinate system in this program.
+
+Examples can be found in :code:`bdsim/examples/features/fields/query`.
+
+Usage: ::
+
+  bdsinterpolator --file=<my-file.gmad>
+
+
+* If more points are requested in the query in a dimension than are in the original
+  field map, then we are in effect interpolating the field.
+* If fewer points are requested in the query in a dimension than are in the original
+  field map, we are still interpolating values in the field map, but we are just
+  reducing the 'resolution' of the field map.
+
+Example in one gmad file called :code:`bdsim/examples/features/fields/maps_bdsim/2d_cubic.gmad`: ::
+
+  f1: field, type="bmap2d",
+                 magneticFile = "bdsim2d:2dexample.dat",
+		 magneticInterpolator = "cubic";
+
+  q1: query, nx = 200,
+             xmin = -30*cm,
+	     xmax = 30*cm,
+	     ny = 200,
+	     ymin = -50*cm,
+	     ymax = 50*cm,
+	     outfileMagnetic = "2d_interpolated_linear.dat",
+	     fieldObject = "f1";
+
 
 .. _materials-and-atoms:
 	  
@@ -1241,7 +1524,7 @@ the input.
   geometry be placed "inside" BDSIM geometry.
 * The geometry may also have a field map overlaid on it.
 * Placements cannot be made with respect to other placements.
-* There is the possiblity to strip off the outermost logical volume and place the contents
+* There is the possibility to strip off the outermost logical volume and place the contents
   with the compound transform in the world. Useful for preparing for example, shielding.
   See the parameter below :code:`stripOuterVolume=1`.
 
@@ -1892,7 +2175,7 @@ density.
 * The default for Geant4 is **1 mm** or **0.7 mm** depending on the version.
   This approximately corresponds to keV energy scales in air for most particles.
 * The related energies in various materials do not scale linearly or continuously
-  with the range parameter. This is ok.
+  with the range parameter. This is OK.
 
 .. warning:: Setting a length scale longer or larger than the beam line element or
 	     volume the region will be used in may result in inaccurate physics

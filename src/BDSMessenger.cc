@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineElement.hh"
 #include "BDSMessenger.hh"
 #include "BDSSamplerRegistry.hh"
+#include "BDSUIcmdStringInt.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
@@ -29,9 +30,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithAString.hh"
 
+#include <iomanip>
 #include <iostream>
 #include <ostream>
-#include <iomanip>
+#include <string>
+
 
 BDSMessenger::BDSMessenger()
 {
@@ -45,9 +48,12 @@ BDSMessenger::BDSMessenger()
 
   elementNameSearchCmd = new G4UIcmdWithAString("/bds/beamline/namesearch",this);
   elementNameSearchCmd->SetGuidance("Search beamline components for element");
-
-  elementGoToCmd = new G4UIcmdWithAString("/bds/beamline/goto", this);
-  elementGoToCmd->SetGuidance("Move to a particular element's location");
+  
+  elementGoToCmd = new BDSUIcmdStringInt("/bds/beamline/goto", this);
+  G4String elementGoToCmdGuidance = "Move the viewpoint to a particular element's location. ";
+  elementGoToCmdGuidance += "Arguments are the name of an element in the beam line and optionally,";
+  elementGoToCmdGuidance += " the instance number (zero-counting).";
+  elementGoToCmd->SetGuidance(elementGoToCmdGuidance);
   
   bdsSamplersDirectory = new G4UIdirectory("/bds/samplers/");
   samplerListCmd = new G4UIcmdWithoutParameter("/bds/samplers/list",this);
@@ -66,6 +72,7 @@ BDSMessenger::~BDSMessenger()
   delete bdsBeamlineDirectory;
   delete beamlineListCmd;
   delete elementNameSearchCmd;
+  delete elementGoToCmd;
   delete bdsSamplersDirectory;
   delete samplerListCmd;
   delete samplerViewCmd;
@@ -130,29 +137,48 @@ void BDSMessenger::ElementNameSearch(std::string name)
     }
 }
 
-void BDSMessenger::GoToElement(const std::string& name)
+void BDSMessenger::GoToElement(const std::string& value)
 {
+  if (value.empty())
+    {G4cerr << "empty string given - can't search" << G4endl; return;}
+  std::vector<G4String> words = BDS::GetWordsFromString(value);
+  G4String name = words[0];
+  G4int instance = 0;
+  if (words.size() > 1)
+    {instance = std::stoi(words[1]);}
+  
   const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
 
   if (!beamline)
-    {
-      G4cout << "No beam line in this model so not possible to search it.";
-      return;
-    }
+    {G4cout << "No beam line in this model so not possible to search it."; return;}
+  
   // search for the name exactly
-  const BDSBeamlineElement* e = beamline->GetElement(name);
+  const BDSBeamlineElement* e = beamline->GetElement(name, instance);
  
+  G4int count = -1;
   if (!e)
     {// search the beam line for any element containing the name at all
       for (const auto& el : *beamline)
 	{
 	  if (BDS::StrContains(el->GetName(), name))
-	    {e = el; break;}
+	    {
+	      count++;
+	      if (count == instance)
+		{
+		  e = el;
+		  break;
+		}
+	    }
+	}
+      if (!e)
+	{
+	  G4cout << "No component found by that name" << G4endl;
+	  if (count > -1)
+	    {G4cout << "only " << count << " instances found." << G4endl;}
+	  return;
 	}
     }
   
-  if (!e)
-    {G4cout << "No component found by that name" << G4endl; return;}
   G4ThreeVector pos = e->GetReferencePositionMiddle();
   G4cout << "goto> " << name << " at global position> " << pos/CLHEP::m << " m" << G4endl;
   G4UImanager* UIManager = G4UImanager::GetUIpointer();

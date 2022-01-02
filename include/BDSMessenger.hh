@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4UImessenger.hh"
 
+class BDSUIcmdStringInt;
 class G4UIcmdWithAString;
 class G4UIcmdWithoutParameter;
 class G4UIcommand;
@@ -45,7 +46,7 @@ public:
   void        BeamLineList();
   std::string BDSBeamlineElementToString(G4int iElement);
   void        ElementNameSearch(std::string name);
-  void        GoToElement(const std::string& name);
+  void        GoToElement(const std::string& value);
   void        ElementTypeSearch(std::string type);
   void        SamplerList();
   void        ViewSamplers();
@@ -57,7 +58,7 @@ protected:
   G4UIdirectory*           bdsBeamlineDirectory;
   G4UIcmdWithoutParameter* beamlineListCmd;
   G4UIcmdWithAString*      elementNameSearchCmd;
-  G4UIcmdWithAString*      elementGoToCmd;
+  BDSUIcmdStringInt*       elementGoToCmd;
   G4UIdirectory*           bdsSamplersDirectory;
   G4UIcmdWithoutParameter* samplerListCmd;
   G4UIcmdWithoutParameter* samplerViewCmd;
