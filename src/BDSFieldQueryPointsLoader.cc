@@ -48,7 +48,8 @@ BDSFieldQueryPointsLoader<T>::~BDSFieldQueryPointsLoader()
 {;}
 
 template <class T>
-std::vector<BDSFourVector<G4double>> BDSFieldQueryPointsLoader<T>::Load(const G4String& fileName) const
+std::vector<BDSFourVector<G4double>> BDSFieldQueryPointsLoader<T>::Load(const G4String& fileName,
+									std::vector<G4String>* columnNamesIn) const
 {
   G4String functionName = "BDSFieldQueryPointsLoader::Load> ";
   T file;
@@ -101,7 +102,7 @@ std::vector<BDSFourVector<G4double>> BDSFieldQueryPointsLoader<T>::Load(const G4
 
       if (!intoData)
 	{
-	  std::regex columnRow("\\s*^!"); // ignore any initial white space and look for '!'
+	  std::regex columnRow("^\\s*!"); // ignore any initial white space and look for '!'
 	  if (std::regex_search(line, columnRow))
 	    {
 	      std::regex afterExclamation("\\s*!\\s*(.+)");
@@ -128,16 +129,22 @@ std::vector<BDSFourVector<G4double>> BDSFieldQueryPointsLoader<T>::Load(const G4
 		      throw BDSException(functionName, msg);
 		    }
 		  values.push_back(search->second);
-      units.push_back(columnNameToUnits[search->first]);
+		  units.push_back(columnNameToUnits[search->first]);
 		  columnNamesToPrint.push_back(search->first);
 		}
 	      nCoordinates = (G4int)values.size();
-	      G4cout << functionName << "assuming " << nCoordinates << "{";
+	      G4cout << functionName << "assuming " << nCoordinates << " coordinate";
+	      if (nCoordinates > 1)
+		{G4cout << "s";}
+	      G4cout << " in each  line: (";
 	      for (const auto& coordName : columnNamesToPrint)
-		{G4cout << coordName << " ";}
-	      G4cout << "}" << G4endl;
+		{G4cout << " " << coordName;}
+	      G4cout << " )" << G4endl;
+	      if (columnNamesIn)
+		{*columnNamesIn = columnNamesToPrint;}
 	    }
 	  intoData = true;
+	  continue;
 	}
 
       std::vector<G4String> wordsInLine = BDS::GetWordsFromString(line);
@@ -147,7 +154,11 @@ std::vector<BDSFourVector<G4double>> BDSFieldQueryPointsLoader<T>::Load(const G4
 
       for (G4int i = 0; i < (G4int)values.size(); i++)
 	{
-	  G4double coord = std::stod(wordsInLine[i]);
+	  G4double coord = 0;
+	  try
+	    {coord = std::stod(wordsInLine[i]);}
+	  catch (std::exception& e)
+	    {throw BDSException(functionName, "Error on line> " + std::to_string(lineNo) + "> cannot convert to number");}
 	  (*values[i]) = coord * units[i];
 	}
       
@@ -163,7 +174,8 @@ std::vector<BDSFourVector<G4double>> BDSFieldQueryPointsLoader<T>::Load(const G4
   return result;
 }
 
-std::vector<BDSFourVector<G4double>> BDS::LoadFieldQueryPoints(const G4String& fileName)
+std::vector<BDSFourVector<G4double>> BDS::LoadFieldQueryPoints(const G4String& fileName,
+							       std::vector<G4String>* columnNamesIn)
 {
   G4String functionName = "BDS::LoadFieldQueryPoints>"; // namespaced functions don't print so well
   
@@ -176,7 +188,7 @@ std::vector<BDSFourVector<G4double>> BDS::LoadFieldQueryPoints(const G4String& f
     {
 #ifdef USE_GZSTREAM
       BDSFieldQueryPointsLoader<igzstream> loader;
-      result = loader.Load(fullFilePath);
+      result = loader.Load(fullFilePath, columnNamesIn);
 #else
       throw BDSException(functionName, "Compressed file loading - but BDSIM not compiled with ZLIB.");
 #endif
@@ -184,7 +196,7 @@ std::vector<BDSFourVector<G4double>> BDS::LoadFieldQueryPoints(const G4String& f
   else
     {
       BDSFieldQueryPointsLoader<std::ifstream> loader;
-      result = loader.Load(fullFilePath);
+      result = loader.Load(fullFilePath, columnNamesIn);
     }
   return result;
 }

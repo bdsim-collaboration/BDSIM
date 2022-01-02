@@ -37,7 +37,8 @@ public:
   BDSFieldQueryPointsLoader();
   ~BDSFieldQueryPointsLoader();
 
-  std::vector<BDSFourVector<G4double>> Load(const G4String& fileName) const;
+  std::vector<BDSFourVector<G4double>> Load(const G4String& fileName,
+					    std::vector<G4String>* columnNamesIn) const;
 };
 
 namespace BDS
@@ -45,7 +46,8 @@ namespace BDS
   /// Detect whether gzipped file or not, instantiate right template and load the data.
   /// This will expand the path to the full one and check it exists and throw an exception
   /// if it doesn't.
-  std::vector<BDSFourVector<G4double>> LoadFieldQueryPoints(const G4String& fileName);
+  std::vector<BDSFourVector<G4double>> LoadFieldQueryPoints(const G4String& fileName,
+							    std::vector<G4String>* columnNamesIn);
 }
 
 #endif
