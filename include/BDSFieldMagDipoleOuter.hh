@@ -59,7 +59,8 @@ private:
   G4double      normalisation;  ///< Storage of the overal normalisation factor.
   G4ThreeVector localField;     ///< Nominal dipole field.
   G4ThreeVector m;              ///< Dipole moment as unit vector of field direction.
-
+  G4double      maxField;       ///< Any field beyond this will curtailed to this value.
+  G4bool        initialisationPhase; ///< Need a way to control cludge normalisation behaviour during initial normalisation calculation.
   static G4double transitionLengthScale;
 };
 
