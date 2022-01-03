@@ -61,7 +61,8 @@ public:
                     QueryDimensionInfo tInfoIn,
                     const G4AffineTransform& globalTransformIn = G4AffineTransform(),
                     G4bool overwriteExistingFilesIn = false,
-		    const G4String& fieldObjectIn = "");
+                    const G4String& fieldObjectIn = "",
+                    G4bool printTransformIn = false);
 
   /// Alternative constructor with list of exact points to query.
   BDSFieldQueryInfo(const G4String& nameIn,
@@ -91,6 +92,7 @@ public:
   G4AffineTransform globalTransform;
   
   G4bool overwriteExistingFiles;
+  G4bool printTransform;
 
   G4String fieldObject; ///< Optional for use in interpolator.
   

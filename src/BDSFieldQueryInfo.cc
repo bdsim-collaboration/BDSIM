@@ -29,7 +29,8 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
                                      QueryDimensionInfo tInfoIn,
                                      const G4AffineTransform& globalTransformIn,
                                      G4bool overwriteExistingFilesIn,
-				     const G4String& fieldObjectIn):
+                                     const G4String& fieldObjectIn,
+                                     G4bool printTransformIn):
   name(nameIn),
   outfileMagnetic(outfileMagneticIn),
   outfileElectric(outfileElectricIn),
@@ -41,18 +42,19 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
   tInfo(tInfoIn),
   globalTransform(globalTransformIn),
   overwriteExistingFiles(overwriteExistingFilesIn),
+  printTransform(printTransformIn),
   fieldObject(fieldObjectIn)
 {;}
 
 BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
-				     const G4String& outfileMagneticIn,
-				     const G4String& outfileElectricIn,
-				     G4bool queryMagneticIn,
-				     G4bool queryElectricIn,
-				     const std::vector<BDSFourVector<G4double>>& pointsToQueryIn,
+                                     const G4String& outfileMagneticIn,
+                                     const G4String& outfileElectricIn,
+                                     G4bool queryMagneticIn,
+                                     G4bool queryElectricIn,
+                                     const std::vector<BDSFourVector<G4double>>& pointsToQueryIn,
                                      const std::vector<G4String>& pointsColumnNamesIn,
-				     G4bool overwriteExistingFilesIn,
-				     const G4String& fieldObjectIn):
+                                     G4bool overwriteExistingFilesIn,
+                                     const G4String& fieldObjectIn):
   name(nameIn),
   outfileMagnetic(outfileMagneticIn),
   outfileElectric(outfileElectricIn),
@@ -61,6 +63,7 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
   pointsToQuery(pointsToQueryIn),
   pointsColumnNames(pointsColumnNamesIn),
   overwriteExistingFiles(overwriteExistingFilesIn),
+  printTransform(false),
   fieldObject(fieldObjectIn)
 {;}
 

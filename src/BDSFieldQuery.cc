@@ -98,6 +98,9 @@ void BDSFieldQuery::QueryField(const BDSFieldQueryInfo* query)
          << "), writing to file";
   PrintBAndEInfo(query);
 
+  if (query->printTransform)
+    {G4cout << query->globalTransform << G4endl;}
+
   /// Ensure field transform navigator is in a completely clean state.
   BDSAuxiliaryNavigator::ResetNavigatorStates();
   

@@ -1386,7 +1386,8 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
 						    {def.nt, def.tmin*CLHEP::ns, def.tmax*CLHEP::ns},
 						    globalTransform,
 						    G4bool(def.overwriteExistingFiles),
-						    G4String(def.fieldObject)));
+						    G4String(def.fieldObject),
+                G4bool(def.printTransform)));
 	}
     }
   return result;
