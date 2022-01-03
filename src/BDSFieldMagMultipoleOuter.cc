@@ -110,7 +110,7 @@ G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
       pole++;
     }
 
-  // limit to pole tip maximum - 0.1 empircal factor to match
+  // limit to pole tip maximum - 0.1 empirical factor to match
   if (closeToPole)
     {result = result.unit()*0.1;}
 
