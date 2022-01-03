@@ -1260,6 +1260,11 @@ This magnet geometry is quite similar to `polesfacet`, but the yoke in between e
 pole is cropped to form another facet. This results in the magnet geometry having
 double the number of poles as sides.
 
+.. warning:: The poles in this geometry may not appear in the visualiser when
+	     using Geant4 V11. This is because of limitations introduced in the
+	     Geant4 visualiser Boolean processing engine. The geometry is still there,
+	     but just the visualiser can't generate a 3D mesh for it.
+
 `horizontalWidth` is the full width horizontally as shown in the figure.
 
 .. figure:: figures/polesfacetcrop_quadrupole.png
@@ -1310,6 +1315,31 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 +-----------------------------+-----------------------+
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
+
+.. _external-magnet-geometry:
+
+External Magnet Geometry
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+A geometry file may be placed around a beam pipe inside a BDSIM magnet instance. The beam pipe
+will be constructed as normal and will use the appropriate BDSIM tracking routines, but the
+yoke geometry will be loaded from the file provided. The external geometry must have a cut out
+in its container volume for the beam pipe to fit, i.e. both the beam pipe and the yoke exist
+at the same level in the geometry hierarchy (both are placed in one container for the magnet).
+The beam pipe is not placed 'inside' the yoke.
+
+This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
+`decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
+
+Example: ::
+
+  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
+
+
+:code:`autoColour=1` can also be used to automatically colour the supplied geometry by
+density if desired. This is on by default.  Example to turn it off: ::
+    
+  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml", autoColour=0;
 
 .. _cavity-geometry-parameters:
 
@@ -1589,21 +1619,6 @@ externally provided piece of geometry (e.g. GDML file and optional field map) or
 provided accelerator component can be placed by declaring a :code:`placement` object in
 the input.
 
-* :code:`bdsimElement` should be used to name a component to place. In this case the component
-  should be defined **before** the placement definition in the input GMAD.
-* :code:`geometryFile` should be used to place an externally provided geometry file.
-* Only one of :code:`bdsimElement` or :code:`geometryFile` should be used in a placement.
-* This is intended to place geometry alongside the beam line and **not** inside or as part of it.
-* The user is responsible for ensuring that the geometry does not
-  overlap with any other geometry including the beam line.
-* Only in special cases, such as for a magnet yoke, can externally provided
-  geometry be placed "inside" BDSIM geometry.
-* The geometry may also have a field map overlaid on it.
-* Placements cannot be made with respect to other placements.
-* There is the possibility to strip off the outermost logical volume and place the contents
-  with the compound transform in the world. Useful for preparing for example, shielding.
-  See the parameter below :code:`stripOuterVolume=1`.
-
 For geometry to be placed as part of the beam line, use the :ref:`element` component in a line.
 
 .. warning:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
@@ -1642,8 +1657,14 @@ it is either scenario 2 or 3. If `referenceElement` is specified, scenario 3 is 
 	     the accelerator - it is not possible to place something beyond the accelerator currently.
 	     In this case, the user should resort to a global placement.
 
+
+Two styles of rotation can be used: either a set of three Euler angles, or the axis-angle
+rotation scheme, where a **unit** vector is provided in :math:`x,y,z` and an angle to
+rotate about that. The later is usually easier to imagine.	     
 	     
 The following parameters may be specified with a placement in BDSIM:
+
+.. tabularcolumns:: |p{4cm}|p{7cm}|
 
 +-------------------------+--------------------------------------------------------------------+
 | **Parameter**           |  **Description**                                                   |
@@ -1695,6 +1716,28 @@ The following parameters may be specified with a placement in BDSIM:
 |                         | whole geometry including all daughter volumes.                     |
 +-------------------------+--------------------------------------------------------------------+
 
+
+* Only one of :code:`bdsimElement` or :code:`geometryFile` should be used in a placement.
+* :code:`bdsimElement` should be used to name a component to place. In this case the component
+  should be defined **before** the placement definition in the input GMAD.
+* :code:`geometryFile` should be used to place an externally provided geometry file.
+* This is intended to place geometry alongside the beam line and **not** inside or as part of it.
+* The user is responsible for ensuring that the geometry does not
+  overlap with any other geometry including the beam line.
+* Only in special cases, such as for a magnet yoke, can externally provided
+  geometry be placed "inside" BDSIM geometry.
+* The geometry may also have a field map overlaid on it.
+* Placements cannot be made with respect to other placements.
+* There is the possibility to strip off the outermost logical volume and place the contents
+  with the compound transform in the world. Useful for preparing for example, shielding.
+  See the parameter below :code:`stripOuterVolume=1`.
+* Examples can be found in :code:`bdsim/examples/features/geometry/13_placements`.
+* The file path provided in :code:`geometryFile` should either be relative to where bdsim
+  is executed from or an absolute path.
+* The main beam line begins at (0,0,0) by default but may be offset.  See
+  :ref:`beamline-offset` for more details.
+
+
 `referenceElementNumber` is the occurrence of that element in the sequence. For example, if a sequence
 was: ::
 
@@ -1720,8 +1763,8 @@ would use: ::
 		 axisY=1,
 		 angle=pi/4;
 
-This would place with an offset of x, y, z = 2, 0.1, 30 m, then a rotation about the Y axis
-of :math:`pi/4`. We use the flag :code:`axisAngle=1` to turn 'on' the axis angle rotation
+This would place with an offset of :math:`x, y, z = 2, 0.1, 30 m`, then a rotation about the Y axis
+of :math:`\pi/4`. We use the flag :code:`axisAngle=1` to turn 'on' the axis angle rotation
 (instead of the Euler angles one), and :code:`axisX`, :code:`axisY`, :code:`axisZ` are the
 components of the unit vector about which to rotate by :code:`angle`. Each component is by
 default 0, so we need only define the axis we want as 1 if aligned with one of the global
@@ -1735,18 +1778,6 @@ axes.
 	  and identify the name of the segment of the dipole they wish to place with respect to.
 	  Alternatively, in the case of low angle bends, the element before or after can be used
 	  with a finite `s` offset.
-
-* Examples can be found in :code:`bdsim/examples/features/geometry/13_placements`.
-* The file path provided in :code:`geometryFile` should either be relative to where bdsim
-  is executed from or an absolute path.
-* The main beam line begins at (0,0,0) by default but may be offset.  See
-  :ref:`beamline-offset` for more details.
-
-
-Two styles of rotation can be used: either a set of three Euler angles, or the axis angle
-rotation scheme, where a **unit** vector is provided in :math:`x,y,z` and an angle to
-rotate about that. These variables are used to construct a :code:`G4RotationMatrix`
-directly, which is also the same as a :code:`CLHEP::HepRotation`.
 
 .. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
 	  the default units for offsets and angles in BDSIM.
@@ -1778,32 +1809,6 @@ The following is an example of placing a **single** BDSIM-generated component at
 .. note:: For using a general piece of geometry as part of a beam line, it is better to use
 	  the `element` beam line element.  See :ref:`element`.  The length should be specified
 	  accurately and then the beam line will fit together well without any air gaps.
-
-	     
-.. _external-magnet-geometry:
-
-External Magnet Geometry
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-A geometry file may be placed around a beam pipe inside a BDSIM magnet instance. The beam pipe
-will be constructed as normal and will use the appropriate BDSIM tracking routines, but the
-yoke geometry will be loaded from the file provided. The external geometry must have a cut out
-in its container volume for the beam pipe to fit, i.e. both the beam pipe and the yoke exist
-at the same level in the geometry hierarchy (both are placed in one container for the magnet).
-The beam pipe is not placed 'inside' the yoke.
-
-This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
-`decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
-
-Example: ::
-
-  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
-
-
-:code:`autoColour=1` can also be used to automatically colour the supplied geometry by
-density if desired. This is on by default.  Example to turn it off: ::
-    
-  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml", autoColour=0;
 
   
 .. _tunnel-geometry:
