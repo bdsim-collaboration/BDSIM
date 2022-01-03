@@ -572,8 +572,12 @@ The following parameters can be used in a query object:
 | overwriteExistingFiles  | Whether to overwrite existing output files     |
 |                         | - default is False (0)                         |
 +-------------------------+------------------------------------------------+
+| printTransform          | (1 or 0) whether to print out the calculated   |
+|                         | transform from the origin to the global        |
+|                         | coordinates                                    |
++-------------------------+------------------------------------------------+
 | referenceElement        | Element with respect to which the coordinates  |
-|                         | are desired to be queried.                     |
+|                         | are desired to be queried                      |
 +-------------------------+------------------------------------------------+
 | referenceElementNumber  | Instance of the reference element in the beam  |
 |                         | line if it is used more than once (0-counting) |

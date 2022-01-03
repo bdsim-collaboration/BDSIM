@@ -49,6 +49,7 @@ void Query::clear()
   queryElectricField = false;
   
   overwriteExistingFiles = false;
+  printTransform = true;
 
   pointsFile = "";
 
@@ -91,6 +92,7 @@ void Query::PublishMembers()
   publish("queryElectricField", &Query::queryElectricField);
   
   publish("overwriteExistingFiles", &Query::overwriteExistingFiles);
+  publish("printTransform",         &Query::printTransform);
   
   publish("pointsFile", &Query::pointsFile);
 
@@ -128,6 +130,7 @@ void Query::print()const
 	    << "queryMagneticField: "    << queryMagneticField     << std::endl
 	    << "queryElectricField: "    << queryElectricField     << std::endl
 	    << "overwriteExistingFiles " << overwriteExistingFiles << std::endl
+	    << "printTransform "         << printTransform         << std::endl
 	    << "pointsFile "             << pointsFile             << std::endl
 	    << "referenceElement "       << referenceElement       << std::endl
 	    << "referenceElementNumber " << referenceElementNumber << std::endl
