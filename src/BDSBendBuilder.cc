@@ -664,9 +664,18 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, centralInputFaceAngle, centralOutputFaceAngle, bpInfo, yokeOnLeft);
   mgInfo->name = elementName;
 
+  BDSFieldInfo* outerField = BDSComponentFactory::PrepareMagnetOuterFieldInfo(st,
+                                                                              BDSFieldType::dipole,
+                                                                              bpInfo,
+                                                                              mgInfo,
+                                                                              fieldTiltOffset,
+                                                                              integratorSet,
+                                                                              brho,
+                                                                              element->scalingFieldOuter);
+
   // Here we change from the strength angle convention of +ve angle corresponds to
   // deflection in negative x, to correct 3d +ve angle corresponds to deflection in
-  // positive x. Hence angle sign flip for construction.
+  // positive x. Hence, angle sign flip for construction.
   BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::rectangularbend,
 				     elementName+"_centre",
 				     centralArcLength,
@@ -674,7 +683,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 				     mgInfo,
 				     vacuumField,
 				     -centralAngle,
-				     nullptr);
+                                     outerField);
   
   rbendline->AddComponent(oneBend);
   
