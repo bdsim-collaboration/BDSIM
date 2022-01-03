@@ -40,6 +40,8 @@ void BDSFieldQueryRaw::GetFieldValue(const G4ThreeVector& globalXYZ,
 				     G4double tGlobal,
 				     G4double fieldValue[6])
 {
+  for (G4int i = 0; i < 6; i++)
+    {fieldValue[i] = 0;}
   if (!field)
     {return;}
   G4double position[4] = {globalXYZ.x(), globalXYZ.y(),globalXYZ.z(), tGlobal};
