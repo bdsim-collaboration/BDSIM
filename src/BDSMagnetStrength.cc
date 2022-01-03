@@ -63,6 +63,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "equatorradius",   // radius from axis at which field goes to 0
   "nominalenergy",   // nominal beam energy needed by some integrators
   "scaling",         // field scaling factor needed by dipolequadrupole integrator
+  "scalingOuter",    // arbitrary scaling for yoke fields - kept as a separate scaling number
   "isentrance",      // bool to determine is integrator is for entrance (1) or exit (0) face
   "kick1",
   "kick2",
@@ -136,6 +137,7 @@ const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::uni
     {"equatorradius" , {"m",   CLHEP::m}},
     {"nominalenergy" , {"GeV", CLHEP::GeV}},
     {"scaling"       , {"",    1.0}},
+    {"scalingOuter"  , {"",    1.0}},
     {"isentrance"    , {"",    1.0}},
     {"kick1"         , {"",    1.0}},
     {"kick2"         , {"",    1.0}},
@@ -237,7 +239,8 @@ const G4double& BDSMagnetStrength::operator[](const G4String& key) const
 
 std::vector<G4double> BDSMagnetStrength::NormalComponents() const
 {
-  std::vector<G4double> result(normalComponentKeys.size());
+  std::vector<G4double> result;
+  result.reserve(normalComponentKeys.size());
   for (const auto& key : normalComponentKeys)
     {result.push_back(GetValue(key));}
   return result;
@@ -245,7 +248,8 @@ std::vector<G4double> BDSMagnetStrength::NormalComponents() const
 
 std::vector<G4double> BDSMagnetStrength::SkewComponents() const
 {
-  std::vector<G4double> result(skewComponentKeys.size());
+  std::vector<G4double> result;
+  result.reserve(skewComponentKeys.size());
   for (const auto& key : skewComponentKeys)
     {result.push_back(GetValue(key));}
   return result;

@@ -138,7 +138,8 @@ public:
 						   const BDSMagnetOuterInfo* outerInfo,
 						   const G4Transform3D&      fieldTransform,
 						   const BDSIntegratorSet*   integratorSetIn,
-						   G4double                  brhoIn);
+						   G4double                  brhoIn,
+						   G4double                  outerFieldScaling = 1.0);
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle

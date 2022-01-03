@@ -151,7 +151,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 										  mgInfo,
 										  fieldTiltOffset,
 										  integratorSet,
-										  brho);
+										  brho,
+										  element->scalingFieldOuter);
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 baseName,
 					 arcLength,
@@ -238,7 +239,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
                                                                               mgInfo,
                                                                               fieldTiltOffset,
                                                                               integratorSet,
-                                                                              brho);
+                                                                              brho,
+                                                                              element->scalingFieldOuter);
   mgInfo->name = centralName;
   BDSMagnet* centralWedge = new BDSMagnet(BDSMagnetType::sectorbend,
 					  centralName,
