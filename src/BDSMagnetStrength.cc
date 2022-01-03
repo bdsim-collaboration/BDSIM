@@ -168,9 +168,9 @@ const std::vector<G4String> BDSMagnetStrength::skewComponentKeys = {
 const G4double BDSMagnetStrength::zero     = 0.0;
 G4double       BDSMagnetStrength::variable = 0.0;
 
-BDSMagnetStrength::BDSMagnetStrength(std::map<G4String, G4double> sts)
+BDSMagnetStrength::BDSMagnetStrength(const std::map<G4String, G4double>& sts)
 {
-  for (auto keyValue : sts)
+  for (const auto&  keyValue : sts)
     {
       if (ValidKey(keyValue.first))
 	{(*this)[keyValue.first] = keyValue.second;}
@@ -179,7 +179,7 @@ BDSMagnetStrength::BDSMagnetStrength(std::map<G4String, G4double> sts)
 
 std::ostream& operator<<(std::ostream& out, BDSMagnetStrength const &st)
 {
-  for (auto key : st.keys)
+  for (const auto& key : BDSMagnetStrength::keys)
     {out << key << ": " << st.GetValue(key) << ", ";}
   return out;
 }
@@ -237,16 +237,16 @@ const G4double& BDSMagnetStrength::operator[](const G4String& key) const
 
 std::vector<G4double> BDSMagnetStrength::NormalComponents() const
 {
-  std::vector<G4double> result;
-  for (auto key : normalComponentKeys)
+  std::vector<G4double> result(normalComponentKeys.size());
+  for (const auto& key : normalComponentKeys)
     {result.push_back(GetValue(key));}
   return result;
 }
 
 std::vector<G4double> BDSMagnetStrength::SkewComponents() const
 {
-  std::vector<G4double> result;
-  for (auto key : skewComponentKeys)
+  std::vector<G4double> result(skewComponentKeys.size());
+  for (const auto& key : skewComponentKeys)
     {result.push_back(GetValue(key));}
   return result;
 }
