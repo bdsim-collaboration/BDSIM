@@ -1446,6 +1446,20 @@ GDML Geometry Specifics
 * The Geant4 installation that BDSIM is compiled with repsect to must have GDML support turned on.
 * BDSIM must be compiled with the GDML build option in CMake turned on for GDML loading to work.
 
+Creating GDML Geometry
+**********************
+
+To create customised geometry, we recommend our separate (free) Python package, **pyg4ometry**. This
+is a Python package that can be used in a script to create Geant4 or FLUKA geometry or convert
+it into GDML and has many examples. It can also be used to **check for overlaps** in any GDML file
+and validate geometry.
+
+See :ref:`python-geometry-preparation` for details and links to the software and manual. This
+package is used for many of the examples included with BDSIM and the Python scripts are
+included with the examples.
+
+.. _geometry-gdml-preprocessing:
+
 GDML Preprocessing
 ******************
 
@@ -1497,10 +1511,9 @@ directed to by the URL at the very top of the file and is found online.  e.g. ::
   <gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
 
 
-If however, you need
-**offline access**, then BDSIM includes a copy of the latest GDML Schema. During the preprocessing,
-this is automatically substituted for the one included with BDSIM. If you use a custom Schema
-or do not wish to use this feature, it can be turned off with: ::
+If however, you need **offline access**, then BDSIM includes a copy of the latest GDML Schema.
+During the preprocessing, this is automatically substituted for the one included with BDSIM.
+If you use a custom Schema or do not wish to use this feature, it can be turned off with: ::
 
   option, preprocessGDMLSchema=0;
 
@@ -1517,6 +1530,15 @@ This is independent of the :code:`preprocessGDML` option above, i.e. with that t
   order to create the temporary directory. This behaviour can be overridden by specifying the option
   :code:`option, temporaryDirectory="/path/to/desired/directory"`. :code:`"./"` could be used
   for example for the current working directory.
+
+The BDSIM GDML preprocessor has some limitations. We cannot support variables in values.
+In this case, the user should load a GDML file with Geant4 and re-export it. This will
+'flatten' / resolve any variables, e.g. ::
+
+  <variable name="offsetX" value="3"/>
+  <position x="offsetX+3" y="0" z="-3|/>
+
+would not work, as the *variable* "offsetX" is referred to in the *value* "x" in the position tag.
 
 
 .. _external-world-geometry:
