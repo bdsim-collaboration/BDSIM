@@ -32,13 +32,13 @@ using namespace GMAD;
 namespace
 {
   /// Helper method
-  void print(std::list<Element> l, int ident=0)
+  void print(const std::list<Element>& l, int ident=0)
   {
-    if(ident == 0)
+    if (ident == 0)
       {std::cout << "using line " << Parser::Instance()->current_line << std::endl;}
-  
-    for(std::list<Element>::iterator it=l.begin();it!=l.end();++it)
-      {(*it).print(ident);}
+
+    for (auto& el : l)
+      {el.print();}
   }
 }
 
@@ -292,15 +292,12 @@ void Element::print(int ident) const
 
   switch(type)
     {
-    case ElementType::_DRIFT:
-      {break;}
     case ElementType::_SBEND:
     case ElementType::_RBEND:
       {
 	std::cout << "B     = " << B     << std::endl
 		  << "angle = " << angle << std::endl
 		  << "k1    = " << k1    << std::endl;
-        std::cout << "scaling = " << scaling << std::endl;
 	break;
       }
     case ElementType::_QUAD:
@@ -391,6 +388,33 @@ void Element::print(int ident) const
 		  << "phi=   " << phi   << "rad" << std::endl
 		  << "theta= " << theta << "rad" << std::endl
 		  << "psi=   " << psi   << "rad" << std::endl;
+	break;
+      }
+    default:
+      {break;}
+    }
+
+  switch (type)
+    {
+    case ElementType::_RBEND:
+    case ElementType::_SBEND:
+    case ElementType::_QUAD:
+    case ElementType::_SEXTUPOLE:
+    case ElementType::_OCTUPOLE:
+    case ElementType::_DECAPOLE:
+    case ElementType::_SOLENOID:
+    case ElementType::_MULT:
+    case ElementType::_THINMULT:
+    case ElementType::_AWAKESPECTROMETER:
+    case ElementType::_MUONSPOILER:
+    case ElementType::_HKICKER:
+    case ElementType::_VKICKER:
+    case ElementType::_KICKER:
+    case ElementType::_TKICKER:
+    case ElementType::_UNDULATOR:
+    case ElementType::_RF:
+      {
+        std::cout << "scaling = " << scaling << std::endl;
 	break;
       }
     default:
