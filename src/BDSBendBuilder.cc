@@ -636,7 +636,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
       BDSMagnetStrength* fringeStIn = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
                                                                    trackingPolefaceAngleIn, trackingPolefaceAngleOut,
                                                                    fintx, true);
-      G4String fringeName            = name + "_e1_fringe";
+      G4String fringeName = name + "_e1_fringe";
 
       // element used for beam pipe materials etc - not strength, angle or length.
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, angleIn, fringeInOutputAngle,
@@ -682,7 +682,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
       BDSMagnetStrength* fringeStOut = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
                                                                     trackingPolefaceAngleIn, trackingPolefaceAngleOut,
                                                                     fintx, false);
-      G4String fringeName             = name + "_e2_fringe";
+      G4String fringeName = name + "_e2_fringe";
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeOutInputAngle, angleOut,
 						    fringeName,
