@@ -1410,6 +1410,9 @@ geometry can be used in several ways:
 2) Wrapped around the beam pipe in a BDSIM magnet element (see :ref:`external-magnet-geometry`)
 3) As a general element in the beam line where the geometry constitutes the whole object. (see :ref:`element`)
 4) As the world volume in which the BDSIM beamline is placed. (see :ref:`external-world-geometry`)
+
+.. warning:: If including any external geometry, overlaps must be checked in the visualiser by
+	     running :code:`/geometry/test/run` before the model is used for a physics study.
    
 .. _geometry-formats:
 
@@ -1435,15 +1438,75 @@ formats are described in more detail in :ref:`external-geometry-formats`.
   also be checked for overlaps.
 
 
+.. _geometry-gdml:
+  
 GDML Geometry Specifics
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-* BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
-* For GDML geometry, we preprocess the input file prepending all names with the name
-  of the element. This is to compensate for the fact that the Geant4 GDML loader does
-  not handle unique file names. However, in the case of very large files with many
-  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
-  should be turned off. The loading will only work with one file in this case.
+* The Geant4 installation that BDSIM is compiled with repsect to must have GDML support turned on.
+* BDSIM must be compiled with the GDML build option in CMake turned on for GDML loading to work.
+
+GDML Preprocessing
+******************
+
+Geant4's GDML loader, which BDSIM uses to load GDML files, was only designed to use 1 GDML file.
+Unlike Geant4's C++ classes where names to do not matter, in GDML, each object is identified by
+name. An example of some GDML defining solids is: ::
+
+  <solids>
+    <box lunit="mm" name="box" x="20" y="30" z="40"/>
+    <box lunit="mm" name="world" x="200" y="200" z="200"/>
+  </solids>
+
+
+When loading a file, if Geant4 finds an object in memory (Geant4's registries of objects)
+already with that name, it uses that object instead of reading the one from the file. e.g. in
+this case, another solid with the name "box". This can have the unintended consequence of
+thinking you are loading a piece of geometry but getting a completely different piece! This
+can cause overlaps, bad tracking and an incorrect model and results. Worse still, it may go unseen.
+
+.. note:: If including any external geometry, overlaps must be checked in the visualiser by
+	  running :code:`/geometry/test/run` before the model is used for a physics study.
+
+The most common use of Geant4 is for a detector model where the entire model is written
+in 1 GDML file, hence this design in Geant4.
+
+However, in BDSIM, we may wish to piece together (like LEGO bricks) many pieces of
+geometry in and around an accelerator. To compensate for this Geant4 behaviour,
+we **preprocess** a GDML file. This means, we create a temporary copy of the file,
+and change all the names adding a unique string to the beginning of them all - typically
+the element or placement the GDML file will be used in. This allows us to load multiple
+files with possibly degenerate names safely.
+
+For each name we change, we must check for any uses elsewhere in the file. Therefore,
+this can be a :math:`O(N^2)` problem with the number of names. In the case of a GDML
+file that includes a large tessellated solid, each individual 3-vector position is
+written with it's own name and this vastly increases the number of names to process.
+
+In this case, it is possible to **keep the temporary *preprocessed* file** and edit the
+input GMAD file to use this new file. However, this strategy means that if the GDML
+file is updated, it has to be preprocessed again and copied and the input edited (not ideal). ::
+
+  option, preprocessGDML=0;
+
+The **Schema** is a set of rules of what is allowed in the GDML file that generally uses the
+XML syntax. It defines which *tags* are allowed and what parameters they can have. This is
+directed to by the URL at the very top of the file and is found online.  e.g. ::
+
+  <?xml version="1.0" ?>
+  <gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+
+If however, you need
+**offline access**, then BDSIM includes a copy of the latest GDML Schema. During the preprocessing,
+this is automatically substituted for the one included with BDSIM. If you use a custom Schema
+or do not wish to use this feature, it can be turned off with: ::
+
+  option, preprocessGDMLSchema=0;
+
+This is independent of the :code:`preprocessGDML` option above, i.e. with that turned off, but
+`preprocessGDMLSchema` on (by default), we can preprocess only the Schema location.
+  
 * BDSIM will put the preprocessed GDML files in a temporary directory and remove
   them once finished. The temporary files can be retained by using the option
   :code:`option, removeTemporaryFiles=0;`.
@@ -1455,15 +1518,6 @@ GDML Geometry Specifics
   :code:`option, temporaryDirectory="/path/to/desired/directory"`. :code:`"./"` could be used
   for example for the current working directory.
 
-GMAD Geometry Specifics
-^^^^^^^^^^^^^^^^^^^^^^^
-
-If a geometry file path is defined relative to the location of the GMAD file and that
-GMAD file is included in a parent file in a different location, the file will not be
-correctly located (i.e. main.gmad includes ../somedir/anotherfile.gmad, which defines
-geometry in "../a/relative/path/geometryfile.gdml". The file will not be found). If all
-GMAD files are located in the same directory, this will not be a problem. It is better / cleaner
-overall to use multiple GMAD input files and include them.
 
 .. _external-world-geometry:
 
@@ -1629,11 +1683,27 @@ and we wanted to place with respect to the first element, we would use::
   p1: placement, referenceElement="d1",
                  referenceElementNumber=0;
 
-If 0, the `referenceElementNumber` argument is optional. If we want to place with respect to
-the third usage of "d2", we would use::
+And the `referenceElementNumber` argument is optional as the default is 0. If we want to place with respect to
+the fourth usage of "d2", we would use::
 
   p1: placement, referenceElement="d2",
                  referenceElementNumber=3;
+
+If we want to placement at some coordinates with an axis-angle rotation (easier to perceive), we
+would use: ::
+
+  p1: placement, geometryFile="gdml:anExampleFile.gdml",
+                 x=2*m, y=10*cm, z=30*m,
+                 axisAngle=1,
+		 axisY=1,
+		 angle=pi/4;
+
+This would place with an offset of x, y, z = 2, 0.1, 30 m, then a rotation about the Y axis
+of :math:`pi/4`. We use the flag :code:`axisAngle=1` to turn 'on' the axis angle rotation
+(instead of the Euler angles one), and :code:`axisX`, :code:`axisY`, :code:`axisZ` are the
+components of the unit vector about which to rotate by :code:`angle`. Each component is by
+default 0, so we need only define the axis we want as 1 if aligned with one of the global
+axes.
 
 .. note:: Dipoles are split in BDSIM into many small straight sections. These must have a unique
 	  name to appear correctly in the Geant4 visualisation system. The splitting is done
