@@ -79,6 +79,8 @@ General
 * The visualiser command :code:`/bds/beamline/goto` now accepts an optional integer as a second
   argument to specify the instance of a beam line element in the line to go to. i.e. if the same
   beam line element is reused, you can select an individual one to go to.
+* Tolerate "electron", "positron" and "photon" for beam particle names and substitute in the
+  Geant4 names (e.g. "e-").
 
 Bug Fixes
 ---------
