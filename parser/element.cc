@@ -57,6 +57,7 @@ void Element::PublishMembers()
   
   publish("l",         &Element::l);
   publish("scaling",   &Element::scaling);
+  publish("scalingFieldOuter", &Element::scalingFieldOuter);
   publish("ks",        &Element::ks);
   publish("k1",        &Element::k1);
   publish("k2",        &Element::k2);
@@ -415,6 +416,8 @@ void Element::print(int ident) const
     case ElementType::_RF:
       {
         std::cout << "scaling = " << scaling << std::endl;
+        if (scalingFieldOuter != 1)
+          {std::cout << "scalingFieldOuter = " << scalingFieldOuter << std::endl;}
 	break;
       }
     default:
@@ -433,6 +436,7 @@ void Element::flush()
   userParameters = "";
   l = 0;
   scaling = 1;
+  scalingFieldOuter = 1;
   ks = 0;
   k1 = 0;
   k2 = 0;

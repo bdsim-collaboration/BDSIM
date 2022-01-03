@@ -26,10 +26,11 @@ BDSFieldMagMultipoleOuterDual::BDSFieldMagMultipoleOuterDual(G4int              
 							   const BDSFieldMag* innerFieldIn,
 							   G4bool             kPositive,
 							   G4double           separation,
-							   G4bool             secondFieldOnLeft):
+							   G4bool             secondFieldOnLeft,
+							   G4double           arbitraryScaling):
   fieldBase(nullptr)
 {
-  fieldBase = new BDSFieldMagMultipoleOuter(orderIn, poleTipRadiusIn, innerFieldIn, kPositive);
+  fieldBase = new BDSFieldMagMultipoleOuter(orderIn, poleTipRadiusIn, innerFieldIn, kPositive, arbitraryScaling);
   G4double offsetX = secondFieldOnLeft ? -separation : separation;
   offset = G4ThreeVector(offsetX,0,0);
 }

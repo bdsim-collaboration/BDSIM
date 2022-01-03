@@ -32,7 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 G4double BDSFieldMagDipoleOuter::transitionLengthScale = 1*CLHEP::cm;
 
 BDSFieldMagDipoleOuter::BDSFieldMagDipoleOuter(const BDSMagnetStrength* strength,
-					       const G4double&          poleTipRadiusIn):
+					       const G4double&          poleTipRadiusIn,
+                                               G4double           arbitraryScaling):
   poleTipRadius(poleTipRadiusIn),
   normalisation(1)
 {
