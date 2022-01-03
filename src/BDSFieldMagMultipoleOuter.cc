@@ -36,8 +36,11 @@ BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(G4int              orderIn,
   order(orderIn),
   normalisation(1), // we have to get field first to calculate the normalisation which uses it, so start with 1
   positiveField(kPositive),
-  poleTipRadius(poleTipRadiusIn)
+  poleTipRadius(poleTipRadiusIn),
+  maxField(1e100),
+  initialisationPhase(true)
 {
+  // we're assuming order > 0
   G4int nPoles = 2*order;
 
   // prepare vector of infinite wire current sources
@@ -49,12 +52,22 @@ BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(G4int              orderIn,
       currents.push_back(c);
     }
 
-  // query inner field - at point just outside pole tip
-  G4ThreeVector poleTipPoint = G4ThreeVector(0, poleTipRadius, 0);
-  G4double angleOffset = CLHEP::twopi/(G4double)nPoles;
-  poleTipPoint.rotateZ(0.5*angleOffset); // rotate from 0,1 to the pole position (different for each magnet).
+  // query inner field at pole tip radius
+  // choose a point to query carefully though
+  // beside a current source (and with intialisationPhase=true) the function is unbound
+  // so we choose a point halfway in between the first two current sources
+  G4double angleC1 = currents[0].phi();
+  G4double angleC2 = currents[1].phi();
+  G4double angleAvg = (angleC1 + angleC2) / 2.0;
+  G4TwoVector queryPoint;
+  queryPoint.setPolar(poleTipRadius, angleAvg);
+  G4ThreeVector poleTipPoint(queryPoint.x(), queryPoint.y(), 0);
+
   G4ThreeVector fieldAtPoleTip = innerFieldIn->GetField(poleTipPoint,/*t=*/0);
   G4double fieldAtPoleTipMag = fieldAtPoleTip.mag();
+
+  // include arbitrary scaling here so it can obey an arbitrary scaling
+  maxField = fieldAtPoleTipMag * arbitraryScaling;
 
   // we query this field object but with the normalisation initialised to 1 so it won't
   // affect the result despite using the same code
@@ -64,11 +77,13 @@ BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(G4int              orderIn,
   
   // normalisation
   normalisation = fieldAtPoleTipMag / rawOuterlFieldAtPoleTipMag;
+  normalisation *= arbitraryScaling;
   if (!std::isfinite(normalisation))
     {
       normalisation = 0;
       finiteStrength = false;
     }
+  initialisationPhase = false;
 }
 
 G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
@@ -111,10 +126,6 @@ G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
       pole++;
     }
 
-  // limit to pole tip maximum - 0.1 empirical factor to match
-  if (closeToPole)
-    {result = result.unit()*0.1;}
-
   // get sign right to match convention
   if (positiveField)
     {result *= -1;}
@@ -122,5 +133,12 @@ G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
   // normalisation
   result *= normalisation;
 
+  // limit to pole tip maximum
+  if (!initialisationPhase)
+    {
+      if ((result.mag() > maxField) || closeToPole)
+	{result = result.unit() * maxField;}
+    }
+  
   return G4ThreeVector(result.x(), result.y(), 0);
 }

@@ -69,10 +69,12 @@ public:
 
 private:
   const G4int       order;           ///< N-poles / 2.
-  G4double          normalisation;   ///< Storage of the overal normalisation factor.
+  G4double          normalisation;   ///< Storage of the overall normalisation factor.
   G4bool            positiveField;   ///< Sign of magnetic field.
   G4double          poleTipRadius;   ///< Radius of transition between inner and outer fields.
-  std::vector<G4TwoVector> currents; ///< Locations of inifite wire current sources.
+  std::vector<G4TwoVector> currents; ///< Locations of infinite wire current sources.
+  G4double          maxField;        ///< Any field beyond this will curtailed to this value.
+  G4bool            initialisationPhase; ///< Need a way to control cludge normalisation behaviour during initial normalisation calculation.
 };
 
 #endif
