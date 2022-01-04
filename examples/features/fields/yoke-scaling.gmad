@@ -36,14 +36,14 @@ quBendScaled: query, nx=51, xmin=-30*cm, xmax=30*cm,
 		     overwriteExistingFiles=1;
 
 ! regular quadrupole
-quQuadNormal: query, nx=51, xmin=-30*cm, xmax=30*cm,
-	      	     ny=51, ymin=-30*cm, ymax=30*cm,
+quQuadNormal: query, nx=21, xmin=-30*cm, xmax=30*cm,
+	      	     ny=21, ymin=-30*cm, ymax=30*cm,
 		     queryMagneticField=1,
 		     outfileMagnetic="out_sfo_quad_normal.dat",
 		     referenceElement="q1",
 		     overwriteExistingFiles=1;
 
-quQuadNormal: query, nx=51, xmin=-30*cm, xmax=30*cm,
+quQuadScaled: query, nx=51, xmin=-30*cm, xmax=30*cm,
 	      	     ny=51, ymin=-30*cm, ymax=30*cm,
 		     queryMagneticField=1,
 		     outfileMagnetic="out_sfo_quad_scaled.dat",
@@ -78,7 +78,7 @@ quQuadLHCNormal: query, nx=71, xmin=-20*cm, xmax=40*cm,
 		        referenceElement="lhcq1",
 		        overwriteExistingFiles=1;
 
-quQuadLHCNormal: query, nx=71, xmin=-20*cm, xmax=40*cm,
+quQuadLHCScaled: query, nx=71, xmin=-20*cm, xmax=40*cm,
 	      	        ny=71, ymin=-30*cm, ymax=30*cm,
 		        queryMagneticField=1,
 		        outfileMagnetic="out_sfo_quad_lhc_scaled.dat",
