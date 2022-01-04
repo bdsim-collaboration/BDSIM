@@ -35,8 +35,8 @@ BDSVisCommandSceneAddQueryMagneticField::BDSVisCommandSceneAddQueryMagneticField
   realWorld(realWorldIn),
   command(nullptr)
 {
-  command = new G4UIcommand("/bds/scene/add/magneticField", this);
-  command->SetGuidance("Adds magnetic field representation to current scene.");
+  command = new G4UIcommand("/bds/field/drawQuery", this);
+  command->SetGuidance("Adds field representation from a query to the current scene. The key \"all\" can be used to draw all defined queries.");
 
   G4UIparameter* parameter;
   parameter = new G4UIparameter("queryName", 's', false);
@@ -65,7 +65,8 @@ void BDSVisCommandSceneAddQueryMagneticField::SetNewValue(G4UIcommand*, G4String
 	{G4cerr <<  "ERROR: No current scene.  Please create one." << G4endl;}
       return;
     }
-  
+  if (newValue.empty())
+    {G4cerr << "No query name specified." << G4endl; return;}
   std::vector<G4String> queryNames = BDS::GetWordsFromString(newValue);
   
   std::vector<BDSFieldQueryInfo*> queries;
@@ -91,6 +92,9 @@ void BDSVisCommandSceneAddQueryMagneticField::SetNewValue(G4UIcommand*, G4String
       else
         {G4cerr << "No such query name \"" << name << "\"" << G4endl;}
     }
+  
+  if (queries.empty())
+    {G4cerr << "No queries found to draw" << G4endl; return;}
   
   G4VModel* model = new BDSVisFieldModel(queries);
   G4bool successful = scene->AddRunDurationModel(model, warn);
