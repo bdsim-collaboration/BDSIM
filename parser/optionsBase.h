@@ -168,6 +168,7 @@ namespace GMAD
 
     bool      yokeFields;
     bool      yokeFieldsMatchLHCGeometry;
+    bool      useOldMultipoleOuterFields;
     bool        includeFringeFields;
     bool        includeFringeFieldsCavities;
 

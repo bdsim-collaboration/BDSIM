@@ -41,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagDecapole.hh"
 #include "BDSFieldMagDipole.hh"
 #include "BDSFieldMagDipoleOuter.hh"
+#include "BDSFieldMagDipoleOuterOld.hh"
 #include "BDSFieldMagDipoleQuadrupole.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagGlobalPlacement.hh"
@@ -49,6 +50,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMultipoleOuter.hh"
 #include "BDSFieldMagMultipoleOuterDual.hh"
+#include "BDSFieldMagMultipoleOuterDualOld.hh"
+#include "BDSFieldMagMultipoleOuterOld.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSFieldMagQuadrupole.hh"
@@ -147,12 +150,14 @@ BDSFieldFactory* BDSFieldFactory::Instance()
   return instance;
 }
 
-BDSFieldFactory::BDSFieldFactory()
+BDSFieldFactory::BDSFieldFactory():
+  useOldMultipoleOuterFields(false)
 {
   G4double defaultRigidity = std::numeric_limits<double>::max();
   if (designParticle)
     {defaultRigidity = designParticle->BRho();}
   PrepareFieldDefinitions(BDSParser::Instance()->GetFields(), defaultRigidity);
+  useOldMultipoleOuterFields = BDSGlobalConstants::Instance()->UseOldMultipoleOuterFields();
 }
 
 BDSFieldFactory::~BDSFieldFactory()
@@ -470,7 +475,10 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {// suitable only for querying transversely in x,y - no 3d nature
 	BDSFieldMag* innerField = new BDSFieldMagDipole(strength);
 	G4bool positiveField = (*strength)["field"] < 0; // convention for dipoles - "positive"
-	field = new BDSFieldMagMultipoleOuter(1, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);
+	if (useOldMultipoleOuterFields)
+	  {field = new BDSFieldMagMultipoleOuterOld(1, poleTipRadius, innerField, positiveField);}
+	else
+	  {field = new BDSFieldMagMultipoleOuter(1, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);}
 	delete innerField; // no longer required
 	break;
       }
@@ -478,7 +486,10 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
 	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
 	G4bool positiveField = (*strength)["k1"] > 0;
-	field = new BDSFieldMagMultipoleOuter(2, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);
+	if (useOldMultipoleOuterFields)
+	  {field = new BDSFieldMagMultipoleOuterOld(2, poleTipRadius, innerField, positiveField);}
+	else
+	  {field = new BDSFieldMagMultipoleOuter(2, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);}
 	delete innerField; // no longer required
 	break;
       }
@@ -486,7 +497,10 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
 	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
 	G4bool positiveField = (*strength)["k2"] > 0;
-	field = new BDSFieldMagMultipoleOuter(3, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);
+	if (useOldMultipoleOuterFields)
+	  {field = new BDSFieldMagMultipoleOuterOld(3, poleTipRadius, innerField, positiveField);}
+	else
+	  {field = new BDSFieldMagMultipoleOuter(3, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);}
 	delete innerField; // no longer required
 	break;
       }
@@ -494,7 +508,10 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
 	BDSFieldMag* innerField = new BDSFieldMagOctupole(strength, brho);
 	G4bool positiveField = (*strength)["k3"] > 0;
-	field = new BDSFieldMagMultipoleOuter(4, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);
+	if (useOldMultipoleOuterFields)
+	  {field = new BDSFieldMagMultipoleOuterOld(4, poleTipRadius, innerField, positiveField);}
+	else
+	  {field = new BDSFieldMagMultipoleOuter(4, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);}
 	delete innerField; // no longer required
 	break;
       }
@@ -502,7 +519,10 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
 	BDSFieldMag* innerField = new BDSFieldMagDecapole(strength, brho);
 	G4bool positiveField = (*strength)["k4"] > 0;
-	field = new BDSFieldMagMultipoleOuter(5, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);
+	if (useOldMultipoleOuterFields)
+	  {field = new BDSFieldMagMultipoleOuterOld(5, poleTipRadius, innerField, positiveField);}
+	else
+	  {field = new BDSFieldMagMultipoleOuter(5, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);}
 	delete innerField; // no longer required
 	break;
       }
@@ -510,8 +530,11 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
 	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
 	G4bool positiveField = (*strength)["k1"] > 0;
-	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(2, poleTipRadius,
-								 innerField, positiveField, (*strength)["scalingOuter"]);
+	BDSFieldMag* normalField;
+	if (useOldMultipoleOuterFields)
+	  {normalField = new BDSFieldMagMultipoleOuterOld(2, poleTipRadius, innerField, positiveField);}
+	else
+	  {normalField = new BDSFieldMagMultipoleOuter(2, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);}
 	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/4.);
 	delete innerField; // no longer required
 	break;
@@ -520,8 +543,11 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
 	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
 	G4bool positiveField = (*strength)["k2"] > 0;
-	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(3, poleTipRadius,
-								 innerField, positiveField, (*strength)["scalingOuter"]);
+	BDSFieldMag* normalField;
+	if (useOldMultipoleOuterFields)
+	  {normalField = new BDSFieldMagMultipoleOuterOld(3, poleTipRadius, innerField, positiveField);}
+	else
+	  {normalField = new BDSFieldMagMultipoleOuter(3, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);}
 	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/6.);
 	delete innerField; // no longer required
 	break;
@@ -530,8 +556,11 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
 	BDSFieldMag* innerField = new BDSFieldMagOctupole(strength, brho);
 	G4bool positiveField = (*strength)["k3"] > 0;
-	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(4, poleTipRadius,
-								 innerField, positiveField, (*strength)["scalingOuter"]);
+	BDSFieldMag* normalField;
+	if (useOldMultipoleOuterFields)
+	  {normalField = new BDSFieldMagMultipoleOuterOld(4, poleTipRadius, innerField, positiveField);}
+	else
+	  {normalField = new BDSFieldMagMultipoleOuter(4, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);}
 	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/8.);
 	delete innerField; // no longer required
 	break;
@@ -540,20 +569,37 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
 	BDSFieldMag* innerField = new BDSFieldMagDecapole(strength, brho);
 	G4bool positiveField = (*strength)["k4"] > 0;
-	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(5, poleTipRadius,
-								 innerField, positiveField, (*strength)["scalingOuter"]);
+	BDSFieldMag* normalField;
+	if (useOldMultipoleOuterFields)
+	  {normalField = new BDSFieldMagMultipoleOuterOld(5, poleTipRadius, innerField, positiveField);}
+	else
+	  {normalField = new BDSFieldMagMultipoleOuter(5, poleTipRadius, innerField, positiveField, (*strength)["scalingOuter"]);}
 	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/10.);
 	delete innerField; // no longer required
 	break;
       }
     case BDSFieldType::multipoleouterdipole3d:
-      {field = new BDSFieldMagDipoleOuter(strength, poleTipRadius, (*strength)["scalingOuter"]); break;}
+      {
+	if (useOldMultipoleOuterFields)
+	  {field = new BDSFieldMagDipoleOuterOld(strength, poleTipRadius);}
+	else
+	  {field = new BDSFieldMagDipoleOuter(strength, poleTipRadius, (*strength)["scalingOuter"]);}
+	break;
+      }
     case BDSFieldType::multipoleouterdipolelhc:
       {
         BDSFieldMag* innerField = new BDSFieldMagDipole(strength);
         G4bool positiveField = (*strength)["field"] < 0; // convention for dipoles - "positive"
-        field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField, 194.0,
-                                                  info.SecondFieldOnLeft(), (*strength)["scalingOuter"]);
+	if (useOldMultipoleOuterFields)
+	  {
+	    field = new BDSFieldMagMultipoleOuterDualOld(1, poleTipRadius, innerField, positiveField, 194.0,
+							 info.SecondFieldOnLeft());
+	  }
+	else
+	  {
+	    field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField, 194.0,
+						      info.SecondFieldOnLeft(), (*strength)["scalingOuter"]);
+	  }
         delete innerField; // no longer required
         break;
       }
@@ -561,8 +607,16 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
 	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
         G4bool positiveField = (*strength)["k1"] > 0;
-        field = new BDSFieldMagMultipoleOuterDual(2, poleTipRadius, innerField, positiveField, 194.0,
-                                                  info.SecondFieldOnLeft(), (*strength)["scalingOuter"]);
+	if (useOldMultipoleOuterFields)
+	  {
+	    field = new BDSFieldMagMultipoleOuterDualOld(2, poleTipRadius, innerField, positiveField, 194.0,
+							 info.SecondFieldOnLeft());
+	  }
+	else
+	  {
+	    field = new BDSFieldMagMultipoleOuterDual(2, poleTipRadius, innerField, positiveField, 194.0,
+						      info.SecondFieldOnLeft(), (*strength)["scalingOuter"]);
+	  }
         delete innerField; // no longer required
         break;
       }
@@ -570,8 +624,16 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
 	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
 	G4bool positiveField = (*strength)["k2"] > 0;
-	field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0,
-                                            info.SecondFieldOnLeft(), (*strength)["scalingOuter"]);
+	if (useOldMultipoleOuterFields)
+	  {
+	    field = new BDSFieldMagMultipoleOuterDualOld(3, poleTipRadius, innerField, positiveField, 194.0,
+							 info.SecondFieldOnLeft());
+	  }
+	else
+	  {
+	    field = new BDSFieldMagMultipoleOuterDual(3, poleTipRadius, innerField, positiveField, 194.0,
+						      info.SecondFieldOnLeft(), (*strength)["scalingOuter"]);
+	  }
 	delete innerField; // no longer required
 	break;
       }
