@@ -20,9 +20,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSMessenger.hh"
+#include "BDSParser.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSUIcmdStringInt.hh"
 #include "BDSUtilities.hh"
+
+#include "parser/query.h"
 
 #include "globals.hh"
 #include "G4UImanager.hh"
@@ -61,6 +64,9 @@ BDSMessenger::BDSMessenger()
   
   samplerViewCmd = new G4UIcmdWithoutParameter("/bds/samplers/view",this);
   samplerViewCmd->SetGuidance("View sampler paralle world");
+  
+  queryListCmd = new G4UIcmdWithoutParameter("/bds/field/listQueries", this);
+  queryListCmd->SetGuidance("List all queries defined in input");
 
   // G4UImanager* UIManager = G4UImanager::GetUIpointer();
   // UIManager->ApplyCommand("/control/execute " + visMacroFilename);
@@ -90,6 +96,8 @@ void BDSMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     {SamplerList();}
   else if (command == samplerViewCmd)
     {ViewSamplers();}
+  else if (command == queryListCmd)
+    {ListQueries();}
 }
 
 void BDSMessenger::BeamLineList()
@@ -223,4 +231,11 @@ std::string BDSMessenger::BDSSamplerToString(int iSampler)
      << std::right << std::setw(20) << sInfo.Name() << " "
      << std::right << std::setw(20) << sInfo.SPosition();
   return ss.str();
+}
+
+void BDSMessenger::ListQueries()
+{
+  auto queries = BDSParser::Instance()->GetQuery();
+  for (const auto& qu : queries)
+    {G4cout << qu.name << G4endl;}
 }

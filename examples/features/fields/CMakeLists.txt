@@ -6,6 +6,7 @@ add_subdirectory(low_energy_high_field)
 add_subdirectory(integrators)
 add_subdirectory(query)
 add_subdirectory(subfield)
+add_subdirectory(yoke_scaling)
 
 simple_testing(field-lhc-on  "--file=lhc-fields-on.gmad"  "")
 simple_testing(field-lhc-off "--file=lhc-fields-off.gmad" "")

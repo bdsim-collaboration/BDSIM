@@ -478,6 +478,40 @@ sets a density of points. If few useful arrows appear, then this number can be i
 will go with the cube (i.e. N^3) of this number. Suggested values are 10, 30, 40. An example can be seen above
 in the :ref:`fields-sub-fields` section.
 
+.. _fields-visualisation-queries:
+
+Field Map Visualisation - Queries
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Any query object (see :ref:`field-map-validation`) can be drawn on the screen in the visualiser.
+A query defines a grid of points where the field is queried or found out. By default, this is
+written to a field map file. Any of these queries can also be shown in the visualiser. This is
+controlled by the command: ::
+
+  /bds/field/drawQuery <query object name>
+
+For a list of queries, one can do: ::
+
+  /bds/field/listQueries
+
+.. image:: figures/field-query.png
+	   :width: 80%
+	   :align: center
+
+
+You can find examples in :code:`bdsim/examples/features/field/yoke_scaling/`. There is
+a view point macro that can be loaded in the visualiser (open icon in the top left) to
+centre the view nicely and make a quadrupole transparent.
+
+* It may be required to make volumes partially transparent to see the field arrows.
+* 4D queries will not work. Only up to 3D is supported.
+* The visualisation may become very slow if a large (e.g. > 100x100 in x,y) points is used.
+  This is a limitation of the visualisation system. Typically, the querying of the model
+  is very quick.
+* Magnetic fields are drawn with the matplotlib "viridis" colour scale and electric
+  fields with the "magma" colour scale.
+* Both electric and magnetic fields may be visualised as defined by the query object.
+
 Field Map Preparation
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -492,6 +526,8 @@ field maps in Python: `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_.
 	  the looping order and dimension based on the header information.
 
 
+.. _field-map-validation:
+	  
 Field Map Validation
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -572,8 +608,12 @@ The following parameters can be used in a query object:
 | overwriteExistingFiles  | Whether to overwrite existing output files     |
 |                         | - default is False (0)                         |
 +-------------------------+------------------------------------------------+
+| printTransform          | (1 or 0) whether to print out the calculated   |
+|                         | transform from the origin to the global        |
+|                         | coordinates                                    |
++-------------------------+------------------------------------------------+
 | referenceElement        | Element with respect to which the coordinates  |
-|                         | are desired to be queried.                     |
+|                         | are desired to be queried                      |
 +-------------------------+------------------------------------------------+
 | referenceElementNumber  | Instance of the reference element in the beam  |
 |                         | line if it is used more than once (0-counting) |
@@ -1260,6 +1300,11 @@ This magnet geometry is quite similar to `polesfacet`, but the yoke in between e
 pole is cropped to form another facet. This results in the magnet geometry having
 double the number of poles as sides.
 
+.. warning:: The poles in this geometry may not appear in the visualiser when
+	     using Geant4 V11. This is because of limitations introduced in the
+	     Geant4 visualiser Boolean processing engine. The geometry is still there,
+	     but just the visualiser can't generate a 3D mesh for it.
+
 `horizontalWidth` is the full width horizontally as shown in the figure.
 
 .. figure:: figures/polesfacetcrop_quadrupole.png
@@ -1310,6 +1355,31 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 +-----------------------------+-----------------------+
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
+
+.. _external-magnet-geometry:
+
+External Magnet Geometry
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+A geometry file may be placed around a beam pipe inside a BDSIM magnet instance. The beam pipe
+will be constructed as normal and will use the appropriate BDSIM tracking routines, but the
+yoke geometry will be loaded from the file provided. The external geometry must have a cut out
+in its container volume for the beam pipe to fit, i.e. both the beam pipe and the yoke exist
+at the same level in the geometry hierarchy (both are placed in one container for the magnet).
+The beam pipe is not placed 'inside' the yoke.
+
+This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
+`decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
+
+Example: ::
+
+  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
+
+
+:code:`autoColour=1` can also be used to automatically colour the supplied geometry by
+density if desired. This is on by default.  Example to turn it off: ::
+    
+  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml", autoColour=0;
 
 .. _cavity-geometry-parameters:
 
@@ -1410,6 +1480,9 @@ geometry can be used in several ways:
 2) Wrapped around the beam pipe in a BDSIM magnet element (see :ref:`external-magnet-geometry`)
 3) As a general element in the beam line where the geometry constitutes the whole object. (see :ref:`element`)
 4) As the world volume in which the BDSIM beamline is placed. (see :ref:`external-world-geometry`)
+
+.. warning:: If including any external geometry, overlaps must be checked in the visualiser by
+	     running :code:`/geometry/test/run` before the model is used for a physics study.
    
 .. _geometry-formats:
 
@@ -1435,15 +1508,88 @@ formats are described in more detail in :ref:`external-geometry-formats`.
   also be checked for overlaps.
 
 
+.. _geometry-gdml:
+  
 GDML Geometry Specifics
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-* BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
-* For GDML geometry, we preprocess the input file prepending all names with the name
-  of the element. This is to compensate for the fact that the Geant4 GDML loader does
-  not handle unique file names. However, in the case of very large files with many
-  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
-  should be turned off. The loading will only work with one file in this case.
+* The Geant4 installation that BDSIM is compiled with repsect to must have GDML support turned on.
+* BDSIM must be compiled with the GDML build option in CMake turned on for GDML loading to work.
+
+Creating GDML Geometry
+**********************
+
+To create customised geometry, we recommend our separate (free) Python package, **pyg4ometry**. This
+is a Python package that can be used in a script to create Geant4 or FLUKA geometry or convert
+it into GDML and has many examples. It can also be used to **check for overlaps** in any GDML file
+and validate geometry.
+
+See :ref:`python-geometry-preparation` for details and links to the software and manual. This
+package is used for many of the examples included with BDSIM and the Python scripts are
+included with the examples.
+
+.. _geometry-gdml-preprocessing:
+
+GDML Preprocessing
+******************
+
+Geant4's GDML loader, which BDSIM uses to load GDML files, was only designed to use 1 GDML file.
+Unlike Geant4's C++ classes where names to do not matter, in GDML, each object is identified by
+name. An example of some GDML defining solids is: ::
+
+  <solids>
+    <box lunit="mm" name="box" x="20" y="30" z="40"/>
+    <box lunit="mm" name="world" x="200" y="200" z="200"/>
+  </solids>
+
+
+When loading a file, if Geant4 finds an object in memory (Geant4's registries of objects)
+already with that name, it uses that object instead of reading the one from the file. e.g. in
+this case, another solid with the name "box". This can have the unintended consequence of
+thinking you are loading a piece of geometry but getting a completely different piece! This
+can cause overlaps, bad tracking and an incorrect model and results. Worse still, it may go unseen.
+
+.. note:: If including any external geometry, overlaps must be checked in the visualiser by
+	  running :code:`/geometry/test/run` before the model is used for a physics study.
+
+The most common use of Geant4 is for a detector model where the entire model is written
+in 1 GDML file, hence this design in Geant4.
+
+However, in BDSIM, we may wish to piece together (like LEGO bricks) many pieces of
+geometry in and around an accelerator. To compensate for this Geant4 behaviour,
+we **preprocess** a GDML file. This means, we create a temporary copy of the file,
+and change all the names adding a unique string to the beginning of them all - typically
+the element or placement the GDML file will be used in. This allows us to load multiple
+files with possibly degenerate names safely.
+
+For each name we change, we must check for any uses elsewhere in the file. Therefore,
+this can be a :math:`O(N^2)` problem with the number of names. In the case of a GDML
+file that includes a large tessellated solid, each individual 3-vector position is
+written with it's own name and this vastly increases the number of names to process.
+
+In this case, it is possible to **keep the temporary *preprocessed* file** and edit the
+input GMAD file to use this new file. However, this strategy means that if the GDML
+file is updated, it has to be preprocessed again and copied and the input edited (not ideal). ::
+
+  option, preprocessGDML=0;
+
+The **Schema** is a set of rules of what is allowed in the GDML file that generally uses the
+XML syntax. It defines which *tags* are allowed and what parameters they can have. This is
+directed to by the URL at the very top of the file and is found online.  e.g. ::
+
+  <?xml version="1.0" ?>
+  <gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+
+If however, you need **offline access**, then BDSIM includes a copy of the latest GDML Schema.
+During the preprocessing, this is automatically substituted for the one included with BDSIM.
+If you use a custom Schema or do not wish to use this feature, it can be turned off with: ::
+
+  option, preprocessGDMLSchema=0;
+
+This is independent of the :code:`preprocessGDML` option above, i.e. with that turned off, but
+`preprocessGDMLSchema` on (by default), we can preprocess only the Schema location.
+  
 * BDSIM will put the preprocessed GDML files in a temporary directory and remove
   them once finished. The temporary files can be retained by using the option
   :code:`option, removeTemporaryFiles=0;`.
@@ -1455,15 +1601,15 @@ GDML Geometry Specifics
   :code:`option, temporaryDirectory="/path/to/desired/directory"`. :code:`"./"` could be used
   for example for the current working directory.
 
-GMAD Geometry Specifics
-^^^^^^^^^^^^^^^^^^^^^^^
+The BDSIM GDML preprocessor has some limitations. We cannot support variables in values.
+In this case, the user should load a GDML file with Geant4 and re-export it. This will
+'flatten' / resolve any variables, e.g. ::
 
-If a geometry file path is defined relative to the location of the GMAD file and that
-GMAD file is included in a parent file in a different location, the file will not be
-correctly located (i.e. main.gmad includes ../somedir/anotherfile.gmad, which defines
-geometry in "../a/relative/path/geometryfile.gdml". The file will not be found). If all
-GMAD files are located in the same directory, this will not be a problem. It is better / cleaner
-overall to use multiple GMAD input files and include them.
+  <variable name="offsetX" value="3"/>
+  <position x="offsetX+3" y="0" z="-3|/>
+
+would not work, as the *variable* "offsetX" is referred to in the *value* "x" in the position tag.
+
 
 .. _external-world-geometry:
 
@@ -1513,21 +1659,6 @@ externally provided piece of geometry (e.g. GDML file and optional field map) or
 provided accelerator component can be placed by declaring a :code:`placement` object in
 the input.
 
-* :code:`bdsimElement` should be used to name a component to place. In this case the component
-  should be defined **before** the placement definition in the input GMAD.
-* :code:`geometryFile` should be used to place an externally provided geometry file.
-* Only one of :code:`bdsimElement` or :code:`geometryFile` should be used in a placement.
-* This is intended to place geometry alongside the beam line and **not** inside or as part of it.
-* The user is responsible for ensuring that the geometry does not
-  overlap with any other geometry including the beam line.
-* Only in special cases, such as for a magnet yoke, can externally provided
-  geometry be placed "inside" BDSIM geometry.
-* The geometry may also have a field map overlaid on it.
-* Placements cannot be made with respect to other placements.
-* There is the possibility to strip off the outermost logical volume and place the contents
-  with the compound transform in the world. Useful for preparing for example, shielding.
-  See the parameter below :code:`stripOuterVolume=1`.
-
 For geometry to be placed as part of the beam line, use the :ref:`element` component in a line.
 
 .. warning:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
@@ -1566,8 +1697,14 @@ it is either scenario 2 or 3. If `referenceElement` is specified, scenario 3 is 
 	     the accelerator - it is not possible to place something beyond the accelerator currently.
 	     In this case, the user should resort to a global placement.
 
+
+Two styles of rotation can be used: either a set of three Euler angles, or the axis-angle
+rotation scheme, where a **unit** vector is provided in :math:`x,y,z` and an angle to
+rotate about that. The later is usually easier to imagine.	     
 	     
 The following parameters may be specified with a placement in BDSIM:
+
+.. tabularcolumns:: |p{4cm}|p{7cm}|
 
 +-------------------------+--------------------------------------------------------------------+
 | **Parameter**           |  **Description**                                                   |
@@ -1619,6 +1756,28 @@ The following parameters may be specified with a placement in BDSIM:
 |                         | whole geometry including all daughter volumes.                     |
 +-------------------------+--------------------------------------------------------------------+
 
+
+* Only one of :code:`bdsimElement` or :code:`geometryFile` should be used in a placement.
+* :code:`bdsimElement` should be used to name a component to place. In this case the component
+  should be defined **before** the placement definition in the input GMAD.
+* :code:`geometryFile` should be used to place an externally provided geometry file.
+* This is intended to place geometry alongside the beam line and **not** inside or as part of it.
+* The user is responsible for ensuring that the geometry does not
+  overlap with any other geometry including the beam line.
+* Only in special cases, such as for a magnet yoke, can externally provided
+  geometry be placed "inside" BDSIM geometry.
+* The geometry may also have a field map overlaid on it.
+* Placements cannot be made with respect to other placements.
+* There is the possibility to strip off the outermost logical volume and place the contents
+  with the compound transform in the world. Useful for preparing for example, shielding.
+  See the parameter below :code:`stripOuterVolume=1`.
+* Examples can be found in :code:`bdsim/examples/features/geometry/13_placements`.
+* The file path provided in :code:`geometryFile` should either be relative to where bdsim
+  is executed from or an absolute path.
+* The main beam line begins at (0,0,0) by default but may be offset.  See
+  :ref:`beamline-offset` for more details.
+
+
 `referenceElementNumber` is the occurrence of that element in the sequence. For example, if a sequence
 was: ::
 
@@ -1629,11 +1788,27 @@ and we wanted to place with respect to the first element, we would use::
   p1: placement, referenceElement="d1",
                  referenceElementNumber=0;
 
-If 0, the `referenceElementNumber` argument is optional. If we want to place with respect to
-the third usage of "d2", we would use::
+And the `referenceElementNumber` argument is optional as the default is 0. If we want to place with respect to
+the fourth usage of "d2", we would use::
 
   p1: placement, referenceElement="d2",
                  referenceElementNumber=3;
+
+If we want to placement at some coordinates with an axis-angle rotation (easier to perceive), we
+would use: ::
+
+  p1: placement, geometryFile="gdml:anExampleFile.gdml",
+                 x=2*m, y=10*cm, z=30*m,
+                 axisAngle=1,
+		 axisY=1,
+		 angle=pi/4;
+
+This would place with an offset of :math:`x, y, z = 2, 0.1, 30 m`, then a rotation about the Y axis
+of :math:`\pi/4`. We use the flag :code:`axisAngle=1` to turn 'on' the axis angle rotation
+(instead of the Euler angles one), and :code:`axisX`, :code:`axisY`, :code:`axisZ` are the
+components of the unit vector about which to rotate by :code:`angle`. Each component is by
+default 0, so we need only define the axis we want as 1 if aligned with one of the global
+axes.
 
 .. note:: Dipoles are split in BDSIM into many small straight sections. These must have a unique
 	  name to appear correctly in the Geant4 visualisation system. The splitting is done
@@ -1643,18 +1818,6 @@ the third usage of "d2", we would use::
 	  and identify the name of the segment of the dipole they wish to place with respect to.
 	  Alternatively, in the case of low angle bends, the element before or after can be used
 	  with a finite `s` offset.
-
-* Examples can be found in :code:`bdsim/examples/features/geometry/13_placements`.
-* The file path provided in :code:`geometryFile` should either be relative to where bdsim
-  is executed from or an absolute path.
-* The main beam line begins at (0,0,0) by default but may be offset.  See
-  :ref:`beamline-offset` for more details.
-
-
-Two styles of rotation can be used: either a set of three Euler angles, or the axis angle
-rotation scheme, where a **unit** vector is provided in :math:`x,y,z` and an angle to
-rotate about that. These variables are used to construct a :code:`G4RotationMatrix`
-directly, which is also the same as a :code:`CLHEP::HepRotation`.
 
 .. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
 	  the default units for offsets and angles in BDSIM.
@@ -1686,32 +1849,6 @@ The following is an example of placing a **single** BDSIM-generated component at
 .. note:: For using a general piece of geometry as part of a beam line, it is better to use
 	  the `element` beam line element.  See :ref:`element`.  The length should be specified
 	  accurately and then the beam line will fit together well without any air gaps.
-
-	     
-.. _external-magnet-geometry:
-
-External Magnet Geometry
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-A geometry file may be placed around a beam pipe inside a BDSIM magnet instance. The beam pipe
-will be constructed as normal and will use the appropriate BDSIM tracking routines, but the
-yoke geometry will be loaded from the file provided. The external geometry must have a cut out
-in its container volume for the beam pipe to fit, i.e. both the beam pipe and the yoke exist
-at the same level in the geometry hierarchy (both are placed in one container for the magnet).
-The beam pipe is not placed 'inside' the yoke.
-
-This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
-`decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
-
-Example: ::
-
-  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
-
-
-:code:`autoColour=1` can also be used to automatically colour the supplied geometry by
-density if desired. This is on by default.  Example to turn it off: ::
-    
-  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml", autoColour=0;
 
   
 .. _tunnel-geometry:
