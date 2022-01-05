@@ -67,7 +67,7 @@ void BDSVisCommandSceneAddQueryMagneticField::SetNewValue(G4UIcommand*, G4String
     }
   if (newValue.empty())
     {G4cerr << "No query name specified." << G4endl; return;}
-  std::vector<G4String> queryNames = BDS::GetWordsFromString(newValue);
+  std::vector<G4String> queryNames = BDS::SplitOnWhiteSpace(newValue);
   
   std::vector<BDSFieldQueryInfo*> queries;
   
