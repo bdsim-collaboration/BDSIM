@@ -58,7 +58,8 @@ public:
   BDSFieldMagMultipoleOuterOld(G4int              orderIn,
 			    G4double           poleTipRadius,
 			    const BDSFieldMag* innerFieldIn,
-			    G4bool             kPositive);
+			    G4bool             kPositive,
+                               G4double           arbitraryScaling = 1.0);
 
   virtual ~BDSFieldMagMultipoleOuterOld(){;}
 
