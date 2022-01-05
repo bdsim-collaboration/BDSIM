@@ -59,6 +59,8 @@ New Features
   world with the compound transforms: relative to the former outermost logical volume and also
   the placements transform in the world. This works by making the outer volume into a G4AssemblyVolume.
 * New type of scorermesh geometry: cylindrical.
+* Materials are now stored for each trajectory step point (optionally) as described
+  by an integer ID.
   
 General
 -------
@@ -88,6 +90,8 @@ Bug Fixes
 * Fix extension of all parser objects (i.e. not beam line elements), which was broken. Extension
   is the access and update of a variable inside a defined object such as a field or scorer.
 * Fix lack of yoke fields for rbends.
+* Fix LHC 'other' beam pipe field which was not offset to the correct position. Mostly a fault for
+  quadrupoles where the field appeared in effect as a distorted dipole field (i.e. very off-axis quadrupole field).
 * Fix parser :code:`print` command for all objects in the parser. Previously, only beam line elements
   would work with this command or variables in the input GMAD.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
@@ -100,8 +104,6 @@ Bug Fixes
   was the creation of the particle and the post step was an interaction (i.e. not
   transportation). Previously, this step would not be stored breaking the indexing
   for parent step index.
-* Materials are now stored for each trajectory step point (optionally) as described
-  by an integer ID.
 * Fix double deletion bug for particle definition when using the Link version of BDSIM.
 * Fix `distrFile` not being found when used as an executable option in the case where the
   current working directory, the main input gmad file and the distribution file were all in
