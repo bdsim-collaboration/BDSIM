@@ -58,14 +58,15 @@ void BDSFieldQueryForVis::GetFieldValue(const G4ThreeVector& globalXYZ,
                                         G4double fieldValue[6])
 {
   BDSFieldQuery::GetFieldValue(globalXYZ, globalDirection, tGlobal, fieldValue);
-
-  values.emplace_back( std::array<G4double, 9>({globalXYZ.x(), globalXYZ.y(), globalXYZ.z(), fieldValue[0], fieldValue[1],
-                        fieldValue[2], fieldValue[3], fieldValue[4], fieldValue[5]}) );
-  
   G4double bFieldMag = SimpleMag(fieldValue[0], fieldValue[1], fieldValue[2]);
   G4double eFieldMag = SimpleMag(fieldValue[3], fieldValue[4], fieldValue[5]);
   maxFieldB = std::max(maxFieldB, bFieldMag);
   maxFieldE = std::max(maxFieldE, eFieldMag);
+  if ( (bFieldMag == 0) && (eFieldMag == 0) )
+    {return;} // don't store 0 field points - we don't need to retain the structure or complete array shape
+  values.emplace_back( std::array<G4double, 9>({globalXYZ.x(), globalXYZ.y(), globalXYZ.z(),
+                                                fieldValue[0], fieldValue[1], fieldValue[2],
+                                                fieldValue[3], fieldValue[4], fieldValue[5]}) );
 }
 
 G4double BDSFieldQueryForVis::SimpleMag(G4double x, G4double y, G4double z)
