@@ -59,6 +59,7 @@ public:
 			    G4double           poleTipRadius,
 			    const BDSFieldMag* innerFieldIn,
 			    G4bool             kPositive,
+			    G4double           bRho,
 			    G4double           arbitraryScaling = 1.0);
 
   virtual ~BDSFieldMagMultipoleOuter(){;}
@@ -71,6 +72,7 @@ private:
   const G4int       order;           ///< N-poles / 2.
   G4double          normalisation;   ///< Storage of the overall normalisation factor.
   G4bool            positiveField;   ///< Sign of magnetic field.
+  G4int             poleNOffset;     ///< Offset for pole to start at - in effect this flips the sign of the field.
   G4double          poleTipRadius;   ///< Radius of transition between inner and outer fields.
   std::vector<G4TwoVector> currents; ///< Locations of infinite wire current sources.
   G4double          maxField;        ///< Any field beyond this will curtailed to this value.
