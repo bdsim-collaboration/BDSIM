@@ -44,7 +44,7 @@ public:
 private:
   /// Counter variable as we need to construct a new one of this class and have
   /// it have a unique name.
-  static G4double instanceCounter;
+  static G4int instanceCounter;
   
   /// Return the minimum of 0.8 x the step length in x,y,z
   G4double CalculateArrowLength(const BDSFieldQueryInfo* query) const;

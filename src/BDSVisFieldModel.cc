@@ -36,13 +36,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-G4double BDSVisFieldModel::instanceCounter = 0;
+G4int BDSVisFieldModel::instanceCounter = 0;
 
 BDSVisFieldModel::BDSVisFieldModel(const std::vector<BDSFieldQueryInfo*>& queriesIn):
   queries(queriesIn)
 {
   fGlobalTag = "BDSVisFieldModel";
-  fGlobalDescription = "Instance number: " + std::to_string(instanceCounter);
+  fGlobalDescription = "Field view #" + std::to_string(instanceCounter);
   instanceCounter++;
 }
 
