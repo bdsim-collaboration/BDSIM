@@ -478,6 +478,8 @@ sets a density of points. If few useful arrows appear, then this number can be i
 will go with the cube (i.e. N^3) of this number. Suggested values are 10, 30, 40. An example can be seen above
 in the :ref:`fields-sub-fields` section.
 
+.. _fields-visualisation-queries:
+
 Field Map Visualisation - Queries
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

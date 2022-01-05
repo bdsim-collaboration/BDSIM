@@ -41,8 +41,10 @@ BDSIM provides some extra useful commands.
   therefore have a different name than expected - try a straight component.
 * :code:`/bds/samplers/list` List the names of all samplers in the terminal.
 * :code:`/bds/samplers/view` Issue all the right commands to make the samplers visible.
-* :code:`/bds/field/drawQuery <query object name>` Draw the vector field of a field query object. ("all" can be used too)
+* :code:`/bds/field/drawQuery <query object name>` Draw the vector field of a field query object.
+  ("all" can be used too) See :ref:`fields-visualisation-queries`.
 * :code:`/bds/field/listQueries` List all query objects defined in the input by name to use with the above command.
+
 
 Common Useful Commands
 ======================
