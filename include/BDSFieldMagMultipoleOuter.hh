@@ -70,6 +70,7 @@ public:
 
 private:
   const G4int       order;           ///< N-poles / 2.
+  G4double          spatialLimit;    ///< Radius from any current source within which the field is artificially saturated.
   G4double          normalisation;   ///< Storage of the overall normalisation factor.
   G4bool            positiveField;   ///< Sign of magnetic field.
   G4int             poleNOffset;     ///< Offset for pole to start at - in effect this flips the sign of the field.

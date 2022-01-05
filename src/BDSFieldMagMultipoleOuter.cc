@@ -35,6 +35,7 @@ BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(G4int              orderIn,
                                                      G4double           brho,
                                                      G4double           arbitraryScaling):
   order(orderIn),
+  spatialLimit(1),
   normalisation(1), // we have to get field first to calculate the normalisation which uses it, so start with 1
   positiveField(kPositive),
   poleNOffset(0),
@@ -57,6 +58,15 @@ BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(G4int              orderIn,
       c.rotate((G4double)i*CLHEP::twopi / nPoles); // rotate copy
       currents.push_back(c);
     }
+
+  // work out a radial extent close to a current source where we artificially saturate
+  // do this based on the distance between two current sources
+  G4TwoVector pointA(poleTipRadius, 0);
+  G4TwoVector pointB = pointA;
+  pointB.rotate(CLHEP::twopi / nPoles);
+  G4double interPoleDistance = (pointB - pointA).mag();
+  // arbitrary -> let's say 5% of the distance between poles for saturation
+  spatialLimit = 0.05*interPoleDistance;
 
   // query inner field at pole tip radius
   // choose a point to query carefully though
@@ -106,7 +116,6 @@ G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
 
   // loop over linear sum from all infinite wire sources
   G4int pole = 1; // counter
-  const G4double spatialLimit = 6; // mm
   G4bool closeToPole = false;
   for (const auto& c : currents)
     {
