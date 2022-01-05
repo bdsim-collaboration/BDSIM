@@ -478,6 +478,38 @@ sets a density of points. If few useful arrows appear, then this number can be i
 will go with the cube (i.e. N^3) of this number. Suggested values are 10, 30, 40. An example can be seen above
 in the :ref:`fields-sub-fields` section.
 
+Field Map Visualisation - Queries
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Any query object (see :ref:`field-map-validation`) can be drawn on the screen in the visualiser.
+A query defines a grid of points where the field is queried or found out. By default, this is
+written to a field map file. Any of these queries can also be shown in the visualiser. This is
+controlled by the command: ::
+
+  /bds/field/drawQuery <query object name>
+
+For a list of queries, one can do: ::
+
+  /bds/field/listQueries
+
+.. image:: figures/field-query.png
+	   :width: 80%
+	   :align: center
+
+
+You can find examples in :code:`bdsim/examples/features/field/yoke_scaling/`. There is
+a view point macro that can be loaded in the visualiser (open icon in the top left) to
+centre the view nicely and make a quadrupole transparent.
+
+* It may be required to make volumes partially transparent to see the field arrows.
+* 4D queries will not work. Only up to 3D is supported.
+* The visualisation may become very slow if a large (e.g. > 100x100 in x,y) points is used.
+  This is a limitation of the visualisation system. Typically, the querying of the model
+  is very quick.
+* Magnetic fields are drawn with the matplotlib "viridis" colour scale and electric
+  fields with the "magma" colour scale.
+* Both electric and magnetic fields may be visualised as defined by the query object.
+
 Field Map Preparation
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -492,6 +524,8 @@ field maps in Python: `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_.
 	  the looping order and dimension based on the header information.
 
 
+.. _field-map-validation:
+	  
 Field Map Validation
 ^^^^^^^^^^^^^^^^^^^^
 

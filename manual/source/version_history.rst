@@ -30,6 +30,7 @@ New Features
 * New ability to query a 3D model for the field and export a field map.
 * New program bdsinterpolator to interpolate a field map and export it without
   any handling by Geant4.
+* New field drawing facility in the visualiser to draw query objects.
 * Samplers now have the parameter :code:`partID={11,-11}`, which for example can be used
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
