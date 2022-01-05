@@ -152,7 +152,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 										  fieldTiltOffset,
 										  integratorSet,
 										  brho,
-										  element->scalingFieldOuter);
+                                                                                  BDSComponentFactory::ScalingFieldOuter(element));
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 baseName,
 					 arcLength,
@@ -234,13 +234,13 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 							    0.5*semiAngle, 0.5*semiAngle, bpInfo,
 							    yokeOnLeft);
   BDSFieldInfo* semiOuterField = BDSComponentFactory::PrepareMagnetOuterFieldInfo(semiStrength,
-                                                                              BDSFieldType::dipole,
-                                                                              bpInfo,
-                                                                              mgInfo,
-                                                                              fieldTiltOffset,
-                                                                              integratorSet,
-                                                                              brho,
-                                                                              element->scalingFieldOuter);
+										  BDSFieldType::dipole,
+										  bpInfo,
+										  mgInfo,
+										  fieldTiltOffset,
+										  integratorSet,
+										  brho,
+                                                                                  BDSComponentFactory::ScalingFieldOuter(element));
   mgInfo->name = centralName;
   BDSMagnet* centralWedge = new BDSMagnet(BDSMagnetType::sectorbend,
 					  centralName,
@@ -671,7 +671,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
                                                                               fieldTiltOffset,
                                                                               integratorSet,
                                                                               brho,
-                                                                              element->scalingFieldOuter);
+                                                                              BDSComponentFactory::ScalingFieldOuter(element));
 
   // Here we change from the strength angle convention of +ve angle corresponds to
   // deflection in negative x, to correct 3d +ve angle corresponds to deflection in
