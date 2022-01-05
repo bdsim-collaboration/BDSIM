@@ -62,7 +62,6 @@ std::vector<std::array<G4double, 3>> BDSColourScaleViridis::data = {
 
 
 BDSColourScaleViridis::BDSColourScaleViridis():
-  dataSize((G4int)data.size()),
   dataStep(1.0 / (G4double)data.size())
 {;}
 
