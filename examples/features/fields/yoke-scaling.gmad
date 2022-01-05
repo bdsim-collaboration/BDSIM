@@ -7,8 +7,10 @@ lhcsb1: sbend, l=1*m, angle=10*degrees, magnetGeometryType="lhcleft";
 lhcsb2: sbend, l=1*m, angle=10*degrees, magnetGeometryType="lhcleft", scalingFieldOuter=10;
 lhcq1: quadrupole, l=1*cm, k1=1.0, magnetGeometryType="lhcleft";
 lhcq2: quadrupole, l=1*cm, k1=1.0, magnetGeometryType="lhcleft", scalingFieldOuter=10;
+sx1: sextupole, l=20*cm, k2=10.0;
+sx2: sextupole, l=20*cm, k2=10.0, scalingFieldOuter=10;
 
-l1: line=(d1,sb1,d1,sb2,d1,q1,d1,q2,d1,lhcsb1,d1,lhcsb2,d1,lhcq1,d1,lhcq2,d1);
+l1: line=(d1,sb1,d1,sb2,d1,q1,d1,q2,d1,lhcsb1,d1,lhcsb2,d1,lhcq1,d1,lhcq2,d1,sx1,d1,sx2,d1);
 use, l1;
 
 ! high energy beam for strong fields
@@ -70,7 +72,7 @@ quBendLHCScaled: query, nx=51, xmin=-20*cm, xmax=40*cm,
 		        overwriteExistingFiles=1;
 
 
-!lhc dual yoke field - dipole
+!lhc dual yoke field - quad
 quQuadLHCNormal: query, nx=71, xmin=-20*cm, xmax=40*cm,
 	      	        ny=71, ymin=-30*cm, ymax=30*cm,
 		        queryMagneticField=1,
@@ -84,3 +86,20 @@ quQuadLHCScaled: query, nx=71, xmin=-20*cm, xmax=40*cm,
 		        outfileMagnetic="out_sfo_quad_lhc_scaled.dat",
 		        referenceElement="lhcq2",
 		        overwriteExistingFiles=1;
+
+
+!sextupole yoke field
+quSextNormal: query, nx=51, xmin=-30*cm, xmax=30*cm,
+	      	     ny=51, ymin=-30*cm, ymax=30*cm,
+		     queryMagneticField=1,
+		     outfileMagnetic="out_sfo_sext_normal.dat",
+		     referenceElement="sx1",
+		     overwriteExistingFiles=1;
+
+!sextupole yoke field - scaled
+quSextNormal: query, nx=51, xmin=-30*cm, xmax=30*cm,
+	      	     ny=51, ymin=-30*cm, ymax=30*cm,
+		     queryMagneticField=1,
+		     outfileMagnetic="out_sfo_sext_scaled.dat",
+		     referenceElement="sx2",
+		     overwriteExistingFiles=1;
