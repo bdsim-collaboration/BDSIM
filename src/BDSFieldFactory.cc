@@ -592,6 +592,7 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       {
         BDSFieldMag* innerField = new BDSFieldMagDipole(strength);
         G4bool positiveField = (*strength)["field"] < 0; // convention for dipoles - "positive"
+        G4bool positiveField2 = (*strength)["angle"] > 0;
         G4double dx = BDSMagnetOuterFactoryLHC::beamSeparation;
 	if (useOldMultipoleOuterFields)
 	  {
@@ -600,7 +601,7 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
 	  }
 	else
 	  {
-	    field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField, brho, dx,
+	    field = new BDSFieldMagMultipoleOuterDual(1, poleTipRadius, innerField, positiveField2, brho, dx,
 						      info.SecondFieldOnLeft(), (*strength)["scalingOuter"]);
 	  }
         delete innerField; // no longer required
