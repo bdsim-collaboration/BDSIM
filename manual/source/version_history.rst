@@ -22,6 +22,7 @@ V1.7.0 - 2021 / XX / XX
   with all the changes to string handling in Geant4 V11.
 * New executable options :code:`--reference` and :code:`--citation` to display the citation
   in bibtex to cite BDSIM easily.
+* The default yoke fields have changed and are on average stronger (and more correct). See below.
 
 New Features
 ------------
@@ -45,7 +46,8 @@ New Features
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
 * Scoring of the differential flux (3D mesh + energy spectrum per cell) following either a linear,
   logarithmic or user-defined energy axis scale (requires Boost).
-* New scorer type: cellflux4d
+* New scorer type: cellflux4d.
+* New type of scorermesh geometry: cylindrical.
 * New :code:`--versionGit` executable option to get the git SHA1 code as well as the version number.
 * New :code:`--E0=number`, :code:`--Ek0=number`, and :code:`--P0=number` executable options are
   introduced to permit overriding the energy of the beam.
@@ -58,13 +60,21 @@ New Features
   outermost volume (e.g. the 'world' of that file) and place all the contents in the BDSIM
   world with the compound transforms: relative to the former outermost logical volume and also
   the placements transform in the world. This works by making the outer volume into a G4AssemblyVolume.
-* New type of scorermesh geometry: cylindrical.
 * Materials are now stored for each trajectory step point (optionally) as described
   by an integer ID.
+* New ability to arbitrarily scale the yoke fields
   
 General
 -------
 
+* The default yoke fields have been revised. The equation for the field is the same, but the
+  normalisation to the pure vacuum field at the pole-tip has been fixed and improved. This
+  leads to the removal of very high peak values close to the hypothetical current sources
+  between poles and also generally increases the average field magnitude in the yoke. This makes
+  a smooth transitino from the vacuum field to the yoke field and is more correct. Specifically,
+  the contribution from each current source is evaluated half way between each current source
+  for the purpose of normalisation. The new option :code:`useOldMultipoleOuterFields=1` is
+  available to regain the old behaviour. This will be removed in the next version beyond this one.
 * Compatibility with Geant4 V11.
 * Optional dependency on Boost libraries (at least V1.71.0) for 4D histograms.
 * The option :code:`scintYieldFactor` has no effect from Geant4 V11 onwards.
