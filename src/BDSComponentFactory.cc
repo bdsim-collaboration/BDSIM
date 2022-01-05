@@ -1974,7 +1974,7 @@ G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
   return yokeOnLeft;
 }
 
-G4double BDSComponentFactory::ScalingFieldOuter(const GMAD::Element* ele) const
+G4double BDSComponentFactory::ScalingFieldOuter(const GMAD::Element* ele)
 {
   return ele->scalingFieldOuterSet ? ele->scalingFieldOuter : BDSGlobalConstants::Instance()->ScalingFieldOuter();
 }

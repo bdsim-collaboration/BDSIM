@@ -131,7 +131,7 @@ public:
   static G4double PrepareHorizontalWidth(GMAD::Element const* el,
 					 G4double defaultHorizontalWidth = -1);
   
-  G4double ScalingFieldOuter(const GMAD::Element* ele) const;
+  static G4double ScalingFieldOuter(const GMAD::Element* ele);
   
   /// Prepare the field definition for the yoke of a magnet.
   static BDSFieldInfo* PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
