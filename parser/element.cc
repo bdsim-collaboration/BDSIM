@@ -32,13 +32,13 @@ using namespace GMAD;
 namespace
 {
   /// Helper method
-  void print(std::list<Element> l, int ident=0)
+  void print(const std::list<Element>& l, int ident=0)
   {
-    if(ident == 0)
+    if (ident == 0)
       {std::cout << "using line " << Parser::Instance()->current_line << std::endl;}
-  
-    for(std::list<Element>::iterator it=l.begin();it!=l.end();++it)
-      {(*it).print(ident);}
+
+    for (auto& el : l)
+      {el.print();}
   }
 }
 
@@ -57,6 +57,7 @@ void Element::PublishMembers()
   
   publish("l",         &Element::l);
   publish("scaling",   &Element::scaling);
+  publish("scalingFieldOuter", &Element::scalingFieldOuter);
   publish("ks",        &Element::ks);
   publish("k1",        &Element::k1);
   publish("k2",        &Element::k2);
@@ -292,15 +293,12 @@ void Element::print(int ident) const
 
   switch(type)
     {
-    case ElementType::_DRIFT:
-      {break;}
     case ElementType::_SBEND:
     case ElementType::_RBEND:
       {
 	std::cout << "B     = " << B     << std::endl
 		  << "angle = " << angle << std::endl
 		  << "k1    = " << k1    << std::endl;
-        std::cout << "scaling = " << scaling << std::endl;
 	break;
       }
     case ElementType::_QUAD:
@@ -396,6 +394,35 @@ void Element::print(int ident) const
     default:
       {break;}
     }
+
+  switch (type)
+    {
+    case ElementType::_RBEND:
+    case ElementType::_SBEND:
+    case ElementType::_QUAD:
+    case ElementType::_SEXTUPOLE:
+    case ElementType::_OCTUPOLE:
+    case ElementType::_DECAPOLE:
+    case ElementType::_SOLENOID:
+    case ElementType::_MULT:
+    case ElementType::_THINMULT:
+    case ElementType::_AWAKESPECTROMETER:
+    case ElementType::_MUONSPOILER:
+    case ElementType::_HKICKER:
+    case ElementType::_VKICKER:
+    case ElementType::_KICKER:
+    case ElementType::_TKICKER:
+    case ElementType::_UNDULATOR:
+    case ElementType::_RF:
+      {
+        std::cout << "scaling = " << scaling << std::endl;
+        if (scalingFieldOuter != 1)
+          {std::cout << "scalingFieldOuter = " << scalingFieldOuter << std::endl;}
+	break;
+      }
+    default:
+      {break;}
+    }
   
   if (lst)
     {::print(*lst,++ident);}
@@ -409,6 +436,7 @@ void Element::flush()
   userParameters = "";
   l = 0;
   scaling = 1;
+  scalingFieldOuter = 1;
   ks = 0;
   k1 = 0;
   k2 = 0;
@@ -581,6 +609,7 @@ void Element::flush()
   crystalAngleYAxisRight = 0;
   
   angleSet = false;
+  scalingFieldOuterSet = false;
 
   lst = nullptr;
 }
@@ -599,7 +628,7 @@ double Element::property_lookup(std::string property_name) const
   return value;
 }
 
-void Element::set(const Parameters& params,std::string nameIn, ElementType typeIn)
+void Element::set(const Parameters& params, std::string nameIn, ElementType typeIn)
 {
   // common parameters for all elements
   type = typeIn;
@@ -609,6 +638,8 @@ void Element::set(const Parameters& params,std::string nameIn, ElementType typeI
 
   if (params.setMap.at("angle"))
     {angleSet = true;}
+  else if (params.setMap.at("scalingFieldOuter"))
+    {scalingFieldOuterSet = true;}
 }
 
 void Element::set(const Parameters& params)

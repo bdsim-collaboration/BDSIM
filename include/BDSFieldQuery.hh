@@ -46,17 +46,26 @@ public:
   virtual ~BDSFieldQuery();
   
   /// Query the field in the Geant4 model according to information in query.
-  void QueryField(const BDSFieldQueryInfo* query);
+  virtual void QueryField(const BDSFieldQueryInfo* query);
   /// Vector version of above function. Unique output files for each query.
   void QueryFields(const std::vector<BDSFieldQueryInfo*>& fieldQueries);
   
   /// Setup the navigator w.r.t. to a world volume.
   static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPVIn);
   
-private:
   /// Reset any member variables used during a query. Closes any files if open.
-  void CleanUp();
-  
+  virtual void CleanUp();
+
+protected:
+  /// Get the electric and magnetic field at the specified coordinates. The navigator requires
+  /// a direction for safe hierarchy searching. The output is written to array argument, where
+  /// the values are Bx,By,Bz,Ex,Ey,Ez as in Geant4.
+  virtual void GetFieldValue(const G4ThreeVector& globalXYZ,
+                             const G4ThreeVector& globalDirection,
+                             G4double tGlobal,
+                             G4double fieldValue[6]);
+
+private:
   /// Different algorithm where we query a specific list of points defined in the query info object.
   void QuerySpecificPoints(const BDSFieldQueryInfo* query);
 
@@ -82,14 +91,6 @@ private:
   void GlobalToLocalAxisField(const G4AffineTransform& globalToLocalTransform,
                               const G4double globalBEField[6],
                               G4double localBEField[6]);
-  
-  /// Get the electric and magnetic field at the specified coordinates. The navigator requires
-  /// a direction for safe hierarchy searching. The output is written to array argument, where
-  /// the values are Bx,By,Bz,Ex,Ey,Ez as in Geant4.
-  virtual void GetFieldValue(const G4ThreeVector& globalXYZ,
-			     const G4ThreeVector& globalDirection,
-			     G4double tGlobal,
-			     G4double fieldValue[6]);
   
   /// Write an entry ta line of the output file(s). The array is assumed to be Bx,By,Bz,Ex,Ey,Ez as in Geant4.
   void WriteFieldValue(const G4ThreeVector& xyzGlobal,

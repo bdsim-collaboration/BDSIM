@@ -1281,7 +1281,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 					       outerInfo,
 					       fieldTrans,
 					       integratorSet,
-					       brho);
+					       brho,
+                                               ScalingFieldOuter(element));
     }
 
   auto solenoid = new BDSMagnet(BDSMagnetType::solenoid,
@@ -1908,7 +1909,8 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					       outerInfo,
 					       fieldTrans,
 					       integratorSet,
-					       brho);
+					       brho,
+                                               ScalingFieldOuter(element));
     }
 
   return new BDSMagnet(magnetType,
@@ -1972,13 +1974,19 @@ G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
   return yokeOnLeft;
 }
 
+G4double BDSComponentFactory::ScalingFieldOuter(const GMAD::Element* ele)
+{
+  return ele->scalingFieldOuterSet ? ele->scalingFieldOuter : BDSGlobalConstants::Instance()->ScalingFieldOuter();
+}
+
 BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
 							       const BDSFieldType&       fieldType,
 							       const BDSBeamPipeInfo*    bpInfo,
 							       const BDSMagnetOuterInfo* outerInfo,
 							       const G4Transform3D&      fieldTransform,
 							       const BDSIntegratorSet*   integratorSetIn,
-							       G4double                  brhoIn)
+							       G4double                  brhoIn,
+                                                               G4double                  outerFieldScaling)
 {  
   BDSFieldType outerType;
   switch (fieldType.underlying())
@@ -2009,6 +2017,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
     }
 
   BDSMagnetStrength* stCopy = new BDSMagnetStrength(*vacuumSt);
+  (*stCopy)["scalingOuter"] = outerFieldScaling;
   BDSIntegratorType intType = integratorSetIn->Integrator(outerType);
   BDSFieldInfo* outerField  = new BDSFieldInfo(outerType,
 					       brhoIn,
@@ -2568,6 +2577,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldOuter)));
 	  if (info->ProvideGlobal())
 	    {info->SetTransformBeamline(fieldTrans);}
+	  info->CompoundBScaling(ScalingFieldOuter(el));
 	  mag->SetOuterField(info);
 	}
       if (!(el->fieldVacuum.empty()))
@@ -2585,6 +2595,8 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldAll)));
 	  if (info->ProvideGlobal())
 	    {info->SetTransformBeamline(fieldTrans);}
+	  if (el->scalingFieldOuter != 1)
+	    {BDS::Warning("component \"" + el->name + "\" has \"scalingFieldOuter\" != 1.0 -> this will have no effect for \"fieldAll\"");}
 	  component->SetField(info);
 	}
     }

@@ -52,6 +52,7 @@ public:
   void        ViewSamplers();
   std::string BDSSamplerToString(G4int iSampler);
   std::string BDSSamplerToString(std::string samplerName);
+  void        ListQueries();
 
 protected:
   G4UIdirectory*           bdsDirectory;
@@ -62,6 +63,7 @@ protected:
   G4UIdirectory*           bdsSamplersDirectory;
   G4UIcmdWithoutParameter* samplerListCmd;
   G4UIcmdWithoutParameter* samplerViewCmd;
+  G4UIcmdWithoutParameter* queryListCmd;
 };
 
 #endif
