@@ -1282,7 +1282,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 					       fieldTrans,
 					       integratorSet,
 					       brho,
-                                               element->scalingFieldOuter);
+                                               ScalingFieldOuter(element));
     }
 
   auto solenoid = new BDSMagnet(BDSMagnetType::solenoid,
@@ -1910,7 +1910,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					       fieldTrans,
 					       integratorSet,
 					       brho,
-                                               element->scalingFieldOuter);
+                                               ScalingFieldOuter(element));
     }
 
   return new BDSMagnet(magnetType,
@@ -1972,6 +1972,11 @@ G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
   else
     {yokeOnLeft = false;}
   return yokeOnLeft;
+}
+
+G4double BDSComponentFactory::ScalingFieldOuter(const GMAD::Element* ele) const
+{
+  return ele->scalingFieldOuterSet ? ele->scalingFieldOuter : BDSGlobalConstants::Instance()->ScalingFieldOuter();
 }
 
 BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
@@ -2572,7 +2577,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldOuter)));
 	  if (info->ProvideGlobal())
 	    {info->SetTransformBeamline(fieldTrans);}
-    info->CompoundBScaling(el->scalingFieldOuter);
+	  info->CompoundBScaling(ScalingFieldOuter(el));
 	  mag->SetOuterField(info);
 	}
       if (!(el->fieldVacuum.empty()))
@@ -2590,8 +2595,8 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldAll)));
 	  if (info->ProvideGlobal())
 	    {info->SetTransformBeamline(fieldTrans);}
-    if (el->scalingFieldOuter != 1)
-      {BDS::Warning("component \"" + el->name + "\" has \"scalingFieldOuter\" != 1.0 -> this will have no effect for \"fieldAll\"");}
+	  if (el->scalingFieldOuter != 1)
+	    {BDS::Warning("component \"" + el->name + "\" has \"scalingFieldOuter\" != 1.0 -> this will have no effect for \"fieldAll\"");}
 	  component->SetField(info);
 	}
     }

@@ -234,6 +234,8 @@ namespace GMAD
     /// field. This allows us to distinguish later on.
     /// NOTE: this is not used in Params.
     bool   angleSet;
+    
+    bool   scalingFieldOuterSet;
 
     /// in case the element is a list itself (line)
     std::list<Element>* lst;

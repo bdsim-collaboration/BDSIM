@@ -255,6 +255,7 @@ void Options::PublishMembers()
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
   publish("yokeFieldsMatchLHCGeometry", &Options::yokeFieldsMatchLHCGeometry);
   publish("useOldMultipoleOuterFields", &Options::useOldMultipoleOuterFields);
+  publish("scalingFieldOuter",    &Options::scalingFieldOuter);
   publish("includeFringeFields",  &Options::includeFringeFields);
   publish("includeFringeFieldsCavities", &Options::includeFringeFieldsCavities);
   publish("beampipeRadius",       &Options::aper1);

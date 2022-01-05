@@ -297,6 +297,7 @@ public:
   inline G4bool   YokeFields()               const {return G4bool  (options.yokeFields);}
   inline G4bool   YokeFieldsMatchLHCGeometry()const{return G4bool  (options.yokeFieldsMatchLHCGeometry);}
   inline G4bool   UseOldMultipoleOuterFields()const{return G4bool  (options.useOldMultipoleOuterFields);}
+  inline G4double ScalingFieldOuter()        const {return G4double(options.scalingFieldOuter);}
   inline G4bool   TurnOnOpticalAbsorption()  const {return G4bool  (options.turnOnOpticalAbsorption);}
   inline G4bool   TurnOnRayleighScattering() const {return G4bool  (options.turnOnRayleighScattering);}
   inline G4bool   TurnOnMieScattering()      const {return G4bool  (options.turnOnMieScattering);}
