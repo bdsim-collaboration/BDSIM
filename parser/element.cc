@@ -609,6 +609,7 @@ void Element::flush()
   crystalAngleYAxisRight = 0;
   
   angleSet = false;
+  scalingFieldOuterSet = false;
 
   lst = nullptr;
 }
@@ -627,7 +628,7 @@ double Element::property_lookup(std::string property_name) const
   return value;
 }
 
-void Element::set(const Parameters& params,std::string nameIn, ElementType typeIn)
+void Element::set(const Parameters& params, std::string nameIn, ElementType typeIn)
 {
   // common parameters for all elements
   type = typeIn;
@@ -637,6 +638,8 @@ void Element::set(const Parameters& params,std::string nameIn, ElementType typeI
 
   if (params.setMap.at("angle"))
     {angleSet = true;}
+  else if (params.setMap.at("scalingFieldOuter"))
+    {scalingFieldOuterSet = true;}
 }
 
 void Element::set(const Parameters& params)
