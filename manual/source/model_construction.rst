@@ -223,6 +223,41 @@ An example is included in `examples/features/components/scaling.gmad`.
 	  not total energy of the particle.
 
 
+Magnet Yoke Field Scaling
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+As described in :ref:`yoke-multipole-field`, BDSIM uses by default an approximate magnetic
+field for the yoke or "outer" part of each magnet. This is a sum of infinite (in :math:`z`)
+current sources placed in the :math:`x, y` plane half way between each pole. This field is
+only approximate and field maps should be used if a very accurate model is desired.
+
+These fields are normalised to match the vacuum field at the pole tip, so the transition
+is smooth.
+
+However, to control this, an arbitrary scaling factor can be applied to all elements with
+a yoke field (i.e. all magnets). This can be applied individually, or as an option to all
+components. Individually specified parameters will take precedence.
+
+In both cases the parameter and option is :code:`scalingFieldOuter` and should be a numerical
+factor (e.g. 1.0 is the default).
+
+An example model is: ::
+
+  d1: drift, l=1*m;
+  q1: quadrupole, l=20*cm, k1=0.2, scalingFieldOuter=1.5;
+  q2: quadrupole, l=20*cm, k1=0.2;
+  l1: line=(d1,q1,d1,q2,d1);
+  use, l1;
+
+  beam, particle="proton", kineticEnergy=100*GeV;
+
+  option, scalingFieldOuter=2.0;
+
+Here, the "q1" element will have an arbitrary scaling factor of the 1.5 over the normal field inside
+the pole tip radius. For "q2", the default is picked up from the option with a value of 2.0.
+
+This is recommended only for systematic error studies.
+
 drift
 ^^^^^
 
