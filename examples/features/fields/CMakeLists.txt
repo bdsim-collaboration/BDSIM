@@ -9,4 +9,5 @@ add_subdirectory(subfield)
 simple_testing(field-lhc-on  "--file=lhc-fields-on.gmad"  "")
 simple_testing(field-lhc-off "--file=lhc-fields-off.gmad" "")
 
-simple_testing(field-outer-scaling "--file=yoke-scaling.gmad" "")
+simple_testing(field-outer-scaling       "--file=yoke-scaling.gmad"    "")
+simple_testing(field-outer-scaling-old   "--file=yoke-fields-old.gmad" "")
