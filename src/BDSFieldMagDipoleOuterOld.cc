@@ -32,7 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 G4double BDSFieldMagDipoleOuterOld::transitionLengthScale = 1*CLHEP::cm;
 
 BDSFieldMagDipoleOuterOld::BDSFieldMagDipoleOuterOld(const BDSMagnetStrength* strength,
-					       const G4double&          poleTipRadiusIn):
+                                                     G4double poleTipRadiusIn,
+                                                     G4double arbitraryScaling):
   poleTipRadius(poleTipRadiusIn),
   normalisation(1)
 {
@@ -45,7 +46,7 @@ BDSFieldMagDipoleOuterOld::BDSFieldMagDipoleOuterOld(const BDSMagnetStrength* st
   G4ThreeVector innerFieldValue = innerField->GetField(normalisationPoint);
   G4ThreeVector outerFieldValue = GetField(normalisationPoint);
   
-  normalisation = innerFieldValue.mag() / outerFieldValue.mag();
+  normalisation = arbitraryScaling * innerFieldValue.mag() / outerFieldValue.mag();
   if (std::isnan(normalisation))
     {
       normalisation = 0; // possible for 0 strength -> b inner = 0 / b outer = 0;

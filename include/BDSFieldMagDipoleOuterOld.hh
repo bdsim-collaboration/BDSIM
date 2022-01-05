@@ -45,7 +45,8 @@ class BDSFieldMagDipoleOuterOld: public BDSFieldMag
 {
 public:
   BDSFieldMagDipoleOuterOld(const BDSMagnetStrength* strength,
-			 const G4double&          poleTipRadius);
+                            G4double poleTipRadius,
+                            G4double arbitraryScaling = 1.0);
 
   virtual ~BDSFieldMagDipoleOuterOld(){;}
 
