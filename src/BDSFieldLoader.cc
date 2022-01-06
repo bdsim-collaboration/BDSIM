@@ -649,8 +649,8 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
 	  }
 	case BDSArrayReflectionType::reflectxzdipole:
 	  {
-	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(true,  false, true,  false));
-	    valueOperators.emplace_back(new BDSArrayOperatorValueReflect(false, true,  false, false));
+	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(false, true,  false, false));
+	    valueOperators.emplace_back(new BDSArrayOperatorValueReflect(true,  false, false, false));
 	    break;
 	  }
 	case BDSArrayReflectionType::reflectyzdipole:
