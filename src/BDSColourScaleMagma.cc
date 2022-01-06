@@ -63,7 +63,7 @@ std::vector<std::array<G4double, 3>> BDSColourScaleMagma::data = {
 
 
 BDSColourScaleMagma::BDSColourScaleMagma():
-  dataStep(1.0 / (G4double)data.size())
+  dataStep(1.0 / (G4double)(data.size()-1))
 {;}
 
 BDSColourScaleMagma::~BDSColourScaleMagma()
