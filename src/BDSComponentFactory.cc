@@ -783,7 +783,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   const G4String baseName       = elementName;
   BDSMagnetStrength* st         = new BDSMagnetStrength();
   SetBeta0(st);
-  BDSFieldType       fieldType  = BDSFieldType::dipole3d;
+  BDSFieldType       fieldType  = BDSFieldType::dipole;
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
   G4double           scaling    = element->scaling;
@@ -1015,12 +1015,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   
   auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInf, yokeOnLeft,
 					  defaultHorizontalWidth, defaultVHRatio, 0.9);
-
+  
+  BDSFieldInfo* outerField = nullptr;
+  G4bool externalOuterField = !(element->fieldOuter.empty());
+  if (yokeFields && !externalOuterField)
+    {
+      outerField = PrepareMagnetOuterFieldInfo(st,
+					       fieldType,
+					       bpInf,
+					       magOutInf,
+					       fieldTrans,
+					       integratorSet,
+					       brho,
+					       ScalingFieldOuter(element));
+    }
+  
   if (!HasSufficientMinimumLength(element, false))
     {
       delete fringeStIn;
       delete fringeStOut;
       // fringe effect applied in integrator so nothing more to do.
+      // no outer field as thin component here
       return new BDSMagnet(t,
 			   baseName,
 			   chordLength,
@@ -1058,7 +1073,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 					kickerChordLength,
 					bpInf,
 					magOutInf,
-					vacuumField);
+					vacuumField,
+                                        0,
+                                        outerField);
       kickerLine->AddComponent(kicker);
       
       if (buildEntranceFringe)

@@ -109,7 +109,7 @@ void BDSVisCommandSceneAddQueryMagneticField::SetNewValue(G4UIcommand*, G4String
     {G4cout << "Magnetic field, if any, will be drawn in scene \"" << scene->GetName() << "\"" << G4endl;}
   else
     {
-      if (verbosity >= G4VisManager::warnings)
+      if (!successful && verbosity >= G4VisManager::warnings)
         {G4cerr << "WARNING: not possible to add to the scene" << G4endl;}
     }
 
