@@ -507,10 +507,11 @@ centre the view nicely and make a quadrupole transparent.
 * 4D queries will not work. Only up to 3D is supported.
 * The visualisation may become very slow if a large (e.g. > 100x100 in x,y) points is used.
   This is a limitation of the visualisation system. Typically, the querying of the model
-  is very quick.
+  is very quick and it is drawing the arrows that takes time.
 * Magnetic fields are drawn with the matplotlib "viridis" colour scale and electric
   fields with the "magma" colour scale.
 * Both electric and magnetic fields may be visualised as defined by the query object.
+* A query done in the visualiser will not be written to file.
 
 Field Map Preparation
 ^^^^^^^^^^^^^^^^^^^^^
@@ -606,7 +607,7 @@ The following parameters can be used in a query object:
 |                         | - default is False (0)                         |
 +-------------------------+------------------------------------------------+
 | overwriteExistingFiles  | Whether to overwrite existing output files     |
-|                         | - default is False (0)                         |
+|                         | - default is True (1)                          |
 +-------------------------+------------------------------------------------+
 | printTransform          | (1 or 0) whether to print out the calculated   |
 |                         | transform from the origin to the global        |
@@ -653,7 +654,7 @@ The following parameters can be used in a query object:
 	  or sampler placements - see :ref:`placements` for a full description of the possible
 	  combination of parameters for the 3 ways of specifying a transform. 
 
-* The default is to query the magnetic field only and to not overwrite files.
+* The default is to query the magnetic field only and **to overwrite** files.
 * The ranges defined will be queried in global frame if no transform is specified,
   otherwise they will be about the point / frame of the transform.
 * If you don't wish to query a dimension, then the number of points should be
