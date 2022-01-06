@@ -48,7 +48,7 @@ void Query::clear()
   queryMagneticField = true;
   queryElectricField = false;
   
-  overwriteExistingFiles = false;
+  overwriteExistingFiles = true;
   printTransform = true;
 
   pointsFile = "";

@@ -606,7 +606,7 @@ The following parameters can be used in a query object:
 |                         | - default is False (0)                         |
 +-------------------------+------------------------------------------------+
 | overwriteExistingFiles  | Whether to overwrite existing output files     |
-|                         | - default is False (0)                         |
+|                         | - default is True (1)                          |
 +-------------------------+------------------------------------------------+
 | printTransform          | (1 or 0) whether to print out the calculated   |
 |                         | transform from the origin to the global        |
