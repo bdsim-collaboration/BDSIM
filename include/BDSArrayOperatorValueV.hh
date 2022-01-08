@@ -33,7 +33,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSArrayOperatorValueV: public BDSArrayOperatorValue
 {
 public:
-  BDSArrayOperatorValueV(){;}
+  BDSArrayOperatorValueV():
+    BDSArrayOperatorValue("Vector( ")
+  {;}
   virtual ~BDSArrayOperatorValueV()
   {
     for (auto op : operators)
@@ -46,9 +48,10 @@ public:
   /// Return a name of the operator for feedback to the user in print out.
   virtual G4String Name() const
   {
-    G4String result = "";
+    G4String result = name;
     for (auto op : operators)
       {result += op->Name() + " ";}
+    result += " )";
     return result;
   }
   

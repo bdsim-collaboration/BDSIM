@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSARRAYOPERATORINDEX_H
 #define BDSARRAYOPERATORINDEX_H
+#include "G4String.hh"
 #include "G4Types.hh"
 
 /**
@@ -33,11 +34,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSArrayOperatorIndex
 {
 public:
-  BDSArrayOperatorIndex(){;}
+  BDSArrayOperatorIndex() = delete;
+  explicit BDSArrayOperatorIndex(const G4String& nameIn = "None"):
+    name(nameIn)
+  {;}
   virtual ~BDSArrayOperatorIndex(){;}
   
   /// Supply a name of this operator for feedback to the user in print out.
-  virtual G4String Name() const {return "none";}
+  virtual G4String Name() const {return name;}
 
   /// Operation to modify the coordinates by reference. As we typically have
   /// more than one return value, we therefore use references as a way of doing this.
@@ -92,6 +96,8 @@ public:
     TransformLimits(xMin, xMax, yMin, yMax, zMin, zMax, v[0], v[1]);
   }
   
+protected:
+  G4String name;
 };
 
 #endif

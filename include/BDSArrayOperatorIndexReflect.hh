@@ -34,6 +34,7 @@ class BDSArrayOperatorIndexReflect: public BDSArrayOperatorIndex
 {
 public:
   BDSArrayOperatorIndexReflect():
+    BDSArrayOperatorIndex("Reflect(None)"),
     xyzt{false, false, false, false}
   {;}
   explicit BDSArrayOperatorIndexReflect(G4bool xyzt[4]):
@@ -43,11 +44,16 @@ public:
                                G4bool y,
                                G4bool z,
                                G4bool t):
+    BDSArrayOperatorIndex("Reflect("),
     xyzt{x,y,z,t}
-  {;}
+  {
+    G4String newName = "Reflect(";
+    for (const auto& v : xyzt)
+      {newName += std::to_string(v);}
+    newName += ")";
+    name = newName;
+  }
   virtual ~BDSArrayOperatorIndexReflect(){;}
-  
-  virtual G4String Name() const {return "Reflect";}
   
   virtual void Apply(G4int& x,
                      G4int& y,

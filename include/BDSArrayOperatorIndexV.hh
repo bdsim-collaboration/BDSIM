@@ -33,7 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSArrayOperatorIndexV: public BDSArrayOperatorIndex
 {
 public:
-  BDSArrayOperatorIndexV(){;}
+  BDSArrayOperatorIndexV():
+    BDSArrayOperatorIndex("Vector( "){;}
   virtual ~BDSArrayOperatorIndexV()
   {
     for (auto op : operators)
@@ -46,9 +47,10 @@ public:
   /// Supply a name of this operator for feedback to the user in print out.
   virtual G4String Name() const
   {
-    G4String result = "";
+    G4String result = "Vector(";
     for (auto op : operators)
       {result += op->Name() + " ";}
+    result += ")";
     return result;
   }
 

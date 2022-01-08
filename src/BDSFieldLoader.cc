@@ -686,6 +686,9 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
       indexOperator = indexOperators[0];
       valueOperator = valueOperators[0];
     }
+  
+  G4cout << "Array index operator: " << indexOperator->Name() << G4endl;
+  G4cout << "Array value operator: " << valueOperator->Name() << G4endl;
 }
 
 G4bool BDSFieldLoader::NeedToProvideTransform(const BDSArrayReflectionTypeSet* reflectionTypes) const

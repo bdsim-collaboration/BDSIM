@@ -32,6 +32,7 @@ class BDSArrayOperatorIndexFlip: public BDSArrayOperatorIndex
 {
 public:
   BDSArrayOperatorIndexFlip():
+    BDSArrayOperatorIndex("Flip(None)"),
     xyzt{1,1,1,1}
   {;}
   BDSArrayOperatorIndexFlip(G4bool xyzt[4]):
@@ -40,16 +41,21 @@ public:
   BDSArrayOperatorIndexFlip(G4bool x,
                             G4bool y,
                             G4bool z,
-                            G4bool t)
+                            G4bool t):
+    BDSArrayOperatorIndex("Flip")
   {
     xyzt[0] = x ? -1 : 1;
     xyzt[1] = y ? -1 : 1;
     xyzt[2] = z ? -1 : 1;
     xyzt[3] = t ? -1 : 1;
+  
+    G4String newName = "Flip(";
+    for (const auto& v : xyzt)
+      {newName += std::to_string(v < 0);}
+    newName += ")";
+    name = newName;
   }
   virtual ~BDSArrayOperatorIndexFlip(){;}
-  
-  virtual G4String Name() const {return "Flip";}
   
   virtual void Apply(G4int& x,
                      G4int& y,
