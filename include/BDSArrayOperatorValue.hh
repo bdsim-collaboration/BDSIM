@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSARRAYOPERATORVALUE_H
 #define BDSARRAYOPERATORVALUE_H
+#include "G4String.hh"
 #include "G4Types.hh"
 
 /**
@@ -31,11 +32,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSArrayOperatorValue
 {
 public:
-  BDSArrayOperatorValue(){;}
+  explicit BDSArrayOperatorValue(const G4String& nameIn = "None"):
+    name(nameIn)
+  {;}
   virtual ~BDSArrayOperatorValue(){;}
   
   /// Return a name of the operator for feedback to the user in print out.
-  virtual G4String Name() const {return "None";}
+  virtual G4String Name() const {return name;}
   
   /// Index arguments are original coordinate space indices, i.e. allowed
   /// to be negative. No action by default.
@@ -48,6 +51,9 @@ public:
     yInd = 2; zInd = 3; tInd = 4;// to retain default values and prevent compiler warnings
     return v;
   }
+  
+protected:
+  G4String name;
 };
 
 #endif

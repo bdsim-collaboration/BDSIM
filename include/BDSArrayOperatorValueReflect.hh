@@ -24,6 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "G4Types.hh"
 
+#include <string>
+
 /**
  * @brief Reflect field component in individual dimensions.
  * 
@@ -34,6 +36,7 @@ class BDSArrayOperatorValueReflect: public BDSArrayOperatorValue
 {
 public:
   BDSArrayOperatorValueReflect():
+    BDSArrayOperatorValue("Reflect(None)"),
     multiplier{1.0,1.0,1.0,1.0}
   {;}
   explicit BDSArrayOperatorValueReflect(G4bool xyzt[4]):
@@ -49,11 +52,14 @@ public:
     multiplier[1] = y ? -1.0 : 1.0;
     multiplier[2] = z ? -1.0 : 1.0;
     multiplier[3] = t ? -1.0 : 1.0;
+    
+    G4String newName = "Reflect(";
+    for (const auto& v : multiplier)
+      {newName += std::to_string(v < 0);}
+    newName += ")";
+    name = newName;
   }
   virtual ~BDSArrayOperatorValueReflect(){;}
-  
-  /// Return a name of the operator for feedback to the user in print out.
-  virtual G4String Name() const {return name;}
   
   virtual BDSFieldValue Apply(BDSFieldValue v,
                               G4int /*xInd*/,
@@ -66,7 +72,6 @@ public:
   }
   
 private:
-  G4String name;
   /// This has to match the type of the field value components (e.g. double or float) to avoid
   /// a possible narrowing conversion.
   FIELDTYPET multiplier[4];
