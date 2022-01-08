@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSARRAYOPERATORVALUEREFLECTDIPOLEXY_H
-#define BDSARRAYOPERATORVALUEREFLECTDIPOLEXY_H
+#ifndef BDSARRAYOPERATORVALUEREFLECTDIPOLEY_H
+#define BDSARRAYOPERATORVALUEREFLECTDIPOLEY_H
 #include "BDSArrayOperatorValue.hh"
 #include "BDSFieldValue.hh"
 
@@ -25,40 +25,35 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 /**
- * @brief Reflect field values for a dipolar field in the positive quadrant.
+ * @brief Reflect field values for a dipolar field about the x-z plane.
  *
- * Note this must work in combination with a coordinate relfection in x and y.
- * Ultimately, the goal is this:
+ * Note this must work in combination with a coordinate reflection.
  *
  * \verbatim
- *       y
- *       ∧
- *       |
- *    ∧  |  ∧
- *    |  |  | original
- * <---  |  --->
- *       |
- * -------------------> x
- * ∧     |     ∧
- * |     |     |
- * --->  |  <---
- *       |
- *       |
+ *
+ *
+ *     ∧
+ *     | original
+ *     --->
+ *
+ * -------------> x,z
+ *      ∧
+ *      |
+ *   <---
+ *
  * \endverbatim
  *
  * 
  * @author Laurie Nevay
  */
 
-class BDSArrayOperatorValueReflectDipoleXY: public BDSArrayOperatorValue
+class BDSArrayOperatorValueReflectDipoleY: public BDSArrayOperatorValue
 {
 public:
-  BDSArrayOperatorValueReflectDipoleXY()
+  BDSArrayOperatorValueReflectDipoleY():
+    BDSArrayOperatorValue("ReflectDipoleY")
   {;}
-  virtual ~BDSArrayOperatorValueReflectDipoleXY(){;}
-  
-  /// Return a name of the operator for feedback to the user in print out.
-  virtual G4String Name() const {return name;}
+  virtual ~BDSArrayOperatorValueReflectDipoleY(){;}
   
   virtual BDSFieldValue Apply(BDSFieldValue v,
                               G4int xInd,
@@ -66,15 +61,12 @@ public:
                               G4int zInd = 0,
                               G4int tInd = 0) const
   {
-    zInd = 3; tInd = 4;// to retain default values and prevent compiler warnings
-    // only top left or bottom right quadrant need the x-component flipped
-    if ( (xInd < 0 && yInd >= 0) || (xInd >= 0 && yInd < 0) )
+    xInd = 1; zInd = 3; tInd = 4;// to retain default values and prevent compiler warnings
+    // only for lower y-half, we flip the x-component
+    if (yInd < 0 )
       {v[0] *= -1.0;}
     return v;
   }
-  
-private:
-  G4String name;
 };
 
 #endif

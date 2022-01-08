@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSARRAYOPERATORVALUEREFLECTYDIPOLE_H
-#define BDSARRAYOPERATORVALUEREFLECTYZDIPOLE_H
+#ifndef BDSARRAYOPERATORVALUEREFLECTDIPOLEXY_H
+#define BDSARRAYOPERATORVALUEREFLECTDIPOLEXY_H
 #include "BDSArrayOperatorValue.hh"
 #include "BDSFieldValue.hh"
 
@@ -27,7 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @brief Reflect field values for a dipolar field in the positive quadrant.
  *
- * Note this must work in combination with a coordinate relfection in x and y.
+ * Note this must work in combination with a coordinate reflection in x and y.
  * Ultimately, the goal is this:
  *
  * \verbatim
@@ -50,15 +50,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @author Laurie Nevay
  */
 
-class BDSArrayOperatorValueReflectDipoleY: public BDSArrayOperatorValue
+class BDSArrayOperatorValueReflectDipoleXY: public BDSArrayOperatorValue
 {
 public:
-  BDSArrayOperatorValueReflectDipoleXY()
+  BDSArrayOperatorValueReflectDipoleXY():
+    BDSArrayOperatorValue("ReflectDipoleXY")
   {;}
   virtual ~BDSArrayOperatorValueReflectDipoleXY(){;}
-  
-  /// Return a name of the operator for feedback to the user in print out.
-  virtual G4String Name() const {return name;}
   
   virtual BDSFieldValue Apply(BDSFieldValue v,
                               G4int xInd,
@@ -72,9 +70,6 @@ public:
       {v[0] *= -1.0;}
     return v;
   }
-  
-private:
-  G4String name;
 };
 
 #endif
