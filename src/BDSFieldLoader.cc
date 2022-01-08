@@ -32,7 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArrayOperatorIndexV.hh"
 #include "BDSArrayOperatorValue.hh"
 #include "BDSArrayOperatorValueReflect.hh"
-#include "BDSArrayOperatorValueReflectXYDipole.hh"
+#include "BDSArrayOperatorValueReflectDipoleXY.hh"
+#include "BDSArrayOperatorValueReflectDipoleY.hh"
 #include "BDSArrayOperatorValueV.hh"
 #include "BDSArrayReflectionType.hh"
 #include "BDSDebug.hh"
@@ -650,7 +651,7 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
 	case BDSArrayReflectionType::reflectxzdipole:
 	  {
 	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(false, true,  false, false));
-	    valueOperators.emplace_back(new BDSArrayOperatorValueReflect(true,  false, false, false));
+	    valueOperators.emplace_back(new BDSArrayOperatorValueReflectDipoleY());
 	    break;
 	  }
 	case BDSArrayReflectionType::reflectyzdipole:
