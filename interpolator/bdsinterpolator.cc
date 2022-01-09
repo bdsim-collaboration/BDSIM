@@ -26,13 +26,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDetectorConstruction.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParser.hh"
+#include "BDSPhysicsUtilities.hh"
 
 #include "globals.hh"      // geant4 types / globals
 #include "G4Field.hh"
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
 
+#include "parser/beam.h"
+
+#include <stdexcept>
+#include <string>
 #include <vector>
+
 
 int main(int argc, char** argv)
 {
@@ -56,6 +62,20 @@ int main(int argc, char** argv)
 
   /// Force construction of global constants
   BDSGlobalConstants::Instance();
+
+  BDSParticleDefinition* designParticle = nullptr;
+  BDSParticleDefinition* beamParticle = nullptr;
+  G4bool beamDifferentFromDesignParticle = false;
+  auto beamDefinition = BDSParser::Instance()->GetBeam();
+  if (!beamDefinition.particle.empty())
+    {
+      BDS::ConstructDesignAndBeamParticle(beamDefinition,
+					  BDSGlobalConstants::Instance()->FFact(),
+					  designParticle,
+					  beamParticle,
+					  beamDifferentFromDesignParticle);
+      BDSFieldFactory::SetDesignParticle(designParticle);
+    }
 
   BDSFieldQueryRaw querier;
 
