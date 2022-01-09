@@ -75,6 +75,8 @@ namespace GMAD
     std::string magneticReflection;
     std::string electricReflection;
     
+    std::string fieldParameters;
+    
     /// Constructor
     Field();
     /// Reset

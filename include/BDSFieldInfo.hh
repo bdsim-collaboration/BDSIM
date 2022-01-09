@@ -134,6 +134,7 @@ public:
   /// Set Transform - could be done afterwards once instance of this class is passed around.
   inline void SetFieldType(BDSFieldType fieldTypeIn) {fieldType = fieldTypeIn;}
   inline void SetIntegratorType(BDSIntegratorType typeIn) {integratorType = typeIn;}
+  inline void SetProvideGlobalTransform(G4bool provideGlobalTransformIn) {provideGlobalTransform = provideGlobalTransformIn;}
   inline void SetMagneticInterpolatorType(BDSInterpolatorType typeIn) {magneticInterpolatorType = typeIn;}
   inline void SetMagneticArrayReflectionType(const BDSArrayReflectionTypeSet& typeIn) {magneticArrayReflectionTypeSet = typeIn;}
   inline void SetElectricArrayReflectionType(const BDSArrayReflectionTypeSet& typeIn) {electricArrayReflectionTypeSet = typeIn;}

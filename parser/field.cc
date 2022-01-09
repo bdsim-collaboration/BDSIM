@@ -56,6 +56,7 @@ void Field::clear()
   electricSubField = "";
   magneticReflection = "";
   electricReflection = "";
+  fieldParameters = "";
 }
 
 void Field::PublishMembers()
@@ -88,6 +89,7 @@ void Field::PublishMembers()
   publish("electricSubField",     &Field::electricSubField);
   publish("magneticReflection",   &Field::magneticReflection);
   publish("electricReflection",   &Field::electricReflection);
+  publish("fieldParameters",      &Field::fieldParameters);
 }
 
 void Field::print()const
@@ -112,5 +114,6 @@ void Field::print()const
 	    << "electricSubField "     << electricSubField     << std::endl
 	    << "magneticSubField "     << magneticSubField     << std::endl
 	    << "magneticReflection "   << magneticReflection   << std::endl
-	    << "electricReflection "   << electricReflection   << std::endl;
+	    << "electricReflection "   << electricReflection   << std::endl
+      << "fieldParameters "      << fieldParameters      << std::endl;
 }
