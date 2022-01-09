@@ -84,7 +84,7 @@ int main(int argc, char** argv)
     std::vector<BDSFieldQueryInfo*> queries = BDSDetectorConstruction::PrepareFieldQueries(nullptr);
     for (const auto& query: queries)
       {
-	G4cout << "Query: " << query->name << G4endl;
+	G4cout << "Query: \"" << query->name << "\"" << G4endl;
 	BDSFieldInfo* recipe = BDSFieldFactory::Instance()->GetDefinition(query->fieldObject);
 	recipe->SetProvideGlobalTransform(false);
 	BDSFieldObjects* completeField = BDSFieldFactory::Instance()->CreateField(*recipe);
@@ -101,7 +101,6 @@ int main(int argc, char** argv)
   catch (std::exception& e)
     {G4cout << e.what();}
   
-  delete BDSFieldFactory::Instance();
   delete BDSGlobalConstants::Instance();
   delete BDSParser::Instance();
 

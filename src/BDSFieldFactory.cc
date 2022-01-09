@@ -390,13 +390,13 @@ void BDSFieldFactory::PrepareFieldStrengthFromParameters(BDSMagnetStrength* st,
 	{poleTipRadius = ConvertToDoubleWithException(keyValue.second, keyValue.first) * CLHEP::m;}
       else
 	{
-	  G4String msg = "Invalid key \"" + keyValue.first + "\" for field parameters";
-	  msg += "Acceptable parameters are: ";
+	  G4String msg = "Invalid key \"" + keyValue.first + "\" for field parameters. ";
+	  msg += "Acceptable parameters are: \n";
 	  const std::vector<G4String>& allKeys = BDSMagnetStrength::AllKeys();
 	  for (G4int i = 0; i < (G4int)allKeys.size(); i++)
 	    {
 	      msg += allKeys[i] + ", ";
-	      if (i % 10 == 0)
+	      if ((i % 10 == 0) && (i > 0))
 		{msg += "\n";}
 	    }
 	  throw BDSException(__METHOD_NAME__, msg);
