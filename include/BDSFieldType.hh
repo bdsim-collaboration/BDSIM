@@ -63,6 +63,8 @@ struct fieldtypes_def
 //  - BDSFieldClassType should also be updated
 //  - BDSIntegratorSet::Integrator() should also be updated
 
+// NOTE - also add to manual/source/dev_fields.rst -> Field Names and Parameters
+
 typedef BDSTypeSafeEnum<fieldtypes_def,int> BDSFieldType;
 
 namespace BDS

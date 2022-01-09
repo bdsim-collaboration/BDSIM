@@ -20,9 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExecOptions.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
-#include "BDSFieldLoader.hh"
-#include "BDSFieldMag.hh"
-#include "BDSFieldMagInterpolated.hh"
+#include "BDSFieldObjects.hh"
 #include "BDSFieldQueryInfo.hh"
 #include "BDSFieldQueryRaw.hh"
 #include "BDSDetectorConstruction.hh"
@@ -61,32 +59,29 @@ int main(int argc, char** argv)
 
   BDSFieldQueryRaw querier;
 
-  std::vector<BDSFieldQueryInfo*> queries = BDSDetectorConstruction::PrepareFieldQueries(nullptr);
-  for (const auto& query : queries)
-    {
-      BDSFieldInfo* recipe = BDSFieldFactory::Instance()->GetDefinition(query->fieldObject);
-
-      // We don't need to use the full interface of BDSFieldFactory to manufacture a complete
-      // geant4 field - we only need the BDSFieldMag* instance.
-      BDSFieldMag* field = nullptr;
-      try
-	{
-	  std::cout << "Loading field " << std::endl;
-	  field = BDSFieldLoader::Instance()->LoadMagField(*recipe);
-	}
-      catch (const BDSException& e)
-	{std::cerr << e.what() << std::endl;} // continue anyway to next one
-
-      if (!field)
-	{
-	  G4cout << "No field constructed - skipping" << G4endl;
-	  continue;
-	}
-      querier.QueryFieldRaw(field, query);
-    }
+  try
+  {
+    std::vector<BDSFieldQueryInfo*> queries = BDSDetectorConstruction::PrepareFieldQueries(nullptr);
+    for (const auto& query: queries)
+      {
+	G4cout << "Query: " << query->name << G4endl;
+	BDSFieldInfo* recipe = BDSFieldFactory::Instance()->GetDefinition(query->fieldObject);
+	recipe->SetProvideGlobalTransform(false);
+	BDSFieldObjects* completeField = BDSFieldFactory::Instance()->CreateField(*recipe);
+	G4Field* field = nullptr;
+	if (completeField)
+	  {field = completeField->GetField();}
+	if (!field)
+	  {G4cout << "No field constructed - skipping" << G4endl; continue;}
+	querier.QueryFieldRaw(field, query);
+      }
+  }
+  catch (BDSException& e)
+    {G4cout << e.what();}
+  catch (std::exception& e)
+    {G4cout << e.what();}
   
   delete BDSFieldFactory::Instance();
-  delete BDSFieldLoader::Instance();
   delete BDSGlobalConstants::Instance();
   delete BDSParser::Instance();
 

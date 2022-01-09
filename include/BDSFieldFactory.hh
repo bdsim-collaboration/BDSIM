@@ -157,7 +157,17 @@ private:
 
   /// Prepare all required definitions that can be used dynamically.
   void PrepareFieldDefinitions(const std::vector<GMAD::Field>& definitions,
-			       const G4double defaultBRho);
+                               G4double defaultBRho);
+  
+  /// Convert the string 'value' to a double. Throw an exception including the parameterNameForError if it doesn't work.
+  G4double ConvertToDoubleWithException(const G4String& value,
+                                        const G4String& parameterNameForError) const;
+  
+  /// Fill an instance of BDSMagnetStrength with parameters as defined in a string "fieldParameters"
+  /// that is assumed to be a space-delimited set of parameter=value strings.
+  void PrepareFieldStrengthFromParameters(BDSMagnetStrength* st,
+                                          const G4String& fieldParameters,
+                                          G4double& poleTipRadius) const;
 
   /// BDSFieldInfo definitions prepare from parser vector of definitions.
   std::map<G4String, BDSFieldInfo*> parserDefinitions;

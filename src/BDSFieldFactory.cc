@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSArrayReflectionType.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSPTCOneTurnMap.hh"
@@ -97,6 +98,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4RotationMatrix.hh"
+#include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 #include "G4Version.hh"
@@ -169,7 +171,7 @@ BDSFieldFactory::~BDSFieldFactory()
 }
 
 void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& definitions,
-					      const G4double defaultBRho)
+                                              G4double defaultBRho)
 {
   for (const auto& definition : definitions)
     {
@@ -291,12 +293,16 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	  if (ul != defaultUL)
 	    {fieldLimit = ul;}
 	}
-
+      
       BDSMagnetStrength* st = new BDSMagnetStrength();
+      G4double poleTipRadius = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->aper1;
+      if (!definition.fieldParameters.empty())
+        {PrepareFieldStrengthFromParameters(st, definition.fieldParameters, poleTipRadius);}
+      
       BDSFieldInfo* info = new BDSFieldInfo(fieldType,
 					    defaultBRho,
 					    intType,
-					    st, /*empty strengths to avoid any possible segfault*/
+					    st,
 					    G4bool(definition.globalTransform),
 					    transform,
 					    magFile,
@@ -311,6 +317,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    G4double(definition.t*CLHEP::s),
 					    G4bool(definition.autoScale),
 					    fieldLimit);
+      info->SetScalingRadius(poleTipRadius);
       
       if (!definition.magneticSubField.empty())
 	{
@@ -344,6 +351,55 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
           G4cout << *info << G4endl;
         }
       parserDefinitions[G4String(definition.name)] = info;
+    }
+}
+
+G4double BDSFieldFactory::ConvertToDoubleWithException(const G4String& value,
+                                                       const G4String& parameterNameForError) const
+{
+  G4double result = 0;
+  try
+    {result = std::stod(value);}
+  catch (std::exception& e)
+    {
+      G4String msg(e.what());
+      G4String baseMsg = "Unable to interpret value (\"" + value + "\" of parameter \"";
+      baseMsg += parameterNameForError + "\" as a number: ";
+      throw BDSException(__METHOD_NAME__, baseMsg + msg;
+    }
+  return result;
+}
+
+void BDSFieldFactory::PrepareFieldStrengthFromParameters(BDSMagnetStrength* st,
+                                                         const G4String& fieldParameters,
+                                                         G4double& poleTipRadius) const
+{
+  // use function from BDSUtilities to process user params string into
+  // map of strings and values.
+  std::map<G4String, G4String> map = BDS::GetUserParametersMap(fieldParameters, '=');
+  
+  for (const auto& keyValue : map)
+    {
+      if (BDSMagnetStrength::ValidKey(keyValue.first))
+	{
+	  G4double value = ConvertToDoubleWithException(keyValue.second, keyValue.first);
+	  (*st)[keyValue.first] = value * BDSMagnetStrength::Unit(keyValue.first);
+	}
+      else if (keyValue.first == "poletipradius")
+	{poleTipRadius = ConvertToDoubleWithException(keyValue.second, keyValue.first) * CLHEP::m;}
+      else
+	{
+	  G4String msg = "Invalid key \"" + keyValue.first + "\" for field parameters";
+	  msg += "Acceptable parameters are: ";
+	  const std::vector<G4String>& allKeys = BDSMagnetStrength::AllKeys();
+	  for (G4int i = 0; i < (G4int)allKeys.size(); i++)
+	    {
+	      msg += allKeys[i] + ", ";
+	      if (i % 10 == 0)
+		{msg += "\n";}
+	    }
+	  throw BDSException(__METHOD_NAME__, msg);
+	}
     }
 }
 
