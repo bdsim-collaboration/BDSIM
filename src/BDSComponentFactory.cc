@@ -546,9 +546,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
 	}
 
   if (buildIncomingFringe)
-	{cavityLength -= thinElementLength;}
+	  {cavityLength -= thinElementLength;}
   if (buildOutgoingFringe)
-	{cavityLength -= thinElementLength;}
+	  {cavityLength -= thinElementLength;}
 
   // supply currentArcLength (not element length) to strength as its needed
   // for time offset from s=0 position
