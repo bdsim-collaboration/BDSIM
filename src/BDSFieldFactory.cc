@@ -58,6 +58,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagOctupole.hh"
 #include "BDSFieldMagQuadrupole.hh"
 #include "BDSFieldMagSextupole.hh"
+#include "BDSFieldMagSolenoidSheet.hh"
 #include "BDSFieldMagSkewOwn.hh"
 #include "BDSFieldMagZero.hh"
 #include "BDSFieldObjects.hh"
@@ -529,6 +530,8 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
     case BDSFieldType::dipole:
     case BDSFieldType::dipole3d:
       {field = new BDSFieldMagDipole(strength); break;}
+    case BDSFieldType::solenoidsheet:
+      {field = new BDSFieldMagSolenoidSheet(strength, poleTipRadius); break;}
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
     case BDSFieldType::undulator:
