@@ -58,7 +58,6 @@ private:
   G4double a;
   G4double halfLength;
   G4double B0;
-  G4double mu0OverPi;
   G4double Iprime;
   G4double normalisation;
 };

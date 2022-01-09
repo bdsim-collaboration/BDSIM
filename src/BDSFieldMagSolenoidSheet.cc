@@ -48,7 +48,6 @@ BDSFieldMagSolenoidSheet::BDSFieldMagSolenoidSheet(G4double fullLength,
   a(sheetRadius*0.5),
   halfLength(0.5*fullLength),
   B0(B0In),
-  mu0OverPi(CLHEP::mu0/CLHEP::pi),
   Iprime(0),
   normalisation(1)
 {
