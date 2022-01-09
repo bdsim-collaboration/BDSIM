@@ -9,5 +9,6 @@ if (USE_GDML)
 endif()
 
 
-interpolator_test(interp-field-pure-dipole      "query-pure-dipole-field-only.gmad"       "")
-interpolator_test(interp-field-pure-quadrupole  "query-pure-quadrupole-field-only.gmad"   "")
+interpolator_test(interp-field-pure-dipole         "query-pure-dipole-field-only.gmad"          "")
+interpolator_test(interp-field-pure-quadrupole     "query-pure-quadrupole-field-only.gmad"      "")
+interpolator_test(interp-field-pure-solenoidsheet  "query-pure-solenoidsheet-field-only.gmad"   "")

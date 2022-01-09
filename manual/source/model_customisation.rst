@@ -289,6 +289,7 @@ field definition must be exactly one of the internal names used for the field na
 
 * See field types here: :ref:`dev-fields-pure-field-names`.
 * No units may be used inside the :code:`fieldParameters` string.
+* Normalised field strengths are used with respect to the beam particle and design energy.
 
 Example: ::
 
@@ -296,7 +297,7 @@ Example: ::
              fieldParameters="field=1.2, by=1.0";
 
 For a dipole field with value 1.2 T and along the unit Y axis (local). The other
-components of the unit vector associated with it will default to 0. 
+components of the unit vector associated with it will default to 0.
 	  
 
 Integrators
