@@ -145,7 +145,10 @@ private:
   /// Create special parallel transport 'field' that applies a parallel
   /// transport along beam line.
   BDSFieldObjects* CreateParallelTransport(const BDSFieldInfo& info);
-
+  
+  /// Return the parameter "outerScaling" from strength st, but default to 1
+  G4double GetOuterScaling(const BDSMagnetStrength* st) const;
+  
   /// Private default constructor as singleton class.
   BDSFieldFactory();
 
