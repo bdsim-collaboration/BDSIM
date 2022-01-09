@@ -365,7 +365,7 @@ G4double BDSFieldFactory::ConvertToDoubleWithException(const G4String& value,
       G4String msg(e.what());
       G4String baseMsg = "Unable to interpret value (\"" + value + "\" of parameter \"";
       baseMsg += parameterNameForError + "\" as a number: ";
-      throw BDSException(__METHOD_NAME__, baseMsg + msg;
+      throw BDSException(__METHOD_NAME__, baseMsg + msg);
     }
   return result;
 }
