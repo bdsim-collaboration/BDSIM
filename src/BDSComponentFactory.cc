@@ -1303,7 +1303,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
     }
 
   auto solenoid = new BDSMagnet(BDSMagnetType::solenoid,
-                         elementName + "_centre",
+                         elementName,
                          solenoidBodyLength,
                          bpInfo,
                          outerInfo,
