@@ -35,11 +35,11 @@ void Query::clear()
   nz   = 1;
   nt   = 1;
   xmin = 0;
-  xmax = 1;
+  xmax = 0;
   ymin = 0;
-  ymax = 1;
+  ymax = 0;
   zmin = 0;
-  zmax = 1;
+  zmax = 0;
   tmin = 0;
   tmax = 0;
   outfileMagnetic = "";
