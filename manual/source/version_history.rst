@@ -27,6 +27,9 @@ V1.7.0 - 2021 / XX / XX
 New Features
 ------------
 
+* New ability to use any "pure" field (i.e. one from equations inside BDSIM) as a field
+  and attach it to placements, or beam line geometry, as well as query it to generate
+  an external field map.
 * New ability to query a 3D model for the field and export a field map.
 * New program bdsinterpolator to interpolate a field map and export it without
   any handling by Geant4.

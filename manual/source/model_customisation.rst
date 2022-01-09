@@ -204,6 +204,10 @@ When defining a :code:`field`, the following parameters can be specified. Exampl
 | magneticSubField     | Name of another field object like this one that will be used as |
 |                      | a magnetic 'sub' field that overlays this one.                  |
 +----------------------+-----------------------------------------------------------------+
+| fieldParameters      | A string containing a white-space separated list of             |
+|                      | :code:`parameter=value` when using a pure field type. See       |
+|                      | :ref:`fields-pure-field-types`.                                 |
++----------------------+-----------------------------------------------------------------+
 
 Simple example: ::
 
@@ -266,7 +270,34 @@ Field Types
 | ebmap4d          | 4D electric-magnetic field map   |
 +------------------+----------------------------------+
 
+.. note:: Some "pure" fields can be used also. Their names for the "type" are listed
+	  in :ref:`dev-fields-pure-field-names`.
 
+.. _fields-pure-field-types:
+   
+Pure Fields Types
+*****************
+
+"Pure" fields are ones that are described by equations in BDSIM. These are used
+for all the generic accelerator components. Note, we may use custom numerical
+integrators for tracking in accelerator components that *ignore* the field
+that is required to be there for Geant4. However, these integrators often *fall-back*
+to this field when tracking a particle in a direction they can't handle.
+
+The pure fields can be used as a field object in BDSIM. The :code:`type` in the
+field definition must be exactly one of the internal names used for the field name.
+
+* See field types here: :ref:`dev-fields-pure-field-names`.
+* No units may be used inside the :code:`fieldParameters` string.
+
+Example: ::
+
+  f1: field, type="dipole",
+             fieldParameters="field=1.2, by=1.0";
+
+For a dipole field with value 1.2 T and along the unit Y axis (local). The other
+components of the unit vector associated with it will default to 0. 
+	  
 
 Integrators
 ***********
