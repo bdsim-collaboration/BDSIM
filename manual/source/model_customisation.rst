@@ -165,6 +165,10 @@ When defining a :code:`field`, the following parameters can be specified. Exampl
 +----------------------+-----------------------------------------------------------------+
 | electricInterpolator | Which interpolator to use - see below for a full list.          |
 +----------------------+-----------------------------------------------------------------+
+| magneticReflection   | String of white-space separate relfection names to use.         |
++----------------------+-----------------------------------------------------------------+
+| electricReflection   | String of white-space separate relfection names to use.         |
++----------------------+-----------------------------------------------------------------+
 | x                    | x-offset from element it's attached to                          |
 +----------------------+-----------------------------------------------------------------+
 | y                    | y-offset from element it's attached to                          |
@@ -298,6 +302,53 @@ Example: ::
 
 For a dipole field with value 1.2 T and along the unit Y axis (local). The other
 components of the unit vector associated with it will default to 0.
+
+Field Reflections and Transforms
+********************************
+
+It is possible to exploit symmetry in a field map and use a field map with only
+some fraction of the complete expected map. This speeds up start up time as there
+is less to load and saves memory at run-time as there is less to store in memory.
+
+Several operations are available and may be combined arbitrarily. Thse are specified
+in the field definition in either :code:`magneticReflection` or :code:`electricReflection`.
+
+* The reflection string must be a white-space separated list (if more than one) of
+  the below names.
+
++-----------------------+------------------------------------------+
+| **Reflection Name**   | **Description**                          |
++=======================+==========================================+
+| flipx                 | :math:`\pm x \mapsto \mp x`              |
++-----------------------+------------------------------------------+
+| flipy                 | :math:`\pm y \mapsto \mp y`              |
++-----------------------+------------------------------------------+
+| flipz                 | :math:`\pm z \mapsto \mp z`              |
++-----------------------+------------------------------------------+
+| flipt                 | :math:`\pm t \mapsto \mp t`              |
++-----------------------+------------------------------------------+
+| reflectx              | :math:`x \mapsto |x|`                    |
++-----------------------+------------------------------------------+
+| reflecty              | :math:`y \mapsto |y|`                    |
++-----------------------+------------------------------------------+
+| reflectz              | :math:`z \mapsto |z|`                    |
++-----------------------+------------------------------------------+
+| reflectt              | :math:`t \mapsto |t|`                    |
++-----------------------+------------------------------------------+
+| reflectxydipole       | :math:`\pm x -> \mpx`                    |
++-----------------------+------------------------------------------+
+| reflectxzdipole       | :math:`\pm x -> \mpx`                    |
++-----------------------+------------------------------------------+
+| reflectyzdipole       | :math:`\pm x -> \mpx`                    |
++-----------------------+------------------------------------------+
+| reflectxyquadrupole   | :math:`\pm x -> \mpx`                    |
++-----------------------+------------------------------------------+
+
+Examples: ::
+
+  magneticReflection="flipx";
+  magneticReflection="flipx flipy";
+
 	  
 
 Integrators
