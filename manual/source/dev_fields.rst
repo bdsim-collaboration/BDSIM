@@ -584,6 +584,85 @@ these fields are automatically applied to rbends, sbends, quadrupoles and sextup
    :align: center
 
 
+Solenoid Sheet or Cylinder
+--------------------------
+
+For the outside of a solenoid, we have a solenoid "sheet" or "cylinder" model. This is
+modelled on the magnetic field due to symmetric cylinder of current of full length
+:math:`2 b` and of radius :math:`a`. The field is calculated in cylindrical coordinates
+and translted into Cartesian. The normalisation is to some nominal field :math:`B_0`.
+
+This follows the parameterisation and uses the algorithm for the generalised complete
+elliptical integral as described in:
+
+* Cylindrical Magnets and ideal Solenoids, N. Derby and S. Olbert, American Journal of
+  Physics **78**, 229 (2010); https://doi.org/10.1119/1.3256157 and also at
+  https://arxiv.org/abs/0909.3880.
+
+The cylindrical B field components are given by:
+
+.. math::
+
+   B_{rho} &= B_0 \left[ \alpha_+ C(k_+,1,1,-1) - \alpha_- C(k_-,1,1,-1) \right],
+
+   B_z &= \frac{B_0 a}{a + \rho} \left[ \beta_+ C(k_+,\gamma^2,1,\gamma) - \beta_- C(k_-,\gamma^2,1,\gamma) \right]
+
+where:
+
+.. math::
+
+   B_0 &= \frac{\mu_0 n I}{\pi},
+
+   z_{\pm} &= z \pm b,
+
+   \alpha_{\pm} &= \frac{a}{\sqrt{z_{\pm}^{2} + (\rho + a)^2}},
+   
+   \beta_{\pm} &= \frac{z_{\pm}}{ \sqrt{z_{\pm}^{2} + (\rho + a)^2}},
+   
+   \gamma &= \frac{a - \rho}{a + \rho},
+
+   k_{\pm} &= \sqrt{ \frac{z_{\pm}^{2} + (\rho - a)^2}{z_{\pm}^{2} + (\rho + a)^2} }.
+
+
+The implementation defines a *spatial tolerance* of :math:`10^{-5} \times \textrm{min}(a,2h)`. If a coordinate
+is requested within this distance of the cylinder radius (i.e. :math:`|\rho - a| < tol.` and :math:`|z| < b`) or on
+the end of the cylinder face (i.e. :math:`|\,|z| - h\,| < tol.` and :math:`\rho < a + tol.`) then no field is returned as the
+function is unstable at these points.
+
+The coordinates are transformed as:
+
+.. math::
+
+   z, \rho, \phi = z,\: \sqrt{x^2 + y^2},\: \arctan \left( \frac{y}{x} \right).
+
+Here, :code:`std::atan2(y,x)` is used for :math:`\arctan` to give the correct sign throughout. The final field
+is constructed as:
+
+.. math::
+
+   B_{x,y,z} = \{ B_{\rho}, 0, B_z \},
+
+then rotated about the :math:`z` axis by angle :math:`\phi`.
+
+If the field is queried close to the axis (i.e. :math:`|\rho| < tol.`), then a reduced formula is
+used:
+
+.. math::
+
+   B_{\rho} &= 0,
+
+   B_{z} &= \frac{B_{0}}{2} \left[  \frac{z+b}{ \sqrt{(z+b)^2 + a^2} } - \frac{z-b} { \sqrt{(z-b)^2 + a^2} } \right].
+
+Below is an example of the field.
+
+.. figure:: dev_figures/solenoidsheet.pdf
+   :width: 70%
+   :align: center
+
+   Solenoidal field for 2T solenoid.
+   
+
+
 Electric Fields From Equations
 ==============================
 
