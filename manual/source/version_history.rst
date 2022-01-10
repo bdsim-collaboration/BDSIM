@@ -16,6 +16,12 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.7.0 - 2021 / XX / XX
 =======================
 
+* The input parser will now reject any duplicate object names (e.g. a field with the same name),
+  whereas it didn't before. In the past, multiple objects would be created ignoring their name.
+  However, after the input is loaded, BDSIM itself may look through the objects for one matching
+  a name. In this case, the one it finds may be ambiguous or unexpected. The code was revised to
+  purposively protect against this. This was always the case with beam line elements, but now it
+  is also the case with all objects defined in the parser.
 * GGMAD Geometry format is now deprecated. This was not maintained for a long time and with
   pyg4ometry and GDML we support much better geometry. The code is old and hard to maintain
   and really needs to be rewritten. The functionality was broken in making BDSIM compatible
@@ -102,6 +108,12 @@ General
 Bug Fixes
 ---------
 
+* The input parser will now reject any duplicate object names (e.g. a field with the same name),
+  whereas it didn't before. In the past, multiple objects would be created ignoring their name.
+  However, after the input is loaded, BDSIM itself may look through the objects for one matching
+  a name. In this case, the one it finds may be ambiguous or unexpected. The code was revised to
+  purposively protect against this. This was always the case with beam line elements, but now it
+  is also the case with all objects defined in the parser.
 * Fix extension of all parser objects (i.e. not beam line elements), which was broken. Extension
   is the access and update of a variable inside a defined object such as a field or scorer.
 * Fix lack of yoke fields for rbends.

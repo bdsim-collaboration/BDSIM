@@ -63,7 +63,7 @@ namespace GMAD
 
     /// insert element at end of list
     /// option to check for unique element name (exits in case name is not unique), false by default
-    void push_back(const T& el, bool unique=false);
+    void push_back(const T& el, bool unique=false, const std::string& objectName="element");
 
     inline bool empty() const {return itsList.empty();} ///< Whether the list is empty.
 
@@ -149,10 +149,10 @@ namespace GMAD
   }
 
   template <typename T>
-    void FastList<T>::push_back(const T& el, bool unique) {
+    void FastList<T>::push_back(const T& el, bool unique, const std::string& className) {
     // better to search in map (faster)
     if (unique && itsMap.find(el.name) != itsMap.end()) {
-      std::cout << "ERROR: element already defined: " << el.name << std::endl;
+      std::cout << "ERROR: " << className << " with name \"" << el.name << "\" already defined." << std::endl;
       exit(1);
     }
     // insert at back of list (insert() instead of push_back() to get iterator for map):
