@@ -95,7 +95,7 @@ void BDSFieldQuery::QueryField(const BDSFieldQueryInfo* query)
   
   G4cout << "FieldQuery> \"" << query->name << "\" with N (x,y,z,t) points: ("
          << query->xInfo.n << ", " << query->yInfo.n << ", " << query->zInfo.n << ", " << query->tInfo.n
-         << "), writing to file";
+         << ")";
   PrintBAndEInfo(query);
 
   if (query->printTransform)
@@ -197,6 +197,7 @@ void BDSFieldQuery::QuerySpecificPoints(const BDSFieldQueryInfo* query)
 
 void BDSFieldQuery::PrintBAndEInfo(const BDSFieldQueryInfo* query) const
 {
+  G4cout << ", writing to file";
   if (query->queryMagnetic && query->queryElectric)
     {G4cout << "s B: \"" << query->outfileMagnetic << "\" and E: \"" << query->outfileElectric << "\"" << G4endl;}
   else if (query->queryMagnetic)

@@ -60,6 +60,7 @@ public:
   virtual void WriteFieldValue(const G4ThreeVector&,
                                G4double,
                                const G4double[6]) {;}
+  virtual void PrintBAndEInfo(const BDSFieldQueryInfo*) const {;}
   /// @}
   
 protected:

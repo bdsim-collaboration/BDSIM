@@ -70,7 +70,7 @@ private:
   void QuerySpecificPoints(const BDSFieldQueryInfo* query);
 
   /// Print out whether B and E files are being generated and which ones.
-  void PrintBAndEInfo(const BDSFieldQueryInfo* query) const;
+  virtual void PrintBAndEInfo(const BDSFieldQueryInfo* query) const;
   
   /// Open potentially both electric and magnetic field map files.
   virtual void OpenFiles(const BDSFieldQueryInfo* query);
