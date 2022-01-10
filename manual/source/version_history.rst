@@ -37,11 +37,7 @@ New Features
 * Samplers now have the parameter :code:`partID={11,-11}`, which for example can be used
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
-* New Docker script in :code:`bdsim/building/docker/build-centos-bdsim.sh` and updated
-  instructions on how to run Docker. This is a container system where a complete
-  environment build on Centos7 will be built locally and works on Mac, Linux, Windows. It
-  typically takes about 6Gb of space and is a great alternative to a virtual machine. An
-  XWindows server is required for the visualiser. See :ref:`docker-build`.
+* Solenoid sheet / cylinder field has been added and is used by default on the solenoid yoke geometry.
 * A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into
   voxelized geometries.
 * New Spectra command for rebsdim to make very flexible sets of spectra automatically. See
@@ -66,7 +62,12 @@ New Features
   the placements transform in the world. This works by making the outer volume into a G4AssemblyVolume.
 * Materials are now stored for each trajectory step point (optionally) as described
   by an integer ID.
-* New ability to arbitrarily scale the yoke fields
+* New ability to arbitrarily scale the yoke fields.
+* New Docker script in :code:`bdsim/building/docker/build-centos-bdsim.sh` and updated
+  instructions on how to run Docker. This is a container system where a complete
+  environment build on Centos7 will be built locally and works on Mac, Linux, Windows. It
+  typically takes about 6Gb of space and is a great alternative to a virtual machine. An
+  XWindows server is required for the visualiser. See :ref:`docker-build`.
   
 General
 -------
