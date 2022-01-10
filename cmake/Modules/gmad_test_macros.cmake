@@ -18,5 +18,5 @@ endmacro()
 # run a specific file pattern
 macro(gmad_test_duplicate objectName)
   add_test(NAME gmad-duplicate-name-${objectName} COMMAND gmadExec duplicateName-${objectName}.gmad)
-  set_tests_properties(gmad-duplicate-name-${objectName} PROPERTIES WILL_FAIL 1)
+  set_tests_properties(gmad-duplicate-name-${objectName} PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
 endmacro()
