@@ -188,6 +188,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSolenoid(G4String     na
   // NOTE this is a reproduction of some calculations in component factory for now
   G4double innerRadius = beamPipe->GetContainerRadius() + lengthSafetyLarge;
   G4double outerRadius = horizontalWidth * 0.5;
+  
+  if ( ((outerRadius - innerRadius)/outerRadius) < 0.05 )
+    {return result;} // mostly beam pipe with thin yoke - don't build more geometry
+  
+  // build a current cylinder sheet but of the same material - purely to indicate to the user
+  // the geometry used for the yoke field calculation
   G4double coilRadius = innerRadius + 0.25*(outerRadius - innerRadius);
   G4double coilThickness = 0.05*coilRadius; // arbitrary 5%
   G4VSolid* sheetSolid = new G4Tubs(name + "_sheet_solid",
