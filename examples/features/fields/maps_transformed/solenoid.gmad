@@ -5,17 +5,22 @@ use, l1;
 beam, particle="electron", kineticEnergy=1*GeV;
 
 
-q1: query, nx=2, xmin=-40*cm, xmax=40*cm,
+q1: query, nx=4, xmin=-50*cm, xmax=50*cm,
     	   ny=1, ymin=0*cm, ymax=41*cm,
 	   nz=3, zmin=-50*cm, zmax=50*cm,
 	   queryMagneticField=1,
-	   outfileMagnetic="solenoid-field.dat",
+	   outfileMagnetic="out_solenoidsheet_field.dat",
 	   referenceElement="s1";
 
 
-q2: query, nx=21, xmin=0*cm, xmax=100*cm,
-    	   ny=1, ymin=0*cm, ymax=100*cm,
-	   nz=21, zmin=-200*cm, zmax=200*cm,
+q2: query, nx=21, xmin=-100*cm, xmax=100*cm,
+    	   ny=1,  ymin=0*cm,    ymax=100*cm,
+	   nz=11, zmin=-200*cm, zmax=200*cm,
 	   queryMagneticField=1,
-	   outfileMagnetic="solenoid-field-many.dat",
+	   outfileMagnetic="out_solenoidsheet_field_many.dat",
+	   referenceElement="s1";
+
+q3: query, nx = 301, xmin=-100*cm, xmax=100*cm,
+    	   queryMagneticField=1,
+	   outfileMagnetic="out_solenoidsheet_field_xscan.dat",
 	   referenceElement="s1";
