@@ -1211,7 +1211,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   (*st)["bz"]    = 1;
-  (*st)["length"] = element->l * CLHEP::m * 0.5; // arbitrary fraction of 0.7 for current length of full length
+  (*st)["length"] = element->l * CLHEP::m * 0.8; // arbitrary fraction of 0.7 for current length of full length
   const G4double scaling = element->scaling;
   if (BDS::IsFinite(element->B))
     {
@@ -1301,8 +1301,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 					       integratorSet,
 					       brho,
                                                ScalingFieldOuter(element));
-      G4double averageRadius = (bpInfo->IndicativeRadius() + (outerInfo->horizontalWidth * 0.5) ) / 2;
-      outerField->SetScalingRadius(averageRadius);
+      
+      // determine a suitable radius for the current carrying coil of the solenoid
+      // this defines the field geometry
+      // there is no coil in our geometry so it is a bit fictional
+      G4double beamPipeRadius = bpInfo->IndicativeRadius();
+      G4double outerRadius = outerInfo->horizontalWidth * 0.5;
+      G4double coilRadius = beamPipeRadius + 0.25*(outerRadius - beamPipeRadius);
+      outerField->SetScalingRadius(coilRadius);
     }
 
   auto solenoid = new BDSMagnet(BDSMagnetType::solenoid,
@@ -2031,8 +2037,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
       {outerType = BDSFieldType::skewmultipoleouterdecapole;   break;}
     case BDSFieldType::dipole3d:
     case BDSFieldType::solenoid:
-      //{outerType = BDSFieldType::solenoidsheet; break;} // not ready yet
-      {outerType = BDSFieldType::multipoleouterdipole3d; break;}
+      {outerType = BDSFieldType::solenoidsheet; break;}
     default:
       {return nullptr; break;} // no possible outer field for any other magnet types
     }

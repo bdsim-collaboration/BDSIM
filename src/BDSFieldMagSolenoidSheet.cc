@@ -24,103 +24,161 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4Types.hh"
 
+#include "CLHEP/Units/PhysicalConstants.h"
 #include "CLHEP/Units/SystemOfUnits.h"
 
-#include "Math/SpecFuncMathMore.h"
-
+#include <algorithm>
 #include <cmath>
 
-#ifndef ROOT_HAS_MATHMORE
-#include "BDSDebug.hh"
-#include "BDSWarning.hh"
-#endif
-
 BDSFieldMagSolenoidSheet::BDSFieldMagSolenoidSheet(BDSMagnetStrength const* strength,
-						   G4double radiusIn):
-  BDSFieldMagSolenoidSheet((*strength)["length"],
-			   radiusIn,
-			   (*strength)["field"])
+                                                   G4double radiusIn):
+  BDSFieldMagSolenoidSheet((*strength)["length"], radiusIn, (*strength)["field"])
 {;}
 
 BDSFieldMagSolenoidSheet::BDSFieldMagSolenoidSheet(G4double fullLength,
 						   G4double sheetRadius,
 						   G4double B0In):
-  a(sheetRadius*0.5),
+  a(sheetRadius),
   halfLength(0.5*fullLength),
   B0(B0In),
-  Iprime(0),
-  normalisation(1)
+  spatialLimit(std::min(1e-5*sheetRadius, 1e-5*fullLength)),
+  normalisation(1.0)
 {
   finiteStrength = BDS::IsFinite(B0In);
-  G4double f1 = halfLength / std::sqrt(halfLength*halfLength + a*a);
-  Iprime = B0 / (CLHEP::mu0 * f1);
   
-  normalisation = B0 / fullLength / CLHEP::tesla; // = mu_0 N I
-#ifndef ROOT_HAS_MATHMORE
-  BDS::Warning(__METHOD_NAME__, "ROOT does not include MathMore package so this field will not work");
-#endif
+  // The field inside the current cylinder is actually slightly parabolic in rho.
+  // The equation for the field takes B0 as the peak magnetic field at the current
+  // cylinder sheet. So we evaluate it here then normalise. ~<1% adjustment in magnitude.
+  G4double testBz = OnAxisBz(halfLength, -halfLength);
+  normalisation = B0 / testBz;
 }
 
-#ifndef ROOT_HAS_MATHMORE
-G4ThreeVector BDSFieldMagSolenoidSheet::GetField(const G4ThreeVector& /*position*/,
-						 const G4double       /*t*/) const
-{
-  return G4ThreeVector();
-}
-#else
 G4ThreeVector BDSFieldMagSolenoidSheet::GetField(const G4ThreeVector& position,
-						 const G4double       /*t*/) const
+                                                 const G4double       /*t*/) const
 {
   G4double z = position.z();
   G4double rho = position.perp();
   G4double phi = position.phi(); // angle about z axis
-
-  G4double bzPlusHL = 0;
-  G4double brhoPlusHL = 0;
-  bzbr(rho, z+halfLength, bzPlusHL, brhoPlusHL);
-  G4double bzMinusHL = 0;
-  G4double brhoMinusHL = 0;
-  bzbr(rho, z-halfLength, bzMinusHL, brhoMinusHL);
   
-  G4double Bz = bzPlusHL - bzMinusHL;
-  G4double Br = brhoPlusHL - brhoMinusHL;
+  // check if close to current source - function not well-behaved at exactly the rho of
+  // the current source or at the boundary of +- halfLength
+  if (std::abs(std::abs(z) - halfLength) < spatialLimit && (rho < a+2*spatialLimit))
+    {return G4ThreeVector();} // close to +-z edge of cylinder and inside the radius
+  else if (std::abs(rho - a) < spatialLimit && (std::abs(z) < halfLength+2*spatialLimit))
+    {return G4ThreeVector();} // close to radius and inside +- z
+  
+  G4double zp = z + halfLength;
+  G4double zm = z - halfLength;
+  
+  G4double Brho = 0;
+  G4double Bz   = 0;
+  
+  // approximation for on-axis
+  if (std::abs(rho) < spatialLimit)
+    {Bz = OnAxisBz(zp, zm);}
+  else
+    {
+      G4double zpSq = zp*zp;
+      G4double zmSq = zm*zm;
+      
+      G4double rhoPlusA = rho + a;
+      G4double rhoPlusASq = rhoPlusA * rhoPlusA;
+      G4double aMinusRho = a - rho;
+      G4double aMinusRhoSq = aMinusRho*aMinusRho;
+      
+      G4double denominatorP = std::sqrt(zpSq + rhoPlusASq);
+      G4double denominatorM = std::sqrt(zmSq + rhoPlusASq);
+      
+      G4double alphap = a / denominatorP;
+      G4double alpham = a / denominatorM;
+      
+      G4double betap = zp / denominatorP;
+      G4double betam = zm / denominatorM;
+      
+      G4double gamma = (a - rho) / (rhoPlusA);
+      G4double gammaSq = gamma * gamma;
 
+      G4double kp = std::sqrt(zpSq + aMinusRhoSq) / denominatorP;
+      G4double km = std::sqrt(zmSq + aMinusRhoSq) / denominatorM;
+      
+      Brho = B0 * (alphap * CEL(kp, 1, 1, -1) - alpham * CEL(km, 1, 1, -1)) / CLHEP::pi;
+      Bz = ((B0 * a) / (rhoPlusA)) * (betap * CEL(kp, gammaSq, 1, gamma) - betam * CEL(km, gammaSq, 1, gamma)) / CLHEP::pi;
+      // technically possible for integral to return nan, so protect against it and default to B0 along z
+      if (std::isnan(Brho))
+	{Brho = 0;}
+      if (std::isnan(Bz))
+	{Bz = B0;}
+    }
   // we have to be consistent with the phi we calculated at the beginning,
   // so unit rho is in the x direction.
-  G4ThreeVector result = G4ThreeVector(Br,0,Bz);
+  G4ThreeVector result = G4ThreeVector(Brho,0,Bz) * normalisation;
   result = result.rotateZ(phi);
   return result;
 }
-#endif
 
-void BDSFieldMagSolenoidSheet::bzbr(G4double rho, G4double zeta,
-				    G4double& bz, G4double& brho) const
+G4double BDSFieldMagSolenoidSheet::CEL(G4double kc,
+                                       G4double p,
+                                       G4double c,
+                                       G4double s,
+                                       G4int nIterationLimit)
 {
-  G4double fourARho = 4*a*rho;
+  if (!BDS::IsFinite(kc))
+    {return NAN;}
   
-  G4double aplusrhoSq = std::pow(a + rho, 2);
-  G4double hSq = fourARho / aplusrhoSq;
-  G4double kSq = fourARho / (aplusrhoSq + zeta*zeta);
-  G4double k    = std::sqrt(kSq);
+  G4double errtol = 0.000001;
+  G4double k = std::abs(kc);
+  G4double pp = p;
+  G4double cc = c;
+  G4double ss = s;
+  G4double em = 1.0;
+  if (p > 0)
+    {
+      pp = std::sqrt(p);
+      ss = s/pp;
+    }
+  else
+    {
+      G4double f = kc * kc;
+      G4double q = 1.0 - f;
+      G4double g = 1.0 - pp;
+      f = f - pp;
+      q = q * (ss - c * pp);
+      pp = std::sqrt(f / g);
+      cc = (c - ss) / g;
+      ss = -q / (g * g * pp) + cc * pp;
+    }
+  
+  G4double f = cc;
+  cc = cc + ss/pp;
+  G4double g = k/pp;
+  ss = 2*(ss + f*g);
+  pp = g + pp;
+  g = em;
+  em = k + em;
+  G4double kk = k;
+  G4int nLoop = 0;
+  while ( (std::abs(g-k) > g*errtol) && nLoop < nIterationLimit)
+    {
+      k = 2*std::sqrt(kk);
+      kk = k*em;
+      f = cc;
+      cc = cc + ss/pp;
+      g = kk / pp;
+      ss = 2*(ss + f*g);
+      pp = g + pp;
+      g = em;
+      em = k + em;
+      nLoop++;
+    }
+  G4double result = CLHEP::halfpi*(ss + cc*em)/( em*(em + pp) );
+  return result;
+}
 
-  // elliptical integrals
-  G4double KofkSq  = ROOT::Math::comp_ellint_1(kSq);
-  G4double EofkSq  = ROOT::Math::comp_ellint_2(kSq);
-  G4double PiofhSqkSq = ROOT::Math::comp_ellint_3(hSq, kSq);
-  //G4double PiofhSqkSq = ROOT::Math::comp_ellint_3(kSq, hSq);
-
-  // terms of equations
-  G4double f1 = (2.0 / (2*halfLength) ) * std::sqrt(a / rho);
-  G4double f2 = ((kSq - 2) / k) * KofkSq;
-  G4double f3 = 2*EofkSq / k;
-  
-  brho = f1 * f2 * (f2 + f3) * normalisation;
-  
-  G4double f4 = 1.0 / (2*halfLength);
-  G4double f5 = 1.0 / std::sqrt(a * rho);
-  G4double f6 = zeta*k;
-  G4double f7 = KofkSq;
-  G4double f8 = ( (a - rho) / (a + rho) ) * PiofhSqkSq;
-  
-  bz = f4 * f5 * f6 * (f7 + f8) * normalisation;
+G4double BDSFieldMagSolenoidSheet::OnAxisBz(G4double zp,
+                                            G4double zm) const
+{
+  G4double f1 = zp / std::sqrt( zp*zp + a*a );
+  G4double f2 = zm / std::sqrt( zm*zm + a*a );
+  G4double Bz = 0.5*B0 * (f1 - f2);
+  return Bz;
 }
