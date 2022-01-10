@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSFieldMagMultipoleOuter.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
@@ -81,6 +82,8 @@ BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(G4int              orderIn,
 
   G4ThreeVector fieldAtPoleTip = innerFieldIn->GetField(poleTipPoint,/*t=*/0);
   G4double fieldAtPoleTipMag = fieldAtPoleTip.mag();
+  
+  finiteStrength = !BDS::IsFinite(fieldAtPoleTipMag) || innerFieldIn->FiniteStrength();
 
   // include arbitrary scaling here so it can obey an arbitrary scaling
   maxField = fieldAtPoleTipMag * arbitraryScaling;
