@@ -84,6 +84,9 @@ namespace GMAD
     FastListConstIterator begin()const;
     FastListConstIterator end()const;
     ///@}
+    
+    /// Get a vector version of this list.
+    std::vector<T> getVector() const {return std::vector<T>(begin(), end());}
 
     ///@{ lookup method, returns iterator of list pointing to element with name
     /// second argument is instance number, default first instance
