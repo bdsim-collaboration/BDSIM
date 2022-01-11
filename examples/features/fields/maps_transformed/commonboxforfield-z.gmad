@@ -12,3 +12,5 @@ beam, particle="e-",
       sigmaYp=1e-6;
 
 option, ngenerate=1;
+
+option, outputFormat="none";

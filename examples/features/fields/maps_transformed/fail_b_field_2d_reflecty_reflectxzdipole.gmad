@@ -1,0 +1,7 @@
+f1: field, type="bmap2d",
+    	   magneticFile="bdsim2d:bmap_xy_dipole_top_half.dat.gz",
+	   magneticInterpolator="cubic",
+	   magneticReflection="reflectxzdipole reflecty";
+! should fail
+
+include commonboxforfield.gmad;

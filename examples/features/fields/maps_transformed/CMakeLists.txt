@@ -20,6 +20,10 @@ simple_testing(field-map-transform-1d-b-reflectz-nearest  "--file=b_field_1d_ref
 simple_testing(field-map-transform-1d-b-reflectz-linear   "--file=b_field_1d_reflect_z_linear.gmad"  "")
 simple_testing(field-map-transform-1d-b-reflectz-cubic    "--file=b_field_1d_reflect_z_cubic.gmad"   "")
 
+simple_testing(field-map-transform-2d-b-reflectx-cubic    "--file=b_field_2d_reflect_x_cubic.gmad"   "")
+simple_testing(field-map-transform-2d-b-reflectx-linear   "--file=b_field_2d_reflect_x_linear.gmad"  "")
+simple_testing(field-map-transform-2d-b-reflecty-cubic    "--file=b_field_2d_reflect_y_cubic.gmad"   "")
+
 simple_testing(field-map-transform-2d-b-reflectxydipole "--file=b_field_2d_reflectxydipole.gmad" "")
 
 
@@ -42,3 +46,8 @@ interpolator_test(interpolator-1d-transform-b-reflecty-cubic    "b_field_1d_refl
 interpolator_test(interpolator-1d-transform-b-reflectz-nearest  "b_field_1d_reflect_z_nearest.gmad")
 interpolator_test(interpolator-1d-transform-b-reflectz-linear   "b_field_1d_reflect_z_linear.gmad")
 interpolator_test(interpolator-1d-transform-b-reflectz-cubic    "b_field_1d_reflect_z_cubic.gmad")
+
+
+simple_fail(field-map-transform-invalid-combination-1   "--file=fail_b_field_2d_reflecty_reflectxzdipole.gmad")
+simple_fail(field-map-transform-invalid-combination-2   "--file=fail_b_field_2d_flipy_reflectxzdipole.gmad")
+
