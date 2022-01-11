@@ -37,7 +37,7 @@ class BDSArrayOperatorValueReflect: public BDSArrayOperatorValue
 public:
   BDSArrayOperatorValueReflect():
     BDSArrayOperatorValue("Reflect(None)"),
-    multiplier{1.0,1.0,1.0,1.0}
+    xyzt{false, false, false}
   {;}
   explicit BDSArrayOperatorValueReflect(G4bool xyzt[4]):
     BDSArrayOperatorValueReflect(xyzt[0], xyzt[1], xyzt[2], xyzt[3])
@@ -45,36 +45,36 @@ public:
   BDSArrayOperatorValueReflect(G4bool x,
                                G4bool y,
                                G4bool z,
-                               G4bool t):
+                               G4bool /*t*/):
     BDSArrayOperatorValueReflect()
   {
-    multiplier[0] = x ? -1.0 : 1.0;
-    multiplier[1] = y ? -1.0 : 1.0;
-    multiplier[2] = z ? -1.0 : 1.0;
-    multiplier[3] = t ? -1.0 : 1.0;
+    xyzt[0] = x;
+    xyzt[1] = y;
+    xyzt[2] = z;
     
     G4String newName = "Reflect(";
-    for (const auto& v : multiplier)
-      {newName += std::to_string(v < 0);}
+    for (const auto& v : xyzt)
+      {newName += std::to_string(v);}
     newName += ")";
     name = newName;
   }
   virtual ~BDSArrayOperatorValueReflect(){;}
   
   virtual BDSFieldValue Apply(BDSFieldValue v,
-                              G4int /*xInd*/,
+                              G4int xInd,
                               G4int yInd = 0,
                               G4int zInd = 0,
                               G4int tInd = 0) const
   {
-    yInd = 2; zInd = 3; tInd = 4;// to retain default values and prevent compiler warnings
-    return BDSFieldValue(v.x()*multiplier[0], v.y()*multiplier[1], v.z()*multiplier[2]);
+    G4double xM = (xInd < 0) && xyzt[0] ? -1.0 : 1.0;
+    G4double yM = (yInd < 0) && xyzt[1] ? -1.0 : 1.0;
+    G4double zM = (zInd < 0) && xyzt[2] ? -1.0 : 1.0;
+    tInd = 4;// to retain default values and prevent compiler warnings
+    return BDSFieldValue(v.x()*xM, v.y()*yM, v.z()*zM);
   }
   
 private:
-  /// This has to match the type of the field value components (e.g. double or float) to avoid
-  /// a possible narrowing conversion.
-  FIELDTYPET multiplier[4];
+  G4bool xyzt[3];
 };
 
 #endif

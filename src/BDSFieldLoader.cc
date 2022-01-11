@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArrayOperatorIndexReflect.hh"
 #include "BDSArrayOperatorIndexV.hh"
 #include "BDSArrayOperatorValue.hh"
+#include "BDSArrayOperatorValueFlip.hh"
 #include "BDSArrayOperatorValueReflect.hh"
 #include "BDSArrayOperatorValueReflectDipoleXY.hh"
 #include "BDSArrayOperatorValueReflectDipoleY.hh"
@@ -577,12 +578,14 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
 				     BDSArrayOperatorIndex*& indexOperator,
 				     BDSArrayOperatorValue*& valueOperator) const
 {
-  G4bool problem = BDS::ProblemWithArrayReflectionCombination(*reflectionTypes);
+  G4String details;
+  G4bool problem = BDS::ProblemWithArrayReflectionCombination(*reflectionTypes, &details);
   if (problem)
-  {
-    G4String msg = "Invalid combination of array transforms. Must contain only simple flips\n"; // TBC
-    throw BDSException(__METHOD_NAME__, msg); // caught at a higher level to append name of definition
-  }
+    {
+      G4String msg = "Invalid combination of array transforms.\n";
+      msg += details;
+      throw BDSException(__METHOD_NAME__, msg); // caught at a higher level to append name of definition
+    }
   
   std::vector<BDSArrayOperatorIndex*> indexOperators;
   std::vector<BDSArrayOperatorValue*> valueOperators;
@@ -609,7 +612,7 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
   if (anyFlipIndexOperators)
     {//nIndexOperatorsRequired
       indexOperators.emplace_back(new BDSArrayOperatorIndexFlip(flipIndexOperators));
-      valueOperators.emplace_back(new BDSArrayOperatorValue()); // no operation
+      valueOperators.emplace_back(new BDSArrayOperatorValueFlip(flipIndexOperators)); // no operation
     }
   
   // basic reflections are combined into 1 operator
