@@ -657,12 +657,6 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
 	    valueOperators.emplace_back(new BDSArrayOperatorValueReflectDipoleY());
 	    break;
 	  }
-	case BDSArrayReflectionType::reflectyzdipole:
-	  {// TBC
-	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(true,  false, true,  false));
-	    valueOperators.emplace_back(new BDSArrayOperatorValueReflect(false, true,  false, false));
-	    break;
-	  }
 	case BDSArrayReflectionType::reflectxyquadrupole:
 	  {// TBC
 	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(true,  false, true,  false));

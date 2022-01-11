@@ -43,7 +43,6 @@ std::map<BDSArrayReflectionType, std::string>* BDSArrayReflectionType::dictionar
       {BDSArrayReflectionType::reflectt,            "reflectt"},
       {BDSArrayReflectionType::reflectxydipole,     "reflectxydipole"},
       {BDSArrayReflectionType::reflectxzdipole,     "reflectxzdipole"},
-      {BDSArrayReflectionType::reflectyzdipole,     "reflectyzdipole"},
       {BDSArrayReflectionType::reflectxyquadrupole, "reflectxyquadrupole"}
 });
 
@@ -60,7 +59,6 @@ BDSArrayReflectionType BDS::DetermineArrayReflectionType(G4String arrayReflectio
   types["reflectt"]            = BDSArrayReflectionType::reflectt;
   types["reflectxydipole"]     = BDSArrayReflectionType::reflectxydipole;
   types["reflectxzdipole"]     = BDSArrayReflectionType::reflectxzdipole;
-  types["reflectyzdipole"]     = BDSArrayReflectionType::reflectyzdipole;
   types["reflectxyquadrupole"] = BDSArrayReflectionType::reflectxyquadrupole;
   
   arrayReflectionType.toLower();
@@ -107,7 +105,6 @@ G4bool BDS::ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSe
     {BDSArrayReflectionType::reflectt, BDSArrayReflectionType::reflectsimple},
     {BDSArrayReflectionType::reflectxydipole, BDSArrayReflectionType::reflectadvanced},
     {BDSArrayReflectionType::reflectxzdipole, BDSArrayReflectionType::reflectadvanced},
-    {BDSArrayReflectionType::reflectyzdipole, BDSArrayReflectionType::reflectadvanced},
     {BDSArrayReflectionType::reflectxyquadrupole, BDSArrayReflectionType::reflectadvanced}
   };
   
