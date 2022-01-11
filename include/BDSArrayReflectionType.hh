@@ -32,10 +32,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct arrayreflectiontypes_def
 {
-  enum type {flipgeneral,   // for internal use
+  enum type {flipsimple,    // for internal use
              flipx, flipy, flipz, flipt,
              reflectsimple, // for internal use
              reflectx, reflecty, reflectz, reflectt,
+             reflectadvanced, // for internal use
              reflectxydipole,
              reflectxzdipole,
              reflectyzdipole,
@@ -56,7 +57,7 @@ namespace BDS
   BDSArrayReflectionTypeSet DetermineArrayReflectionTypeSet(const G4String& arrayReflectionType);
   
   /// Return true if there's a conceptual conflict with the set of field reflections requested.
-  G4bool ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSet& setIn);
+  G4bool ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSet& setIn, G4String* details=nullptr);
 }
 
 std::ostream& operator<< (std::ostream &out, BDSArrayReflectionTypeSet const& t);

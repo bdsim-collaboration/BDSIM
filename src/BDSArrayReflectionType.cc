@@ -90,35 +90,58 @@ BDSArrayReflectionTypeSet BDS::DetermineArrayReflectionTypeSet(const G4String& a
   return result;
 }
 
-G4bool BDS::ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSet& setIn)
+G4bool BDS::ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSet& setIn, G4String* details)
 {
   // we permit flipxyzt with a reflection
   // we permit reflectxyzt (any combination)
   // we permit a special reflection but not with any one of reflectxyzt
   // therefore we substitute flipxyzt and relfectxyzt to reflectsimple here
-  std::map<BDSArrayReflectionType, BDSArrayReflectionType> substitutions = {
-    {BDSArrayReflectionType::flipx, BDSArrayReflectionType::reflectsimple},
-    {BDSArrayReflectionType::flipy, BDSArrayReflectionType::reflectsimple},
-    {BDSArrayReflectionType::flipz, BDSArrayReflectionType::reflectsimple},
-    {BDSArrayReflectionType::flipt, BDSArrayReflectionType::reflectsimple},
+  const std::map<BDSArrayReflectionType, BDSArrayReflectionType> substitutions = {
+    {BDSArrayReflectionType::flipx, BDSArrayReflectionType::flipsimple},
+    {BDSArrayReflectionType::flipy, BDSArrayReflectionType::flipsimple},
+    {BDSArrayReflectionType::flipz, BDSArrayReflectionType::flipsimple},
+    {BDSArrayReflectionType::flipt, BDSArrayReflectionType::flipsimple},
     {BDSArrayReflectionType::reflectx, BDSArrayReflectionType::reflectsimple},
     {BDSArrayReflectionType::reflecty, BDSArrayReflectionType::reflectsimple},
     {BDSArrayReflectionType::reflectz, BDSArrayReflectionType::reflectsimple},
-    {BDSArrayReflectionType::reflectt, BDSArrayReflectionType::reflectsimple}
+    {BDSArrayReflectionType::reflectt, BDSArrayReflectionType::reflectsimple},
+    {BDSArrayReflectionType::reflectxydipole, BDSArrayReflectionType::reflectadvanced},
+    {BDSArrayReflectionType::reflectxzdipole, BDSArrayReflectionType::reflectadvanced},
+    {BDSArrayReflectionType::reflectyzdipole, BDSArrayReflectionType::reflectadvanced},
+    {BDSArrayReflectionType::reflectxyquadrupole, BDSArrayReflectionType::reflectadvanced}
   };
   
   BDSArrayReflectionTypeSet test;
-  for (auto reflection : setIn)
-    {
-      auto search = substitutions.find(reflection);
-      if (search != substitutions.end())
-	{test.insert(search->second);}
-      else
-	{test.insert(reflection);}
+  BDSArrayReflectionTypeSet testAdvanced;
+  for (const auto& reflection : setIn)
+    {// all reflections are included so this is safe
+      auto sub = substitutions.at(reflection);
+      test.insert(sub);
+      if (sub == BDSArrayReflectionType::reflectadvanced)
+        {testAdvanced.insert(reflection);}
     }
-  // if there's more than one of the allowed unique types in the set
-  // then there's technically a problem
-  return test.size() > 1;
+  auto testSize = test.size();
+  auto testAdvancedSize = testAdvanced.size();
+  if (testSize <= 1 && testAdvancedSize <= 1)
+    {return false;} // if only one class of operation, and max 1x advanced reflection, then it'll be fine
+  else if (testAdvancedSize > 1)
+    {// only one type of advanced reflection at a time
+      if (details)
+        {(*details) += "more than one 'specific' type of reflection - only one allowed";}
+      return true;
+    }
+  /*
+  else if (testAdvancedSize > 0 && testSize > 1)
+    {
+      // 1x advanced reflection but also a general reflection / flip - not allowed
+      if (details)
+        {(*details) += "'specific' reflection used with a simple reflection or flip - not allowed";}
+      return true;
+    }
+    */
+  else
+    {return false;}
+  return false;
 }
 
 std::ostream& operator<< (std::ostream &out, BDSArrayReflectionTypeSet const& t)

@@ -63,7 +63,7 @@ public:
   {
     xInd = 1; zInd = 3; tInd = 4;// to retain default values and prevent compiler warnings
     // only for lower y-half, we flip the x-component
-    if (yInd < 0 )
+    if (yInd < 0)
       {v[0] *= -1.0;}
     return v;
   }
