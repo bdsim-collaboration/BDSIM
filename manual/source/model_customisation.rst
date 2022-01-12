@@ -315,6 +315,20 @@ in the field definition in either :code:`magneticReflection` or :code:`electricR
 
 * The reflection string must be a white-space separated list (if more than one) of
   the below names.
+* For arrays to be reflected it is recommended that they run from 0 in that dimension
+  in a positive direction. e.g. a 1D map in :math:`z` to be reflected would ideally
+  run from :math:`z = 0 cm` to for example, :math:`z = 20 cm`, i.e. a positive value.
+
+.. warning:: Any partial field map used for a reflection must either have its
+	     first data point on the axis of reflection or an integer number
+	     of array steps from it. e.g. A 1D array in z to be reflected
+	     runs from 0 cm to 20 cm - this OK. Another array in z runs from 1 cm
+	     to 21 cm with 5 points - this is not OK. This is because the step size
+	     is (21-1 / 5 = 4 cm). The distance from the relfection axis is 1 cm.
+	     This would cause an irregularly spaced grid which there is no provision
+	     for in BDSIM for interpolation. The tolerance for this calculation is
+	     5% of the step size. The code will proceed, but the map may be
+	     distorted at the boundaries.
 
 +-----------------------+------------------------------------------+
 | **Reflection Name**   | **Description**                          |
