@@ -67,7 +67,7 @@ public:
 private:
   /// This has to match the type of the field value components (e.g. double or float) to avoid
   /// a possible narrowing conversion.
-  FIELDTYPET multiplier[4];
+  std::array<FIELDTYPET,4> multiplier;
 };
 
 #endif
