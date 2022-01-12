@@ -76,7 +76,7 @@ void BDSArray3DCoordsTransformed::ExtractSection2x2x2(G4double x,
 	      indexTransformedZ = indexOriginalZ;
 	      indexOperator->Apply(indexTransformedX, indexTransformedY, indexTransformedZ);
 	      BDSFieldValue v = GetConst(indexTransformedX, indexTransformedY, indexTransformedZ);
-	      localData[i][j][k] = valueOperator->Apply(v, indexTransformedX, indexTransformedY, indexTransformedZ);
+	      localData[i][j][k] = valueOperator->Apply(v, indexOriginalX, indexOriginalY, indexOriginalZ);
 	    }
 	}
     }
@@ -108,7 +108,7 @@ void BDSArray3DCoordsTransformed::ExtractSection4x4x4(G4double x,
     {
       for (G4int j = 0; j < 4; j++)
 	{
-	  for (G4int k = 0; k < 2; k++)
+	  for (G4int k = 0; k < 4; k++)
 	    {
 	      indexOriginalX = indexArrX[i];
 	      indexTransformedX = indexOriginalX;
@@ -131,7 +131,7 @@ BDSFieldValue BDSArray3DCoordsTransformed::ExtractNearest(G4double x,
 {
   G4int indexOriginalX = NearestX(x);
   G4int indexOriginalY = NearestY(y);
-  G4int indexOriginalZ = NearestY(z);
+  G4int indexOriginalZ = NearestZ(z);
   G4int indexTransformedX = indexOriginalX;
   G4int indexTransformedY = indexOriginalY;
   G4int indexTransformedZ = indexOriginalZ;
