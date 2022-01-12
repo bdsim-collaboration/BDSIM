@@ -24,6 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <ostream>
 #include <limits>
+#include <set>
+#include <vector>
 
 BDSArray1DCoords::BDSArray1DCoords(G4int            nXIn,
 				   G4double         xMinIn,
@@ -33,7 +35,20 @@ BDSArray1DCoords::BDSArray1DCoords(G4int            nXIn,
 		   xMinIn,xMaxIn,
 		   0,   1,
 		   dimensionIn)
-{;}
+{
+  std::set<BDSDimensionType> allDims = {BDSDimensionType::x,
+                                        BDSDimensionType::y,
+                                        BDSDimensionType::z,
+                                        BDSDimensionType::t};
+  allDims.erase(dimensionIn);
+  BDSDimensionType* vars[3] = {&yDimension,
+                               &zDimension,
+                               &tDimension};
+  std::vector<BDSDimensionType> unusedDims(allDims.begin(), allDims.end());
+  for (G4int i = 0; i < 3; i++)
+    {*(vars[i]) = unusedDims[i];}
+  BuildDimensionIndex();
+}
 
 void BDSArray1DCoords::ExtractSection2(G4double x,
                                        BDSFieldValue (&localData)[2],

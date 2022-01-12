@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include <array>
 #include <ostream>
 
 class BDSExtent;
@@ -225,7 +226,17 @@ public:
   inline BDSDimensionType FourthDimension() const {return tDimension;}
   /// @}
 
+  /// Return the index to be used in array arguments for a given spatial dimension.
+  /// e.g. DimensionIndex((spatial) z) -> index 0 for 1D array holding spatial z.
+  G4int DimensionIndex(BDSDimensionType spatialDimension) const;
+
+  /// Access all indices at once.
+  inline std::array<G4int, 4> ArrayToSpatialDimensionIndices() const {return dimensions;}
+
 protected:
+  /// Build up an array of ints based on the order of dimensions stored in the array.
+  void BuildDimensionIndex();
+  
   /// @{ Dimension parameter - protected for derived class access.
   G4double xMin;
   G4double xMax;
@@ -250,6 +261,8 @@ protected:
   BDSDimensionType yDimension;
   BDSDimensionType zDimension;
   BDSDimensionType tDimension;
+  std::array<G4int, 4> dimensions;
+  
 private:
   static void CheckStep(G4double step, const G4String& name);
 };

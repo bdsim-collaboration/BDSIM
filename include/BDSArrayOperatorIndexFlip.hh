@@ -20,7 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSARRAYOPERATORINDEXFLIP_H
 #include "BDSArrayOperatorIndex.hh"
 
+#include "G4String.hh"
 #include "G4Types.hh"
+
+#include <array>
+#include <string>
 
 /**
  * @brief 1D array for completeness in array system.
@@ -35,19 +39,11 @@ public:
     BDSArrayOperatorIndex("Flip(None)"),
     xyzt{1,1,1,1}
   {;}
-  BDSArrayOperatorIndexFlip(G4bool xyzt[4]):
-    BDSArrayOperatorIndexFlip(xyzt[0], xyzt[1], xyzt[2], xyzt[3])
-  {;}
-  BDSArrayOperatorIndexFlip(G4bool x,
-                            G4bool y,
-                            G4bool z,
-                            G4bool t):
-    BDSArrayOperatorIndex("Flip")
+  explicit BDSArrayOperatorIndexFlip(const std::array<G4bool,4>& xyztIn):
+    BDSArrayOperatorIndexFlip()
   {
-    xyzt[0] = x ? -1 : 1;
-    xyzt[1] = y ? -1 : 1;
-    xyzt[2] = z ? -1 : 1;
-    xyzt[3] = t ? -1 : 1;
+    for (G4int i = 0; i < 4; i++)
+      {xyzt[0] = xyztIn[i] ? -1 : 1;}
   
     G4String newName = "Flip(";
     for (const auto& v : xyzt)
@@ -88,7 +84,7 @@ public:
   }
   
 private:
-  G4int xyzt[4];
+  std::array<G4int,4> xyzt;
 };
 
 #endif

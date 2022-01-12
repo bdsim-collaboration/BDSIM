@@ -30,6 +30,7 @@ class BDSArray1DCoords;
 class BDSArray2DCoords;
 class BDSArray3DCoords;
 class BDSArray4DCoords;
+class BDSArrayInfo;
 class BDSArrayOperatorIndex;
 class BDSArrayOperatorValue;
 class BDSFieldInfo;
@@ -108,8 +109,13 @@ private:
   /// Create the appropriate array operators (index and value) and assign to the pointers
   /// given by reference. Assumes valid pointer for reflectionTypes argument.
   void CreateOperators(const BDSArrayReflectionTypeSet* reflectionTypes,
+		       const BDSArray4DCoords* existingArray,
 		       BDSArrayOperatorIndex*& indexOperator,
 		       BDSArrayOperatorValue*& valueOperator) const;
+  
+  /// Print a warning if the array info says the zero-point in array coordinates is
+  /// not within the tolerance value.
+  void ReportIfProblemWithReflection(const BDSArrayInfo& info, G4double tolerance=0.05) const;
 
   /// Small utility to check the pointer is valid and if it is that it's also not empty.
   /// Returns true only if it's value and not empty.
@@ -145,7 +151,7 @@ private:
 					BDSInterpolatorType  interpolatorType,
 					const G4Transform3D& transform,
 					G4double             bScaling,
-          const BDSArrayReflectionTypeSet* reflection = nullptr);
+					const BDSArrayReflectionTypeSet* reflection = nullptr);
   
   /// Load a 2D BDSIM format magnetic field.
   BDSFieldMagInterpolated* LoadBDSIM2DB(const G4String&      filePath,

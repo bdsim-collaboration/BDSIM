@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArray4DCoordsTransformed.hh"
 #include "BDSArray2DCoordsRDipole.hh"
 #include "BDSArray2DCoordsRQuad.hh"
+#include "BDSArrayInfo.hh"
 #include "BDSArrayOperatorIndex.hh"
 #include "BDSArrayOperatorIndexFlip.hh"
 #include "BDSArrayOperatorIndexReflect.hh"
@@ -83,10 +84,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSInterpolatorType.hh"
 #include "BDSFieldMagGradient.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4String.hh"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <fstream>
 #include <set>
@@ -575,6 +579,7 @@ BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   arra
 }
 
 void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflectionTypes,
+				     const BDSArray4DCoords* existingArray,
 				     BDSArrayOperatorIndex*& indexOperator,
 				     BDSArrayOperatorValue*& valueOperator) const
 {
@@ -587,23 +592,33 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
       throw BDSException(__METHOD_NAME__, msg); // caught at a higher level to append name of definition
     }
   
+  auto arrayInfo = BDSArrayInfo(existingArray);
+  ReportIfProblemWithReflection(arrayInfo);
+  
   std::vector<BDSArrayOperatorIndex*> indexOperators;
   std::vector<BDSArrayOperatorValue*> valueOperators;
   
+  // input xyzt are w.r.t. spatial dimensions - we want to translate that into
+  // whether to operate on the 'x', 'y', 'z', 't' of the array, which may
+  // not truly be xyzt (this is a hangover from the initial design). Think of
+  // it as xyzt (spatial) -> ijkl (array). e.g. 1D array of spatial z -> only
+  // 'x' in the array is filled.
+  // .underlying() gives us an int from the enum
+  
   // flips are combined into 1 operator
-  G4bool flipIndexOperators[4] = {false, false, false, false};
+  std::array<G4bool,4> flipIndexOperators = {false, false, false, false};
   for (auto& reflectionType : *reflectionTypes)
     {
       switch (reflectionType.underlying())
 	{
 	case BDSArrayReflectionType::flipx:
-	  {flipIndexOperators[0] = true; break;}
+	  {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::x)] = true; break;}
 	case BDSArrayReflectionType::flipy:
-	  {flipIndexOperators[1] = true; break;}
+	  {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::y)] = true; break;}
 	case BDSArrayReflectionType::flipz:
-	  {flipIndexOperators[2] = true; break;}
+	  {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::z)] = true; break;}
 	case BDSArrayReflectionType::flipt:
-	  {flipIndexOperators[3] = true; break;}
+	  {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::t)] = true; break;}
 	default:
 	  {break;}
 	}
@@ -616,19 +631,19 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
     }
   
   // basic reflections are combined into 1 operator
-  G4bool reflectIndexOperators[4] = {false, false, false, false};
+  std::array<G4bool,4> reflectIndexOperators = {false, false, false, false};
   for (auto& reflectionType : *reflectionTypes)
     {
       switch (reflectionType.underlying())
 	{
 	case BDSArrayReflectionType::reflectx:
-	  {reflectIndexOperators[0] = true; break;}
+	  {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::x)] = true; break;}
 	case BDSArrayReflectionType::reflecty:
-	  {reflectIndexOperators[1] = true; break;}
+	  {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::y)] = true; break;}
 	case BDSArrayReflectionType::reflectz:
-	  {reflectIndexOperators[2] = true; break;}
+	  {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::z)] = true; break;}
 	case BDSArrayReflectionType::reflectt:
-	  {reflectIndexOperators[3] = true; break;}
+	  {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::t)] = true; break;}
 	default:
 	  {break;}
 	}
@@ -636,8 +651,8 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
   G4bool anyReflectIndexOperators = std::any_of(std::begin(reflectIndexOperators), std::end(reflectIndexOperators), [](bool i){return i;});
   if (anyReflectIndexOperators)
     {//nIndexOperatorsRequired
-      indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(reflectIndexOperators));
-      valueOperators.emplace_back(new BDSArrayOperatorValueReflect(reflectIndexOperators));
+      indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(reflectIndexOperators, arrayInfo));
+      valueOperators.emplace_back(new BDSArrayOperatorValueReflect(reflectIndexOperators, arrayInfo));
     }
   
   // special reflections
@@ -647,20 +662,20 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
 	{
 	case BDSArrayReflectionType::reflectxydipole:
 	  {
-	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(true, true, false, false));
+	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true, true, false, false}, arrayInfo));
 	    valueOperators.emplace_back(new BDSArrayOperatorValueReflectDipoleXY());
 	    break;
 	  }
 	case BDSArrayReflectionType::reflectxzdipole:
 	  {
-	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(false, true,  false, false));
+	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({false, true,  false, false}, arrayInfo));
 	    valueOperators.emplace_back(new BDSArrayOperatorValueReflectDipoleY());
 	    break;
 	  }
 	case BDSArrayReflectionType::reflectxyquadrupole:
 	  {// TBC
-	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect(true,  false, true,  false));
-	    valueOperators.emplace_back(new BDSArrayOperatorValueReflect(false, true,  false, false));
+	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true,  false, true,  false}, arrayInfo));
+	    valueOperators.emplace_back(new BDSArrayOperatorValueReflect({false, true,  false, false}, arrayInfo));
 	    break;
 	  }
 	default:
@@ -688,6 +703,23 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
   G4cout << "Array ( index | value ) operator: (" << indexOperator->Name() << " | " << valueOperator->Name() << ")" << G4endl;
 }
 
+void BDSFieldLoader::ReportIfProblemWithReflection(const BDSArrayInfo& info,
+                                                   G4double tolerance) const
+{
+  G4String suffix[4] = {"st", "nd", "rd", "th"};
+  for (G4int i = 0; i < 4; i++)
+    {
+      G4double integerPart = 0;
+      if (std::modf(std::abs(info.zeroPoint[i]), &integerPart) > tolerance)
+	{
+	  G4String msg = "Array reflection will not work as intended as the axis zero point is not an integer number of \n";
+	  msg += "array steps from 0 in the " + std::to_string(i + 1) + suffix[i];
+	  msg += " dimension of the array (tolerance 5% of array step size)";
+	  BDS::Warning(msg);
+	}
+    }
+}
+
 G4bool BDSFieldLoader::NeedToProvideTransform(const BDSArrayReflectionTypeSet* reflectionTypes) const
 {
   if (!reflectionTypes)
@@ -706,10 +738,10 @@ BDSArray1DCoords* BDSFieldLoader::CreateArrayReflected(BDSArray1DCoords* existin
 {
   if (!NeedToProvideTransform(reflectionTypes))
     {return existingArray;}
-
+  
   BDSArrayOperatorIndex* indexOperator = nullptr;
   BDSArrayOperatorValue* valueOperator = nullptr;
-  CreateOperators(reflectionTypes, indexOperator, valueOperator);
+  CreateOperators(reflectionTypes, existingArray, indexOperator, valueOperator);
   BDSArray1DCoords* result = new BDSArray1DCoordsTransformed(existingArray, indexOperator, valueOperator);
   return result;
 }
@@ -722,7 +754,7 @@ BDSArray2DCoords* BDSFieldLoader::CreateArrayReflected(BDSArray2DCoords* existin
 
   BDSArrayOperatorIndex* indexOperator = nullptr;
   BDSArrayOperatorValue* valueOperator = nullptr;
-  CreateOperators(reflectionTypes, indexOperator, valueOperator);
+  CreateOperators(reflectionTypes, existingArray, indexOperator, valueOperator);
   BDSArray2DCoords* result = new BDSArray2DCoordsTransformed(existingArray, indexOperator, valueOperator);
   return result;
 }
@@ -735,7 +767,7 @@ BDSArray3DCoords* BDSFieldLoader::CreateArrayReflected(BDSArray3DCoords* existin
 
   BDSArrayOperatorIndex* indexOperator = nullptr;
   BDSArrayOperatorValue* valueOperator = nullptr;
-  CreateOperators(reflectionTypes, indexOperator, valueOperator);
+  CreateOperators(reflectionTypes, existingArray, indexOperator, valueOperator);
   BDSArray3DCoords* result = new BDSArray3DCoordsTransformed(existingArray, indexOperator, valueOperator);
   return result;
 }
@@ -748,7 +780,7 @@ BDSArray4DCoords* BDSFieldLoader::CreateArrayReflected(BDSArray4DCoords* existin
 
   BDSArrayOperatorIndex* indexOperator = nullptr;
   BDSArrayOperatorValue* valueOperator = nullptr;
-  CreateOperators(reflectionTypes, indexOperator, valueOperator);
+  CreateOperators(reflectionTypes, existingArray, indexOperator, valueOperator);
   BDSArray4DCoords* result = new BDSArray4DCoordsTransformed(existingArray, indexOperator, valueOperator);
   return result;
 }

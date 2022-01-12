@@ -24,6 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "G4Types.hh"
 
+#include <array>
+#include <cmath>
 #include <string>
 
 /**
@@ -37,26 +39,34 @@ class BDSArrayOperatorValueReflect: public BDSArrayOperatorValue
 public:
   BDSArrayOperatorValueReflect():
     BDSArrayOperatorValue("Reflect(None)"),
-    xyzt{false, false, false}
+    xyz{false, false, false},
+    zeroInArrayCoords{0,0,0},
+    dimensionInverted{false, false, false},
+    arrayToSpatialIndex{0,1,2,3}
   {;}
-  explicit BDSArrayOperatorValueReflect(G4bool xyzt[4]):
-    BDSArrayOperatorValueReflect(xyzt[0], xyzt[1], xyzt[2], xyzt[3])
-  {;}
-  BDSArrayOperatorValueReflect(G4bool x,
-                               G4bool y,
-                               G4bool z,
-                               G4bool /*t*/):
+  BDSArrayOperatorValueReflect(const std::array<G4bool,4>& xyzt,
+			       const BDSArrayInfo& arrayInfo):
     BDSArrayOperatorValueReflect()
   {
-    xyzt[0] = x;
-    xyzt[1] = y;
-    xyzt[2] = z;
+    for (G4int i = 0; i < 3; i++)
+      {xyz[i] = xyzt[i];}
+    
+    arrayToSpatialIndex = arrayInfo.arrayToSpatialIndex;
     
     G4String newName = "Reflect(";
-    for (const auto& v : xyzt)
+    for (const auto& v : xyz)
       {newName += std::to_string(v);}
     newName += ")";
     name = newName;
+    
+    auto zeroV = arrayInfo.zeroPoint;
+    auto nPoints = arrayInfo.nPoints;
+    for (G4int i = 0; i < 3; i++)
+      {
+	G4bool inverted = zeroV[i] > nPoints[i];
+	dimensionInverted[i] = inverted;
+	zeroInArrayCoords[i] = inverted ? (G4int)std::ceil(zeroV[i]) : (G4int)std::floor(zeroV[i]);
+      }
   }
   virtual ~BDSArrayOperatorValueReflect(){;}
   
@@ -66,15 +76,24 @@ public:
                               G4int zInd = 0,
                               G4int tInd = 0) const
   {
-    G4double xM = (xInd < 0) && xyzt[0] ? -1.0 : 1.0;
-    G4double yM = (yInd < 0) && xyzt[1] ? -1.0 : 1.0;
-    G4double zM = (zInd < 0) && xyzt[2] ? -1.0 : 1.0;
+    std::array<G4double, 4> m;
+    std::array<G4int, 4> inds = {xInd, yInd, zInd, tInd};
+    for (G4int i = 0; i < 3; i++)
+      {
+	if (dimensionInverted[i])
+	  {m[arrayToSpatialIndex[i]] = xyz[i] && inds[i] > zeroInArrayCoords[i] ? -1.0 : 1.0;}
+	else
+	  {m[arrayToSpatialIndex[i]] = xyz[i] && inds[i] < zeroInArrayCoords[i] ? -1.0 : 1.0;}
+      }
     tInd = 4;// to retain default values and prevent compiler warnings
-    return BDSFieldValue(v.x()*xM, v.y()*yM, v.z()*zM);
+    return BDSFieldValue(v.x()*m[0], v.y()*m[1], v.z()*m[2]);
   }
   
 private:
-  G4bool xyzt[3];
+  std::array<G4bool,3> xyz;
+  std::array<G4int, 4> zeroInArrayCoords;
+  std::array<G4bool,4> dimensionInverted;
+  std::array<G4int, 4> arrayToSpatialIndex;
 };
 
 #endif
