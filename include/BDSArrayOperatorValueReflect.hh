@@ -63,9 +63,9 @@ public:
     auto nPoints = arrayInfo.nPoints;
     for (G4int i = 0; i < 3; i++)
       {
-	G4bool inverted = zeroV[i] > nPoints[i];
-	dimensionInverted[i] = inverted;
-	zeroInArrayCoords[i] = inverted ? (G4int)std::ceil(zeroV[i]) : (G4int)std::floor(zeroV[i]);
+        G4bool inverted = (zeroV[i] >= nPoints[i] - 1) && (nPoints[i] > 1);
+        dimensionInverted[i] = inverted;
+        zeroInArrayCoords[i] = inverted ? nPoints[i] - 1 : (G4int)std::floor(zeroV[i]);
       }
   }
   virtual ~BDSArrayOperatorValueReflect(){;}
@@ -76,7 +76,7 @@ public:
                               G4int zInd = 0,
                               G4int tInd = 0) const
   {
-    std::array<G4double, 4> m;
+    std::array<G4double, 4> m = {1,1,1,1};
     std::array<G4int, 4> inds = {xInd, yInd, zInd, tInd};
     for (G4int i = 0; i < 3; i++)
       {
