@@ -29,6 +29,17 @@ def main():
 
     f = pybdsim.Field.Field1D(data, column="T")
     f.Write("1dexample-along-t.dat")
+
+    # now one that doesn't start at 0 in that axis
+    z = _np.linspace(0.2*length, 1.2*length, 120)
+    by = amplitude * _np.sin(2*_np.pi * z / period)
+
+    data = []
+    for zi,byi in zip(z,by):
+        data.append([zi, 0.0, byi, 0.0])
+    data = _np.array(data)
+    f = pybdsim.Field.Field1D(data, column="Z")
+    f.Write("1dexample-along-z-offset.dat")
     
     return data
 
