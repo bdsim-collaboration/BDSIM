@@ -47,7 +47,3 @@ interpolator_test(interpolator-1d-transform-b-reflectz-nearest  "b_field_1d_refl
 interpolator_test(interpolator-1d-transform-b-reflectz-linear   "b_field_1d_reflect_z_linear.gmad")
 interpolator_test(interpolator-1d-transform-b-reflectz-cubic    "b_field_1d_reflect_z_cubic.gmad")
 
-
-simple_fail(field-map-transform-invalid-combination-1   "--file=fail_b_field_2d_reflecty_reflectxzdipole.gmad")
-simple_fail(field-map-transform-invalid-combination-2   "--file=fail_b_field_2d_flipy_reflectxzdipole.gmad")
-
