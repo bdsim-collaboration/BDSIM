@@ -52,6 +52,7 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
   yDimension(yDimensionIn),
   zDimension(zDimensionIn),
   tDimension(tDimensionIn),
+  dimensions{0,1,2,3}
 {
   // There are 1 fewer differences than the points.
   if (nX > 1)
@@ -87,6 +88,7 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
     }
   else
     {tStep = 1;}
+  BuildDimensionIndex();
 }
 
 void BDSArray4DCoords::CheckStep(G4double step, const G4String& name)
@@ -225,4 +227,27 @@ std::ostream& operator<< (std::ostream& out, BDSArray4DCoords const &a)
 BDSExtent BDSArray4DCoords::Extent() const
 {
   return BDSExtent(xMin, xMax, yMin, yMax, zMin, zMax);
+}
+
+void BDSArray4DCoords::BuildDimensionIndex()
+{
+  dimensions[0] = FirstDimension().underlying();
+  dimensions[1] = SecondDimension().underlying();
+  dimensions[2] = ThirdDimension().underlying();
+  dimensions[3] = FourthDimension().underlying();
+}
+
+G4int BDSArray4DCoords::DimensionIndex(BDSDimensionType spatialDimension) const
+{
+  G4int result = -1;
+  G4int match = spatialDimension.underlying();
+  for (G4int i = 0; i < 4; i++)
+    {
+      if (dimensions[i] == match)
+	{
+	  result = i;
+	  break;
+	}
+    }
+  return result;
 }

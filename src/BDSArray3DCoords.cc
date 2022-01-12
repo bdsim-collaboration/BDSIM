@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 #include <ostream>
+#include <set>
+#include <vector>
 
 #include "globals.hh"
 
@@ -39,6 +41,16 @@ BDSArray3DCoords::BDSArray3DCoords(G4int nXIn, G4int nYIn, G4int nZIn,
 		   yDimensionIn,
 		   zDimensionIn)
 {
+  std::set<BDSDimensionType> allDims = {BDSDimensionType::x,
+                                        BDSDimensionType::y,
+                                        BDSDimensionType::z,
+                                        BDSDimensionType::t};
+  allDims.erase(xDimensionIn);
+  allDims.erase(yDimensionIn);
+  allDims.erase(zDimensionIn);
+  std::vector<BDSDimensionType> allDimsV(allDims.begin(), allDims.end());
+  tDimension = allDimsV[0];
+  BuildDimensionIndex();
 }
 
 void BDSArray3DCoords::ExtractSection2x2x2(G4double x,

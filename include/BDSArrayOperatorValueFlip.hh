@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "G4Types.hh"
 
+#include <array>
 #include <string>
 
 /**
@@ -39,19 +40,11 @@ public:
     BDSArrayOperatorValue("Flip(None)"),
     multiplier{1.0,1.0,1.0,1.0}
   {;}
-  explicit BDSArrayOperatorValueFlip(G4bool xyzt[4]):
-    BDSArrayOperatorValueFlip(xyzt[0], xyzt[1], xyzt[2], xyzt[3])
-  {;}
-  BDSArrayOperatorValueFlip(G4bool x,
-                            G4bool y,
-                            G4bool z,
-                            G4bool t):
+  explicit BDSArrayOperatorValueFlip(const std::array<G4bool,4>& xyztIn):
     BDSArrayOperatorValueFlip()
   {
-    multiplier[0] = x ? -1.0 : 1.0;
-    multiplier[1] = y ? -1.0 : 1.0;
-    multiplier[2] = z ? -1.0 : 1.0;
-    multiplier[3] = t ? -1.0 : 1.0;
+    for (G4int i = 0; i < 4; i++)
+      {multiplier[i] = xyztIn[i] ? -1.0 : 1.0;}
     
     G4String newName = "Flip(";
     for (const auto& v : multiplier)

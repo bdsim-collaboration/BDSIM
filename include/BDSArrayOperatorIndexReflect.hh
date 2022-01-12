@@ -18,11 +18,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSARRAYOPERATORCOORDREFLECT_H
 #define BDSARRAYOPERATORCOORDREFLECT_H
+#include "BDSArray4DCoords.hh"
+#include "BDSArrayInfo.hh"
 #include "BDSArrayOperatorIndex.hh"
+#include "BDSWarning.hh"
 
+#include "G4String.hh"
 #include "G4Types.hh"
 
+#include <array>
 #include <cmath>
+#include <string>
 
 /**
  * @brief 1D array for completeness in array system.
@@ -35,23 +41,29 @@ class BDSArrayOperatorIndexReflect: public BDSArrayOperatorIndex
 public:
   BDSArrayOperatorIndexReflect():
     BDSArrayOperatorIndex("Reflect(None)"),
-    xyzt{false, false, false, false}
+    xyzt{false, false, false, false},
+    zeroInArrayCoords{0,0,0,0},
+    dimensionInverted{false, false, false, false}
   {;}
-  explicit BDSArrayOperatorIndexReflect(G4bool xyzt[4]):
-    BDSArrayOperatorIndexReflect(xyzt[0], xyzt[1], xyzt[2], xyzt[3])
-  {;}
-  BDSArrayOperatorIndexReflect(G4bool x,
-                               G4bool y,
-                               G4bool z,
-                               G4bool t):
-    BDSArrayOperatorIndex("Reflect("),
-    xyzt{x,y,z,t}
+  explicit BDSArrayOperatorIndexReflect(const std::array<G4bool,4>& xyztIn,
+                                        const BDSArrayInfo& arrayInfo):
+    BDSArrayOperatorIndexReflect()
   {
+    xyzt = xyztIn;
     G4String newName = "Reflect(";
     for (const auto& v : xyzt)
       {newName += std::to_string(v);}
     newName += ")";
     name = newName;
+    
+    auto zeroV = arrayInfo.zeroPoint;
+    auto nPoints = arrayInfo.nPoints;
+    for (G4int i = 0; i < 4; i++)
+      {
+        G4bool inverted = zeroV[i] > nPoints[i];
+        dimensionInverted[i] = inverted;
+        zeroInArrayCoords[i] = inverted ? (G4int)std::ceil(zeroV[i]) : (G4int)std::floor(zeroV[i]);
+      }
   }
   virtual ~BDSArrayOperatorIndexReflect(){;}
   
@@ -60,10 +72,15 @@ public:
                      G4int& z,
                      G4int& t) const
   {
-    x = xyzt[0] ? std::abs(x) : x;
-    y = xyzt[1] ? std::abs(y) : y;
-    z = xyzt[2] ? std::abs(z) : z;
-    t = xyzt[3] ? std::abs(t) : t;
+    G4int* values[4] = {&x, &y, &z, &t};
+    for (G4int i = 0; i < 4; i++)
+      {
+	G4int v = *(values[i]);
+	if (dimensionInverted[i])
+	  { *(values[i]) = xyzt[i] && v > zeroInArrayCoords[i] ? zeroInArrayCoords[i] + std::abs(zeroInArrayCoords[i] - v) : v; }
+	else
+	  { *(values[i]) = xyzt[i] && v < zeroInArrayCoords[i] ? std::abs(v - zeroInArrayCoords[i]) : v; }
+      }
   }
   
   virtual void ApplyX(G4int& x) const {x = xyzt[0] ? std::abs(x) : x;}
@@ -83,7 +100,9 @@ public:
   }
   
 private:
-  G4bool xyzt[4];
+  std::array<G4bool,4> xyzt;
+  std::array<G4int, 4> zeroInArrayCoords;
+  std::array<G4bool,4> dimensionInverted;
 };
 
 #endif
