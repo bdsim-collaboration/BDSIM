@@ -59,10 +59,11 @@ public:
   virtual ~BDSArray4D(){;}
 
   /// @{ Access the number of elements in a given dimension.
-  inline G4int sizeX() const {return nX;}
-  inline G4int sizeY() const {return nY;}
-  inline G4int sizeZ() const {return nZ;}
-  inline G4int sizeT() const {return nT;}
+  inline G4int NX() const {return nX;}
+  inline G4int NY() const {return nY;}
+  inline G4int NZ() const {return nZ;}
+  inline G4int NT() const {return nT;}
+  inline BDSFourVector<G4int> NXYZT() const {return BDSFourVector<G4int>(NX(), NY(), NZ(), NT());}
   /// @}
 
   /// Setter & (technically, a non-const) accessor.

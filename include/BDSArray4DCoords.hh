@@ -203,6 +203,16 @@ public:
   
   /// Return the SPATIAL (only) extent of this field without any offset. Ignores time.
   virtual BDSExtent Extent() const;
+  
+  inline G4double XMin() const {return xMin;}
+  inline G4double YMin() const {return yMin;}
+  inline G4double ZMin() const {return zMin;}
+  inline G4double TMin() const {return tMin;}
+  inline G4double XMax() const {return xMax;}
+  inline G4double YMax() const {return yMax;}
+  inline G4double ZMax() const {return zMax;}
+  inline G4double TMax() const {return tMax;}
+  
 
 protected:
   /// @{ Dimension parameter - protected for derived class access.

@@ -51,7 +51,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  *
  * This is reflected about 0,0 and can only be so given the implementation.
  *
- * Some interfaces are overloaded and some aren't as are required to be (sizeX for example).
+ * Some interfaces are overloaded and some aren't as are required to be (NX for example).
  * The ostream << writes both the raw array and the reflected version too.
  *
  * Note, by return a reference to a non-const member returnValue that may be updated by another
