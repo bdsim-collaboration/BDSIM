@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSARRAY3DCOORDS_H
 
 #include "BDSArray4DCoords.hh"
-#include "BDSDimensionType.hh"
 
 #include "G4Types.hh"
 
@@ -77,22 +76,6 @@ public:
 
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSArray3DCoords const &a);
-
-  /// Accessor for dimension that the data represents (first).
-  inline BDSDimensionType FirstDimension() const {return xDimension;}
-
-  /// Accessor for dimension that the data represents (second).
-  inline BDSDimensionType SecondDimension() const {return yDimension;}
-
-  /// Accessor for dimension that the data represents (second).
-  inline BDSDimensionType ThirdDimension() const {return zDimension;}
-
-private:
-  /// Which dimension the contained data represents spatially. Always referred to
-  /// locally as 'x' but may represent another dimension.
-  BDSDimensionType xDimension;
-  BDSDimensionType yDimension;
-  BDSDimensionType zDimension;
 };
 
 #endif

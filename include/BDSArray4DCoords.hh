@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSARRAY4DCOORDS_H
 
 #include "BDSArray4D.hh"
+#include "BDSDimensionType.hh"
 #include "BDSFourVector.hh"
 
 #include "globals.hh"
@@ -57,7 +58,11 @@ public:
 		   G4double xMinIn, G4double xMaxIn,
 		   G4double yMinIn, G4double yMaxIn,
 		   G4double zMinIn, G4double zMaxIn,
-		   G4double tMinIn, G4double tMaxIn);
+		   G4double tMinIn, G4double tMaxIn,
+                   BDSDimensionType xDimensionIn = BDSDimensionType::x,
+                   BDSDimensionType yDimensionIn = BDSDimensionType::y,
+                   BDSDimensionType zDimensionIn = BDSDimensionType::z,
+                   BDSDimensionType tDimensionIn = BDSDimensionType::t);
 
   virtual ~BDSArray4DCoords(){;} 
 
@@ -213,6 +218,12 @@ public:
   inline G4double ZMax() const {return zMax;}
   inline G4double TMax() const {return tMax;}
   
+  /// @{ Accessor for each dimension label. e.g. array 'x' = spatial z.
+  inline BDSDimensionType FirstDimension()  const {return xDimension;}
+  inline BDSDimensionType SecondDimension() const {return yDimension;}
+  inline BDSDimensionType ThirdDimension()  const {return zDimension;}
+  inline BDSDimensionType FourthDimension() const {return tDimension;}
+  /// @}
 
 protected:
   /// @{ Dimension parameter - protected for derived class access.
@@ -233,6 +244,12 @@ protected:
   
   G4double smallestSpatialStep;
   
+  /// Which dimension the contained data represents spatially. Always referred to
+  /// locally as 'x' but may represent another dimension.
+  BDSDimensionType xDimension;
+  BDSDimensionType yDimension;
+  BDSDimensionType zDimension;
+  BDSDimensionType tDimension;
 private:
   static void CheckStep(G4double step, const G4String& name);
 };

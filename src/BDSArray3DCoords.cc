@@ -34,11 +34,12 @@ BDSArray3DCoords::BDSArray3DCoords(G4int nXIn, G4int nYIn, G4int nZIn,
 		   xMinIn,xMaxIn,
 		   yMinIn,yMaxIn,
 		   zMinIn,zMaxIn,
-		   0,   1),
-  xDimension(xDimensionIn),
-  yDimension(yDimensionIn),
-  zDimension(zDimensionIn)
-{;}
+		   0,   1,
+		   xDimensionIn,
+		   yDimensionIn,
+		   zDimensionIn)
+{
+}
 
 void BDSArray3DCoords::ExtractSection2x2x2(G4double x,
                                            G4double y,

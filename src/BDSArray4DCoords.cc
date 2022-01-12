@@ -37,13 +37,21 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
 				   G4double xMinIn, G4double xMaxIn,
 				   G4double yMinIn, G4double yMaxIn,
 				   G4double zMinIn, G4double zMaxIn,
-				   G4double tMinIn, G4double tMaxIn):
+				   G4double tMinIn, G4double tMaxIn,
+                                   BDSDimensionType xDimensionIn,
+                                   BDSDimensionType yDimensionIn,
+                                   BDSDimensionType zDimensionIn,
+                                   BDSDimensionType tDimensionIn):
   BDSArray4D(nXIn,nYIn,nZIn,nTIn),
   xMin(xMinIn), xMax(xMaxIn),
   yMin(yMinIn), yMax(yMaxIn),
   zMin(zMinIn), zMax(zMaxIn),
   tMin(tMinIn), tMax(tMaxIn),
-  smallestSpatialStep(std::numeric_limits<double>::max())
+  smallestSpatialStep(std::numeric_limits<double>::max()),
+  xDimension(xDimensionIn),
+  yDimension(yDimensionIn),
+  zDimension(zDimensionIn),
+  tDimension(tDimensionIn),
 {
   // There are 1 fewer differences than the points.
   if (nX > 1)
