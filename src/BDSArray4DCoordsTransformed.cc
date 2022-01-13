@@ -126,9 +126,9 @@ void BDSArray4DCoordsTransformed::ExtractSection4x4x4x4(G4double x,
     {
       for (G4int j = 0; j < 4; j++)
 	{
-	  for (G4int k = 0; k < 2; k++)
+	  for (G4int k = 0; k < 4; k++)
 	    {
-	      for (G4int l = 0; l < 2; l++)
+	      for (G4int l = 0; l < 4; l++)
 		{
 		  indexOriginalX = indexArrX[i];
 		  indexTransformedX = indexOriginalX;
