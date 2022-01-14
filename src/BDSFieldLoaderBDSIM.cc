@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <algorithm>
+#include <array>
 #include <exception>
 #include <fstream>
 #include <iostream>
@@ -269,14 +270,16 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
 	  // only link up indices if we have to for different ordering
 	  if (loopOrder != nominalOrder)
 	    {
-	      std::vector<G4int*> indReferences = {&indX, &indY, &indZ, &indT};
-	      std::vector<G4int*> numReferences = {&nX,   &nY,   &nZ,   &nT};
-	      std::vector<G4int**> inds         = {&ind1, &ind2, &ind3, &ind4};
-	      std::vector<G4int**> nums         = {&n1,   &n2,   &n3,   &n4};
+        G4cout << "Non-standard loop order: ";
+	      std::array<G4int*,4> indReferences = {&indX, &indY, &indZ, &indT};
+	      std::array<G4int*,4> numReferences = {&nX,   &nY,   &nZ,   &nT};
+	      std::array<G4int**,4> inds         = {&ind1, &ind2, &ind3, &ind4};
+	      std::array<G4int**,4> nums         = {&n1,   &n2,   &n3,   &n4};
 	      
 	      // loop over indices and link pointers to counters
 	      for (unsigned int i = 0; i < (unsigned int)loopOrder.size(); i++)
 		{
+          G4cout << loopOrder[i];
 		  std::size_t found = nominalOrder.find(loopOrder[i]);
 		  if (found != std::string::npos)
 		    {
@@ -288,6 +291,7 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
 		  else
 		    {Terminate(functionName+"Invalid dimension specifier in loopOrder key: \"" + loopOrder + "\"");}
 		}
+        G4cout << G4endl;
 	    }
 	  continue; // loopOrder -> it's not a number so don't try matching it
 	}   
