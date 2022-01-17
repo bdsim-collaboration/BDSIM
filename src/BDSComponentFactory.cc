@@ -2114,7 +2114,11 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   // magnet geometry type
   info->geometryType = MagnetGeometryType(el);
   if (! (el->magnetGeometryType.empty() || globals->IgnoreLocalMagnetGeometry()) )
-    {info->geometryTypeAndPath = el->magnetGeometryType;}
+    {
+      info->geometryTypeAndPath = el->magnetGeometryType;
+      if (el->stripOuterVolume)
+        {BDS::Warning(__METHOD_NAME__, "stripOuterVolume for element \"" + el->name + "\" will have no effect");}
+    }
 
   // set face angles w.r.t. chord
   info->angleIn  = angleIn;
