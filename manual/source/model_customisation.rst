@@ -565,15 +565,19 @@ in the visualiser below. The magnetic field lines were visualised using the Gean
 Field Map Visualisation
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Recent versions of Geant4 (> 5) provide a mechanism in the visualiser to visualise magnetic fields. The
-following command can be used to add magnetic field lines to the visualisation. ::
+Recent versions of Geant4 (> 10.5) provide a mechanism in the visualiser to visualise
+magnetic fields. The following command can be used to add magnetic field lines to
+the visualisation. ::
 
   /vis/scene/add/magneticField 10 lightArrow
 
-This may take some time as particles are being tracked to determine the field direction. The number 10 here
-sets a density of points. If few useful arrows appear, then this number can be increased. Note, the time taken
-will go with the cube (i.e. N^3) of this number. Suggested values are 10, 30, 40. An example can be seen above
-in the :ref:`fields-sub-fields` section.
+This may take some time due to the Geant4 visualiser drawing many arrows individually. The
+number 10 here sets a density of points. If few useful arrows appear, then this number can be
+increased. Note, the time taken will go with the cube (i.e. N^3) of this number. Suggested
+values are 10, 30, 40. An example can be seen above in the :ref:`fields-sub-fields` section.
+
+Geant4 attempts to identify which volumes have fields and distribute the appoints accordingly
+in the global Cartesian frame. For a more controllable distribution, see :ref:`fields-visualisation-queries`.
 
 .. _fields-visualisation-queries:
 
@@ -585,7 +589,7 @@ A query defines a grid of points where the field is queried or found out. By def
 written to a field map file. Any of these queries can also be shown in the visualiser. This is
 controlled by the command: ::
 
-  /bds/field/drawQuery <query object name>
+  /bds/field/drawQuery <query-object-name>
 
 For a list of queries, one can do: ::
 
@@ -752,7 +756,7 @@ The following parameters can be used in a query object:
 	  combination of parameters for the 3 ways of specifying a transform. 
 
 * The default is to query the magnetic field only and **to overwrite** files.
-* The ranges defined will be queried in global frame if no transform is specified,
+* The ranges defined will be queried in the global frame if no transform is specified,
   otherwise they will be about the point / frame of the transform.
 * If you don't wish to query a dimension, then the number of points should be
   1, which is the default and need not be specified.
@@ -1216,9 +1220,16 @@ Magnet Geometry Parameters
 As well as the beam pipe, magnet beam line elements also have further outer geometry beyond the
 beam pipe. This geometry typically represents the magnetic poles and yoke of the magnet but there
 are several geometry types to choose from. The possible different styles are described below and
-syntax **examples** can be found in *examples/features/geometry/4_magnets/*.
+syntax **examples** can be found in *examples/features/geometry/4_magnets/*. These are:
 
-* Externally provided geometry can also be wrapped around the beam pipe (detailed below).
+* :ref:`mag-geom-none`
+* :ref:`mag-geom-cylindrical`
+* :ref:`mag-geom-polescircular`
+* :ref:`mag-geom-polessquare`
+* :ref:`mag-geom-polesfacet`
+* :ref:`mag-geom-polesfacetcrop`
+* :ref:`mag-geom-lhc`
+* :ref:`external-magnet-geometry` (e.g. a GDML file for the yoke)
 
 The magnet geometry is controlled by the following parameters.
 
@@ -1297,6 +1308,8 @@ Examples: ::
 .. note:: Should a custom selection of various magnet styles be required for your simulation, please
 	  contact us (see :ref:`feature-request`) and this can be added - it is a relatively simple process.
 
+.. _mag-geom-none:
+
 No Magnet Outer Geometry - "`none`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1307,6 +1320,8 @@ in only a beam pipe with the correct fields being provided.
 	   :width: 60%
 	   :align: center
 
+.. _mag-geom-cylindrical:
+		   
 Cylindrical - "`cylindrical`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1324,6 +1339,7 @@ therefore this geometry is best suited for the most general studies.
 .. figure:: figures/cylindrical_sextupole.png
 	    :width: 40%
 
+.. _mag-geom-polescircular:
 
 Poles Circular - "`polescircular`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1346,6 +1362,8 @@ used to create the circular aperture at the pole tips.
 	    :width: 40%
 
 
+.. _mag-geom-polessquare:
+		    
 Poles Square (Default) - "`polessquare`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1369,6 +1387,8 @@ same way as `polescircular` with regard to the beam pipe size.
 	    :width: 40%
 
 
+.. _mag-geom-polesfacet:
+		    
 Poles Faceted - "`polesfacet`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1377,6 +1397,10 @@ joins at a flat piece of yoke and not in a corner. This geometry behaves in the
 same way as `polescircular` with regards to the beam pipe size.
 
 `horizontalWidth` is the full width as shown in the figure.
+
+.. warning:: In Geant4 V11.0, the visualiser cannot handle the Boolean solids created by this
+	     geometry and the poles appear invisible. They are in-fact there, but the Geant4
+	     visualisation system cannot make the 3D meshes for the visualisation.
 
 .. figure:: figures/polesfacet_quadrupole.png
 	    :width: 40%
@@ -1390,6 +1414,8 @@ same way as `polescircular` with regards to the beam pipe size.
 .. figure:: figures/polesfacet_sextupole_3d.png
 	    :width: 40%
 
+
+.. _mag-geom-polesfacetcrop:
 
 Poles Faceted with Crop - "`polesfacetcrop`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1418,6 +1444,8 @@ double the number of poles as sides.
 	    :width: 40%
 
 
+.. _mag-geom-lhc:
+		    
 LHC Left & Right - "`lhcleft`" | "`lhcright`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1461,11 +1489,22 @@ External Magnet Geometry
 
 A geometry file may be placed around a beam pipe inside a BDSIM magnet instance. The beam pipe
 will be constructed as normal and will use the appropriate BDSIM tracking routines, but the
-yoke geometry will be loaded from the file provided. The external geometry must have a cut out
+yoke geometry will be loaded from the file provided. The external geometry **must have a cut out**
 in its container volume for the beam pipe to fit, i.e. both the beam pipe and the yoke exist
 at the same level in the geometry hierarchy (both are placed in one container for the magnet).
-The beam pipe is not placed 'inside' the yoke.
+The beam pipe is not placed 'inside' the yoke. This is shown schematically below:
 
+.. figure:: figures/magnet-hierarchy-schematic.pdf
+	    :width: 100%
+	    :align: center
+
+	    Geometrical hierarchy of a magnet. Here, a quadrupole is shown, but all magnets
+	    have the same geometrical structure even if the specific shapes are different.
+
+Therefore, if using a GDML file for the yoke of the magnet (labelled "outer" in the figure),
+care should be taken to make the outermost *container* volume, not just a box, but a box with
+a cylinder cut out of it, i.e. a Boolean solid.
+	    
 This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
 `decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
 
