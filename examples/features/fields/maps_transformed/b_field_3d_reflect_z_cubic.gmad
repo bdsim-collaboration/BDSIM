@@ -1,5 +1,5 @@
 f1: field, type="bmap3d",
-    	   magneticFile="bdsim3d:bmap_xyz_solenoid_front_upper_half.dat",
+    	   magneticFile="bdsim3d:bmap_xyz_solenoid_front_upper_half.dat.gz",
 	   magneticInterpolator="cubic",
 	   magneticReflection="reflectz";
 
