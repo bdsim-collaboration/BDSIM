@@ -1065,6 +1065,45 @@ from a Python numpy array.
 The pybdsim field classes are fully documented in the pybdsim documentation `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_.
 
 
+Field Map Transforms and Reflections
+====================================
+
+To implement transforms such as reflections and flips, the implementation introduces
+two types of class. These are index operators and value operators. A combination of these
+produces the relevant field map. Typically, a reflection and flip operator are provided
+for each that operates on x,y,z,t independently.
+
+For this to work, the extraction of a small section of the array for interpolation
+is done inside the array class (e.g. :code:`BDSArray3DCoordsTransformed`) and not inside
+the interpolator. The interpolator simply asks for a section of the array (e.g. 2x2x2).
+
+If a reflection is required, only then will the field loader wrap the resultant loaded
+field map array (e.g. :code:`BDSArray2DCoords`) in with a transform and a set of operators.
+
+If more than one operator is specified, they are appended to a vector of operators that
+are applied sequentially.
+
+Index Operator
+--------------
+
+An index operator takes any real array coordinate (i.e. not spatial coordinate, but array
+index space coordinate) including negative values (not possible in an array indexed from 0)
+and therefore including points outside its range. The operator maps this query index onto
+a different index - most likely in available data (although it doesn't have to be).
+
+This new index is the one used to access the array.
+
+* These inherit :code:`BDSArrayOperatorIndex`.
+
+Value Operator
+--------------
+
+Based on the queried (i.e. before the index operator) array space coordinate, the field
+value components may be altered.
+
+* These inherit :code:`BDSArrayOperatorValue`.
+
+
 .. _field-interpolators:
 
 Field Map Interpolators
@@ -1141,7 +1180,7 @@ Linear Magnitude
 ----------------
 
 in this case, the interpolation is also linear. However, additionally, the magnitude of
-the field vector is also linearly inteprolated. Imagine linear interpolation between two
+the field vector is also linearly interpolated. Imagine linear interpolation between two
 vectors pointing up and left with magnitude 1. The linearly interpolated vector exactly
 half way between would be at 45 degrees point to the top right. As the components of the
 vector are linearly interpolated, (0,1) to (1,0), then the components would be (0.5,0.5)
@@ -1224,7 +1263,7 @@ Linear & Cubic Higher Dimension Interpolation
 ---------------------------------------------
 
 To interpolate both in a cubic polynomial and linear at greater than one dimension, the
-1D interplator can be used iteratively. In the case of 2D interpolation this would be called
+1D interpolator can be used iteratively. In the case of 2D interpolation this would be called
 *bilinear* and *bicubic*, and in the case of 3D, *trilinear* and *tricubic* interpolation.
 Below is a diagram of a cube representing a point :math:`C` at an arbitrary point inside the
 eight corners that represent the closest values of the regular field map. The diagram shows this

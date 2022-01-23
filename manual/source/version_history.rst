@@ -13,7 +13,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
-V1.7.0 - 2021 / XX / XX
+V1.7.0 - 2022 / XX / XX
 =======================
 
 * The input parser will now reject any duplicate object names (e.g. a field with the same name),
@@ -27,7 +27,7 @@ V1.7.0 - 2021 / XX / XX
   and really needs to be rewritten. The functionality was broken in making BDSIM compatible
   with all the changes to string handling in Geant4 V11.
 * New executable options :code:`--reference` and :code:`--citation` to display the citation
-  in bibtex to cite BDSIM easily.
+  in Bibtex syntax to cite BDSIM easily.
 * The default yoke fields have changed and are on average stronger (and more correct). See below.
 
 New Features
@@ -40,6 +40,8 @@ New Features
 * New program bdsinterpolator to interpolate a field map and export it without
   any handling by Geant4.
 * New field drawing facility in the visualiser to draw query objects.
+* Field map reflections have been introduced allowing symmetry to be exploited.
+  See :ref:`fields-transforms`.
 * Samplers now have the parameter :code:`partID={11,-11}`, which for example can be used
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
@@ -82,7 +84,7 @@ General
   normalisation to the pure vacuum field at the pole-tip has been fixed and improved. This
   leads to the removal of very high peak values close to the hypothetical current sources
   between poles and also generally increases the average field magnitude in the yoke. This makes
-  a smooth transitino from the vacuum field to the yoke field and is more correct. Specifically,
+  a smooth transition from the vacuum field to the yoke field and is more correct. Specifically,
   the contribution from each current source is evaluated half way between each current source
   for the purpose of normalisation. The new option :code:`useOldMultipoleOuterFields=1` is
   available to regain the old behaviour. This will be removed in the next version beyond this one.
@@ -116,6 +118,8 @@ Bug Fixes
 
 **Fields**
 
+* Fix BDSIM-format field map loading with :code:`loopOrder> tzyx` in the header. It was not
+  loaded correctly before. Also, there are corresponding fixes in the pybdsim package.
 * Fix lack of yoke fields for rbends.
 * Fix lack of yoke fields and also orientation of fields in (thick) hkickers and vkicker magnets.
 * Fix LHC 'other' beam pipe field which was not offset to the correct position. Mostly a fault for
