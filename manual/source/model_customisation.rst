@@ -303,6 +303,8 @@ Example: ::
 For a dipole field with value 1.2 T and along the unit Y axis (local). The other
 components of the unit vector associated with it will default to 0.
 
+.. _fields-transforms:
+
 Field Reflections and Transforms
 ********************************
 
@@ -310,7 +312,7 @@ It is possible to exploit symmetry in a field map and use a field map with only
 some fraction of the complete expected map. This speeds up start up time as there
 is less to load and saves memory at run-time as there is less to store in memory.
 
-Several operations are available and may be combined arbitrarily. Thse are specified
+Several operations are available and may be combined arbitrarily. These are specified
 in the field definition in either :code:`magneticReflection` or :code:`electricReflection`.
 
 * The reflection string must be a white-space separated list (if more than one) of
@@ -318,18 +320,28 @@ in the field definition in either :code:`magneticReflection` or :code:`electricR
 * For arrays to be reflected it is recommended that they run from 0 in that dimension
   in a positive direction. e.g. a 1D map in :math:`z` to be reflected would ideally
   run from :math:`z = 0 cm` to for example, :math:`z = 20 cm`, i.e. a positive value.
+  However, the code will tolerate it going in a positive direction but from a negative
+  value towards 0.
+* The values exactly on the axis of reflection come from the original field map.
 
 .. warning:: Any partial field map used for a reflection must either have its
 	     first data point on the axis of reflection or an integer number
 	     of array steps from it. e.g. A 1D array in z to be reflected
 	     runs from 0 cm to 20 cm - this OK. Another array in z runs from 1 cm
 	     to 21 cm with 5 points - this is not OK. This is because the step size
-	     is (21-1 / 5 = 4 cm). The distance from the relfection axis is 1 cm.
+	     is (21-1 / 5 = 4 cm). The distance from the reflection axis is 1 cm.
 	     This would cause an irregularly spaced grid which there is no provision
 	     for in BDSIM for interpolation. The tolerance for this calculation is
 	     5% of the step size. The code will proceed, but the map may be
 	     distorted at the boundaries.
 
+.. note:: It is strongly recommended to visualise a reflected  (or indeed any) field map
+	  before using it for a physics study to ensure it is correctly prepared. See
+	  :ref:`field-map-validation` and :ref:`fields-visualisation-queries`.
+
+
+.. tabularcolumns:: |p{3cm}|p{7cm}|
+	       
 +-----------------------+------------------------------------------+
 | **Reflection Name**   | **Description**                          |
 +=======================+==========================================+
@@ -349,7 +361,7 @@ in the field definition in either :code:`magneticReflection` or :code:`electricR
 +-----------------------+------------------------------------------+
 | reflectt              | :math:`t \mapsto |t|`                    |
 +-----------------------+------------------------------------------+
-| reflectxydipole \*    | Reflect a postive x and y quadrant to    |
+| reflectxydipole \*    | Reflect a positive x and y quadrant to   |
 |                       | all four quadrants with appropriate      |
 |                       | flips to make a dipolar field            |
 +-----------------------+------------------------------------------+
@@ -551,7 +563,7 @@ make physical sense.
 
 * Currently only sub-magnetic fields are supported.
 * The tilt or rotation of the field map (with respect to the element it is attached to) does not
-  apply to the region of applicability for the subfield. However, the field is tilted appropriately.
+  apply to the region of applicability for the sub-field. However, the field is tilted appropriately.
 * The spatial (only) offset (x,y,z) of the sub-field applies to it independently of the offset of the
   main outer field.
 * If a 2D field is used both fields apply infinitely in z in a 3D model, therefore the sub-field
@@ -648,7 +660,7 @@ Field Map Preparation
 It is not recommended to write a field map file by hand. This can create very hard to identify
 subtle problems that may lead to unintended behaviour. It is recommended to use our Python
 utility `pybdsim`. See the pybdsim manual for details on creating, converting and plotting
-field maps in Python: `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_.
+field maps in Python: `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/fieldmaps.html>`_.
 
 .. note:: The order of looping over dimensions is important and must be correct otherwise, the
 	  loaded field map may not be as intended. Use of a field map should be validated.
