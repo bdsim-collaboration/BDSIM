@@ -355,8 +355,6 @@ in the field definition in either :code:`magneticReflection` or :code:`electricR
 +-----------------------+------------------------------------------+
 | reflectyzdipole       | :math:`\pm x -> \mpx`                    |
 +-----------------------+------------------------------------------+
-| reflectxyquadrupole   | :math:`\pm x -> \mpx`                    |
-+-----------------------+------------------------------------------+
 
 Examples: ::
 
