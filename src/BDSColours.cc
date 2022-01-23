@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -76,7 +76,7 @@ BDSColours::BDSColours()
   colours["sextupole"]        = new G4Colour(1,     0.8,   0);     // yellow
   colours["octupole"]         = new G4Colour(0,     0.6,   0.3);   // green
   colours["decapole"]         = new G4Colour(0.3,   0.2,   0.7);   // purple
-  colours["solenoid"]         = new G4Colour(1,     0.549, 0);     // orange
+  colours["solenoid"]         = new G4Colour(1,     0.549, 0, 0.7);// orange - semi transparent to see coil
   colours["multipole"]        = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["rfcavity"]         = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["rf"]               = colours["rfcavity"];
@@ -151,8 +151,7 @@ void BDSColours::DefineColour(const G4String& name,
 {
   if (colours.find(name) != colours.end())
     {
-      G4cerr << "Colour \"" << name
-	     << "\" is already defined - clashing definitions" << G4endl;
+      G4cerr << "Colour \"" << name << "\" is already defined - clashing definitions" << G4endl;
       G4cout << "Already defined colours are " << G4endl;
       Print();
       throw BDSException(__METHOD_NAME__, "duplicate colour definition");
@@ -171,9 +170,9 @@ void BDSColours::Print()
   // auto-generate the manual colour table in rst syntax
   G4cout << __METHOD_NAME__ << "Colour Table" << G4endl;
   G4cout << "This is only the pre-defined BDSIM colours and not the user-defined ones." << G4endl;
-  G4cout << "+---------------------+-----+-----+-----+-----+" << G4endl;
-  G4cout << "| Name                |  R  |  G  |  B  |  A  |" << G4endl;
-  G4cout << "+=====================+=====+=====+=====+=====+" << G4endl;
+  G4cout << "+---------------------+-----+-----+-----+------+" << G4endl;
+  G4cout << "| Name                |  R  |  G  |  B  |  A   |" << G4endl;
+  G4cout << "+=====================+=====+=====+=====+======+" << G4endl;
   for (const auto& col : colours)
     {
       int r = (int)(col.second->GetRed() * 255);
@@ -184,8 +183,8 @@ void BDSColours::Print()
 	     << std::setw(3) << r << " | "
 	     << std::setw(3) << g << " | "
 	     << std::setw(3) << b << " | "
-	     << std::setw(3) << a << " |" << G4endl;
-      G4cout << "+---------------------+-----+-----+-----+-----+" << G4endl;
+	     << std::setw(4) << a << " |" << G4endl;
+      G4cout << "+---------------------+-----+-----+-----+------+" << G4endl;
     }
 }
 

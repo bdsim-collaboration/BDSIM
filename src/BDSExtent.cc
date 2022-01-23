@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -149,7 +149,7 @@ std::ostream& operator<< (std::ostream& out, BDSExtent const& ext)
 {
   out << ext.extXNeg << " " << ext.extXPos << " ";
   out << ext.extYNeg << " " << ext.extYPos << " ";
-  out << ext.extZNeg << " " << ext.extZPos;
+  out << ext.extZNeg << " " << ext.extZPos << " mm";
   return out;
 }
 

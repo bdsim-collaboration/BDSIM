@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -50,6 +50,7 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::ebmap4d,          	           "ebmap4d"},
       {BDSFieldType::mokka,            	           "mokka"},
       {BDSFieldType::solenoid,         	           "solenoid"},
+      {BDSFieldType::solenoidsheet,                "solenoidsheet"},
       {BDSFieldType::dipole,           	           "dipole"},
       {BDSFieldType::quadrupole,       	           "quadrupole"},
       {BDSFieldType::dipolequadrupole, 	           "dipolequadrupole"},
@@ -106,6 +107,7 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["ebmap4d"]          = BDSFieldType::ebmap4d;
   types["mokka"]            = BDSFieldType::mokka;
   types["solenoid"]         = BDSFieldType::solenoid;
+  types["solenoidsheet"]    = BDSFieldType::solenoidsheet;
   types["dipole"]           = BDSFieldType::dipole;
   types["quadrupole"]       = BDSFieldType::quadrupole;
   types["dipolequadrupole"] = BDSFieldType::dipolequadrupole;
