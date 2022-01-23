@@ -244,8 +244,8 @@ Field Types
 
 * These are not case sensitive.
 
-.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
-
+.. tabularcolumns:: |p{4cm}|p{6cm}|
+		    
 +------------------+----------------------------------+
 | **Type String**  | **Description**                  |
 +==================+==================================+
@@ -508,9 +508,9 @@ is automatically chosen based on the number of dimensions in the field map type.
 File Formats
 ^^^^^^^^^^^^
 
-.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
-
 .. note:: BDSIM field maps by default have units :math:`cm,s`.
+
+.. tabularcolumns:: |p{3cm}|p{6cm}|
 
 +------------------+--------------------------------------------+
 | **Format**       | **Description**                            |
@@ -706,7 +706,7 @@ or: ::
 
 The following parameters can be used in a query object:
 
-.. tabularcolumns:: |p{3cm}|p{7cm}|
+.. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +-------------------------+------------------------------------------------+
 | **Parameter**           | **Description**                                |
@@ -1209,6 +1209,8 @@ The required parameters and their meaning are given in the following table.
 	  but can of course can be controlled with :code:`vacuumMaterial`. So you could create
 	  a magnet with air and no beam pipe.
 .. note:: The default beam pipe material is "stainlessSteel".
+
+.. tabularcolumns:: |p{3cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|
 
 +-------------------+--------------+-------------------+-----------------+----------------+------------------+
 | Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`        | `aper4`          |
