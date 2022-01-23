@@ -26,7 +26,7 @@ def GenerateBoxField(fx,fy,fz, filename, xmax=10, ymax=20, plot=False):
     f = pybdsim.Field.Field2D(data)
     f.Write(filename+'.dat')
 
-    fd = pybdsim.Field.Field2D(data,doublePrecision=True,flip=True)
+    fd = pybdsim.Field.Field2D(data,doublePrecision=True)
     fd.Write(filename+'_dp.dat')
 
     # compress the result
