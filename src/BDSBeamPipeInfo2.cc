@@ -79,3 +79,71 @@ BDSExtent BDSBeamPipeInfo2::Extent() const
   else
     {return result;}
 }
+
+BDSExtent BDSBeamPipeInfo2::ExtentInner() const
+{
+  // TBC
+  return Extent();  // BROKEN
+  /*
+  G4double extX = 0;
+  G4double extY = 0;
+  switch (beamPipeType.underlying())
+  {
+    case BDSBeamPipeType::circular:
+    case BDSBeamPipeType::circularvacuum:
+    {
+      extX = aper1;
+      extY = aper1;
+      break;
+    }
+    case BDSBeamPipeType::elliptical:
+    case BDSBeamPipeType::rectangular:
+    case BDSBeamPipeType::octagonal:
+    {
+      extX = aper1;
+      extY = aper2;
+      break;
+    }
+    case BDSBeamPipeType::lhc:
+    case BDSBeamPipeType::lhcdetailed:
+    case BDSBeamPipeType::rectellipse:
+    {
+      extX = std::min(aper1, aper3);
+      extY = std::min(aper2, aper3);
+      break;
+    }
+    case BDSBeamPipeType::racetrack:
+    {
+      extX = aper1 + aper3;
+      extY = aper2 + aper3;
+      break;
+    }
+    case BDSBeamPipeType::clicpcl:
+    {// this one is asymmetric so done separately
+      G4double extentX     = aper1 + beamPipeThickness;
+      G4double extentYLow  = -(std::abs(aper3) + beamPipeThickness);
+      G4double extentYHigh = aper2 + aper4 + beamPipeThickness;
+      BDSExtent ext = BDSExtent(-extentX,     extentX,
+                                extentYLow,   extentYHigh,
+                                0,0);
+      return ext;
+      break;
+    }
+    default:break;
+  }
+  BDSExtent ext = BDSExtent(extX, extY, 0);
+  return ext;
+   */
+}
+
+G4double BDSBeamPipeInfo2::IndicativeRadius() const
+{
+  BDSExtent ext = Extent();
+  return ext.MaximumAbsTransverse();
+}
+
+G4double BDSBeamPipeInfo2::IndicativeRadiusInner() const
+{
+  BDSExtent ext = ExtentInner();
+  return ext.MinimumAbsTransverse();
+}

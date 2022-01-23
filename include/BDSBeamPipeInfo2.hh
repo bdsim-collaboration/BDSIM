@@ -61,6 +61,15 @@ public:
   
   /// This gives the maximal extent of both the entrance and exit faces.
   BDSExtent Extent() const;
+  
+  /// Return an extent for just the raw aperture.
+  BDSExtent ExtentInner() const;
+  
+  /// Return an indicative extent of the beam pipe - typically the maximum of x or y extent.
+  G4double IndicativeRadius() const;
+  
+  /// Return an indicative inner extent for the beam pipe vacuum.
+  G4double IndicativeRadiusInner() const;
 
   //  Public member for direct access
   /// @{ Necessary members.

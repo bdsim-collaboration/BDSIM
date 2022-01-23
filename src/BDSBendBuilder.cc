@@ -243,7 +243,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
   BDSFieldInfo* semiVacuumField = nullptr;
   BDSFieldInfo* semiOuterField = nullptr;
-  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, 0.5*semiAngle, 0.5*semiAngle);
+  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo2(element, 0.5*semiAngle, 0.5*semiAngle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(centralName, element,
                                                             0.5*semiAngle, 0.5*semiAngle, bpInfo,
                                                             yokeOnLeft);
@@ -689,7 +689,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
   BDSFieldInfo* vacuumField = nullptr;
   BDSFieldInfo* outerField = nullptr;
-  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, centralInputFaceAngle, centralOutputFaceAngle);
+  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo2(element, centralInputFaceAngle, centralOutputFaceAngle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, centralInputFaceAngle, centralOutputFaceAngle, bpInfo, yokeOnLeft);
   mgInfo->name = elementName;
   if (!zeroStrength)
