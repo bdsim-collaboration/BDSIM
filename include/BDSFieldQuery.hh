@@ -65,6 +65,9 @@ protected:
                              G4double tGlobal,
                              G4double fieldValue[6]);
 
+  /// Warn the user if the fieldObject variable is use when it shouldn't be.
+  virtual void CheckIfFieldObjectSpecified(const BDSFieldQueryInfo* query) const;
+  
 private:
   /// Different algorithm where we query a specific list of points defined in the query info object.
   void QuerySpecificPoints(const BDSFieldQueryInfo* query);
