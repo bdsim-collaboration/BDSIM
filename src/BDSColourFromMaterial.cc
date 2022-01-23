@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -65,6 +65,8 @@ BDSColourFromMaterial::BDSColourFromMaterial()
   defines["cu"]          = defines["copper"];
   defines["iron"]        = c->GetColour("iron");
   defines["fe"]          = defines["iron"];
+  defines["gold"]        = c->GetColour("gold:220 176 71");
+  defines["au"]          = defines["gold"];
   defines["kapton"]      = c->GetColour("kapton");
   defines["lead"]        = c->GetColour("lead");
   defines["pb"]          = defines["lead"];

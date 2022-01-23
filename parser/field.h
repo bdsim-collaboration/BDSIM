@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -71,6 +71,11 @@ namespace GMAD
 
     std::string magneticSubField;
     std::string electricSubField;
+
+    std::string magneticReflection;
+    std::string electricReflection;
+    
+    std::string fieldParameters;
     
     /// Constructor
     Field();
@@ -82,6 +87,7 @@ namespace GMAD
     template <typename T>
     void set_value(std::string property, T value);
 
+    
   private:
     /// publish members
     void PublishMembers();

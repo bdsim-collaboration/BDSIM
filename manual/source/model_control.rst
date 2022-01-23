@@ -2199,6 +2199,11 @@ described in :ref:`tunnel-geometry`.
 +----------------------------------+-------------------------------------------------------+
 | samplerDiameter                  | Diameter of all samplers [m]. (default = 5 m)         |
 +----------------------------------+-------------------------------------------------------+
+| scalingFieldOuter                | Numerical scaling factor that will be applied to all  |
+|                                  | magnet outer (i.e. yoke) fields unless they have      |
+|                                  | their own scalingFieldOuter factor specified in their |
+|                                  | element definition. Default 1.0 (no effect).          |
++----------------------------------+-------------------------------------------------------+
 | sensitiveBeamPipe                | Whether the beam pipe records energy loss. This       |
 |                                  | includes cavities. (default = true)                   |
 +----------------------------------+-------------------------------------------------------+
@@ -2271,9 +2276,14 @@ described in :ref:`tunnel-geometry`.
 | autoColourWorldGeometryFile      | Boolean whether to automatically colour geometry      |
 |                                  | loaded from the worldGeometryFile. Default true.      |
 +----------------------------------+-------------------------------------------------------+
+| useOldMultipoleOuterFields       | Boolean whether to use the multipolar yoke fields for |
+|                                  | all elements according to pre-V1.7.0 behaviour. Off   |
+|                                  | by default but here to allow comparison.              |
++----------------------------------+-------------------------------------------------------+
 | yokeFields                       | Whether to include a general multipolar field for     |
 |                                  | the yoke of each magnet (using a fourth order         |
-|                                  | Runge-Kutta integrator). Default true.                |
+|                                  | Runge-Kutta integrator). Default true. See also       |
+|                                  | `scalingFieldOuter` option.                           |
 +----------------------------------+-------------------------------------------------------+
 | yokeFieldsMatchLHCGeometry       | Boolean whether to use yoke fields that are the sum   |
 |                                  | of two multipole yoke fields with the LHC separation  |
@@ -2371,6 +2381,11 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 | ptcOneTurnMapFileName            | File name for a one turn map prepared in PTC that is  |
 |                                  | used in the teleporter to improve the accuracy of     |
 |                                  | circular tracking. See :ref:`one-turn-map`.           |
++----------------------------------+-------------------------------------------------------+
+| scalingFieldOuter                | Numerical scaling factor that will be applied to all  |
+|                                  | magnet outer (i.e. yoke) fields unless they have      |
+|                                  | their own scalingFieldOuter factor specified in their |
+|                                  | element definition. Default 1.0 (no effect).          |
 +----------------------------------+-------------------------------------------------------+
 | stopSecondaries                  | Whether to stop secondaries or not (default = false)  |
 +----------------------------------+-------------------------------------------------------+
@@ -3226,7 +3241,7 @@ This can be applied to all samplers as well. ::
 Any sampler specified after this will be overwritten. ::
 
   sample, all, partID={13,-13};
-  sample, range=partID={11,-11};
+  sample, range=d1, partID={11,-11};
 
 Here, all samplers apart from the one attached to "d1" would record only particles
 with PDG ID 13 and -13. The sampler attached to "d1" would record only 11 and -11 PDG ID
