@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -99,7 +99,9 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
 								    placement.autoColour,
 								    0, 0,
 								    nullptr,
-								    placement.sensitive);
+								    placement.sensitive,
+								    BDSSDType::energydep,
+								    placement.stripOuterVolume);
 	  
 	  chordLength = geom->GetExtent().DZ();
 	  comp = new BDSSimpleComponent(placement.name + "_" + geom->GetName(), geom, chordLength);

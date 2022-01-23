@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -65,11 +65,11 @@ G4int BDSSamplerRegistry::RegisterSampler(const G4String&      name,
       uniqueName = name + "_" + std::to_string(existingNames[name]);
       existingNames[name]++;
     }
-  BDSSamplerInfo info = BDSSamplerInfo(name, sampler, transform, S, element, uniqueName);
+  BDSSamplerPlacementRecord info = BDSSamplerPlacementRecord(name, sampler, transform, S, element, uniqueName);
   return RegisterSampler(info);
 }
 
-G4int BDSSamplerRegistry::RegisterSampler(BDSSamplerInfo& info)
+G4int BDSSamplerRegistry::RegisterSampler(BDSSamplerPlacementRecord& info)
 {
   infos.push_back(info);
 

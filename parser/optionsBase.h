@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -168,6 +168,9 @@ namespace GMAD
 
     bool      yokeFields;
     bool      yokeFieldsMatchLHCGeometry;
+    bool      useOldMultipoleOuterFields;
+    double    scalingFieldOuter;
+
     bool        includeFringeFields;
     bool        includeFringeFieldsCavities;
 

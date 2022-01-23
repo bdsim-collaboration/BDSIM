@@ -5,18 +5,32 @@ Installation
 Supported Systems
 =================
 
-BDSIM is developed and used on Mac OSX and (Scientific) Linux.
+BDSIM is developed and used on Mac OSX and (Scientific) Linux. It can be used
+on Windows through some virtualisation technology (e.g. a virtual machine, docker,
+or Cygwin, X11 and CVMFS access).
 
 Tested systems:
 
-* Mac OS 11.3 (Big Sur), XCode 12.5 (Apple clang version 12.0.5 (clang-1205.0.22.9)), Geant4 10.7.1, ROOT 6.24/00, CLHEP 2.4.4.1, Qt 5.15.2
+* Mac OS 11.6.1 M1 (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 11.0.0, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* Mac OS 11.6.1 M1 (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 10.7.3, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* Mac OS 11.6.1 Intel (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 11.0.0, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* Mac OS 11.6.1 Intel (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 10.7.3, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* CERN CentOS 7, GCC 9.2.0, Geant4 10.7.2, 10.6, 10.4.3, ROOT 6.24.00, CLHEP 2.4.4.0 (i.e. lxplus at CERN with LCG100)
+* SLC6, GCC 4.9.3, Geant4 10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt 5.7.0
+* SLC6 as above with Geant4 10.4.p02, Geant4 10.3.p03, Geant4 10.2.p03, Geant4 10.1.p03
+
+Recently tested:
+
+* Mac OS 11.6.1 (Big Sur), XCode 12.5 (Apple clang version 12.0.5 (clang-1205.0.22.9)), Geant4 10.7.1, ROOT 6.24/00, CLHEP 2.4.4.1, Qt 5.15.2
 * Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4 10.7, ROOT 6.18/04, CLHEP 2.4.4.0, Qt 5.14.2
 * Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4 10.6.p02, ROOT 6.18/04, CLHEP 2.4.1.0, Qt 5.14.2
 * Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4 10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt 5.12.0
 * Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4 10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt 5.12.0
-* SLC6, GCC 4.9.3, Geant4 10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt 5.7.0
-* SLC6 as above with Geant4 10.4.p02, Geant4 10.3.p03, Geant4 10.2.p03, Geant4 10.1.p03
-* CERN CentOS 7, GCC 8.3, Geant4 10.7.1, 10.6, 10.4.3, ROOT 6.22.06, CLHEP 2.4.4.0 (i.e. lxplus at CERN)
+
+
+
+Solutions
+=========
 
 BDSIM on Windows
 ----------------
@@ -24,6 +38,8 @@ BDSIM on Windows
 BDSIM is available on Windows 10 through installation on the Windows Subsystem for Linux (WSL) which is downloadable
 from the Windows store. We currently advise that you should only install BDSIM on WSL 1 as difficulties have been
 encountered in installing BDSIM's dependencies and visualising GUIs with X servers on WSL 2.
+
+An alternative is to use DockerDesktop and build a docker image - instructions below - see :ref:`docker-build`.
 
 A number of Linux distributions are available, however BDSIM installation has only been tested
 on the Ubuntu distribution at present. Please note that we do not regularly test BDSIM on the Windows subsystems.
@@ -33,6 +49,127 @@ To install BDSIM on the subsystem, follow the standard installation guide below.
 BDSIM visualiser from the Linux subsystem. We recommend installing the XMing display server to your Windows 10 machine;
 to view windows with XMing you will need to run the command :code:`export DISPLAY=:0` in the Linux Bash environment.
 The command should be added to your ``.bashrc`` or profile so that it's loaded automatically every time.
+
+.. _cvmfs-build:
+	  
+CentOS 7 with CVMFS Access
+--------------------------
+
+If you have a machine running CERN CentOS 7 and with access to the CVMFS file system (CERN Virtual Machine
+File System), you can access an installation of bdsim at: ::
+
+  /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt
+
+You can source a script for a specific version of Geant4 + BDSIM. e.g. ::
+
+  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.6.0-g4v10.7.2.3.sh
+
+
+* Tagged versions (e.g. v1.6.0) will remain even when newer versions of BDSIM are provided.
+* "develop" versions can change without notice.
+* The scripts require BASH (not ZSH) and currently only work on Centos7 as per the name of the directory.
+* Each provides: BDSIM, ROOT, Geant4, CLHEP, Python3, IPython, pybdsim, pymadx, pymad8 and pytransport.
+
+Each setup script includes Geant4, ROOT, CLHEP, IPython, Python, and all dependencies. This is based
+on CERN's LCG software release (currently #100 for BDSIM). Each build is in a directory with the
+naming convention: ::
+
+  bdsim-<version>-g4<g4version>.sh
+
+Optional BDSIM-group patches to Geant4 are represented by an extra patch number (e.g. 10.7.1.1 for our patch
+#1 on 10.7.1). The contents of the patches are documented in the build directory in a directory called
+"patches" as patch files. These are the patches that were applied to the public source code. Each directory
+has a text file in it named with the time of the build and contains any options used to configure the software
+so that anyone could reproduce the build.
+
+Example usage: ::
+
+  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.6.0-g4v10.7.2.3.sh
+  bdsim --help
+
+This may take some time the first time it is used (up to a minute or two), but CVMFS is highly efficient
+at caching files and it will subsequently be much faster.
+
+.. note:: We are currently fixing some ongoing issues with pybdsim loading ROOT data files and crashing
+	  due to a segfault in ROOT.
+
+.. note:: When browsing CVMFS, you may not see the directory :code:`beam-physics.cern.ch`. It is there though.
+	  Type the full path and it will be accessible.  Once inside this directory (:code:`beam-physics.cern.ch`)
+	  you will be able to browse normally. CVMFS doesn't show directories the local computer has
+	  never visited before even though they are accessible.
+
+.. note:: MacOS and X11 and 3D visualisation. If using the visualiser on a Centos7 machine remotely (e.g. CERN's
+	  lxplus) over X-windows from a Mac, you may find that the whilst the visualiser window generally works,
+	  the actual visualisation itself is missing. This is because MacOS, by default, blocks OpenGL over X11.
+	  This should be re-enabled. See :ref:`mac-xwindows`.
+
+.. _docker-build:
+	  
+Docker
+------
+
+Docker is a virtualisation tool that puts software and all libraries in a 'container'. This can be run
+independently on an operating system and requires fewer resources than a virtual machine. It therefore
+allows us to use say a Centos container on a Mac or Windows machine.
+
+The initial setup takes about 30 minutes, but after that it is nearly instantaneous to start.
+
+Included with BDSIM we have a 'docker file' that docker can follow to build an image on your computer.
+This contains instructions about getting Centos, installing various packages and compiling Geant4 and
+BDSIM. The docker file is a text file that one can read and use as a set of instructions to follow
+on your own system should you wish - of course not a literal set of copy-and-paste instructions as it
+uses some docker commands.
+
+To use this, do the following:
+
+1) Download the DockerDesktop application (e.g. `<https://www.docker.com/products/docker-desktop>`_).
+2) Clone the BDSIM git repository: :code:`git clone https://bitbucket.org/jairhul/bdsim`.
+3) In a terminal (unix or Cygwin), go to :code:`bdsim/building/docker`.
+4) Use the docker build script :code:`source build-centos-bdsim.sh` - this may take 20 mins. (\*)
+5) Adapt and use the run script :code:`run-centos-bdsim.sh` which is made for Mac / unix.
+
+
+The last step can commonly be made into an alias in your profile. On the developer's Mac, this is: ::
+
+  alias bdsimdocker="docker run -t -i -v `pwd`:/hostfs -e DISPLAY=`ipconfig getifaddr en0`:0 --rm bdsim bash
+
+This will start a terminal prompt that is a BASH shell 'inside' the container, so Centos7, with
+everything ready to go and the command :code:`bdsim` available.
+
+.. note:: (\*) The command in this script is a docker command and can be used in Windows.
+
+Some explanation of the contents of the run script. For a Mac, this reduces (removing the comments) to: ::
+
+  DV=`ipconfig getifaddr en0`
+  docker run -t -i -v `pwd`:/hostfs -e DISPLAY=$DV:0 --rm bdsim bash
+
+For docker to send an X-window to the host operating system, it uses the IP address of the computer. The
+first command gets this (on a Mac). The second command runs docker and links the display. The image is
+called "bdsim" here as per the build script, but it may also be referred to by its docker hexadecimal
+image name.
+
+The :code:`-v` syntax work as :code:`-v <host_dir_abs_path>:<container_dir_abs_path>`.
+
+Basic Docker Commands
+*********************
+
+* :code:`docker image ls`
+* :code:`docker container ls`
+* :code:`docker run -t -i --rm <image_name> bash`
+
+   
+X11 Notes
+*********
+
+Whilst the docker image will almost certainly work without problem, it is more common to have
+some issues with the visualiser, which requires sending the window by X11 ('xwindows'). A few
+notes:
+
+* On a Mac, you may have to do :code:`xhost +` to allow X11 connections over the network.
+* On a Mac, you may have to set once :code:`defaults write org.xquartz.X11 enable_iglx -bool true`.
+* See :ref:`mac-xwindows`.
+
+
 
 Obtaining  BDSIM
 ================
@@ -60,7 +197,7 @@ when the :code:`--recursive` option is used.
 Download
 --------
 
-BDSIM versions can be downloaded from the git repository website:
+BDSIM source code versions can be downloaded from the git repository website:
 
 https://bitbucket.org/jairhul/bdsim/downloads/?tab=tags
 
@@ -68,49 +205,6 @@ https://bitbucket.org/jairhul/bdsim/downloads/?tab=tags
 	  a copy of the files. In the case of the develop branch, the BDSIM version recorded in the
 	  output will just be "develop" and not the specific git SHA1 commit ID. Therefore, if
 	  dealing with the develop branch, it's recommended to clone the repository.
-
-.. _cvmfs-build:
-	  
-CentOS 7 with CVMFS Access
---------------------------
-
-If you have a machine running CERN CentOS 7 and with access to the CVMFS file system (CERN Virtual Machine
-File System), you can access an installation of bdsim at: ::
-
-  /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt
-
-In this directory, there are several BASH environment scripts you can source to use the BDSIM
-installation there, including Geant4, ROOT, CLHEP and all dependencies. This is based on CERN's LCG
-software release (currently #99 for BDSIM). There are builds of the latest tagged version of BDSIM
-as well as a reasonably up to date "develop" branch build. The develop branch build may be updated
-without notice. Each build is in a directory with the naming convention: ::
-
-  bdsim-<version>-g4<g4version>.sh
-
-Optional group patches to Geant4 are represented by an extra patch number (e.g. 10.7.1.1 for our patch
-#1 on 10.7.1). The contents of the patches are documented in the build directory in a directory called
-"patches" as patch files. These are the patches that were applied to the public source code. Each directory
-has a text file in it named with the time of the build and contains any options used to configure the software
-so that anyone could reproduce the build.
-
-Example usage: ::
-
-  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.5.1-g4v10.7.1.1.sh
-  bdsim --help
-
-This may take some time the first time it is used (up to a minute or two), but CVMFS is highly efficient
-at caching files and it will subsequently be much faster.
-
-Sourcing this script will include BDSIM, ROOT, Geant4, CLHEP, Python3, IPython, pybdsim, pymadx, pymad8, and pytransport.
-Using this Python and IPython installation will provide the utilities.
-
-.. note:: We are currently fixing some ongoing issues with pybdsim loading ROOT data files and crashing
-	  due to a segfault in ROOT.
-
-.. note:: When browsing CVMFS, you may not see the directory :code:`beam-physics.cern.ch`. It is there though.
-	  Type the full path and it will be accessible.  Once inside this directory (:code:`beam-physics.cern.ch`)
-	  you will be able to browse normally. CVMFS doesn't show directories the local computer has
-	  never visited before even though they are accessible.
 	  
 .. _required-packages:
    
@@ -997,8 +1091,13 @@ set. See :ref:`installation-building` and :ref:`installation-environmental-varia
      /usr/lib/../lib64/libxml2.so: undefined reference to `gzdirect@ZLIB_1.2.2.3'
      collect2: error: ld returned 1 exit status
 
-   This probably means that the xml library is not properly installed. The easiest option may be not to use this part of BDSIM by switching off the CMake variable USE_LCDD (in ccmake).
+   This probably means that the xml library is not properly installed. The easiest option may be not to use this part of BDSIM by switching off the CMake variable USE_GDML (in ccmake).
 
+7) The visualiser starts but there is no 3D model present (BDSIM on CVMFS).
+
+This problem is encountered when using BDSIM over X11 / XWindows such as from lxplus at CERN
+and using the CVMFS installation and using it from a Mac computer. This is due to the X-server
+not allowing OpenGL by default (the 3D bit). See :ref:`mac-xwindows` for the solution.
 
 .. rubric:: Footnotes
 
@@ -1016,3 +1115,94 @@ set. See :ref:`installation-building` and :ref:`installation-environmental-varia
 .. _Geant4: http://geant4.cern.ch/
 .. _Macports: http://www.macports.org/
 .. _ROOT: http://root.cern.ch/
+
+
+.. _mac-xwindows:
+
+XWindows With MacOS
+===================
+
+If using a Mac computer and intending to use BDSIM via SSH / X-Windows, which may include
+using BDSIM via a Docker image, it is possible the display will appear but there will be
+no model present and just a **blank white screen**. This is due to the default settings
+of XQuartz (the most common Mac X-Windows server) not allowing 3D content (specifically openGL)
+over X-Windows by default. This was done for security reasons but since we typically connect
+to a 'window' via SSH, this is irrelevant.
+
+To fix this, we must change the settings.
+
+.. note:: These settings apply only for MacOS with XQuartz.
+
+1) In a terminal, do the following: ::
+
+     defaults write org.macosforge.xquartz.X11 enable_iglx -bool true
+
+   which enables *indirect openGL over X*.
+
+2) Edit the X11 startup script to include the :code:`defaultserverargs="+iglx"`. ::
+
+     sudo emacs -nw /opt/X11/bin/startx
+
+Around line 58 we find the argument and edit it.
+
+.. figure:: figures/macx11.png
+	    :width: 100%
+	    :align: center
+
+	    Example of editing the X11 configuration in a terminal.
+
+If emacs is use, save and close with :code:`Ctrl X Ctrl S`, then :code:`Ctrl X Ctrl C`.
+
+3) Restart the mac to force a restart of X11.
+
+A test is to use the small utility program :code:`glxgears`, which when started will
+bring up a small window with 3 animated interlocking cogs that rotate.
+
+This is based on advice found at: https://www.visitusers.org/index.php?title=Re-enabling_INdirect_GLX_on_your_X_server .
+
+
+Programs Included
+=================
+
+BDSIM is a program but it is accompanied by other programs for various tasks. Here is a complete
+list of all executable programs included.
+
+
+.. tabularcolumns:: |p{3cm}|p{7cm}|
+
++--------------------+-----------------------------------------------------------+
+| **Program**        | **Description**                                           |
++====================+===========================================================+
+| bdsim              | The main tool to generate Monte Carlo simulation data.    |
++--------------------+-----------------------------------------------------------+
+| rebdsim            | Analysis tool to make histograms and calcualte optics.    |
++--------------------+-----------------------------------------------------------+
+| rebdsimCombine     | Combine multiple rebdsim output files into 1 file.        |
++--------------------+-----------------------------------------------------------+
+| rebdsimHistoMerge  | Operate on a bdsim output file and average the per-event  |
+|                    | pre-made histograms only.                                 |
++--------------------+-----------------------------------------------------------+
+| rebdsimOptics      | Operate on a bdsim output file and calculate optical      |
+|                    | functions from the sampler data - the 'optics'.           |
++--------------------+-----------------------------------------------------------+
+| rebdsimOrbit       | Operate on a bdsim output file and extrac the first       |
+|                    | entry in each sampler - assuming 1 primary this is the    |
+|                    | 'orbit' of that particle.                                 |
++--------------------+-----------------------------------------------------------+
+| bdskim             | Create a copy of a bdsim output file keeping only select  |
+|                    | events according to a selection - skim the data.          |
++--------------------+-----------------------------------------------------------+
+| bdsimCombine       | Combine bdsim output files together into a bigger file.   |
++--------------------+-----------------------------------------------------------+
+| bdsinterpolator    | Load a field map and query it by inteprolation.           |
++--------------------+-----------------------------------------------------------+
+| comparator         | Utility for numerically and statistically comparing bdsim |
+|                    | and rebdsim output files for regression testing.          |
++--------------------+-----------------------------------------------------------+
+| makematerialfile   | Export 2 files with materials and elements from NIST as   |
+|                    | required by pyg4ometry.                                   |
++--------------------+-----------------------------------------------------------+
+| ptc2bdsim          | Convert a PTC inrays file to one useable by bdsim.        |
++--------------------+-----------------------------------------------------------+
+| gmad               | The parser on its own as a program - no model is built.   |
++--------------------+-----------------------------------------------------------+

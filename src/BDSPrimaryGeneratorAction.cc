@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -80,7 +80,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
   particleGun->SetParticleTime(0);
 
   BDSBunchType egf = BDSBunchType::eventgeneratorfile;
-  useEventGeneratorFile = G4String(beam.distrType).contains(egf.ToString());
+  useEventGeneratorFile = BDS::StrContains(G4String(beam.distrType), egf.ToString());
   if (useEventGeneratorFile)
     {
 #ifdef USE_HEPMC3

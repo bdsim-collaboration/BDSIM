@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -53,7 +53,7 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
 				       G4bool                       generatePrimariesOnlyIn)  
 {
   G4String distrName = G4String(beam.distrType);
-  if (distrName.contains(":")) // must be eventgeneratorfile:subtype
+  if (BDS::StrContains(distrName, ":")) // must be eventgeneratorfile:subtype
     {
       std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrName);
       distrName = ba.first; // overwrite with just first bit

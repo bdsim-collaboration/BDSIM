@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -18,17 +18,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSExtent.hh"
 #include "BDSSamplerCylinder.hh"
-#include "BDSSDSampler.hh"
-#include "BDSSDManager.hh"
 
-#include "globals.hh" // geant types / globals
 #include "G4LogicalVolume.hh"
+#include "G4String.hh"
 #include "G4Tubs.hh"
+#include "G4Types.hh"
 
-BDSSamplerCylinder::BDSSamplerCylinder(G4String      nameIn,
-				       G4double      length,
-				       G4double      radius):
-  BDSSampler(nameIn)
+#include "CLHEP/Units/SystemOfUnits.h"
+
+
+BDSSamplerCylinder::BDSSamplerCylinder(const G4String& nameIn,
+				       G4double        length,
+				       G4double        radius,
+                                       G4int           filterSetIDIn):
+  BDSSampler(nameIn, filterSetIDIn)
 {
   containerSolid = new G4Tubs(nameIn + "_solid",    // name
 			      radius - 1*CLHEP::um, // inner radius
@@ -38,8 +41,5 @@ BDSSamplerCylinder::BDSSamplerCylinder(G4String      nameIn,
 			      CLHEP::twopi);        // sweep angle
 
   SetExtent(BDSExtent(radius, radius, length*0.5));
-
   CommonConstruction();
-
-  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->SamplerCylinder());
 }
