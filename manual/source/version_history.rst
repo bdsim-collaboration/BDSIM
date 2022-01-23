@@ -108,6 +108,47 @@ General
 Bug Fixes
 ---------
 
+(topics alphabetically)
+
+**Analysis**
+
+* rebdsim will now explicitly exit if a duplicate histogram name is detected whereas it didn't before.
+
+**Fields**
+
+* Fix lack of yoke fields for rbends.
+* Fix lack of yoke fields and also orientation of fields in (thick) hkickers and vkicker magnets.
+* Fix LHC 'other' beam pipe field which was not offset to the correct position. Mostly a fault for
+  quadrupoles where the field appeared in effect as a distorted dipole field (i.e. very off-axis quadrupole field).
+* Fix field interpolation manual figures. Z component was transposed.
+* Fixed example field map generation scripts to not use tar as we don't support loading
+  of tar.gz (only gzipped or uncompressed) files (historical hangover).
+* Fixed field map interpolation and plotting scripts as well as make use of improvements
+  in pybdsim.
+* Fix a bug in field map loading where a space was before the "!" character the columns
+  wouldn't be parsed correctly.
+* Fix BDSIM field map format :code:`loopOrder` documentation. The variable can be either `xyzt` or `tzyx`.
+
+**Geometry**
+  
+* If a multipole has a zero-length, it will be converted in a thin multipole.
+* Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
+  with pole face rotations. Issue #306.
+* Fix missing magnet coil end pieces despite being available space when the sequence
+  is a magnet, drift, element, or the reverse.
+
+
+**Output**
+
+* Fix the wrong value being stored in PrimaryFirstHist.postStepProcessType which was in fact SubType again.
+* When storing trajectories, it was possible if store transportation steps was
+  purposively turned off that the first step point may not be stored. So, the pre-step
+  was the creation of the particle and the post step was an interaction (i.e. not
+  transportation). Previously, this step would not be stored breaking the indexing
+  for parent step index.
+
+**Parser**
+
 * The input parser will now reject any duplicate object names (e.g. a field with the same name),
   whereas it didn't before. In the past, multiple objects would be created ignoring their name.
   However, after the input is loaded, BDSIM itself may look through the objects for one matching
@@ -116,23 +157,27 @@ Bug Fixes
   is also the case with all objects defined in the parser.
 * Fix extension of all parser objects (i.e. not beam line elements), which was broken. Extension
   is the access and update of a variable inside a defined object such as a field or scorer.
-* Fix BDSIM field map format :code:`loopOrder` documentation. The variable can be either `xyzt` or `tzyx`.
-* Fix lack of yoke fields for rbends.
-* Fix lack of yoke fields and also orientation of fields in (thick) hkickers and vkicker magnets.
-* Fix LHC 'other' beam pipe field which was not offset to the correct position. Mostly a fault for
-  quadrupoles where the field appeared in effect as a distorted dipole field (i.e. very off-axis quadrupole field).
 * Fix parser :code:`print` command for all objects in the parser. Previously, only beam line elements
   would work with this command or variables in the input GMAD.
-* If a multipole has a zero-length, it will be converted in a thin multipole.
-* Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
-  with pole face rotations. Issue #306.
+
+**Sensitivity**
+
 * Fix a bug where a sampler before a dump wouldn't record any output.
-* Fix the wrong value being stored in PrimaryFirstHist.postStepProcessType which was in fact SubType again.
-* When storing trajectories, it was possible if store transportation steps was
-  purposively turned off that the first step point may not be stored. So, the pre-step
-  was the creation of the particle and the post step was an interaction (i.e. not
-  transportation). Previously, this step would not be stored breaking the indexing
-  for parent step index.
+
+**Tracking**
+
+* Fix lack of user limits for RF cavity geometry.
+* Fix maximum step length user limit for externally loaded geometry.
+
+**Visualisation**
+
+* GDML auto-colouring now works for G4 materials correctly. The name searching was broken. As a
+  reminder, any material without a specific colour will default to a shade of grey according to
+  its density.
+* Fix visualisation of loaded GDML container volume.
+  
+**General**
+
 * Fix double deletion bug for particle definition when using the Link version of BDSIM.
 * Fix `distrFile` not being found when used as an executable option in the case where the
   current working directory, the main input gmad file and the distribution file were all in
@@ -142,23 +187,11 @@ Bug Fixes
   definition of material "ups923a".
 * "FASTCOMPONENT", "FASTTIMECONSTANT", and "YIELDRATIO" material properties for various optical
   materials have no effect when BDSIM is compiled with respect to Geant4 V11 onwards.
-* GDML auto-colouring now works for G4 materials correctly. The name searching was broken. As a
-  reminder, any material without a specific colour will default to a shade of grey according to
-  its density.
-* Fix field interpolation manual figures. Z component was transposed.
-* Fixed example field map generation scripts to not use tar as we don't support loading
-  of tar.gz (only gzipped or uncompressed) files (historical hangover).
-* Fixed field map interpolation and plotting scripts as well as make use of improvements
-  in pybdsim.
-* Fix visualisation of loaded GDML container volume.
 * Fix uncaught Geant4 exceptions by introducing our own exception handler to intercept
   the Geant4 one and throw our own, safely handled exceptions a la standard C++.
-* Fix lack of user limits for RF cavity geometry.
-* Fix maximum step length user limit for externally loaded geometry.
-* Fix missing magnet coil end pieces despite being available space when the sequence
-  is a magnet, drift, element, or the reverse.
-* Fix a bug in field map loading where a space was before the "!" character the columns
-  wouldn't be parsed correctly.
+
+
+
 
 Output Changes
 --------------
