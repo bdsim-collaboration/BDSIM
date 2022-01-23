@@ -43,6 +43,7 @@ std::map<BDSArrayReflectionType, std::string>* BDSArrayReflectionType::dictionar
       {BDSArrayReflectionType::reflectt,            "reflectt"},
       {BDSArrayReflectionType::reflectxydipole,     "reflectxydipole"},
       {BDSArrayReflectionType::reflectxzdipole,     "reflectxzdipole"},
+      {BDSArrayReflectionType::reflectyzdipole,     "reflectyzdipole"},
       {BDSArrayReflectionType::reflectxyquadrupole, "reflectxyquadrupole"}
 });
 
@@ -59,6 +60,7 @@ BDSArrayReflectionType BDS::DetermineArrayReflectionType(G4String arrayReflectio
   types["reflectt"]            = BDSArrayReflectionType::reflectt;
   types["reflectxydipole"]     = BDSArrayReflectionType::reflectxydipole;
   types["reflectxzdipole"]     = BDSArrayReflectionType::reflectxzdipole;
+  types["reflectyzdipole"]     = BDSArrayReflectionType::reflectyzdipole;
   types["reflectxyquadrupole"] = BDSArrayReflectionType::reflectxyquadrupole;
   
   arrayReflectionType.toLower();
@@ -105,6 +107,7 @@ G4bool BDS::ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSe
     {BDSArrayReflectionType::reflectt, BDSArrayReflectionType::reflectsimple},
     {BDSArrayReflectionType::reflectxydipole, BDSArrayReflectionType::reflectadvanced},
     {BDSArrayReflectionType::reflectxzdipole, BDSArrayReflectionType::reflectadvanced},
+    {BDSArrayReflectionType::reflectyzdipole, BDSArrayReflectionType::reflectadvanced},
     {BDSArrayReflectionType::reflectxyquadrupole, BDSArrayReflectionType::reflectadvanced}
   };
   
@@ -127,15 +130,6 @@ G4bool BDS::ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSe
         {(*details) += "more than one 'specific' type of reflection - only one allowed";}
       return true;
     }
-  /*
-  else if (testAdvancedSize > 0 && testSize > 1)
-    {
-      // 1x advanced reflection but also a general reflection / flip - not allowed
-      if (details)
-        {(*details) += "'specific' reflection used with a simple reflection or flip - not allowed";}
-      return true;
-    }
-    */
   else
     {return false;}
   return false;

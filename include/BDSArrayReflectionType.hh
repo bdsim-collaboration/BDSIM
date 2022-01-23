@@ -39,6 +39,7 @@ struct arrayreflectiontypes_def
              reflectadvanced, // for internal use
              reflectxydipole,
              reflectxzdipole,
+             reflectyzdipole,
              reflectxyquadrupole};
 };
 
