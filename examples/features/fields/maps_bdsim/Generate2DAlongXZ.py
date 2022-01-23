@@ -31,7 +31,7 @@ def main():
     data = _np.array(data)
     
     # construct a BDSIM format field object and write it out
-    f = pybdsim.Field.Field2D(data, secondColumn='Z', flip=True)
+    f = pybdsim.Field.Field2D(data, secondColumn='Z')
     f.Write('2dexample-along-xz.dat')
 
     # compress the result
