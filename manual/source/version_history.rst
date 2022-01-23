@@ -116,6 +116,7 @@ Bug Fixes
   is also the case with all objects defined in the parser.
 * Fix extension of all parser objects (i.e. not beam line elements), which was broken. Extension
   is the access and update of a variable inside a defined object such as a field or scorer.
+* Fix BDSIM field map format :code:`loopOrder` documentation. The variable can be either `xyzt` or `tzyx`.
 * Fix lack of yoke fields for rbends.
 * Fix lack of yoke fields and also orientation of fields in (thick) hkickers and vkicker magnets.
 * Fix LHC 'other' beam pipe field which was not offset to the correct position. Mostly a fault for
