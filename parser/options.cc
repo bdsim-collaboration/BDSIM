@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -254,6 +254,8 @@ void Options::PublishMembers()
   publish("yokeFields",           &Options::yokeFields);
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
   publish("yokeFieldsMatchLHCGeometry", &Options::yokeFieldsMatchLHCGeometry);
+  publish("useOldMultipoleOuterFields", &Options::useOldMultipoleOuterFields);
+  publish("scalingFieldOuter",    &Options::scalingFieldOuter);
   publish("includeFringeFields",  &Options::includeFringeFields);
   publish("includeFringeFieldsCavities", &Options::includeFringeFieldsCavities);
   publish("beampipeRadius",       &Options::aper1);

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -37,6 +37,7 @@ Parameters::Parameters()
   
   setMap["l"]         = false;
   setMap["scaling"]   = false;
+  setMap["scalingFieldOuter"] = false;
   setMap["ks"]        = false;
   setMap["k1"]        = false;
   setMap["k2"]        = false;
