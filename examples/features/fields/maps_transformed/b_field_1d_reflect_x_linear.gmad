@@ -8,4 +8,5 @@ include commonboxforfield.gmad;
 q1: query, nx = 100, xmin = -75*cm, xmax = 75*cm,
 	   outfileMagnetic = "interp_out_1d_b_reflectx_linear.dat",
 	   queryMagneticField=1,
-	   fieldObject = "f1";
+	   fieldObject = "f1",
+	   checkParameters=0;
