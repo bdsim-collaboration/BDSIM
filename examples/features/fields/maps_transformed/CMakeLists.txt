@@ -24,9 +24,13 @@ simple_testing(field-map-transform-2d-b-reflectx-cubic    "--file=b_field_2d_ref
 simple_testing(field-map-transform-2d-b-reflectx-linear   "--file=b_field_2d_reflect_x_linear.gmad"  "")
 simple_testing(field-map-transform-2d-b-reflecty-cubic    "--file=b_field_2d_reflect_y_cubic.gmad"   "")
 
+simple_testing(field-map-transform-3d-b-reflectz-cubic    "--file=b_field_3d_reflect_z_cubic.gmad"   "")
+
+# special transforms
 simple_testing(field-map-transform-2d-b-reflectxydipole "--file=b_field_2d_reflectxydipole.gmad" "")
 simple_testing(field-map-transform-2d-b-reflectxzdipole "--file=b_field_2d_reflectxzdipole.gmad" "")
 simple_testing(field-map-transform-3d-b-reflectxzdipole "--file=b_field_3d_reflectxzdipole.gmad" "")
+simple_testing(field-map-transform-3d-b-reflectyzdipole "--file=b_field_3d_reflectyzdipole.gmad" "")
 
 
 interpolator_test(interpolator-1d-transform-b-flipx-nearest  "b_field_1d_flip_x_nearest.gmad")
