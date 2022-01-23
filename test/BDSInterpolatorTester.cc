@@ -210,9 +210,9 @@ int main(int /*argc*/, char** /*argv*/)
       G4cout << biCubic->GetField(G4ThreeVector(10, 11, 0)) << G4endl;
     }
   
-  const G4String exampleFile2DQuadrant = "../examples/features/fields/maps_bdsim/2d_dipole_quadrant.dat";
-  BDSFieldLoaderBDSIM<std::ifstream> loader;
-  BDSArray2DCoords* result = loader.Load2D(exampleFile2DQuadrant);
+  //const G4String exampleFile2DQuadrant = "../examples/features/fields/maps_bdsim/2d_dipole_quadrant.dat";
+  //BDSFieldLoaderBDSIM<std::ifstream> loader;
+  //BDSArray2DCoords* result = loader.Load2D(exampleFile2DQuadrant);
   //BDSArrayCoordOperatorFlip* transform = new BDSArrayCoordOperatorFlip(true, false, false, false);
   //auto transformed = new BDSArray2DCoordsTransformed(result, transform);
 
