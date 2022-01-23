@@ -12,7 +12,6 @@ def main():
     
     # define functions for each field component
     def fx(x,y):
-        return 
         return 4*_np.cos(0.08*x)*_np.sin(0.1*y)
     def fy(x,y):
         return 2*_np.sin(0.08*x)*_np.cos(0.1*y)
