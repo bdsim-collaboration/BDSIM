@@ -30,10 +30,10 @@ def main():
     data = _np.array(data)
     
     # construct a BDSIM format field object and write it out
-    f = pybdsim.Field.Field2D(data)
+    f = pybdsim.Field.Field2D(data, flip=True)
     f.Write('2dexample.dat')
 
-    fd = pybdsim.Field.Field2D(data,doublePrecision=True)
+    fd = pybdsim.Field.Field2D(data, flip=True, doublePrecision=True)
     fd.Write('2dexample_dp.dat')
 
     # compress the result
