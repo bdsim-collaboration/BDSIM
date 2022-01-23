@@ -757,7 +757,11 @@ BDSIM Field Format
 The field should be in an ASCII text file with the extension :code:`.dat`. Below is an
 example of the required format in each 1D, 2D, 3D and 4D case.
 
-A compressed file using *gzip* may also be used (".gz" extension).
+* A compressed file using *gzip* may also be used (".gz" extension).
+
+
+.. note:: It is recommended to use **pybdsim** to write field maps as it is guaranteed to write the
+	  correct syntax exactly. It is **not** recommended to write field maps by hand.
 
 The `pybdsim` utility package may be used to prepare fields in the correct format in Python if a
 Python numpy array is provided.  If the user has a custom field format, it would be
@@ -767,18 +771,22 @@ provided file writers in pybdsim.
 Generally:
 
  * A series of keys define the dimensions of the grid.
+ * The keys must not have any whitespace before them nor any between the key and the '>'
  * The keys at the beginning do not have to be in any order.
  * Empty lines will be skipped.
  * A line starting with :code:`!` denotes the column name definition row (there can be only one of these).
  * The order in the file must be 1) keys, 2) column name definition row, 3) data.
  * A line starting with :code:`#` will be ignored as a comment line.
- * The order of the data must loop in the **lowest** dimension first and then the upper,
-   so the order should be :math:`x`, then :math:`y`, then :math:`z`, then :math:`t`.
+ * The default order of the data loop is the **lowest** dimension first and then the upper,
+   so the order should be :math:`x`, then :math:`y`, then :math:`z`, then :math:`t`. If
+   we look in a file, we should see the first coordinate column change first.
+ * :code:`loopOrder > tzyx` may optionally be defined in the header to indicate the
+   the **opposite** order of looping of variables in the file to the loader. The default is xyzt.
+   It can only be **either** 'xyzt' or 'tzyx'. In this case, the coordinate columns must still
+   be in x,y,z,t order but the right most column coordinate will change first.
  * Python classes are provided to write numpy arrays to this format.
  * Any lines beyond the amount of data specified by the dimensions will be ignored.
  * One **cannot** put a comment after the data in the line.
- * :code:`loopOrder > zyxt` may optionally be defined in the header to indicate the
-    the order of looping of variables in the file to the loader. The default is xyzt.
 
 .. note:: The units are :math:`cm` for spatial coordinates and :math:`s` for temporal.
 
@@ -1009,6 +1017,13 @@ BDSIM Field Format Different Dimensions
 Different dimensions can be used but they must be in order. Below is a list of the allowable
 alternate dimensions for various field maps.
 
+* The dimensions are detected automatically by the column label row.
+* The reverse order of all the possible combinations is also possible with the :code:`loopOrder`
+  header parameter set to the reverse (either :code:`xyzt` or :code:`tzyx`) for the general order
+  even if not all those dimensions are present. The default order is :code:`xyzt` with the more
+  left column appearing to change first in value. Even if the order of the looping in the file
+  is different, the columns themselves must still be in x,y,z,t order left to right.
+
 * 4D field::
 
     x,y,z,t
@@ -1035,6 +1050,8 @@ alternate dimensions for various field maps.
     y
     z
     t
+
+See examples in :code:`bdsim/examples/features/fields/maps_bdsim/*.py`.
 
 
 .. _field-map-file-preparation:
