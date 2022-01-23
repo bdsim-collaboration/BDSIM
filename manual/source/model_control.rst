@@ -828,7 +828,7 @@ appropriate parameters need to be defined for each individual distribution.
 * All parameters from `reference`_ distribution are used as centroids.
 * The default for `xDistrType`, `yDistrType` and `zDistrType` are `reference`.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|p{4cm}|
+.. tabularcolumns:: |p{3cm}|p{4cm}|p{4cm}|
 
 +---------------+--------------------------------+------------------------+
 | **Variable**  | **Description**                | **Coordinates Used**   |
@@ -882,7 +882,7 @@ one for directional, and one for energy & time.
 * All parameters from `reference`_ distribution are used as centroids.
 * The default for `spaceDistrType`, `directionDistrType` and `energyDistrType` are `reference`.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|p{4cm}|
+.. tabularcolumns:: |p{3cm}|p{4cm}|p{4cm}|
 
 +----------------------+--------------------------------+------------------------+
 | **Variable**         | **Description**                | **Coordinates Used**   |
@@ -957,7 +957,7 @@ particle coordinates from the beginning. A warning will be printed out in this c
 	     is a proxy to load their definitions. Note, without decay physics used, unstable
 	     particles will be tracked beyond their normal lifetime.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|
+.. tabularcolumns:: |p{3cm}|p{7cm}|
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
@@ -998,6 +998,8 @@ Examples:
    for another instance of BDSIM on a computer farm.
 
 Acceptable tokens for the columns are:
+
+.. tabularcolumns:: |p{2cm}|p{4cm}|
 
 +------------+----------------------------------------+
 | **Token**  |  **Description**                       |
@@ -1071,7 +1073,7 @@ ptc
 
 Output from MAD-X PTC used as input for BDSIM.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|
+.. tabularcolumns:: |p{2cm}|p{3cm}|
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
@@ -1093,7 +1095,7 @@ specified. These are used to calculate the magnetic field strengths.
 
 The following parameters are used to control the use of an event generator file.
 
-.. tabularcolumns:: |p{3cm}|p{14cm}|
+.. tabularcolumns:: |p{5cm}|p{9cm}|
 
 +----------------------------+-----------------------------------------------------------+
 | Option                     | Description                                               |
@@ -1236,6 +1238,8 @@ This results in an uneven distribution in these variables over the range (cube p
 
 * The values will vary from -envelope to +envelope.
 * `Xp0`, `Yp0`, and `Zp0` are ignored from the reference distribution.
+
+.. tabularcolumns:: |p{5cm}|p{9cm}|
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
@@ -1544,7 +1548,7 @@ Examples: ::
 The following are also accepted as aliases to current physics lists. These are typically previously
 used names.
 
-.. tabularcolumns:: |p{5cm}|p{5cm}|
+.. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +---------------------------+--------------------------+
 | **Physics List**          | **Alias To**             |
@@ -1585,6 +1589,9 @@ em_extra Physics Notes
 The em_extra model is an interface to `G4EmExtraPhysics` that collects a variety of extra electromagnetic models
 together. Not all of these are activated by default. BDSIM provides options to turn these components on and off.
 See :ref:`physics-process-options` for more details on the specific options.
+
+
+.. tabularcolumns:: |p{4cm}|p{6cm}|p{2cm}|
 
 +------------------------+-----------------------------+--------------+
 | **Option**             | **Minimum Geant4 Version**  | **Default**  |
@@ -1741,6 +1748,8 @@ for crystal channelling physics. These all begin with "complete".
 
 These cannot be used in combination with any other physics processes.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
 +---------------------------+---------------------------------------------------------------------------+
 | **Physics List**          | **Description**                                                           |
 +===========================+===========================================================================+
@@ -1789,6 +1798,8 @@ only one proton definition.
 1) Define a bias object with parameters in following table.
 2) Use :code:`bias`, :code:`biasMaterial` or :code:`biasVacuum` in an element definition naming the bias object.
 
+.. tabularcolumns:: |p{3cm}|p{10cm}|
+   
 +------------------+------------------------------------------------------+
 | **Parameter**    | **Description**                                      |
 +==================+======================================================+
@@ -1874,6 +1885,8 @@ volumes as if you were conducting a standard simulation without importance sampl
 importance world file should contain the volumes that will be the importance cells only. A
 third text file must also be provided which contains a map of the physical volumes that form
 the importance cells and their corresponding importance volumes.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +------------------------------+-------------------------------------------------------------+
 | **Parameter**                | **Description**                                             |
@@ -2898,7 +2911,7 @@ Recommendations:
 
 The options listed below are list roughly in terms of the simulation hierarchy.
 
-.. tabularcolumns:: |p{0.2\textwidth}|p{0.15\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{4cm}|p{2cm}|p{8cm}|
 
 +----------------------------------+----------+-------------------------------------------------------------------+
 | **Option**                       | **Type** | **Description**                                                   |
@@ -3058,6 +3071,7 @@ An example can be found in :code:`bdsim/examples/features/io/1_rootevent/sc_scor
 	  length in the way a typical Geant4 scoring map would. This only histograms energy
 	  deposition data.
 
+.. tabularcolumns:: |p{3cm}|p{2cm}|p{7cm}|
 
 +----------------+-----------------+-------------------------------------------------------+
 | **Option**     | **Default**     | **Function**                                          |
@@ -3362,9 +3376,11 @@ The `samplerplacement` object accepts a number of parameters similar to other pa
 These include a subset of the aperture parameters (see :ref:`aperture-parameters`) and the position
 information from the `placements`. The full list of accepted parameters is given below.
 
+.. tabularcolumns:: |p{4cm}|p{10cm}|
+
 +-------------------------+--------------------------------------------------------------------+
 | **Parameter**           |  **Description**                                                   |
-+-------------------------+--------------------------------------------------------------------+
++=========================+====================================================================+
 | x                       | Offset in global x                                                 |
 +-------------------------+--------------------------------------------------------------------+
 | y                       | Offset in global y                                                 |
@@ -3509,7 +3525,7 @@ For :code:`scorermesh`, the syntax is: ::
 Where :code:`name` is the name of the mesh desired and :code:`parameter` and :code:`value` are
 example parameter and value pairs. The following parameters may be specified.
 
-.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
+.. tabularcolumns:: |p{4cm}|p{2cm}|p{7cm}|
 
 +-------------------------+---------------+------------------------------------------------+
 | **Parameter**           | **Required**  | **Description**                                |
@@ -3606,7 +3622,8 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 
   name: scorer, parameter=value, parameter2=value;
 
-.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
+
+.. tabularcolumns:: |p{4cm}|p{2cm}|p{7cm}|
 		    
 +-------------------------+---------------+------------------------------------------------+
 | **Parameter**           | **Required**  | **Description**                                |
@@ -3665,7 +3682,8 @@ The following are accepted scorer types.
 * As the histogram is per-event, the quantity stored is per-event also. So, if there
   is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
 
-.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
+
+.. tabularcolumns:: |p{4cm}|p{2cm}|p{7cm}|
 
 +---------------------------+-----------------+--------------------------------------------------+
 | **Scorer Type**           | **Units**       | **Description**                                  |
