@@ -100,7 +100,7 @@ quSextNormal: query, nx=np, xmin=-30*cm, xmax=30*cm,
 		     overwriteExistingFiles=1;
 
 !sextupole yoke field - scaled
-quSextNormal: query, nx=np, xmin=-30*cm, xmax=30*cm,
+quSextScaled: query, nx=np, xmin=-30*cm, xmax=30*cm,
 	      	     ny=np, ymin=-30*cm, ymax=30*cm,
 		     queryMagneticField=1,
 		     outfileMagnetic="out_sfo_sext_scaled.dat",
@@ -109,7 +109,7 @@ quSextNormal: query, nx=np, xmin=-30*cm, xmax=30*cm,
 
 
 ! linear through a dipole - no scaling
-quQuadNormal1D: query, nx=3*np, xmin=-30*cm, xmax=30*cm,
+quBendNormal1D: query, nx=3*np, xmin=-30*cm, xmax=30*cm,
 		       queryMagneticField=1,
 		       outfileMagnetic="out_xscan_bend.dat",
 		       referenceElement="d1",
