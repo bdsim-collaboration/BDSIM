@@ -89,7 +89,8 @@ void BDSFieldQuery::QueryField(const BDSFieldQueryInfo* query)
     
   // warn the user if a fieldObject is specified. In this context (bdsim) this has no effect
   // derived class may change this
-  CheckIfFieldObjectSpecified(query);
+  if (query->checkParameters)
+    {CheckIfFieldObjectSpecified(query);}
   
   if (query->SpecificPoints())
     {

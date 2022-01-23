@@ -67,6 +67,8 @@ void Query::clear()
   axisZ = 0;
   angle = 0;
   axisAngle = false;
+  
+  checkParameters = true;
 }
 
 void Query::PublishMembers()
@@ -110,6 +112,8 @@ void Query::PublishMembers()
   publish("axisZ",         &Query::axisZ);
   publish("angle",         &Query::angle);
   publish("axisAngle",     &Query::axisAngle);
+  
+  publish("checkParameters", &Query::checkParameters);
 }
 
 void Query::print()const

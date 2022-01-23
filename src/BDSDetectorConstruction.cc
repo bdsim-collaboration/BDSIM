@@ -1366,7 +1366,8 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
 						    points,
 						    columnNames,
 						    G4bool(def.overwriteExistingFiles),
-						    G4String(def.fieldObject)));
+						    G4String(def.fieldObject),
+						    def.checkParameters));
 	}
       else
 	{
@@ -1387,7 +1388,8 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
 						    globalTransform,
 						    G4bool(def.overwriteExistingFiles),
 						    G4String(def.fieldObject),
-                G4bool(def.printTransform)));
+						    G4bool(def.printTransform),
+						    def.checkParameters));
 	}
     }
   return result;
