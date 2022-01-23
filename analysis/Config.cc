@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "SpectraParticles.hh"
 
 #include <algorithm>
+#include <cctype>  // for isspace
 #include <fstream>
 #include <iostream>
 #include <iterator>
