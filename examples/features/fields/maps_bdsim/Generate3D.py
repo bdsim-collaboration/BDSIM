@@ -35,17 +35,15 @@ def main():
     data = _np.array(data)
 
     # construct a BDSIM format field object and write it out
-    f = pybdsim.Field.Field3D(data)
+    f = pybdsim.Field.Field3D(data, flip=True)
     f.Write('3dexample.dat')
 
     # compress the result
     _check_call(['gzip', "3dexample.dat"])
 
-
     # construct flipped ordered data for testing purposes
-    ff = pybdsim.Field.Field3D(data,flip=False) # flipped data looping order
-    ff.header['loopOrder'] = "zyx" # manually add key to header for test
-    ff.Write('3dexample_zyx.dat')
+    ff = pybdsim.Field.Field3D(data, flip=True)
+    ff.Write('3dexample_zyx.dat', writeLoopOrderReversed=True)
 
     # compress the result
     _check_call(['gzip', "3dexample_zyx.dat"])
