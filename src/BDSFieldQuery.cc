@@ -86,12 +86,16 @@ void BDSFieldQuery::QueryField(const BDSFieldQueryInfo* query)
   
   if (!query)
     {return;} // protection - now we assume this pointer is always valid in the rest of this class
+    
+  // warn the user if a fieldObject is specified. In this context (bdsim) this has no effect
+  // derived class may change this
+  CheckIfFieldObjectSpecified(query);
   
   if (query->SpecificPoints())
-  {
-    QuerySpecificPoints(query);
-    return;
-  }
+    {
+      QuerySpecificPoints(query);
+      return;
+    }
   
   G4cout << "FieldQuery> \"" << query->name << "\" with N (x,y,z,t) points: ("
          << query->xInfo.n << ", " << query->yInfo.n << ", " << query->zInfo.n << ", " << query->tInfo.n
@@ -169,6 +173,16 @@ void BDSFieldQuery::QueryField(const BDSFieldQueryInfo* query)
   
   CloseFiles();
   G4cout << "FieldQuery> Complete" << G4endl;
+}
+
+void BDSFieldQuery::CheckIfFieldObjectSpecified(const BDSFieldQueryInfo* query) const
+{
+  if (!(query->fieldObject.empty()))
+    {
+      G4String msg = "\"fieldObject\" variable is specified in query definition \"" + query->name;
+      msg += "\" - this has no effect\nInstead use \"referenceElement\"";
+      BDS::Warning(msg);
+    }
 }
 
 void BDSFieldQuery::QuerySpecificPoints(const BDSFieldQueryInfo* query)

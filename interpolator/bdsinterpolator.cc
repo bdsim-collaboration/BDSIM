@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicsUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh"      // geant4 types / globals
 #include "G4Field.hh"
@@ -85,6 +86,13 @@ int main(int argc, char** argv)
     for (const auto& query: queries)
       {
 	G4cout << "Query: \"" << query->name << "\"" << G4endl;
+        if (query->fieldObject.empty())
+	  {
+	    G4String msg = "\"fieldObject\" variable is empty in query definition \"" + query->name;
+	    msg += "\" - it must have a value\nContinuing to next query...";
+	    BDS::Warning(msg);
+	    continue;
+	  }
 	BDSFieldInfo* recipe = BDSFieldFactory::Instance()->GetDefinition(query->fieldObject);
 	recipe->SetProvideGlobalTransform(false);
 	BDSFieldObjects* completeField = BDSFieldFactory::Instance()->CreateField(*recipe);
