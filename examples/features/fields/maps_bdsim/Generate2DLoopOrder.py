@@ -18,18 +18,21 @@ def main():
     # convert to numpy array
     data = _np.array(data)
 
-    # loop order is actually z, then x - ie z varies first, so tzyx, so flip=True
-    f = pybdsim.Field.Field2D(data, flip=True, secondColumn='Z')
-    # we do this so the order is always written out in the default bdsim way
+    # we looped in x first as per bdsim, so we need only tell it that
+    # the 2nd column is Z and not Y
+    f = pybdsim.Field.Field2D(data, secondColumn='Z')
     f.Write('2dexample_loopOrder_for_xz.dat')
-    # but we can purposively write it out the other loop way for testing
+    # but we can purposively write it out the other loop way for testing purposes
     # note the header keys are still the same apart from loopOrder> tzyx
     f.Write('2dexample_loopOrder_for_xz_tzyx.dat', writeLoopOrderReversed=True)
 
 
     # LOOP METHOD 2
     data2 = []
-    # loop over other way
+    # loop over other way - outer dimension first
+    # this isn't the bdsim way, but we may get a field map from some other source that's
+    # structured like this - so even if you're not creating it in a loop, it may have this
+    # structure already.
     for z in [3,4]:
         v = []
         for x in [-1,0,1]:
@@ -39,9 +42,10 @@ def main():
     # convert to numpy array
     data2 = _np.array(data2)
 
-    # loop order is actually x, then z - ie x varies first, so xyzt, so flip=False
-    g = pybdsim.Field.Field2D(data2, flip=False, secondColumn='Z')
-    # this will write out a file identical to the first one
+    # array structure is z is outer dimension, then x - we need it the other way
+    # around, so we use flip=True when constructing the field instance
+    g = pybdsim.Field.Field2D(data2, flip=True, secondColumn='Z')
+    # this will write out a file identical to the very first one
     g.Write('2dexample_loopOrder_for_zx.dat')
     # this will write out a file identical to the second one
     g.Write('2dexample_loopOrder_for_zx_tzyx.dat', writeLoopOrderReversed=True)
