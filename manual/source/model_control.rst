@@ -2911,7 +2911,7 @@ Recommendations:
 
 The options listed below are list roughly in terms of the simulation hierarchy.
 
-.. tabularcolumns:: |p{4cm}|p{2cm}|p{8cm}|
+.. tabularcolumns:: |p{4.5cm}|p{2cm}|p{7.5cm}|
 
 +----------------------------------+----------+-------------------------------------------------------------------+
 | **Option**                       | **Type** | **Description**                                                   |
