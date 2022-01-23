@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -107,6 +107,7 @@ void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
   slhc* samplerLink = HCE ? dynamic_cast<slhc*>(HCE->GetHC(collIDSamplerLink)) : nullptr;
   typedef BDSHitsCollectionSampler shc;
   shc* sampHC = HCE ? dynamic_cast<shc*>(HCE->GetHC(collIDSampler)) : nullptr;
+  std::vector<shc*> allSamplerHits = {sampHC};
   
   G4VUserEventInformation* evtInfoG4 = evt->GetUserInformation();
   BDSLinkEventInfo* evtInfo = dynamic_cast<BDSLinkEventInfo*>(evtInfoG4);
@@ -127,7 +128,7 @@ void BDSLinkEventAction::EndOfEventAction(const G4Event* evt)
 
   output->FillEvent(nullptr,
 		    evt->GetPrimaryVertex(),
-		    sampHC,
+                    allSamplerHits,
 		    nullptr,
                     samplerLink,
                     nullptr,

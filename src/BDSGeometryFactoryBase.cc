@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -21,10 +21,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryBase.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4AssemblyVolume.hh"
 #include "G4Colour.hh"
 #include "G4LogicalVolume.hh"
+#include "G4RotationMatrix.hh"
 #include "G4String.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
@@ -80,7 +83,7 @@ std::set<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::set<G
           const G4String& name = lv->GetName();
           for (const auto& it : attMap)
             {// iterate over all mappings to find first one that matches substring
-              if (name.contains(it.first))
+              if (BDS::StrContains(name, it.first))
                 {
                   lv->SetVisAttributes(it.second);
                   break;

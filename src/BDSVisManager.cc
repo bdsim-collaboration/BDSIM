@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -41,20 +41,31 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Version.hh"
 
 #include "BDSDebug.hh"
+#include "BDSDetectorConstruction.hh"
 #include "BDSMessenger.hh"
 #include "BDSUtilities.hh"
+#include "BDSVisCommandSceneAddQueryMagneticField.hh"
 
 BDSVisManager::BDSVisManager(const G4String& visMacroFileNameIn,
-			     const G4String& geant4MacroFileNameIn):
+			     const G4String& geant4MacroFileNameIn,
+			     const BDSDetectorConstruction* realWorldIn):
   visMacroFileName(visMacroFileNameIn),
   geant4MacroFileName(geant4MacroFileNameIn)
-{;}
+{
+  visManager = new G4VisExecutive();
+  bdsMessenger = new BDSMessenger();
+  if (realWorldIn)
+    {visManager->RegisterMessenger(new BDSVisCommandSceneAddQueryMagneticField(realWorldIn));}
+}
+
+BDSVisManager::~BDSVisManager()
+{
+  delete visManager;
+  delete bdsMessenger;
+}
 
 void BDSVisManager::StartSession(int argc, char** argv)
 {
-  /// Create BDS UI messenger
-  BDSMessenger* bdsMessenger = new BDSMessenger();
-
 #ifdef G4UI_USE_TCSH
   G4UIsession* session = new G4UIterminal(new G4UItcsh);
 #else
@@ -66,7 +77,6 @@ void BDSVisManager::StartSession(int argc, char** argv)
   G4cout<< __METHOD_NAME__ << "Initializing Visualisation Manager"<<G4endl;
 #endif
   // initialize visualisation
-  G4VisManager* visManager = new G4VisExecutive;
   visManager->Initialize();
   
   // setup trajectory colouring
@@ -107,20 +117,22 @@ void BDSVisManager::StartSession(int argc, char** argv)
     }
   else
     {// user specified visualisation macro - check if it exists
-      if (BDS::FileExists(visMacPath) == false)
+      if (!BDS::FileExists(visMacPath))
         {
-          std::cout << __METHOD_NAME__ << "ERROR: visualisation file "
-                    << visMacPath << " not present!" << G4endl;
+          std::cout << __METHOD_NAME__ << "ERROR: visualisation file " << visMacPath << " not present!" << G4endl;
           return;
         }
+      G4cout << __METHOD_NAME__ << "Using visualisation macro: " << visMacName << G4endl;
     }
   // execute the macro
   UIManager->ApplyCommand("/control/execute " + visMacPath);
 
   // apply optional macro if file name not empty
   if (!geant4MacroFileName.empty())
-    {UIManager->ApplyCommand("/control/execute " + geant4MacroFileName);}
-  
+    {
+      G4cout << __METHOD_NAME__ << "Applying geant4MacroFileName: " << geant4MacroFileName << G4endl;
+      UIManager->ApplyCommand("/control/execute " + geant4MacroFileName);
+    }
   
 #if G4VERSION_NUMBER < 1030
   if (session2->IsGUI())
@@ -136,5 +148,4 @@ void BDSVisManager::StartSession(int argc, char** argv)
   delete session2;
 #endif
   delete session;
-  delete bdsMessenger;
 }

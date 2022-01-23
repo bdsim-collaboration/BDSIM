@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -39,7 +39,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMaterials.hh"
-#include "BDSUtilities.hh"
 #include "BDSWarning.hh"
 
 #include "globals.hh"         // geant4 globals / types
@@ -136,20 +135,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 
       if (loadedLength > outerLength)
 	{
-          if (beamPipe->InputFaceNormal() != -beamPipe->OutputFaceNormal())
-        {
-            BDS::Warning(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
-                                          + "m longer than magnet of length " + std::to_string(outerLength/CLHEP::m)
-                                          + "m. This may be induced by an external geometry with pole face angles. "
-                                          + "You should use the option checkOverlaps=1.", false);
-        }
-          else
-        {
-            BDS::Warning(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
-                                          + "m longer than magnet of length " + std::to_string(outerLength/CLHEP::m)
-                                          + "m. ");
-        }
-
+	  BDS::Warning(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
+			     + "m\nappears to be too long for magnet of length " + std::to_string(outerLength/CLHEP::m) + "m. ");
 	}
       return outer;
     }
@@ -262,9 +249,19 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
   BDSExtent bpExtent = beampipe->GetExtent();
   BDSExtent magInner = geom->GetInnerExtent();
   
-  if (BDS::IsFinite(info->containerRadius))
-    {//containerRadius option imposes the BDSGeometryExternal extent
-      geom->SetExtent(BDSExtent(info->containerRadius*CLHEP::m,info->containerRadius*CLHEP::m, geom->GetExtent().ZPos()));
+  if (magInner.TransverselyLessThan(bpExtent))
+    {
+      std::stringstream ss, ss2, ss3;
+      ss << info->geometryTypeAndPath;
+      ss2 << magInner;
+      ss3 << bpExtent;
+      std::string sss = ss.str();
+      sss += " will not fit around beam pipe\nin element \"" + name + "\" and could potentially overlap with it\n";
+      sss += "Determined extents to be:\n";
+      sss += "External geometry inner: " + ss2.str() + "\n";
+      sss += "Beam pipe outer        : " + ss3.str() + "\n";
+      sss += "Check for overlaps with /geometry/test/run";
+      BDS::Warning(__METHOD_NAME__, sss);
     }
   
   //Test unnecessary now as the method to include the beampipe in the outer logical volume has been modified to work even if (magInner.TransverselyLessThan(bpExtent)). ( see BDSMagnet::PlaceComponents())

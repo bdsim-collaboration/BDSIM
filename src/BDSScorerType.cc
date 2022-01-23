@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -19,8 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSScorerType.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
 
 #include <map>
 #include <string>
@@ -64,8 +66,8 @@ BDSScorerType BDS::DetermineScorerType(G4String scorerType)
   types["cellfluxscaledperparticle"]   = BDSScorerType::cellfluxscaledperparticle;
   types["cellfluxscaledperparticle3d"] = BDSScorerType::cellfluxscaledperparticle3d;
   types["cellflux4d"] = BDSScorerType::cellflux4d;
-  
-  scorerType.toLower();
+
+  scorerType = BDS::LowerCase(scorerType);
   
   auto result = types.find(scorerType);
   if (result == types.end())

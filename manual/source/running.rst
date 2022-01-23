@@ -31,6 +31,9 @@ be used literally.  The following command may be used to display all options::
 +---------------------------------------+------------------------------------------------+
 |  -\-help                              | Lists all executable commands                  |
 +---------------------------------------+------------------------------------------------+
+|  -\-reference or -\-citation          | Print out the citation for the BDSIM paper,    |
+|                                       | including the bibtex syntax.                   |
++---------------------------------------+------------------------------------------------+
 |  -\-file=<file>                       | Specifies the input gmad file                  |
 +---------------------------------------+------------------------------------------------+
 |  -\-batch                             | Batch mode - no graphics                       |
@@ -60,7 +63,7 @@ be used literally.  The following command may be used to display all options::
 |                                       | visualisation has started. Only works in       |
 |                                       | interactive visualisation.                     |
 +---------------------------------------+------------------------------------------------+
-|  -\-genat4PhysicsMacroFileName=<file> | Optional Geant4 macro file to run after        |
+|  -\-geant4PhysicsMacroFileName=<file> | Optional Geant4 macro file to run after        |
 |                                       | physics lists have been constructed but        |
 |                                       | before a run.                                  |
 +---------------------------------------+------------------------------------------------+

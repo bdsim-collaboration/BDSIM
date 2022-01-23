@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -41,7 +41,7 @@ namespace BDS
   /// to order the map of <pdg ID to integral> so we can get the top N histograms.
   template<typename A, typename B>
   std::pair<B, A> flip_pair(const std::pair<A, B> &p)
-  {return std::pair<B, A>(p.second, p.first);};
+  {return std::pair<B, A>(p.second, p.first);}
 
   template<typename A, typename B>
   std::multimap<B, A> flip_map(const std::map<A, B> &src)
@@ -49,7 +49,7 @@ namespace BDS
     std::multimap<B, A> dst;
     std::transform(src.begin(), src.end(), std::inserter(dst, dst.begin()), flip_pair<A, B>);
     return dst;
-  };
+  }
 }
 
 /**

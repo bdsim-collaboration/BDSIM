@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -128,6 +128,7 @@ wirescanner { return WIRESCANNER; }
 undulator { return UNDULATOR; }
 usercomponent { return USERCOMPONENT; }
 dump { return DUMP; }
+ct { return CT; }
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }

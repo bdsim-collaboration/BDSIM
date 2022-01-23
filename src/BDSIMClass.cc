@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -88,7 +88,8 @@ BDSIM::BDSIM():
   bdsBunch(nullptr),
   runManager(nullptr),
   userComponentFactory(nullptr),
-  userPhysicsList(nullptr)
+  userPhysicsList(nullptr),
+  realWorld(nullptr)
 {;}
 
 BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
@@ -103,7 +104,8 @@ BDSIM::BDSIM(int argc, char** argv, bool usualPrintOutIn):
   bdsBunch(nullptr),
   runManager(nullptr),
   userComponentFactory(nullptr),
-  userPhysicsList(nullptr)
+  userPhysicsList(nullptr),
+  realWorld(nullptr)
 {
   initialisationResult = Initialise();
 }
@@ -124,17 +126,8 @@ int BDSIM::Initialise()
   if (usualPrintOut)
     {execOptions->Print();}
   ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
-  
-  /// Print header & program information
-  G4cout<<"BDSIM : version @BDSIM_VERSION@"<<G4endl;
-  G4cout<<"        (C) 2001-@CURRENT_YEAR@ Royal Holloway University London"  << G4endl;
-  G4cout<<G4endl;
-  G4cout<<"        Reference: Computer Physics Communications, 107200 (2020)" << G4endl;
-  G4cout<<"                   https://doi.org/10.1016/j.cpc.2020.107200"      << G4endl;
-  G4cout<<"                   https://arxiv.org/abs/1808.10745"               << G4endl;
-  G4cout<<"        Website:   http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
-  G4cout<<G4endl;
-  
+
+  execOptions->PrintCopyright();  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "DEBUG mode is on." << G4endl;
 #endif
@@ -179,7 +172,7 @@ int BDSIM::Initialise()
   runManager = new BDSRunManager();
 
   /// Register the geometry and parallel world construction methods with run manager.
-  BDSDetectorConstruction* realWorld = new BDSDetectorConstruction(userComponentFactory);
+  realWorld = new BDSDetectorConstruction(userComponentFactory);
   
   /// Here the geometry isn't actually constructed - this is called by the runManager->Initialize()
   auto parallelWorldsRequiringPhysics = BDS::ConstructAndRegisterParallelWorlds(realWorld,
@@ -430,7 +423,8 @@ void BDSIM::BeamOn(int nGenerate)
       if (!BDSGlobalConstants::Instance()->Batch())   // Interactive mode
 	{
 	  BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
-						   BDSGlobalConstants::Instance()->Geant4MacroFileName());
+						   BDSGlobalConstants::Instance()->Geant4MacroFileName(),
+						   realWorld);
 	  visManager.StartSession(argcCache, argvCache);
 	}
       else
