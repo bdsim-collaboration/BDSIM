@@ -115,6 +115,21 @@ Bug Fixes
 **Analysis**
 
 * rebdsim will now explicitly exit if a duplicate histogram name is detected whereas it didn't before.
+* Fix warning when using sampler data in analysis in Python: ::
+
+    input_line_154:2:36: warning: instantiation of variable 'BDSOutputROOTEventSampler<float>::particleTable' required here, but no
+      definition is available [-Wundefined-var-template]
+    BDSOutputROOTEventSampler<float>::particleTable;
+                                   ^
+    .../bdsim-develop-install/bin/../include/bdsim/BDSOutputROOTEventSampler.hh:135:37: note: forward declaration of template entity is here
+    static BDSOutputROOTParticleData* particleTable;
+                                    ^
+    input_line_154:2:36: note: add an explicit instantiation declaration to suppress this warning if
+    'BDSOutputROOTEventSampler<float>::particleTable' is explicitly instantiated in another
+    translation unit
+    BDSOutputROOTEventSampler<float>::particleTable;
+
+
 
 **Fields**
 
