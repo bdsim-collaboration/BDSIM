@@ -2,6 +2,10 @@
 Welcome to BDSIM's documentation!
 #################################
 
+.. figure:: figures/homepage_image.png
+	    :width: 80%
+	    :align: center
+
 .. toctree::
    :maxdepth: 2
    :caption: User Guide
