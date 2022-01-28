@@ -61,9 +61,15 @@ public:
   /// Advance to the correct event number in the file for recreation.
   virtual void RecreateAdvanceToEvent(G4int eventOffset);
 
+  struct DisplacedVertex
+  {
+    G4ThreeVector xyz;
+    G4PrimaryParticle* vertex;
+  };
+  
 protected:
   /// Clear the hepmcEvent object, reallocate and read a single event and fill that member.
-  G4PrimaryVertex* ReadSingleEvent(G4long index);
+  void ReadSingleEvent(G4long index);
 
   /// Conversion from HepMC::GenEvent to G4Event.
   //void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);
@@ -88,7 +94,9 @@ private:
   mutable G4VSolid*         worldSolid;
   
   /// Used for transiently loading information.
-  std::vector<G4PrimaryParticle*> particles;
+  std::vector<DisplacedVertex> vertices;
+  
+  std::vector<G4PrimaryVertex*> currentVertices;
 };
 
 #endif

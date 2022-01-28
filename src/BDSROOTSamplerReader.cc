@@ -44,10 +44,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 
 BDSROOTSamplerReader::BDSROOTSamplerReader(const G4String& distrType,
-				 const G4String& fileNameIn,
-				 BDSBunchEventGenerator* bunchIn,
+					   const G4String& fileNameIn,
+					   BDSBunchEventGenerator* bunchIn,
                                            G4bool removeUnstableWithoutDecayIn,
-				 G4bool warnAboutSkippedParticlesIn):
+					   G4bool warnAboutSkippedParticlesIn):
   currentFileEventIndex(0),
   nEventsInFile(0),
   reader(nullptr),
@@ -76,7 +76,7 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
     {throw BDSException(__METHOD_NAME__, "no file reader available");}
   
   G4int nParticles = 0;
-  G4PrimaryVertex* vertex = nullptr;
+  currentVertices.clear();
   while (nParticles < 1)
     {
       if (currentFileEventIndex > nEventsInFile)
@@ -84,11 +84,13 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
 	  G4cout << __METHOD_NAME__ << "End of file reached. Return to beginning of file for next event." << G4endl;
 	  currentFileEventIndex = 0;
 	}
-      vertex = ReadSingleEvent(currentFileEventIndex);
-      nParticles = vertex->GetNumberOfParticle();
+      ReadSingleEvent(currentFileEventIndex);
+      nParticles = (G4int)currentVertices.size();
       currentFileEventIndex++;
     }
-  anEvent->AddPrimaryVertex(vertex);
+  for (auto* v : currentVertices)
+    {anEvent->AddPrimaryVertex(v);}
+  currentVertices.clear();
 }
 
 void BDSROOTSamplerReader::RecreateAdvanceToEvent(G4int eventOffset)
@@ -104,7 +106,7 @@ void BDSROOTSamplerReader::RecreateAdvanceToEvent(G4int eventOffset)
 
 void BDSROOTSamplerReader::ReadPrimaryParticlesFloat(G4long index)
 {
-  particles.clear();
+  vertices.clear();
   const auto sampler = reader->SamplerDataFloat(index);
   
   int n = sampler->n;
@@ -116,14 +118,17 @@ void BDSROOTSamplerReader::ReadPrimaryParticlesFloat(G4long index)
       G4double zp = (G4double)sampler->zp[i];
       G4double p  = (G4double)sampler->p[i];
       G4ThreeVector momentum = G4ThreeVector(xp,yp,zp) * p * CLHEP::GeV;
+      G4double x = (G4double)sampler->x[i] * CLHEP::m;
+      G4double y = (G4double)sampler->y[i] * CLHEP::m;
+      G4ThreeVector localPosition(x,y,0);
       auto g4prim = new G4PrimaryParticle(pdgID, momentum.x(), momentum.y(), momentum.z());
-      particles.push_back(g4prim);
+      vertices.emplace_back(DisplacedVertex{localPosition, g4prim});
     }
 }
 
 void BDSROOTSamplerReader::ReadPrimaryParticlesDouble(G4long index)
 {
-  particles.clear();
+  vertices.clear();
   const auto sampler = reader->SamplerDataDouble(index);
   
   int n = sampler->n;
@@ -135,38 +140,31 @@ void BDSROOTSamplerReader::ReadPrimaryParticlesDouble(G4long index)
       G4double zp = (G4double)sampler->zp[i];
       G4double p  = (G4double)sampler->p[i];
       G4ThreeVector momentum = G4ThreeVector(xp,yp,zp) * p;
+      G4double x = (G4double)sampler->x[i] * CLHEP::m;
+      G4double y = (G4double)sampler->y[i] * CLHEP::m;
+      G4ThreeVector localPosition(x,y,0);
       auto g4prim = new G4PrimaryParticle(pdgID, momentum.x(), momentum.y(), momentum.z());
-      particles.push_back(g4prim);
+      vertices.emplace_back(DisplacedVertex{localPosition, g4prim});
     }
 }
 
-G4PrimaryVertex* BDSROOTSamplerReader::ReadSingleEvent(G4long index)
+void BDSROOTSamplerReader::ReadSingleEvent(G4long index)
 {
   if (reader->DoublePrecision())
     {ReadPrimaryParticlesDouble(index);}
   else
     {ReadPrimaryParticlesFloat(index);}
   
-  BDSParticleCoordsFull centralCoords = bunch->GetNextParticleLocal();
-  // do the transform for the reference particle (if any transform) and use that
-  BDSParticleCoordsFullGlobal centralCoordsGlobal = bunch->ApplyTransform(centralCoords);
-  G4PrimaryVertex* g4vtx = new G4PrimaryVertex(centralCoordsGlobal.global.x,
-					       centralCoordsGlobal.global.y,
-					       centralCoordsGlobal.global.z,
-					       centralCoordsGlobal.global.T);
-  
   double overallWeight = 1.0;
-  
-  std::vector<BDSPrimaryVertexInformation> vertexInfos;
   G4int nParticlesSkipped = 0;
-  
-  for (const auto& particle : particles)
+  for (const auto& xyzVertex : vertices)
     {
+      const auto vertex = xyzVertex.vertex;
       // if the particle definition isn't found from the pdgcode in the construction
       // of G4PrimaryParticle, it means the mass, charge, etc will be wrong - don't
       // stack this particle into the vertex.
       // technically shouldn't happen as bdsim produced this output... but safety first
-      const G4ParticleDefinition* pd = particle->GetParticleDefinition();
+      const G4ParticleDefinition* pd = vertex->GetParticleDefinition();
       G4bool deleteIt = !pd;
       if (pd && removeUnstableWithoutDecay)
         {deleteIt = !(pd->GetPDGStable()) && !pd->GetDecayTable();}
@@ -180,9 +178,12 @@ G4PrimaryVertex* BDSROOTSamplerReader::ReadSingleEvent(G4long index)
           continue;
         }
   
-      G4ThreeVector unitMomentum = particle->GetMomentumDirection();
+      G4ThreeVector unitMomentum = vertex->GetMomentumDirection();
       unitMomentum.transform(referenceBeamMomentumOffset);
       G4double rp = unitMomentum.perp();
+  
+      BDSParticleCoordsFull centralCoords = bunch->GetNextParticleLocal();
+      centralCoords.AddOffset(xyzVertex.xyz); // add on the local offset from the sampler
       
       BDSParticleCoordsFull local(centralCoords.x,
 				  centralCoords.y,
@@ -192,55 +193,62 @@ G4PrimaryVertex* BDSROOTSamplerReader::ReadSingleEvent(G4long index)
 				  unitMomentum.z(),
 				  centralCoords.T,
 				  centralCoords.s,
-				  particle->GetTotalEnergy(),
+                                  vertex->GetTotalEnergy(),
 				  overallWeight);
 
-      if (!bunch->AcceptParticle(local, rp, particle->GetKineticEnergy(), particle->GetPDGcode()))
+      if (!bunch->AcceptParticle(local, rp, vertex->GetKineticEnergy(), vertex->GetPDGcode()))
 	{
 	  nParticlesSkipped++;
 	  continue;
 	}
+  
+      BDSParticleCoordsFullGlobal fullCoordsGlobal = bunch->ApplyTransform(local);
+  
+      auto g4vtx = new G4PrimaryVertex(fullCoordsGlobal.global.x,
+                                       fullCoordsGlobal.global.y,
+                                       fullCoordsGlobal.global.z,
+                                       fullCoordsGlobal.global.T);
       
-      BDSParticleCoordsFullGlobal fullCoords = bunch->ApplyTransform(local);
       // ensure it's in the world - not done in primary generator action for event generators
-      if (!VertexInsideWorld(fullCoords.global.Position()))
+      if (!VertexInsideWorld(fullCoordsGlobal.global.Position()))
 	{
+	  delete g4vtx;
 	  nParticlesSkipped++;
 	  continue;
 	}  
       
       G4double brho     = 0;
-      G4double charge   = particle->GetCharge();
-      G4double momentum = particle->GetTotalMomentum();
+      G4double charge   = vertex->GetCharge();
+      G4double momentum = vertex->GetTotalMomentum();
       if (BDS::IsFinite(charge)) // else leave as 0
 	{
 	  brho = momentum / CLHEP::GeV / BDS::cOverGeV / charge;
 	  brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
 	}
-      BDSPrimaryVertexInformation vertexInfo(fullCoords,
-					     particle->GetTotalMomentum(),
-					     particle->GetCharge(),
-					     brho,
-					     particle->GetMass(),
-					     particle->GetPDGcode());
-      vertexInfos.emplace_back(vertexInfo);
+      auto vertexInfo = new BDSPrimaryVertexInformation(fullCoordsGlobal,
+                                             vertex->GetTotalMomentum(),
+                                             vertex->GetCharge(),
+                                             brho,
+                                             vertex->GetMass(),
+                                             vertex->GetPDGcode());
 
       // update momentum in case of a beam line transform
-      auto prim = new G4PrimaryParticle(*particle);
-      prim->SetMomentumDirection(G4ThreeVector(fullCoords.global.xp,
-					       fullCoords.global.yp,
-					       fullCoords.global.zp));
+      auto prim = new G4PrimaryParticle(*vertex);
+      prim->SetMomentumDirection(G4ThreeVector(fullCoordsGlobal.global.xp,
+                                               fullCoordsGlobal.global.yp,
+                                               fullCoordsGlobal.global.zp));
       g4vtx->SetPrimary(prim);
+      g4vtx->SetUserInformation(vertexInfo);
+      currentVertices.push_back(g4vtx);
     }
   
   if (nParticlesSkipped > 0 && warnAboutSkippedParticles)
     {G4cout << __METHOD_NAME__ << nParticlesSkipped << " particles skipped" << G4endl;}
-  g4vtx->SetUserInformation(new BDSPrimaryVertexInformationV(vertexInfos));
   
   // clear initially loaded ones
-  for (auto p : particles)
-    {delete p;}
-  return g4vtx;
+  for (auto& v : vertices)
+    {delete v.vertex;}
+  vertices.clear();
 }
 
 G4bool BDSROOTSamplerReader::VertexInsideWorld(const G4ThreeVector& pos) const
