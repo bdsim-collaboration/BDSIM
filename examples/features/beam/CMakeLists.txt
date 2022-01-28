@@ -1,4 +1,5 @@
 add_subdirectory(bad-params)
+add_subdirectory(bdsimsampler)
 add_subdirectory(eventgeneratorfile)
 add_subdirectory(userfile)
 
