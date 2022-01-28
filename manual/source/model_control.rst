@@ -68,16 +68,20 @@ Examples are included in :code:`bdsim/examples/features/beam/random-engine*`.
 Beam Parameters
 ---------------
 
-BDSIM starts each event in one of two ways.
+BDSIM starts each event in one of the following ways:
 
-1) Particles coordinates for one particle
+#) Particles coordinates for one particle
    are generated from a chosen beam distribution, which is specified in the input GMAD file.
    In most cases, the particle coordinates are randomly generated according
    to a distribution.
 
-2) A primary vertex is loaded from an event generator file. This currently requires linking to
+#) A primary vertex is loaded from an event generator file. This currently requires linking to
    HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
    `eventgeneratorfile`_).
+
+#) Hits are loaded from a sampler in BDSIM output file and launched at any location in the
+   simulation - not necessarily in the same position or same model as they were generated in.
+   See :ref:`bunch-bdsimsampler`.
 
 To specify the input particle distribution, the :code:`beam` command is
 used. This also specifies the particle species and **reference total energy**, which is the
@@ -326,6 +330,7 @@ The following beam distributions are available in BDSIM
 - `userfile`_
 - `ptc`_
 - `eventgeneratorfile`_
+- `bdsimsampler`_
 - `sphere`_
 - `box`_
 
@@ -1206,6 +1211,59 @@ For only pions: ::
 	eventGeneratorParticles="111 211 -211";
   
 
+.. _bunch-bdsimsampler:
+	
+bdsimsampler
+************
+
+Recorded hits in a sampler in a BDSIM ROOT output file can be loaded back into BDSIM
+and launched through a model. This does not have to be the same model and the starting
+position does not need to be the same.
+
+.. note:: By default, the 'local' hits in the frame of the sampler are loaded and launched
+	  from wherever the beam central coordinates start (e.g. 0,0,0 with direction 0,0,1).
+	  If you want to continue hits from a sampler, you must include the `S` of that sampler
+	  in the original model as a beam offset.
+
++----------------------------+-----------------------------------------------------------+
+| Option                     | Description                                               |
++============================+===========================================================+
+| `distrType`                | This should be "bdsimsampler:samplername".                |
++----------------------------+-----------------------------------------------------------+
+| `distrFile`                | The path to the input file desired.                       |
++----------------------------+-----------------------------------------------------------+
+
+* **All** of the parameters of `eventgeneratorfile`_ apply - i.e. all of the cuts and filters
+  apply to this distribution as well.
+* Examples can be found in :code:`bdsim/examples/features/beam/bdsimsampler/*gmad`.
+* Remember, a design particle must still be specified in the beam command for the magnets.
+
+Examples: ::
+
+  beam, particle="proton",
+        kineticEnergy=10*GeV,
+	distrType="bdsimsampler:d1_1",
+	distrFile="../../data/sample1.root";
+
+
+  beam, particle="proton",
+        kineticEnergy=10*GeV,
+	distrType="bdsimsampler:d1_1",
+	distrFile="../../data/sample1.root",
+	eventGeneratorMinZp=0.9,
+	eventGeneratorMinEK=1.5*GeV,
+	eventGeneratorMaxEK=1*TeV,
+	eventGeneratorParticles="111 211 -211 12 -12 proton";
+
+
+.. warning:: The number of events may not match the number in the original file. Any events
+	     in the loaded file with 0 hits in that sampler will be skipped as we are not
+	     permitted (nor do we want to) simulate an empty event with no starting particles.
+	     Events are read until at least 1 particle is found in an event. If an event loaded
+	     has more than one particle, that event will also match 1:1 to the output event.
+  
+
+	
 sphere
 ******
 
