@@ -45,6 +45,8 @@ New Features
 * Samplers now have the parameter :code:`partID={11,-11}`, which for example can be used
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
+* A sampler in a BDSIM ROOT output file can now be used as an input beam distribution for
+  another simulation.  See :ref:`bunch-bdsimsampler`.
 * Solenoid sheet / cylinder field has been added and is used by default on the solenoid yoke geometry.
 * A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into
   voxelized geometries.
