@@ -127,6 +127,7 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
     case BDSBunchType::sphere:
       {bdsBunch = new BDSBunchSphere(); break;}
     case BDSBunchType::eventgeneratorfile:
+    case BDSBunchType::bdsimsampler:
       {bdsBunch = new BDSBunchEventGenerator(); break;}
     case BDSBunchType::box:
       {bdsBunch = new BDSBunchBox(); break;}
