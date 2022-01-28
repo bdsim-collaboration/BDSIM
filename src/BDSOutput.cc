@@ -251,6 +251,9 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
 		    turnsTaken);
       primaryGlobal->Fill(vertexInfoBDSV);
     }
+  auto nextLinkedVertex = vertex->GetNext();
+  if (nextLinkedVertex)
+    {FillPrimary(nextLinkedVertex, turnsTaken);}
 }
 
 void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
