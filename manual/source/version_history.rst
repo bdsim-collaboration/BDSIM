@@ -158,6 +158,7 @@ Bug Fixes
   with pole face rotations. Issue #306.
 * Fix missing magnet coil end pieces despite being available space when the sequence
   is a magnet, drift, element, or the reverse.
+* Fix overlaps with various parameter combinations for an octagonal beam / aperture shape.
 
 
 **Output**
