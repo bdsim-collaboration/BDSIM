@@ -56,10 +56,11 @@ Execute BDSIM with your input gmad file name: ::
 The following is a list of our most commonly used commands that can be used in the
 session box (terminal prompt) inside the visualiser: 
 
-* :code:`/run/beamOn 3` - Runs three primary events
-* :code:`exit` - Exits the visualiser and BDSIM
-* :code:`/vis/viewer/set/viewpointThetaPhi 0 90` - Sets the view point angle
-* :code:`/vis/scene/add/axes 0 0 0` - Adds a set of unit vector axes at position (0,0,0)
+* :code:`/run/beamOn 3` - runs three primary events
+* :code:`exit` - exits the visualiser and BDSIM
+* :code:`/vis/viewer/set/viewpointThetaPhi 0 90` - sets the view point angle
+* :code:`/vis/viewer/set/targetPoint 0 0 20 m` - sets the rotation view point at 0,0,20 m as an example
+* :code:`/vis/scene/add/axes 0 0 0` - adds a set of unit vector axes at position (0,0,0)
 * :code:`/vis/drawVolume worlds` - view all invisible geometry including samplers
 * :code:`/vis/viewer/set/lightsVecto 1 1 1` - change the orientation of the lighting to
   roughly opposite
