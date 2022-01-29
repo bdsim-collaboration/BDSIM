@@ -147,9 +147,9 @@ BDSExtent BDSExtent::Tilted(G4double angle) const
 
 std::ostream& operator<< (std::ostream& out, BDSExtent const& ext)
 {
-  out << ext.extXNeg << " " << ext.extXPos << " ";
-  out << ext.extYNeg << " " << ext.extYPos << " ";
-  out << ext.extZNeg << " " << ext.extZPos << " mm";
+  out << "X- " << ext.extXNeg << ", X+ " << ext.extXPos << " mm\n";
+  out << "Y- " << ext.extYNeg << ", Y+ " << ext.extYPos << " mm\n";
+  out << "Z- " << ext.extZNeg << ", Z+ " << ext.extZPos << " mm";
   return out;
 }
 
