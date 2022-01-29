@@ -807,6 +807,15 @@ void BDSMaterials::DefineLHCComponents()
               kStateSolid, 300, 1,
               {"Cu", "C"},
               std::list<double>{0.32, 0.68});
+  AddExistingMaterialAlias("copperdiamond", "cucd");
+  
+  // For HL-LHC Collimation - Copper Diamond
+  AddMaterial("molybdenumcarbide",
+              8.9,
+              kStateSolid, 300, 1,
+              {"Mo", "C"},
+              std::list<int>{1, 1});
+  AddExistingMaterialAlias("molybdenumcarbide", "mogr");
 }
 
 void BDSMaterials::DefineLiquids()
@@ -1009,7 +1018,7 @@ void BDSMaterials::AddMaterial(G4String name,
       G4cout << "BDSMaterials::AddMaterial: " << *sIter << G4endl;
 #endif
       G4Element* element = CheckElement(*sIter);
-      if(element)
+      if (element)
 	{tmpMaterial->AddElement(element, (*dIter));}
       else
 	{tmpMaterial->AddMaterial(GetMaterial(*sIter), (*dIter));}
