@@ -1233,10 +1233,16 @@ a beam pipe in the middle. There is no magnetic field in the beam pipe.
 =================  ============================  ==========  ===========
 Parameter          Description                   Default     Required
 `l`                Length [m]                    0           Yes
-`B`                Magnetic field [T]            0           Yes
+`B`                Magnetic field [T]            0           No
 `material`         Outer material                Iron        No
 `horizontalWidth`  Outer full width [m]          global      No
 =================  ============================  ==========  ===========
+
+Notes:
+
+* The :ref:`aperture-parameters` may also be specified.
+* No field is constructed if B is the default 0.
+
 
 shield
 ^^^^^^

@@ -78,7 +78,7 @@ New Features
   environment build on Centos7 will be built locally and works on Mac, Linux, Windows. It
   typically takes about 6Gb of space and is a great alternative to a virtual machine. An
   XWindows server is required for the visualiser. See :ref:`docker-build`.
-* New materials (Inermet170, Inermet176, Inermet180, Copper-Diamond).
+* New materials (Inermet170, Inermet176, Inermet180, Copper-Diamond, MoGr).
   
 General
 -------

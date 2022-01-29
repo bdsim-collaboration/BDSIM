@@ -1078,6 +1078,7 @@ elements, mass fractions, temperature and state.
 * clay
 * clayousMarl
 * concrete
+* copperdiamond
 * cu_2k (G4_Cu at 2K)
 * cu_4k (G4_Cu at 4K)
 * dy061
@@ -1088,6 +1089,9 @@ elements, mass fractions, temperature and state.
 * graphite
 * graphitefoam
 * hy906
+* inermet170
+* inermet176
+* inermet180
 * invar
 * kapton
 * lanex
@@ -1101,6 +1105,7 @@ elements, mass fractions, temperature and state.
 * liquidhelium
 * marl
 * medex
+* molybdenumcarbide (also "mogr")
 * mild_steel
 * n-bk7
 * nb_87k
