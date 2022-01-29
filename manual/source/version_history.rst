@@ -109,6 +109,7 @@ General
   beam line element is reused, you can select an individual one to go to.
 * Tolerate "electron", "positron" and "photon" for beam particle names and substitute in the
   Geant4 names (e.g. "e-").
+* Print out extent of loaded world when using an external geometry file.
 
 Bug Fixes
 ---------
