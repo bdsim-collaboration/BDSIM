@@ -2771,15 +2771,15 @@ with the following options.
 |                                    | as taken from the beginning of the step before it made it. Default |
 |                                    | off.                                                               |
 +------------------------------------+--------------------------------------------------------------------+
-| storeParticleData                  | Whether to store basic particle information for all particles used |
-|                                    | in the simulation under ParticleData in the output. This can be    |
-|                                    | relatively large when ions are used as there are many thousands    |
-|                                    | of ion definitions. Default on.                                    |
-+------------------------------------+--------------------------------------------------------------------+
 | storeMinimalData                   | When used, all optional parts of the data are turned off. Any bits |
 |                                    | specifically turned on with other options will be respected.       |
 +------------------------------------+--------------------------------------------------------------------+
 | storeModel                         | Whether to store the model information in the output. Default on.  |
++------------------------------------+--------------------------------------------------------------------+
+| storeParticleData                  | Whether to store basic particle information for all particles used |
+|                                    | in the simulation under ParticleData in the output. This can be    |
+|                                    | relatively large when ions are used as there are many thousands    |
+|                                    | of ion definitions. Default on.                                    |
 +------------------------------------+--------------------------------------------------------------------+
 | storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
 |                                    | of the Event tree in the output. Useful to minimise file size.     |
@@ -3384,6 +3384,9 @@ Shape
 To control the sampler shape, the variable :code:`shape` should be specified. Currently,
 either `circular` or `rectangular` are accepted. The parameters `aper1` and `aper2` can
 be used to control the shape with the same meaning as beam pipe apertures.
+
+* :code:`aper1` and :code:`aper2` are the **half** dimensions of a rectangle - horizontal
+  and vertical respectively.
 
 Example: ::
 
