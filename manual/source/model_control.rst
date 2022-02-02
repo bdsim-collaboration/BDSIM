@@ -325,6 +325,7 @@ The following beam distributions are available in BDSIM
 - `ring`_
 - `eshell`_
 - `halo`_
+- `halosigma`_
 - `composite`_
 - `compositespacedirectionenergy`_
 - `userfile`_
@@ -820,6 +821,80 @@ Example::
         haloNSigmaYOuter      = 2,
         haloPSWeightParameter = 1,
         haloPSWeightFunction  = "oneoverr";
+
+halosigma
+*********
+
+Similar to type `halo` except instead of uniformly sampling :math:`J`, the single
+particle emittance (action), the particle's :math:`n\sigma` is sampled uniformly
+instead. The particle action :math:`J` is expressed in terms of the multiple of
+sigma, :math:`n`, the one-sigma transverse beamsize :math:`\sigma` and the Twiss
+beta function :math:`\beta` using
+
+.. math::
+   J = (n \sigma)^2 / \beta.
+
+This randomly generated action variable, combined with the Twiss parameters
+:math:`\alpha` and :math:`\beta` define an ellipse in phase space.  A point is then
+randomly generated on this ellipse to get the position and momentum pair for the
+given transverse dimension.  This is useful for situations where beam halo intensity
+distributions are expressed in terms of :math:`\sigma`, allowing for easier
+reweighting in post-processing.
+
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
++----------------------------------+-----------------------------------------------------------------------------+
+| Option                           | Description                                                                 |
++==================================+=============================================================================+
+| `emitx`                          | Horizontal beam core geometric emittance [m rad]                            |
+|                                  | :math:`\epsilon_{{\rm core},x}`                                             |
++----------------------------------+-----------------------------------------------------------------------------+
+| `emity`                          | Vertical beam core geometric emittance [m rad]                              |
+|                                  | :math:`\epsilon_{{\rm core},y}`                                             |
++----------------------------------+-----------------------------------------------------------------------------+
+| `emitnx`                         | Horizontal beam core geometric emittance [m rad] \*                         |
++----------------------------------+-----------------------------------------------------------------------------+
+| `emitny`                         | Vertical beam core geometric emittance [m rad] \*                           |
++----------------------------------+-----------------------------------------------------------------------------+
+| `betx`                           | Horizontal beta function [m]                                                |
++----------------------------------+-----------------------------------------------------------------------------+
+| `bety`                           | Vertical beta function [m]                                                  |
++----------------------------------+-----------------------------------------------------------------------------+
+| `alfx`                           | Horizontal alpha function                                                   |
++----------------------------------+-----------------------------------------------------------------------------+
+| `alfy`                           | Vertical alpha function                                                     |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloNSigmaXInner`               | Inner radius of halo in x (multiples of sigma)                              |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloNSigmaXOuter`               | Outer radius of halo in x (multiples of sigma)                              |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloNSigmaYInner`               | Inner radius of halo in y (multiples of sigma)                              |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloNSigmaYOuter`               | Outer radius of halo in y (multiples of sigma)                              |
++----------------------------------+-----------------------------------------------------------------------------+
+
+
+* \* :code:`emitx(y)` and :code:`emitnx(y)` are provided for the user's convenience and should not both be set.
+* No variation in `t`, total energy, `z` and `s`. Only central values.
+* Generating a beam in a dispersive region will result in incorrect optics.
+
+Example: ::
+
+  beam, particle              = "e-",
+	energy                = 1.0*GeV,
+	distrType             = "halosigma",
+	betx                  = 9.701136465,
+	bety                  = 46.95602673,
+	alfx                  = -0.5542165316,
+	alfy                  = 2.310858304,
+	emitx                 = 5e-9,
+	emity                 = 5e-9,
+	haloNSigmaXInner      = 1.0,
+	haloNSigmaXOuter      = 5.0,
+	haloNSigmaYInner      = 2.0,
+	haloNSigmaYOuter      = 3.0;
+
 
 .. _beam-composite:
 
