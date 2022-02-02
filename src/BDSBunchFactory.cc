@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunchEventGenerator.hh"
 #include "BDSBunchFactory.hh"
 #include "BDSBunchHalo.hh"
+#include "BDSBunchHaloFlatSigma.hh"
 #include "BDSBunchPtc.hh"
 #include "BDSBunchRing.hh"
 #include "BDSBunchSphere.hh"
@@ -131,6 +132,8 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
       {bdsBunch = new BDSBunchEventGenerator(); break;}
     case BDSBunchType::box:
       {bdsBunch = new BDSBunchBox(); break;}
+    case BDSBunchType::halosigma:
+      {bdsBunch = new BDSBunchHaloFlatSigma(); break;}
     default:
       {bdsBunch = new BDSBunch(); break;}
     }

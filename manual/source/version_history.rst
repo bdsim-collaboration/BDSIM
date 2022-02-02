@@ -79,7 +79,10 @@ New Features
   typically takes about 6Gb of space and is a great alternative to a virtual machine. An
   XWindows server is required for the visualiser. See :ref:`docker-build`.
 * New materials (Inermet170, Inermet176, Inermet180, Copper-Diamond, MoGr).
-  
+* New bunch distribution type `halosigma` that samples a flat halo distribution
+  flat in terms of sigma.  This is useful for reweighting distributions based on
+  the particle's distance from the core in terms of sigma.
+
 General
 -------
 
