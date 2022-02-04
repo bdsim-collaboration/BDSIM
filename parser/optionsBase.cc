@@ -213,6 +213,7 @@ OptionsBase::OptionsBase()
   beamPipeIsInfiniteAbsorber      = false;
   collimatorsAreInfiniteAbsorbers = false;
   tunnelIsInfiniteAbsorber        = false;
+  muonSplittingFactor = 1;
   
   // biasing options
   defaultBiasVacuum        = "";

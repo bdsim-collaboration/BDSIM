@@ -253,6 +253,7 @@ namespace GMAD
     bool     beamPipeIsInfiniteAbsorber;
     bool     collimatorsAreInfiniteAbsorbers;
     bool     tunnelIsInfiniteAbsorber;
+    int      muonSplittingFactor;
     ///@}
 
     // biasing options
