@@ -21,7 +21,7 @@ jobs:
           command: "yum -y install  git make \
                     gcc gcc-c++ gcc-gfortran \
                     xerces-c-devel zlib-devel wget \
-                    openssl-devel cmake3"
+                    openssl-devel cmake3 bison flex"
       - run:
           name: "Install modern compilers"
           command: "yum-config-manager --enable rhel-server-rhscl-7-rpms &&\
@@ -53,12 +53,30 @@ jobs:
       - run:
           name: "Install ROOT"
           command: "yum -y install root python36-root"
-      - run :
+      - run:
           name: "Install HEPMC3"
           command: "yum -y install HepMC3-rootIO-devel"
+      - run:
+          name: "Build Geant4"
+          command: "wget https://github.com/Geant4/geant4/archive/v10.7.3.tar.gz && \
+                    tar zxf v10.7.3.tar.gz && mkdir geant4-10.7.3-build && cd geant4-10.7.3-build && \
+                    source scl_source enable devtoolset-7 && \
+                    cmake3 ../geant4-10.7.3 -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_GDML=ON -DGEANT4_USE_OPENGL_X11=ON \
+                                            -DGEANT4_USE_SYSTEM_CLHEP=ON -DGEANT4_USE_QT=ON -DGEANT4_USE_RAYTRACER_X11=ON && \
+                    make -j6 && make install && \
+                    cd ../ && rm -rfv geant4-10.7.3-build geant4-10.7.3 v10.7.3.tar.gz && \
+                    echo 'source /usr/local/bin/geant4.sh' >> ~/.bashrc"
 
       - checkout
-
+      - run:
+          name: "Build BDSIM"
+          command: "mkdir bdsim-build && \
+                    cd bdsim-build && \
+                    source scl_source enable devtoolset-7 && \
+                    cmake3 ../bdsim -DUSE_HEPMC3=ON && make -j6 && \
+                    make install && cd ../ && \
+                    cp -r bdsim/examples bdsim-examples && \
+                    rm -rfv bdsim-build bdsim && echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
