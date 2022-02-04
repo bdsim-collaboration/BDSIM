@@ -29,6 +29,29 @@ jobs:
                     source scl_source enable devtoolset-7 && \
                     mkdir clhep-2.4.5.1-build && cd clhep-2.4.5.1-build && cmake3 ../2.4.5.1/CLHEP/ && \
                     make -j6 && make install && cd ../ && rm -rfv 2.4.5.1 clhep-2.4.5.1-build"
+      - run:
+          name: "Install X11"
+          command: "yum -y install xorg-x11-server-Xorg xorg-x11-xauth libX11-devel \
+    libXpm-devel libXft-devel libXext-devel libXmu-devel"
+      - run:
+          name: "Install OpenGL"
+          command: "yum -y install freeglut-devel"
+      - run:
+          name: "Install VTK"
+          command: "yum -y install vtk"
+      - run:
+          name: "Install python"
+          command: "yum -y install python3-pip python3"
+      - run:
+          name: "Install Qt5"
+          command: "yum -y install qt5-qtbase-devel"
+      - run:
+          name: "Install ROOT"
+          command: "yum -y install root python36-root"
+      - run :
+          name: "Install HEPMC3"
+          command: "yum -y install HepMC3-rootIO-devel"
+
       - checkout
 
 
