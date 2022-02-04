@@ -5,7 +5,7 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
+  build-bdsim:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
@@ -14,16 +14,20 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - run:
-          name: "Install git"
-          command: "yum -y install git"
+          name: "Install basic programming environment"
+          command: "yum -y install epel-release git make \
+                    gcc gcc-c++ gcc-gfortran \
+                    xerces-c-devel zlib-devel wget \
+                    openssl-devel"
+
+          name: "Install modern compilers"
+          command: "yum -y install centos-release-scl devtoolset-7"
       - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
+  build-bdsim-workflow:
     jobs:
-      - say-hello
+      - build-bdsim
