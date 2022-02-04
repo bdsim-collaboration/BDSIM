@@ -23,10 +23,9 @@ jobs:
           name: "Install modern compilers"
           command: "yum -y install centos-release-scl devtoolset-7"
       - run:
-          name: "Install cmake"
+          name: "Install clhep"
           command: "wget https://proj-clhep.web.cern.ch/proj-clhep/dist1/clhep-2.4.5.1.tgz && \
                     tar -xf clhep-2.4.5.1.tgz && rm -rf clhep-2.4.5.1.tgz && \
-                    source scl_source enable devtoolset-7 && \
                     mkdir clhep-2.4.5.1-build && cd clhep-2.4.5.1-build && cmake3 ../2.4.5.1/CLHEP/ && \
                     make -j6 && make install && cd ../ && rm -rfv 2.4.5.1 clhep-2.4.5.1-build"
       - run:
