@@ -61,6 +61,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
 #include "BDSParticleDefinition.hh"
+#include "BDSPhysicsMuonSplitting.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
@@ -241,7 +242,11 @@ int BDSIM::Initialise()
   realWorld->SetDesignParticle(designParticle);
   BDSFieldFactory::SetDesignParticle(designParticle);
   BDSGeometryFactorySQL::SetDefaultRigidity(designParticle->BRho()); // used for sql field loading
-
+  
+  // Muon splitting - optional - should be done *after* biasing to work with it
+  if (BDSGlobalConstants::Instance()->MuonSplittingFactor() > 1)
+    {physList->RegisterPhysics(new BDSPhysicsMuonSplitting(BDSGlobalConstants::Instance()->MuonSplittingFactor()));}
+  
   BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);
   auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
   if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
