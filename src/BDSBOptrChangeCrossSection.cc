@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VProcess.hh"
 
 #include <limits>
+#include <regex>
 
 BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(const G4String& particleNameIn,
 						       const G4String& name):
@@ -113,6 +114,14 @@ void BDSBOptrChangeCrossSection::SetBias(const G4String& processName,
     {
       const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
       G4String currentProcess = wrapperProcess->GetWrappedProcess()->GetProcessName();
+      
+      // check if the name is already wrapped for biasing of some kind or splitting
+      std::regex braces("[\\w\\-\\+_$]*\\((\\w+)\\)");
+      //std::regex braces("[\\w\\-\\_\\+]*\\((\\w+)\\)");
+      std::smatch match;
+      if (std::regex_search(currentProcess, match, braces))
+        {currentProcess = match[1];} // overwrite the variable to match (in this scope)
+      
       if (allProcesses || processName == currentProcess)
 	{ 
 #ifdef BDSDEBUG
