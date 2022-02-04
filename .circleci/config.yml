@@ -19,7 +19,7 @@ jobs:
                     gcc gcc-c++ gcc-gfortran \
                     xerces-c-devel zlib-devel wget \
                     openssl-devel"
-
+      - run:
           name: "Install modern compilers"
           command: "yum -y install centos-release-scl devtoolset-7"
       - checkout
