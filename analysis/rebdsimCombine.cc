@@ -37,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <exception>
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -62,6 +63,10 @@ int main(int argc, char* argv[])
         {std::cout << "Only one input file provided \"" << inputFiles[0] << "\" - no point." << std::endl;}
       exit(1);
     }
+  
+  std::set<std::string> inputFilesSet = {inputFiles.begin(), inputFiles.end()};
+  if (inputFiles.size() > inputFilesSet.size())
+    {std::cout << "Warning: at least 1 duplicate name in list of files provided to combine." << std::endl;}
 
   std::string outputFile = std::string(argv[1]);
   if (outputFile.find('*') != std::string::npos)

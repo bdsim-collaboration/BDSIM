@@ -90,7 +90,7 @@ void BDSBOptrMultiParticleChangeCrossSection::SetBias(const G4String& biasObject
   
   const G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
   if (!particle)
-    {throw BDSException(__METHOD_NAME__, "Particle \"" + particleName + "\" no found");}
+    {throw BDSException(__METHOD_NAME__, "Particle \"" + particleName + "\" not found");}
   
   fBOptrForParticle[particle]->SetBias(process,dBias,iPrimary);
 }

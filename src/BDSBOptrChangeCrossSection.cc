@@ -159,7 +159,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
 
   // protect against negative interaction lengths
   // sometimes this appears as -1 - exactly -1
-  if(analogInteractionLength < 0)
+  if (analogInteractionLength < 0)
     {return nullptr;}
 
   // Analog cross-section is well-defined:
