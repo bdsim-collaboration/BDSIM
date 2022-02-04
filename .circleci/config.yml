@@ -67,13 +67,18 @@ jobs:
                     cd ../ && rm -rfv geant4-10.7.3-build geant4-10.7.3 v10.7.3.tar.gz && \
                     echo 'source /usr/local/bin/geant4.sh' >> ~/.bashrc"
 
-      - checkout
+      - run:
+          name: "Checkout BDSIM"
+          command: "git clone https://bitbucket.org/jairhul/bdsim.git &&\
+                    cd bdsim &&\
+                    git checkout develop"
+
       - run:
           name: "Build BDSIM"
           command: "mkdir bdsim-build && \
                     cd bdsim-build && \
                     source scl_source enable devtoolset-7 && \
-                    cmake3 ../bdsim -DUSE_HEPMC3=ON && make -j6 && \
+                    cmake3 ../bdsim/ -DUSE_HEPMC3=ON && make -j6 && \
                     make install && cd ../ && \
                     cp -r bdsim/examples bdsim-examples && \
                     rm -rfv bdsim-build bdsim && echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc"
