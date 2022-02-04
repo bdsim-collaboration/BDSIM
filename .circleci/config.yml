@@ -14,8 +14,11 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - run:
+          name: "Install EPEL/release"
+          command: "yum -y install epel-release"
+      - run:
           name: "Install basic programming environment"
-          command: "yum -y install epel-release git make \
+          command: "yum -y install  git make \
                     gcc gcc-c++ gcc-gfortran \
                     xerces-c-devel zlib-devel wget \
                     openssl-devel cmake3"
