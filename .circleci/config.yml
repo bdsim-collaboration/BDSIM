@@ -40,22 +40,17 @@ jobs:
           name: "Test BDSIM"
           command: "source /usr/local/bin/geant4.sh && \
                     cd bdsim-build && \
-                    ctest3 --verbose -j2 -LE LONG -T Test"
-
-      - run:
-          name: "Testing dir"
-          command: "ls bdsim-build/ && \
-                    ls bdsim-build/Testing"
+                    ctest3 --verbose -j2 -LE LONG --output-junit ./ctest_output.xml"
 
       - run:
           name: "Package BDSIM"
           command: "tar zcf bdsim.tgz bdsim-install"
 
       - store_test_results:
-          path: bdsim-build/Testing/Test/
+          path: ./bdsim-build/ctest_output.xml
 
       - store_artifacts:
-          path: bdsim.tgz
+          path: ./bdsim.tgz
           destination: bdsim.tgz
 
 # Invoke jobs via workflows
