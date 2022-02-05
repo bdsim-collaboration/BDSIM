@@ -9,63 +9,9 @@ jobs:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      - image: centos:7
+      - image: sboogert/bdsim-cl7-env
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    steps:
-      - run:
-          name: "Install EPEL/release"
-          command: "yum -y install epel-release"
-      - run:
-          name: "Install basic programming environment"
-          command: "yum -y install  git make \
-                    gcc gcc-c++ gcc-gfortran \
-                    xerces-c-devel zlib-devel wget \
-                    openssl-devel cmake3 bison flex"
-      - run:
-          name: "Install modern compilers"
-          command: "yum-config-manager --enable rhel-server-rhscl-7-rpms &&\
-                    yum -y install centos-release-scl &&\
-                    yum -y install devtoolset-7"
-      - run:
-          name: "Install clhep"
-          command: "wget https://proj-clhep.web.cern.ch/proj-clhep/dist1/clhep-2.4.5.1.tgz && \
-                    tar -xf clhep-2.4.5.1.tgz && rm -rf clhep-2.4.5.1.tgz && \
-                    source scl_source enable devtoolset-7 && \
-                    mkdir clhep-2.4.5.1-build && cd clhep-2.4.5.1-build && cmake3 ../2.4.5.1/CLHEP/ && \
-                    make -j6 && make install && cd ../ && rm -rfv 2.4.5.1 clhep-2.4.5.1-build"
-      - run:
-          name: "Install X11"
-          command: "yum -y install xorg-x11-server-Xorg xorg-x11-xauth libX11-devel \
-    libXpm-devel libXft-devel libXext-devel libXmu-devel"
-      - run:
-          name: "Install OpenGL"
-          command: "yum -y install freeglut-devel"
-      - run:
-          name: "Install VTK"
-          command: "yum -y install vtk"
-      - run:
-          name: "Install python"
-          command: "yum -y install python3-pip python3"
-      - run:
-          name: "Install Qt5"
-          command: "yum -y install qt5-qtbase-devel"
-      - run:
-          name: "Install ROOT"
-          command: "yum -y install root python36-root"
-      - run:
-          name: "Install HEPMC3"
-          command: "yum -y install HepMC3-rootIO-devel"
-      - run:
-          name: "Build Geant4"
-          command: "wget https://github.com/Geant4/geant4/archive/v10.7.3.tar.gz && \
-                    tar zxf v10.7.3.tar.gz && mkdir geant4-10.7.3-build && cd geant4-10.7.3-build && \
-                    source scl_source enable devtoolset-7 && \
-                    cmake3 ../geant4-10.7.3 -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_GDML=ON -DGEANT4_USE_OPENGL_X11=ON \
-                                            -DGEANT4_USE_SYSTEM_CLHEP=ON -DGEANT4_USE_QT=ON -DGEANT4_USE_RAYTRACER_X11=ON && \
-                    make -j6 && make install && \
-                    cd ../ && rm -rfv geant4-10.7.3-build geant4-10.7.3 v10.7.3.tar.gz && \
-                    echo 'source /usr/local/bin/geant4.sh' >> ~/.bashrc"
 
       - run:
           name: "Checkout BDSIM"
