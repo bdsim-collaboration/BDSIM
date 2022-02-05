@@ -39,7 +39,7 @@ jobs:
           no_output_timeout: 30m
           name: "Test BDSIM"
           command: "cd bdsim-build && \
-                    ctest3 -j2 -LE LONG -T Test"
+                    ctest3 --verbose -j2 -LE LONG -T Test"
 
       - run:
           name: "Testing dir?"
