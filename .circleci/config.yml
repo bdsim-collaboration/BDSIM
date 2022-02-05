@@ -52,7 +52,7 @@ jobs:
 
       - store_test_results:
           path: bdsim-build/Testing/Test/
-        -
+
       - store_artifacts:
           path: bdsim.tgz
           destination: bdsim.tgz
