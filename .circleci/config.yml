@@ -38,11 +38,12 @@ jobs:
       - run:
           no_output_timeout: 30m
           name: "Test BDSIM"
-          command: "cd bdsim-build && \
+          command: "source /usr/local/bin/geant4.sh && \
+                    cd bdsim-build && \
                     ctest3 --verbose -j2 -LE LONG -T Test"
 
       - run:
-          name: "Testing dir?"
+          name: "Testing dir"
           command: "ls bdsim-build/ && \
                     ls bdsim-build/Testing"
 
