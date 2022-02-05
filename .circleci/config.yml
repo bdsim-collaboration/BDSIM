@@ -46,7 +46,7 @@ jobs:
           command: |
             source /usr/local/bin/geant4.sh
             cd bdsim-build
-            ctest --verbose -j2 -LE LONG --output-junit ./ctest_output.xml"
+            ctest --verbose -j2 -LE LONG --output-junit ./ctest_output.xml
 
       - store_test_results:
           path: ./bdsim-build/ctest_output.xml
