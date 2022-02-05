@@ -48,7 +48,7 @@ jobs:
                     ls bdsim-build/Testing"
 
       - run:
-          name: "Package BDSIM:
+          name: "Package BDSIM"
           command: "tar zcf bdsim.tgz bdsim-install"
 
       - store_test_results:
