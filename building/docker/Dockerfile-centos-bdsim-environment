@@ -57,8 +57,6 @@ RUN wget https://github.com/Geant4/geant4/archive/v10.7.3.tar.gz && \
     -DGEANT4_USE_SYSTEM_CLHEP=ON -DGEANT4_USE_QT=ON -DGEANT4_USE_RAYTRACER_X11=ON && make -j6 && make install \
     && cd ../ && rm -rfv geant4-10.7.3-build geant4-10.7.3 v10.7.3.tar.gz && echo 'source /usr/local/bin/geant4.sh' >> ~/.bashrc
 
-RUN yum -y install ctest
-
 RUN dbus-uuidgen > /var/lib/dbus/machine-id && \
     mkdir -p /var/run/dbus && \
     dbus-daemon --config-file=/usr/share/dbus-1/system.conf --print-address
