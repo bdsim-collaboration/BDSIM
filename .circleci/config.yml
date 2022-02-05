@@ -39,7 +39,7 @@ jobs:
           no_output_timeout: 30m
           name: "Test BDSIM"
           command: "cd bdsim-build && \
-                    ctest3 -T Test && \
+                    ctest3 -LE LONG -T Test && \
                     ls ./build/Testing"
 
       - store_artifacts:
