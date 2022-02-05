@@ -37,6 +37,7 @@ jobs:
                     echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc"
       - run:
           no_output_timeout: 30m
+          shell: /bin/bash
           name: "Test BDSIM"
           command: "source /usr/local/bin/geant4.sh && \
                     cd bdsim-build && \
