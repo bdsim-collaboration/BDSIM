@@ -43,9 +43,10 @@ jobs:
           no_output_timeout: 30m
           shell: /bin/bash
           name: "Test BDSIM"
-          command: "source /usr/local/bin/geant4.sh && \
-                    cd bdsim-build && \
-                    ctest --verbose -j2 -LE LONG --output-junit ./ctest_output.xml"
+          command: |
+            source /usr/local/bin/geant4.sh
+            cd bdsim-build
+            ctest --verbose -j2 -LE LONG --output-junit ./ctest_output.xml"
 
       - store_test_results:
           path: ./bdsim-build/ctest_output.xml
