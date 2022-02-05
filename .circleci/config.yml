@@ -10,11 +10,15 @@ jobs:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      - image: sboogert/bdsim-cl7-env
+      - image: sboogert/bdsim-cl7-env:latest
+        auth:
+          username: mydockerhub-user  # can specify string literal values
+          password: $DOCKERHUB_PASSWORD  # or project environment variable reference
 
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
 
+    steps:
       - run:
           name: "Checkout BDSIM"
           command: "git clone https://bitbucket.org/jairhul/bdsim.git &&\
