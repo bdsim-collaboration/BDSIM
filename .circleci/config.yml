@@ -30,6 +30,10 @@ jobs:
                     make install && cd ../ && \
                     cp -r bdsim/examples bdsim-examples && \
                     rm -rfv bdsim-build bdsim && echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc"
+      - run:
+          name: "Test BDSIM"
+          command: "cd bdsim-build && \
+                    ctest"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
