@@ -21,7 +21,7 @@ jobs:
           command: "yum -y install  git make \
                     gcc gcc-c++ gcc-gfortran \
                     xerces-c-devel zlib-devel wget \
-                    openssl-devel cmake3 bison flex"
+                    openssl-devel cmake3 bison flex boost-devel"
       - run:
           name: "Install modern compilers"
           command: "yum-config-manager --enable rhel-server-rhscl-7-rpms &&\
