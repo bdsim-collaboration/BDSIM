@@ -28,16 +28,21 @@ jobs:
       - run:
           name: "Build BDSIM"
           command: "mkdir bdsim-build && \
+                    mkdir bdsim-install && \
                     cd bdsim-build && \
                     source scl_source enable devtoolset-7 && \
-                    cmake3 ../bdsim/ -DUSE_HEPMC3=ON && make -j6 && \
+                    cmake3 -DCMAKE_INSTALL_PREFIX=../bdsim-install ../bdsim/ -DUSE_HEPMC3=ON && make -j6 && \
                     make install && cd ../ && \
                     cp -r bdsim/examples bdsim-examples && \
                     echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc"
       - run:
           name: "Test BDSIM"
           command: "cd bdsim-build && \
-                    ctest3"
+                    ctest3 -T Test && \
+                    ls ./build/Testing"
+
+      - store_artifacts:
+          path: bdsim-build/Testing/Test/
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
