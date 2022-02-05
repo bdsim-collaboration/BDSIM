@@ -39,11 +39,23 @@ jobs:
           no_output_timeout: 30m
           name: "Test BDSIM"
           command: "cd bdsim-build && \
-                    ctest3 -j2 -LE LONG -T Test && \
-                    ls Testing"
+                    ctest3 -j2 -LE LONG -T Test"
 
-      - store_artifacts:
+      - run:
+          name: "Testing dir?"
+          command: "ls bdsim-build/ && \
+                    ls bdsim-build/Testing"
+
+      - run:
+          name "Package BDSIM:
+          command: "tar zcf bdsim.tgz bdsim-install"
+
+      - store_test_results:
           path: bdsim-build/Testing/Test/
+        -
+      - store_artifacts:
+          path: bdsim.tgz
+          destination: bdsim.tgz
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
