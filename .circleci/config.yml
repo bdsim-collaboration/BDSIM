@@ -41,8 +41,7 @@ jobs:
           name: "Test BDSIM"
           command: "source /usr/local/bin/geant4.sh && \
                     cd bdsim-build && \
-                    ctest -j2 -LE LONG --output-junit ./ctest_output.xml &&\
-                    ls -l"
+                    ctest --verbose -j2 -LE LONG --output-junit ./ctest_output.xml"
 
       - run:
           name: "Package BDSIM"
