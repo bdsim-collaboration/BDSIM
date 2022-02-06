@@ -39,9 +39,6 @@ public:
 					  const G4Step& step);
   
 private:
-  
-  G4bool MuonPresent(G4VParticleChange* aChange) const;
-  void DeleteSecondaries(G4VParticleChange* aChange) const;
   G4int splittingFactor;
 };
 
