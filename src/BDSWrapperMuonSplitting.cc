@@ -24,7 +24,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VParticleChange.hh"
 #include "G4VProcess.hh"
 
-#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -68,9 +67,7 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
   if (!muonPresent)
     {return particleChange;}
   
-  // we have to copy the original non-muon secondaries out because the interface
-  // in G4VParticleChange forces us to delete all existing secondaries when we resize
-  // which is a bit annoying.
+  // we keep hold of the tracks and manage their memory
   std::vector<G4Track*> originalSecondaries;
   std::vector<G4Track*> originalMuons;
   for (G4int i = 0; i < particleChange->GetNumberOfSecondaries(); i++)
@@ -84,6 +81,8 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
   
   G4int nOriginalSecondaries = particleChange->GetNumberOfSecondaries();
   
+  particleChange->Clear(); // doesn't delete the secondaries
+  
   // Attempt to generate more muons. This might be difficult or rare, so we must tolerate this.
   G4int maxTrials = 1000 * splittingFactor;
   G4int nSuccessfulMuonSplits = 0;
@@ -94,46 +93,36 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
     {
       iTry++;
       particleChange->Clear(); // wipes the vector of tracks, but doesn't delete them
-      particleChange->SetNumberOfSecondaries(0);
       particleChange = pRegProcess->PostStepDoIt(track, step);
-      G4bool aMuon = MuonPresent(particleChange);
-      if (!aMuon)
-	{
-	  for (G4int i = 0; i < particleChange->GetNumberOfSecondaries(); i++)
-	    {
-	      auto sec = particleChange->GetSecondary(i);
-	      potentiallyDelete.insert(sec);
-	      
-	    }
-	  //DeleteSecondaries(particleChange); // causes double deletion bug only with certain processes...
-	  // becuase of the allocator they use inside G4Track and G4DynamicParticle
-	  continue;
-	}
-      
-      nSuccessfulMuonSplits++; // we found at least one muon this call
+      G4bool success = false;
       for (G4int i = 0; i < particleChange->GetNumberOfSecondaries(); i++)
-	{
-	  auto sec = particleChange->GetSecondary(i);
-	  if (std::abs(sec->GetDefinition()->GetPDGEncoding()) == 13)
-	    {newMuons.push_back(new G4Track( *(particleChange->GetSecondary(i) ))); delete sec;}
-	  else
-	    {delete sec;}
-	}
+        {
+          G4Track* sec = particleChange->GetSecondary(i);
+          if (std::abs(sec->GetDefinition()->GetPDGEncoding()) == 13)
+            {
+              newMuons.push_back(sec);
+              success = true;
+            }
+          else
+            {delete sec;}
+        }
+      particleChange->Clear();
+      if (success)
+        {nSuccessfulMuonSplits++;}
     }
+  
   particleChange->Clear();
-  particleChange->SetNumberOfSecondaries(0);
+  particleChange->SetNumberOfSecondaries(nOriginalSecondaries + (G4int)newMuons.size());
+  particleChange->SetSecondaryWeightByProcess(true);
   if (nSuccessfulMuonSplits == 0)
-    {
-      // we've cleared the original ones by now trying, so we have to put them back
+    {// we've cleared the original ones, so we have to put them back
       for (auto secondary : originalSecondaries)
         {particleChange->AddSecondary(secondary);}
       for (auto muon : originalMuons)
         {particleChange->AddSecondary(muon);}
       return particleChange;
-    } // note muon vector is empty, no need to clear up
+    }
     
-  particleChange->SetSecondaryWeightByProcess(true);
-  particleChange->SetNumberOfSecondaries(nOriginalSecondaries + (G4int)newMuons.size());
   G4double weightFactor = 1.0 / ((G4double)nSuccessfulMuonSplits + 1);
   for (auto aSecondary : originalSecondaries)
     {particleChange->AddSecondary(aSecondary);}
@@ -152,38 +141,5 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
       particleChange->AddSecondary(newMuon);
     }
   
-  std::set<G4Track*> finallyToKeep;
-  for (G4int i = 0; i < particleChange->GetNumberOfSecondaries(); i++)
-    {
-      auto sec = particleChange->GetSecondary(i);
-      finallyToKeep.insert(sec);
-    }
-  std::set<G4Track*> definitelyDelete;
-  std::set_difference(potentiallyDelete.begin(), potentiallyDelete.end(), finallyToKeep.begin(), finallyToKeep.end(),
-                      std::inserter(definitelyDelete, definitelyDelete.begin()));
-  
-  for (auto p : definitelyDelete)
-    {delete p;}
   return particleChange;
-}
-
-void BDSWrapperMuonSplitting::DeleteSecondaries(G4VParticleChange* aChange) const
-{
-  for (G4int i = 0; i < aChange->GetNumberOfSecondaries(); i++)
-  {
-    auto sec = aChange->GetSecondary(i);
-    if (sec)
-    {delete sec;}
-  }
-  aChange->SetNumberOfSecondaries(0);
-}
-
-G4bool BDSWrapperMuonSplitting::MuonPresent(G4VParticleChange* aChange) const
-{
-  G4bool result = false;
-  if (!aChange)
-    {return result;}
-  for (G4int i = 0; i < aChange->GetNumberOfSecondaries(); i++)
-    {result = result || std::abs(aChange->GetSecondary(i)->GetDefinition()->GetPDGEncoding()) == 13;}
-  return result;
 }
