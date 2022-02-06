@@ -20,6 +20,7 @@ Model Control
 
   - :ref:`physics-bias-cross-section-biasing`
   - :ref:`physics-bias-importance-sampling`
+  - :ref:`physics-bias-muon-splitting`
     
 * :ref:`bdsim-options`
 * :ref:`sampler-output`
@@ -1641,6 +1642,8 @@ used names.
 	     `G4LENDDATA` set to the directory containing it.
 
 
+.. _physics-em-extra-notes:
+	     
 em_extra Physics Notes
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1823,13 +1826,20 @@ These cannot be used in combination with any other physics processes.
 Physics Biasing
 ---------------
 
-BDSIM currently provides two ways to artificially interfere with the physics processes
-to make the desired outcome happen more often. In both cases, the goal is to simulate
+BDSIM currently provides a few ways to artificially interfere with the physics processes
+to make the desired outcome happen more often. In these cases, the goal is to simulate
 the correct physical outcome, but more efficiently in the parameters of interest,
 i.e. variance reduction.
 
-The two cases are :ref:`physics-bias-cross-section-biasing` and
-:ref:`physics-bias-importance-sampling`, each described below.
+.. note:: If any biasing schemes are used, the :code:`weight` variable in the output
+	  associated with the variable you are using (e.g. :code:`<sampler_name>.x` and
+	  :code:`<sampler_name>.weight`) must be used to regain the correct physical result.
+
+Schemes are:
+
+* :ref:`physics-bias-cross-section-biasing`
+* :ref:`physics-bias-importance-sampling`
+* :ref:`physics-bias-muon-splitting`
 
 .. _physics-bias-cross-section-biasing:
 
@@ -1991,7 +2001,135 @@ the energy deposition in the world volume itself (i.e. the air).
 * If a importance cell volume exists in the importance world geometry and is not listed
   in the ASCII map file with a importance value, BDSIM will exit.
 * The importance sampling world volume has an importance value of 1.
+
+
+.. _physics-bias-muon-splitting:
   
+Muon Splitting
+^^^^^^^^^^^^^^
+
+Muon splitting offers the possibility to understand muon distributions throughout a 3D model a
+little better. It works by wrapping several physics processes for several particles. If they
+produce a muon in their "post step change", the splitting is invoked. The following happens:
+
+#) Any original secondaries are kept from the original physics process to one side.
+#) The original muon(s) is/are kept separately.
+#) The physics process is resampled and asked to do its action again. After each invocation,
+   any muons produced are kept and the other *new* secondaries discarded. This continues until
+   we have the desired number of muons minus 1.
+#) The original muon(s) plus the new ones are added to the final "post step change", each with
+   a weight of original weight / N muons.
+
+.. note:: This can safely be used in combination with BDSIM's cross-section biasing. The weights
+	  are compounded and no special action needs to be taken.
+
+This is controlled by the option: ::
+
+  option, muonSplittingFactor=N
+
+where N is a positive integer (1 = no splitting). This is the factor multiplying the number of
+muons normally produced. The following processes are wrapped for the following
+particles (Geant4 names).
+
++---------------+-----------------+
+| **Particle**  | **Process**     |
++===============+=================+
+| e+            | AnnihiToMuPair  |
++---------------+-----------------+
+| pi+           | Decay           |
++---------------+-----------------+
+| pi-           | Decay           |
++---------------+-----------------+
+| kaon+         | Decay           |
++---------------+-----------------+
+| kaon-         | Decay           |
++---------------+-----------------+
+| kaon0L        | Decay           |
++---------------+-----------------+
+
+**Motivation**
+
+We want to estimate the muon flux including spectra at a location, probably far from the original
+source of beam losses or particles on a target. Muons are comparatively rare, but the numbers
+present with real beams (e.g. :math:`10^9` particles in a bunch) may produce a non-negligible
+muon flux. We want to precisely estimate this through Monte Carlo, but practically, very few
+events produce muons. We can enhance muon numbers in our simulation by for example, biasing
+the cross-section of the decay process for pions and kaons (to balance hadronic inelastic
+interactions), but we still see too few muons.
+
+If we increase the decay cross-section too much, the decays happen over a short distance.
+While this produces a lot of muons, it means we only *sample* muons close spatially to the
+upstream part. The particles (e.g. pions, kaons, muons) may travel through material and
+magnetic fields before producing muons and ultimately contribute to a different *phase space*
+or distribution in the far away plane.
+
+Therefore, we choose splitting. When a given muon is produced at a location, we resample
+the process and repeat it. In the case of 2-body decay, the decay products are produced
+back-to-back in the frame of the parent and have a fixed momenta based on their relative
+masses. The direction of this back-to-back decay is random. Then, the decay products are
+boosted to the lab frame, which can give them different momenta and directions.
+
+Some muons may pass through different material and fields on their way to the point of
+interest. With more muons, we sample this better.
+
+We cannot use a factor of say, 1 million and only sample 1 event, because we would only
+sample 1 (e.g.) decay in 1 location. We must still sample many locations well to properly
+estimate the muon flux.
+
+**Notes:**
+
+* A factor of 1 means no splitting is done.
+* Examples in :code:`bdsim/examples/features/processes/6_muon`.
+* The biasing happens *everywhere* and is not attached to any particle shapes or volumes.
+* The biasing happens to all particles that are wrapped, irrespective of their energy or direction.
+* A factor of 10-100 is recommended.
+* The factor must be an **integer**.
+* If no suitable particles or processes are found, no action will be taken. Only the ones
+  available from the table above are wrapped.
+* Decay must be present in the physics list to occur and be wrapped.
+* The extra EM physics must be used for positron annihilation ("em_extra") or as part of a
+  Geant4 reference physics list (e.g. :code:`g4FTPF_BERT`).
+* A muon might not be produced every time in the final state of the wrapped process. The
+  wrapper will try up to 1000 x muonSplittingFactor to generate the required number. Ultimately,
+  if it can't, it will continue with the number it has produced and normalise the weights accordingly.
+
+
+.. note::  For positron **AnnihiToMuPair** to work, "EmExtra" physics must be included in the physics
+	   list, but this process must also generally be turned on. This can be done in BDSIM with
+	   the option :code:`usePositronToMuMu` in the case of a BDSIM modular physics list, or with
+	   a Geant4 physics macro in the case of a Geant4 reference physics list. See
+	   :ref:`physics-em-extra-notes` for the former, and :ref:`physics-macro-file` for the later.
+	   The relevant command is :code:`/physics_lists/em/PositronToMuons true` for the Geant4 physics
+	   macro.
+
+Examples:
+
+Many examples can be found (including cross-section biasing) in :code:`bdsim/examples/features/processes/6_muon`.
+
+**Pion Decay**
+
+.. math::
+
+   \pi^+ \to \mu^+ + \nu_{\mu}
+
+Here, the neutrino is kept as it would be originally, but the muon is 'split' into N muons. e.g. with a
+splitting factor of 100, there would be 100 muons and 1 neutrino. Each of the 100 muons would have a new
+weight of 1/100. The produces will be 1x neutrino, 100x muons.
+
+**Positron Annihilation**
+
+One possible outcome of a high energy positron hitting a solid target is:
+
+.. math::
+
+   e^+ + e^- \mathrm{(in~material)} \to \gamma \mathrm{ (virtual) } \to \mu^+ \mu^-
+
+With a splitting factor of 100, this would produce 100x the 2 muons, resulting in 100 :math:`\mu^+`
+and 100 :math:`\mu^-`, each with a weight of 1/100.
+
+
+
+   
 .. _bdsim-options:
 
 Options
@@ -2524,6 +2662,10 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | minimumRange                     | A particle that would not travel this range           |
 |                                  | (a distance) in the current material will be cut [m]  |
++----------------------------------+-------------------------------------------------------+
+| muonSplittingFactor              | An integer of 1 or greater. Number of muons to split  |
+|                                  | a muon into (biasing) for select processes. See       |
+|                                  | physics biasing for an explanation. 1 = no effect.    |
 +----------------------------------+-------------------------------------------------------+
 | neutronTimeLimit                 | Maximum allowed tracking time for a neutron when      |
 |                                  | using the `neutron_tracking_cut` physics list [s]     |
