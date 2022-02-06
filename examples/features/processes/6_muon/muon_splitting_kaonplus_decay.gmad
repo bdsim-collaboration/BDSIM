@@ -18,3 +18,4 @@ beam, particle="kaon+";
 option, muonSplittingFactor=100;
 
 
+option, nGenerate=100;
