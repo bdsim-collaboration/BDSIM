@@ -5,4 +5,4 @@ ePlusAnnihiBias: xsecBias, particle="e+", process="AnnihiToMuPair", xsecfact={1e
 
 option, defaultBiasMaterial="ePlusAnnihiBias";
 
-option, ngenerate=100;
+option, ngenerate=5;
