@@ -10,10 +10,14 @@ jobs:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      - image: sboogert/bdsim-cl7-env
+      - image: sboogert/bdsim-cl7-env:latest
+        auth:
+          username: mydockerhub-user  # can specify string literal values
+          password: $DOCKERHUB_PASSWORD  # or project environment variable reference
 
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+
     steps:
       - run:
           name: "Checkout BDSIM"
@@ -24,12 +28,33 @@ jobs:
       - run:
           name: "Build BDSIM"
           command: "mkdir bdsim-build && \
+                    mkdir bdsim-install && \
                     cd bdsim-build && \
                     source scl_source enable devtoolset-7 && \
-                    cmake3 ../bdsim/ -DUSE_HEPMC3=ON && make -j6 && \
+                    cmake -DCMAKE_INSTALL_PREFIX=../bdsim-install ../bdsim/ -DUSE_HEPMC3=ON && make -j6 && \
                     make install && cd ../ && \
                     cp -r bdsim/examples bdsim-examples && \
-                    rm -rfv bdsim-build bdsim && echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc"
+                    echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc"
+      - run:
+          name: "Package BDSIM"
+          command: "tar zcf bdsim.tgz bdsim-install"
+
+      - run:
+          no_output_timeout: 30m
+          shell: /bin/bash
+          name: "Test BDSIM"
+          command: |
+            source /usr/local/bin/geant4.sh
+            cd bdsim-build
+            ctest --verbose -j2 -LE LONG --output-junit ./ctest_output.xml
+
+      - store_test_results:
+          path: ./bdsim-build/ctest_output.xml
+
+      - store_artifacts:
+          path: ./bdsim.tgz
+          destination: bdsim.tgz
+
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
