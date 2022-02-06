@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
+#include "BDSException.hh"
 #include "BDSPhysicsMuonSplitting.hh"
 #include "BDSWrapperMuonSplitting.hh"
 
@@ -35,7 +35,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSPhysicsMuonSplitting::BDSPhysicsMuonSplitting(G4int splittingFactorIn):
   G4VPhysicsConstructor("BDSPhysicsMuonSplitting"),
   splittingFactor(splittingFactorIn)
-{;}
+{
+  if (splittingFactorIn < 1)
+    {throw BDSException(__METHOD_NAME__, "the splitting factor must be an integer 1 or greater.");}
+}
 
 BDSPhysicsMuonSplitting::~BDSPhysicsMuonSplitting()
 {;}
