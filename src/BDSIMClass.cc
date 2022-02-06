@@ -244,8 +244,12 @@ int BDSIM::Initialise()
   BDSGeometryFactorySQL::SetDefaultRigidity(designParticle->BRho()); // used for sql field loading
   
   // Muon splitting - optional - should be done *after* biasing to work with it
-  if (BDSGlobalConstants::Instance()->MuonSplittingFactor() > 1)
-    {physList->RegisterPhysics(new BDSPhysicsMuonSplitting(BDSGlobalConstants::Instance()->MuonSplittingFactor()));}
+  G4int muonSplittingFactor = BDSGlobalConstants::Instance()->MuonSplittingFactor();
+  if (muonSplittingFactor > 1)
+    {
+      G4cout << "\nBDSPhysicsMuonSplitting -> using muon splitting wrapper -> factor of: " << muonSplittingFactor << "\n" << G4endl;
+      physList->RegisterPhysics(new BDSPhysicsMuonSplitting(muonSplittingFactor));
+    }
   
   BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);
   auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
