@@ -18,5 +18,5 @@ beam, particle="e+";
 
 option, muonSplittingFactor=100;
 
-option, ngenerate=100;
+option, ngenerate=10;
 
