@@ -31,7 +31,7 @@ jobs:
                     mkdir bdsim-install && \
                     cd bdsim-build && \
                     source scl_source enable devtoolset-7 && \
-                    cmake -DCMAKE_INSTALL_PREFIX=../bdsim-install ../bdsim/ -DUSE_HEPMC3=ON && make -j6 && \
+                    cmake -DCMAKE_INSTALL_PREFIX=../bdsim-install ../bdsim/ -DUSE_HEPMC3=ON && make -j2 && \
                     make install && cd ../ && \
                     cp -r bdsim/examples bdsim-examples && \
                     echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc"
