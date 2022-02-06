@@ -74,34 +74,31 @@ void BDSPhysicsMuonSplitting::ConstructProcess()
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
   
   while( (*aParticleIterator)() )
-  {
-    G4ParticleDefinition* particle = aParticleIterator->value();
-    G4String particleName = particle->GetParticleName();
-    const auto& search = particleProcesses.find(particleName);
-    if (search == particleProcesses.end())
-      {continue;}
-    
-    // else it's in the set
-    G4ProcessManager* pManager = particle->GetProcessManager();
-    G4ProcessVector* processVector = pManager->GetProcessList();
-    const std::set<G4String>& processNamesToLookFor = search->second;
-    for (G4int i=0; i < (G4int)processVector->entries(); ++i)
     {
-      G4VProcess* process = (*processVector)[i];
-      G4String processName = process->GetProcessName();
-      if (processNamesToLookFor.count(processName) == 0)
-        {continue;}
+      G4ParticleDefinition* particle = aParticleIterator->value();
+      G4String particleName = particle->GetParticleName();
+      const auto& search = particleProcesses.find(particleName);
+      if (search == particleProcesses.end())
+	{continue;}
       
-      auto wrappedProcess = new BDSWrapperMuonSplitting(process, splittingFactor);
-      pManager->RemoveProcess(process);
-      ph->RegisterProcess(wrappedProcess, particle);
-      //pManager->AddProcess(wrappedProcess);
-      /*
-      processVector->removeAt(i);
-      processVector->insertAt(i, wrappedProcess);
-       */
+      // else it's in the set
+      G4ProcessManager* pManager = particle->GetProcessManager();
+      G4ProcessVector* processVector = pManager->GetProcessList();
+      const std::set<G4String>& processNamesToLookFor = search->second;
+      for (G4int i=0; i < (G4int)processVector->entries(); ++i)
+	{
+	  G4VProcess* process = (*processVector)[i];
+	  G4String processName = process->GetProcessName();
+	  if (processNamesToLookFor.count(processName) == 0)
+	    {continue;}
+	  
+	  auto wrappedProcess = new BDSWrapperMuonSplitting(process, splittingFactor);
+	  pManager->RemoveProcess(process);
+	  ph->RegisterProcess(wrappedProcess, particle);
+	  G4cout << "BDSPhysicsMuonSplitting> wrapping \"" << process->GetProcessName()
+		 << "\" for particle \"" << particle->GetParticleName() << "\": factor of " << splittingFactor << G4endl;
+	}
     }
-  }
   
   SetActivated();
 }
