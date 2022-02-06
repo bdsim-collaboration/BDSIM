@@ -31,7 +31,7 @@ jobs:
                     mkdir bdsim-install && \
                     cd bdsim-build && \
                     source scl_source enable devtoolset-7 && \
-                    cmake -DCMAKE_INSTALL_PREFIX=../bdsim-install ../bdsim/ -DUSE_HEPMC3=ON && make -j2 && \
+                    cmake -DCMAKE_INSTALL_PREFIX=../bdsim-install ../bdsim/ -DUSE_HEPMC3=ON && make -j4 && \
                     make install && cd ../ && \
                     cp -r bdsim/examples bdsim-examples && \
                     echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc"
@@ -46,7 +46,7 @@ jobs:
           command: |
             source /usr/local/bin/geant4.sh
             cd bdsim-build
-            ctest --verbose -j2 -LE LONG --output-junit ./ctest_output.xml
+            ctest --verbose -j4 -LE LONG --output-junit ./ctest_output.xml
             exit 0
 
       - store_test_results:
