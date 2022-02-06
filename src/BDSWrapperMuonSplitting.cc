@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VParticleChange.hh"
 #include "G4VProcess.hh"
 
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -79,7 +80,6 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
 	{originalSecondaries.push_back(secondary);}
       else
 	{originalMuons.push_back(secondary);}
-      G4cout << secondary << "keep" << G4endl;
     }
   
   G4int nOriginalSecondaries = particleChange->GetNumberOfSecondaries();
@@ -89,7 +89,7 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
   G4int nSuccessfulMuonSplits = 0;
   G4int iTry = 0;
   std::vector<G4Track*> newMuons;
-  
+  std::set<G4Track*> potentiallyDelete;
   while (iTry < maxTrials && nSuccessfulMuonSplits < splittingFactor-1)
     {
       iTry++;
@@ -99,7 +99,14 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
       G4bool aMuon = MuonPresent(particleChange);
       if (!aMuon)
 	{
-	  //DeleteSecondaries(particleChange);
+	  for (G4int i = 0; i < particleChange->GetNumberOfSecondaries(); i++)
+	    {
+	      auto sec = particleChange->GetSecondary(i);
+	      potentiallyDelete.insert(sec);
+	      
+	    }
+	  //DeleteSecondaries(particleChange); // causes double deletion bug only with certain processes...
+	  // becuase of the allocator they use inside G4Track and G4DynamicParticle
 	  continue;
 	}
       
@@ -145,6 +152,18 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
       particleChange->AddSecondary(newMuon);
     }
   
+  std::set<G4Track*> finallyToKeep;
+  for (G4int i = 0; i < particleChange->GetNumberOfSecondaries(); i++)
+    {
+      auto sec = particleChange->GetSecondary(i);
+      finallyToKeep.insert(sec);
+    }
+  std::set<G4Track*> definitelyDelete;
+  std::set_difference(potentiallyDelete.begin(), potentiallyDelete.end(), finallyToKeep.begin(), finallyToKeep.end(),
+                      std::inserter(definitelyDelete, definitelyDelete.begin()));
+  
+  for (auto p : definitelyDelete)
+    {delete p;}
   return particleChange;
 }
 
