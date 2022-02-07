@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
 #include "G4String.hh"
+#include "G4TrackFastVector.hh"
 #include "G4Types.hh"
 
 #include <map>
@@ -38,6 +39,13 @@ BDSPhysicsMuonSplitting::BDSPhysicsMuonSplitting(G4int splittingFactorIn):
 {
   if (splittingFactorIn < 1)
     {throw BDSException(__METHOD_NAME__, "the splitting factor must be an integer 1 or greater.");}
+  G4int maxSize = G4TrackFastVectorSize/2;
+  if (splittingFactorIn > maxSize)
+    {
+      G4String msg = "the maximum safe splitting factor is " + std::to_string(maxSize);
+      msg += " based on the G4TrackFastVectorSize in Geant4";
+      throw BDSException(__METHOD_NAME__, msg);
+    }
 }
 
 BDSPhysicsMuonSplitting::~BDSPhysicsMuonSplitting()
