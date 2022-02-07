@@ -2028,7 +2028,16 @@ This is controlled by the option: ::
   option, muonSplittingFactor=N
 
 where N is a positive integer (1 = no splitting). This is the factor multiplying the number of
-muons normally produced. The following processes are wrapped for the following
+muons normally produced.
+
+* :code:`muonSplittingFactor` can range from 1 to 206. The limit of 206 is imposed by the
+  compiled constant :code:`G4TrackFastVectorSize` in :code:`G4TrackFastVector.hh`, which
+  is Geant4's expected maximum number of secondary tracks per interaction, which is fair.
+  If more than this are generated, they will be dumped by Geant4 and not tracked. We have
+  a factor of 2, because theoretically AnnihiToMuPair could produce 2x muons per occurrence.
+
+
+The following processes are wrapped for the following
 particles (Geant4 names).
 
 +---------------+-----------------+
@@ -2666,6 +2675,7 @@ Physics Processes
 | muonSplittingFactor              | An integer of 1 or greater. Number of muons to split  |
 |                                  | a muon into (biasing) for select processes. See       |
 |                                  | physics biasing for an explanation. 1 = no effect.    |
+|                                  | 1-206 (depends on Geant4) is acceptable.              |
 +----------------------------------+-------------------------------------------------------+
 | neutronTimeLimit                 | Maximum allowed tracking time for a neutron when      |
 |                                  | using the `neutron_tracking_cut` physics list [s]     |
