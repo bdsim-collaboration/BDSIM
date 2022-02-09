@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     {
       std::cout << "Incorrect number of arguments." << std::endl;
       usage();
-      exit(1);
+      return 1;
     }
 
   std::string inputFileName   = std::string(argv[1]);
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
     {
 	  std::cout << "outputfile same as datafile" << std::endl;
 	  usage();
-	  exit(1);
+	  return 1;
     }
 
   bool emittanceOnFly = false;
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 	{
 	  std::cout << "Unknown option \"" << argv[3] << "\"" << std::endl;
 	  usage();
-	  exit(1);
+	  return 1;
 	}
     }
 
@@ -86,9 +86,9 @@ int main(int argc, char* argv[])
   try
     {dl = new DataLoader(inputFileName, false, true);}
   catch (const RBDSException& error)
-    {std::cerr << error.what(); exit(1);}
+    {std::cerr << error.what() << std::endl; return 1;}
   catch (const std::exception& error)
-    {std::cerr << error.what(); exit(1);}
+    {std::cerr << error.what() << std::endl; return 1;}
 
   // beam required to get the mass of the primary particle in EventAnalysis
   Beam*   beam     = dl->GetBeam();
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
   if (modelTree->GetEntries() == 0)
     {
       std::cerr << "Data file written without Model tree that is required for optics analysis" << std::endl;
-      exit(1);
+      return 1;
     }
 
   EventAnalysis* evtAnalysis;
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
       evtAnalysis->Execute();
     }
   catch (const RBDSException& error)
-    {std::cerr << error.what(); exit(1);}
+    {std::cerr << error.what() << std::endl; return 1;}
 
   TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
 

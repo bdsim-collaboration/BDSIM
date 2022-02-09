@@ -190,9 +190,9 @@ int main(int argc, char *argv[])
       std::cout << "Result written to: " << config->OutputFileName() << std::endl;
     }
   catch (const RBDSException& error)
-    {std::cerr << error.what(); exit(1);}
+    {std::cerr << error.what() << std::endl; exit(1);}
   catch (const std::exception& error)
-    {std::cerr << error.what(); exit(1);}
+    {std::cerr << error.what() << std::endl; exit(1);}
 
   delete dl;
   for (auto analysis : analyses)
