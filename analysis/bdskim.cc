@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
  
   TTree* headerTree = dynamic_cast<TTree*>(input->Get("Header")); // should be safe given check we've just done
   if (!headerTree)
-    {std::cerr << "Error with header" << std::endl; exit(1);}
+    {std::cerr << "Error with header" << std::endl; return 1;}
   Header* headerLocal = new Header();
   headerLocal->SetBranchAddress(headerTree);
   headerTree->GetEntry(0);
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   
   TFile* output = new TFile(outputFile.c_str(), "RECREATE");
   if (output->IsZombie())
-    {std::cerr << "Couldn't open output file " << outputFile << std::endl; exit(1);}
+    {std::cerr << "Couldn't open output file " << outputFile << std::endl; return 1;}
   output->cd();
   TTree* outputHeaderTree = new TTree("Header", "BDSIM Header");
   outputHeaderTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
