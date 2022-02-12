@@ -959,6 +959,10 @@ interactive or compiled C++ with ROOT, or through Python.
 The classes used to store and load data in BDSIM are packaged into a library. This
 library can be used interactively in Python and ROOT to load the data manually.
 
+A custom analysis can also be put in files the same as rebdsim would produce
+and then rebdsimCombine can be used on them. This allows us to scale up a custom
+analysis to any size. See :ref:`custom-analysis-rebdsim-file`.
+
 Analysis in Python
 ------------------
 
@@ -1008,8 +1012,9 @@ associated with it. ::
   d.histograms1d               d.histograms3dpy              
   d.histograms1dpy             d.histogramspy 
 
-General Data Loading
-********************
+
+Raw Data Loading
+****************
 
 Any output file from the BDSIM set of tools can be loaded with: ::
 
@@ -1026,6 +1031,55 @@ to numpy arrays. The type can easily be inspected: ::
 
   >>> type(d)
   pybdsim.Data.RebdsimFile
+
+
+REBDSIM Histogram Loading
+*************************
+
+Output from `rebdsim` can be loaded using pybdsim. The histograms made by `rebdsim`
+are loaded as the ROOT objects they are, but are also converted to numpy arrays
+using classes provided by pybdsim for convenience. The Python converted ones are
+held in dictionaries suffixed with 'py'. The histograms are loaded into dictionaries
+where the key is a string with the full path and name of the histogram in the `rebdsim`
+output file. The value is the histogram from the file. ::
+
+  >>> import pybdsim
+  >>> d = pybdsim.Data.Load("rebdsimoutputfile.root")
+  >>> d.histograms
+  {'Event/MergedHistograms/ElossHisto': <ROOT.TH1D object ("ElossHisto") at 0x7fbe365e9520>,
+  'Event/MergedHistograms/ElossPEHisto': <ROOT.TH1D object ("ElossPEHisto") at 0x7fbe365ea750>,
+  'Event/MergedHistograms/ElossTunnelHisto': <ROOT.TH1D object ("ElossTunnelHisto") at 0x7fbe365eab40>,
+  'Event/MergedHistograms/ElossTunnelPEHisto': <ROOT.TH1D object ("ElossTunnelPEHisto") at 0x7fbe365eaf30>,
+  'Event/MergedHistograms/PhitsHisto': <ROOT.TH1D object ("PhitsHisto") at 0x7fbe365e8bd0>,
+  'Event/MergedHistograms/PhitsPEHisto': <ROOT.TH1D object ("PhitsPEHisto") at 0x7fbe365e9cb0>,
+  'Event/MergedHistograms/PlossHisto': <ROOT.TH1D object ("PlossHisto") at 0x7fbe365e8fc0>,
+  'Event/MergedHistograms/PlossPEHisto': <ROOT.TH1D object ("PlossPEHisto") at 0x7fbe365ea0a0>,
+  'Event/PerEntryHistograms/EnergyLossManual': <ROOT.TH1D object ("EnergyLossManual") at 0x7fbe365a3a50>,
+  'Event/PerEntryHistograms/EnergySpectrum': <ROOT.TH1D object ("EnergySpectrum") at 0x7fbe365a2e20>,
+  'Event/PerEntryHistograms/EventDuration': <ROOT.TH1D object ("EventDuration") at 0x7fbe325907b0>,
+  'Event/PerEntryHistograms/TunnelDeposition': <ROOT.TH3D object ("TunnelDeposition") at 0x7fbe35e2c800>,
+  'Event/PerEntryHistograms/TunnelLossManual': <ROOT.TH1D object ("TunnelLossManual") at 0x7fbe365a40b0>,
+  'Event/SimpleHistograms/Primaryx': <ROOT.TH1D object ("Primaryx") at 0x7fbe325cf9d0>,
+  'Event/SimpleHistograms/Primaryy': <ROOT.TH1D object ("Primaryy") at 0x7fbe325d0230>,
+  'Event/SimpleHistograms/TunnelHitsTransverse': <ROOT.TH2D object ("TunnelHitsTransverse") at 0x7fbe30a7fe00>}
+  >>> d.histogramspy
+  {'Event/MergedHistograms/ElossHisto': <pybdsim.Data.TH1 at 0x12682fa10>,
+  'Event/MergedHistograms/ElossPEHisto': <pybdsim.Data.TH1 at 0x12682f850>,
+  'Event/MergedHistograms/ElossTunnelHisto': <pybdsim.Data.TH1 at 0x12682f690>,
+  'Event/MergedHistograms/ElossTunnelPEHisto': <pybdsim.Data.TH1 at 0x12682f990>,
+  'Event/MergedHistograms/PhitsHisto': <pybdsim.Data.TH1 at 0x12682f890>,
+  'Event/MergedHistograms/PhitsPEHisto': <pybdsim.Data.TH1 at 0x12682f950>,
+  'Event/MergedHistograms/PlossHisto': <pybdsim.Data.TH1 at 0x12682f7d0>,
+  'Event/MergedHistograms/PlossPEHisto': <pybdsim.Data.TH1 at 0x12682f5d0>,
+  'Event/PerEntryHistograms/EnergyLossManual': <pybdsim.Data.TH1 at 0x12682f810>,
+  'Event/PerEntryHistograms/EnergySpectrum': <pybdsim.Data.TH1 at 0x122d577d0>,
+  'Event/PerEntryHistograms/EventDuration': <pybdsim.Data.TH1 at 0x12682f910>,
+  'Event/PerEntryHistograms/TunnelDeposition': <pybdsim.Data.TH3 at 0x116abe090>,
+  'Event/PerEntryHistograms/TunnelLossManual': <pybdsim.Data.TH1 at 0x122d67190>,
+  'Event/SimpleHistograms/Primaryx': <pybdsim.Data.TH1 at 0x12682f710>,
+  'Event/SimpleHistograms/Primaryy': <pybdsim.Data.TH1 at 0x12682f790>,
+  'Event/SimpleHistograms/TunnelHitsTransverse': <pybdsim.Data.TH2 at 0x12682fa50>}
+  
  
 
 Looping Over Events
@@ -1048,6 +1102,109 @@ on how to browse the data.
 .. note:: The branch "Summary" in the Event and Run trees used to be called "Info"
 	  in BDSIM < V1.3. This conflicted with TObject::Info() so this looping in
 	  Python would work for any data in this branch, hence the change.
+
+
+Accumulating - Average Histograms
+*********************************
+
+We typically want a histogram that is an average per-event. If writing our own analysis
+in Python we can of course make a ROOT histogram through ROOT's Python interface and fill
+it as we loop over events. However, we can also use rebdsim's analysis classes through
+ROOT.
+
+**Terminology** : "accumulating" means to add up some quantity over a data set. Here, our
+accumulators (things that accumulate) are building up the average as they go.
+
+The :code:`HistogramAccumulator` class wraps a ROOT TH1D or TH2D or TH3D object and
+calcualtes a rolling average. The class is available in our rebdsim library which is
+imported automatially when loading a data file with pybdsim. However, one can explicitly
+load it with: ::
+
+  >>> import pybdsim
+  >>> pybdsim.Data.LoadROOTLibraries()
+
+* HistogramAccumulator can be found in :code:`bdsim/analysis/HistogramAccumulator.hh`.
+* It works on TH1D, TH2D, TH3D histograms.
+* You do not need to speciy the number of dimensions of the histogram - it's automatic.
+
+This is the basic usage of HistogramAccumulator in Python: ::
+
+  >>> import ROOT
+  >>> import pybdsim
+  >>> h = ROOT.TH1D("HistogramNameForFileBASE", "A Nice Title", 100, 0, 20) # 100 bins from 0 to 20
+  >>> ha = ROOT.HistogramAccumulator(h, h.GetName().strip("BASE"), h.GetTitle())
+
+  >>> h.Reset()
+  >>> h.Fill(1.2)       # fill the histogram
+  >>> ha.Accumulate(h)  # add this histogram to the rolling mean
+
+  ... repeat these last 3 lines ...
+
+  >>> result = ha.Terminate() # returns a TH1* that is the average
+
+
+.. note:: TH1 is the base class of TH1D, TH2D and TH3D
+
+
+.. note:: We need a basic ROOT histogram to base the accumulator off of. It needs to have a
+	  differnet name, but it can have the same title. The first argument, the object name,
+	  is the one used when writing to a file and ROOT uses this internally to identify it
+	  so it **must** be unique. Here, we append the suffix "BASE" onto its name for the
+	  simple histogram, and we give the accumulator the desired name without this suffix
+	  by stripping it off.
+
+An example in a loop: ::
+
+  >>> import pybdsim
+  >>> d = pybdsim.Data.Load("mytastydata.root")
+  >>> h = ROOT.TH1D("HistogramNameForFileBASE", "A Nice Title", 100, 0, 20) # 100 bins from 0 to 20
+  >>> ha = ROOT.HistogramAccumulator(h, h.GetName().strip("BASE"), h.GetTitle())
+  >>> for event in d.GetEventTree():
+          h.Reset()
+	  for i in range(event.someSampler.n):
+	      h.Fill(event.someSampler.x, event.someSampler.weight)
+	  ha.Accumulate(h)
+  >>> result = ha.Terminate()
+  >>> outfile = pybdsim.Data.CreateEmptyRebdsimFile("somehistograms.root", d.header.nOriginalEvents)
+  >>> pybdsim.Data.WriteROOTHistogramsToDirectory(outfile, "Event/PerEntryHistograms", [result])
+  >>> outfile.Close()
+
+.. _custom-analysis-rebdsim-file:
+
+Create A REBDSIM File in Python
+*******************************
+
+When making a custom analysis, we most likely might want to apply it to a large data set using
+a computer farm. If we have per-event average histograms, you **cannot use hadd** from ROOT as
+it simply adds histograms together. We want to make use of rebdsimCombine as we would normally,
+but we wrote our own ROOT file with our own histograms. How do we proceed?
+
+pybdsim has a utility function that will create a rebdsim file that you can write your own histograms
+too. This isn't required, but then allows you to use rebdsimCombine.
+::
+
+   >>> import pybdsim
+   >>> outfile = pybdsim.Data.CreateEmptyRebdsimFile("outfilename.root")
+   >>> pybdsim.Data.WriteROOTHistogramsToDirectory(outfile, "Event/PerEntryHistograms", [th1Object])
+   >>> outfile.Close()
+
+The last item should be a list of ROOT histograms (e.g. TH1D, TH2D, TH3D). The directory should
+match the layout of a regular rebdsim file. e.g. :
+
+* :code:`Event/PerEntryHistograms` for average histograms
+* :code:`Event/SimpleHistograms` for regular histograms that aren't averaged or event-normalised.
+
+REBDSIM In Python
+*****************
+
+The custom analysis could be used to replace rebdsim. Although there is no point to this, examples
+are provided that illustrate the usage of the classes and tools. See:
+
+* :code:`bdsim/examples/features/analysis/pythonAnalysis`
+
+.. note:: rebdsim itself **cannot** be used in Python. This part only describes how to reproduce
+	  rebdsim again in Python as an example of data analysis.
+
 
 Sampler Data
 ************
@@ -1100,54 +1257,6 @@ includes the primaries ("Primary").
 	     Certainly, if the statistical uncertainties are to be calculated, this
 	     is a far preferable route.
 
-REBDSIM Histograms
-******************
-
-Output from `rebdsim` can be loaded using pybdsim. The histograms made by `rebdsim`
-are loaded as the ROOT objects they are, but are also converted to numpy arrays
-using classes provided by pybdsim for convenience. The Python converted ones are
-held in dictionaries suffixed with 'py'. The histograms are loaded into dictionaries
-where the key is a string with the full path and name of the histogram in the `rebdsim`
-output file. The value is the histogram from the file. ::
-
-  >>> import pybdsim
-  >>> d = pybdsim.Data.Load("rebdsimoutputfile.root")
-  >>> d.histograms
-  {'Event/MergedHistograms/ElossHisto': <ROOT.TH1D object ("ElossHisto") at 0x7fbe365e9520>,
-  'Event/MergedHistograms/ElossPEHisto': <ROOT.TH1D object ("ElossPEHisto") at 0x7fbe365ea750>,
-  'Event/MergedHistograms/ElossTunnelHisto': <ROOT.TH1D object ("ElossTunnelHisto") at 0x7fbe365eab40>,
-  'Event/MergedHistograms/ElossTunnelPEHisto': <ROOT.TH1D object ("ElossTunnelPEHisto") at 0x7fbe365eaf30>,
-  'Event/MergedHistograms/PhitsHisto': <ROOT.TH1D object ("PhitsHisto") at 0x7fbe365e8bd0>,
-  'Event/MergedHistograms/PhitsPEHisto': <ROOT.TH1D object ("PhitsPEHisto") at 0x7fbe365e9cb0>,
-  'Event/MergedHistograms/PlossHisto': <ROOT.TH1D object ("PlossHisto") at 0x7fbe365e8fc0>,
-  'Event/MergedHistograms/PlossPEHisto': <ROOT.TH1D object ("PlossPEHisto") at 0x7fbe365ea0a0>,
-  'Event/PerEntryHistograms/EnergyLossManual': <ROOT.TH1D object ("EnergyLossManual") at 0x7fbe365a3a50>,
-  'Event/PerEntryHistograms/EnergySpectrum': <ROOT.TH1D object ("EnergySpectrum") at 0x7fbe365a2e20>,
-  'Event/PerEntryHistograms/EventDuration': <ROOT.TH1D object ("EventDuration") at 0x7fbe325907b0>,
-  'Event/PerEntryHistograms/TunnelDeposition': <ROOT.TH3D object ("TunnelDeposition") at 0x7fbe35e2c800>,
-  'Event/PerEntryHistograms/TunnelLossManual': <ROOT.TH1D object ("TunnelLossManual") at 0x7fbe365a40b0>,
-  'Event/SimpleHistograms/Primaryx': <ROOT.TH1D object ("Primaryx") at 0x7fbe325cf9d0>,
-  'Event/SimpleHistograms/Primaryy': <ROOT.TH1D object ("Primaryy") at 0x7fbe325d0230>,
-  'Event/SimpleHistograms/TunnelHitsTransverse': <ROOT.TH2D object ("TunnelHitsTransverse") at 0x7fbe30a7fe00>}
-  >>> d.histogramspy
-  {'Event/MergedHistograms/ElossHisto': <pybdsim.Data.TH1 at 0x12682fa10>,
-  'Event/MergedHistograms/ElossPEHisto': <pybdsim.Data.TH1 at 0x12682f850>,
-  'Event/MergedHistograms/ElossTunnelHisto': <pybdsim.Data.TH1 at 0x12682f690>,
-  'Event/MergedHistograms/ElossTunnelPEHisto': <pybdsim.Data.TH1 at 0x12682f990>,
-  'Event/MergedHistograms/PhitsHisto': <pybdsim.Data.TH1 at 0x12682f890>,
-  'Event/MergedHistograms/PhitsPEHisto': <pybdsim.Data.TH1 at 0x12682f950>,
-  'Event/MergedHistograms/PlossHisto': <pybdsim.Data.TH1 at 0x12682f7d0>,
-  'Event/MergedHistograms/PlossPEHisto': <pybdsim.Data.TH1 at 0x12682f5d0>,
-  'Event/PerEntryHistograms/EnergyLossManual': <pybdsim.Data.TH1 at 0x12682f810>,
-  'Event/PerEntryHistograms/EnergySpectrum': <pybdsim.Data.TH1 at 0x122d577d0>,
-  'Event/PerEntryHistograms/EventDuration': <pybdsim.Data.TH1 at 0x12682f910>,
-  'Event/PerEntryHistograms/TunnelDeposition': <pybdsim.Data.TH3 at 0x116abe090>,
-  'Event/PerEntryHistograms/TunnelLossManual': <pybdsim.Data.TH1 at 0x122d67190>,
-  'Event/SimpleHistograms/Primaryx': <pybdsim.Data.TH1 at 0x12682f710>,
-  'Event/SimpleHistograms/Primaryy': <pybdsim.Data.TH1 at 0x12682f790>,
-  'Event/SimpleHistograms/TunnelHitsTransverse': <pybdsim.Data.TH2 at 0x12682fa50>}
-  
-
   
 
 Analysis in C++ or ROOT
@@ -1179,8 +1288,8 @@ classes provided by the library::
 The header (".hh") files in :code:`<bdsim>/analysis` provide the contents and abilities
 of each class.
 
-General Data Loading
-********************
+Raw Data Loading
+****************
 
 This would of course be fairly tedious to load all the structures in the output. Therefore,
 a data loader class is provided that constructs local instances of all the objects and
@@ -1193,6 +1302,17 @@ sets the branch address on them (links them to the open file). For example::
   root> TTree* evtTree = dl->GetEventTree();
 
 Here, a file is loaded and by default all data is loaded in the file.
+
+REBDSIM Histogram Loading
+*************************
+
+To load histograms, the user should open the ROOT file and access the histograms directly.::
+
+  root> TFile* f = new TFile("output.root");
+  root> TH1D* eloss = (TH1D*)f->Get("Event/MergedHistograms/ElossHisto");
+
+It is recommended to use a TBrowser to get the exact names of objects in the file.
+
 
 Looping Over Events
 *******************
@@ -1244,16 +1364,6 @@ DataLoader class::
 
   std::vector<std::string> samplerNames = dl->GetSamplerNames();
 
-
-REBDSIM Histograms
-******************
-
-To load histograms, the user should open the ROOT file and access the histograms directly.::
-
-  root> TFile* f = new TFile("output.root");
-  root> TH1D* eloss = (TH1D*)f->Get("Event/MergedHistograms/ElossHisto");
-
-It is recommended to use a TBrowser to get the exact names of objects in the file.
 
   
 Output Classes
