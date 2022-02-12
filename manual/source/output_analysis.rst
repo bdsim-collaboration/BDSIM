@@ -4,11 +4,56 @@
 Output Analysis
 ===============
 
-This section describes how to load and view data from the recommended output **rootevent**
+This section describes how to load, view and analyse data from the recommended output **rootevent**
 format.
+
+Broadly, there are 2 data formats with BDSIM and its analysis tools. These will be the
+same format, i.e. ROOT files, but will have a different layout. These are:
+
+#) BDSIM raw data - the output of a BDSIM run
+#) REBDSIM data - the output of various analysis tools containing histograms and optics.
+
+A variety of tools are provided that accommodate several different workflows depending on
+data size versus computation time for analysis. The following tools are provided:
+
++--------------------+------------------------+--------------------------+--------------------------------------+
+| **Tool**           | **Used on Data Type**  | **Produces as Output**   | **Purpose**                          |
++====================+========================+==========================+======================================+
+| bdskim             | BDSIM raw              | BDSIM raw                | Filter a raw file to select events   |
++--------------------+------------------------+--------------------------+--------------------------------------+
+| bdsimCombine       | BDSIM raw              | BDSIM raw                | Combine events from multiple files   |
++--------------------+------------------------+--------------------------+--------------------------------------+
+| rebdsim            | BDSIM raw              | REBDSIM                  | Make histograms of raw data          |
++--------------------+------------------------+--------------------------+--------------------------------------+
+| rebdsimCombine     | REBDSIM                | REBDSIM                  | Combine REBDSIM output files         |
+|                    |                        |                          | as if they were done in one run of   |
+|                    |                        |                          | rebdsim                              |
++--------------------+------------------------+--------------------------+--------------------------------------+
+| rebdsimHistoMerge  | BDSIM raw              | REBDSIM                  | Merge per-made per event histograms  |
+|                    |                        |                          | in BDSIM raw output (e.g. ELoss)     |
++--------------------+------------------------+--------------------------+--------------------------------------+
+| rebdsimOptics      | BDSIM raw              | REBDSIM                  | Calculate optical functions from raw |
+|                    |                        |                          | sampler data                         |
++--------------------+------------------------+--------------------------+--------------------------------------+
+| rebdsimOrbit       | BDSIM raw              | REBDSIM                  | Extract the i-th hit from every      |
+|                    |                        |                          | sampler                              |
++--------------------+------------------------+--------------------------+--------------------------------------+
+
+
+These are discussed each in:
+
+* :ref:`bdskim-tool`
+* :ref:`bdsim-combine-tool`
+* :ref:`rebdsim-analysis-tool`
+* :ref:`rebdsim-combine-tool`
+* :ref:`rebdsim-histo-merge-tool`
+* :ref:`rebdsim-optics-tool`
+* :ref:`rebdsim-orbit-tool`
 
 See :ref:`basic-data-inspection` for how to view the data and make the most basic
 on-the-fly histograms.
+
+Strategies on the workflow and use of the tools is discussed in :ref:`output-analysis-efficiency`.
 
 .. _output-analysis-setup:
 
@@ -54,7 +99,7 @@ Inspect Histograms
 1. Run rebdsimHistoMerge on BDSIM output file (quick).
 2. Browse output of rebdsimHistoMerge in TBrowser in ROOT.
 
-See :ref:`rebdsim-histo-merge` for details.
+See :ref:`rebdsim-histo-merge-tool` for details.
 
 ::
 
@@ -141,7 +186,17 @@ if they are rare.
 
 Usage: ::
 
-  bdskim <skimselection.txt> <input_bdsim_raw.root> <output_bdsim_raw.root>
+  bdskim <skimselection.txt> <input_bdsim_raw.root> (<output_bdsim_raw.root>)
+
+e.g. ::
+
+  bdskim skimselection.txt 1234.root  1234-skim.root
+  
+  bdskim skimselection.txt 1234.root
+
+
+The second version uses :code:`1234_skiimed.root` as the default output file name by adding "_skimmed"
+to the name of the input file.
 
 As an example, if we use the data sample included in :code:`bdsim/examples/features/data`: ::
   
@@ -152,13 +207,15 @@ of `skimselection.txt` are: ::
 
   dq1_1.n>30
 
+
+* The output file name is optional and will default to :code:`inputfilename_skimmed.root.`
 * Any line starting with :code:`#` will be treated as a comment and ignored.
 * Any empty line will be ignored.
 * Only one selection should be specified in the file.
 * The selection must not contain any white space between characters, i.e. there is only 1 'word' on the line.
 * Run information is not recalculated (e.g. histograms) and is simply copied from the original file.
 
-.. _bdsimCombine-tool:
+.. _bdsim-combine-tool:
   
 bdsimCombine - Combine BDSIM Output Files
 =========================================
@@ -199,7 +256,7 @@ Notes:
   is controllable in ROOT (`TTree::SetMaxTreeSize`) but no control over this is currently
   provided with `bdsimCombine`.
 
-.. note:: This tool is distinct from :ref:`rebdsim-combine` as this tool only handles
+.. note:: This tool is distinct from :ref:`rebdsim-combine-tool` as this tool only handles
 	  raw BDSIM output data. `rebdsimCombine` handles output from the analysis
 	  tool `rebdsim`.
 
@@ -249,6 +306,7 @@ Examples::
   rebdsim analysisConfig.txt
   rebdsim analysisConfig.txt output.root
   rebdsim analysisConfig.txt output.root results.root
+  rebdsim analysisConfig.txt "*.root" results.root
 
 * If the output filename is specified this will take precedence over the output file name
   possibly specified in the analysis configuration text file.
@@ -676,7 +734,7 @@ Variables In Data
 See :ref:`basic-data-inspection` for how to view the data and make the most basic
 on-the-fly histograms.
 
-.. _rebdsim-combine:
+.. _rebdsim-combine-tool:
 
 rebdsimCombine - Output Combination
 ===================================
@@ -694,7 +752,7 @@ in comparison to the analysis. `rebdsimCombine` is used as follows: ::
 where `<result.root>` is the desired name of the merged output file and `<fileX.root>` etc.
 are input files to be merged. This workflow is shown schematically in the figure below.
 
-.. _rebdsim-histo-merge:
+.. _rebdsim-histo-merge-tool:
 
 rebdsimHistoMerge - Simple Histogram Merging
 ============================================
@@ -713,10 +771,19 @@ follows::
 
   rebdsimHistoMerge output.root results.root
 
-This creates a ROOT file called "results.root" that contains the average histograms
+or ::
+  
+  rebdsimHistoMerge output.root
+
+This creates a ROOT file called (first example) "results.root" and (second example)
+"output_histos.root", that contains the average histograms
 across all events.  This can only operate on BDSIM output files, not `rebdsim`
 output files.
 
+* The output file name is optional and will default to :code:`inputfilename_histos.root.`
+
+.. _rebdsim-optics-tool:
+  
 rebdsimOptics - Optical Functions
 =================================
 
@@ -725,7 +792,12 @@ optical functions as well as beam sizes. It is run as follows::
 
   rebdsimOptics output.root optics.root
 
-This creates a ROOT file called "optics.root" that contains the optical functions
+or ::
+
+  rebdsimOptics output.root
+
+This creates a ROOT file called (first example) "optics.root" and
+(second example) output_optics.root, that contains the optical functions
 of the sampler data.
 
 This may also take the optional argument :code:`--emittanceOnTheFly` (exactly, case-sensitive)
@@ -740,8 +812,27 @@ cavities are used, then the emittance on the fly option should be used.::
 
 
 * The order is not interchangeable.
+* The output file name is optional and will default to :code:`inputfilename_optics.root.`
+* The output **is not** mergeable with `rebdsimCombine`.
 
 See :ref:`optical-validation` for more details.
+
+.. _rebdsim-orbit-tool:
+
+rebdsimOrbit - Orbit Extraction
+===============================
+
+A small tool was made but not actively used to extract the i-th hit from every sampler. In the
+case where we simulate one particle and sample all beam line elements, this gives us the 'orbit'
+of that particle.
+
+::
+
+   rebdsimOrbit output.root orbit.root
+
+The argument `output.root` is a BDSIM raw file. The output of this program is a REBDSIM file
+that can be loaded with the pybdsim Python utility.
+
 
 .. _output-analysis-efficiency:
 
@@ -816,7 +907,7 @@ combine the results. In the case of per-event histograms, `rebdsim` provides the
 per event, along with the error on the mean for the bin error. A separate tool,
 `rebdsimCombine`, can be used to combine these `rebdsim` output files into one single
 file. This is numerically equivalent to analysing all the data in one execution of
-`rebdsim` but significantly faster. See :ref:`rebdsim-combine` for more details.
+`rebdsim` but significantly faster. See :ref:`rebdsim-combine-tool` for more details.
 
 .. figure:: figures/multiple_analyses.pdf
 	    :width: 100%
