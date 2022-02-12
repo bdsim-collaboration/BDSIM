@@ -16,6 +16,8 @@ same format, i.e. ROOT files, but will have a different layout. These are:
 A variety of tools are provided that accommodate several different workflows depending on
 data size versus computation time for analysis. The following tools are provided:
 
+  .. tabularcolumns:: |p{2cm}|p{3cm}|p{3cm}|p{4cm}|
+
 +--------------------+------------------------+--------------------------+--------------------------------------+
 | **Tool**           | **Used on Data Type**  | **Produces as Output**   | **Purpose**                          |
 +====================+========================+==========================+======================================+
