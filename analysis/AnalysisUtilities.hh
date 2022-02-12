@@ -78,6 +78,6 @@ namespace RBDS
   std::string DefaultOutputName(const std::string& inputFilePath,
                                 const std::string& suffix);
   
-};
+}
 
 #endif
