@@ -134,7 +134,11 @@ Bug Fixes
     translation unit
     BDSOutputROOTEventSampler<float>::particleTable;
 
+**Biasing**
 
+* Fixed huge amount of print out for bias objects attached to a whole beam line. Now, bias
+  objects are only constructed internally for a unique combination of biases from the input.
+  Less print out and (marginally) lower memory usage.
 
 **Fields**
 

@@ -238,6 +238,7 @@ private:
 
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;
+  std::map<G4String, BDSBOptrMultiParticleChangeCrossSection*> biasSetObjects;
 #endif
 
 #ifdef BDSDEBUG
