@@ -110,9 +110,8 @@ void BDSBOptrChangeCrossSection::SetBias(const G4String& processName,
     {allProcesses = true;}
   
   G4bool processFound = false;
-  for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++)
+  for (const auto& wrapperProcess : sharedData->GetPhysicsBiasingProcessInterfaces())
     {
-      const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
       G4String currentProcess = wrapperProcess->GetWrappedProcess()->GetProcessName();
       
       // check if the name is already wrapped for biasing of some kind or splitting
@@ -123,10 +122,7 @@ void BDSBOptrChangeCrossSection::SetBias(const G4String& processName,
         {currentProcess = match[1];} // overwrite the variable to match (in this scope)
       
       if (allProcesses || processName == currentProcess)
-	{ 
-#ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << i << " " << processName << " " << currentProcess << G4endl;
-#endif
+	{
 	  fXSScale[wrapperProcess]      = bias;
 	  fPrimaryScale[wrapperProcess] = iPrimary;
 	  processFound                  = true; // the process was found at some point
