@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @file bdskim.cc
  */
+#include "AnalysisUtilities.hh"
 #include "FileMapper.hh"
 #include "Header.hh"
 #include "SelectionLoader.hh"
@@ -35,15 +36,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 int main(int argc, char* argv[])
 {
-  if (argc != 4)
+  if (argc < 3 || argc > 4)
     {
-      std::cout << "usage: bdskim skimselection.txt input_bdsim_raw.root output_bdsim_raw.root" << std::endl;
+      std::cout << "usage: bdskim skimselection.txt input_bdsim_raw.root (output_bdsim_raw.root)" << std::endl;
+      std::cout << "default output name if none given is <inputname>_skimmed.root" << std::endl;
       return 1;
     }
 
   std::string selectionFile = std::string(argv[1]);
   std::string inputFile     = std::string(argv[2]);
-  std::string outputFile    = std::string(argv[3]);
+  std::string outputFile;
+  if (argc == 4)
+    {outputFile = std::string(argv[3]);}
+  else
+    {
+      outputFile = RBDS::DefaultOutputName(inputFile, "_skimmed");
+      std::cout << "Using default output file name with \"_skimmed\" suffix  : " << outputFile << std::endl;
+    }
 
   // load selection
   std::string selection;
