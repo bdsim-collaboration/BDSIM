@@ -48,13 +48,23 @@ Config* Config::instance = nullptr;
 std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Run.", "Event."};
 
 Config::Config(const std::string& inputFilePathIn,
-	       const std::string& outputFileNameIn):
+	       const std::string& outputFileNameIn,
+	       const std::string& defaultOutputFileSuffix):
   allBranchesActivated(false)
 {
   InitialiseOptions("");
+  
+  std::string ofn;
+  if (outputFileNameIn.empty() && !inputFilePathIn.empty())
+    {
+      ofn = RBDS::DefaultOutputName(inputFilePathIn, defaultOutputFileSuffix);
+      std::cout << "Using default output file name with \"" << defaultOutputFileSuffix << "\" suffix  : " << ofn << std::endl;
+    }
+  else
+    {ofn = outputFileNameIn;}
 
   optionsString["inputfilepath"]  = inputFilePathIn;
-  optionsString["outputfilename"] = outputFileNameIn;
+  optionsString["outputfilename"] = ofn;
 
   // turn on merging only
   branches["Event."].push_back("Histos");
@@ -64,7 +74,8 @@ Config::Config(const std::string& inputFilePathIn,
 
 Config::Config(const std::string& fileNameIn,
 	       const std::string& inputFilePathIn,
-	       const std::string& outputFileNameIn):
+	       const std::string& outputFileNameIn,
+               const std::string& defaultOutputFileSuffix):
   allBranchesActivated(false)
 {
   InitialiseOptions(fileNameIn);
@@ -140,19 +151,20 @@ void Config::InitialiseOptions(const std::string& analysisFile)
 }
 
 Config* Config::Instance(const std::string& fileName,
-			             const std::string& inputFilePath,
-			             const std::string& outputFileName)
+			 const std::string& inputFilePath,
+			 const std::string& outputFileName,
+                         const std::string& defaultOutputFileSuffix)
 {
-  if(!instance && !fileName.empty())
-    {instance = new Config(fileName, inputFilePath, outputFileName);}
+  if (!instance && !fileName.empty())
+    {instance = new Config(fileName, inputFilePath, outputFileName, defaultOutputFileSuffix);}
   else if(instance && !fileName.empty())
     {
       std::cout << "Config::Instance> Instance present, delete and construct" << std::endl;
       delete instance;
-      instance = new Config(fileName, inputFilePath, outputFileName);
+      instance = new Config(fileName, inputFilePath, outputFileName, defaultOutputFileSuffix);
     }
   else if (!instance && fileName.empty())
-    {instance = new Config(inputFilePath, outputFileName);}
+    {instance = new Config(inputFilePath, outputFileName, defaultOutputFileSuffix);}
   // else return current instance (can be nullptr!)
   return instance;
 }
