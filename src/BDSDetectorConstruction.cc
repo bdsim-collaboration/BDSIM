@@ -1059,8 +1059,24 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
     {return nullptr;}
   
   std::list<std::string> biasesAll = biasList.empty() ? defaultBias : biasList;
+  
+  // build a unique 'key' as the sorted set of bias names
+  std::set<std::string> biasNamesSorted = {biasesAll.begin(), biasesAll.end()};
+  G4String biasSetKey;
+  G4String biasSetPrintOut;
+  for (const auto& n : biasNamesSorted)
+    {
+      biasSetKey += n + "_";
+      biasSetPrintOut += n + " ";
+    }
+  biasSetKey = biasSetKey.strip(G4String::stripType::trailing, '_');
+  
+  auto exists = biasSetObjects.find(biasSetKey);
+  if (exists != biasSetObjects.end())
+    {return exists->second;}
 
   // loop over all physics biasing
+  G4cout << "Bias> Creating unique set of bias objects ( " << biasSetPrintOut << ")" << G4endl;
   BDSBOptrMultiParticleChangeCrossSection* eg = new BDSBOptrMultiParticleChangeCrossSection();
 
   const auto& biasObjectList = BDSParser::Instance()->GetBiasing();
@@ -1086,6 +1102,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
     }
 
   biasObjects.push_back(eg);
+  biasSetObjects[biasSetKey] = eg; // cache it
   return eg;
 }
 #endif
