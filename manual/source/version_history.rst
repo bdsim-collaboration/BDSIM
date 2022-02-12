@@ -64,7 +64,9 @@ New Features
 * New executable option :code:`--geant4PhysicsMacroFileName` to control the physics macro from the
   command line. Useful when BDSIM is executed from a different directory from the main GMAD input
   file and with a relatively complex model.
-* rebdsim will now default to "intputfilename" + "_ana.root" if no outputfile name is specified.
+* rebdsim will now default to <inputfilename>_ana.root if no outputfile name is specified.
+* Similarly, rebdsimHistoMerge will default to <inputfilename>_histos.root; rebdsimOptics to
+  <intputfilename>_optics.root and bdskim to <inputfilename>_skimmed.root.
 * "linearmag" experimental interpolation.
 * When loading geometry (e.g. a GDML file) to be used as a placement, you can now remove the
   outermost volume (e.g. the 'world' of that file) and place all the contents in the BDSIM
@@ -296,7 +298,7 @@ New Features
 * New executable option :code:`--version` for the bdsim executable that returns the version number.
 * New skimming tool called :code:`bdskim` is included for skimming raw data. See :ref:`bdskim-tool`.
 * New combination tool called :code:`bdsimCombine` is included to merge raw data files
-  and skimmed data files alike. See :ref:`bdsimCombine-tool`.
+  and skimmed data files alike. See :ref:`bdsim-combine-tool`.
 * New ability to choose random number generator. Previously, BDSIM always used CLHEP's HepJamesRandom
   class. In more recent versions of Geant4, CLHEP's MixMax class is now the default. For now, BDSIM
   still uses HepJamesRandom as the default, but the user can select MixMax with the option :code:`randomEngine`.
