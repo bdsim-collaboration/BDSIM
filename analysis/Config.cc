@@ -92,7 +92,7 @@ Config::~Config()
   for (auto& nameDefs : histoDefs)
     {
       for (auto& histoDef : nameDefs.second)
-	    {delete histoDef;}
+	{delete histoDef;}
     }
   for (auto def : eventHistoDefSetsSimple)
     {delete def;}

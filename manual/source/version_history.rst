@@ -611,8 +611,8 @@ V1.5.1 - 2020 / 12 / 21
 Hotfix for tapered elliptical collimators (`ecol`). The apertures would differ at the few percent
 level due to the calculation of the obscure parameterisation of the solid used in Geant4.
 
-V1.5 - 2020 / 12 / 16
-=====================
+V1.5.0 - 2020 / 12 / 16
+=======================
 
 Build System
 ------------
@@ -873,8 +873,8 @@ Utilities
 * pymad8 v1.6.0
 * pytransport v1.4.0
 
-V1.4 - 2020 / 06 / 08
-=====================
+V1.4.0 - 2020 / 06 / 08
+=======================
 
 Expected Changes To Results
 ---------------------------
