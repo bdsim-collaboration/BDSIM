@@ -92,7 +92,13 @@ void BDSBOptrMultiParticleChangeCrossSection::SetBias(const G4String& biasObject
   if (!particle)
     {throw BDSException(__METHOD_NAME__, "Particle \"" + particleName + "\" not found");}
   
-  fBOptrForParticle[particle]->SetBias(process,dBias,iPrimary);
+  try
+    {fBOptrForParticle[particle]->SetBias(process,dBias,iPrimary);}
+  catch (BDSException& e)
+    {
+      e.AppendToMessage("in bias definition \"" + biasObjectName + "\"");
+      throw e;
+    }
 }
 
 G4VBiasingOperation* BDSBOptrMultiParticleChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track* track,
