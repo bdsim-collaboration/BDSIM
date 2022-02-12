@@ -134,6 +134,12 @@ void BDSBOptrChangeCrossSection::SetBias(const G4String& processName,
     }
   if (!processFound)
     {
+      G4cout << "\nCouldn't find process by name. Available processes are:" << G4endl;
+      for (const auto wrapperProcess : sharedData->GetPhysicsBiasingProcessInterfaces())
+	{
+	  G4String currentProcessName = wrapperProcess->GetWrappedProcess()->GetProcessName();
+	  G4cout << "\"" << currentProcessName << "\"" << G4endl;
+	}
       throw BDSException(__METHOD_NAME__, "Process \"" + processName +
 			 "\" not found registered to particle \"" + particleName + "\"");
     }
