@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "AnalysisUtilities.hh"
 #include "BinGeneration.hh"
 #include "BinLoader.hh"
 #include "BinSpecification.hh"
@@ -77,21 +78,9 @@ Config::Config(const std::string& fileNameIn,
     {
       if (optionsString["outputfilename"].empty())
 	{// no argument supplied and also no output name in input file - default to filename+_ana.root
-	  std::string newOutputFilePath = optionsString["inputfilepath"];
-	  // get only the filename - ie just write the file to the cwd
-	  auto foundSlash = newOutputFilePath.rfind('/'); // find the last '/'
-	  if (foundSlash != std::string::npos)
-	    {newOutputFilePath = newOutputFilePath.substr(foundSlash+1);} // the rest
-	  std::string key = ".root";
-	  auto found = newOutputFilePath.rfind(key);
-	  if (found != std::string::npos)
-	    {
-	      newOutputFilePath.replace(found, key.length(), "_ana.root");
-	      optionsString["outputfilename"] = newOutputFilePath;
-	      std::cout << "Using default output file name with _ana.root suffix: " << optionsString.at("outputfilename") << std::endl;
-	    }
-	  else
-	    {throw RBDSException("filename does not contain \".root\"");}
+    std::string newOutputFilePath = RBDS::DefaultOutputName(optionsString["inputfilepath"], defaultOutputFileSuffix);
+    optionsString["outputfilename"] = newOutputFilePath;
+    std::cout << "Using default output file name with \"" << defaultOutputFileSuffix << "\" suffix  : " << optionsString.at("outputfilename") << std::endl;
 	}
     }
 }
