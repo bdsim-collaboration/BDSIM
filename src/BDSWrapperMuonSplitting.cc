@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VProcess.hh"
 
 #include <cmath>
+#include <set>
 #include <vector>
 
 BDSWrapperMuonSplitting::BDSWrapperMuonSplitting(G4VProcess* originalProcess,
@@ -88,7 +89,6 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
   G4int nSuccessfulMuonSplits = 0;
   G4int iTry = 0;
   std::vector<G4Track*> newMuons;
-  std::set<G4Track*> potentiallyDelete;
   while (iTry < maxTrials && nSuccessfulMuonSplits < splittingFactor-1)
     {
       iTry++;

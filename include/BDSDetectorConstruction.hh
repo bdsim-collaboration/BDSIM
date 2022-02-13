@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VUserDetectorConstruction.hh"
 
 #include <list>
+#include <map>
 #include <set>
 #include <string>
 #include <vector>
