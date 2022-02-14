@@ -38,7 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace BDS
 {
-  PhaseSpaceCoord PhaseSpaceCoordFromActionAngle(ActionAngleCoord aa, TwissPair tp)
+  PhaseSpaceCoord PhaseSpaceCoordFromActionAngle(ActionAngleCoord aa, const TwissPair& tp)
   {
     double action = aa.action;
     double angle = aa.angle;
@@ -50,10 +50,12 @@ namespace BDS
     return result;
   }
 
-  EllipsePointGenerator::EllipsePointGenerator(double actionIn, TwissPair tp):
+  EllipsePointGenerator::EllipsePointGenerator(G4double actionIn,
+                                               const TwissPair& tp,
+                                               CLHEP::RandFlat* flatRandomGeneratorIn):
     action(actionIn),
     twisspair(tp),
-    flatRandomGenerator(new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine()))
+    flatRandomGenerator(flatRandomGeneratorIn)
   {
     // Here: populate angles vector from 0 to 2pi and the corresponding arc
     // lengths from angle=0 to each angle.
@@ -106,13 +108,6 @@ namespace BDS
     double angle = angle0 + (pathLength - s0) * ((angle1 - angle0) / (s1 - s0));
     return angle;
   }
-
-  PhaseSpaceCoord GetCoordinatesOnPhaseSpaceEllipse(double action, TwissPair tp)
-  {
-    auto epg = BDS::EllipsePointGenerator(action, tp);
-    return epg.GetRandomPointOnEllipse();
-  }
-
 }
 
 BDSBunchHaloFlatSigma::BDSBunchHaloFlatSigma():
@@ -170,12 +165,15 @@ BDSParticleCoordsFull BDSBunchHaloFlatSigma::GetNextParticleLocal()
   
   BDS::TwissPair tx = {alphaX, betaX};
   BDS::TwissPair ty = {alphaY, betaY};
-  auto xps = BDS::GetCoordinatesOnPhaseSpaceEllipse(jx, tx);
-  auto yps = BDS::GetCoordinatesOnPhaseSpaceEllipse(jy, ty);
   
-  G4double x  = (xps.position + X0) * CLHEP::m;
+  BDS::EllipsePointGenerator epgx = BDS::EllipsePointGenerator(jx, tx, flatGen);
+  BDS::EllipsePointGenerator epgy = BDS::EllipsePointGenerator(jy, ty, flatGen);
+  auto xps = epgx.GetRandomPointOnEllipse();
+  auto yps = epgy.GetRandomPointOnEllipse();
+  
+  G4double x  = (xps.position + X0)  * CLHEP::m;
   G4double xp = (xps.momentum + Xp0) * CLHEP::rad;
-  G4double y  = (yps.position + Y0) * CLHEP::m;
+  G4double y  = (yps.position + Y0)  * CLHEP::m;
   G4double yp = (yps.momentum + Yp0) * CLHEP::rad;
   G4double z  = 0.;
   G4double zp = CalculateZp(xp, yp, Zp0);
