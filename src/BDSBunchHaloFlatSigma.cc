@@ -67,8 +67,6 @@ namespace detail
 	double angle = i * CLHEP::twopi / npoints;
 	angles.push_back(angle);
 	ActionAngleCoord aa = {action, angle};
-	auto ps = PhaseSpaceCoordFromActionAngle(aa, twisspair);
-	// std::cout << ps.position << " " << ps.momentum << std::endl;
 	points.push_back(PhaseSpaceCoordFromActionAngle(aa, twisspair));
       }
     // Get the cumulative distances from angle=0 to each angle.  The distance
