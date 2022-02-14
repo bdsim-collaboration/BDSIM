@@ -185,14 +185,6 @@ private:
   G4double haloNSigmaYInner;
   G4double haloNSigmaYOuter;
 
-  G4double haloNSigmaXpOuter;
-  G4double haloNSigmaYpOuter;
-
-  G4double emitInnerX;
-  G4double emitInnerY;
-  G4double emitOuterX;
-  G4double emitOuterY;
-
   CLHEP::RandFlat* flatGen;
 };
 
