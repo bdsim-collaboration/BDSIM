@@ -117,28 +117,27 @@ namespace detail
 
 BDSBunchHaloFlatSigma::BDSBunchHaloFlatSigma():
   BDSBunch("halo-nsigma-flat"),
-  alphaX(0.0), alphaY(0.0), betaX(0.0),
-  betaY(0.0), emitX(0.0), emitY(0.0), gammaX(0.0), gammaY(0.0), sigmaX(0.0),
-  sigmaY(0.0), haloNSigmaXInner(0.0), haloNSigmaXOuter(0.0),
-  haloNSigmaYInner(0.0), haloNSigmaYOuter(0.0), emitInnerX(0.0),
-  emitInnerY(0.0), emitOuterX(0.0), emitOuterY(0.0)
+  alphaX(0.0), alphaY(0.0),
+  betaX(0.0),  betaY(0.0),
+  emitX(0.0), emitY(0.0),
+  sigmaX(0.0),  sigmaY(0.0),
+  haloNSigmaXInner(0.0), haloNSigmaXOuter(0.0),
+  haloNSigmaYInner(0.0), haloNSigmaYOuter(0.0)
 {
   flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
 void BDSBunchHaloFlatSigma::SetOptions(const BDSParticleDefinition* beamParticle,
-				       const GMAD::Beam& beam,
-				       const BDSBunchType& distrType,
-				       G4Transform3D beamlineTransformIn,
-				       const G4double beamlineSIn)
+                                       const GMAD::Beam&   beam,
+                                       const BDSBunchType& distrType,
+                                       G4Transform3D       beamlineTransformIn,
+                                       const G4double      beamlineSIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   alphaX = G4double(beam.alfx);
   alphaY = G4double(beam.alfy);
-  betaX = G4double(beam.betx);
-  betaY = G4double(beam.bety);
-  gammaX = (1.0 + alphaX * alphaX) / betaX;
-  gammaY = (1.0 + alphaY * alphaY) / betaY;
+  betaX  = G4double(beam.betx);
+  betaY  = G4double(beam.bety);
   haloNSigmaXInner = G4double(beam.haloNSigmaXInner);
   haloNSigmaXOuter = G4double(beam.haloNSigmaXOuter);
   haloNSigmaYInner = G4double(beam.haloNSigmaYInner);
@@ -149,17 +148,9 @@ void BDSBunchHaloFlatSigma::SetOptions(const BDSParticleDefinition* beamParticle
 
   sigmaX = std::sqrt(emitX * betaX);
   sigmaY = std::sqrt(emitY * betaY);
-  haloNSigmaXpOuter = std::sqrt(gammaX * emitX);
-  haloNSigmaYpOuter = std::sqrt(gammaY * emitY);
-
-  emitInnerX = std::pow(haloNSigmaXInner, 2) * emitX;
-  emitInnerY = std::pow(haloNSigmaYInner, 2) * emitY;
-  emitOuterX = std::pow(haloNSigmaXOuter, 2) * emitX;
-  emitOuterY = std::pow(haloNSigmaYOuter, 2) * emitY;
 
   CheckParameters();
 }
-
 
 BDSParticleCoordsFull BDSBunchHaloFlatSigma::GetNextParticleLocal()
 {
