@@ -876,7 +876,7 @@ reweighting in post-processing.
 +----------------------------------+-----------------------------------------------------------------------------+
 
 
-* \* :code:`emitx(y)` and :code:`emitnx(y)` are provided for the user's convenience and should not both be set.
+* (\*) :code:`emitx(y)` and :code:`emitnx(y)` are provided for the user's convenience and should not both be set.
 * No variation in `t`, total energy, `z` and `s`. Only central values.
 * Generating a beam in a dispersive region will result in incorrect optics.
 

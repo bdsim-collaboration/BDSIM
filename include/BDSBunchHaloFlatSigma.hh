@@ -44,7 +44,6 @@ namespace GMAD
 
 namespace BDS
 {
-
 /**
 * @brief Simple struct for storing action/angle pairs to aid readability.
 * Implementation detail.
@@ -54,10 +53,9 @@ namespace BDS
 
 struct ActionAngleCoord
 {
-  double action;
-  double angle;
+  G4double action;
+  G4double angle;
 };
-
 
 /**
 * @brief Simple struct for storing position/momentum pairs to aid readability.
@@ -68,8 +66,8 @@ struct ActionAngleCoord
 
 struct PhaseSpaceCoord
 {
-  double position;
-  double momentum;
+  G4double position;
+  G4double momentum;
 };
 
 /**
@@ -81,41 +79,40 @@ struct PhaseSpaceCoord
 
 struct TwissPair
 {
-  double alpha;
-  double beta;
+  G4double alpha;
+  G4double beta;
 };
 
 PhaseSpaceCoord PhaseSpaceCoordFromActionAngle(ActionAngleCoord aa, const TwissPair& tp);
 
-template <typename T> std::vector<double> CumulativeDistances(T pairs)
+template <typename T>
+std::vector<G4double> CumulativeDistances(T pairs)
 {
   if (pairs.size() < 2)
     {throw BDSException("At least two points needed to calculated adjacent distances.");}
-  std::vector<double> distances;
+  std::vector<G4double> distances;
 
   auto it = std::begin(pairs);
   auto next = std::next(it);
   for (; next != std::end(pairs); ++it, ++next)
     {
-      double x0 = it->position;
-      double xp0 = it->momentum;
-      
-      double x1 = next->position;
-      double xp1 = next->momentum;
-      
-      double xd = std::pow((x0 - x1), 2);
-      double xpd = std::pow((xp0 - xp1), 2);
-      
-      double distance = std::sqrt(xd + xpd);
+      G4double x0 = it->position;
+      G4double xp0 = it->momentum;
+  
+      G4double x1 = next->position;
+      G4double xp1 = next->momentum;
+  
+      G4double xd = std::pow((x0 - x1), 2);
+      G4double xpd = std::pow((xp0 - xp1), 2);
+  
+      G4double distance = std::sqrt(xd + xpd);
       
       distances.push_back(distance);
     }
-  std::vector<double> result;
-  std::partial_sum(std::begin(distances), std::end(distances),
-                   std::back_inserter(result));
+  std::vector<G4double> result;
+  std::partial_sum(std::begin(distances), std::end(distances), std::back_inserter(result));
   return result;
 }
-
 
 /**
 * @brief Class for generating points uniformly on ellipse perimeters via

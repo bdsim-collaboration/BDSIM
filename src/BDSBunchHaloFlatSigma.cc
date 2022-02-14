@@ -40,12 +40,12 @@ namespace BDS
 {
   PhaseSpaceCoord PhaseSpaceCoordFromActionAngle(ActionAngleCoord aa, const TwissPair& tp)
   {
-    double action = aa.action;
-    double angle = aa.angle;
-    double alpha = tp.alpha;
-    double beta = tp.beta;
-    double x = std::sqrt(2 * action * beta) * std::cos(angle);
-    double xp = (-std::sqrt(2 * action / beta) * (std::sin(angle) + alpha * std::cos(angle)));
+    G4double action = aa.action;
+    G4double angle = aa.angle;
+    G4double alpha = tp.alpha;
+    G4double beta = tp.beta;
+    G4double x = std::sqrt(2 * action * beta) * std::cos(angle);
+    G4double xp = (-std::sqrt(2 * action / beta) * (std::sin(angle) + alpha * std::cos(angle)));
     PhaseSpaceCoord result = {x, xp};
     return result;
   }
@@ -59,14 +59,14 @@ namespace BDS
   {
     // Here: populate angles vector from 0 to 2pi and the corresponding arc
     // lengths from angle=0 to each angle.
-    int npoints = 100;
+    G4int npoints = 100;
     std::vector<PhaseSpaceCoord> points;
     points.reserve(npoints);
     // Sample points on the ellipse equidistantly.
     // leq (<=) so that can can interpolate up to 2pi.
-    for (int i = 0; i <= npoints; ++i)
+    for (G4int i = 0; i <= npoints; ++i)
       {
-	double angle = i * CLHEP::twopi / npoints;
+	G4double angle = i * CLHEP::twopi / npoints;
 	angles.push_back(angle);
 	ActionAngleCoord aa = {action, angle};
 	points.push_back(PhaseSpaceCoordFromActionAngle(aa, twisspair));
@@ -75,7 +75,7 @@ namespace BDS
     // between the first and second point is of course non-zero.  So we have to
     // consider the case where we roll a pathLength between 0 and the first
     // distance.  To do this we insert 0 at the start.
-    auto cumulativeDistances = CumulativeDistances(points);
+    std::vector<G4double> cumulativeDistances = CumulativeDistances(points);
     cumulativeDistances.insert(std::begin(cumulativeDistances), 0);
     pathLengths = std::move(cumulativeDistances);
   }
@@ -83,29 +83,28 @@ namespace BDS
   PhaseSpaceCoord EllipsePointGenerator::GetRandomPointOnEllipse() const
   {
     // Select random point on the perimeter
-    double pathLength = EllipsePerimeter() * flatRandomGenerator->shoot();
+    G4double pathLength = EllipsePerimeter() * flatRandomGenerator->shoot();
     // Invert to get the angle and then use that to get the (x, xp) pair.
-    double angle = PathLengthToAngle(pathLength);
+    G4double angle = PathLengthToAngle(pathLength);
     ActionAngleCoord aa = {action, angle};
     return PhaseSpaceCoordFromActionAngle(aa, twisspair);
   }
-
-  double EllipsePointGenerator::PathLengthToAngle(double pathLength) const
+  
+  G4double EllipsePointGenerator::PathLengthToAngle(G4double pathLength) const
   {
     // Find position of pathLength in pathLengths
-    auto it = std::lower_bound(std::begin(pathLengths), std::end(pathLengths),
-			       pathLength);
+    auto it = std::lower_bound(std::begin(pathLengths), std::end(pathLengths), pathLength);
     auto n = std::distance(std::begin(pathLengths), it);
 
     // Get path lengths and angles either side of the point we are trying to
     // evaluate.
-    double s1 = *it;
-    double s0 = *(--it);
-    double angle0 = *std::next(std::begin(angles), n - 1);
-    double angle1 = *std::next(std::begin(angles), n);
+    G4double s1 = *it;
+    G4double s0 = *(--it);
+    G4double angle0 = *std::next(std::begin(angles), n - 1);
+    G4double angle1 = *std::next(std::begin(angles), n);
 
     // Do the linear interpolation
-    double angle = angle0 + (pathLength - s0) * ((angle1 - angle0) / (s1 - s0));
+    G4double angle = angle0 + (pathLength - s0) * ((angle1 - angle0) / (s1 - s0));
     return angle;
   }
 }
@@ -187,9 +186,9 @@ void BDSBunchHaloFlatSigma::CheckParameters()
   BDSBunch::CheckParameters();
 
   if (emitX <= 0)
-    {throw BDSException(__METHOD_NAME__, "emitx must be finite!");}
+    {throw BDSException(__METHOD_NAME__, "emitx must be > 0!");}
   if (emitY <= 0)
-    {throw BDSException(__METHOD_NAME__, "emity must be finite!");}
+    {throw BDSException(__METHOD_NAME__, "emity must be > 0!");}
 
   if (haloNSigmaXInner <= 0)
     {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner <= 0");}
