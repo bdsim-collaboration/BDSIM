@@ -133,14 +133,13 @@ public:
   ~EllipsePointGenerator() = default;
   
   PhaseSpaceCoord GetRandomPointOnEllipse() const;
-  double EllipsePerimeter() const { return pathLengths.back(); };
+  inline double EllipsePerimeter() const {return pathLengths.back();};
 
 private:
   double PathLengthToAngle(double pathLength) const;
+  
   double action;
   TwissPair twisspair;
-  // double alpha;
-  // double beta;
   std::unique_ptr<CLHEP::RandFlat> flatRandomGenerator;
   std::vector<double> angles;
   std::vector<double> pathLengths;
