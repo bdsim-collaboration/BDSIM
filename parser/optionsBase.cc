@@ -214,6 +214,9 @@ OptionsBase::OptionsBase()
   collimatorsAreInfiniteAbsorbers = false;
   tunnelIsInfiniteAbsorber        = false;
   muonSplittingFactor = 1;
+  muonSplittingThresholdParentEk = 0;
+  muonSplittingFactor2 = 1;
+  muonSplittingThresholdParentEk2 = 0;
   
   // biasing options
   defaultBiasVacuum        = "";

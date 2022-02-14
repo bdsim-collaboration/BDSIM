@@ -32,14 +32,22 @@ class BDSWrapperMuonSplitting: public BDSWrapperProcess
 public:
   BDSWrapperMuonSplitting() = delete;
   BDSWrapperMuonSplitting(G4VProcess* originalProcess,
-			  G4int splittingFactorIn); 
+                          G4int splittingFactorIn,
+                          G4double splittingThresholdEKIn = 0,
+                          G4int splittingFactor2In = 1,
+                          G4double splittingThresholdEK2In = 0);
   virtual ~BDSWrapperMuonSplitting();
   
   virtual G4VParticleChange* PostStepDoIt(const G4Track& track,
 					  const G4Step& step);
   
+  static G4int nCallsThisEvent;
+  
 private:
   G4int splittingFactor;
+  G4double splittingThresholdEK;
+  G4int splittingFactor2;
+  G4double splittingThresholdEK2;
 };
 
 #endif
