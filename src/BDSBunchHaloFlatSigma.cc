@@ -50,10 +50,10 @@ namespace detail
     return result;
   }
 
-  EllipsePointGenerator::EllipsePointGenerator(double action_, TwissPair tp)
-    : action(action_),
-      twisspair(tp),
-      flatRandomGenerator(new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine()))
+  EllipsePointGenerator::EllipsePointGenerator(double actionIn, TwissPair tp):
+    action(actionIn),
+    twisspair(tp),
+    flatRandomGenerator(new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine()))
   {
     // Here: populate angles vector from 0 to 2pi and the corresponding arc
     // lengths from angle=0 to each angle.
