@@ -85,9 +85,7 @@ struct TwissPair
   double beta;
 };
 
-PhaseSpaceCoord PhaseSpaceCoordFromActionAngle(ActionAngleCoord aa, TwissPair tp);
-
-PhaseSpaceCoord GetCoordinatesOnPhaseSpaceEllipse(double action, TwissPair tp);
+PhaseSpaceCoord PhaseSpaceCoordFromActionAngle(ActionAngleCoord aa, const TwissPair& tp);
 
 template <typename T> std::vector<double> CumulativeDistances(T pairs)
 {
@@ -129,7 +127,9 @@ template <typename T> std::vector<double> CumulativeDistances(T pairs)
 class EllipsePointGenerator
 {
 public:
-  EllipsePointGenerator(double actionIn, TwissPair tp);
+  EllipsePointGenerator(G4double actionIn,
+                        const TwissPair& tp,
+                        CLHEP::RandFlat* flatRandomGeneratorIn);
   ~EllipsePointGenerator() = default;
   EllipsePointGenerator(const EllipsePointGenerator&) = delete;
   EllipsePointGenerator& operator=(const EllipsePointGenerator&) = delete;
@@ -138,13 +138,13 @@ public:
   inline double EllipsePerimeter() const {return pathLengths.back();};
 
 private:
-  double PathLengthToAngle(double pathLength) const;
+  G4double PathLengthToAngle(G4double pathLength) const;
   
-  double action;
+  G4double action;
   TwissPair twisspair;
-  std::unique_ptr<CLHEP::RandFlat> flatRandomGenerator;
-  std::vector<double> angles;
-  std::vector<double> pathLengths;
+  CLHEP::RandFlat* flatRandomGenerator;
+  std::vector<G4double> angles;
+  std::vector<G4double> pathLengths;
 };
 
 } // namespace BDS
