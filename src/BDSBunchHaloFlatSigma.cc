@@ -36,7 +36,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 
-namespace detail
+namespace BDS
 {
   PhaseSpaceCoord PhaseSpaceCoordFromActionAngle(ActionAngleCoord aa, TwissPair tp)
   {
@@ -109,7 +109,7 @@ namespace detail
 
   PhaseSpaceCoord GetCoordinatesOnPhaseSpaceEllipse(double action, TwissPair tp)
   {
-    auto epg = detail::EllipsePointGenerator(action, tp);
+    auto epg = BDS::EllipsePointGenerator(action, tp);
     return epg.GetRandomPointOnEllipse();
   }
 
@@ -167,12 +167,11 @@ BDSParticleCoordsFull BDSBunchHaloFlatSigma::GetNextParticleLocal()
   // The particle actions, which we use here.
   G4double jx = csix / 2.0;
   G4double jy = csiy / 2.0;
-
-  using namespace detail;
-  TwissPair tx = {alphaX, betaX};
-  TwissPair ty = {alphaY, betaY};
-  auto xps = GetCoordinatesOnPhaseSpaceEllipse(jx, tx);
-  auto yps = GetCoordinatesOnPhaseSpaceEllipse(jy, ty);
+  
+  BDS::TwissPair tx = {alphaX, betaX};
+  BDS::TwissPair ty = {alphaY, betaY};
+  auto xps = BDS::GetCoordinatesOnPhaseSpaceEllipse(jx, tx);
+  auto yps = BDS::GetCoordinatesOnPhaseSpaceEllipse(jy, ty);
   
   G4double x  = (xps.position + X0) * CLHEP::m;
   G4double xp = (xps.momentum + Xp0) * CLHEP::rad;
