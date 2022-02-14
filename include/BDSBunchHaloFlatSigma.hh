@@ -128,8 +128,6 @@ public:
                         const TwissPair& tp,
                         CLHEP::RandFlat* flatRandomGeneratorIn);
   ~EllipsePointGenerator() = default;
-  EllipsePointGenerator(const EllipsePointGenerator&) = delete;
-  EllipsePointGenerator& operator=(const EllipsePointGenerator&) = delete;
   
   PhaseSpaceCoord GetRandomPointOnEllipse() const;
   inline double EllipsePerimeter() const {return pathLengths.back();};
