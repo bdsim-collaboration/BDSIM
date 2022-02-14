@@ -29,13 +29,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "Randomize.hh"
 
+#include <algorithm>
 #include <cmath>
+#include <iterator>
 #include <utility>
+#include <vector>
 
 
 namespace detail
 {
-
   PhaseSpaceCoord PhaseSpaceCoordFromActionAngle(ActionAngleCoord aa, TwissPair tp)
   {
     double action = aa.action;

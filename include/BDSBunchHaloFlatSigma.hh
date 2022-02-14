@@ -18,17 +18,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSBUNCHHALOFLATSIGMA_H
 #define BDSBUNCHHALOFLATSIGMA_H
+#include "BDSBunch.hh"
+#include "BDSBunchType.hh"
+#include "BDSException.hh"
 
+#include "G4Transform3D.hh"
+#include "G4Types.hh"
+
+#include <algorithm>
+#include <cmath>
+#include <iterator>
 #include <memory>
 #include <numeric>
 #include <vector>
-#include "BDSException.hh"
-
-#include "BDSBunch.hh"
 
 namespace CLHEP
 {
-class RandFlat;
+  class RandFlat;
+}
+
+namespace GMAD
+{
+  class Beam;
 }
 
 namespace detail
