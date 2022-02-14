@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
   std::string inputFileName = arguments[0];
   std::string outputFileName;
   if (arguments.size() > 1)
-    {outputFileName = arguments[2];}
+    {outputFileName = arguments[1];}
   if (arguments.size() > 2)
     {
       for (int i = 2; i < (int)arguments.size(); i++)
