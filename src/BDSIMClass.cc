@@ -22,9 +22,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh" //  global parameters
 
 #include <algorithm>
+#include <csignal>
 #include <cstdlib>
 #include <cstdio>
-#include <signal.h>
 
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4GenericBiasingPhysics.hh"
@@ -61,6 +61,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
 #include "BDSParticleDefinition.hh"
+#include "BDSPhysicsMuonSplitting.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
@@ -241,7 +242,15 @@ int BDSIM::Initialise()
   realWorld->SetDesignParticle(designParticle);
   BDSFieldFactory::SetDesignParticle(designParticle);
   BDSGeometryFactorySQL::SetDefaultRigidity(designParticle->BRho()); // used for sql field loading
-
+  
+  // Muon splitting - optional - should be done *after* biasing to work with it
+  G4int muonSplittingFactor = BDSGlobalConstants::Instance()->MuonSplittingFactor();
+  if (muonSplittingFactor > 1)
+    {
+      G4cout << "\nBDSPhysicsMuonSplitting -> using muon splitting wrapper -> factor of: " << muonSplittingFactor << "\n" << G4endl;
+      physList->RegisterPhysics(new BDSPhysicsMuonSplitting(muonSplittingFactor));
+    }
+  
   BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);
   auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
   if (biasPhysics)//could be nullptr and can't be passed to geant4 like this

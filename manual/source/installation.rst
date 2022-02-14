@@ -7,7 +7,7 @@ Supported Systems
 
 BDSIM is developed and used on Mac OSX and (Scientific) Linux. It can be used
 on Windows through some virtualisation technology (e.g. a virtual machine, docker,
-or Cygwin, X11 and CVMFS access). See :ref:`windows-build` for Windows setup.
+or Cygwin, X11 and CVMFS access). See :ref:`solution-windows` for Windows setup.
 
 Tested systems: Mac OS 11, 12, both Intel & M1 (ARM64); Centos7, SLC6. A full list
 can be found in :ref:`tested-platforms`.
@@ -20,6 +20,7 @@ Solutions
 * :ref:`solution-precompiled`
 * :ref:`solution-cvmfs`
 * :ref:`solution-from-source`
+* :ref:`solution-windows`
 * :ref:`docker-build`
 
 .. _solution-precompiled:
@@ -80,9 +81,6 @@ Example usage: ::
 This may take some time the first time it is used (up to a minute or two), but CVMFS is highly efficient
 at caching files and it will subsequently be much faster.
 
-.. note:: We are currently fixing some ongoing issues with pybdsim loading ROOT data files and crashing
-	  due to a segfault in ROOT.
-
 .. note:: When browsing CVMFS, you may not see the directory :code:`beam-physics.cern.ch`. It is there though.
 	  Type the full path and it will be accessible.  Once inside this directory (:code:`beam-physics.cern.ch`)
 	  you will be able to browse normally. CVMFS doesn't show directories the local computer has
@@ -98,10 +96,10 @@ at caching files and it will subsequently be much faster.
 Compilation From Source
 -----------------------
 
-BDSIM source code can be downloaded and then compiled. For this, you need compilers to be
+BDSIM source code can be downloaded and then compiled. For this, you need a compiler to be
 available as well as several other libraries. Most of these can be found through a package
-manager such as YUM, APT, MacPorts or HomeBrew. However, we recommend compiling Geant4 also
-yourself for the best options.  See:
+manager such as YUM, APT, MacPorts or HomeBrew. However, for Geant4, we recommend compiling
+it yourself for the best options compatible with BDSIM. See:
 
 #. :ref:`required-packages`
 #. :ref:`build-setup`
@@ -110,7 +108,7 @@ yourself for the best options.  See:
       
 #. :ref:`installation-building`
 
-.. _windows-build:
+.. _solution-windows:
 
 BDSIM on Windows
 ----------------

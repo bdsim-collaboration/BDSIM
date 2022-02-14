@@ -6,6 +6,7 @@ if (USE_GDML)
   simple_testing(field-query-points-2d-b  "--file=query-points-2d.gmad --output=none"  "")
   simple_testing(field-query-points-3d-b  "--file=query-points-3d.gmad --output=none"  "")
   simple_testing(field-query-points-4d-b  "--file=query-points-4d.gmad --output=none"  "")
+  simple_fail(field-query-bad-range       "--file=query-2d-b-bad.gmad --output=none"   "")
 endif()
 
 
