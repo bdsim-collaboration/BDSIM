@@ -131,6 +131,8 @@ class EllipsePointGenerator
 public:
   EllipsePointGenerator(double actionIn, TwissPair tp);
   ~EllipsePointGenerator() = default;
+  EllipsePointGenerator(const EllipsePointGenerator&) = delete;
+  EllipsePointGenerator& operator=(const EllipsePointGenerator&) = delete;
   
   PhaseSpaceCoord GetRandomPointOnEllipse() const;
   inline double EllipsePerimeter() const {return pathLengths.back();};
