@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "AnalysisUtilities.hh"
 #include "BinGeneration.hh"
+#include "RBDSException.hh"
 
 #include "Rtypes.h" // for classdef
 
@@ -44,4 +45,21 @@ std::vector<double> AnalysisUtilities::LinSpace(double start,
 						bool   includeLastPoint)
 {
   return RBDS::LinSpace(start, stop, nBins, includeLastPoint);
+}
+
+std::string RBDS::DefaultOutputName(const std::string& inputFilePath,
+                                    const std::string& suffix)
+{
+  std::string result = inputFilePath;
+  // get only the filename - ie just write the file to the cwd
+  auto foundSlash = result.rfind('/'); // find the last '/'
+  if (foundSlash != std::string::npos)
+    {result = result.substr(foundSlash + 1);} // the rest
+  std::string key = ".root";
+  auto found = result.rfind(key);
+  if (found != std::string::npos)
+    {result.replace(found, key.length(), suffix + ".root");}
+  else
+    {throw RBDSException("filename does not contain \".root\"");}
+  return result;
 }

@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VProcess.hh"
 
 #include <limits>
+#include <regex>
 
 BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(const G4String& particleNameIn,
 						       const G4String& name):
@@ -109,15 +110,19 @@ void BDSBOptrChangeCrossSection::SetBias(const G4String& processName,
     {allProcesses = true;}
   
   G4bool processFound = false;
-  for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++)
+  for (const auto& wrapperProcess : sharedData->GetPhysicsBiasingProcessInterfaces())
     {
-      const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
       G4String currentProcess = wrapperProcess->GetWrappedProcess()->GetProcessName();
+      
+      // check if the name is already wrapped for biasing of some kind or splitting
+      std::regex braces("[\\w\\-\\+_$]*\\((\\w+)\\)");
+      //std::regex braces("[\\w\\-\\_\\+]*\\((\\w+)\\)");
+      std::smatch match;
+      if (std::regex_search(currentProcess, match, braces))
+        {currentProcess = match[1];} // overwrite the variable to match (in this scope)
+      
       if (allProcesses || processName == currentProcess)
-	{ 
-#ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << i << " " << processName << " " << currentProcess << G4endl;
-#endif
+	{
 	  fXSScale[wrapperProcess]      = bias;
 	  fPrimaryScale[wrapperProcess] = iPrimary;
 	  processFound                  = true; // the process was found at some point
@@ -125,6 +130,12 @@ void BDSBOptrChangeCrossSection::SetBias(const G4String& processName,
     }
   if (!processFound)
     {
+      G4cout << "\nCouldn't find process by name. Available processes are:" << G4endl;
+      for (const auto wrapperProcess : sharedData->GetPhysicsBiasingProcessInterfaces())
+	{
+	  G4String currentProcessName = wrapperProcess->GetWrappedProcess()->GetProcessName();
+	  G4cout << "\"" << currentProcessName << "\"" << G4endl;
+	}
       throw BDSException(__METHOD_NAME__, "Process \"" + processName +
 			 "\" not found registered to particle \"" + particleName + "\"");
     }
@@ -159,7 +170,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
 
   // protect against negative interaction lengths
   // sometimes this appears as -1 - exactly -1
-  if(analogInteractionLength < 0)
+  if (analogInteractionLength < 0)
     {return nullptr;}
 
   // Analog cross-section is well-defined:

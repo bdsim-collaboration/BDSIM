@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VUserDetectorConstruction.hh"
 
 #include <list>
+#include <map>
 #include <set>
 #include <string>
 #include <vector>
@@ -238,6 +239,7 @@ private:
 
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;
+  std::map<G4String, BDSBOptrMultiParticleChangeCrossSection*> biasSetObjects;
 #endif
 
 #ifdef BDSDEBUG
