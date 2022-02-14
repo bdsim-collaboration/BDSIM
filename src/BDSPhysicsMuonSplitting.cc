@@ -31,6 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 #include "G4Version.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <map>
 #include <set>
 
