@@ -73,7 +73,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   if (aTrack->GetTrackID() > maxTracksPerEvent)
     {classification = fKill;}
 
-  // Kill all neutrinos
+  // Optionally kill all neutrinos
   if (killNeutrinos)
     {
       G4int pdgNr = std::abs(aTrack->GetParticleDefinition()->GetPDGEncoding());
@@ -81,7 +81,7 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 	{classification = fKill;}
     }
 
-  // kill secondaries
+  // Optionally kill secondaries
   if (stopSecondaries && (aTrack->GetParentID() > 0))
     {classification = fKill;}
 
