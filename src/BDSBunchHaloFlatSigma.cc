@@ -45,8 +45,7 @@ namespace detail
     double alpha = tp.alpha;
     double beta = tp.beta;
     double x = std::sqrt(2 * action * beta) * std::cos(angle);
-    double xp = (-std::sqrt(2 * action / beta) *
-		 (std::sin(angle) + alpha * std::cos(angle)));
+    double xp = (-std::sqrt(2 * action / beta) * (std::sin(angle) + alpha * std::cos(angle)));
     PhaseSpaceCoord result = {x, xp};
     return result;
   }
@@ -116,26 +115,26 @@ namespace detail
     return epg.GetRandomPointOnEllipse();
   }
 
-} // namespace detail
+}
 
-BDSBunchHaloFlatSigma::BDSBunchHaloFlatSigma()
-  : BDSBunch("halo-nsigma-flat"), alphaX(0.0), alphaY(0.0), betaX(0.0),
-    betaY(0.0), emitX(0.0), emitY(0.0), gammaX(0.0), gammaY(0.0), sigmaX(0.0),
-    sigmaY(0.0), haloNSigmaXInner(0.0), haloNSigmaXOuter(0.0),
-    haloNSigmaYInner(0.0), haloNSigmaYOuter(0.0), emitInnerX(0.0),
-    emitInnerY(0.0), emitOuterX(0.0), emitOuterY(0.0)
+BDSBunchHaloFlatSigma::BDSBunchHaloFlatSigma():
+  BDSBunch("halo-nsigma-flat"),
+  alphaX(0.0), alphaY(0.0), betaX(0.0),
+  betaY(0.0), emitX(0.0), emitY(0.0), gammaX(0.0), gammaY(0.0), sigmaX(0.0),
+  sigmaY(0.0), haloNSigmaXInner(0.0), haloNSigmaXOuter(0.0),
+  haloNSigmaYInner(0.0), haloNSigmaYOuter(0.0), emitInnerX(0.0),
+  emitInnerY(0.0), emitOuterX(0.0), emitOuterY(0.0)
 {
   flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
-void BDSBunchHaloFlatSigma::SetOptions(const BDSParticleDefinition *beamParticle,
-				       const GMAD::Beam &beam,
-				       const BDSBunchType &distrType,
+void BDSBunchHaloFlatSigma::SetOptions(const BDSParticleDefinition* beamParticle,
+				       const GMAD::Beam& beam,
+				       const BDSBunchType& distrType,
 				       G4Transform3D beamlineTransformIn,
 				       const G4double beamlineSIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn,
-                       beamlineSIn);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   alphaX = G4double(beam.alfx);
   alphaY = G4double(beam.alfy);
   betaX = G4double(beam.betx);
@@ -202,33 +201,19 @@ void BDSBunchHaloFlatSigma::CheckParameters()
   BDSBunch::CheckParameters();
 
   if (emitX <= 0)
-    {
-      throw BDSException(__METHOD_NAME__, "emitx must be finite!");
-    }
+    {throw BDSException(__METHOD_NAME__, "emitx must be finite!");}
   if (emitY <= 0)
-    {
-      throw BDSException(__METHOD_NAME__, "emity must be finite!");
-    }
+    {throw BDSException(__METHOD_NAME__, "emity must be finite!");}
 
   if (haloNSigmaXInner <= 0)
-    {
-      throw BDSException(__METHOD_NAME__, "haloNSigmaXInner <= 0");
-    }
+    {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner <= 0");}
 
   if (haloNSigmaYInner <= 0)
-    {
-      throw BDSException(__METHOD_NAME__, "haloNSigmaYInner <= 0");
-    }
+    {throw BDSException(__METHOD_NAME__, "haloNSigmaYInner <= 0");}
 
   if (haloNSigmaXInner > haloNSigmaXOuter)
-    {
-      throw BDSException(__METHOD_NAME__,
-			 "haloNSigmaXInner cannot be less than haloNSigmaXOuter");
-    }
+    {throw BDSException(__METHOD_NAME__, "haloNSigmaXInner cannot be less than haloNSigmaXOuter");}
 
   if (haloNSigmaYInner > haloNSigmaYOuter)
-    {
-      throw BDSException(__METHOD_NAME__,
-			 "haloNSigmaYInner cannot be less than haloNSigmaYOuter");
-    }
+    {throw BDSException(__METHOD_NAME__, "haloNSigmaYInner cannot be less than haloNSigmaYOuter");}
 }

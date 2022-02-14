@@ -85,35 +85,32 @@ struct TwissPair
   double beta;
 };
 
-PhaseSpaceCoord PhaseSpaceCoordFromActionAngle(ActionAngleCoord aa,
-                                               TwissPair tp);
+PhaseSpaceCoord PhaseSpaceCoordFromActionAngle(ActionAngleCoord aa, TwissPair tp);
+
 PhaseSpaceCoord GetCoordinatesOnPhaseSpaceEllipse(double action, TwissPair tp);
 
 template <typename T> std::vector<double> CumulativeDistances(T pairs)
 {
   if (pairs.size() < 2)
-    {
-    throw BDSException(
-        "At least two points needed to calculated adjacent distances.");
-    }
+    {throw BDSException("At least two points needed to calculated adjacent distances.");}
   std::vector<double> distances;
 
   auto it = std::begin(pairs);
   auto next = std::next(it);
   for (; next != std::end(pairs); ++it, ++next)
     {
-    double x0 = it->position;
-    double xp0 = it->momentum;
-
-    double x1 = next->position;
-    double xp1 = next->momentum;
-
-    double xd = std::pow((x0 - x1), 2);
-    double xpd = std::pow((xp0 - xp1), 2);
-
-    double distance = std::sqrt(xd + xpd);
-
-    distances.push_back(distance);
+      double x0 = it->position;
+      double xp0 = it->momentum;
+      
+      double x1 = next->position;
+      double xp1 = next->momentum;
+      
+      double xd = std::pow((x0 - x1), 2);
+      double xpd = std::pow((xp0 - xp1), 2);
+      
+      double distance = std::sqrt(xd + xpd);
+      
+      distances.push_back(distance);
     }
   std::vector<double> result;
   std::partial_sum(std::begin(distances), std::end(distances),
@@ -155,16 +152,16 @@ private:
 * @author Stuart Walker
 */
 
-class BDSBunchHaloFlatSigma : public BDSBunch
+class BDSBunchHaloFlatSigma: public BDSBunch
 {
 public:
   BDSBunchHaloFlatSigma();
   virtual ~BDSBunchHaloFlatSigma(){};
-  virtual void
-  SetOptions(const BDSParticleDefinition *beamParticle, const GMAD::Beam &beam,
-             const BDSBunchType &distrType,
-             G4Transform3D beamlineTransformIn = G4Transform3D::Identity,
-             const G4double beamlineS = 0);
+  virtual void SetOptions(const BDSParticleDefinition* beamParticle,
+                          const GMAD::Beam& beam,
+                          const BDSBunchType& distrType,
+                          G4Transform3D beamlineTransformIn = G4Transform3D::Identity,
+                          const G4double beamlineS = 0);
   virtual void CheckParameters();
   virtual BDSParticleCoordsFull GetNextParticleLocal();
 
@@ -195,7 +192,7 @@ private:
   G4double emitOuterX;
   G4double emitOuterY;
 
-  CLHEP::RandFlat *flatGen;
+  CLHEP::RandFlat* flatGen;
 };
 
 #endif
