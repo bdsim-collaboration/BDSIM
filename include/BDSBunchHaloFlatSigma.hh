@@ -174,8 +174,6 @@ private:
   G4double betaY;
   G4double emitX;
   G4double emitY;
-  G4double gammaX;
-  G4double gammaY;
   G4double sigmaX;
   G4double sigmaY;
   /// @}
