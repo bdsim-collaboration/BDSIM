@@ -127,6 +127,7 @@ int main(int argc, char* argv[])
 
   unsigned long long int nOriginalEvents = 0;
   
+  std::cout << "Combination of " << inputFiles.size() << " files beginning" << std::endl;
   // loop over files and accumulate
   for (const auto& file : inputFiles)
     {
