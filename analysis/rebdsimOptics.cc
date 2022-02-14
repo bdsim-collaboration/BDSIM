@@ -65,13 +65,13 @@ int main(int argc, char* argv[])
   std::set<std::string> argumentsSet = {arguments.begin(), arguments.end()};
   
   // emittance on the fly
-  bool emittanceOnFly = argumentsSet.count("--emittanceOnTheFly") > 0;
+  bool emittanceOnFly = argumentsSet.count("--emittanceOnTheFly") > 0 || argumentsSet.count("--emittanceOnFly") > 0;
   if (emittanceOnFly)
     {std::cout << "Calculating emittance per sampler" << std::endl;}
   // remove this option from vector of arguments
   arguments.erase(std::remove_if(arguments.begin(),
                                  arguments.end(),
-                                 [](const std::string& s){ return s == "--emittanceOnTheFly";}),
+                                 [](const std::string& s){ return s == "--emittanceOnTheFly" || s == "--emittanceOnFly";}),
                   arguments.end());
 
   std::string inputFileName = arguments[0];
