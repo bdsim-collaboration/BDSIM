@@ -247,8 +247,19 @@ int BDSIM::Initialise()
   G4int muonSplittingFactor = BDSGlobalConstants::Instance()->MuonSplittingFactor();
   if (muonSplittingFactor > 1)
     {
+      G4int muonSplittingFactor2 = BDSGlobalConstants::Instance()->MuonSplittingFactor2();
+      G4double muonSplittingThresholdParentEk = BDSGlobalConstants::Instance()->MuonSplittingThresholdParentEk();
+      G4double muonSplittingThresholdParentEk2 = BDSGlobalConstants::Instance()->MuonSplittingThresholdParentEk2();
       G4cout << "\nBDSPhysicsMuonSplitting -> using muon splitting wrapper -> factor of: " << muonSplittingFactor << "\n" << G4endl;
-      physList->RegisterPhysics(new BDSPhysicsMuonSplitting(muonSplittingFactor));
+      if (muonSplittingThresholdParentEk > 0)
+        {G4cout << "BDSPhysicsMuonSplitting -> minimum parent kinetic energy: " << muonSplittingThresholdParentEk << " GeV" << G4endl;}
+      if (muonSplittingFactor2 > 1)
+        {
+          G4cout << "\nBDSPhysicsMuonSplitting -> factor #2: " << muonSplittingFactor2 << " for muons above "
+                 << muonSplittingThresholdParentEk << " GeV" << G4endl;
+        }
+      physList->RegisterPhysics(new BDSPhysicsMuonSplitting(muonSplittingFactor,  muonSplittingThresholdParentEk,
+                                                            muonSplittingFactor2, muonSplittingThresholdParentEk2));
     }
   
   BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);

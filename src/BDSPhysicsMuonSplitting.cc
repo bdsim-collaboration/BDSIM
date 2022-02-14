@@ -34,16 +34,30 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <set>
 
-BDSPhysicsMuonSplitting::BDSPhysicsMuonSplitting(G4int splittingFactorIn):
+BDSPhysicsMuonSplitting::BDSPhysicsMuonSplitting(G4int splittingFactorIn,
+                                                 G4double splittingThresholdEKIn,
+                                                 G4int splittingFactor2In,
+                                                 G4double splittingThresholdEK2In):
   G4VPhysicsConstructor("BDSPhysicsMuonSplitting"),
-  splittingFactor(splittingFactorIn)
+  splittingFactor(splittingFactorIn),
+  splittingThresholdEK(splittingThresholdEKIn),
+  splittingFactor2(splittingFactor2In),
+  splittingThresholdEK2(splittingThresholdEK2In)
 {
   if (splittingFactorIn < 1)
     {throw BDSException(__METHOD_NAME__, "the splitting factor must be an integer 1 or greater.");}
+  if (splittingFactor2In < 1)
+    {throw BDSException(__METHOD_NAME__, "the splitting factor #2 must be an integer 1 or greater.");}
   G4int maxSize = G4TrackFastVectorSize/2;
   if (splittingFactorIn > maxSize)
     {
       G4String msg = "the maximum safe splitting factor is " + std::to_string(maxSize);
+      msg += " based on the G4TrackFastVectorSize in Geant4";
+      throw BDSException(__METHOD_NAME__, msg);
+    }
+  if (splittingFactor2In > maxSize)
+    {
+      G4String msg = "(for factor #2) the maximum safe splitting factor is " + std::to_string(maxSize);
       msg += " based on the G4TrackFastVectorSize in Geant4";
       throw BDSException(__METHOD_NAME__, msg);
     }
@@ -106,11 +120,18 @@ void BDSPhysicsMuonSplitting::ConstructProcess()
 	  if (processNamesToLookFor.count(processName) == 0)
 	    {continue;}
 	  
-	  auto wrappedProcess = new BDSWrapperMuonSplitting(process, splittingFactor);
+	  auto wrappedProcess = new BDSWrapperMuonSplitting(process, splittingFactor, splittingThresholdEK, splittingFactor2, splittingThresholdEK2);
 	  pManager->RemoveProcess(process);
 	  ph->RegisterProcess(wrappedProcess, particle);
-	  G4cout << "BDSPhysicsMuonSplitting> wrapping \"" << process->GetProcessName()
-		 << "\" for particle \"" << particle->GetParticleName() << "\": factor of " << splittingFactor << G4endl;
+	  G4cout << "Bias> muon splitting > wrapping \"" << process->GetProcessName()
+           << "\" for particle \"" << particle->GetParticleName() << "\": x" << splittingFactor
+           << " for parent Ek > " << splittingThresholdEK / CLHEP::GeV << " GeV" << G4endl;
+	  if (splittingFactor2 > 1)
+	    {
+	      G4cout << "Bias> muon splitting > wrapping \"" << process->GetProcessName()
+		     << "\" for particle \"" << particle->GetParticleName() << "\": (2nd band) x" << splittingFactor2
+		     << " for parent Ek > " << splittingThresholdEK2 / CLHEP::GeV << " GeV" << G4endl;
+	    }
 	}
     }
   

@@ -45,6 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectoryFilter.hh"
 #include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
+#include "BDSWrapperMuonSplitting.hh"
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
@@ -132,6 +133,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
+  BDSWrapperMuonSplitting::nCallsThisEvent = 0;
   nTracks = 0;
   primaryTrajectoriesCache.clear();
   BDSStackingAction::energyKilled = 0;
@@ -219,6 +221,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 
 void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
+  //G4cout << "BDSWrapperMuonSplitting::nCallsThisEvent> " << BDSWrapperMuonSplitting::nCallsThisEvent << G4endl;
   auto flagsCache(G4cout.flags());
   // Get event number information
   G4int event_number = evt->GetEventID();

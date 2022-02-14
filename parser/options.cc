@@ -340,6 +340,9 @@ void Options::PublishMembers()
   publish("collimatorsAreInfiniteAbsorbers", &Options::collimatorsAreInfiniteAbsorbers);
   publish("tunnelIsInfiniteAbsorber",        &Options::tunnelIsInfiniteAbsorber);
   publish("muonSplittingFactor",             &Options::muonSplittingFactor);
+  publish("muonSplittingThresholdParentEk",  &Options::muonSplittingThresholdParentEk);
+  publish("muonSplittingFactor2",            &Options::muonSplittingFactor2);
+  publish("muonSplittingThresholdParentEk2", &Options::muonSplittingThresholdParentEk2);
   
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
