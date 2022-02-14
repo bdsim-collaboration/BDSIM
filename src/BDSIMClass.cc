@@ -38,6 +38,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Version.hh"
 #include "G4VModularPhysicsList.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBunch.hh"
@@ -250,13 +252,13 @@ int BDSIM::Initialise()
       G4int muonSplittingFactor2 = BDSGlobalConstants::Instance()->MuonSplittingFactor2();
       G4double muonSplittingThresholdParentEk = BDSGlobalConstants::Instance()->MuonSplittingThresholdParentEk();
       G4double muonSplittingThresholdParentEk2 = BDSGlobalConstants::Instance()->MuonSplittingThresholdParentEk2();
-      G4cout << "\nBDSPhysicsMuonSplitting -> using muon splitting wrapper -> factor of: " << muonSplittingFactor << "\n" << G4endl;
+      G4cout << "BDSPhysicsMuonSplitting -> using muon splitting wrapper -> factor of: " << muonSplittingFactor << G4endl;
       if (muonSplittingThresholdParentEk > 0)
-        {G4cout << "BDSPhysicsMuonSplitting -> minimum parent kinetic energy: " << muonSplittingThresholdParentEk << " GeV" << G4endl;}
+        {G4cout << "BDSPhysicsMuonSplitting -> minimum parent kinetic energy: " << muonSplittingThresholdParentEk / CLHEP::GeV << " GeV" << G4endl;}
       if (muonSplittingFactor2 > 1)
         {
-          G4cout << "\nBDSPhysicsMuonSplitting -> factor #2: " << muonSplittingFactor2 << " for muons above "
-                 << muonSplittingThresholdParentEk << " GeV" << G4endl;
+          G4cout << "BDSPhysicsMuonSplitting -> factor #2: " << muonSplittingFactor2 << " for muons above "
+                 << muonSplittingThresholdParentEk / CLHEP::GeV << " GeV" << G4endl;
         }
       physList->RegisterPhysics(new BDSPhysicsMuonSplitting(muonSplittingFactor,  muonSplittingThresholdParentEk,
                                                             muonSplittingFactor2, muonSplittingThresholdParentEk2));
