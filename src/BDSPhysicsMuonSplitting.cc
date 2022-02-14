@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "G4TrackFastVector.hh"
 #include "G4Types.hh"
+#include "G4Version.hh"
 
 #include <map>
 #include <set>
@@ -78,8 +79,10 @@ void BDSPhysicsMuonSplitting::ConstructProcess()
                                                                {"kaon+", {"Decay"}},
                                                                {"kaon-", {"Decay"}},
                                                                {"kaon0L", {"Decay"}} };
-  
+
+#if G4VERSION_NUMBER > 1029
   auto aParticleIterator =  G4ParticleTable::GetParticleTable()->GetIterator();
+#endif
   aParticleIterator->reset();
   
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
