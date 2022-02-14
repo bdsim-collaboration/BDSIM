@@ -155,32 +155,32 @@ void BDSBunchHaloFlatSigma::SetOptions(const BDSParticleDefinition* beamParticle
 BDSParticleCoordsFull BDSBunchHaloFlatSigma::GetNextParticleLocal()
 {
   // Sampler flat in nsigma between lower and upper.
-  double xsigrange = (haloNSigmaXOuter - haloNSigmaXInner);
-  double ysigrange = (haloNSigmaYOuter - haloNSigmaYInner);
-  double xnsig = haloNSigmaXInner + flatGen->shoot() * xsigrange;
-  double ynsig = haloNSigmaYInner + flatGen->shoot() * ysigrange;
+  G4double xsigrange = (haloNSigmaXOuter - haloNSigmaXInner);
+  G4double ysigrange = (haloNSigmaYOuter - haloNSigmaYInner);
+  G4double xnsig = haloNSigmaXInner + flatGen->shoot() * xsigrange;
+  G4double ynsig = haloNSigmaYInner + flatGen->shoot() * ysigrange;
 
   // Courant-snyder invariants for the particle, which are actually twice the
   // particle actions...
-  double csix = std::pow(xnsig * sigmaX, 2) / betaX;
-  double csiy = std::pow(ynsig * sigmaY, 2) / betaY;
+  G4double csix = std::pow(xnsig * sigmaX, 2) / betaX;
+  G4double csiy = std::pow(ynsig * sigmaY, 2) / betaY;
   // The particle actions, which we use here.
-  double jx = csix / 2.0;
-  double jy = csiy / 2.0;
+  G4double jx = csix / 2.0;
+  G4double jy = csiy / 2.0;
 
   using namespace detail;
   TwissPair tx = {alphaX, betaX};
   TwissPair ty = {alphaY, betaY};
   auto xps = GetCoordinatesOnPhaseSpaceEllipse(jx, tx);
   auto yps = GetCoordinatesOnPhaseSpaceEllipse(jy, ty);
-
-  double x = (xps.position + X0) * CLHEP::m;
-  double xp = (xps.momentum + Xp0) * CLHEP::rad;
-  double y = (yps.position + Y0) * CLHEP::m;
-  double yp = (yps.momentum + Yp0) * CLHEP::rad;
-  double z = 0.;
-  double zp = CalculateZp(xp, yp, Zp0);
-  double weight = 1.0;
+  
+  G4double x  = (xps.position + X0) * CLHEP::m;
+  G4double xp = (xps.momentum + Xp0) * CLHEP::rad;
+  G4double y  = (yps.position + Y0) * CLHEP::m;
+  G4double yp = (yps.momentum + Yp0) * CLHEP::rad;
+  G4double z  = 0.;
+  G4double zp = CalculateZp(xp, yp, Zp0);
+  G4double weight = 1.0;
   BDSParticleCoordsFull result(x, y, z, xp, yp, zp, T0, S0 + z, E0, weight);
   return result;
 }
