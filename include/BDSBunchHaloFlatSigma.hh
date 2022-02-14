@@ -42,7 +42,7 @@ namespace GMAD
   class Beam;
 }
 
-namespace detail
+namespace BDS
 {
 
 /**
@@ -145,7 +145,7 @@ private:
   std::vector<double> pathLengths;
 };
 
-} // namespace detail
+} // namespace BDS
 
 /**
 * @brief Bunch halo distribution where the PDF is uniformly distribution in sigma.
