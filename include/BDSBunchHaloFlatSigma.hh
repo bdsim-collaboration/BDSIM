@@ -129,7 +129,9 @@ template <typename T> std::vector<double> CumulativeDistances(T pairs)
 class EllipsePointGenerator
 {
 public:
-  EllipsePointGenerator(double action, TwissPair tp);
+  EllipsePointGenerator(double actionIn, TwissPair tp);
+  ~EllipsePointGenerator() = default;
+  
   PhaseSpaceCoord GetRandomPointOnEllipse() const;
   double EllipsePerimeter() const { return pathLengths.back(); };
 
