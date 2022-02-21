@@ -101,6 +101,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ChannelingOptrMultiParticleChangeCrossSection.hh"
 #endif
 
+#ifdef BDSCHECKUSERLIMITS
+#include "G4UserLimits.hh"
+#endif
+
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Vector/EulerAngles.h"
 
@@ -259,6 +263,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl << G4endl;
   if (verbose || debug) {G4cout << "Finished listing materials, returning physiWorld" << G4endl;} 
+#endif
+#ifdef BDSCHECKUSERLIMITS
+  PrintUserLimitsSummary(worldPV);
 #endif
   return worldPV;
 }
@@ -1414,3 +1421,31 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
     }
   return result;
 }
+
+#ifdef BDSCHECKUSERLIMITS
+void BDSDetectorConstruction::PrintUserLimitsSummary(const G4VPhysicalVolume* world) const
+{
+  G4cout << "USERLIMITS START" << G4endl;
+  G4double globalMinEK = BDSGlobalConstants::Instance()->MinimumKineticEnergy();
+  PrintUserLimitsPV(world, globalMinEK);
+  G4cout << "USERLIMITS END" << G4endl;
+}
+
+void BDSDetectorConstruction::PrintUserLimitsPV(const G4VPhysicalVolume* aPV, G4double globalMinEK) const
+{
+  const auto lv = aPV->GetLogicalVolume();
+  const auto ul = lv->GetUserLimits();
+  if (ul)
+    {
+      G4Track dummyTrack;
+      G4double ekUL = ul->GetUserMinEkine(dummyTrack);
+      //G4cout << lv->GetName() << " Ek Min: " << ekUL << G4endl;
+      if (ekUL < globalMinEK)
+	{G4cout << lv->GetName() << " Ek Min: " << ekUL << " MeV < global: " << globalMinEK << " MeV" << G4endl;}
+    }
+  else
+    {G4cout << lv->GetName() << " no G4UserLimits" << G4endl;}
+  for (G4int i = 0; i < (G4int)lv->GetNoDaughters(); i++)
+    {PrintUserLimitsPV(lv->GetDaughter(i), globalMinEK);}
+}
+#endif

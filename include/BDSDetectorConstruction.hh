@@ -277,6 +277,12 @@ private:
   G4LogicalVolume* worldLogicalVolume;
   
   std::vector<BDSFieldQueryInfo*> fieldQueries;
+
+  // for developer checks only
+#ifdef BDSCHECKUSERLIMITS
+  void PrintUserLimitsSummary(const G4VPhysicalVolume* world) const;
+  void PrintUserLimitsPV(const G4VPhysicalVolume* aPV, G4double globalMinEK) const;
+#endif
 };
 
 #endif
