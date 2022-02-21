@@ -1132,7 +1132,7 @@ This is the basic usage of HistogramAccumulator in Python: ::
   >>> import ROOT
   >>> import pybdsim
   >>> h = ROOT.TH1D("HistogramNameForFileBASE", "A Nice Title", 100, 0, 20) # 100 bins from 0 to 20
-  >>> ha = ROOT.HistogramAccumulator(h, h.GetName().strip("BASE"), h.GetTitle())
+  >>> ha = ROOT.HistogramAccumulator(h, h.GetName()[:-4], h.GetTitle())
 
   >>> h.Reset()
   >>> h.Fill(1.2)       # fill the histogram
@@ -1151,14 +1151,14 @@ This is the basic usage of HistogramAccumulator in Python: ::
 	  is the one used when writing to a file and ROOT uses this internally to identify it
 	  so it **must** be unique. Here, we append the suffix "BASE" onto its name for the
 	  simple histogram, and we give the accumulator the desired name without this suffix
-	  by stripping it off.
+	  by stripping it off (:code:`[:-4]` means up to the 4th last character).
 
 An example in a loop: ::
 
   >>> import pybdsim
   >>> d = pybdsim.Data.Load("mytastydata.root")
   >>> h = ROOT.TH1D("HistogramNameForFileBASE", "A Nice Title", 100, 0, 20) # 100 bins from 0 to 20
-  >>> ha = ROOT.HistogramAccumulator(h, h.GetName().strip("BASE"), h.GetTitle())
+  >>> ha = ROOT.HistogramAccumulator(h, h.GetName()[:-4], h.GetTitle())
   >>> for event in d.GetEventTree():
           h.Reset()
 	  for i in range(event.someSampler.n):
