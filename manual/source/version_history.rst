@@ -85,6 +85,8 @@ New Features
   flat in terms of sigma. This is useful for re-weighting distributions based on
   the particle's distance from the core in terms of sigma.
 * New muon-splitting biasing scheme.
+* Ability to inspect G4EllipticalTube for extents as a container volume of imported GDML geometry
+  as required for NA62.
 
 
 General
