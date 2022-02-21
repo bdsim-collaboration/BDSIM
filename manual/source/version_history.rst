@@ -82,14 +82,18 @@ New Features
   XWindows server is required for the visualiser. See :ref:`docker-build`.
 * New materials (Inermet170, Inermet176, Inermet180, Copper-Diamond, MoGr).
 * New bunch distribution type `halosigma` that samples a flat halo distribution
-  flat in terms of sigma.  This is useful for reweighting distributions based on
+  flat in terms of sigma. This is useful for re-weighting distributions based on
   the particle's distance from the core in terms of sigma.
 * New muon-splitting biasing scheme.
-  
->>>>>>> develop
+
+
 General
 -------
 
+* When using the minimum kinetic energy option, tracks are now stopped in the stacking action
+  rather than being allowed to be tracked for a single step. This should vastly improve the
+  speed of some events with large numbers of tracks.
+* The minimum kinetic energy option is printed out if used now as it is important.
 * The default yoke fields have been revised. The equation for the field is the same, but the
   normalisation to the pure vacuum field at the pole-tip has been fixed and improved. This
   leads to the removal of very high peak values close to the hypothetical current sources
@@ -201,6 +205,9 @@ Bug Fixes
 
 **Tracking**
 
+* When using the minimum kinetic energy option, tracks are now stopped in the stacking action
+  rather than being allowed to be tracked for a single step. This should vastly improve the
+  speed of some events with large numbers of tracks.
 * Fix lack of user limits for RF cavity geometry.
 * Fix maximum step length user limit for externally loaded geometry.
 
