@@ -87,6 +87,8 @@ New Features
 * New muon-splitting biasing scheme.
 * Ability to inspect G4EllipticalTube for extents as a container volume of imported GDML geometry
   as required for NA62.
+* Nicer visualisation colours for charged particles. Green for neutrals is by default now at
+  20% opacity as there are usually so many gammas.
 
 
 General
