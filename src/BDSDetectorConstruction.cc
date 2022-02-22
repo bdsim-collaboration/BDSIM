@@ -592,7 +592,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   if (!worldGeometryFile.empty())
     {
       if (BDSGlobalConstants::Instance()->WorldMaterialSet())
-        {throw BDSException(__METHOD_NAME__, "conflicting options - world material option specified but material will be taken from world GDML file");}
+        {BDS::Warning(__METHOD_NAME__, "conflicting options - world material option specified but material will be taken from world GDML file");}
       G4bool ac = BDSGlobalConstants::Instance()->AutoColourWorldGeometryFile();
       
       std::vector<G4String> namedWorldVacuumVolumes = BDS::SplitOnWhiteSpace(BDSGlobalConstants::Instance()->WorldVacuumVolumeNames());
