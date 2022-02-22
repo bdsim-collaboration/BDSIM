@@ -1821,7 +1821,7 @@ file. See :ref:`externally-provided-geometry` for more details.
 * See also :ref:`physics-bias-importance-sampling` for usage of this.
 * The world **material** will be taken from the GDML file and the option :code:`worldMaterial`
   will be ignored. If the option :code:`worldMaterial` is specified as well as
-  :code:`worldGeometryFile`, BDSIM will exit.
+  :code:`worldGeometryFile`, BDSIM will issue a warning but proceed.
 * The option :code:`autoColourWorldGeometryFile` can be used (default true) to colour
   the supplied geometry by density. See :ref:`automatic-colours` for details.
 * The option :code:`biasForWorldContents` may be used to attach a bias object to the
