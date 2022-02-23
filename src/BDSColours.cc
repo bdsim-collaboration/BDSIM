@@ -61,8 +61,8 @@ BDSColours::BDSColours()
   
   // visualisation of trajectories
   colours["traj_neutral"]     = new G4Colour(0.2, 0.7, 0.0, 0.2); // 0  charge - nicer green 0, semi-transparent as tonnes of photons usually
-  colours["traj_positive"]    = new G4Colour(0.8, 0.0, 0.0);
-  colours["traj_negative"]    = new G4Colour(0.0, 0.2, 0.9);
+  colours["traj_positive"]    = new G4Colour(0.0, 0.2, 0.9); // nicer blue
+  colours["traj_negative"]    = new G4Colour(0.8, 0.0, 0.0); // nicer red
 
   // tunnel
   colours["tunnel"]           = new G4Colour(0.545, 0.533, 0.470); // a nice grey
