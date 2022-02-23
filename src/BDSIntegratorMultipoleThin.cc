@@ -107,8 +107,8 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   OneStep(localPos, localMomUnit, momMag, localPosOut, localMomUnitOut, h);
 
   // xp1 or yp1 may be > 1, so isnan check also needed for zp1.
-  G4double zp1 = localMom.z();
-  if (std::isnan(zp1) || (zp1 < 0.9))
+  G4double zp1 = localMomUnitOut.z();
+  if (std::isnan(zp1) || (zp1 < backupStepperMomLimit))
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
