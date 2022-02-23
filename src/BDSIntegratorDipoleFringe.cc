@@ -95,6 +95,8 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 
   bx = (*strengthIn)["bx"];
   by = (*strengthIn)["by"];
+
+  backupStepperMomLimit = BDSGlobalConstants::Instance()->BackupStepperMomLimit();
 }
 
 BDSIntegratorDipoleFringe::~BDSIntegratorDipoleFringe()
