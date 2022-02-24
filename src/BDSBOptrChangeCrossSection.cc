@@ -71,9 +71,6 @@ void BDSBOptrChangeCrossSection::StartRun()
       const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
       const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
       
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << processManager << " " << sharedData << G4endl;
-#endif
       if (sharedData)
 	{
 	  // sharedData tested, as is can happen a user attaches an operator to a
@@ -95,15 +92,8 @@ void BDSBOptrChangeCrossSection::SetBias(const G4String& processName,
 					 G4double bias,
 					 G4int    iPrimary)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << processName << " " << bias << " " << iPrimary << G4endl;
-#endif  
   const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
   const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << fParticleToBias << " " << processManager << " " << sharedData << G4endl;
-#endif
 
   G4bool allProcesses = false;
   if (processName == "all")
@@ -139,10 +129,6 @@ void BDSBOptrChangeCrossSection::SetBias(const G4String& processName,
       throw BDSException(__METHOD_NAME__, "Process \"" + processName +
 			 "\" not found registered to particle \"" + particleName + "\"");
     }
-#ifdef BDSDEBUG
-  else
-    {G4cout << "Process found OK" << G4endl;}
-#endif
 }
 
 G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*                   track, 
