@@ -75,9 +75,8 @@ void BDSBOptrChangeCrossSection::StartRun()
 	{
 	  // sharedData tested, as is can happen a user attaches an operator to a
 	  // volume but without defined BiasingProcessInterface processes.
-	  for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++)
-	    {
-	      const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
+    for (const auto& wrapperProcess : sharedData->GetPhysicsBiasingProcessInterfaces())
+      {
 	      G4String operationName = "XSchange-"+wrapperProcess->GetWrappedProcess()->GetProcessName();
 	      fChangeCrossSectionOperations[wrapperProcess] = new G4BOptnChangeCrossSection(operationName);
 	      fXSScale[wrapperProcess]      = 1.0;
@@ -196,19 +195,19 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // occured. If the interaction did not occur for the process in the previous,
   // we update the number of interaction length instead of resampling.
 
-  if(!previousOperation)
+  if (!previousOperation)
     {
       operation->SetBiasedCrossSection( XStransformation * analogXS );
       operation->Sample();
     }
   else
     {
-      if(previousOperation != operation)
+      if (previousOperation != operation)
 	{// should not happen !
 	  //G4cout << __METHOD_NAME__ << "Logic Problem" << G4endl;
 	  return nullptr;
 	}
-      if(operation->GetInteractionOccured())
+      if (operation->GetInteractionOccured())
 	{
 	  operation->SetBiasedCrossSection( XStransformation * analogXS );
 	  operation->Sample();
