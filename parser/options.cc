@@ -374,6 +374,7 @@ void Options::PublishMembers()
   publish("nominalMatrixRelativeMomCut", &Options::nominalMatrixRelativeMomCut);
   publish("teleporterFullTransform",  &Options::teleporterFullTransform);
   publish("dEThresholdForScattering", &Options::dEThresholdForScattering);
+  publish("backupStepperMomLimit",    &Options::backupStepperMomLimit);
 
   // hit generation
   publish("sensitiveOuter",              &Options::sensitiveOuter);

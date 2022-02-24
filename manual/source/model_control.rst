@@ -3439,7 +3439,12 @@ should only be used with understanding.
 |                                   | an option, but part of the beam command. This cannot be used with  |
 |                                   | the visualiser.                                                    |
 +-----------------------------------+--------------------------------------------------------------------+
-
+| backupStepperMomLimit             | Default = 0.1. Fractional unit momentum limit beyond which the     |
+|                                   | matrix integrator reverts back to a backup stepper, generally RK4. |
+|                                   | Every bdsim integrator that applies matrix-style stepping will     |
+|                                   | check Zp < (1-limit), and often (Xp > limit) & (Yp > limit).       |
+|                                   | Changing this limit will affect tracking of large angle particles. |
++-----------------------------------+--------------------------------------------------------------------+
 
 .. _sampler-output:
 
