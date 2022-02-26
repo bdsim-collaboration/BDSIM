@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSPhysicsVectorLinear.hh"
 #include "BDSWrapperMuonSplitting.hh"
 
 #include "G4ParticleDefinition.hh"
@@ -25,7 +26,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VProcess.hh"
 
 #include <cmath>
-#include <set>
 #include <vector>
 
 G4int BDSWrapperMuonSplitting::nCallsThisEvent = 0;
@@ -39,7 +39,8 @@ BDSWrapperMuonSplitting::BDSWrapperMuonSplitting(G4VProcess* originalProcess,
   splittingFactor(splittingFactorIn),
   splittingThresholdEK(splittingThresholdEKIn),
   splittingFactor2(splittingFactor2In),
-  splittingThresholdEK2(splittingThresholdEK2In)
+  splittingThresholdEK2(splittingThresholdEK2In),
+  splitting(nullptr)
 {
   RegisterProcess(originalProcess);
   theProcessSubType = originalProcess->GetProcessSubType();
@@ -48,10 +49,21 @@ BDSWrapperMuonSplitting::BDSWrapperMuonSplitting(G4VProcess* originalProcess,
     {splittingFactor2 = splittingFactor;} // always want more high energy
   if (splittingThresholdEK2 < splittingThresholdEK)
     {splittingThresholdEK2 = splittingThresholdEK;}
+  
+  std::vector<G4double> eK = {0.8*splittingThresholdEK, splittingThresholdEK};
+  std::vector<G4double> va = {2.0, (G4double)splittingFactorIn};
+  if (splittingThresholdEK2 > splittingThresholdEK)
+    {
+      eK.push_back(splittingThresholdEK2);
+      va.push_back((G4double)splittingFactor2In);
+    }
+  splitting = new BDSPhysicsVectorLinear(eK, va);
 }
 
 BDSWrapperMuonSplitting::~BDSWrapperMuonSplitting()
-{;}
+{
+  delete splitting;
+}
 
 G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
 							 const G4Step& step)
@@ -62,7 +74,7 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
     {return particleChange;}
   
   G4double parentEk = track.GetKineticEnergy();
-  if (parentEk < splittingThresholdEK) // smaller of the two thresholds by design
+  if (parentEk < 0.8*splittingThresholdEK) // smaller of the two thresholds by design
     {return particleChange;}
   
   G4int nSecondaries = particleChange->GetNumberOfSecondaries();
@@ -100,9 +112,11 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
   
   particleChange->Clear(); // doesn't delete the secondaries
   
+  G4double spf2 = splitting->Value(parentEk);
+  G4int thisTimeSplittingFactor = (G4int)std::round(spf2);
   // Attempt to generate more muons. This might be difficult or rare, so we must tolerate this.
-  G4int thisTimeSplittingFactor = parentEk > splittingThresholdEK2 ? splittingFactor2 : splittingFactor;
-  G4int maxTrials = 1000 * thisTimeSplittingFactor;
+  //G4int thisTimeSplittingFactor = parentEk > splittingThresholdEK2 ? splittingFactor2 : splittingFactor;
+  G4int maxTrials = 10 * thisTimeSplittingFactor;
   G4int nSuccessfulMuonSplits = 0;
   G4int iTry = 0;
   std::vector<G4Track*> newMuons;
@@ -156,9 +170,7 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
       G4double newWeight = existingWeight * weightFactor;
       newMuon->SetWeight(newWeight);
       particleChange->AddSecondary(newMuon);
-      //G4cout << newMuon->GetKineticEnergy()/ CLHEP::GeV << G4endl;
     }
   nCallsThisEvent++;
-  //G4cout << "Muon parent trackID / pdgID: " << track.GetTrackID() << " " << track.GetParticleDefinition()->GetPDGEncoding() << G4endl;
   return particleChange;
 }
