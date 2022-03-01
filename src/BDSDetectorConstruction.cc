@@ -1076,7 +1076,7 @@ BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& bia
       biasSetKey += n + "_";
       biasSetPrintOut += n + " ";
     }
-  biasSetKey = biasSetKey.strip(G4String::stripType::trailing, '_');
+  biasSetKey = BDS::StrStrip(biasSetKey, '_', BDS::StringStripType::trailing);
   
   auto exists = biasSetObjects.find(biasSetKey);
   if (exists != biasSetObjects.end())
