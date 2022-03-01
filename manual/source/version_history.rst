@@ -30,6 +30,7 @@ V1.7.0 - 2022 / XX / XX
   in Bibtex syntax to cite BDSIM easily.
 * The default yoke fields have changed and are on average stronger (and more correct). See below.
 
+
 New Features
 ------------
 
