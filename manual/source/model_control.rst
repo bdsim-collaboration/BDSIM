@@ -2166,6 +2166,29 @@ a similar linear interpolation procedure is used along with rounding.
 	    well as 2 kinetic energy thresholds.
 
 
+**Examples:**
+
+::
+
+   option, muonSplittingFactor=10;
+
+
+::
+   
+   option, muonSplittingFactor=10,
+           muonSplittingThresholdParentEk=50*GeV,
+
+
+::
+
+   option, muonSplittingFactor=10,
+           muonSplittingThresholdParentEk=50*GeV,
+	   muonSplittingFactor=30,
+	   muonSplittingThresholdParentEk=150*GeV;
+
+
+More examples can be found (including cross-section biasing) in :code:`bdsim/examples/features/processes/6_muon`.
+
 The following processes are wrapped for the following
 particles (Geant4 names).
 
@@ -2240,9 +2263,6 @@ estimate the muon flux.
 	   The relevant command is :code:`/physics_lists/em/PositronToMuons true` for the Geant4 physics
 	   macro.
 
-Examples:
-
-Many examples can be found (including cross-section biasing) in :code:`bdsim/examples/features/processes/6_muon`.
 
 **Pion Decay**
 
