@@ -556,12 +556,12 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
 						       G4int* indexOfFoundElement) const
 {
   // check if s is in the range of the beamline
-  if (s-previousSPositionEnd > totalArcLength) // need to offset start S position 
+  G4double sStart = at(0)->GetSPositionStart();
+  if (s-sStart > totalArcLength) // need to offset start S position
     {
-      G4cout << __METHOD_NAME__
-	     << "s position " << s/CLHEP::m << " m is beyond length of accelerator ("
-	     << totalArcLength/CLHEP::m << " m)" << G4endl;
-      G4cout << "Returning identify transform" << G4endl;
+      G4String msg = "s position " + std::to_string(s/CLHEP::m) + " m is beyond length of accelerator (";
+      msg += std::to_string(totalArcLength/CLHEP::m) + " m)\nReturning identify transform";
+      BDS::Warning(__METHOD_NAME__, msg);
       return G4Transform3D();
     }
 
