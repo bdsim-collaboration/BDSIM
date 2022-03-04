@@ -121,9 +121,6 @@ G4bool BDSSDSamplerCylinder::ProcessHits(G4Step* aStep, G4TouchableHistory* /*re
       // The global to local transform is defined in the registry.
       // Cast 3 vector to 'point' to transform position (required to be explicit for * operator)
       localPosition  = globalToLocal * (HepGeom::Point3D<G4double>)pos;
-      // Now, if the sampler is infinitely thin, the local z should be 0, but it's finite.
-      // Account for this by purposively setting local z to be 0.
-      localPosition.setZ(0.0);
       // Cast 3 vector to 3 vector to transform vector (required to be explicit for * operator)
       localDirection = globalToLocal * (HepGeom::Vector3D<G4double>)mom;
     }
