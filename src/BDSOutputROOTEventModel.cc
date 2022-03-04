@@ -190,7 +190,7 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 				   const std::map<short int, G4String>*     materialIDToNameUnique,
 				   G4bool storeTrajectory)
 {
-  for (const auto& nameSPos : BDSSamplerRegistry::Instance()->GetUniqueNamesAndSPosition())
+  for (const auto& nameSPos : BDSSamplerRegistry::Instance()->GetUniquePlaneNamesAndSPosition())
     {
       samplerNamesUnique.push_back(std::string(nameSPos.first) + ".");
       samplerSPosition.push_back((double) nameSPos.second / CLHEP::m);

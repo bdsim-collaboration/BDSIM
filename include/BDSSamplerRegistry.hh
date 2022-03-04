@@ -123,7 +123,7 @@ public:
   std::vector<G4String> GetUniqueNamesSphere() const;
   
   /// Access all the unique names and their corresponding s position at once.
-  std::vector<std::pair<G4String, G4double> > GetUniqueNamesAndSPosition() const;
+  std::vector<std::pair<G4String, G4double> > GetUniquePlaneNamesAndSPosition() const;
 
   /// Get number of registered samplers
   inline G4int NumberOfExistingSamplers() const;
