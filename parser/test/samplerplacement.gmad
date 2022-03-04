@@ -1,6 +1,7 @@
 ! define every parameter to check them all.
-minidetector: samplerplacement, referenceElement="d1",
-	      			referenceElementNumber=2,
+minidetector: samplerplacement, samplerType="plane",
+                referenceElement="d1",
+	      	    referenceElementNumber=2,
 				s=123, x=10*m,y=3*cm,z=12*m,
 				phi=1,theta=2,psi=3,
 				axisX=1, axisY=0.5, axisZ=0.01, angle=0.003,
