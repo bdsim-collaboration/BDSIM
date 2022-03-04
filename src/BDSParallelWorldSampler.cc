@@ -31,11 +31,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSampler.hh"
 #include "BDSSamplerCustom.hh"
 #include "BDSSamplerCylinder.hh"
+#include "BDSSamplerInfo.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerRegistry.hh"
-#include "BDSSDSampler.hh"
-#include "BDSSamplerInfo.hh"
+#include "BDSSamplerSphere.hh"
 #include "BDSSamplerType.hh"
+#include "BDSSDSampler.hh"
 #include "BDSUtilities.hh"
 #include "BDSWarning.hh"
 
@@ -123,25 +124,16 @@ void BDSParallelWorldSampler::Construct()
       
       // use main beamline - in future, multiple beam lines
       G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(samplerPlacement, beamline);
-      
+  
+      BDSSamplerType st = BDS::DetermineSamplerType(samplerPlacement.samplerType);
+      BDSSampler* sampler = BuildSampler(samplerPlacement, st);
       G4String samplerName = G4String(samplerPlacement.name);
-      BDSApertureInfo* shape;
-      if (samplerPlacement.apertureModel.empty())
-	{
-	  shape = new BDSApertureInfo(samplerPlacement.shape,
-				      samplerPlacement.aper1*CLHEP::m,
-				      samplerPlacement.aper2*CLHEP::m,
-				      samplerPlacement.aper3*CLHEP::m,
-				      samplerPlacement.aper4*CLHEP::m,
-				      samplerPlacement.name);
-	}
-      else
-	{shape = BDSAcceleratorModel::Instance()->Aperture(samplerPlacement.apertureModel);}
-      
-      BDSSampler* sampler = new BDSSamplerCustom(samplerName, *shape, samplerPlacement.partIDSetID);
       G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,
 									sampler,
-									transform);
+									transform,
+                  -1000,
+                  nullptr,
+                  st);
       
       G4String uniqueName = BDSSamplerRegistry::Instance()->GetNameUnique(samplerID);
       if (uniqueName != samplerName)
@@ -156,6 +148,47 @@ void BDSParallelWorldSampler::Construct()
 					    checkOverlaps);
       placements.push_back(pl);
     } 
+}
+
+BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& samplerPlacement,
+                                                  BDSSamplerType st) const
+{
+  BDSSampler* result = nullptr;
+  G4String samplerName = G4String(samplerPlacement.name);
+  
+  switch (st.underlying())
+    {
+    case BDSSamplerType::plane:
+      {
+	BDSApertureInfo* shape;
+	if (samplerPlacement.apertureModel.empty())
+	  {
+	    shape = new BDSApertureInfo(samplerPlacement.shape,
+					samplerPlacement.aper1 * CLHEP::m,
+					samplerPlacement.aper2 * CLHEP::m,
+					samplerPlacement.aper3 * CLHEP::m,
+					samplerPlacement.aper4 * CLHEP::m,
+					samplerPlacement.name);
+	  }
+	else
+	  {shape = BDSAcceleratorModel::Instance()->Aperture(samplerPlacement.apertureModel);}
+	
+	result = new BDSSamplerCustom(samplerName, *shape, samplerPlacement.partIDSetID);
+	break;
+      }
+    case BDSSamplerType::cylinder:
+      {
+	result = new BDSSamplerCylinder(samplerName, 2 * samplerPlacement.aper2 * CLHEP::m,
+					samplerPlacement.aper1 * CLHEP::m);
+	break;
+      }
+    case BDSSamplerType::sphere:
+      {
+	result = new BDSSamplerSphere(samplerName, samplerPlacement.aper1 * CLHEP::m);
+	break;
+      }
+    }
+  return result;
 }
 
 void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
@@ -189,7 +222,7 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
                                    samplerInfo->pdgSetID);
 	break;
       }
-    default:
+    default: // no spherical samplers for beam line samplers
       {break;} // leave as nullptr - shouldn't occur due to if at top
     }
   
@@ -201,7 +234,8 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
 									sampler,
 									*pt,
 									sEnd,
-									element);
+									element,
+                  samplerType);
 
       G4VPhysicalVolume* samplerWorld   = GetWorld();
       samplerWorldLV = samplerWorld->GetLogicalVolume();
