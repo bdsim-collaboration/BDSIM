@@ -37,6 +37,7 @@ namespace GMAD
   {
   public:
     std::string name;         ///< Name of this samplerplacement.
+    std::string samplerType;  ///< Plane, Cylinder, Sphere.
     std::string referenceElement; ///< Name of reference element w.r.t. to place to.
     int         referenceElementNumber; ///< Index of repetition of element if there are multiple uses.
     double s; ///< Curvilinear s position to place w.r.t..

@@ -28,7 +28,8 @@ SamplerPlacement::SamplerPlacement()
 
 void SamplerPlacement::clear()
 {
-  name         = "";
+  name = "";
+  samplerType = "plane";
   referenceElement = "";
   referenceElementNumber = 0;
   s     = 0;
@@ -56,6 +57,7 @@ void SamplerPlacement::clear()
 void SamplerPlacement::PublishMembers()
 {
   publish("name",          &SamplerPlacement::name);
+  publish("samplerType",   &SamplerPlacement::samplerType);
   publish("referenceElement", &SamplerPlacement::referenceElement);
   publish("referenceElementNumber", &SamplerPlacement::referenceElementNumber);
   publish("s",             &SamplerPlacement::s);
@@ -85,6 +87,7 @@ void SamplerPlacement::print()const
 {
   std::cout << "SamplerPlacement: "
 	    << "name "          << name          << std::endl
+	    << "samplerType "   << samplerType   << std::endl
 	    << "referenceElement" << referenceElement << std::endl
 	    << "referenceElementNumber" << referenceElementNumber << std::endl
 	    << "s"              << s             << std::endl
