@@ -17,39 +17,37 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSExtent.hh"
-#include "BDSSamplerCylinder.hh"
+#include "BDSSamplerSphere.hh"
 #include "BDSSDManager.hh"
-#include "BDSSDSamplerCylinder.hh"
+#include "BDSSDSamplerSphere.hh"
 
 #include "G4LogicalVolume.hh"
+#include "G4Sphere.hh"
 #include "G4String.hh"
-#include "G4Tubs.hh"
 #include "G4Types.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
 
-BDSSamplerCylinder::BDSSamplerCylinder(const G4String& nameIn,
-				       G4double        length,
-				       G4double        radiusIn,
-                                       G4int           filterSetIDIn):
+BDSSamplerSphere::BDSSamplerSphere(const G4String& nameIn,
+				   G4double        radiusIn,
+				   G4int           filterSetIDIn):
   BDSSampler(nameIn, filterSetIDIn)
 {
   G4double thickness = 1e-6 * radiusIn;
-  containerSolid = new G4Tubs(nameIn + "_solid",      // name
-			      radiusIn,               // inner radius
-			      radiusIn + thickness,   // outer radius
-			      length*0.5,             // half-length
-			      0,                      // start angle
-			      CLHEP::twopi);          // sweep angle
+  containerSolid = new G4Sphere(nameIn + "_solid",      // name
+				radiusIn,               // inner radius
+				radiusIn + thickness,   // outer radius
+				0, CLHEP::pi,
+				0, CLHEP::twopi);
 
-  SetExtent(BDSExtent(radiusIn, radiusIn, length*0.5));
+  SetExtent(BDSExtent(radiusIn, radiusIn, radiusIn));
   CommonConstruction();
 }
 
-void BDSSamplerCylinder::SetSensitivity()
+void BDSSamplerSphere::SetSensitivity()
 {
   auto sdMan = BDSSDManager::Instance();
-  BDSSDSamplerCylinder* sd = filterSetID > -1 ? sdMan->SamplerCylinderWithFilter(filterSetID) : sdMan->SamplerCylinder();
+  BDSSDSamplerSphere* sd = filterSetID > -1 ? sdMan->SamplerSphereWithFilter(filterSetID) : sdMan->SamplerSphere();
   containerLogicalVolume->SetSensitiveDetector(sd);
 }
