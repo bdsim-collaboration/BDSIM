@@ -128,10 +128,13 @@ std::vector<G4String> BDSSamplerRegistry::GetUniqueNamesSphere() const
   return names;
 }
 
-std::vector<std::pair<G4String, G4double> > BDSSamplerRegistry::GetUniqueNamesAndSPosition() const
+std::vector<std::pair<G4String, G4double> > BDSSamplerRegistry::GetUniquePlaneNamesAndSPosition() const
 {
   std::vector<std::pair<G4String, G4double> > result;
   for (const auto& info : infos)
-    {result.emplace_back(std::make_pair(info.UniqueName(), info.SPosition()));}
+    {
+      if (info.Type() == BDSSamplerType::sphere)
+        {result.emplace_back(std::make_pair(info.UniqueName(), info.SPosition()));}
+    }
   return result;
 }
