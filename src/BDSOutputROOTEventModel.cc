@@ -70,8 +70,6 @@ int BDSOutputROOTEventModel::findNearestElement(const TVector3& point) const
 void BDSOutputROOTEventModel::Flush()
 {
   n = 0;
-  samplerNamesUnique.clear();
-  samplerSPosition.clear();
   componentName.clear();
   placementName.clear();
   componentType.clear();
@@ -149,6 +147,11 @@ void BDSOutputROOTEventModel::Flush()
 
   materialIDToName.clear();
   materialNameToID.clear();
+  
+  samplerNamesUnique.clear();
+  samplerSPosition.clear();
+  samplerCNamesUnique.clear();
+  samplerSNamesUnique.clear();
 }
 
 #ifndef __ROOTBUILD__
@@ -195,6 +198,10 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
       samplerNamesUnique.push_back(std::string(nameSPos.first) + ".");
       samplerSPosition.push_back((double) nameSPos.second / CLHEP::m);
     }
+  for (const auto& name: BDSSamplerRegistry::Instance()->GetUniqueNamesCylinder())
+    {samplerCNamesUnique.push_back(std::string(name) + ".");}
+  for (const auto& name: BDSSamplerRegistry::Instance()->GetUniqueNamesSphere())
+    {samplerSNamesUnique.push_back(std::string(name) + ".");}
 
   for (const auto& name : collimatorBranchNamesIn)
     {collimatorBranchNamesUnique.push_back(std::string(name) + ".");}
