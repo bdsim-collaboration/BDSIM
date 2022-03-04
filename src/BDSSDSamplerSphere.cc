@@ -121,9 +121,6 @@ G4bool BDSSDSamplerSphere::ProcessHits(G4Step* aStep, G4TouchableHistory* /*read
       // The global to local transform is defined in the registry.
       // Cast 3 vector to 'point' to transform position (required to be explicit for * operator)
       localPosition  = globalToLocal * (HepGeom::Point3D<G4double>)pos;
-      // Now, if the sampler is infinitely thin, the local z should be 0, but it's finite.
-      // Account for this by purposively setting local z to be 0.
-      localPosition.setZ(0.0);
       // Cast 3 vector to 3 vector to transform vector (required to be explicit for * operator)
       localDirection = globalToLocal * (HepGeom::Vector3D<G4double>)mom;
     }
@@ -136,13 +133,12 @@ G4bool BDSSDSamplerSphere::ProcessHits(G4Step* aStep, G4TouchableHistory* /*read
 
   // spherical coords
   G4double r = localPosition.mag();
-  G4ThreeVector unitR = G4ThreeVector(localPosition.x(), localPosition.y(), 0);
-  unitR = unitR.unit();
-  G4ThreeVector ldc = localDirection - unitR; // localDirectionCylindrical
-  ldc = ldc.unit();
+  G4ThreeVector unitR = localPosition.unit();
+  G4ThreeVector lds = localDirection - unitR; // localDirectionSpherical
+  lds = lds.unit();
   
   BDSParticleCoordsSpherical coords(r, localPosition.z(), localPosition.phi(),
-                                      ldc.perp(), ldc.z(), ldc.phi(), T);
+                                    lds.mag(), lds.theta(), lds.phi(), T);
 
   BDSHitSamplerSphere* smpHit = new BDSHitSamplerSphere(samplerID,
 							    coords,
