@@ -51,7 +51,8 @@ G4int BDSSamplerRegistry::RegisterSampler(const G4String&      name,
 					  BDSSampler*          sampler,
 					  const G4Transform3D& transform,
 					  G4double             S,
-					  const BDSBeamlineElement* element)
+					  const BDSBeamlineElement* element,
+            BDSSamplerType       type)
 {
   samplerObjects.insert(sampler);
   G4String uniqueName = name;
@@ -65,7 +66,7 @@ G4int BDSSamplerRegistry::RegisterSampler(const G4String&      name,
       uniqueName = name + "_" + std::to_string(existingNames[name]);
       existingNames[name]++;
     }
-  BDSSamplerPlacementRecord info = BDSSamplerPlacementRecord(name, sampler, transform, S, element, uniqueName);
+  BDSSamplerPlacementRecord info = BDSSamplerPlacementRecord(name, sampler, transform, S, element, uniqueName, type);
   return RegisterSampler(info);
 }
 
@@ -91,6 +92,39 @@ std::vector<G4String> BDSSamplerRegistry::GetUniqueNames() const
   std::vector<G4String> names;
   for (const auto& info : infos)
     {names.push_back(info.UniqueName());}
+  return names;
+}
+
+std::vector<G4String> BDSSamplerRegistry::GetUniqueNamesPlane() const
+{
+  std::vector<G4String> names;
+  for (const auto& info: infos)
+    {
+      if (info.Type() == BDSSamplerType::plane)
+        {names.push_back(info.UniqueName());}
+    }
+  return names;
+}
+
+std::vector<G4String> BDSSamplerRegistry::GetUniqueNamesCylinder() const
+{
+  std::vector<G4String> names;
+  for (const auto& info: infos)
+    {
+      if (info.Type() == BDSSamplerType::cylinder)
+        {names.push_back(info.UniqueName());}
+    }
+  return names;
+}
+
+std::vector<G4String> BDSSamplerRegistry::GetUniqueNamesSphere() const
+{
+  std::vector<G4String> names;
+  for (const auto& info: infos)
+    {
+      if (info.Type() == BDSSamplerType::sphere)
+        {names.push_back(info.UniqueName());}
+    }
   return names;
 }
 
