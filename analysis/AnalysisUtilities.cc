@@ -61,5 +61,7 @@ std::string RBDS::DefaultOutputName(const std::string& inputFilePath,
   auto found = result.rfind(key);
   if (found != std::string::npos)
     {result.replace(found, key.length(), suffix + ".root");}
+  else
+    {result += ".root";}
   return result;
 }
