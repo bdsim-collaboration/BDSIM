@@ -51,6 +51,8 @@ std::string RBDS::DefaultOutputName(const std::string& inputFilePath,
                                     const std::string& suffix)
 {
   std::string result = inputFilePath;
+  // protect against globbing
+  std::replace(result.begin(), result.end(), '*', '_');
   // get only the filename - ie just write the file to the cwd
   auto foundSlash = result.rfind('/'); // find the last '/'
   if (foundSlash != std::string::npos)
@@ -59,7 +61,5 @@ std::string RBDS::DefaultOutputName(const std::string& inputFilePath,
   auto found = result.rfind(key);
   if (found != std::string::npos)
     {result.replace(found, key.length(), suffix + ".root");}
-  else
-    {throw RBDSException("filename does not contain \".root\"");}
   return result;
 }
