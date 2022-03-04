@@ -78,6 +78,16 @@ std::vector<std::string> Model::SamplerNames() const
     {return std::vector<std::string>();}
 }
 
+std::vector<std::string> Model::SamplerCNames() const
+{
+  return model ? model->samplerCNamesUnique : std::vector<std::string>();
+}
+
+std::vector<std::string> Model::SamplerSNames() const
+{
+  return model ? model->samplerSNamesUnique : std::vector<std::string>();
+}
+
 std::vector<std::string> Model::CollimatorNames() const
 {
   if (dataVersion > 3)
