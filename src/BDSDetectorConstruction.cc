@@ -1003,13 +1003,22 @@ BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD:
   BDSExtent apertureExtent;
   if (sp.apertureModel.empty())
     {
-      BDSApertureInfo aperture = BDSApertureInfo(sp.shape,
-						 sp.aper1 * CLHEP::m,
-						 sp.aper2 * CLHEP::m,
-						 sp.aper3 * CLHEP::m,
-						 sp.aper4 * CLHEP::m,
-						 sp.name);
-      apertureExtent = aperture.Extent();
+      if (sp.samplerType == "plane")
+      {
+        BDSApertureInfo aperture = BDSApertureInfo(sp.shape,
+                                                   sp.aper1 * CLHEP::m,
+                                                   sp.aper2 * CLHEP::m,
+                                                   sp.aper3 * CLHEP::m,
+                                                   sp.aper4 * CLHEP::m,
+                                                   sp.name);
+        apertureExtent = aperture.Extent();
+      }
+      else if (sp.samplerType == "cylinder")
+        {apertureExtent = BDSExtent(sp.aper1*CLHEP::m, sp.aper2*CLHEP::m, sp.aper1*CLHEP::m);}
+      else if (sp.samplerType == "sphere")
+        {apertureExtent = BDSExtent(sp.aper1*CLHEP::m, sp.aper1*CLHEP::m, sp.aper1*CLHEP::m);}
+      else
+        {throw BDSException(__METHOD_NAME__, "unknown samplerType \"" + sp.samplerType + "\" in samplerplacement \"" + sp.name + "\"");}
     }
   else
     {
