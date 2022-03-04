@@ -33,7 +33,8 @@ std::map<BDSSamplerType, std::string>* BDSSamplerType::dictionary =
   new std::map<BDSSamplerType, std::string> ({
   {BDSSamplerType::none,     "none"},
   {BDSSamplerType::plane,    "plane"},
-  {BDSSamplerType::cylinder, "cylinder"}
+  {BDSSamplerType::cylinder, "cylinder"},
+  {BDSSamplerType::sphere,   "sphere"}
 });
 
 BDSSamplerType BDS::DetermineSamplerType(G4String samplerType)
@@ -42,6 +43,7 @@ BDSSamplerType BDS::DetermineSamplerType(G4String samplerType)
   types["none"]     = BDSSamplerType::none;
   types["plane"]    = BDSSamplerType::plane;
   types["cylinder"] = BDSSamplerType::cylinder;
+  types["sphere"]   = BDSSamplerType::sphere;
 
   samplerType = BDS::LowerCase(samplerType);
 
