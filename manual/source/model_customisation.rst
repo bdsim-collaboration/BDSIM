@@ -27,13 +27,15 @@ Fields
 ------
 
 BDSIM provides the facility to overlay magnetic, electric, or combined electromagnetic fields
-on an element, as defined by an externally provided field map. A field map is an array of evenly
-space points in **Cartesian** coordinates that define the field as a 3-vector at that point.
+on an element, as defined either by an externally provided field map or by a 'pure' field from
+an equation already included in BDSIM. A field map is an array of evenly space points in **Cartesian**
+coordinates that define the field as a 3-vector at that point.
+
 A field can be applied to an element or a piece of geometry for:
 
-1) only the "vacuum" volume(s) ("fieldVacuum")
-2) only the "outer" volume(s) outside the vacuum (i.e. the yoke) ("fieldOuter")
-3) or one full map for the whole element. ("fieldAll")
+#) only the "vacuum" volume(s) ("fieldVacuum")
+#) only the "outer" volume(s) outside the vacuum (i.e. the yoke) ("fieldOuter")
+#) or one full map for the whole element. ("fieldAll")
 
 BDSIM allows any Geant4 integrator to be used to calculate the motion of the particle, which
 can be chosen given knowledge of the smoothness of the field or the application (default is
@@ -57,6 +59,7 @@ The field map is a 3D field map in BDSIM file format and uses cubic interpolatio
 
 
 * :code:`field` objects are described below at: :ref:`field-map-definition`.
+* Pure fields are described at: :ref:`fields-pure-field-types`.
 * Accepted file formats for a field object are described below at: :ref:`field-map-file-formats`.
 * Specific field map file descriptions are described here: :ref:`field-map-formats`.
 * Allowable different combinations of dimension are described here: :ref:`fields-different-dimensions`.
@@ -292,13 +295,13 @@ The pure fields can be used as a field object in BDSIM. The :code:`type` in the
 field definition must be exactly one of the internal names used for the field name.
 
 * See field types here: :ref:`dev-fields-pure-field-names`.
-* No units may be used inside the :code:`fieldParameters` string.
+* No units or commas may be used inside the :code:`fieldParameters` string.
+* The :code:`fieldParameters` string should have parameter=value pairs white-space separated.
 * Normalised field strengths are used with respect to the beam particle and design energy.
 
 Example: ::
 
-  f1: field, type="dipole",
-             fieldParameters="field=1.2, by=1.0";
+  f1: field, type="dipole", fieldParameters="field=1.2 by=1.0";
 
 For a dipole field with value 1.2 T and along the unit Y axis (local). The other
 components of the unit vector associated with it will default to 0.

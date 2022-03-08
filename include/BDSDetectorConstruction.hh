@@ -125,7 +125,8 @@ public:
   static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement,
 						const BDSBeamline*     beamLine,
 						G4double*              S               = nullptr,
-						BDSExtent*             placementExtent = nullptr);
+						BDSExtent*             placementExtent = nullptr,
+						const G4String&        objectTypeForErrorMsg = "placement");
 
   // Create a scorermesh placement transform. Turns the scorermesh into a
   /// placement and uses the above function.

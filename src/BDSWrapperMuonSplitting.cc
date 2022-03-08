@@ -51,7 +51,7 @@ BDSWrapperMuonSplitting::BDSWrapperMuonSplitting(G4VProcess* originalProcess,
     {splittingThresholdEK2 = splittingThresholdEK;}
   
   std::vector<G4double> eK = {0.8*splittingThresholdEK, splittingThresholdEK};
-  std::vector<G4double> va = {2.0, (G4double)splittingFactorIn};
+  std::vector<G4double> va = {2.0, static_cast<G4double>(splittingFactorIn)};
   if (splittingThresholdEK2 > splittingThresholdEK)
     {
       eK.push_back(splittingThresholdEK2);
@@ -113,9 +113,10 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
   particleChange->Clear(); // doesn't delete the secondaries
   
   G4double spf2 = splitting->Value(parentEk);
-  G4int thisTimeSplittingFactor = (G4int)std::round(spf2);
-  // Attempt to generate more muons. This might be difficult or rare, so we must tolerate this.
-  //G4int thisTimeSplittingFactor = parentEk > splittingThresholdEK2 ? splittingFactor2 : splittingFactor;
+  G4int thisTimeSplittingFactor = static_cast<G4int>(std::round(spf2));
+
+  // Attempt to generate more muons. This might be difficult or rare, so we must
+  // tolerate this and go for up to a number.
   G4int maxTrials = 10 * thisTimeSplittingFactor;
   G4int nSuccessfulMuonSplits = 0;
   G4int iTry = 0;
@@ -143,7 +144,7 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
     }
   
   particleChange->Clear();
-  particleChange->SetNumberOfSecondaries(nOriginalSecondaries + (G4int)newMuons.size());
+  particleChange->SetNumberOfSecondaries(nOriginalSecondaries + static_cast<G4int>(newMuons.size()));
   particleChange->SetSecondaryWeightByProcess(true);
   if (nSuccessfulMuonSplits == 0)
     {// we've cleared the original ones, so we have to put them back
@@ -154,7 +155,7 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
       return particleChange;
     }
     
-  G4double weightFactor = 1.0 / ((G4double)nSuccessfulMuonSplits + 1);
+  G4double weightFactor = 1.0 / (static_cast<G4double>(nSuccessfulMuonSplits) + 1.0);
   for (auto aSecondary : originalSecondaries)
     {particleChange->AddSecondary(aSecondary);}
   for (auto originalMuon : originalMuons)

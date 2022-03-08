@@ -803,7 +803,8 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
 								const BDSBeamline*     beamLine,
 								G4double*              S,
-								BDSExtent*             placementExtent)
+								BDSExtent*             placementExtent,
+								const G4String&        objectTypeForErrorMsg)
 {
   G4Transform3D result;
 
@@ -840,23 +841,25 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
   if (!placement.referenceElement.empty())
     {// scenario 3
       if (!beamLine)
-        {throw BDSException(__METHOD_NAME__, "no valid beam line yet placement w.r.t. a beam line.");}
+        {throw BDSException(__METHOD_NAME__, "no valid beam line yet for " + objectTypeForErrorMsg + " w.r.t. a beam line.");}
       const BDSBeamlineElement* element = beamLine->GetElement(placement.referenceElement,
 							 placement.referenceElementNumber);
       if (!element)
 	{
-	  G4cerr << __METHOD_NAME__ << "No element named \""
-		 << placement.referenceElement << "\" found for placement number "
-		 << placement.referenceElementNumber << G4endl;
+	  G4cerr << __METHOD_NAME__ << "No element named \"" << placement.referenceElement << "\" (instance #"
+		 << placement.referenceElementNumber << ") in " << objectTypeForErrorMsg << " \""
+		 << placement.name << "\"" << G4endl;
 	  G4cout << "Note, this may be because the element is a bend and split into " << G4endl;
 	  G4cout << "multiple sections with unique names. Run the visualiser to get " << G4endl;
 	  G4cout << "the name of the segment, or place w.r.t. the element before / after." << G4endl;
-	  throw BDSException("Error in placement.");
+	  throw BDSException("Error in "+objectTypeForErrorMsg+".");
 	}
       // in this case we should use s for longitudinal offset - warn user if mistakenly using z
       if (BDS::IsFinite(placement.z))
 	{
-	  G4String message = "placement \"" + placement.name + "\" is placed using a referenceElement but the z offset is\n non zero. Note, s should be used to offset the placement in this case and z will\n have no effect.";
+	  G4String message = objectTypeForErrorMsg + " \"" + placement.name + "\" is placed using";
+	  message += " a referenceElement but the z offset is\n non zero. Note, s should be used to";
+	  message += " offset the placement in this case and z will\n have no effect.";
 	  BDS::Warning(message);
 	}
       G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
@@ -912,7 +915,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Scor
 {
   // convert a scorermesh to a general placement for generation of the transform only.
   GMAD::Placement convertedPlacement(scorerMesh);
-  return CreatePlacementTransform(convertedPlacement, beamLine, S);
+  return CreatePlacementTransform(convertedPlacement, beamLine, S, nullptr, "scorermesh");
 }
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::SamplerPlacement& samplerPlacement,
@@ -921,7 +924,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Samp
 {
   // convert a sampler placement to a general placement for generation of the transform only.
   GMAD::Placement convertedPlacement(samplerPlacement); 
-  return CreatePlacementTransform(convertedPlacement, beamLine, S);
+  return CreatePlacementTransform(convertedPlacement, beamLine, S, nullptr, "samplerplacement");
 }
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMPlacement& blmPlacement,
@@ -931,7 +934,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::BLMP
 {
   // convert a sampler placement to a general placement for generation of the transform.
   GMAD::Placement convertedPlacement(blmPlacement);
-  return CreatePlacementTransform(convertedPlacement, beamLine, S, blmExtent);
+  return CreatePlacementTransform(convertedPlacement, beamLine, S, blmExtent, "blm");
 }
 
 G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Query& queryPlacement,
@@ -939,7 +942,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Quer
                                                                 G4double* S)
 {
   GMAD::Placement convertedPlacement(queryPlacement);
-  return CreatePlacementTransform(convertedPlacement, beamLine, S);
+  return CreatePlacementTransform(convertedPlacement, beamLine, S, nullptr, "query");
 }
 
 G4ThreeVector BDSDetectorConstruction::SideToLocalOffset(const GMAD::Placement& placement,
