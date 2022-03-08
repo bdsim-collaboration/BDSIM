@@ -556,12 +556,12 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
 						       G4int* indexOfFoundElement) const
 {
   // check if s is in the range of the beamline
-  if (s-previousSPositionEnd > totalArcLength) // need to offset start S position 
+  G4double sStart = at(0)->GetSPositionStart();
+  if (s-sStart > totalArcLength) // need to offset start S position
     {
-      G4cout << __METHOD_NAME__
-	     << "s position " << s/CLHEP::m << " m is beyond length of accelerator ("
-	     << totalArcLength/CLHEP::m << " m)" << G4endl;
-      G4cout << "Returning identify transform" << G4endl;
+      G4String msg = "s position " + std::to_string(s/CLHEP::m) + " m is beyond length of accelerator (";
+      msg += std::to_string(totalArcLength/CLHEP::m) + " m)\nReturning identify transform";
+      BDS::Warning(__METHOD_NAME__, msg);
       return G4Transform3D();
     }
 
@@ -578,8 +578,8 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   // G4double dy = 0; // currently magnets can only bend in local x so avoid extra calculation
 
   // difference from centre of element to point in local coords)
-  // difference in s from centre, normalised to arcLengh and scaled to chordLength
-  // as s is really arc length but we must place effectively in chord length coordinates
+  // difference in s from centre, normalised to arcLength and scaled to chordLength
+  // as s is really arc length, but we must place effectively in chord length coordinates
   const BDSAcceleratorComponent* component = element->GetAcceleratorComponent();
   G4double arcLength   = component->GetArcLength();
   G4double chordLength = component->GetChordLength();
@@ -626,7 +626,7 @@ const BDSBeamlineElement* BDSBeamline::GetElementFromGlobalS(G4double S,
 {
   // find element that s position belongs to
   auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), S);
-  G4int index = lower - sEnd.begin(); // subtract iterators to get index
+  G4int index = G4int(lower - sEnd.begin()); // subtract iterators to get index
   if (indexOfFoundElement)
     {*indexOfFoundElement = index;}
   return beamline.at(index);
@@ -646,7 +646,7 @@ const BDSBeamlineElement* BDSBeamline::GetPrevious(const BDSBeamlineElement* ele
   auto result = find(beamline.begin(), beamline.end(), element);
   if (result != beamline.end())
     {// found
-      return GetPrevious(result - beamline.begin());
+      return GetPrevious(G4int(result - beamline.begin()));
     }
   else
     {return nullptr;}
@@ -666,7 +666,7 @@ const BDSBeamlineElement* BDSBeamline::GetNext(const BDSBeamlineElement* element
   auto result = find(beamline.begin(), beamline.end(), element);
   if (result != beamline.end())
     {// found
-      return GetNext(result - beamline.begin());
+      return GetNext(G4int(result - beamline.begin()));
     }
   else
     {return nullptr;}
@@ -683,7 +683,7 @@ const BDSBeamlineElement* BDSBeamline::GetNext(G4int index) const
 void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
 {
   // check if base name already registered (can be single component placed multiple times)
-  std::map<G4String, BDSBeamlineElement*>::iterator search = components.find(element->GetName());
+  const auto search = components.find(element->GetName());
   if (search == components.end())
     {// not registered
       components[element->GetPlacementName()] = element;
@@ -728,7 +728,7 @@ const BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentN
     {return search->second;}
 }
 
-G4Transform3D BDSBeamline::GetTransformForElement(G4String acceleratorComponentName,
+G4Transform3D BDSBeamline::GetTransformForElement(const G4String& acceleratorComponentName,
 						  G4int    i) const
 {
   const BDSBeamlineElement* result = GetElement(acceleratorComponentName, i);

@@ -2085,9 +2085,9 @@ Muon Splitting
 
 Muon splitting offers the possibility to understand muon distributions throughout a 3D model a
 little better. It works by wrapping several physics processes for several particles. If they
-produce a muon in their "post step change", the splitting is invoked. The following happens:
+produce a muon in their "post step change", the splitting is invoked. In this case, the following happens:
 
-#) Any original secondaries are kept from the original physics process to one side.
+#) Any original secondaries (excluding muons) are kept from the original physics process to one side.
 #) The original muon(s) is/are kept separately.
 #) The physics process is resampled and asked to do its action again. After each invocation,
    any muons produced are kept and the other *new* secondaries discarded. This continues until
@@ -2111,6 +2111,83 @@ muons normally produced.
   If more than this are generated, they will be dumped by Geant4 and not tracked. We have
   a factor of 2, because theoretically AnnihiToMuPair could produce 2x muons per occurrence.
 
+The following full set of options control the splitting:
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
++----------------------------------+--------------------------------------------------------+
+| **Option**                       | **Description**                                        |
++==================================+========================================================+
+| muonSplittingFactor              | The multiplication factor of muons if split. Postive   |
+|                                  | integer between 1 and 206.                             |
++----------------------------------+--------------------------------------------------------+
+| muonSplittingThresholdParentEk   | The minimum kinetic energy of the parent particle to   |
+|                                  | qualify for splitting. Default 0 GeV.                  |
++----------------------------------+--------------------------------------------------------+
+| muonSplittingFactor2             | A second multiplication factor of muons if split for   |
+|                                  | a second higher energy band as defined by the next     |
+|                                  | option. Positive integer between 1 and 206, and should |
+|                                  | be greater or equal to `muonSplittingFactor`.          |
++----------------------------------+--------------------------------------------------------+
+| muonSplittingThresholdParentEk2  | The minimum kinetic energy of the parent particle for  |
+|                                  | the second splitting factor to take effect. Should be  |
+|                                  | greater or equal to `muonSplittingThresholdParentEk`.  |
++----------------------------------+--------------------------------------------------------+
+
+The splitting can be used with 1 or 2 factors. In the case of 1 factor, only the first one
+is used. In the case of `muonSplittingThresholdParentEk` is set, the 1 factor applies above
+this energy and the factor is 'faded-in' from 0.8 x this value. The factor is linearly
+interpolated as a function of kinetic energy and rounded to the nearest integer.
+
+In the case of a second splitting factor and therefore also `muonSplittingThresholdParentEk2`,
+a similar linear interpolation procedure is used along with rounding.
+
+.. figure:: figures/splittingfactor1.pdf
+	    :width: 70%
+	    :align: center
+
+	    Muon splitting factor as a function of kinetic energy with only 1 factor specified
+	    and no kinetic energy threshold used.
+
+
+.. figure:: figures/splittingfactor1b.pdf
+	    :width: 70%
+	    :align: center
+
+	    Muon splitting factor as a function of kinetic energy with only 1 factor specified
+	    and a kinetic energy threshold specified.
+
+
+.. figure:: figures/splittingfactor2.pdf
+	    :width: 70%
+	    :align: center
+
+	    Muon splitting factor as a function of kinetic energy with 2 factors specified as
+	    well as 2 kinetic energy thresholds.
+
+
+**Examples:**
+
+::
+
+   option, muonSplittingFactor=10;
+
+
+::
+   
+   option, muonSplittingFactor=10,
+           muonSplittingThresholdParentEk=50*GeV,
+
+
+::
+
+   option, muonSplittingFactor=10,
+           muonSplittingThresholdParentEk=50*GeV,
+	   muonSplittingFactor=30,
+	   muonSplittingThresholdParentEk=150*GeV;
+
+
+More examples can be found (including cross-section biasing) in :code:`bdsim/examples/features/processes/6_muon`.
 
 The following processes are wrapped for the following
 particles (Geant4 names).
@@ -2166,7 +2243,7 @@ estimate the muon flux.
 * Examples in :code:`bdsim/examples/features/processes/6_muon`.
 * The biasing happens *everywhere* and is not attached to any particle shapes or volumes.
 * The biasing happens to all particles that are wrapped, irrespective of their energy or direction.
-* A factor of 10-100 is recommended.
+* A factor of 5-30 is recommended.
 * The factor must be an **integer**.
 * If no suitable particles or processes are found, no action will be taken. Only the ones
   available from the table above are wrapped.
@@ -2174,7 +2251,7 @@ estimate the muon flux.
 * The extra EM physics must be used for positron annihilation ("em_extra") or as part of a
   Geant4 reference physics list (e.g. :code:`g4FTPF_BERT`).
 * A muon might not be produced every time in the final state of the wrapped process. The
-  wrapper will try up to 1000 x muonSplittingFactor to generate the required number. Ultimately,
+  wrapper will try up to 10 x muonSplittingFactor to generate the required number. Ultimately,
   if it can't, it will continue with the number it has produced and normalise the weights accordingly.
 
 
@@ -2186,9 +2263,6 @@ estimate the muon flux.
 	   The relevant command is :code:`/physics_lists/em/PositronToMuons true` for the Geant4 physics
 	   macro.
 
-Examples:
-
-Many examples can be found (including cross-section biasing) in :code:`bdsim/examples/features/processes/6_muon`.
 
 **Pion Decay**
 
@@ -3790,8 +3864,16 @@ scoring mesh in a parallel world.
 
 Conceptually creating a scoring mesh is split into two key definitions in the input:
 
-1) A :ref:`scoring-mesh` to define the 3D grid and histogram where information is recorded.
-2) A :ref:`scorer` to define what information is recorded
+#) A :ref:`scorer` to define what information is recorded
+#) A :ref:`scoring-mesh` to define the 3D grid and histogram where information is recorded.
+
+e.g. ::
+
+  allParticleDose: scorer, type="depositeddose";
+  collimatorDose: scorermesh, scoreQuantity="allParticleDose",
+                  nx=10, ny=10, nz=5, xsize=50*cm, ysize=50*cm, zsize=2*m,
+		  referenceElement="col1";
+
 
 * The mesh does not affect the physics of the simulation but is used to record or
   'score' one or more quantities.
@@ -3806,6 +3888,148 @@ Conceptually creating a scoring mesh is split into two key definitions in the in
   is one proton fired per-event, then the quantity for deposited dose is J / kg / proton.
 * Examples can be found in :code:`bdsim/examples/features/scoring`.
 
+.. _scorer:
+  
+Scorer
+^^^^^^
+
+A `scorer` defines a quantity to be recorded. The syntax is: ::
+
+  name: scorer, parameter=value, parameter2=value;
+
+
+.. tabularcolumns:: |p{4cm}|p{2cm}|p{7cm}|
+		    
++-------------------------+---------------+------------------------------------------------+
+| **Parameter**           | **Required**  | **Description**                                |
++=========================+===============+================================================+
+| type                    | Yes           | Which quantity to score - see below            |
++-------------------------+---------------+------------------------------------------------+
+| particleName            | No            | Name of particle in Geant4 to only apply       |
+|                         |               | scoring to (only one)                          |
++-------------------------+---------------+------------------------------------------------+
+| particlePDGID           | No            | PDG ID of particle to only apply scoring to    |
+|                         |               | (only one)                                     |
++-------------------------+---------------+------------------------------------------------+
+| minimumKineticEnergy    | No            | Minimum kinetic energy of particles to be      |
+|                         |               | included in scoring (GeV)                      |
++-------------------------+---------------+------------------------------------------------+
+| maximumKineticEnergy    | No            | Maximum kinetic energy of particles to be      |
+|                         |               | included in scoring (GeV)                      |
++-------------------------+---------------+------------------------------------------------+
+| minimumTime             | No            | Minimum time coordinate of particles to be     |
+|                         |               | included in scoring (s)                        |
++-------------------------+---------------+------------------------------------------------+
+| maximumTime             | No            | Maximum time coordinate of particles to be     |
+|                         |               | included in scoring (s)                        |
++-------------------------+---------------+------------------------------------------------+
+| conversionFactorFile    | No            | File name of conversion factor file to be used |
+|                         |               | in calculation                                 |
++-------------------------+---------------+------------------------------------------------+
+| conversionFactorPath    | No            | Path to set of files per particle to be used   |
+|                         |               | in calculation                                 |
++-------------------------+---------------+------------------------------------------------+
+| materialToInclude       | No            | A space separated list of materials to be      |
+|                         |               | scored. Any materials not matching this will   |
+|                         |               | be ignored. (string, case sensitive).          |
++-------------------------+---------------+------------------------------------------------+
+| materialToExclude       | No            | A space separated list of materials to be      |
+|                         |               | excluded from scoring. (string, case           |
+|                         |               | sensitive).                                    |
++-------------------------+---------------+------------------------------------------------+
+| scoreWorldVolumeOnly    | No            | Whether to only record information from the    |
+|                         |               | world volume only. This means that a mesh can  |
+|                         |               | overlap a piece of geometry but not score from |
+|                         |               | that specific geometry allowing tight fitting  |
+|                         |               | scoring.                                       |
++-------------------------+---------------+------------------------------------------------+
+| scorePrimariesOnly      | No            | If true, only score the quantity for the       |
+|                         |               | the primary particle(s) with Parent ID == 0.   |
++-------------------------+---------------+------------------------------------------------+
+
+.. _scorer-types:
+
+Scorer Types
+************
+
+The following are accepted scorer types.
+
+* As the histogram is per-event, the quantity stored is per-event also. So, if there
+  is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
+
+
+.. tabularcolumns:: |p{4cm}|p{2cm}|p{7cm}|
+
++---------------------------+-----------------+--------------------------------------------------+
+| **Scorer Type**           | **Units**       | **Description**                                  |
++===========================+=================+==================================================+
+| cellcharge                | e-              |The charge deposited in the cell                  |
++---------------------------+-----------------+--------------------------------------------------+
+| cellflux(*)               | :math:`cm^{-2}` | The flux (step length / cell volume)             |
++---------------------------+-----------------+--------------------------------------------------+
+| cellfluxscaled            | :math:`cm^{-2}` | The flux (step length / cell volume) multiplied  |
+|                           |                 | a factor as a function of kinetic energy as      |
+|                           |                 | specified in the :code:`conversionFactorFile`.   |
+|                           |                 | Default factor is 1.0.                           |
++---------------------------+-----------------+--------------------------------------------------+
+| cellfluxscaledperparticle | :math:`cm^{-2}` | Similar to `cellfluxscaled` but per particle     |
+|                           |                 | species. Specify :code:`conversionFilePath` to   |
+|                           |                 | files (see below). Default factor is 0 for all   |
+|                           |                 | particles and energies.                          |
++---------------------------+-----------------+--------------------------------------------------+
+| depositeddose             | Gray (J/kg)     |The dose (energy deposited per unit mass)         |
++---------------------------+-----------------+--------------------------------------------------+
+| depositedenergy           | GeV             |The deposited energy in the cell                  |
++---------------------------+-----------------+--------------------------------------------------+
+| population                | NA              |The number of particles passing through the cell  |
++---------------------------+-----------------+--------------------------------------------------+
+
+.. note:: (\*) It is possible to score the differential flux by using the scorer type cellflux4D which adds a binning along the energy axis.
+.. note:: (\*) To score quantities such as the ambient dose equivalent, the scorer type `cellfluxscaledperparticle`
+               should be used, however conversion factors must be supplied (see :ref:`scorer-conversion-factor-file`)
+               to ensure the ambient dose is calculated correctly and in the correct units.
+
+
+.. _scorer-conversion-factor-file:
+
+Conversion Factor File
+**********************
+
+The conversion factor file is a text file (optionally compressed with gzip, but not tar)
+that contains two columns separated by white space. Currently, linear interpolation is
+used between points in kinetic energy using the Geant4 `G4PhysicsOrderedFreeVector` class.
+
+Columns are:
+
+1) Kinetic energy in **MeV**
+2) Numerical factor
+
+Below is an example contents: ::
+
+  5.0e-02	2.97e-09
+  1.0e-01	1.52e-09
+  2.0e-01	9.99e-10
+  5.0e-01	7.86e-10
+  1.0e+00	6.41e-10
+  5.0e+00	7.65e-10
+  1.0e+01	8.39e-10
+  1.0e+02	8.22e-10
+  1.0e+03	9.96e-10
+  1.0e+04	1.20e-09
+
+Here, a quantity in the scorer will be multiplied by 2.97e-9 for a particle with an energy
+of 0.05 MeV.
+
+Conversion factor files for :code:`cellfluxscaledperparticle` can be one of:
+
+* :code:`protons.dat`
+* :code:`neutrons.dat`
+* :code:`photons.dat`
+* :code:`electrons.dat`
+* :code:`positrons.dat`
+
+At least 1 must be specified.  Any particles without a conversion factor are scored as 0.
+
 .. _scoring-mesh:
   
 Scorer Mesh
@@ -3813,7 +4037,7 @@ Scorer Mesh
   
 For :code:`scorermesh`, the syntax is: ::
 
-  name: scorermesh, parameter=value, parameter2=value;
+  name: scorermesh, parameter=value, ... ; 
 
 Where :code:`name` is the name of the mesh desired and :code:`parameter` and :code:`value` are
 example parameter and value pairs. The following parameters may be specified.
@@ -3905,148 +4129,6 @@ see :ref:`placements` for the 3 possible ways to make placements easily in BDSIM
 
 * Multiple quantities may be specified in `scoreQuantity` if the names are separated by a space
   inside the string.
-
-.. _scorer:
-  
-Scorer
-^^^^^^
-
-A `scorer` defines a quantity to be recorded. The syntax is: ::
-
-  name: scorer, parameter=value, parameter2=value;
-
-
-.. tabularcolumns:: |p{4cm}|p{2cm}|p{7cm}|
-		    
-+-------------------------+---------------+------------------------------------------------+
-| **Parameter**           | **Required**  | **Description**                                |
-+=========================+===============+================================================+
-| type                    | Yes           | Which quantity to score - see below            |
-+-------------------------+---------------+------------------------------------------------+
-| particleName            | No            | Name of particle in Geant4 to only apply       |
-|                         |               | scoring to (only one)                          |
-+-------------------------+---------------+------------------------------------------------+
-| particlePDGID           | No            | PDG ID of particle to only apply scoring to    |
-|                         |               | (only one)                                     |
-+-------------------------+---------------+------------------------------------------------+
-| minimumKineticEnergy    | No            | Minimum kinetic energy of particles to be      |
-|                         |               | included in scoring (GeV)                      |
-+-------------------------+---------------+------------------------------------------------+
-| maximumKineticEnergy    | No            | Maximum kinetic energy of particles to be      |
-|                         |               | included in scoring (GeV)                      |
-+-------------------------+---------------+------------------------------------------------+
-| minimumTime             | No            | Minimum time coordinate of particles to be     |
-|                         |               | included in scoring (s)                        |
-+-------------------------+---------------+------------------------------------------------+
-| maximumTime             | No            | Maximum time coordinate of particles to be     |
-|                         |               | included in scoring (s)                        |
-+-------------------------+---------------+------------------------------------------------+
-| conversionFactorFile    | No            | File name of conversion factor file to be used |
-|                         |               | in calculation                                 |
-+-------------------------+---------------+------------------------------------------------+
-| conversionFactorPath    | No            | Path to set of files per particle to be used   |
-|                         |               | in calculation                                 |
-+-------------------------+---------------+------------------------------------------------+
-| materialToInclude       | No            | A space separated list of materials to be      |
-|                         |               | scored. Any materials not matching this will   |
-|                         |               | be ignored. (string, case sensitive).          |
-+-------------------------+---------------+------------------------------------------------+
-| materialToExclude       | No            | A space separated list of materials to be      |
-|                         |               | excluded from scoring. (string, case           |
-|                         |               | sensitive).                                    |
-+-------------------------+---------------+------------------------------------------------+
-| scoreWorldVolumeOnly    | No            | Whether to only record information from the    |
-|                         |               | world volume only. This means that a mesh can  |
-|                         |               | overlap a piece of geometry but not score from |
-|                         |               | that specific geometry allowing tight fitting  |
-|                         |               | scoring.                                       |
-+-------------------------+---------------+------------------------------------------------+
-| scorePrimariesOnly      | No            | If true, only score the quantity for the       |
-|                         |               | the primary particle(s) with Parent ID == 0.   |
-+-------------------------+---------------+------------------------------------------------+
-
-.. _scorer-types:
-
-Scorer Types
-^^^^^^^^^^^^
-
-The following are accepted scorer types.
-
-* As the histogram is per-event, the quantity stored is per-event also. So, if there
-  is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
-
-
-.. tabularcolumns:: |p{4cm}|p{2cm}|p{7cm}|
-
-+---------------------------+-----------------+--------------------------------------------------+
-| **Scorer Type**           | **Units**       | **Description**                                  |
-+===========================+=================+==================================================+
-| cellcharge                | e-              |The charge deposited in the cell                  |
-+---------------------------+-----------------+--------------------------------------------------+
-| cellflux(*)               | :math:`cm^{-2}` | The flux (step length / cell volume)             |
-+---------------------------+-----------------+--------------------------------------------------+
-| cellfluxscaled            | :math:`cm^{-2}` | The flux (step length / cell volume) multiplied  |
-|                           |                 | a factor as a function of kinetic energy as      |
-|                           |                 | specified in the :code:`conversionFactorFile`.   |
-|                           |                 | Default factor is 1.0.                           |
-+---------------------------+-----------------+--------------------------------------------------+
-| cellfluxscaledperparticle | :math:`cm^{-2}` | Similar to `cellfluxscaled` but per particle     |
-|                           |                 | species. Specify :code:`conversionFilePath` to   |
-|                           |                 | files (see below). Default factor is 0 for all   |
-|                           |                 | particles and energies.                          |
-+---------------------------+-----------------+--------------------------------------------------+
-| depositeddose             | Gray (J/kg)     |The dose (energy deposited per unit mass)         |
-+---------------------------+-----------------+--------------------------------------------------+
-| depositedenergy           | GeV             |The deposited energy in the cell                  |
-+---------------------------+-----------------+--------------------------------------------------+
-| population                | NA              |The number of particles passing through the cell  |
-+---------------------------+-----------------+--------------------------------------------------+
-
-.. note:: (\*) It is possible to score the differential flux by using the scorer type cellflux4D which adds a binning along the energy axis.
-.. note:: (\*) To score quantities such as the ambient dose equivalent, the scorer type `cellfluxscaledperparticle`
-               should be used, however conversion factors must be supplied (see :ref:`scorer-conversion-factor-file`)
-               to ensure the ambient dose is calculated correctly and in the correct units.
-
-
-.. _scorer-conversion-factor-file:
-
-Conversion Factor File
-^^^^^^^^^^^^^^^^^^^^^^
-
-The conversion factor file is a text file (optionally compressed with gzip, but not tar)
-that contains two columns separated by white space. Currently, linear interpolation is
-used between points in kinetic energy using the Geant4 `G4PhysicsOrderedFreeVector` class.
-
-Columns are:
-
-1) Kinetic energy in **MeV**
-2) Numerical factor
-
-Below is an example contents: ::
-
-  5.0e-02	2.97e-09
-  1.0e-01	1.52e-09
-  2.0e-01	9.99e-10
-  5.0e-01	7.86e-10
-  1.0e+00	6.41e-10
-  5.0e+00	7.65e-10
-  1.0e+01	8.39e-10
-  1.0e+02	8.22e-10
-  1.0e+03	9.96e-10
-  1.0e+04	1.20e-09
-
-Here, a quantity in the scorer will be multiplied by 2.97e-9 for a particle with an energy
-of 0.05 MeV.
-
-Conversion factor files for :code:`cellfluxscaledperparticle` can be one of:
-
-* :code:`protons.dat`
-* :code:`neutrons.dat`
-* :code:`photons.dat`
-* :code:`electrons.dat`
-* :code:`positrons.dat`
-
-At least 1 must be specified.  Any particles without a conversion factor are scored as 0.
 
 Scoring Examples
 ^^^^^^^^^^^^^^^^
