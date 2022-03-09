@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSDetectorConstruction.hh"
+#include "BDSExtent.hh"
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
@@ -243,6 +244,11 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
       {// these are built uniquely for each instance so the length matches exactly
         // TBC - could include angled faces
 	G4double length = element->GetAcceleratorComponent()->GetChordLength();
+  
+	// for a cylindrical sampler we make it 'fit' the component
+	G4double boundingRadius = element->GetExtent().TransverseBoundingRadius();
+	if (boundingRadius > 0) // protect against bad extent, i.e. 0
+	  {samplerRadius = boundingRadius;}
 	sampler = new BDSSamplerCylinder(name,
 					 samplerRadius,
 					 length,
