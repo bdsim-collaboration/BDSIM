@@ -135,11 +135,13 @@ G4bool BDSSDSamplerCylinder::ProcessHits(G4Step* aStep, G4TouchableHistory* /*re
   G4double r = localPosition.perp();
   G4ThreeVector unitR = G4ThreeVector(localPosition.x(), localPosition.y(), 0);
   unitR = unitR.unit();
-  G4ThreeVector ldc = localDirection - unitR; // localDirectionCylindrical
-  ldc = ldc.unit();
+  
+  G4double rp = localDirection.dot(unitR);
+  G4double zp = localDirection.z();
+  G4double phip = unitR.deltaPhi({localDirection.x(), localDirection.y(), 0});
   
   BDSParticleCoordsCylindrical coords(r, localPosition.z(), localPosition.phi(),
-                                      ldc.perp(), ldc.z(), ldc.phi(), T);
+                                      rp, zp, phip, T);
 
   BDSHitSamplerCylinder* smpHit = new BDSHitSamplerCylinder(samplerID,
 							    coords,

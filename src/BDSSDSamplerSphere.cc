@@ -135,10 +135,13 @@ G4bool BDSSDSamplerSphere::ProcessHits(G4Step* aStep, G4TouchableHistory* /*read
   G4double r = localPosition.mag();
   G4ThreeVector unitR = localPosition.unit();
   G4ThreeVector lds = localDirection - unitR; // localDirectionSpherical
-  lds = lds.unit();
   
-  BDSParticleCoordsSpherical coords(r, localPosition.z(), localPosition.phi(),
-                                    lds.mag(), lds.theta(), lds.phi(), T);
+  G4double rp = localDirection.dot(unitR);
+  G4double thetap = localDirection.theta(unitR);
+  G4double phip = localDirection.deltaPhi(unitR);
+  
+  BDSParticleCoordsSpherical coords(r, localPosition.theta(), localPosition.phi(),
+                                    rp, thetap, phip, T);
 
   BDSHitSamplerSphere* smpHit = new BDSHitSamplerSphere(samplerID,
 							    coords,
