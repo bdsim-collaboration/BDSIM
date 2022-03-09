@@ -11,7 +11,7 @@ option, physicsList="em_ss ion_elastic",
 	stopSecondaries=1;
 
 
-s1: samplerplacement, aper1=1*m, aper2=2*m, samplerType="cylinder",
+s1: samplerplacement, aper1=2*m, aper2=1*m, samplerType="cylinder",
     		      axisAngle=1, axisX=1, angle=-pi/2;
 
 option, worldMaterial="vacuum";
