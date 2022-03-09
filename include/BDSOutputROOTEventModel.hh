@@ -170,6 +170,8 @@ public:
   std::vector<double>      samplerSPosition;
   std::vector<std::string> samplerCNamesUnique;
   std::vector<std::string> samplerSNamesUnique;
+  std::map<std::string, double> samplerCRadius;
+  std::map<std::string, double> samplerSRadius;
 
   ClassDef(BDSOutputROOTEventModel, 6);
 };

@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4Transform3D.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <map>
 #include <string>
 #include <utility>
@@ -52,7 +54,8 @@ G4int BDSSamplerRegistry::RegisterSampler(const G4String&      name,
 					  const G4Transform3D& transform,
 					  G4double             S,
 					  const BDSBeamlineElement* element,
-            BDSSamplerType       type)
+            BDSSamplerType       type,
+            G4double             radius)
 {
   samplerObjects.insert(sampler);
   G4String uniqueName = name;
@@ -66,7 +69,7 @@ G4int BDSSamplerRegistry::RegisterSampler(const G4String&      name,
       uniqueName = name + "_" + std::to_string(existingNames[name]);
       existingNames[name]++;
     }
-  BDSSamplerPlacementRecord info = BDSSamplerPlacementRecord(name, sampler, transform, S, element, uniqueName, type);
+  BDSSamplerPlacementRecord info = BDSSamplerPlacementRecord(name, sampler, transform, S, element, uniqueName, type, radius);
   return RegisterSampler(info);
 }
 
@@ -126,6 +129,28 @@ std::vector<G4String> BDSSamplerRegistry::GetUniqueNamesSphere() const
         {names.push_back(info.UniqueName());}
     }
   return names;
+}
+
+std::map<std::string, double> BDSSamplerRegistry::GetUniqueNameToRadiusCylinder() const
+{
+  std::map<std::string, double> result;
+  for (const auto& info: infos)
+    {
+      if (info.Type() == BDSSamplerType::cylinder || info.Type() == BDSSamplerType::cylinderforward)
+        {result[static_cast<std::string>(info.UniqueName())] = info.Radius()/CLHEP::m;}
+    }
+  return result;
+}
+
+std::map<std::string, double> BDSSamplerRegistry::GetUniqueNameToRadiusSphere() const
+{
+  std::map<std::string, double> result;
+  for (const auto& info: infos)
+    {
+      if (info.Type() == BDSSamplerType::sphere || info.Type() == BDSSamplerType::sphereforward)
+        {result[static_cast<std::string>(info.UniqueName())] = info.Radius()/CLHEP::m;}
+    }
+  return result;
 }
 
 std::vector<std::pair<G4String, G4double> > BDSSamplerRegistry::GetUniquePlaneNamesAndSPosition() const

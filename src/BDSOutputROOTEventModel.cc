@@ -152,6 +152,8 @@ void BDSOutputROOTEventModel::Flush()
   samplerSPosition.clear();
   samplerCNamesUnique.clear();
   samplerSNamesUnique.clear();
+  samplerCRadius.clear();
+  samplerSRadius.clear();
 }
 
 #ifndef __ROOTBUILD__
@@ -193,15 +195,18 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 				   const std::map<short int, G4String>*     materialIDToNameUnique,
 				   G4bool storeTrajectory)
 {
-  for (const auto& nameSPos : BDSSamplerRegistry::Instance()->GetUniquePlaneNamesAndSPosition())
+  auto sr = BDSSamplerRegistry::Instance();
+  for (const auto& nameSPos : sr->GetUniquePlaneNamesAndSPosition())
     {
       samplerNamesUnique.push_back(std::string(nameSPos.first) + ".");
       samplerSPosition.push_back((double) nameSPos.second / CLHEP::m);
     }
-  for (const auto& name: BDSSamplerRegistry::Instance()->GetUniqueNamesCylinder())
+  for (const auto& name : sr->GetUniqueNamesCylinder())
     {samplerCNamesUnique.push_back(std::string(name) + ".");}
-  for (const auto& name: BDSSamplerRegistry::Instance()->GetUniqueNamesSphere())
+  for (const auto& name : sr->GetUniqueNamesSphere())
     {samplerSNamesUnique.push_back(std::string(name) + ".");}
+  samplerCRadius = sr->GetUniqueNameToRadiusCylinder();
+  samplerSRadius = sr->GetUniqueNameToRadiusSphere();
 
   for (const auto& name : collimatorBranchNamesIn)
     {collimatorBranchNamesUnique.push_back(std::string(name) + ".");}

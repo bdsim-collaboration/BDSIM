@@ -54,7 +54,8 @@ public:
                             G4double                  sPositionIn  = -1000,
                             const BDSBeamlineElement* elementIn    = nullptr,
                             const G4String&           uniqueNameIn = "",
-                            BDSSamplerType            typeIn       = BDSSamplerType::plane);
+                            BDSSamplerType            typeIn       = BDSSamplerType::plane,
+                            G4double                  radiusIn     = 0);
 
   ~BDSSamplerPlacementRecord(){;}
 
@@ -68,6 +69,7 @@ public:
   inline const BDSBeamlineElement* Element() const {return element;}
   inline G4int         BeamlineIndex()    const;
   inline BDSSamplerType Type()            const {return type;}
+  inline G4double      Radius()           const {return radius;}
   /// @}
   
 private:
@@ -79,6 +81,7 @@ private:
   const BDSBeamlineElement* element; ///< The beam line element to which this sampler pertains (if any).
   G4String uniqueName; ///< The name of the sampler but suffixed with a number - guaranteed to be unique.
   BDSSamplerType type;
+  G4double radius;
 };
 
 G4int BDSSamplerPlacementRecord::BeamlineIndex() const

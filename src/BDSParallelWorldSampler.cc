@@ -128,14 +128,16 @@ void BDSParallelWorldSampler::Construct()
   
       BDSSamplerType st = BDS::DetermineSamplerType(samplerPlacement.samplerType);
       AdjustTransform(transform, st); // for 'forward' samplers we add an extra rotation
-      BDSSampler* sampler = BuildSampler(samplerPlacement, st);
+      G4double radius = 0;
+      BDSSampler* sampler = BuildSampler(samplerPlacement, st, radius);
       G4String samplerName = G4String(samplerPlacement.name);
       G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,
 									sampler,
 									transform,
                   -1000,
                   nullptr,
-                  st);
+                  st,
+                  radius);
       
       G4String uniqueName = BDSSamplerRegistry::Instance()->GetNameUnique(samplerID);
       if (uniqueName != samplerName)
@@ -153,7 +155,8 @@ void BDSParallelWorldSampler::Construct()
 }
 
 BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& samplerPlacement,
-                                                  BDSSamplerType st) const
+                                                  BDSSamplerType st,
+                                                  G4double& radius) const
 {
   BDSSampler* result = nullptr;
   G4String samplerName = G4String(samplerPlacement.name);
@@ -186,12 +189,14 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
           {sweepAnglePhi = CLHEP::twopi;}
         else if (sweepAnglePhi > CLHEP::twopi + 1e-6)
 	  {throw BDSException(__METHOD_NAME__, "\"sweepAnglePhi\" must be in range (0 to pi] in samplerplacement \"" + samplerPlacement.name + "\"");}
+   
 	result = new BDSSamplerCylinder(samplerName,
 					samplerPlacement.aper1 * CLHEP::m,
 					2 * samplerPlacement.aper2 * CLHEP::m,
 					startAnglePhi,
 					sweepAnglePhi,
 					samplerPlacement.partIDSetID);
+        radius = samplerPlacement.aper1 * CLHEP::m;
 	break;
       }
     case BDSSamplerType::cylinderforward:
@@ -205,12 +210,14 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
         else if (sweepAnglePhi > CLHEP::twopi + 1e-6)
           {throw BDSException(__METHOD_NAME__, "\"sweepAnglePhi\" must be in range (0 to pi] in samplerplacement \"" + samplerPlacement.name + "\"");}
         G4double startAnglePhi = -0.5*sweepAnglePhi;
+        
         result = new BDSSamplerCylinder(samplerName,
                                         samplerPlacement.aper1 * CLHEP::m,
                                         2 * samplerPlacement.aper2 * CLHEP::m,
                                         startAnglePhi,
                                         sweepAnglePhi,
                                         samplerPlacement.partIDSetID);
+        radius = samplerPlacement.aper1 * CLHEP::m;
         break;
       }
     case BDSSamplerType::sphere:
@@ -235,6 +242,7 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
 				      startAngleTheta,
 				      sweepAngleTheta,
 				      samplerPlacement.partIDSetID);
+        radius = samplerPlacement.aper1 * CLHEP::m;
 	break;
       }
     case BDSSamplerType::sphereforward:
@@ -265,6 +273,7 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
                                       startAngleTheta,
                                       sweepAngleTheta,
                                       samplerPlacement.partIDSetID);
+        radius = samplerPlacement.aper1 * CLHEP::m;
         break;
       }
     }
