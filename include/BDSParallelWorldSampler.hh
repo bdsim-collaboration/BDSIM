@@ -69,6 +69,11 @@ private:
   BDSSampler* BuildSampler(const GMAD::SamplerPlacement& samplerPlacement,
                            BDSSamplerType st) const;
   
+  /// Compound the rotation of the placement transform for sphereforward and
+  /// cylinderforward types of sampler only to orientate them along the beam line direction.
+  void AdjustTransform(G4Transform3D& trans,
+                       BDSSamplerType st) const;
+  
   /// Cache of the placements to clean up at the end.
   std::vector<G4VPhysicalVolume*> placements;
   

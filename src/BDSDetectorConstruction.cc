@@ -1013,9 +1013,9 @@ BDSExtent BDSDetectorConstruction::CalculateExtentOfSamplerPlacement(const GMAD:
                                                    sp.name);
         apertureExtent = aperture.Extent();
       }
-      else if (sp.samplerType == "cylinder")
-        {apertureExtent = BDSExtent(sp.aper1*CLHEP::m, sp.aper2*CLHEP::m, sp.aper1*CLHEP::m);}
-      else if (sp.samplerType == "sphere")
+      else if (sp.samplerType == "cylinder" || sp.samplerType == "cylinderforward") // we ignore the possibility of only a part-cylinder
+        {apertureExtent = BDSExtent(sp.aper1*CLHEP::m, sp.aper1*CLHEP::m, sp.aper2*CLHEP::m);}
+      else if (sp.samplerType == "sphere" || sp.samplerType == "sphereforward") //  we ignore the possibility of only a part-sphere
         {apertureExtent = BDSExtent(sp.aper1*CLHEP::m, sp.aper1*CLHEP::m, sp.aper1*CLHEP::m);}
       else
         {throw BDSException(__METHOD_NAME__, "unknown samplerType \"" + sp.samplerType + "\" in samplerplacement \"" + sp.name + "\"");}

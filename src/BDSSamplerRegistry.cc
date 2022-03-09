@@ -111,7 +111,7 @@ std::vector<G4String> BDSSamplerRegistry::GetUniqueNamesCylinder() const
   std::vector<G4String> names;
   for (const auto& info: infos)
     {
-      if (info.Type() == BDSSamplerType::cylinder)
+      if (info.Type() == BDSSamplerType::cylinder || info.Type() == BDSSamplerType::cylinderforward)
         {names.push_back(info.UniqueName());}
     }
   return names;
@@ -122,7 +122,7 @@ std::vector<G4String> BDSSamplerRegistry::GetUniqueNamesSphere() const
   std::vector<G4String> names;
   for (const auto& info: infos)
     {
-      if (info.Type() == BDSSamplerType::sphere)
+      if (info.Type() == BDSSamplerType::sphere || info.Type() == BDSSamplerType::sphereforward)
         {names.push_back(info.UniqueName());}
     }
   return names;
