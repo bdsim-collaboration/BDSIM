@@ -2,8 +2,8 @@ simple_testing(sampler-placement               "--file=user_placed_sampler.gmad"
 simple_testing(sampler-placement-far           "--file=user_placed_sampler_far.gmad"         "")
 simple_testing(sampler-placement-rectangular   "--file=user_placed_sampler_rectangular.gmad" "")
 simple_testing(sampler-placement-by-aperture   "--file=user_placed_sampler_ap_model.gmad"    "")
-simple_testing(sampler-placement-cylindrical   "--file=sampler-cylindrical-placement.gmad"   "")
-simple_testing(sampler-placement-spherical     "--file=sampler-spherical-placement.gmad"     "")
+simple_testing(sampler-placement-cylindrical   "--file=user_placed_sampler_cyl.gmad"         "")
+simple_testing(sampler-placement-spherical     "--file=user_placed_sampler_sph.gmad"         "")
 
 simple_testing(sampler-particles            "--file=sampler-particles.gmad"           "")
 simple_testing(sampler-particles-all        "--file=sampler-particles-all.gmad"       "")
