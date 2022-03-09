@@ -64,7 +64,6 @@ void BDSOutputROOTEventSamplerS::Fill(const BDSHitSamplerSphere* hit,
   n++;
   
   totalEnergy.push_back(static_cast<float>(hit->totalEnergy / CLHEP::GeV));
-  r.push_back(static_cast<float>(hit->coords.r / CLHEP::m));
   theta.push_back(static_cast<float>(hit->coords.theta / CLHEP::radian));
   phi.push_back(static_cast<float>(hit->coords.phi / CLHEP::radian));
   rp.push_back(static_cast<float>(hit->coords.rp));
@@ -106,7 +105,6 @@ void BDSOutputROOTEventSamplerS::Fill(const BDSOutputROOTEventSamplerS* other)
     {return;}
   n       = other->n;
   totalEnergy = other->totalEnergy;
-  r       = other->r;
   theta   = other->theta;
   phi     = other->phi;
   rp      = other->rp;
@@ -141,7 +139,6 @@ void BDSOutputROOTEventSamplerS::Flush()
 {
   n = 0;
   totalEnergy.clear();
-  r.clear();
   theta.clear();
   phi.clear();
   rp.clear();

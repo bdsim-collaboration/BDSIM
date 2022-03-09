@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Transform3D.hh"
 
 BDSSamplerPlacementRecord::BDSSamplerPlacementRecord(const G4String&           nameIn,
                                                      BDSSampler*               samplerIn,
@@ -28,7 +27,8 @@ BDSSamplerPlacementRecord::BDSSamplerPlacementRecord(const G4String&           n
                                                      G4double                  sPositionIn,
                                                      const BDSBeamlineElement* elementIn,
                                                      const G4String&           uniqueNameIn,
-                                                     BDSSamplerType            typeIn):
+                                                     BDSSamplerType            typeIn,
+                                                     G4double                  radiusIn):
   name(nameIn),
   sampler(samplerIn),
   transform(transformIn),
@@ -36,7 +36,8 @@ BDSSamplerPlacementRecord::BDSSamplerPlacementRecord(const G4String&           n
   sPosition(sPositionIn),
   element(elementIn),
   uniqueName(uniqueNameIn),
-  type(typeIn)
+  type(typeIn),
+  radius(radiusIn)
 {
   if (uniqueName.empty())
     {uniqueName = name;}

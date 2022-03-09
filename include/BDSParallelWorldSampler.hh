@@ -66,8 +66,10 @@ public:
 	     G4double                  samplerRadius);
 
 private:
+  /// Construct the geometry for a sampler. Update 'radius' by reference if applicable.
   BDSSampler* BuildSampler(const GMAD::SamplerPlacement& samplerPlacement,
-                           BDSSamplerType st) const;
+                           BDSSamplerType st,
+                           G4double& radius) const;
   
   /// Compound the rotation of the placement transform for sphereforward and
   /// cylinderforward types of sampler only to orientate them along the beam line direction.

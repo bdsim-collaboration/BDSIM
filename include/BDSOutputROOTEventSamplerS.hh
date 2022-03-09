@@ -48,7 +48,6 @@ public:
   
   int                n;
   std::vector<float> totalEnergy;
-  std::vector<float> r;
   std::vector<float> theta;
   std::vector<float> phi;
   std::vector<float> rp;
