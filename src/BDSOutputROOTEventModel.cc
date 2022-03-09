@@ -42,7 +42,8 @@ ClassImp(BDSOutputROOTEventModel)
 
 BDSOutputROOTEventModel::BDSOutputROOTEventModel():
   n(0),
-  storeCollimatorInfo(false)
+  storeCollimatorInfo(false),
+  nCollimators(0)
 {
   Flush();
 }
@@ -159,7 +160,8 @@ void BDSOutputROOTEventModel::Flush()
 #ifndef __ROOTBUILD__
 BDSOutputROOTEventModel::BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn):
   n(0),
-  storeCollimatorInfo(storeCollimatorInfoIn)
+  storeCollimatorInfo(storeCollimatorInfoIn),
+  nCollimators(0)
 {;}
 
 TRotation BDSOutputROOTEventModel::ConvertToROOT(const G4RotationMatrix* rm) const
