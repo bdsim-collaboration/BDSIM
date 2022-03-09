@@ -64,6 +64,11 @@ namespace GMAD
     double aper3;
     double aper4;
     
+    double startAnglePhi;
+    double sweepAnglePhi;
+    double startAngleTheta;
+    double sweepAngleTheta;
+    
     // This should be std::list<int> but the parser only supports double for numerical types in a list.
     /// List of PDG IDs of which particles to record for - default is empty, so all particles.
     std::list<double> partID;

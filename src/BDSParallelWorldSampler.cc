@@ -178,13 +178,42 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
       }
     case BDSSamplerType::cylinder:
       {
-	result = new BDSSamplerCylinder(samplerName, 2 * samplerPlacement.aper2 * CLHEP::m,
-					samplerPlacement.aper1 * CLHEP::m);
+        G4double startAnglePhi = samplerPlacement.startAnglePhi * CLHEP::rad;
+        G4double sweepAnglePhi = samplerPlacement.sweepAnglePhi * CLHEP::rad;
+        if (sweepAnglePhi < 0) // default in parser is -1 to flag we should use 2pi now we have units
+          {sweepAnglePhi = CLHEP::twopi;}
+        else if (sweepAnglePhi > CLHEP::twopi + 1e-6)
+	  {throw BDSException(__METHOD_NAME__, "\"sweepAnglePhi\" must be in range 0 to pi in samplerplacement \"" + samplerPlacement.name + "\"");}
+	result = new BDSSamplerCylinder(samplerName,
+					samplerPlacement.aper1 * CLHEP::m,
+					2 * samplerPlacement.aper2 * CLHEP::m,
+					startAnglePhi,
+					sweepAnglePhi,
+					samplerPlacement.partIDSetID);
 	break;
       }
     case BDSSamplerType::sphere:
       {
-	result = new BDSSamplerSphere(samplerName, samplerPlacement.aper1 * CLHEP::m);
+        G4double startAnglePhi = samplerPlacement.startAnglePhi * CLHEP::rad;
+        G4double sweepAnglePhi = samplerPlacement.sweepAnglePhi * CLHEP::rad;
+        if (sweepAnglePhi < 0) // default in parser is -1 to flag we should use 2pi now we have units
+          {sweepAnglePhi = CLHEP::twopi;}
+        else if (sweepAnglePhi > CLHEP::pi + 1e-6)
+          {throw BDSException(__METHOD_NAME__, "\"sweepAnglePhi\" must be in range 0 to pi in samplerplacement \"" + samplerPlacement.name + "\"");}
+        G4double startAngleTheta = samplerPlacement.startAngleTheta * CLHEP::rad;
+        G4double sweepAngleTheta = samplerPlacement.sweepAngleTheta * CLHEP::rad;
+        if (sweepAngleTheta < 0) // default in parser is -1 to flag we should use 2pi now we have units
+          {sweepAngleTheta = CLHEP::twopi;}
+        else if (sweepAnglePhi > CLHEP::twopi + 1e-6)
+          {throw BDSException(__METHOD_NAME__, "\"sweepAngleTheta\" must be in range 0 to 2 pi in samplerplacement \"" + samplerPlacement.name + "\"");}
+        
+        result = new BDSSamplerSphere(samplerName,
+				      samplerPlacement.aper1 * CLHEP::m,
+				      startAnglePhi,
+				      sweepAnglePhi,
+				      startAngleTheta,
+				      sweepAngleTheta,
+				      samplerPlacement.partIDSetID);
 	break;
       }
     }
@@ -201,9 +230,7 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
   if (samplerType == BDSSamplerType::none)
     {return;}
   // else must be a valid sampler
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Sampler type: " << element->GetSamplerType() << G4endl;
-#endif
+  
   G4String name = samplerInfo->name;
   G4double sEnd = element->GetSPositionEnd();
   
@@ -217,9 +244,10 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
         // TBC - could include angled faces
 	G4double length = element->GetAcceleratorComponent()->GetChordLength();
 	sampler = new BDSSamplerCylinder(name,
-					 length,
 					 samplerRadius,
-                                   samplerInfo->pdgSetID);
+					 length,
+					 0, CLHEP::twopi,
+					 samplerInfo->pdgSetID);
 	break;
       }
     default: // no spherical samplers for beam line samplers

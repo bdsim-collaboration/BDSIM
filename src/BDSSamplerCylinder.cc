@@ -30,20 +30,22 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 BDSSamplerCylinder::BDSSamplerCylinder(const G4String& nameIn,
-				       G4double        length,
-				       G4double        radiusIn,
+                                       G4double        radiusIn,
+                                       G4double        fullLength,
+                                       G4double        startAngle,
+                                       G4double        sweepAngle,
                                        G4int           filterSetIDIn):
   BDSSampler(nameIn, filterSetIDIn)
-{
+{ 
   G4double thickness = 1e-6 * radiusIn;
   containerSolid = new G4Tubs(nameIn + "_solid",      // name
 			      radiusIn,               // inner radius
 			      radiusIn + thickness,   // outer radius
-			      length*0.5,             // half-length
-			      0,                      // start angle
-			      CLHEP::twopi);          // sweep angle
+			      fullLength*0.5,         // half-length
+			      startAngle,             // start angle
+			      sweepAngle);            // sweep angle
 
-  SetExtent(BDSExtent(radiusIn, radiusIn, length*0.5));
+  SetExtent(BDSExtent(radiusIn, radiusIn, fullLength*0.5));
   CommonConstruction();
 }
 
