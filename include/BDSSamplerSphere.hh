@@ -24,22 +24,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "G4Types.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 /** 
  * @brief Spherical sampler around an object.
  * 
  * Creates a hollow very thin (1um thick) sphere around an object
  * without end caps that acts as a sampler.
+ *
+ * @author Laurie Nevay
  */
 
 class BDSSamplerSphere: public BDSSampler
 {
 public:
-  BDSSamplerSphere(const G4String& name,
-		     G4double        radiusIn,
-		     G4int           filterSetIDIn = -1);
-  
-  /// Private default constructor to ensure use of provided one.
   BDSSamplerSphere() = delete;
+  BDSSamplerSphere(const G4String& name,
+                   G4double        radiusIn,
+                   G4double        startAnglePhi   = 0,
+                   G4double        sweepAnglePhi   = CLHEP::twopi,
+                   G4double        startAngleTheta = 0,
+                   G4double        sweepAngleTheta = CLHEP::pi,
+                   G4int           filterSetIDIn   = -1);
   
   /// @{ Assignment and copy constructor not implemented nor used
   BDSSamplerSphere& operator=(const BDSSamplerSphere&) = delete;

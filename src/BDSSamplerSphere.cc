@@ -30,16 +30,22 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 BDSSamplerSphere::BDSSamplerSphere(const G4String& nameIn,
-				   G4double        radiusIn,
-				   G4int           filterSetIDIn):
+                                   G4double        radiusIn,
+                                   G4double        startAnglePhi,
+                                   G4double        sweepAnglePhi,
+                                   G4double        startAngleTheta,
+                                   G4double        sweepAngleTheta,
+                                   G4int           filterSetIDIn):
   BDSSampler(nameIn, filterSetIDIn)
 {
   G4double thickness = 1e-6 * radiusIn;
   containerSolid = new G4Sphere(nameIn + "_solid",      // name
-				radiusIn,               // inner radius
-				radiusIn + thickness,   // outer radius
-				0, CLHEP::pi,
-				0, CLHEP::twopi);
+                                radiusIn,               // inner radius
+                                radiusIn + thickness,   // outer radius
+                                startAnglePhi,
+                                sweepAnglePhi,
+                                startAngleTheta,
+                                sweepAngleTheta);
 
   SetExtent(BDSExtent(radiusIn, radiusIn, radiusIn));
   CommonConstruction();
