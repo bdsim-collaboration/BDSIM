@@ -219,14 +219,14 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
         G4double sweepAnglePhi = samplerPlacement.sweepAnglePhi * CLHEP::rad;
         if (sweepAnglePhi <= 0) // default in parser is -1 to flag we should use 2pi now we have units
           {sweepAnglePhi = CLHEP::twopi;}
-        else if (sweepAnglePhi > CLHEP::pi + 1e-6)
-          {throw BDSException(__METHOD_NAME__, "\"sweepAnglePhi\" must be in range (0 to pi] in samplerplacement \"" + samplerPlacement.name + "\"");}
+        else if (sweepAnglePhi > CLHEP::twopi + 1e-6)
+          {throw BDSException(__METHOD_NAME__, "\"sweepAnglePhi\" must be in range (0 to 2 pi] in samplerplacement \"" + samplerPlacement.name + "\"");}
         G4double startAngleTheta = samplerPlacement.startAngleTheta * CLHEP::rad;
         G4double sweepAngleTheta = samplerPlacement.sweepAngleTheta * CLHEP::rad;
         if (sweepAngleTheta <= 0) // default in parser is -1 to flag we should use 2pi now we have units
-          {sweepAngleTheta = CLHEP::twopi;}
-        else if (sweepAnglePhi > CLHEP::twopi + 1e-6)
-          {throw BDSException(__METHOD_NAME__, "\"sweepAngleTheta\" must be in range (0 to 2 pi] in samplerplacement \"" + samplerPlacement.name + "\"");}
+          {sweepAngleTheta = CLHEP::pi;}
+        else if (sweepAnglePhi > CLHEP::pi + 1e-6)
+          {throw BDSException(__METHOD_NAME__, "\"sweepAngleTheta\" must be in range (0 to pi] in samplerplacement \"" + samplerPlacement.name + "\"");}
         
         result = new BDSSamplerSphere(samplerName,
 				      samplerPlacement.aper1 * CLHEP::m,
@@ -247,13 +247,13 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
         G4double sweepAnglePhi = samplerPlacement.sweepAnglePhi * CLHEP::rad;
         if (sweepAnglePhi <= 0) // default in parser is -1 to flag we should use 2pi now we have units
           {sweepAnglePhi = CLHEP::twopi;}
-        else if (sweepAnglePhi > CLHEP::pi + 1e-6)
-          {throw BDSException(__METHOD_NAME__, "\"sweepAnglePhi\" must be in range (0 to pi] in samplerplacement \"" + samplerPlacement.name + "\"");}
+        else if (sweepAnglePhi > CLHEP::twopi + 1e-6)
+          {throw BDSException(__METHOD_NAME__, "\"sweepAnglePhi\" must be in range (0 to 2 pi] in samplerplacement \"" + samplerPlacement.name + "\"");}
         G4double sweepAngleTheta = samplerPlacement.sweepAngleTheta * CLHEP::rad;
         if (sweepAngleTheta <= 0) // default in parser is -1 to flag we should use 2pi now we have units
-          {sweepAngleTheta = CLHEP::twopi;}
-        else if (sweepAnglePhi > CLHEP::twopi + 1e-6)
-          {throw BDSException(__METHOD_NAME__, "\"sweepAngleTheta\" must be in range (0 to 2 pi] in samplerplacement \"" + samplerPlacement.name + "\"");}
+          {sweepAngleTheta = CLHEP::pi;}
+        else if (sweepAngleTheta > CLHEP::pi + 1e-6)
+          {throw BDSException(__METHOD_NAME__, "\"sweepAngleTheta\" must be in range (0 to pi] in samplerplacement \"" + samplerPlacement.name + "\"");}
   
         G4double startAngleTheta = CLHEP::halfpi -0.5*sweepAngleTheta;
         G4double startAnglePhi   = -0.5*sweepAnglePhi;
