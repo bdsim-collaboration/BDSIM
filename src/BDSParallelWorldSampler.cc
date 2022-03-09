@@ -290,7 +290,7 @@ void BDSParallelWorldSampler::AdjustTransform(G4Transform3D& trans,
       {
 	auto rmExisting = trans.getRotation();
 	G4RotationMatrix rm;
-	rm.rotate(-CLHEP::halfpi, {0,0,1});
+	rm.rotate(-CLHEP::halfpi, {0,1,0});
 	rmExisting *= rm;
 	trans = G4Transform3D(rmExisting, trans.getTranslation());
 	break;
