@@ -1093,7 +1093,7 @@ pybdsim. ::
   >>> d = pybdsim.Data.Load("myoutputfile.root")
   >>> eventTree = d.GetEventTree()
   >>> for event in eventTree:
-  ...     print(numpy.array(event.Primary.x))
+  ...     print(list(event.Primary.x))
 
 In this example, the variable :code:`event` will have the same structure as the
 Event tree in the BDSIM output. See :ref:`basic-data-inspection` for more details
@@ -1102,6 +1102,10 @@ on how to browse the data.
 .. note:: The branch "Summary" in the Event and Run trees used to be called "Info"
 	  in BDSIM < V1.3. This conflicted with TObject::Info() so this looping in
 	  Python would work for any data in this branch, hence the change.
+
+.. warning:: Do not construct numpy arrays inside the loop - this seems to expose
+	     some behaviour with numpy where it gets slower and slower with every
+	     loop.
 
 
 Accumulating - Average Histograms
