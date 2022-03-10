@@ -76,6 +76,7 @@ public:
   const_iterator begin() const {return line.begin();}
   const_iterator end()   const {return line.end();}
   G4bool         empty() const {return line.empty();}
+  const BDSAcceleratorComponent* back() const {return line.back();}
   /// @}
 
   /// Size of line

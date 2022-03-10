@@ -141,13 +141,30 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
   
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
+      // in the case a single component has become a line, when we have a cylindrical
+      // sample we should flag that it should cover the full 'line', however with a plane
+      // one it is only attached to the last element.
+      BDSBeamlineElement* first = nullptr;
+      BDSBeamlineElement* last  = nullptr;
       G4int sizeLine = (G4int)line->size();
       for (G4int i = 0; i < sizeLine; ++i)
 	{
 	  if (i < sizeLine-1)
-	    {AddSingleComponent((*line)[i], tiltOffset);}
-	  else // only attach the desired sampler to the last one in the line
-	    {AddSingleComponent((*line)[i], tiltOffset, samplerInfo);}
+	    {
+	      if (i == 0)
+		{first = back();}
+	      AddSingleComponent((*line)[i], tiltOffset);
+	    }
+	  else 
+	    {// only attach the desired sampler to the last one in the line
+	      AddSingleComponent((*line)[i], tiltOffset, samplerInfo);
+	      last = back();
+	    }
+	}
+      if (samplerInfo->samplerType == BDSSamplerType::cylinder) // only a cylinder or plane can be attached to an element
+	{// cache the range it should cover as a cylinder
+	  last->GetSamplerInfo()->startElement = first;
+	  last->GetSamplerInfo()->finishElement = last;
 	}
     }
   else

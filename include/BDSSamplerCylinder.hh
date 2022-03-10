@@ -39,9 +39,20 @@ class BDSSamplerCylinder: public BDSSampler
 {
 public:
   BDSSamplerCylinder() = delete;
+  /// Straight cylinder without angled ends, i.e. a G4Tubs.
   BDSSamplerCylinder(const G4String& name,
                      G4double        radiusIn,
                      G4double        fullLength,
+                     G4double        startAngle = 0,
+                     G4double        sweepAngle = CLHEP::twopi,
+                     G4int           filterSetIDIn = -1);
+  
+  /// Alternative constructor for angled faces - uses G4CutTubs.
+  BDSSamplerCylinder(const G4String& name,
+                     G4double        radiusIn,
+                     G4double        fullLength,
+                     const G4ThreeVector& inputFaceNormal,
+                     const G4ThreeVector& outputFaceNormal,
                      G4double        startAngle = 0,
                      G4double        sweepAngle = CLHEP::twopi,
                      G4int           filterSetIDIn = -1);
