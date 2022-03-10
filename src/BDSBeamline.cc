@@ -486,11 +486,6 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 
   // reset flag for transform since we've now added a component
   transformHasJustBeenApplied = false;
-
-#ifdef BDSDEBUG
-  G4cout << *element;
-  G4cout << __METHOD_NAME__ << "component added" << G4endl;
-#endif
 }
 
 void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
