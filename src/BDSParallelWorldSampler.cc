@@ -330,19 +330,34 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
       {sampler = samplerInstances[samplerInfo->pdgSetID]; break;}
     case BDSSamplerType::cylinder:
       {// these are built uniquely for each instance so the length matches exactly
-        // TBC - could include angled faces
-	G4double length = element->GetAcceleratorComponent()->GetChordLength();
-  
-	// for a cylindrical sampler we make it 'fit' the component
-	G4double boundingRadius = element->GetExtent().TransverseBoundingRadius();
-	if (boundingRadius > 0) // protect against bad extent, i.e. 0
-	  {samplerRadius = boundingRadius;}
-	sampler = new BDSSamplerCylinder(name,
-					 samplerRadius,
-					 length,
-					 0, CLHEP::twopi,
-					 samplerInfo->pdgSetID);
-	break;
+        // for a cylindrical sampler we make it 'fit' the component
+        G4double boundingRadius = element->GetExtent().TransverseBoundingRadius();
+        if (boundingRadius > 0) // protect against bad extent, i.e. 0
+          {samplerRadius = boundingRadius;}
+        
+        G4double length = element->GetChordLength();
+        G4double angle  = element->GetAngle();
+        if (BDS::IsFinite(angle))
+	  {
+	    const auto ipfn = element->GetAcceleratorComponent()->InputFaceNormal();
+	    const auto opfn = element->GetAcceleratorComponent()->OutputFaceNormal();
+        sampler = new BDSSamplerCylinder(name,
+                                         samplerRadius,
+                                         length,
+                                         ipfn,
+                                         opfn,
+                                         0, CLHEP::twopi,
+                                         samplerInfo->pdgSetID);
+	  }
+        else
+	  {
+	    sampler = new BDSSamplerCylinder(name,
+					     samplerRadius,
+					     length,
+					     0, CLHEP::twopi,
+					     samplerInfo->pdgSetID);
+	  }
+        break;
       }
     default: // no spherical samplers for beam line samplers
       {break;} // leave as nullptr - shouldn't occur due to if at top
