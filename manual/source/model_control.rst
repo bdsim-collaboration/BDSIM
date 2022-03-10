@@ -3522,22 +3522,39 @@ should only be used with understanding.
 
 .. _sampler-output:
 
-Output at a Plane - Samplers
-----------------------------
+Output at a Surface - Samplers
+------------------------------
 
-BDSIM provides a 'sampler' as a means to observe the particle distribution at a
-point in the lattice. A sampler is 'attached' to an already defined element
-and records all the particles passing through a plane at the **exit** face of
-that element.
+BDSIM provides a 'sampler' as a means to record the particle distribution at a
+point in the model as defined by a plane, the surface of a cylinder, or the
+surface of a sphere.
 
-A sampler will record any particles passing through that plane in any direction.
-It is defined in reality by a box 5 x 5 m that is 1 nm thick. The user
-may consider it an infinitely thin plane.
+* A sampler records the kinematic variables of a single particle passing through a surface
+* Scoring refers to the accumulation of a quantity (e.g. dose) for a volume (see :ref:`scoring`)
+
+Samplers may have the following forms:
+
+#) a **plane**
+#) a **cylinder**
+#) a **sphere**.
+
+The plane is the most commonly used and can be 'attached' to an already defined beam line
+element and records all the particles passing through a plane at the **exit** face of
+that element. The cylinder can be attached to a beam line element also. A spherer sampler
+can only be placed through a samplerplacement.
+
+A sampler will record **any particles** passing through that plane in **any direction**.
+The plane sampler is practically defined in the Geant4 model built by BDSIM as a box
+5 x 5 m that is 1 nm thick. The user may consider it an infinitely thin plane.
+
+Samplers are built in a parallel world and are normally invisible. They can 'overlap'
+existing geometry but we should avoid having faces of shapes coincident as this may
+affect tracking ('coplanar' faces).
 
 .. _sampler-syntax:
 
-Attaching a Sampler to a Beamline Element
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Attaching a Plane Sampler to a Beamline Element
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 They are defined using the following syntax::
 
@@ -3547,13 +3564,13 @@ where `element_name` is the name of the element you wish to sample. Depending on
 output format chosen, the element name may be recorded in the output ('rootevent' output only).
 
 .. note:: Samplers **can only** be defined **after** the main sequence has been defined
-	  using the `use` command (see :ref:`the-use-command`). Failure to do
+	  using the **use** command (see :ref:`the-use-command`). Failure to do
 	  so will result in an error and BDSIM will exit.
 
 .. note:: Samplers record **all** particles impinging on them (i.e. both forwards and
 	  backwards). Even secondary particles that may originate from further along the
-	  lattice are recorded. They have no material so they do not absorb or affect particles, only
-	  witness them.
+	  lattice are recorded. They have no material so they do not absorb or affect
+	  particles, only witness them.
 
 To place a sampler before an item, attach it to the previous item. If however,
 you wish to record the coordinates with another name rather than the name of the
@@ -3597,6 +3614,10 @@ e.g. ::
 	     resemble a sampler but it is just a record of the initial coordinates. It is
 	     not a sampler and cannot record other secondary particles.
 
+Attaching a Cylindrical Sampler to a Beamline Element
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+	     
 .. _sampler-filtering:
 
 Filtering Particles To Record
