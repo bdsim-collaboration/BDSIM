@@ -460,7 +460,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
           if (temp->GetType() == "dump") // don't sample after a dump as there'll be nothing
             {forceNoSamplerOnThisElement = true;}
           BDSSamplerInfo* samplerInfo = forceNoSamplerOnThisElement ? nullptr : BuildSamplerInfo(&(*elementIt));
-          BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
+          BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(&(*elementIt));
           massWorld->AddComponent(temp, tiltOffset, samplerInfo);
 	}
     }
