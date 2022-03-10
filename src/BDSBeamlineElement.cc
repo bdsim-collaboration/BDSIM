@@ -107,6 +107,7 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete placementTransform;
   delete placementTransformCL;
   delete samplerPlacementTransform;
+  delete samplerInfo;
 }
 
 std::set<G4VPhysicalVolume*> BDSBeamlineElement::GetPVsFromAssembly(G4AssemblyVolume* av)
