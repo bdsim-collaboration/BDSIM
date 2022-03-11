@@ -1559,8 +1559,6 @@ won't use it for optical comparison. Therefore, only float precision is provided
 +--------------------+--------------------+--------------------------------------------------------------------------+
 | totalEnergy        | std::vector<float> | Vector of the total energy (GeV) of each hit in this sampler             |
 +--------------------+--------------------+--------------------------------------------------------------------------+
-| r                  | std::vector<float> | Vector of the r-coordinate of each hit (m)                               |
-+--------------------+--------------------+--------------------------------------------------------------------------+
 | z                  | std::vector<float> | Vector of the z-coordinate of each hit (m)                               |
 +--------------------+--------------------+--------------------------------------------------------------------------+
 | phi                | std::vector<float> | Vector of the phi-coordinate of each hit (rad)                           |
@@ -1569,7 +1567,8 @@ won't use it for optical comparison. Therefore, only float precision is provided
 +--------------------+--------------------+--------------------------------------------------------------------------+
 | zp                 | std::vector<float> | Vector of the z component of the unit momentum vector                    |
 +--------------------+--------------------+--------------------------------------------------------------------------+
-| phip               | std::vector<float> | Vector of the phi component of the unit momentum vector                  |
+| phip               | std::vector<float> | Vector of the phi angle between the momentum vector and the surface      |
+|                    |                    | normal vector (rad)                                                      |
 +--------------------+--------------------+--------------------------------------------------------------------------+
 | p                  | std::vector<float> | Vector of the momentum (magnitude) of the particle (GeV)                 |
 +--------------------+--------------------+--------------------------------------------------------------------------+
@@ -1627,17 +1626,17 @@ won't use it for optical comparison. Therefore, only float precision is provided
 +--------------------+--------------------+--------------------------------------------------------------------------+
 | totalEnergy        | std::vector<float> | Vector of the total energy (GeV) of each hit in this sampler             |
 +--------------------+--------------------+--------------------------------------------------------------------------+
-| r                  | std::vector<float> | Vector of the r-coordinate of each hit (m)                               |
-+--------------------+--------------------+--------------------------------------------------------------------------+
 | theta              | std::vector<float> | Vector of the theta-coordinate of each hit (rad)                         |
 +--------------------+--------------------+--------------------------------------------------------------------------+
 | phi                | std::vector<float> | Vector of the phi-coordinate of each hit (rad)                           |
 +--------------------+--------------------+--------------------------------------------------------------------------+
 | rp                 | std::vector<float> | Vector of the r component of the unit momentum vector                    |
 +--------------------+--------------------+--------------------------------------------------------------------------+
-| thetap             | std::vector<float> | Vector of the theta component of the unit momentum vector                |
+| thetap             | std::vector<float> | Vector of the theta angle between the momentum vector at the surface     |
+|                    |                    | of the sphere and the radial vector (rad)                                |
 +--------------------+--------------------+--------------------------------------------------------------------------+
-| phip               | std::vector<float> | Vector of the phi component of the unit momentum vector                  |
+| phip               | std::vector<float> | Vector of the phi angle between the momentum vector at the surface of    |
+|                    |                    | the sphere and the radial vector (rad)                                   |
 +--------------------+--------------------+--------------------------------------------------------------------------+
 | p                  | std::vector<float> | Vector of the momentum (magnitude) of the particle (GeV)                 |
 +--------------------+--------------------+--------------------------------------------------------------------------+
