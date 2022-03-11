@@ -54,8 +54,8 @@ G4int BDSSamplerRegistry::RegisterSampler(const G4String&      name,
 					  const G4Transform3D& transform,
 					  G4double             S,
 					  const BDSBeamlineElement* element,
-            BDSSamplerType       type,
-            G4double             radius)
+					  BDSSamplerType       type,
+					  G4double             radius)
 {
   samplerObjects.insert(sampler);
   G4String uniqueName = name;
