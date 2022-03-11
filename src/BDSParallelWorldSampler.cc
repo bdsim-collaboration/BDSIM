@@ -403,7 +403,8 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
 									*pt,
 									sEnd,
 									element,
-									samplerType);
+									samplerType,
+									samplerRadius);
 
       G4VPhysicalVolume* samplerWorld   = GetWorld();
       samplerWorldLV = samplerWorld->GetLogicalVolume();
