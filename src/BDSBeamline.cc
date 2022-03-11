@@ -37,6 +37,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
+#include "CLHEP/Vector/AxisAngle.h"
+
 #include <algorithm>
 #include <iterator>
 #include <ostream>
@@ -151,9 +153,9 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 	{
 	  if (i < sizeLine-1)
 	    {
-	      if (i == 0)
-		{first = back();}
 	      AddSingleComponent((*line)[i], tiltOffset);
+        if (i == 0)
+          {first = back();}
 	    }
 	  else 
 	    {// only attach the desired sampler to the last one in the line
@@ -165,6 +167,32 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 	{// cache the range it should cover as a cylinder
 	  last->GetSamplerInfo()->startElement = first;
 	  last->GetSamplerInfo()->finishElement = last;
+	  // calculate the mid (i.e. mean) position and rotation
+	  G4ThreeVector midRefPosition = (last->GetReferencePositionEnd() + first->GetReferencePositionStart()) / 2.0;
+	  G4ThreeVector aaMidAxis;
+	  G4double aaMidAngle;
+	  auto aaStart = first->GetReferenceRotationStart()->axisAngle();
+	  auto aaFinish = last->GetReferenceRotationEnd()->axisAngle();
+	  // careful of identity rotations in AA form (axis=(0,0,1),angle=0) as our average of these would be wrong
+	  if (first->GetReferenceRotationStart()->isIdentity())
+	    {
+	      aaMidAxis = aaFinish.axis();
+	      aaMidAngle = 0.5*aaFinish.delta();
+	    }
+	  else if (last->GetReferenceRotationEnd()->isIdentity())
+	    {
+	      aaMidAxis = aaStart.axis();
+	      aaMidAngle = 0.5*aaStart.delta();
+	    }
+	  else
+	    {
+	      aaMidAxis = (aaFinish.axis() + aaStart.axis()) / 2.0;
+	      aaMidAngle = (aaFinish.delta() + aaStart.delta()) / 2.0;
+	    }
+	  auto aaCSampler = CLHEP::HepAxisAngle(aaMidAxis, aaMidAngle);
+	  G4RotationMatrix rmCSampler = G4RotationMatrix(aaCSampler);
+	  G4Transform3D trCSampler(rmCSampler, midRefPosition);
+	  last->UpdateSamplerPlacementTransform(trCSampler);
 	}
     }
   else
