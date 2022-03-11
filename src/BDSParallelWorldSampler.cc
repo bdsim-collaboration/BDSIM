@@ -347,18 +347,17 @@ void BDSParallelWorldSampler::Place(const BDSBeamlineElement* element,
 	    const auto finishElement = samplerInfo->finishElement;
 	    G4ThreeVector connectingVector = finishElement->GetReferencePositionEnd() - startElement->GetReferencePositionStart();
 	    G4double chordLength = connectingVector.mag();
-	    
-	    G4ThreeVector ipfnFrameStart = startElement->InputFaceNormal();
-	    G4ThreeVector opfnFrameFinish = finishElement->OutputFaceNormal();
-	    
+     
 	    G4ThreeVector directionFrameStart = G4ThreeVector(0,0,1).transform(*(startElement->GetReferenceRotationStart()));
 	    G4ThreeVector directionFrameFinish = G4ThreeVector(0,0,1).transform(*(finishElement->GetReferenceRotationEnd()));
 	    
 	    G4ThreeVector dChordFrameStart = connectingVector.unit() - directionFrameStart;
 	    G4ThreeVector dChordFrameFinish = connectingVector.unit() - directionFrameFinish;
 	    
-	    G4ThreeVector ipfnCSampler = ipfnFrameStart + dChordFrameStart;
-	    G4ThreeVector opfnCSampler = opfnFrameFinish - dChordFrameFinish;
+      // we purposively ignore possible pole face rotations or a different input normal
+      // this is convention for cylindrical samplers where we do the same for drifts
+	    G4ThreeVector ipfnCSampler = G4ThreeVector(0,0,-1) + dChordFrameStart;
+	    G4ThreeVector opfnCSampler = G4ThreeVector(0,0,1) - dChordFrameFinish;
 	    
 	    sampler = new BDSSamplerCylinder(name,
 					     samplerRadius,
