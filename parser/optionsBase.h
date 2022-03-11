@@ -126,7 +126,7 @@ namespace GMAD
     /// magnetic field flip (+1 default, -1: flip sign)
     double ffact;
 
-    ///@{ Intial beam line transform w.r.t. the world coordinate frame.
+    ///@{ Initial beam line transform w.r.t. the world coordinate frame.
     double beamlineX;
     double beamlineY;
     double beamlineZ;
