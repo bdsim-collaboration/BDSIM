@@ -191,6 +191,12 @@ G4ThreeVector BDSBeamlineElement::OutputFaceNormal() const
     }
 }
 
+void BDSBeamlineElement::UpdateSamplerPlacementTransform(const G4Transform3D& tranfsormIn)
+{
+  delete samplerPlacementTransform;
+  samplerPlacementTransform = new G4Transform3D(tranfsormIn);
+}
+
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
 {
   out << "Beamline element: " << e.component->GetName() << G4endl;
