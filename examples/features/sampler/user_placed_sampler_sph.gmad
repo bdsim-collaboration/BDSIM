@@ -1,6 +1,6 @@
 ! rutherford scattering like setup
 
-t1: rcol, l=1e-6*m, material="Au", horizontalWidth=1*cm;
+t1: rcol, l=1e-6*m, material="Au";
 l1: line=(t1);
 use, l1;
 
