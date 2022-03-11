@@ -22,6 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Rtypes.h" // for classdef
 
+#include <algorithm>
+#include <string>
+#include <vector>
+
 ClassImp(AnalysisUtilities)
 
 AnalysisUtilities::AnalysisUtilities()
