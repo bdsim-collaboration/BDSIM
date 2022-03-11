@@ -154,6 +154,14 @@ void BDSParallelWorldSampler::Construct()
     } 
 }
 
+void BDSParallelWorldSampler::ErrorNonPositive(G4double value,
+                                               const G4String& variableName,
+                                               const G4String& objectName) const
+{
+  if (value <= 0)
+  {throw BDSException("\"" + variableName + "\" is <= 0 and must be > 0 in samplerplacement \"" + objectName + "\"");}
+}
+
 BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& samplerPlacement,
                                                   BDSSamplerType st,
                                                   G4double& radius) const
@@ -183,6 +191,8 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
       }
     case BDSSamplerType::cylinder:
       {
+        ErrorNonPositive(samplerPlacement.aper1, "aper1", samplerName);
+        ErrorNonPositive(samplerPlacement.aper2, "aper2", samplerName);
         G4double startAnglePhi = samplerPlacement.startAnglePhi * CLHEP::rad;
         G4double sweepAnglePhi = samplerPlacement.sweepAnglePhi * CLHEP::rad;
         if (sweepAnglePhi <= 0) // default in parser is -1 to flag we should use 2pi now we have units
@@ -201,6 +211,8 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
       }
     case BDSSamplerType::cylinderforward:
       {
+        ErrorNonPositive(samplerPlacement.aper1, "aper1", samplerName);
+        ErrorNonPositive(samplerPlacement.aper2, "aper2", samplerName);
         if (BDS::IsFinite(samplerPlacement.startAnglePhi))
           {BDS::Warning("\"startAnglePhi\" in samplerplacement \""+samplerName+"\" != 0 -> this has no effect for a cylinderforward sampler");}
         
@@ -222,6 +234,7 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
       }
     case BDSSamplerType::sphere:
       {
+        ErrorNonPositive(samplerPlacement.aper1, "aper1", samplerName);
         G4double startAnglePhi = samplerPlacement.startAnglePhi * CLHEP::rad;
         G4double sweepAnglePhi = samplerPlacement.sweepAnglePhi * CLHEP::rad;
         if (sweepAnglePhi <= 0) // default in parser is -1 to flag we should use 2pi now we have units
@@ -251,6 +264,7 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
       }
     case BDSSamplerType::sphereforward:
       {
+        ErrorNonPositive(samplerPlacement.aper1, "aper1", samplerName);
         if (BDS::IsFinite(samplerPlacement.startAnglePhi))
           {BDS::Warning("\"startAnglePhi\" in samplerplacement \""+samplerName+"\" != 0 -> this has no effect for a sphereforward sampler");}
         if (BDS::IsFinite(samplerPlacement.startAngleTheta))
