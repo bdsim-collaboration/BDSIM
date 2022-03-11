@@ -111,11 +111,11 @@ G4String BDS::StrStrip(const G4String& str,
       {G4StrUtil::strip(result, ch);}
 #else
     case StringStripType::leading:
-      {result.strip(G4String::stripType::leading, ch);}
+      {result.strip(G4String::stripType::leading, ch); break;}
     case StringStripType::trailing:
-      {result.strip(G4String::stripType::trailing, ch);}
+      {result.strip(G4String::stripType::trailing, ch); break;}
     case StringStripType::both:
-      {result.strip(G4String::stripType::both, ch);}
+      {result.strip(G4String::stripType::both, ch); break;}
 #endif
     }
   return result;
