@@ -66,6 +66,11 @@ public:
 	     G4double                  samplerRadius);
 
 private:
+  /// Utility function to reduce code.
+  void ErrorNonPositive(G4double value,
+                        const G4String& variableName,
+                        const G4String& objectName) const;
+  
   /// Construct the geometry for a sampler. Update 'radius' by reference if applicable.
   BDSSampler* BuildSampler(const GMAD::SamplerPlacement& samplerPlacement,
                            BDSSamplerType st,
