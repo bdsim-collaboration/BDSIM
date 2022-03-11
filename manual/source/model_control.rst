@@ -155,7 +155,7 @@ The PDG IDs can be found at the PDG website; reviews and tables; Monte Carlo Num
 * `<https://pdg.lbl.gov/2020/reviews/rpp2020-rev-monte-carlo-numbering.pdf>`_
 
 Ion Beams
-^^^^^^^^^
+*********
 
 The user may also specify any ion with the following syntax::
 
@@ -285,6 +285,7 @@ Event Tree, as described in :ref:`output-event-tree`.
 	     precision numbers are used so that the beam distribution is accurate. A float typically
 	     has seven significant figures and a double 15.
 
+	     
 Beam Tilt
 ^^^^^^^^^
 
@@ -3529,8 +3530,8 @@ BDSIM provides a 'sampler' as a means to record the particle distribution at a
 point in the model as defined by a plane, the surface of a cylinder, or the
 surface of a sphere.
 
-* A sampler records the kinematic variables of a single particle passing through a surface
-* Scoring refers to the accumulation of a quantity (e.g. dose) for a volume (see :ref:`scoring`)
+* A **sampler** records the kinematic variables of a single particle passing through a surface
+* **Scoring** refers to the accumulation of a quantity (e.g. dose) for a volume (see :ref:`scoring`)
 
 Samplers may have the following forms:
 
@@ -3550,6 +3551,40 @@ The plane sampler is practically defined in the Geant4 model built by BDSIM as a
 Samplers are built in a parallel world and are normally invisible. They can 'overlap'
 existing geometry but we should avoid having faces of shapes coincident as this may
 affect tracking ('coplanar' faces).
+
+.. _sampler-coordinate-systems:
+
+Sampler Coordinate Systems
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**plane**
+
+* `x`, `y`, `z`
+
+
+**cylindrical**
+
+* `z`, `r`, :math:`\phi`
+* :math:`\phi` : :math:`[0 \to 2\pi]`
+
+
+**spherical**
+
+* `r`, :math:`\theta`, :math:`\phi`
+* :math:`\theta` : polar angle :math:`[0 \to \pi]`
+* :math:`\phi` : azimuthal angle :math:`[0 \to 2\pi]`
+
+
+Generally:
+
+* In cylindrical coordinates `z` and `phi` are recorded as well as `rp`, `zp` and `phip`.
+* `r` is not recorded for either cylindrical or spherical coordinates because it is the
+  same for every hit. This information is recorded in the Model part of the output with
+  the sampler name as it is a constant.
+* Positive `z` is along the direction of the beam by default.
+* For cylindrical coordinates, `phi` = 0 corresponds to a point at positive
+  :math:`x = r, y = 0` and increases clockwise looking along the direction of the beam.
+
 
 .. _sampler-syntax:
 
@@ -3614,9 +3649,54 @@ e.g. ::
 	     resemble a sampler but it is just a record of the initial coordinates. It is
 	     not a sampler and cannot record other secondary particles.
 
+
+.. _sampler-dimensions:
+	  
+Plane Sampler Dimensions
+************************
+
+The sampler is represented by a box solid that is 1 nm thick along z and 5m wide
+transversely in x and y. If a smaller or larger capture area for the samplers is required,
+the option *samplerDiameter* may be specified in the input gmad. ::
+
+  option, samplerDiameter=3*m;
+
+This affects all plane samplers.
+
+.. note:: For a very low energy lattice with large angle bends, the default samplerDiameter
+	  may cause geometrical overlap warnings from Geant4. This situation is difficult to
+	  avoid automatically, but easy to remedy by setting the samplerDiameter to a lower
+	  value. We recommend reducing :code:`samplerDiameter` for low energy or strongly
+	  curving accelerators.
+
 Attaching a Cylindrical Sampler to a Beamline Element
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+A cylindrical sampler places a thin cylinder around a beamline element that records hits
+in a cylindrical coordinate system about the z axis of that component. The syntax is the
+same as a plane sampler except for the command :code:`csample`. ::
+
+  csample, range=<element_name>[index];
+
+e.g. ::
+
+  d1: drift, l=1*m;
+  l1: line=(d1);
+  use, l1;
+
+  csample, range=d1;
+
+Details:
+
+* The radius of the sampler is set automatically to fit the component and **cannot**
+  be controlled. If control is required, it is better to use a `samplerplacement` and
+  make it with respect to the beamline element.
+* A cylindrical sampler does not match pole-face rotations of magnets.
+* Particle filters can similarly be used as with a plane sampler.
+* The output sampler structure uses cylindrical coordinates.
+
+See :ref:`sampler-coordinate-systems` for details about the coordinates.
+  
 	     
 .. _sampler-filtering:
 
@@ -3646,24 +3726,6 @@ Here, all samplers apart from the one attached to "d1" would record only particl
 with PDG ID 13 and -13. The sampler attached to "d1" would record only 11 and -11 PDG ID
 particles.
 
-.. _sampler-dimensions:
-	  
-Sampler Dimensions
-^^^^^^^^^^^^^^^^^^
-
-The sampler is represented by a box solid that is 1 nm thick along z and 5m wide
-transversely in x and y. If a smaller or larger capture area for the samplers is required,
-the option *samplerDiameter* may be specified in the input gmad. ::
-
-  option, samplerDiameter=3*m;
-
-This affects all samplers.
-
-.. note:: For a very low energy lattice with large angle bends, the default samplerDiameter
-	  may cause geometrical overlap warnings from Geant4. This situation is difficult to
-	  avoid automatically, but easy to remedy by setting the samplerDiameter to a lower
-	  value. We recommend reducing :code:`samplerDiameter` for low energy or strongly
-	  curving accelerators.
 
 .. _sampler-visualisation:
 	  
@@ -3684,11 +3746,16 @@ Output at an Arbitrary Plane - User Placed Sampler
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The user may place a sampler anywhere in the model with any orientation. This is called a
-`samplerplacement`. The sampler may have either a circular or rectangular (including
-square) shape and be placed with any orientation. A `samplerplacement` will record all
-particles travelling in **any direction** through it. A branch in the Event output will be
-create with the name of the `samplerplacement`. The user may define an arbitrary number of
-`samplerplacement` s.  A `samplerplacement` is defined with the following syntax::
+`samplerplacement`. The sampler may have the following forms:
+
+* A **plane** sampler (circular or rectangular shape)
+* A **sphere** sampler
+* A **cylinder** sampler
+
+A `samplerplacement` will record all particles travelling in **any direction** through it.
+A branch in the Event output will be created with the name of the `samplerplacement`. The
+user may define an arbitrary number of `samplerplacement` s.  A `samplerplacement` is defined
+with the following syntax::
 
   s1: samplerplacement, referenceElement="d1",
                         referenceElementNumber=1,
@@ -3696,19 +3763,57 @@ create with the name of the `samplerplacement`. The user may define an arbitrary
 			axisAngle=1, axisY=1, angle=pi/4,
 			aper1=10*cm;
 
-This defines a circular (by default) sampler with radius 10 cm positioned with respect to
+This defines a circular (by default) plane sampler with radius 10 cm positioned with respect to
 the 2nd instance of the d1 element (zero counting) in the main beam line with a rotation
 about the unit Y axis of :math:`\pi / 4`.
 
 .. note:: samplerplacements have no S coordinate, so the S variable will always be -1 m in
-	  the output (the default unphysical value for easy filtering).
+	  the output (the default un-physical value for easy filtering).
 
-Shape
-*****
+.. _sampler-types-and-shapes:
+	  
+Types and Shapes
+****************
+
+* The default is a plane sampler.
+
+The following types (exact name to be used in the :code:`type` parameter) of sampler can be used:
+
++--------------------+------------------------------------------------------------------+
+| **samplerType**    | **Description**                                                  |
++====================+==================================================================+
+| plane              | A flat plane (circular[default] or rectangular) for recording    |
+|                    | in local Cartesian coordinates.                                  |
++--------------------+------------------------------------------------------------------+
+| cylinder           | A thin cylinder for recording in cylindrical coordinates the     |
+|                    | same as a csampler.                                              |
++--------------------+------------------------------------------------------------------+
+| cylinderforward    | Similar to a cylinder but rotated so `z` is by default aligned   |
+|                    | with Cartesian `y` and `phi` = 0  is aligned with Cartesian `z`. |
+|                    | It only responds to `sweepAnglePhi`.                             |
++--------------------+------------------------------------------------------------------+
+| sphere             | A thin sphere for recording in spherical coordinates.            |
++--------------------+------------------------------------------------------------------+
+| sphereforward      | Similar to sphere but rotated so that `theta`, `phi` = 0         |
+|                    | corresponds to `z` in Cartesian coordinates. It only responds    |
+|                    | to `sweepAnglePhi` and `sweepAngleTheta`.                        |
++--------------------+------------------------------------------------------------------+
+
+* `cylinderforward`: is also a full cylinder by default, but in the case of control over
+  the range in angle of the cylinder, only the sweep angle is specified and it is expanded
+  symmetrically about the forward point.
+* `sphereforward`: is also a full sphere by default, but in the case of control over
+  the range in angles of the sphere, only the sweep angles are specified and they are expanded
+  symmetrically about the forward point.
+
+
+
+Plane Shape
+***********
 
 * Default `circular`. Control the radius with :code:`aper1`.
 
-To control the sampler shape, the variable :code:`shape` should be specified. Currently,
+To control the plane sampler shape, the variable :code:`shape` should be specified. Currently,
 either `circular` or `rectangular` are accepted. The parameters `aper1` and `aper2` can
 be used to control the shape with the same meaning as beam pipe apertures.
 
@@ -3723,6 +3828,98 @@ Example: ::
 
 .. warning:: In the case of `rectangular` **both** `aper1` and `aper2` must be specified.
 
+Cylinder Shape
+**************
+
+There are two types of cylindrical sampler: a `cylinder` and `cylinderforward`. The later
+is orientated more conveniently so `z` is by default aligned with Cartesian `y` and `phi` = 0
+is aligned with Cartesian `z`. In both cases, the default is to make a complete cylinder of
+:math:`2\pi`. Optionally, parameters can be specified to reduce this to a fraction of that.
+
+Geometry parameters for :code:`samplerType="cylinder"`:
+
++-----------------+-----------------------------------------------+
+| **Parameter**   | **Description**                               |
++=================+===============================================+
+| `aper1`         | radius of the cylinder (m)                    |
++-----------------+-----------------------------------------------+
+| `aper2`         | half length in z of the cylinder (m)          |
++-----------------+-----------------------------------------------+
+| `startAnglePhi` | Optional start angle for cylinder shape (rad) |
++-----------------+-----------------------------------------------+
+| `sweepAnglePhi` | Optional sweep angle for cylinder shape (rad) |
++-----------------+-----------------------------------------------+
+
+Geometry parameters for :code:`samplerType="cylinderforward"`:
+
++-----------------+-----------------------------------------------+
+| **Parameter**   | **Description**                               |
++=================+===============================================+
+| `aper1`         | radius of the cylinder (m)                    |
++-----------------+-----------------------------------------------+
+| `aper2`         | half length in z of the cylinder (m)          |
++-----------------+-----------------------------------------------+
+| `sweepAnglePhi` | Optional sweep angle for cylinder shape (rad) |
++-----------------+-----------------------------------------------+
+
+This only responds to `sweepAnglePhi` and it spread out symmetrically from the forward direction.
+
+Examples: ::
+
+  s3: samplerplacement, samplerType="cylinder", aper1=20*cm, aper2=2*m;
+  s4: samplerplacement, samplerType="cylinder", aper1=20*cm, aper2=2*m, startAnglePhi=-pi/6, sweepAnglePhi=pi/3;
+  s5: samplerplacement, samplerType="cylinderforward", aper1=20*cm, aper2=2*m, sweepAnglePhi=pi/3;
+
+* More examples can be found in :code:`bdsim/examples/features/sampler/*gmad`.
+
+Sphere Shape
+************
+
+There are two types of spherical sampler: a `sphere` and `sphereforward`. The later
+is orientated more conveniently so Cartesian `z` is by default aligned with `phi` = 0
+and `theta` = 0. In both cases, the default is to make a complete sphere. Optionally,
+parameters can be specified to reduce this to a fraction of that.
+
+Geometry parameters for :code:`samplerType="sphere"`:
+
++-------------------+---------------------------------------------------------+
+| **Parameter**     | **Description**                                         |
++===================+=========================================================+
+| `aper1`           | radius of the sphere (m)                                |
++-------------------+---------------------------------------------------------+
+| `startAngleTheta` | Optional polar start angle for sphere shape (rad)       |
++-------------------+---------------------------------------------------------+
+| `sweepAngleTheta` | Optional polar sweep angel for sphere shape (rad)       |
++-------------------+---------------------------------------------------------+
+| `startAnglePhi`   | Optional azimuthal start angle for cylinder shape (rad) |
++-------------------+---------------------------------------------------------+
+| `sweepAnglePhi`   | Optional azimuthal sweep angle for cylinder shape (rad) |
++-------------------+---------------------------------------------------------+
+
+Geometry parameters for :code:`samplerType="sphereforward"`:
+
++-------------------+---------------------------------------------------------+
+| **Parameter**     | **Description**                                         |
++===================+=========================================================+
+| `aper1`           | radius of the sphere (m)                                |
++-------------------+---------------------------------------------------------+
+| `sweepAngleTheta` | Optional polar sweep angel for sphere shape (rad)       |
++-------------------+---------------------------------------------------------+
+| `sweepAnglePhi`   | Optional azimuthal sweep angle for cylinder shape (rad) |
++-------------------+---------------------------------------------------------+
+
+This only responds to `sweepAnglePhi` and it spread out symmetrically from the forward direction.
+
+Examples: ::
+
+  s6: samplerplacement, samplerType="sphere", aper1=20*cm, aper2=2*m;
+  s7: samplerplacement, samplerType="sphere", aper1=20*cm, aper2=2*m,
+                        startAnglePhi=-pi/6, sweepAnglePhi=pi/3,
+			startAngleTheta=pi/2-pi/6, sweepAngleTheta=pi/3;
+  s8: samplerplacement, samplerType="sphereforward", aper1=20*cm, aper2=2*m,
+                        sweepAnglePhi=pi/3, sweepAngleTheta=pi/6;
+
+* More examples can be found in :code:`bdsim/examples/features/sampler/*gmad`.
 
 Placement
 *********
@@ -3745,18 +3942,6 @@ parameters is described below, but the required ones for each scenario are descr
 	     to help avoid this problem.
 
 
-Shape
-*****
-
-The sampler will be 1 nm thick in reality but may be treated by the user an
-infinitely thin plane. It is composed of vacuum and should not interfere with the ongoing
-physics of the simulation. The user may select the shape of the sampler from either
-circular or rectangular (including square). The parameter :code:`apertureType` should
-be specified as either :code:`"circular"` or :code:`"rectangular"`. The aperture parameters
-typically used in BDSIM should also be used - these are :code:`aper1` and :code:`aper2`.
-The meaning of these parameters is described in :ref:`aperture-parameters`.
-
-
 Parameters
 **********
 			
@@ -3769,6 +3954,9 @@ information from the `placements`. The full list of accepted parameters is given
 +-------------------------+--------------------------------------------------------------------+
 | **Parameter**           |  **Description**                                                   |
 +=========================+====================================================================+
+| samplerType             | One of 'plane' (default), 'cylinder', 'cylinderforward', 'sphere', |
+|                         | 'sphereforward' (see :ref:`sampler-types-and-shapes`)              |
++-------------------------+--------------------------------------------------------------------+
 | x                       | Offset in global x                                                 |
 +-------------------------+--------------------------------------------------------------------+
 | y                       | Offset in global y                                                 |
@@ -3800,11 +3988,11 @@ information from the `placements`. The full list of accepted parameters is given
 | referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
 +-------------------------+--------------------------------------------------------------------+
-| apertureType            | The shape of the sampler desired as described using the aperture   |
-|                         | syntax of BDSIM. Currently, only `circular` and `rectangular` are  |
-|                         | supported. `circular` is the default.                              |
+| apertureType            | The shape for a plane sampler desired as described using the       |
+|                         | aperture syntax of BDSIM. Currently, only `circular` and           |
+|                         | `rectangular` are supported. `circular` is the default.            |
 +-------------------------+--------------------------------------------------------------------+
-| shape                   | An intuitive alias to `apertureType`.                              |
+| shape                   | An intuitive alias to `apertureType` for plane sampler shape.      |
 +-------------------------+--------------------------------------------------------------------+
 | aper1                   | Aperture parameter #1.                                             |
 +-------------------------+--------------------------------------------------------------------+
@@ -3813,6 +4001,18 @@ information from the `placements`. The full list of accepted parameters is given
 | aper3                   | Aperture parameter #3.                                             |
 +-------------------------+--------------------------------------------------------------------+
 | aper4                   | Aperture parameter #4.                                             |
++-------------------------+--------------------------------------------------------------------+
+| startAnglePhi           | The starting angle in :math:`\phi` for the cylinder or sphere      |
+|                         | surface. Can range from :math:`[-2\pi \to 2\pi]`.                  |
++-------------------------+--------------------------------------------------------------------+
+| sweepAnglePhi           | The distance in :math:`\phi` to go from the start point. Can range |
+|                         | from :math:`(0 \to 2\pi]`.                                         |
++-------------------------+--------------------------------------------------------------------+
+| startAngleTheta         | The starting angle in :math:`\theta` for the sphere surface. Can   |
+|                         | range from :math:`[0 \to \pi]`.                                    |
++-------------------------+--------------------------------------------------------------------+
+| sweepAngleTheta         | The distance in :math:`\theta` to go from the start point. Can     |
+|                         | range from :math:`(0 \to \pi]`.                                    |
 +-------------------------+--------------------------------------------------------------------+
 | partID                  | List of integers for PDG IDs for which particles to record only.   |
 +-------------------------+--------------------------------------------------------------------+
