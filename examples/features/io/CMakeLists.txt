@@ -3,7 +3,6 @@ add_subdirectory(1_rootevent)
 
 simple_testing(io-none "--file=sm.gmad --output=none" "")
 simple_testing(io-store-trajectories     "--file=1_storeTrajectories.gmad"             "")
-simple_testing(io-minimal-data-plus-bits "--file=minimal_data_plus_bits.gmad"          "")
 
 
 # checks - tests that should fail

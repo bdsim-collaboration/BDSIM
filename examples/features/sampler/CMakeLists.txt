@@ -20,3 +20,4 @@ simple_testing(sampler-placement-particles  "--file=sampler-placement-particles.
 simple_fail(io-user-sampler-bad-shape    "--file=user_placed_sampler_bad_shape.gmad"   "")
 simple_fail(io-user-sampler-bad-name     "--file=user_placed_sampler_bad_name.gmad"    "")
 simple_testing(io-user-sampler-degenerate-name  "--file=user_placed_sampler_conflicting_name.gmad" "")
+simple_testing(io-minimal-data-plus-bits "--file=minimal_data_plus_bits.gmad"          "")
