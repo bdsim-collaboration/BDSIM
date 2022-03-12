@@ -1,3 +1,6 @@
+simple_testing(sampler-csample                              "--file=csample.gmad"           "")
+simple_testing(sampler-csample-angled-component             "--file=csample_angled.gmad"    "")
+
 simple_testing(sampler-placement                            "--file=user_placed_sampler.gmad"                    "")
 simple_testing(sampler-placement-far                        "--file=user_placed_sampler_far.gmad"                "")
 simple_testing(sampler-placement-rectangular                "--file=user_placed_sampler_rectangular.gmad"        "")
