@@ -15,8 +15,11 @@ option, storeSamplerPolarCoords=1;
 
 beam, particle="proton", kineticEnergy=500*GeV;
 
-option, muonSplittingFactor=10,
-	muonSplittingThresholdParentEk=50*GeV,
+! we could choose 10x : 50 GeV and 30x : 150 GeV for physics
+! reasons but we choose different factors so the test efficiently
+! covers the linear interpolation code
+option, muonSplittingFactor=5,
+	muonSplittingThresholdParentEk=10*GeV,
 	muonSplittingFactor=30,
 	muonSplittingThresholdParentEk=150*GeV;
 	
