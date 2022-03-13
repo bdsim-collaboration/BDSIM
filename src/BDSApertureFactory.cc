@@ -29,7 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureType.hh"
 #include "BDSBeamPipeToApertureType.hh"
 #include "BDSBeamPipeType.hh"
-#include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSPolygon.hh"
@@ -468,13 +467,13 @@ G4VSolid* BDSApertureFactory::CreateDifferentEnds() const
 
 G4VSolid* BDSApertureFactory::CreateTubeByPoints() const
 {
-  G4int nPointsIn  = productApertureIn->MinimumNumberOfPoints();
-  G4int nPointsOut = productApertureOut->MinimumNumberOfPoints();
+  unsigned int nPointsIn  = productApertureIn->MinimumNumberOfPoints();
+  unsigned int nPointsOut = productApertureOut->MinimumNumberOfPoints();
 
   G4bool isAMultiple = (nPointsIn % nPointsOut == 0) || (nPointsOut % nPointsIn == 0);
   if (!isAMultiple)
     {
-      G4int lowestCommonMultiple = BDS::LowestCommonMultiple(nPointsIn, nPointsOut);
+      unsigned int lowestCommonMultiple = BDS::LowestCommonMultiple(nPointsIn, nPointsOut);
       nPointsIn  = lowestCommonMultiple;
       nPointsOut = lowestCommonMultiple;
     }

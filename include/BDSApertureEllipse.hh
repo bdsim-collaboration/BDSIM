@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSAPERTUREELLIPSE_H
 #define BDSAPERTUREELLIPSE_H
 
-#include "BDSAperture.hh"
+#include "BDSApertureCurved.hh"
 #include "BDSTiltOffset.hh"
 
 #include "G4Types.hh"
@@ -36,18 +36,17 @@ class BDSPolygon;
  * @author Laurie Nevay
  */
 
-class BDSApertureEllipse: public BDSAperture
+class BDSApertureEllipse: public BDSApertureCurved
 {
 public:
   BDSApertureEllipse() = delete;
   BDSApertureEllipse(G4double aIn,
                      G4double bIn,
-                     G4int    nPointsIn = 0);
+                     unsigned int nPointsIn = 0);
   virtual ~BDSApertureEllipse(){;}
 
   G4double a;
   G4double b;
-  G4int    nPoints;
 
   G4bool    Equals(const BDSAperture* other) const override;
   void      CheckInfoOK()                    const override;

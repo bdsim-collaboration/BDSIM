@@ -31,12 +31,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 BDSApertureEllipse::BDSApertureEllipse(G4double aIn,
-                                      G4double bIn,
-                                      G4int    nPointsIn):
-  BDSAperture(BDSApertureType::ellipse),
+                                       G4double bIn,
+                                       unsigned int nPointsIn):
+  BDSApertureCurved(BDSApertureType::ellipse, nPointsIn),
   a(aIn),
-  b(bIn),
-  nPoints(nPointsIn)
+  b(bIn)
 {;}
 
 G4bool BDSApertureEllipse::Equals(const BDSAperture* other) const
