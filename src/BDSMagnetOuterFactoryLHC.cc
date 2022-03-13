@@ -286,7 +286,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateLHCDipole(const G4String&    nam
   G4Material*      stainlesssteel_304L_2K  = BDSMaterials::Instance()->GetMaterial("stainless_steel_304L_2K");
   
   G4VisAttributes* coilVisAtt   = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcoil"));
-  coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  coilVisAtt->SetForceLineSegmentsPerCircle((G4int)nSegmentsPerCircle);
   allVisAttributes.insert(coilVisAtt);
   G4VSolid*        collar1PoleTopInnerSolid     = nullptr;
   G4VSolid*        collar1PoleBottomInnerSolid  = nullptr;
@@ -320,7 +320,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateLHCDipole(const G4String&    nam
   // use base class yokeLV and yokePV members (reset in CleanUp())
   
   G4VisAttributes* collarVisAtt = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcollar"));
-  collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  collarVisAtt->SetForceLineSegmentsPerCircle((G4int)nSegmentsPerCircle);
   allVisAttributes.insert(collarVisAtt);
 
   //buildInnerCoil = false;
@@ -881,10 +881,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateLHCDipole(const G4String&    nam
     case YokeColour::kicker:
       {yokeColour = recipe->colour; break;}
     default:
-      {yokeColour = BDSColours::Instance()->GetColour("LHCyoke");}
+      {yokeColour = BDSColours::Instance()->GetColour("LHCyoke"); break;}
     }
   G4VisAttributes* yokeVis = new G4VisAttributes(*yokeColour);
-  yokeVis->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  yokeVis->SetForceLineSegmentsPerCircle((G4int)nSegmentsPerCircle);
   allVisAttributes.insert(yokeVis);
   yokeLV->SetVisAttributes(yokeVis);
   
@@ -1178,9 +1178,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   G4Material*      stainlesssteel_304L_2K  = BDSMaterials::Instance()->GetMaterial("stainless_steel_304L_2K");
   
   G4VisAttributes* coilVisAtt   = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcoil"));
-  coilVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  coilVisAtt->SetForceLineSegmentsPerCircle((G4int)nSegmentsPerCircle);
   G4VisAttributes* collarVisAtt = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcollar"));
-  collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  collarVisAtt->SetForceLineSegmentsPerCircle((G4int)nSegmentsPerCircle);
   allVisAttributes.insert(coilVisAtt);
   allVisAttributes.insert(collarVisAtt);
   
@@ -1489,7 +1489,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   
   // yoke visualisation
   G4VisAttributes* LHCred = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCyokered"));
-  LHCred->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  LHCred->SetForceLineSegmentsPerCircle((G4int)nSegmentsPerCircle);
   allVisAttributes.insert(LHCred);
   yokeLV->SetVisAttributes(LHCred);
   
