@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "fastlist.h"
 #include "material.h"
 #include "options.h"
+#include "particlefilter.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
 #include "placement.h"
@@ -232,6 +233,7 @@ namespace GMAD
     FastList<Field>  field_list;
     /// List of parser defined materials
     FastList<Material> material_list;
+    FastList<ParticleFilter> particlefilter_list; ///< List of parser defined particle filters.
     /// List of parser defined query objects
     FastList<Query> query_list;
     /// List of parser defined regions
@@ -277,6 +279,7 @@ namespace GMAD
     Field field;
     /// Material instance;
     Material material;
+    ParticleFilter particleFilter;
     /// PhysicsBiasing instance 
     PhysicsBiasing xsecbias;
     /// Placement instance

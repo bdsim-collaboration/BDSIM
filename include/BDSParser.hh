@@ -109,6 +109,9 @@ public:
 
   /// Return material list.
   inline std::vector<GMAD::Material> GetMaterials() const {return material_list.getVector();}
+
+  /// Return particlefilter_list.
+  inline std::vector<GMAD::ParticleFilter> GetParticleFilters() const {return particlefilter_list.getVector();}
   
   /// Return the vector of placement objects.
   inline std::vector<GMAD::Placement> GetPlacements() const {return placement_list.getVector();}

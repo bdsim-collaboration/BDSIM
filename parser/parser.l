@@ -135,6 +135,7 @@ cutsregion { return REGION; }
 newcolour { return NEWCOLOUR; }
 crystal { return CRYSTAL; }
 field { return FIELD; }
+particlefilter { return PARTICLEFILTER; }
 placement { return PLACEMENT; }
 query { return QUERY; }
 samplerplacement { return SAMPLERPLACEMENT; }

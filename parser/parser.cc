@@ -68,6 +68,7 @@ namespace GMAD {
   template void Parser::Add<SamplerPlacement, FastList<SamplerPlacement> >(bool unique, const std::string& className);
   template void Parser::Add<Atom, FastList<Atom> >(bool unique, const std::string& className);
   template void Parser::Add<Field, FastList<Field> >(bool unique, const std::string& className);
+  template void Parser::Add<ParticleFilter, FastList<ParticleFilter> >(bool unique, const std::string& className);
   template void Parser::Add<Query, FastList<Query> >(bool unique, const std::string& className);
   template void Parser::Add<Region, FastList<Region> >(bool unique, const std::string& className);
   template void Parser::Add<Scorer, FastList<Scorer> >(bool unique, const std::string& className);
@@ -750,6 +751,7 @@ void Parser::Overwrite(const std::string& objectName)
     else if ( (extended = FindAndExtend<Crystal>    (objectName)) ) {}
     else if ( (extended = FindAndExtend<Field>      (objectName)) ) {}
     else if ( (extended = FindAndExtend<Material>   (objectName)) ) {}
+    else if ( (extended = FindAndExtend<ParticleFilter>(objectName)) ) {}
     else if ( (extended = FindAndExtend<Placement>  (objectName)) ) {}
     else if ( (extended = FindAndExtend<Query>      (objectName)) ) {}
     else if ( (extended = FindAndExtend<Region>     (objectName)) ) {}
@@ -832,48 +834,67 @@ bool Parser::TryPrintingObject(const std::string& objectName) const
   auto searchAtom = std::find_if(atom_list.begin(), atom_list.end(), [&on](const Atom& obj) {return obj.name == on;});
   if (searchAtom != atom_list.end())
     {searchAtom->print(); return true;}
+  
   auto searchNewColour = std::find_if(colour_list.begin(), colour_list.end(), [&on](const NewColour& obj) {return obj.name == on;});
   if (searchNewColour != colour_list.end())
     {searchNewColour->print(); return true;}
+  
   auto searchCrystal = std::find_if(crystal_list.begin(), crystal_list.end(), [&on](const Crystal& obj) {return obj.name == on;});
   if (searchCrystal != crystal_list.end())
     {searchCrystal->print(); return true;}
+  
   auto searchField = std::find_if(field_list.begin(), field_list.end(), [&on](const Field& obj) {return obj.name == on;});
   if (searchField != field_list.end())
     {searchField->print(); return true;}
+  
   auto searchMaterial = std::find_if(material_list.begin(), material_list.end(), [&on](const Material& obj) {return obj.name == on;});
   if (searchMaterial != material_list.end())
     {searchMaterial->print(); return true;}
+
+  auto searchParticleFilter = std::find_if(particlefilter_list.begin(), particlefilter_list.end(), [&on](const Material& obj) {return obj.name == on;});
+  if (searchParticleFilter != particlefilter_list.end())
+    {searchParticleFilter->print(); return true;}
+  
   auto searchQuery = std::find_if(query_list.begin(), query_list.end(), [&on](const Query& obj) {return obj.name == on;});
   if (searchQuery != query_list.end())
     {searchQuery->print(); return true;}
+  
   auto searchRegion = std::find_if(region_list.begin(), region_list.end(), [&on](const Region& obj) {return obj.name == on;});
   if (searchRegion != region_list.end())
     {searchRegion->print(); return true;}
+  
   auto searchTunnel = std::find_if(tunnel_list.begin(), tunnel_list.end(), [&on](const Tunnel& obj) {return obj.name == on;});
   if (searchTunnel != tunnel_list.end())
     {searchTunnel->print(); return true;}
+  
   auto searchXsecbias = std::find_if(xsecbias_list.begin(), xsecbias_list.end(), [&on](const PhysicsBiasing& obj) {return obj.name == on;});
   if (searchXsecbias != xsecbias_list.end())
     {searchXsecbias->print(); return true;}
+  
   auto searchPlacement = std::find_if(placement_list.begin(), placement_list.end(), [&on](const Placement& obj) {return obj.name == on;});
   if (searchPlacement != placement_list.end())
     {searchPlacement->print(); return true;}
+  
   auto searchCavityModel = std::find_if(cavitymodel_list.begin(), cavitymodel_list.end(), [&on](const CavityModel& obj) {return obj.name == on;});
   if (searchCavityModel != cavitymodel_list.end())
     {searchCavityModel->print(); return true;}
+  
   auto searchSamplerPlacement = std::find_if(samplerplacement_list.begin(), samplerplacement_list.end(), [&on](const SamplerPlacement& obj) {return obj.name == on;});
   if (searchSamplerPlacement != samplerplacement_list.end())
     {searchSamplerPlacement->print(); return true;}
+  
   auto searchScorer = std::find_if(scorer_list.begin(), scorer_list.end(), [&on](const Scorer& obj) {return obj.name == on;});
   if (searchScorer != scorer_list.end())
   {searchScorer->print(); return true;}
+  
   auto searchScorerMesh = std::find_if(scorermesh_list.begin(), scorermesh_list.end(), [&on](const ScorerMesh& obj) {return obj.name == on;});
   if (searchScorerMesh != scorermesh_list.end())
     {searchScorerMesh->print(); return true;}
+  
   auto searchAperture = std::find_if(aperture_list.begin(), aperture_list.end(), [&on](const Aperture& obj) {return obj.name == on;});
   if (searchAperture != aperture_list.end())
     {searchAperture->print(); return true;}
+  
   auto searchBLMPlacement = std::find_if(blm_list.begin(), blm_list.end(), [&on](const BLMPlacement& obj) {return obj.name == on;});
   if (searchBLMPlacement != blm_list.end())
     {searchBLMPlacement->print(); return true;}
@@ -921,6 +942,12 @@ namespace GMAD {
 
   template<>
   FastList<Field>& Parser::GetList<Field>(){return field_list;}
+
+  template<>
+  ParticleFilter& Parser::GetGlobla(){return particleFilter;}
+
+  template<>
+  FastList<ParticleFilter>& Parser::GetList<ParticleFilter>(){return particlefilter_list;}
 
   template<>
   Query& Parser::GetGlobal(){return query;}

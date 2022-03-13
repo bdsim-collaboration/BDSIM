@@ -95,8 +95,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %token <ival> SHIELD DEGRADER GAP CRYSTALCOL WIRESCANNER
 %token <ival> VKICKER HKICKER KICKER TKICKER THINRMATRIX PARALLELTRANSPORTER
 %token <ival> RMATRIX UNDULATOR USERCOMPONENT DUMP CT
-%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR SAMPLERPLACEMENT
-%token SCORER SCORERMESH BLM
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PARTICLEFILTER PLACEMENT 
+%token NEWCOLOUR SAMPLERPLACEMENT SCORER SCORERMESH BLM
 %token CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL APERTURE
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
@@ -217,6 +217,14 @@ decl : VARIABLE ':' component_with_params
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : material" << std::endl;
              Parser::Instance()->SetValue<Material>("name",*($1));
              Parser::Instance()->Add<Material>(true, "material");
+         }
+     }
+     | VARIABLE ':' particlefilter
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : particlefilter" << std::endl;
+             Parser::Instance()->SetValue<ParticleFilter>("name",*($1));
+             Parser::Instance()->Add<ParticleFilter>(true, "particlefilter");
          }
      }
      | VARIABLE ':' tunnel
@@ -412,6 +420,7 @@ scorer      : SCORER      ',' scorer_options
 scorermesh  : SCORERMESH  ',' scorermesh_options
 aperture    : APERTURE    ',' aperture_options
 blm         : BLM         ',' blm_options
+particlefilter : PARTICLEFILTER ',' particlefilter_options
 
 // every object needs parameters
 object_noparams : MATERIAL
@@ -421,6 +430,7 @@ object_noparams : MATERIAL
                 | NEWCOLOUR
                 | CRYSTAL
                 | FIELD
+                | PARTICLEFILTER
                 | CAVITYMODEL
                 | QUERY
                 | TUNNEL
@@ -829,6 +839,14 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
               Parser::Instance()->Add<Material>(true, "material");
             }
         }
+        | PARTICLEFILTER ',' particlefilter_options // particlefilter
+        {
+          if(execute)
+            {
+              if(ECHO_GRAMMAR) std::cout << "command -> PARTICLEFILTER" << std::endl;
+              Parser::Instance()->Add<ParticleFilter>(true, "particlefilter");
+            }
+        }
         | TUNNEL ',' tunnel_options // tunnel
         {
           if(execute)
@@ -1041,6 +1059,19 @@ material_options : paramassign '=' aexpr material_options_extend
                     { if(execute) Parser::Instance()->SetValue<Material>(*$1,*$3);}
                  | paramassign '=' vecexpr material_options_extend
                     { if(execute) Parser::Instance()->SetValue<Material>(*($1),$3);}
+
+particlefilter_options_extend : /* nothing */
+                         | ',' particlefilter_options
+
+particlefilter_options : paramassign '=' aexpr particlefilter_options_extend
+                    { if(execute) Parser::Instance()->SetValue<ParticleFilter>((*$1),$3);}
+                  | paramassign '=' string particlefilter_options_extend
+                    { if(execute) Parser::Instance()->SetValue<ParticleFilter>(*$1,*$3);}
+                  | paramassign '=' vecexpr particlefilter_options_extend
+                    {
+		      if(execute)
+                        {Parser::Instance()->SetValue<ParticleFilter>(*($1),$3);}
+                   }
 
 atom_options_extend : /* nothing */
                     | ',' atom_options
