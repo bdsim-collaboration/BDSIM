@@ -72,23 +72,23 @@ public:
 			const G4ThreeVector* normalOut = nullptr,
 			G4double           lengthExtraForBoolean = 0);
   
-  G4VSolid* CreateSolidWithInnerInvariant(const G4String&      name,
-                                                              G4double             length,
-                                                              const BDSAperture*   apertureInInside,
-                                                              const BDSAperture*   apertureOutInside,
-                                                              G4double             thickness,
-                                                              const G4ThreeVector* normalIn,
-                                                              const G4ThreeVector* normalOut,
-                                                              G4double             lengthExtraForBoolean = 0);
-  G4VSolid* CreateSolidWithInner(const G4String& name,
-                                 G4double length,
-                                 const BDSAperture* apertureInOutside,
-                                 const BDSAperture* apertureInInside,
-                                 const BDSAperture* apertureOutOutside = nullptr,
-                                 const BDSAperture* apertureOutInside  = nullptr,
-                                 const G4ThreeVector* normalIn  = nullptr,
-                                 const G4ThreeVector* normalOut = nullptr,
-                                 G4double           lengthExtraForBoolean = 0);
+  G4VSolid* CreateSolidWithInner(const G4String&      name,
+                                 G4double             length,
+                                 const BDSAperture*   apertureInInside,
+                                 const BDSAperture*   apertureOutInside,
+                                 G4double             thickness,
+                                 const G4ThreeVector* normalIn,
+                                 const G4ThreeVector* normalOut,
+                                 G4double             lengthExtraForBoolean = 0);
+  G4VSolid* CreateSolidWithInnerVariableThickness(const G4String& name,
+                                                  G4double length,
+                                                  const BDSAperture* apertureInOutside,
+                                                  const BDSAperture* apertureInInside,
+                                                  const BDSAperture* apertureOutOutside = nullptr,
+                                                  const BDSAperture* apertureOutInside  = nullptr,
+                                                  const G4ThreeVector* normalIn  = nullptr,
+                                                  const G4ThreeVector* normalOut = nullptr,
+                                                  G4double           lengthExtraForBoolean = 0);
 
 private:
   /// @{ Flat faced construction function.

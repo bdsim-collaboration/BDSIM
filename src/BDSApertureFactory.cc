@@ -213,7 +213,7 @@ G4VSolid* BDSApertureFactory::CreateSolid(const G4String&    name,
   return product;
 }
 
-G4VSolid* BDSApertureFactory::CreateSolidWithInnerInvariant(const G4String&      name,
+G4VSolid* BDSApertureFactory::CreateSolidWithInner(const G4String&      name,
                                                    G4double             length,
                                                    const BDSAperture*   apertureInInside,
                                                    const BDSAperture*   apertureOutInside,
@@ -225,15 +225,15 @@ G4VSolid* BDSApertureFactory::CreateSolidWithInnerInvariant(const G4String&     
   return nullptr;
 }
 
-G4VSolid* BDSApertureFactory::CreateSolidWithInner(const G4String&      name,
-                                                   G4double             length,
-                                                   const BDSAperture*   apertureInInside,
-                                                   const BDSAperture*   apertureInOutside,
-                                                   const BDSAperture*   apertureOutInside,
-                                                   const BDSAperture*   apertureOutOutside,
-                                                   const G4ThreeVector* normalIn,
-                                                   const G4ThreeVector* normalOut,
-                                                   G4double             lengthExtraForBoolean)
+G4VSolid* BDSApertureFactory::CreateSolidWithInnerVariableThickness(const G4String&      name,
+                                                                    G4double             length,
+                                                                    const BDSAperture*   apertureInOutside,
+                                                                    const BDSAperture*   apertureInInside,
+                                                                    const BDSAperture*   apertureOutOutside,
+                                                                    const BDSAperture*   apertureOutInside,
+                                                                    const G4ThreeVector* normalIn,
+                                                                    const G4ThreeVector* normalOut,
+                                                                    G4double             lengthExtraForBoolean)
 {
   productNormalIn  = normalIn  ? *normalIn : G4ThreeVector();
   productNormalOut = normalOut ? *normalOut : G4ThreeVector();

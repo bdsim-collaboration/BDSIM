@@ -56,11 +56,15 @@ BDSBeamPipe* BDSBeamPipeFactoryGeneral::CreateBeamPipe(const G4String& name,
                                 bpi->inputFaceNormal, bpi->outputFaceNormal);
   
   if (!bpi->vacuumOnly)
-  {
-    beamPipeSolid = fac.CreateSolidWithInnerInvariant(name, length,
-                                             apBpInnerIn, apBpInnerOut, bpi->beamPipeThickness,
-                                             bpi->inputFaceNormal, bpi->outputFaceNormal);
-  }
+    {
+      beamPipeSolid = fac.CreateSolidWithInner(name,
+                                               length,
+                                               apBpInnerIn,
+                                               apBpInnerOut,
+                                               bpi->beamPipeThickness,
+                                               bpi->inputFaceNormal,
+                                               bpi->outputFaceNormal);
+    }
   
   containerSolid = fac.CreateSolid(name + "_container_solid", length, apContIn, apContOut,
   bpi->inputFaceNormal, bpi->outputFaceNormal);
