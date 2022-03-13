@@ -23,9 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo2.hh"
 #include "BDSExtent.hh"
 
-#include "G4CutTubs.hh"
 #include "G4String.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4Types.hh"
 #include "G4VSolid.hh"
 
@@ -35,8 +33,8 @@ BDSBeamPipeFactoryGeneral::BDSBeamPipeFactoryGeneral()
 {;}
 
 BDSBeamPipe* BDSBeamPipeFactoryGeneral::CreateBeamPipe(const G4String& name,
-                                                G4double length,
-                                                BDSBeamPipeInfo2* bpi)
+						       G4double length,
+						       BDSBeamPipeInfo2* bpi)
 {
   CleanUp();
   
@@ -49,11 +47,16 @@ BDSBeamPipe* BDSBeamPipeFactoryGeneral::CreateBeamPipe(const G4String& name,
   BDSAperture* apContOut    = apVacOut->Plus(containerThickness);
   BDSAperture* apContSubIn  = apVacIn->Plus(containerThickness + lengthSafety);
   BDSAperture* apContSubOut = apVacOut->Plus(containerThickness + lengthSafety);
-  /// TBC -> deletion of these aperture objects
   
   BDSApertureFactory fac;
-  vacuumSolid = fac.CreateSolid(name+"_vacuum", length - lengthSafety, apVacIn, apVacOut,
-                                bpi->inputFaceNormal, bpi->outputFaceNormal);
+  vacuumSolid = fac.CreateSolid(name+"_vacuum",
+				length - lengthSafety,
+				apVacIn,
+				apVacOut,
+                                bpi->inputFaceNormal,
+				bpi->outputFaceNormal);
+  delete apVacIn;
+  delete apVacOut;
   
   if (!bpi->vacuumOnly)
     {
@@ -66,18 +69,28 @@ BDSBeamPipe* BDSBeamPipeFactoryGeneral::CreateBeamPipe(const G4String& name,
                                                bpi->outputFaceNormal);
     }
   
-  containerSolid = fac.CreateSolid(name + "_container_solid", length, apContIn, apContOut,
-  bpi->inputFaceNormal, bpi->outputFaceNormal);
+  containerSolid = fac.CreateSolid(name + "_container_solid",
+				   length,
+				   apContIn,
+				   apContOut,
+				   bpi->inputFaceNormal,
+				   bpi->outputFaceNormal);
   
   containerSubtractionSolid = fac.CreateSolid(name+"_container_sub",
-                                              length, apContSubIn, apContSubOut,
-                                              nullptr, nullptr,
+                                              length,
+					      apContSubIn,
+					      apContSubOut,
+                                              nullptr,
+					      nullptr,
                                               0.2*length);
+  delete apContSubIn;
+  delete apContSubOut;
   
   BDSBeamPipeFactoryBase::CommonConstruction(name, bpi->vacuumMaterial, bpi->beamPipeMaterial, length);
-
-  // record extents
+  
   BDSExtent ext = std::max(apContIn->Extent(), apContOut->Extent());
+  delete apContIn;
+  delete apContOut;
 
   // true for containerIsGeneral - true for this factory
   return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(ext, /*TBC*/containerThickness, true);
