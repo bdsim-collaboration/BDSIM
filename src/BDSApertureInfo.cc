@@ -96,21 +96,19 @@ void BDSApertureInfo::CheckApertureInfo(const G4String& nameForError)
     {
       switch (apertureType.underlying())
 	{
-	case BDSApertureType::circular:
+	case BDSApertureType::circle:
 	  {InfoOKForCircular();    break;}
-	case BDSApertureType::elliptical:
+	case BDSApertureType::ellipse:
 	  {InfoOKForElliptical();  break;}
-	case BDSApertureType::rectangular:
+	case BDSApertureType::rectangle:
 	  {InfoOKForRectangular(); break;}
-	case BDSApertureType::lhc:
+	case BDSApertureType::rectcircle:
 	  {InfoOKForLHC();         break;}
-	case BDSApertureType::lhcdetailed:
-	  {InfoOKForLHCDetailed(); break;}
 	case BDSApertureType::rectellipse:
 	  {InfoOKForRectEllipse(); break;}
 	case BDSApertureType::racetrack:
 	  {InfoOKForRaceTrack();   break;}
-	case BDSApertureType::octagonal:
+	case BDSApertureType::octagon:
 	  {InfoOKForOctagonal();   break;}
 	case BDSApertureType::clicpcl:
 	  {InfoOKForClicPCL();     break;}
@@ -131,23 +129,21 @@ BDSExtent BDSApertureInfo::Extent() const
   G4double extY = 0;
   switch (apertureType.underlying())
     {
-    case BDSApertureType::circular:
-    case BDSApertureType::circularvacuum:
+    case BDSApertureType::circle:
       {
 	extX = aper1;
 	extY = aper1;
 	break;
       }
-    case BDSApertureType::elliptical:
-    case BDSApertureType::rectangular:
-    case BDSApertureType::octagonal:
+    case BDSApertureType::ellipse:
+    case BDSApertureType::rectangle:
+    case BDSApertureType::octagon:
       {
 	extX = aper1;
 	extY = aper2;
 	break;
       }
-    case BDSApertureType::lhc:
-    case BDSApertureType::lhcdetailed:
+    case BDSApertureType::rectcircle:
     case BDSApertureType::rectellipse:
       {
 	extX = std::min(aper1, aper3);
@@ -188,13 +184,6 @@ void BDSApertureInfo::CheckRequiredParametersSet(G4bool setAper1,
 						 G4bool setAper3,
 						 G4bool setAper4)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << "aper1: " << aper1 << " check it? " << setAper1 << G4endl;
-  G4cout << "aper2: " << aper2 << " check it? " << setAper2 << G4endl;
-  G4cout << "aper3: " << aper3 << " check it? " << setAper3 << G4endl;
-  G4cout << "aper4: " << aper4 << " check it? " << setAper4 << G4endl;
-#endif
   if (setAper1 && !BDS::IsFinite(aper1))
     {throw BDSException("","\"aper1\" not set, but required to be.");}
   if (setAper2 && !BDS::IsFinite(aper2))

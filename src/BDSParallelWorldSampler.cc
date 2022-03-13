@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorModel.hh"
 #include "BDSAperture.hh"
 #include "BDSApertureFactory.hh"
+#include "BDSApertureInfo.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamPipeInfo.hh"
@@ -174,20 +175,16 @@ BDSSampler* BDSParallelWorldSampler::BuildSampler(const GMAD::SamplerPlacement& 
     {
     case BDSSamplerType::plane:
       {
-	BDSApertureInfo* shape;
+	BDSAperture* shape;
 	if (samplerPlacement.apertureModel.empty())
 	  {
-	    shape = new BDSApertureInfo(samplerPlacement.shape,
-					samplerPlacement.aper1 * CLHEP::m,
-					samplerPlacement.aper2 * CLHEP::m,
-					samplerPlacement.aper3 * CLHEP::m,
-					samplerPlacement.aper4 * CLHEP::m,
-					samplerName);
+      BDSApertureFactory apFactory;
+      shape = apFactory.CreateAperture(samplerPlacement);
 	  }
 	else
 	  {shape = BDSAcceleratorModel::Instance()->Aperture(samplerPlacement.apertureModel);}
 	
-	result = new BDSSamplerCustom(samplerName, *shape, samplerPlacement.partIDSetID);
+	result = new BDSSamplerCustom(samplerName, shape, samplerPlacement.partIDSetID);
 	break;
       }
     case BDSSamplerType::cylinder:
