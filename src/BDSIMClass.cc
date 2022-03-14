@@ -263,7 +263,7 @@ int BDSIM::Initialise()
       G4bool excludeW1P = globals->MuonSplittingExcludeWeight1Particles();
       physList->RegisterPhysics(new BDSPhysicsMuonSplitting(muonSplittingFactor,  muonSplittingThresholdParentEk,
                                                             muonSplittingFactor2, muonSplittingThresholdParentEk2,
-                                                            excludeW1P));
+                                                            excludeW1P, globals->MuonSplittingExclusionWeight()));
     }
   
   BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);

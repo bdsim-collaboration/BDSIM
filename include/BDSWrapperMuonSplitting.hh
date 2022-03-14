@@ -57,7 +57,8 @@ public:
                           G4double splittingThresholdEKIn  = 0,
                           G4int    splittingFactor2In      = 1,
                           G4double splittingThresholdEK2In = 0,
-                          G4bool   excludeWeight1Particles = false);
+                          G4bool   excludeWeight1Particles = false,
+                          G4double muonSplittingExclusionWeightIn = 1e99);
   virtual ~BDSWrapperMuonSplitting();
   
   /// Do the splitting operation.
@@ -73,6 +74,7 @@ private:
   G4int splittingFactor2;
   G4double splittingThresholdEK2;
   G4bool excludeWeight1Particles;
+  G4double muonSplittingExclusionWeight;
   BDSPhysicsVectorLinear* splitting;
 };
 
