@@ -21,28 +21,30 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSSingleUse.hh"
 
+#include "G4Types.hh"
 #include "G4VPhysicsConstructor.hh"
-class G4Radioactivation;
 
 /**
  * @brief Radioactivation processes.
- *
+ * 
+ * @author Ben Ledroit.
  */
 
 class BDSPhysicsRadioactivation: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
-    BDSPhysicsRadioactivation();
-    virtual ~BDSPhysicsRadioactivation();
+  explicit BDSPhysicsRadioactivation(G4bool atomicRearrangementIn = false);
+  virtual ~BDSPhysicsRadioactivation();
+  
+  // This is a dummy method for physics
+  virtual void ConstructParticle();
+  
+  // This method will be invoked in the Construct() method.
+  // each physics process will be instantiated and
+  // registered to the process manager of each particle type
+  virtual void ConstructProcess();
 
-    // This is a dummy method for physics
-    virtual void ConstructParticle();
-
-    // This method will be invoked in the Construct() method.
-    // each physics process will be instantiated and
-    // registered to the process manager of each particle type
-    virtual void ConstructProcess();
-
-    G4Radioactivation* ra;
+protected:
+  G4bool atomicRearrangement;
 };
 #endif
