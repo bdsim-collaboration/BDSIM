@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/samplerplacement.h"
 
 #include "G4Box.hh"
+#include "G4Cons.hh"
 #include "G4CutTubs.hh"
 #include "G4EllipticalTube.hh"
 #include "G4ExtrudedSolid.hh"
@@ -69,7 +70,7 @@ BDSApertureFactory::BDSApertureFactory():
 {
   specialisations = {
 		     {MakePair(BDSApertureType::circle, BDSApertureType::circle),
-		      &BDSApertureFactory::CircleToCircle}
+          &BDSApertureFactory::CreateDifferentEndsCircleToCircle}
   };
   
   hollowSpecialisations = {
@@ -222,7 +223,30 @@ G4VSolid* BDSApertureFactory::CreateSolidWithInner(const G4String&      name,
                                                    const G4ThreeVector* normalOut,
                                                    G4double             lengthExtraForBoolean)
 {
-  return nullptr;
+  productNormalIn  = normalIn  ? *normalIn : G4ThreeVector();
+  productNormalOut = normalOut ? *normalOut : G4ThreeVector();
+  angledFaces      = normalIn || normalOut;
+  
+  if (!apertureInInside)
+    {throw BDSException(__METHOD_NAME__, "no aperture specified.");}
+  G4bool variedAperture = (G4bool)apertureOutInside && apertureOutInside != apertureInInside;
+  
+  productName        = name;
+  productLength      = length;
+  productApertureIn  = apertureInInside;
+  productApertureOut = variedAperture ? apertureOutInside : apertureInInside;
+  productLengthExtra = lengthExtraForBoolean;
+  
+  // check specialisations
+  auto key    = MakePair(productApertureIn->apertureType, productApertureOut->apertureType);
+  auto search = hollowSpecialisations.find(key);
+  if (search != hollowSpecialisations.end())
+    {
+      auto mem = search->second;
+      return (this->*mem)();
+    }
+  else // no specialisation, so use high number polygons
+    {return CreateTubeByPoints();}
 }
 
 G4VSolid* BDSApertureFactory::CreateSolidWithInnerVariableThickness(const G4String&      name,
@@ -500,8 +524,37 @@ G4VSolid* BDSApertureFactory::CreateTubeByPoints() const
 		     nZ);
 }
 
-G4VSolid* BDSApertureFactory::CircleToCircle() const
-{return nullptr;} // TBC
+G4VSolid* BDSApertureFactory::CreateDifferentEndsCircleToCircle() const
+{
+  const BDSApertureCircle* ap1 = dynamic_cast<const BDSApertureCircle*>(productApertureIn);
+  const BDSApertureCircle* ap2 = dynamic_cast<const BDSApertureCircle*>(productApertureOut);
+  if (!ap1 || !ap2)
+    {return nullptr;}
+  G4VSolid* product;
+  if (angledFaces)
+  {
+    productNormalIn.theta()
+    // make longer cone, then intersect with cut tubs
+    G4Cons* cons = new G4Cons(productName + "_base_cons",
+                              0, ap1->radius,
+                              0, ap2->radius,
+                              0.5*(productLength + productLengthExtra),
+                              0, CLHEP::twopi);
+    G4double maxRadius = std::max(ap1->radius, ap2->radius);
+    G4VSolid* cut = CutSolid(productName + "_angled", maxRadius);
+    product = new G4IntersectionSolid(productName, cons, cut);
+    return product;
+  }
+  else
+  {
+    product = new G4Cons(productName,
+                        0, ap1->radius,
+                        0, ap2->radius,
+                        0.5*(productLength + productLengthExtra),
+                        0, CLHEP::twopi);
+  }
+  return product;
+}
 
 G4VSolid* BDSApertureFactory::HollowCircleToCircle() const
 {return nullptr;} // TBC

@@ -16,19 +16,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSAperture.hh"
-#include "BDSApertureFactory.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryGeneral.hh"
 #include "BDSBeamPipeFactoryLHCDetailed.hh"
-#include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeInfo2.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 
-#include "globals.hh"                        // geant4 globals / types
+#include "G4String.hh"
+#include "G4Types.hh"
 
 BDSBeamPipeFactory::BDSBeamPipeFactory()
 {
@@ -68,10 +66,10 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
   return result;
 }
 
-BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(const G4String& name,
-						G4double        length,
-						BDSBeamPipeInfo2* bpi)
+BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(const G4String&  name,
+                                                G4double         length,
+                                                BDSBeamPipeInfo2* bpi)
 {
   BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(bpi->beamPipeType);
-  return factory->CreateBeamPipe(name,length, bpi);
+  return factory->CreateBeamPipe(name, length, bpi);
 }
