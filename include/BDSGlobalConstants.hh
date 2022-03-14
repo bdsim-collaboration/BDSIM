@@ -154,6 +154,7 @@ public:
   inline G4double HorizontalWidth()          const {return G4double(options.horizontalWidth)*CLHEP::m;}
   inline G4bool   IgnoreLocalAperture()      const {return G4bool  (options.ignoreLocalAperture);}
   inline G4bool   IgnoreLocalMagnetGeometry()const {return G4bool  (options.ignoreLocalMagnetGeometry);}
+  inline G4bool   BuildPoleFaceGeometry()    const {return G4bool  (options.buildPoleFaceGeometry);}
   inline G4String OuterMaterialName()        const {return G4String(options.outerMaterialName);}
   inline G4bool   DontSplitSBends()          const {return G4bool  (options.dontSplitSBends);}
   inline G4bool   BuildTunnel()              const {return G4bool  (options.buildTunnel);}

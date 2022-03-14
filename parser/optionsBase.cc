@@ -126,6 +126,7 @@ OptionsBase::OptionsBase()
   coilWidthFraction          = -1;
   coilHeightFraction         = -1;
   ignoreLocalMagnetGeometry  = false;
+  buildPoleFaceGeometry      = true;
 
   preprocessGDML       = true;
   preprocessGDMLSchema = true;

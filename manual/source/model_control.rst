@@ -3522,6 +3522,11 @@ should only be used with understanding.
 |                                   | check Zp < (1-limit), and often (Xp > limit) & (Yp > limit).       |
 |                                   | Changing this limit will affect tracking of large angle particles. |
 +-----------------------------------+--------------------------------------------------------------------+
+| buildPoleFaceGeometry             | Default = true. Build bending magnet pole face geometry when using |
+|                                   | the geant4 integrator sets. This option doesn't affect the         |
+|                                   | behaviour of matrix integrator sets where angled face geometry is  |
+|                                   | never constructed.                                                 |
++-----------------------------------+--------------------------------------------------------------------+
 
 .. _sampler-output:
 

@@ -158,6 +158,7 @@ namespace GMAD
     double      coilWidthFraction;
     double      coilHeightFraction;
     bool        ignoreLocalMagnetGeometry;
+    bool        buildPoleFaceGeometry;
 
     /// geometry control
     bool preprocessGDML;
