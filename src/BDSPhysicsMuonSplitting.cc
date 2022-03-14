@@ -39,12 +39,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSPhysicsMuonSplitting::BDSPhysicsMuonSplitting(G4int splittingFactorIn,
                                                  G4double splittingThresholdEKIn,
                                                  G4int splittingFactor2In,
-                                                 G4double splittingThresholdEK2In):
+                                                 G4double splittingThresholdEK2In,
+                                                 G4bool excludeWeight1ParticlesIn):
   G4VPhysicsConstructor("BDSPhysicsMuonSplitting"),
   splittingFactor(splittingFactorIn),
   splittingThresholdEK(splittingThresholdEKIn),
   splittingFactor2(splittingFactor2In),
-  splittingThresholdEK2(splittingThresholdEK2In)
+  splittingThresholdEK2(splittingThresholdEK2In),
+  excludeWeight1Particles(excludeWeight1ParticlesIn)
 {
   if (splittingFactorIn < 1)
     {throw BDSException(__METHOD_NAME__, "the splitting factor must be an integer 1 or greater.");}
@@ -122,7 +124,8 @@ void BDSPhysicsMuonSplitting::ConstructProcess()
 	  if (processNamesToLookFor.count(processName) == 0)
 	    {continue;}
 	  
-	  auto wrappedProcess = new BDSWrapperMuonSplitting(process, splittingFactor, splittingThresholdEK, splittingFactor2, splittingThresholdEK2);
+	  auto wrappedProcess = new BDSWrapperMuonSplitting(process, splittingFactor, splittingThresholdEK,
+                                                      splittingFactor2, splittingThresholdEK2, excludeWeight1Particles);
 	  pManager->RemoveProcess(process);
 	  ph->RegisterProcess(wrappedProcess, particle);
 	  G4cout << "Bias> muon splitting > wrapping \"" << process->GetProcessName()

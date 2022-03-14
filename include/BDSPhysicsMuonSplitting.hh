@@ -37,7 +37,8 @@ public:
   explicit BDSPhysicsMuonSplitting(G4int splittingFactorIn,
                                    G4double splittingThresholdEKIn,
                                    G4int splittingFactor2In,
-                                   G4double splittingThresholdEK2In);
+                                   G4double splittingThresholdEK2In,
+                                   G4bool excludeWeight1ParticlesIn = false);
   virtual ~BDSPhysicsMuonSplitting();
 
   /// Construct all leptons, photons (inc optical), and pion +- just in case.
@@ -51,5 +52,6 @@ private:
   G4double splittingThresholdEK;
   G4int splittingFactor2;
   G4double splittingThresholdEK2;
+  G4bool excludeWeight1Particles;
 };
 #endif
