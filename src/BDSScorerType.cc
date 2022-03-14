@@ -58,7 +58,7 @@ BDSScorerType BDS::DetermineScorerType(G4String scorerType)
   types["depositeddose"]      = BDSScorerType::depositeddose;
   types["depositeddose3d"]    = BDSScorerType::depositeddose3d;
   types["depositedenergy"]    = BDSScorerType::depositedenergy;
-  types["depostiedenergyblm"] = BDSScorerType::depostiedenergyblm;
+  types["depostiedenergyblm"] = BDSScorerType::depositedenergyblm;
   types["depositedenergy3d"]  = BDSScorerType::depositedenergy3d;
   types["population"]         = BDSScorerType::population;
   types["population3d"]       = BDSScorerType::population3d;

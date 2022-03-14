@@ -102,7 +102,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const BDSScorerInfo& 
 	break;
       }
     case BDSScorerType::populationscaled:
-      {result = new BDSPSPopulationScaled(name, pathname); break;}
+      {result = new BDSPSPopulationScaled(info.name, info.pathname); break;}
     case BDSScorerType::cellflux:
       {
 	G4PSCellFlux *scorer = new G4PSCellFlux(info.name, "percm2");
