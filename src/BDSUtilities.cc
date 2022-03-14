@@ -347,7 +347,7 @@ G4bool BDS::IsInteger(const char* ch, int& convertedInteger)
     {return false;}
   
   char * p;
-  convertedInteger = std::strtol(ch, &p, 10);
+  convertedInteger = (int)std::strtol(ch, &p, 10);
   
   return (*p == 0);
 }
@@ -384,7 +384,7 @@ unsigned int BDS::NextMultiple(unsigned int value, unsigned int divisor)
   return value + value % divisor;
 }
 
-void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
+void BDS::PrintRotationMatrix(G4RotationMatrix* rm, const G4String& keyName)
 {
   G4cout << "Rotation matrix - reference: \"" << keyName << "\"" << *rm << G4endl;
   G4cout << "unit x -> " << G4ThreeVector(1,0,0).transform(*rm) << G4endl;
