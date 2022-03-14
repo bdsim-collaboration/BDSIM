@@ -157,6 +157,7 @@ General Updates
 * Tolerate "electron", "positron" and "photon" for beam particle names and substitute in the
   Geant4 names (e.g. "e-").
 * Print out extent of loaded world when using an external geometry file.
+* **EMD** physics has a minimum applicable kinetic energy of 1 MeV to prevent crashes in Geant4.
 
 Bug Fixes
 ---------
