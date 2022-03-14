@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSPhysicsRadioactivation.hh"
 
-#include "G4AutoDelete.hh"
 #include "G4GenericIon.hh"
 #include "G4EmParameters.hh"
 #include "G4LossTableManager.hh"
@@ -49,7 +48,7 @@ void BDSPhysicsRadioactivation::ConstructProcess()
     {return;}
 
   G4Radioactivation* ra = new G4Radioactivation();
-  G4AutoDelete::Register(ra);
+  //G4AutoDelete::Register(ra); // this cause a double deletion error somehow
   
   // atomic rearrangement
   ra->SetARM(atomicRearrangement);
