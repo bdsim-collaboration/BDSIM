@@ -96,6 +96,8 @@ New Features
   the placements transform in the world. This works by making the outer volume into a G4AssemblyVolume.
 * Ability to inspect G4EllipticalTube for extents as a container volume of imported GDML geometry
   as required for NA62.
+* Ability to read GDML auxiliary information for the tag "colour" to provide colour information
+  in the GDML file.
 
 **Physics**
 
