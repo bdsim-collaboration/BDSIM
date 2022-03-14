@@ -282,7 +282,7 @@ void Options::PublishMembers()
   publish("coilWidthFraction",    &Options::coilWidthFraction);
   publish("coilHeightFraction",   &Options::coilHeightFraction);
   publish("ignoreLocalMagnetGeometry", &Options::ignoreLocalMagnetGeometry);
-
+  publish("buildPoleFaceGeometry", &Options::buildPoleFaceGeometry);
   publish("preprocessGDML",       &Options::preprocessGDML);
   publish("preprocessGDMLSchema", &Options::preprocessGDMLSchema);
   

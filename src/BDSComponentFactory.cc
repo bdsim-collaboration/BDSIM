@@ -2852,7 +2852,7 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
   
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
   G4double e2 = el->e2*CLHEP::rad;
-  if (BDS::IsFinite(e2))
+  if (BDS::IsFinite(e2) && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry())
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
       outgoingFaceAngle += factor * e2;
@@ -2892,7 +2892,7 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
 
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
   G4double e1 = el->e1*CLHEP::rad;
-  if (BDS::IsFinite(e1))
+  if (BDS::IsFinite(e1) && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry())
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
       incomingFaceAngle += factor * e1;
