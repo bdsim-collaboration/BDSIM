@@ -1,5 +1,6 @@
-simple_testing(sampler-csample                              "--file=csample.gmad"           "")
-simple_testing(sampler-csample-angled-component             "--file=csample_angled.gmad"    "")
+simple_testing(sampler-csample                              "--file=csample.gmad"                "")
+simple_testing(sampler-csample-angled-component             "--file=csample_angled.gmad"         "")
+simple_testing(sampler-csample-sampler-extras               "--file=csample_sampler_extras.gmad" "")
 
 simple_testing(sampler-placement                            "--file=user_placed_sampler.gmad"                    "")
 simple_testing(sampler-placement-far                        "--file=user_placed_sampler_far.gmad"                "")
@@ -13,6 +14,7 @@ simple_testing(sampler-placement-spherical                  "--file=user_placed_
 simple_testing(sampler-placement-spherical-angles           "--file=user_placed_sampler_sph_angles.gmad"         "")
 simple_testing(sampler-placement-spherical-forward          "--file=user_placed_sampler_sph_forward.gmad"        "")
 simple_testing(sampler-placement-spherical-forward-angles   "--file=user_placed_sampler_sph_forward.gmad"        "")
+simple_testing(sampler-placement-spherical-extras           "--file=user_placed_sampler_sph_extras.gmad"         "")
 
 simple_testing(sampler-particles            "--file=sampler-particles.gmad"           "")
 simple_testing(sampler-particles-all        "--file=sampler-particles-all.gmad"       "")
