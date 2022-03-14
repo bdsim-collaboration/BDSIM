@@ -214,6 +214,9 @@ OptionsBase::OptionsBase()
   collimatorsAreInfiniteAbsorbers = false;
   tunnelIsInfiniteAbsorber        = false;
   muonSplittingFactor = 1;
+  muonSplittingThresholdParentEk = 0;
+  muonSplittingFactor2 = 1;
+  muonSplittingThresholdParentEk2 = 0;
   
   // biasing options
   defaultBiasVacuum        = "";
@@ -237,6 +240,7 @@ OptionsBase::OptionsBase()
   nominalMatrixRelativeMomCut = 0.05;  // be careful adjusting this as it affects dipolequadrupole tracking
   teleporterFullTransform  = true;
   dEThresholdForScattering = 1e-11; // GeV
+  backupStepperMomLimit    = 0.1;   // fraction of unit momentum
 
   // default value in Geant4, old value 0 - error must be greater than this
   minimumEpsilonStep       = 5e-25;

@@ -34,10 +34,13 @@ class BDSPhysicsMuonSplitting: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
   BDSPhysicsMuonSplitting() = delete;
-  explicit BDSPhysicsMuonSplitting(G4int splittingFactorIn);
+  explicit BDSPhysicsMuonSplitting(G4int splittingFactorIn,
+                                   G4double splittingThresholdEKIn,
+                                   G4int splittingFactor2In,
+                                   G4double splittingThresholdEK2In);
   virtual ~BDSPhysicsMuonSplitting();
 
-  /// Construct all leptions, photons (inc optical), and pion +- just in case.
+  /// Construct all leptons, photons (inc optical), and pion +- just in case.
   virtual void ConstructParticle();
 
   /// Construct and attach the processes to the relevant particles.
@@ -45,5 +48,8 @@ public:
 
 private:
   G4int splittingFactor;
+  G4double splittingThresholdEK;
+  G4int splittingFactor2;
+  G4double splittingThresholdEK2;
 };
 #endif

@@ -73,6 +73,22 @@ session box (terminal prompt) inside the visualiser:
   everything on one side invisible.
 * :code:`/vis/viewer/clearCutawayPlanes` - get rid of cut away planes
 
+Changing The Colours
+--------------------
+
+We can change the trajectory colours using Geant4 visualiser commands. By default, BDSIM uses
+the draw by charge colouring. Here is an example of modifying this to make neutral particles
+(e.g. numerous photons) semi-transparent so as not to dominate.
+
+::
+   
+   /vis/modeling/trajectories/create/drawByCharge
+   /vis/modeling/trajectories/drawByCharge-0/setRGBA 0 0 0.8 0 0.1
+
+The numbers are charge (e.g. -1,0,1), R G B A
+
+
+
 .. _visualisation-features:
 
 Visualisation Features
