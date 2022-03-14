@@ -187,6 +187,7 @@ public:
   inline G4double MuonSplittingThresholdParentEk() const {return G4double(options.muonSplittingThresholdParentEk * CLHEP::GeV);}
   inline G4int    MuonSplittingFactor2()      const {return G4int   (options.muonSplittingFactor2);}
   inline G4double MuonSplittingThresholdParentEk2() const {return G4double(options.muonSplittingThresholdParentEk2) * CLHEP::GeV;}
+  inline G4bool   MuonSplittingExcludeWeight1Particles() const {return G4bool(options.muonSplittingExcludeWeight1Particles);}
   inline G4String BiasForWorldVolume()       const {return G4String(options.biasForWorldVolume);}
   inline G4String BiasForWorldContents()     const {return G4String(options.biasForWorldContents);}
   inline G4String BiasForWorldVacuum()       const {return G4String(options.biasForWorldVacuum);}
