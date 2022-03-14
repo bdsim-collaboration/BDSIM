@@ -77,6 +77,9 @@ void BDSPhysicsMuonSplitting::ConstructProcess()
 {
   if (Activated())
     {return;}
+  
+  if (excludeWeight1Particles)
+    {G4cout << "Bias> muon splitting> excluding weight=1 parents from splitting." << G4endl;}
 
   // "hPairProduction" includes "MuPairProduction" but this is in fact nothing to do with producing
   // muons. It's for producing e+e- pairs by modelling the interaction of high energy muons. This
@@ -128,12 +131,12 @@ void BDSPhysicsMuonSplitting::ConstructProcess()
                                                       splittingFactor2, splittingThresholdEK2, excludeWeight1Particles);
 	  pManager->RemoveProcess(process);
 	  ph->RegisterProcess(wrappedProcess, particle);
-	  G4cout << "Bias> muon splitting > wrapping \"" << process->GetProcessName()
+	  G4cout << "Bias> muon splitting> wrapping \"" << process->GetProcessName()
            << "\" for particle \"" << particle->GetParticleName() << "\": x" << splittingFactor
            << " for parent Ek > " << splittingThresholdEK / CLHEP::GeV << " GeV" << G4endl;
 	  if (splittingFactor2 > 1)
 	    {
-	      G4cout << "Bias> muon splitting > wrapping \"" << process->GetProcessName()
+	      G4cout << "Bias> muon splitting> wrapping \"" << process->GetProcessName()
 		     << "\" for particle \"" << particle->GetParticleName() << "\": (2nd band) x" << splittingFactor2
 		     << " for parent Ek > " << splittingThresholdEK2 / CLHEP::GeV << " GeV" << G4endl;
 	    }
