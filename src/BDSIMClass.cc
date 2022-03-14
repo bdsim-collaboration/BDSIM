@@ -260,8 +260,10 @@ int BDSIM::Initialise()
           G4cout << "BDSPhysicsMuonSplitting -> factor #2: " << muonSplittingFactor2 << " for muons above "
                  << muonSplittingThresholdParentEk / CLHEP::GeV << " GeV" << G4endl;
         }
+      G4bool excludeW1P = globals->MuonSplittingExcludeWeight1Particles();
       physList->RegisterPhysics(new BDSPhysicsMuonSplitting(muonSplittingFactor,  muonSplittingThresholdParentEk,
-                                                            muonSplittingFactor2, muonSplittingThresholdParentEk2));
+                                                            muonSplittingFactor2, muonSplittingThresholdParentEk2,
+                                                            excludeW1P));
     }
   
   BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);

@@ -34,12 +34,14 @@ BDSWrapperMuonSplitting::BDSWrapperMuonSplitting(G4VProcess* originalProcess,
                                                  G4int splittingFactorIn,
                                                  G4double splittingThresholdEKIn,
                                                  G4int splittingFactor2In,
-                                                 G4double splittingThresholdEK2In):
+                                                 G4double splittingThresholdEK2In,
+                                                 G4bool excludeWeight1ParticlesIn):
   BDSWrapperProcess("MuonSplittingWrapper"),
   splittingFactor(splittingFactorIn),
   splittingThresholdEK(splittingThresholdEKIn),
   splittingFactor2(splittingFactor2In),
   splittingThresholdEK2(splittingThresholdEK2In),
+  excludeWeight1Particles(excludeWeight1ParticlesIn),
   splitting(nullptr)
 {
   RegisterProcess(originalProcess);
@@ -79,6 +81,9 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
   
   G4int nSecondaries = particleChange->GetNumberOfSecondaries();
   if (nSecondaries == 0)
+    {return particleChange;}
+  
+  if (excludeWeight1Particles && (track.GetWeight() == 1.0))
     {return particleChange;}
   
   G4bool muonPresent = false;
