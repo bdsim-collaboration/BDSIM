@@ -1,4 +1,4 @@
-/* 
+/*
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
 University of London 2001 - 2022.
 
@@ -218,6 +218,8 @@ OptionsBase::OptionsBase()
   muonSplittingThresholdParentEk = 0;
   muonSplittingFactor2 = 1;
   muonSplittingThresholdParentEk2 = 0;
+  muonSplittingExcludeWeight1Particles = false;
+  muonSplittingExclusionWeight = 1e99;
   
   // biasing options
   defaultBiasVacuum        = "";
