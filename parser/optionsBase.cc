@@ -218,6 +218,7 @@ OptionsBase::OptionsBase()
   muonSplittingFactor2 = 1;
   muonSplittingThresholdParentEk2 = 0;
   muonSplittingExcludeWeight1Particles = false;
+  muonSplittingExclusionWeight = 1e99;
   
   // biasing options
   defaultBiasVacuum        = "";

@@ -258,6 +258,7 @@ namespace GMAD
     int      muonSplittingFactor2;
     double   muonSplittingThresholdParentEk2;
     bool     muonSplittingExcludeWeight1Particles;
+    double   muonSplittingExclusionWeight;
     ///@}
 
     // biasing options
