@@ -18,8 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSPhysicsRadioactivation.hh"
 
-#include "globals.hh"
-#include "G4DeexPrecoParameters.hh"
+#include "G4AutoDelete.hh"
 #include "G4GenericIon.hh"
 #include "G4EmParameters.hh"
 #include "G4LossTableManager.hh"
@@ -27,14 +26,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleDefinition.hh"
 #include "G4PhysicsListHelper.hh"
 #include "G4Radioactivation.hh"
+#include "G4Types.hh"
 #include "G4UAtomicDeexcitation.hh"
 #include "G4VAtomDeexcitation.hh"
 
-BDSPhysicsRadioactivation::BDSPhysicsRadioactivation():
-  G4VPhysicsConstructor("BDSPhysicsRadioactivation")
-{
-  ra = new G4Radioactivation();
-}
+BDSPhysicsRadioactivation::BDSPhysicsRadioactivation(G4bool atomicRearrangementIn):
+  G4VPhysicsConstructor("BDSPhysicsRadioactivation"),
+  atomicRearrangement(atomicRearrangementIn)
+{;}
 
 BDSPhysicsRadioactivation::~BDSPhysicsRadioactivation()
 {;}
@@ -49,9 +48,11 @@ void BDSPhysicsRadioactivation::ConstructProcess()
   if (Activated())
     {return;}
 
+  G4Radioactivation* ra = new G4Radioactivation();
+  G4AutoDelete::Register(ra);
+  
   // atomic rearrangement
-  G4bool ARMflag = false;
-  ra->SetARM(ARMflag);
+  ra->SetARM(atomicRearrangement);
 
   // initialise atomic deexcitation
   G4LossTableManager* man = G4LossTableManager::Instance();
