@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Types.hh"
 
+class BDSPhysicsVectorLinear;
 class G4Step;
 class G4Track;
 class G4VParticleChange;
@@ -32,17 +33,23 @@ class BDSWrapperMuonSplitting: public BDSWrapperProcess
 public:
   BDSWrapperMuonSplitting() = delete;
   BDSWrapperMuonSplitting(G4VProcess* originalProcess,
-			  G4int splittingFactorIn); 
+                          G4int splittingFactorIn,
+                          G4double splittingThresholdEKIn = 0,
+                          G4int splittingFactor2In = 1,
+                          G4double splittingThresholdEK2In = 0);
   virtual ~BDSWrapperMuonSplitting();
   
   virtual G4VParticleChange* PostStepDoIt(const G4Track& track,
 					  const G4Step& step);
   
-private:
+  static G4int nCallsThisEvent;
   
-  G4bool MuonPresent(G4VParticleChange* aChange) const;
-  void DeleteSecondaries(G4VParticleChange* aChange) const;
+private:
   G4int splittingFactor;
+  G4double splittingThresholdEK;
+  G4int splittingFactor2;
+  G4double splittingThresholdEK2;
+  BDSPhysicsVectorLinear* splitting;
 };
 
 #endif

@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TwoVector.hh"
 
 #include <algorithm>
+#include <cmath>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -177,6 +178,13 @@ G4double BDSExtent::MinimumAbsTransverse() const
 {
   return std::min({std::abs(extXNeg), extXPos,
 		   std::abs(extYNeg), extYPos});
+}
+
+G4double BDSExtent::TransverseBoundingRadius() const
+{
+  G4double x = std::max(std::abs(extXNeg), extXPos);
+  G4double y = std::max(std::abs(extYNeg), extYPos);
+  return std::hypot(x, y);
 }
 
 G4bool BDSExtent::Encompasses(const G4ThreeVector& point) const
