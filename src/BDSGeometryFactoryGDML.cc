@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef USE_GDML
 #include "BDSAcceleratorModel.hh"
 #include "BDSColourFromMaterial.hh"
+#include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSGeometryExternal.hh"
@@ -27,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGDMLPreprocessor.hh"  // also only available with USE_GDML
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh"
 #include "G4Colour.hh"
@@ -95,7 +97,9 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   GetAllLogicalPhysicalAndMaterials(containerPV, pvsGDML, lvsGDML, materialsGDML);
   BDSMaterials::Instance()->CacheMaterialsFromGDML(materialsGDML, componentName, preprocessGDML);
 
+  // load possible colours in auxiliary tags
   std::map<G4String, G4Colour*> gdmlColours;
+  G4int iColour = 0;
   for (auto lv : lvsGDML)
     {
       auto auxInfo = parser->GetVolumeAuxiliaryInformation(lv);
@@ -104,10 +108,16 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
           if (af.type == "colour")
 	    {
 	      std::stringstream ss(af.value);
-	      std::vector<G4double> colVals((std::istream_iterator<G4double>(ss)), std::istream_iterator<G4double>());
+	      std::vector<G4String> colVals((std::istream_iterator<G4String>(ss)), std::istream_iterator<G4String>());
 	      if (colVals.size() != 4)
-		{throw BDSException(__METHOD_NAME__, "invalid number of colour values for logical volume " + lv->GetName());}
-	      G4Colour* colour = new G4Colour(colVals.at(0), colVals.at(1), colVals.at(2), colVals.at(3));
+		{BDS::Warning(__METHOD_NAME__, "invalid number of colour values for logical volume " + lv->GetName());}
+	      G4String colourName = componentName + "_colour_"+std::to_string(iColour);
+	      iColour++;
+	      G4String colourString = colourName + ":";
+	      for (const auto& c : colVals)
+		{colourString += " " + c;}
+	      // false = don't normalie to 255 as already done so
+	      G4Colour* colour = BDSColours::Instance()->GetColour(colourString, false);
 	      gdmlColours[lv->GetName()] = colour;
 	    }
 	}
@@ -116,7 +126,27 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
   G4cout << pvsGDML.size() << " physical volumes, and " << lvsGDML.size() << " logical volumes" << G4endl;
 
-  auto visesGDML = ApplyColourMapping(lvsGDML, mapping, autoColour);
+  // resolve loaded map with possible external map with minimal copying
+  std::map<G4String, G4Colour*>* mappingToUse = nullptr;
+  G4bool deleteMap = false;
+  if (!gdmlColours.empty())
+    {
+      if (mapping)
+        {// copy and extend the map
+          mappingToUse = new std::map<G4String, G4Colour*>(*mapping);
+          mappingToUse->insert(gdmlColours.begin(), gdmlColours.end());
+          deleteMap = true;
+        }
+      else
+        {mappingToUse = &gdmlColours;}
+    }
+  else
+    {mappingToUse = mapping;}
+  
+  auto visesGDML = ApplyColourMapping(lvsGDML, mappingToUse, autoColour);
+  if (deleteMap)
+    {delete mappingToUse;}
+  
   G4UserLimits* ul = userLimitsToAttachToAllLVs ? userLimitsToAttachToAllLVs : BDSGlobalConstants::Instance()->DefaultUserLimits();
   ApplyUserLimits(lvsGDML, ul);
   
