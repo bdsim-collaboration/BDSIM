@@ -72,6 +72,9 @@ public:
 			const G4ThreeVector* normalOut = nullptr,
 			G4double           lengthExtraForBoolean = 0);
   
+  /// Create a solid according to an aperture entrance ('in') and exit ('out') with
+  /// a constant thickness. The aperture defines the interior edge of the solid. In
+  /// effect, a beam pipe on its own; a tube.
   G4VSolid* CreateSolidWithInner(const G4String&      name,
                                  G4double             length,
                                  const BDSAperture*   apertureInInside,
@@ -80,6 +83,10 @@ public:
                                  const G4ThreeVector* normalIn,
                                  const G4ThreeVector* normalOut,
                                  G4double             lengthExtraForBoolean = 0);
+  
+  /// Create a solid like a pipe or tube, but where there are 4 shapes to specify. The inner
+  /// entrance and exit shapes, and the outer entrance and exit shapes. These outer ones must
+  /// be large enough to encompass the inner ones.
   G4VSolid* CreateSolidWithInnerVariableThickness(const G4String& name,
                                                   G4double length,
                                                   const BDSAperture* apertureInOutside,
@@ -116,7 +123,7 @@ private:
   G4VSolid* CreateTubeByPoints()  const;
 
   /// @{ Specialisation for particular solids.
-  G4VSolid* CircleToCircle() const;
+  G4VSolid* CreateDifferentEndsCircleToCircle() const;
   /// @}
   /// @{ Specialisation for particular solids for hollow solid.
   G4VSolid* HollowCircleToCircle() const;

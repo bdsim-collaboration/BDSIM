@@ -239,6 +239,10 @@ G4VSolid* BDSApertureFactory::CreateSolidWithInnerVariableThickness(const G4Stri
   productNormalOut = normalOut ? *normalOut : G4ThreeVector();
   angledFaces      = normalIn || normalOut;
   
+  // If the apertures are twisted, it would be possible to create a shape where both the inner apertures
+  // were smaller than the outer apertures, but part way through they're bigger due to the rotation. This
+  // should be handled.
+  
   return nullptr;
 }
 
