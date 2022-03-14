@@ -6,4 +6,4 @@ beam, particle="proton",
 option, physicsList="g4FTPF_BERT";
 
 
-p1: particleFilter, partID={0};
+p1: particleFilter, partIDToStop={0};
