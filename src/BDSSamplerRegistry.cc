@@ -158,7 +158,7 @@ std::vector<std::pair<G4String, G4double> > BDSSamplerRegistry::GetUniquePlaneNa
   std::vector<std::pair<G4String, G4double> > result;
   for (const auto& info : infos)
     {
-      if (info.Type() == BDSSamplerType::sphere)
+      if (info.Type() == BDSSamplerType::plane)
         {result.emplace_back(std::make_pair(info.UniqueName(), info.SPosition()));}
     }
   return result;
