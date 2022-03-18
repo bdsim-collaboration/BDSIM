@@ -374,6 +374,10 @@ in the field definition in either :code:`magneticReflection` or :code:`electricR
 +-----------------------+------------------------------------------+
 | reflectyzdipole       | equivalent to `reflectx`                 |
 +-----------------------+------------------------------------------+
+| reflectzsolenoid      | Reflect about :math:`z = 0`. Also, for   |
+|                       | :math:`z < 0`, flip the x and y          |
+|                       | components of the field                  |
++-----------------------+------------------------------------------+
 
 * \* See pictorial representation below
 
@@ -398,7 +402,7 @@ simplify things.
 	    the page and the the coordinate system is right-handed.
 
 
-**reflectxydipole**
+**reflectxzdipole**
 
 .. figure:: figures/reflectxzdipole.jpg
 	    :width: 100%
