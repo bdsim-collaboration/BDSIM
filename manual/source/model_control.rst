@@ -1534,7 +1534,7 @@ Examples: ::
 |                              | alone will not give an accurate representation of the distribution     |
 |                              | after a crystal as EM physics is required. Multiple scattering should  |
 |                              | not be used in combination with this however to achieve the correct    |
-|                              | results.                                                               |
+|                              | results. Only available for Geant4 V10.4 onwards.                      |
 +------------------------------+------------------------------------------------------------------------+
 | cherenkov                    | Provides Cherenkov radiation for all charged particles. Issued by the  |
 |                              | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
@@ -1667,6 +1667,7 @@ Examples: ::
 |                              | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
 +------------------------------+------------------------------------------------------------------------+
 | radioactivation              | Use G4Radioactivation process. Atomic de-excitation disabled for now.  |
+|                              | Only available for Geant4 V10.4 onwards.                               |
 +------------------------------+------------------------------------------------------------------------+
 | shielding                    | `G4HadronPhysicsShielding`. Inelastic hadron physics suitable for      |
 |                              | shielding applications.                                                |
