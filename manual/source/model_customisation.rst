@@ -660,6 +660,9 @@ centre the view nicely and make a quadrupole transparent.
   fields with the "magma" colour scale.
 * Both electric and magnetic fields may be visualised as defined by the query object.
 * A query done in the visualiser will not be written to file.
+* If the magnitude of the field is 0 at the given query point, a small circular point
+  is drawn instead of an arrow.
+* The arrow length does not depend on the field magnitude - only the spacing of the query points.
 
 Field Map Preparation
 ^^^^^^^^^^^^^^^^^^^^^
@@ -756,6 +759,10 @@ The following parameters can be used in a query object:
 +-------------------------+------------------------------------------------+
 | overwriteExistingFiles  | Whether to overwrite existing output files     |
 |                         | - default is True (1)                          |
++-------------------------+------------------------------------------------+
+| drawZeroValuePoints     | (1 or 0) whether to draw a point even if the   |
+|                         | queried field value is 0 in magnitude. Default |
+|                         | is true.                                       |
 +-------------------------+------------------------------------------------+
 | printTransform          | (1 or 0) whether to print out the calculated   |
 |                         | transform from the origin to the global        |
