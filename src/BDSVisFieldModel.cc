@@ -53,10 +53,11 @@ BDSVisFieldModel::BDSVisFieldModel(const std::vector<BDSFieldQueryInfo*>& querie
   
   auto bFieldColour = BDSColourScaleViridis();
   pointVisB = new G4VisAttributes(bFieldColour.GetValue(0));
-  pointVisB->SetForceSolid();
   auto eFieldColour = BDSColourScaleMagma();
   pointVisE = new G4VisAttributes(eFieldColour.GetValue(0));
-  pointVisE->SetForceSolid();
+  
+  pointVisB->SetForceSolid(true); // no default argument for g4 V < 10.3, so specify true always
+  pointVisE->SetForceSolid(true);
 }
 
 BDSVisFieldModel::~BDSVisFieldModel()
