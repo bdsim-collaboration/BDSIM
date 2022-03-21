@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VProcess.hh"
 
 #include <cmath>
+#include <limits>
 #include <vector>
 
 G4int BDSWrapperMuonSplitting::nCallsThisEvent = 0;
@@ -85,7 +86,11 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
   if (nSecondaries == 0)
     {return particleChange;}
   
-  if (excludeWeight1Particles && (track.GetWeight() > muonSplittingExclusionWeight))
+  // if weight == 1
+  if (excludeWeight1Particles && std::abs(track.GetWeight() - 1.0) > std::numeric_limits<double>::epsilon())
+    {return particleChange;}
+  
+  if (track.GetWeight() > muonSplittingExclusionWeight)
     {return particleChange;}
   
   G4bool muonPresent = false;
