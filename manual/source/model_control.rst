@@ -3716,14 +3716,16 @@ Particle Data Group ("PDG") integer ID number. PDG IDs are discussed here :ref:`
 example is: ::
 
   sample, range=<element_name>, partID={11,12,13,14};
+  csample, range=<element_name>, partID={11,12,13,14};
 
 Anti-particles must be explicitly specified: ::
 
   sample, range=<element_name>, partID={11,-11};
 
-This can be applied to all samplers as well. ::
+This can be applied to all samplers as well (csample alternative shown). ::
 
   sample, all, partID={13,-13};
+  csample, all, partID={13,-13};
 
 Any sampler specified after this will be overwritten. ::
 
@@ -3757,8 +3759,8 @@ The user may place a sampler anywhere in the model with any orientation. This is
 `samplerplacement`. The sampler may have the following forms:
 
 * A **plane** sampler (circular or rectangular shape)
-* A **sphere** sampler
 * A **cylinder** sampler
+* A **sphere** sampler
 
 A `samplerplacement` will record all particles travelling in **any direction** through it.
 A branch in the Event output will be created with the name of the `samplerplacement`. The
