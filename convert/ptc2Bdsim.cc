@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 	  double p = nominalMomentum*(1. + data.pt);
 	  double E = std::sqrt(std::pow(p,2) + std::pow(mass,2));
 	  lSampler->energy.push_back(E);
-	  
+	  lSampler->p.push_back(p);
 	  lSampler->x.push_back(data.x);
 	  lSampler->y.push_back(data.y);
 	  lSampler->z = 0;                   // local z always 0
