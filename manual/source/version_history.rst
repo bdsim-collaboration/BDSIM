@@ -252,7 +252,7 @@ Bug Fixes
 
 * GDML auto-colouring now works for G4 materials correctly. The name searching was broken. As a
   reminder, any material without a specific colour will default to a shade of grey according to
-  its density.
+  its density. The auto-colouring is also fixed when preprocessing is used (the default).
 * Fix visualisation of loaded GDML container volume.
   
 **General**
