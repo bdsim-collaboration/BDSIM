@@ -529,8 +529,8 @@ G4bool BDS::WillIntersect(const G4double& angleIn,
 {
   // Calculate the z component of triangle with each angle and
   // axis along length.
-  G4double dzIn  = horizontalWidth * tan(angleIn);
-  G4double dzOut = horizontalWidth * tan(angleOut);
+  G4double dzIn  = horizontalWidth * std::tan(angleIn);
+  G4double dzOut = horizontalWidth * std::tan(angleOut);
   if (dzIn > length - dzOut)
     {return true;}
   else
