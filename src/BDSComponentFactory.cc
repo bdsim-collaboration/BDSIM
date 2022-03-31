@@ -700,9 +700,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 						       st,
 						       true,
 						       fieldTiltOffset);
-      
-      BDSFieldInfo* outerFieldInfo = new BDSFieldInfo( BDSFieldType::bmap3d, brho, BDSIntegratorType::g4classicalrk4, nullptr,true,G4Transform3D(),element->fieldOuter,BDSFieldFormat::bdsim3d);
-      
+
+      BDSFieldInfo *outerFieldInfo;
+
+      if (element->fieldOuter.empty())
+      {
+            outerFieldInfo = BDSComponentFactory::PrepareMagnetOuterFieldInfo(st,
+                                                                              BDSFieldType::dipole,
+                                                                              bpInfo,
+                                                                              mgInfo,
+                                                                              fieldTiltOffset,
+                                                                              integratorSet,
+                                                                              brho);
+      }else
+      {
+            outerFieldInfo = new BDSFieldInfo( BDSFieldType::bmap3d, brho, BDSIntegratorType::g4classicalrk4, nullptr,true,G4Transform3D(),element->fieldOuter,BDSFieldFormat::bdsim3d);
+
+      }
+
       return new BDSMagnetNonSplitOuter(BDSMagnetType::sectorbend, bpInfo, mgInfo, vacuumFieldInfo, outerFieldInfo,
 					false,element, st, brho,integratorSet, incomingFaceAngle,
 					outgoingFaceAngle, includeFringeFields, prevElement,nextElement);

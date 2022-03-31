@@ -212,6 +212,8 @@ public:
   /// or more tolerant geometry is required (1um).
   static G4double lengthSafetyLarge;
 
+  inline G4int CurvilinearSplitNumber() const {return curvilinearSplitNumber;}
+
 protected:
   /// This calls BuildContainerLogicalVolume() and then sets the visual attributes
   /// of the container logical volume. This should be overridden by derived class
@@ -279,7 +281,9 @@ protected:
   BDSSimpleComponent* endPieceAfter;
 
   G4UserLimits* userLimits; ///< Cache of user limits.
-  
+
+  G4int curvilinearSplitNumber;
+
 private:
   /// Private default constructor to force use of provided constructors, which
   /// ensure an object meets the requirements for the rest of the construction
@@ -309,6 +313,7 @@ private:
   G4ThreeVector inputFaceNormal;  ///< Input face unit normal vector in incoming reference coordinate frame.
   G4ThreeVector outputFaceNormal; ///< Output face unit normal vector in outgoing reference coordinate frame.
   BDSFieldInfo* fieldInfo;        ///< Recipe for field that could overlay this whole component.
+
 };
 
 #endif

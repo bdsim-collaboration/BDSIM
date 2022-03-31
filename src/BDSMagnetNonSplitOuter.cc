@@ -85,6 +85,12 @@ BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType           typeIn,
   vacuumFieldInfo = vacuumFieldInfoIn;
   outerFieldInfo  = outerFieldInfoIn;
   namedVacuumVolumes = BDS::GetWordsFromString(G4String(element->namedVacuumVolumes));
+
+  // Calculate number of sbends to split parent into
+  G4int nSBends = BDS::CalculateNSBendSegments(arcLength, angle, incomingFaceAngle,
+                                                 outgoingFaceAngle);
+
+  curvilinearSplitNumber = nSBends;
 }
 
 
@@ -129,9 +135,50 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
   if (outerGDML) // the dynamic cast will only work if it's loaded as GDML//
       {
         vacuumVols = outerGDML->VacuumVolumes();
+
+        for (auto vol : vacuumVols)
+        {
+
+            G4String name = vol->GetName();
+            const std::set<G4VPhysicalVolume *> &physicalVols = outerGDML->GetAllPhysicalVolumes();
+
+            for (auto volp : physicalVols)
+            {
+                if (name == volp->GetLogicalVolume()->GetName())
+                {
+                    G4RotationMatrix *mt = volp->GetRotation();
+                    if (!mt){
+                        mt = new G4RotationMatrix();
+                    }
+
+                    CLHEP::Hep3Vector v = volp->GetTranslation();
+
+                    G4Transform3D *transform = new G4Transform3D(*mt, v);
+
+                    outerFieldInfo->SetTransform(*transform);
+
+
+                }
+            }
+
+        }
+
+        // determine key for this specific magnet instance
+        G4String scalingKey = DetermineScalingKey(magnetType);
+
+        BDSMagnetStrength* scalingStrength = vacuumFieldInfo ? vacuumFieldInfo->MagnetStrength() : nullptr;
+        // Attach to the container but don't propagate to daughter volumes. This ensures
+        // any gap between the beam pipe and the outer also has a field.
+        BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
+                                                                  containerLogicalVolume,
+                                                                  false,
+                                                                  scalingStrength,
+                                                                  scalingKey);
+
         BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
                                                                   vacuumVols,
                                                                   true);
+
       }
 
   
@@ -240,9 +287,4 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 void BDSMagnetNonSplitOuter::Build()
 {
   SBendWithSingleOuter(element->name);
-  
-  if (!(element->fieldOuter.empty()) && !(element->extractOuterContainer)) // check when to build the outer field
-    {
-      BuildOuterField(); // must be done when the containerLV exists
-    }
 }
