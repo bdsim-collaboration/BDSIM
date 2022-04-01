@@ -75,9 +75,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
 #include "BDSIntegratorDipoleFringe.hh"
+#include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSMagnetGeometryType.hh"
+#include "BDSMagnetNonSplitOuter.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMaterials.hh"
@@ -681,11 +682,54 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4double incomingFaceAngle = IncomingFaceAngle(element);
   G4double outgoingFaceAngle = OutgoingFaceAngle(element);
 
-  auto sBendLine = BDS::BuildSBendLine(elementName, element, st, brho, integratorSet,
-                                       incomingFaceAngle, outgoingFaceAngle,
-				       includeFringeFields, prevElement, nextElement);
-  
-  return sBendLine;
+  if (element->dontSplitOuter && !(element->magnetGeometryType.empty()))
+    {
+      const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
+      auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle, -outgoingFaceAngle);
+      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element,
+								-incomingFaceAngle,
+								-outgoingFaceAngle,
+								bpInfo, yokeOnLeft);
+
+      G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
+      BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
+      
+      BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::dipolequadrupole,
+						       brho,
+						       intType,
+						       st,
+						       true,
+						       fieldTiltOffset);
+
+      BDSFieldInfo *outerFieldInfo;
+
+      if (element->fieldOuter.empty())
+      {
+            outerFieldInfo = BDSComponentFactory::PrepareMagnetOuterFieldInfo(st,
+                                                                              BDSFieldType::dipole,
+                                                                              bpInfo,
+                                                                              mgInfo,
+                                                                              fieldTiltOffset,
+                                                                              integratorSet,
+                                                                              brho);
+      }else
+      {
+            outerFieldInfo = new BDSFieldInfo( BDSFieldType::bmap3d, brho, BDSIntegratorType::g4classicalrk4, nullptr,true,G4Transform3D(),element->fieldOuter,BDSFieldFormat::bdsim3d);
+
+      }
+
+      return new BDSMagnetNonSplitOuter(BDSMagnetType::sectorbend, bpInfo, mgInfo, vacuumFieldInfo, outerFieldInfo,
+					false,element, st, brho,integratorSet, incomingFaceAngle,
+					outgoingFaceAngle, includeFringeFields, prevElement,nextElement);
+    }
+  else if (element->dontSplitOuter && element->magnetGeometryType.empty())
+    {throw BDSException(__METHOD_NAME__, "no magnetGeometryType given.");}
+  else
+    {
+      return BDS::BuildSBendLine(elementName, element, st, brho, integratorSet,
+				 incomingFaceAngle, outgoingFaceAngle,
+				 includeFringeFields, prevElement, nextElement);
+    }
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
@@ -2135,6 +2179,11 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   
   // horizontal width
   info->horizontalWidth = PrepareHorizontalWidth(el, defaultHorizontalWidth);
+
+  info->extractOuterContainer = el->extractOuterContainer;
+  info->includeGdmlWorldVolume = el->includeGdmlWorldVolume;
+  info->namedVacuumVolumes = BDS::GetWordsFromString(G4String(el->namedVacuumVolumes));
+  info->containerRadius = el->containerRadius;
 
   // inner radius of magnet geometry - TODO when poles can be built away from beam pipe
   info->innerRadius = beamPipe->IndicativeRadius();

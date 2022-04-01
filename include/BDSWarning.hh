@@ -30,8 +30,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 namespace BDS
 {
   void Warning(const G4String& message);
+
+  /// This will only warn if activeThread is true in the multithreaded case.
   void Warning(const G4String& methodName,
-	       const G4String& message);
+	       const G4String& message,
+	       bool activeThread = true);
 }
 
 #endif

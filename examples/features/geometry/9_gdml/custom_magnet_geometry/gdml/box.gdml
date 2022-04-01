@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define/>
+	<materials/>
+	<solids>
+		<box name="ws_1" x="199.1" y="199.1" z="19.91" lunit="mm"/>
+		<box name="all_box" x="170.1" y="170.1" z="19.92" lunit="mm"/>
+		<box name="inner_box" x="160.1" y="160.1" z="19.92" lunit="mm"/>
+		<subtraction name="box">
+			<first ref="all_box"/>
+			<second ref="inner_box"/>
+		</subtraction>
+	</solids>
+	<structure>
+		<volume name="box_l">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="box"/>
+		</volume>
+		<volume name="wl">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="ws_1"/>
+			<physvol name="box_p">
+				<volumeref ref="box_l"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wl"/>
+	</setup>
+</gdml>

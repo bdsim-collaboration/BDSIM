@@ -126,6 +126,10 @@ namespace GMAD
     double xsizeLeft, xsizeRight; ///< individual collimator jaw half widths
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
+    bool dontSplitOuter;
+    bool extractOuterContainer;
+    bool includeGdmlWorldVolume;
+    double containerRadius;
 
     // screen parameters
     double tscint; ///<thickness of scintillating part of screen

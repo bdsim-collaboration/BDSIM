@@ -112,7 +112,10 @@ Parameters::Parameters()
   setMap["xsizeRight"]         = false;
   setMap["offsetX"]            = false;
   setMap["offsetY"]            = false;
-  
+  setMap["dontSplitOuter"]     = false;
+  setMap["extractOuterContainer"] = false;
+  setMap["includeGdmlWorldVolume"] = false;
+  setMap["containerRadius"]    = false;
   setMap["tscint"]             = false;
   setMap["twindow"]            = false;
   setMap["tmount"]             = false;

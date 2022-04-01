@@ -1,0 +1,16 @@
+s1: sbend, angle=0.12, l=1.6*m, dontSplitOuter=1, magnetGeometryType="gdml:gdml/box.gdml",namedVacuumVolumes ="", apertureType="";
+s2: sbend, angle=0.19, l=1.6*m, dontSplitOuter=1, magnetGeometryType="gdml:gdml/sbend.gdml",namedVacuumVolumes ="inner_pipe_l", apertureType="";
+s3: sbend, angle=0.19, l=1.6*m, dontSplitOuter=1, magnetGeometryType="gdml:gdml/sbend.gdml",namedVacuumVolumes ="inner_pipe_l", apertureType="none";
+
+
+l1: line = (s3);
+use,period=l1;
+
+beam, particle="e-",
+      energy=2.0*GeV,
+      distrType="userfile",
+      distrFile="ebeam_sbend.dat",
+      distrFileFormat="x[m]:y[m]:z[m]:xp[rad]:zp[rad]";
+
+option, stopSecondaries=1,
+        maximumStepLength = 1*cm;

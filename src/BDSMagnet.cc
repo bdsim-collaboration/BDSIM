@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldInfo.hh"
 #include "BDSIntegratorType.hh"
 #include "BDSMagnetGeometryType.hh"
+#include "BDSGeometryExternal.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetOuterFactory.hh"
@@ -32,6 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetType.hh"
 #include "BDSMagnet.hh"
 #include "BDSUtilities.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
@@ -215,9 +218,6 @@ void BDSMagnet::BuildOuter()
       RegisterDaughter(outer);
       InheritExtents(container, contOffset); // update extents
 
-      // Only clear after extents etc have been used
-      outer->ClearMagnetContainer();
-      
       endPieceBefore = outer->EndPieceBefore();
       endPieceAfter  = outer->EndPieceAfter();
 
@@ -279,10 +279,8 @@ void BDSMagnet::BuildContainerLogicalVolume()
   if (outer)
     {//build around that
       // container solid will have been updated in BuildOuter if the outer exists
-      containerLogicalVolume = new G4LogicalVolume(containerSolid,
-						   emptyMaterial,
-						   name + "_container_lv");
-      
+      containerLogicalVolume = outer->GetMagnetContainer()->GetContainerLogicalVolume();
+      outer->ClearMagnetContainer();
       // user limits - provided by BDSAcceleratorComponent
       containerLogicalVolume->SetUserLimits(userLimits);
       containerLogicalVolume->SetVisAttributes(containerVisAttr);
@@ -301,7 +299,7 @@ void BDSMagnet::BuildContainerLogicalVolume()
 
 void BDSMagnet::PlaceComponents()
 {
-  if (placeBeamPipe)
+  if (placeBeamPipe && !(magnetOuterInfo->extractOuterContainer) && (beamPipeInfo->beamPipeType != BDSBeamPipeType::none))
     {
       G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();
       // place beampipe
@@ -312,27 +310,75 @@ void BDSMagnet::PlaceComponents()
 						    containerLogicalVolume,  // its mother  volume
 						    false,                   // no boolean operation
 						    0,                       // copy number
-                                                    checkOverlaps);
+                                                    false);
+
+      if (beamPipePV->CheckOverlaps() && checkOverlaps)
+        {throw BDSException(__METHOD_NAME__, "Overlapping detected for the beampipe elements");}
       
       RegisterPhysicalVolume(beamPipePV);
     }
 
-  if (outer)
+  if (outer && !(magnetOuterInfo->extractOuterContainer))
     {
-      //G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
-      G4ThreeVector outerOffset = outer->GetPlacementOffset();
+      // place the outer logical volume into the container logical volume
+      if (magnetOuterInfo->geometryType != BDSMagnetGeometryType::external or magnetOuterInfo->includeGdmlWorldVolume)
+	{
+	  G4ThreeVector outerOffset = outer->GetPlacementOffset();
+	  // place outer volume
+	  G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                                    // rotation
+							   outerOffset,                                      // at normally (0,0,0)
+							   outer->GetContainerLogicalVolume(), // its logical volume
+							   name+"_outer_pv",                         // its name
+							   containerLogicalVolume,                          // its mother  volume
+							   false,                                    // no boolean operation
+							   0,                                       // copy number
+							   false);
+	  
+	  if (magnetOuterPV->CheckOverlaps() && checkOverlaps)
+	    {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
+	  RegisterPhysicalVolume(magnetOuterPV);
+	}
       
-      // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                // rotation
-						       outerOffset,            // at normally (0,0,0)
-						       outer->GetContainerLogicalVolume(), // its logical volume
-						       name+"_outer_pv",       // its name
-						       containerLogicalVolume, // its mother  volume
-						       false,                  // no boolean operation
-						       0,                      // copy number
-                                                       checkOverlaps);
+      // place the elements inside the external outer logical volume (world volume) inside the container logical volume
+      if (magnetOuterInfo->geometryType == BDSMagnetGeometryType::external)
+	{
+          auto gdml_world = outer->GetContainerLogicalVolume();
+          for (G4int j = 0; j < (G4int)gdml_world->GetNoDaughters(); j++)
+	    {
+              const auto& pv = gdml_world->GetDaughter(j);
+              G4String placementName = pv->GetName() + "_pv";
+              std::cout << "placing " << placementName << std::endl;
+              G4int copyNumber = 1;
+	      
+              if (!magnetOuterInfo->includeGdmlWorldVolume)
+		{
+                  auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(),  // placement transform
+                                              pv->GetLogicalVolume(),                   // volume to be placed
+                                              placementName,                            // placement name
+                                              containerLogicalVolume,                   // volume to place it in
+                                              false,                             // no boolean operation
+                                              copyNumber,                               // copy number
+                                              false);                           // overlap checking
+		  
+                  if (vv->CheckOverlaps() && checkOverlaps)
+		    {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
+		  
+                  RegisterPhysicalVolume(vv);
+		}
+	    }
 
-      RegisterPhysicalVolume(magnetOuterPV);
+        // place the vacuum field inside the GDML logical volumes defined by namedVacuumVolumes
+        BDSGeometryExternal* outerGDML = outer->ExternalGeometry();
+        std::set<G4LogicalVolume*> vacuumVols;
+
+        if (outerGDML) // the dynamic cast will only work if it's loaded as GDML//
+        {
+            vacuumVols = outerGDML->VacuumVolumes();
+            BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+                                                                      vacuumVols,
+                                                                      true);
+        }
+	}
     }
 }
 

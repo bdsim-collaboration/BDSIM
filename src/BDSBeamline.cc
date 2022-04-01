@@ -91,10 +91,10 @@ BDSBeamline::~BDSBeamline()
   for (auto it : *this)
     {delete it;}
   // special case, if empty then previousReferenceRotationEnd is not used in the first element
-  if (size()==0)
+  if (empty())
     {delete previousReferenceRotationEnd;}
   // components map goes out of scope - elements are already deleted - no need to
-  // explicitly delete
+  // explicitly delete it
 }
 
 void BDSBeamline::PrintAllComponents(std::ostream& out) const
