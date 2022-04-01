@@ -671,7 +671,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   // quadrupole component
   if (BDS::IsFinite(element->k1))
-    {(*st)["k1"] = element->scaling*element->k1 / CLHEP::m2;}
+    {(*st)["k1"] = element->scaling*element->k1;}
 
 #ifdef BDSDEBUG
   G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
@@ -711,7 +711,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
-    {(*st)["k1"] = element->scaling * element->k1 / CLHEP::m2;}
+    {(*st)["k1"] = element->scaling * element->k1;}
 
   // geometric face angles (can be different from specification depending on integrator set used)
   G4double incomingFaceAngle = IncomingFaceAngle(element);
