@@ -148,12 +148,38 @@ void Element::PublishMembers()
   publish("ysizeOut",         &Element::ysizeOut);
   publish("xsizeLeft",        &Element::xsizeLeft);
   publish("xsizeRight",       &Element::xsizeRight);
-  publish("offsetX",     &Element::offsetX);
-  publish("offsetY",     &Element::offsetY);
+  publish("tilt",             &Element::tilt);
+  publish("offsetX",          &Element::offsetX);
+  publish("offsetY",          &Element::offsetY);
   publish("dontSplitOuter",   &Element::dontSplitOuter);
   publish("extractOuterContainer", &Element::extractOuterContainer);
   publish("includeGdmlWorldVolume" , &Element::includeGdmlWorldVolume);
   publish("containerRadius",  &Element::containerRadius);
+  
+  publish("x",           &Element::xdir);
+  alternativeNames["x"] = "xdir";
+  publish("y",           &Element::ydir);
+  alternativeNames["y"] = "ydir";
+  publish("z",           &Element::zdir);
+  alternativeNames["z"] = "zdir";
+  publish("xdir",        &Element::xdir);
+  publish("ydir",        &Element::ydir);
+  publish("zdir",        &Element::zdir);
+  publish("phi",         &Element::phi);
+  publish("theta",       &Element::theta);
+  publish("psi",         &Element::psi);
+  publish("axisX",       &Element::axisX);
+  publish("axisY",       &Element::axisY);
+  publish("axisZ",       &Element::axisZ);
+  publish("axisAngle",   &Element::axisAngle);
+  
+  publish("region",      &Element::region);
+  publish("fieldOuter",  &Element::fieldOuter);
+  publish("fieldVacuum", &Element::fieldVacuum);
+  publish("fieldAll",    &Element::fieldAll);
+  publish("bmap",        &Element::fieldAll);
+  alternativeNames["bmap"] = "fieldAll";
+  publish("waveLength",  &Element::waveLength);
 
   // screen parameters
   publish("tscint",          &Element::tscint);

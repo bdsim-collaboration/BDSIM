@@ -116,7 +116,6 @@ Parameters::Parameters()
   setMap["extractOuterContainer"] = false;
   setMap["includeGdmlWorldVolume"] = false;
   setMap["containerRadius"]    = false;
-  
   setMap["tscint"]             = false;
   setMap["twindow"]            = false;
   setMap["tmount"]             = false;

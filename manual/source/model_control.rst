@@ -2590,7 +2590,7 @@ described in :ref:`tunnel-geometry`.
 |                                  | this behaviour.                                       |
 +----------------------------------+-------------------------------------------------------+
 | thinElementLength                | The length of all thinmultipoles and dipole           |
-|                                  | fringefields in a lattice (default 1e-6) [m]          |
+|                                  | fringefields in a lattice (default 1e-7) [m]          |
 +----------------------------------+-------------------------------------------------------+
 | tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
 |                                  | should be killed or not (default = false)             |
