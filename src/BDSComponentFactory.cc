@@ -2182,7 +2182,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 
   info->extractOuterContainer = el->extractOuterContainer;
   info->includeGdmlWorldVolume = el->includeGdmlWorldVolume;
-  info->namedVacuumVolumes = BDS::GetWordsFromString(G4String(el->namedVacuumVolumes));
+  info->namedVacuumVolumes = BDS::SplitOnWhiteSpace(G4String(el->namedVacuumVolumes));
   info->containerRadius = el->containerRadius;
 
   // inner radius of magnet geometry - TODO when poles can be built away from beam pipe

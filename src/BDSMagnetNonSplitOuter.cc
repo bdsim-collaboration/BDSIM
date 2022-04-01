@@ -84,7 +84,7 @@ BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType           typeIn,
   magnetOuterInfo = magnetOuterInfoIn;
   vacuumFieldInfo = vacuumFieldInfoIn;
   outerFieldInfo  = outerFieldInfoIn;
-  namedVacuumVolumes = BDS::GetWordsFromString(G4String(element->namedVacuumVolumes));
+  namedVacuumVolumes = BDS::SplitOnWhiteSpace(G4String(element->namedVacuumVolumes));
 
   // Calculate number of sbends to split parent into
   G4int nSBends = BDS::CalculateNSBendSegments(arcLength, angle, incomingFaceAngle,
@@ -220,7 +220,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 	      G4Transform3D* placementTransform = el->GetPlacementTransform();
 	      G4int copyNumber = i;
 	      auto vv = new G4PVPlacement(*placementTransform,             // placement transform
-					  el->GetContainerLogicalVolume(), // volume to be placed
+					  el->GetAcceleratorComponent()->GetContainerLogicalVolume(), // volume to be placed
 					  placementName,                   // placement name
 					  containerLogicalVolume,          // volume to place it in
 					  false,                           // no boolean operation
