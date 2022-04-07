@@ -205,6 +205,10 @@ Bug Fixes
 * Fix a bug in field map loading where a space was before the "!" character the columns
   wouldn't be parsed correctly.
 * Fix BDSIM field map format :code:`loopOrder` documentation. The variable can be either `xyzt` or `tzyx`.
+* The quadrupole field in an sbend or rbend with a k1 value specified was a factor of 1e6 too
+  low due to the placement of units. The integrator for tracking (which ignores the field) was
+  correct and still is, but the back up field used for non-paraxial particles had the wrong
+  effective k1.
 
 **Geometry**
   
