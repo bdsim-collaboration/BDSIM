@@ -203,7 +203,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String      nameIn,
 				 lengthIn, width, height);
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::ComwmonFinalConstruction(G4String    nameIn,
+BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CommonFinalConstruction(G4String    nameIn,
 								    G4Material* vacuumMaterialIn,
 								    G4Material* beamPipeMaterialIn,
 								    G4double    lengthIn,
