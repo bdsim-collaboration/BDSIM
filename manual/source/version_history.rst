@@ -218,7 +218,8 @@ Bug Fixes
 * Fix missing magnet coil end pieces despite being available space when the sequence
   is a magnet, drift, element, or the reverse.
 * Fix overlaps with various parameter combinations for an octagonal beam / aperture shape.
-
+* Fixed issued where sections of an angled dipole were shorter than their containers, resulting in visual gaps
+  in the geometry.
 
 **Output**
 
