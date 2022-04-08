@@ -159,7 +159,7 @@ General Updates
 * Print out extent of loaded world when using an external geometry file.
 * **EMD** physics has a minimum applicable kinetic energy of 1 MeV to prevent crashes in Geant4.
 * Optional executable argument added to ptc2bdsim to control ROOT split-level of sampler branches. Same
-  functionality as the BDSIM option `samplersSplitLevel`.
+  functionality as the BDSIM option :code:`samplersSplitLevel`.
 
 Bug Fixes
 ---------
@@ -254,6 +254,12 @@ Bug Fixes
   speed of some events with large numbers of tracks.
 * Fix lack of user limits for RF cavity geometry.
 * Fix maximum step length user limit for externally loaded geometry.
+* Fix logic of building thin dipole fringe elements when using non-matrix integrator sets. As the
+  rotated poleface geometry will be constructed in such circumstances, the thin integrated pole face kick
+  is now not be applied as well. If finite fringe field quantities are specified, the thin elements will be built
+  but will only apply the fringe kicks and not the pole face effects. If using a non-matrix integrator set
+  and the option :code:`buildPoleFaceGeometry` is specified as false, thin pole face kicks will be applied.
+
 
 **Visualisation**
 
