@@ -76,6 +76,7 @@ BDSOutputLoader::BDSOutputLoader(const G4String& filePath):
     {throw BDSException(__METHOD_NAME__, "Invalid file \"" + filePath + "\" - doesn't contain beam Tree");}
   localBeam = new BDSOutputROOTEventBeam();
   beamTree->SetBranchAddress("Beam.", &localBeam);
+  beamTree->GetEntry(0);
 
   // set up local structure copies.
   optionsTree = static_cast<TTree*>(file->Get("Options"));
@@ -83,6 +84,7 @@ BDSOutputLoader::BDSOutputLoader(const G4String& filePath):
     {throw BDSException(__METHOD_NAME__, "Invalid file \"" + filePath + "\" - doesn't contain options structure.");}
   localOptions = new BDSOutputROOTEventOptions();
   optionsTree->SetBranchAddress("Options.", &localOptions);
+  optionsTree->GetEntry(0);
   
   eventTree = static_cast<TTree*>(file->Get("Event"));
   localEventSummary = new BDSOutputROOTEventInfo();
