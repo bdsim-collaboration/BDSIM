@@ -664,3 +664,40 @@ G4double BDS::Rigidity(G4double momentumMagnitude,
 {
   return momentumMagnitude / CLHEP::GeV / BDS::cOverGeV / charge;
 }
+
+G4double BDS::CalculateSafeAngledVolumeLength(G4ThreeVector inputfaceIn,
+                                              G4ThreeVector outputfaceIn,
+                                              G4double length,
+                                              G4double containerWidth,
+                                              G4double containerHeight)
+{
+  G4double angleIn = inputfaceIn.angle();
+  G4double angleOut = outputfaceIn.angle();
+  return BDS::CalculateSafeAngledVolumeLength(angleIn, angleOut, length, containerWidth, containerHeight);
+}
+
+G4double BDS::CalculateSafeAngledVolumeLength(G4double angleIn,
+                                              G4double angleOut,
+                                              G4double length,
+                                              G4double containerWidth,
+                                              G4double containerHeight)
+{
+  G4double sLength = length;
+  if (!BDS::IsFinite(containerHeight))
+    {containerHeight = containerWidth;}
+
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
+    {
+      // In the case of angled faces, calculate a length so that the straight solids
+      // used in intersection are long enough to reach the edges of the angled faces.
+      // Could simply do 2x length, but for short dipole sections with strongly angled
+      // faces this doesn't work. Calculate extent along z for each angled face. This
+      // is called the 'safe' length -> sLength
+      G4double hypotenuse = std::hypot(containerWidth, containerHeight);
+      G4double dzIn = std::tan(std::abs(angleIn)) * 1.2 * hypotenuse; // 20% over estimation for safety
+      G4double dzOut = std::tan(std::abs(angleOut)) * 1.2 * hypotenuse;
+      // take the longest of different estimations (2x and 1.5x + dZs)
+      sLength = std::max(2 * length, 1.5 * length + dzIn + dzOut);
+    }
+  return sLength;
+}
