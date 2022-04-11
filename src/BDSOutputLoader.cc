@@ -36,7 +36,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TTree.h"
 
 
-BDSOutputLoader::BDSOutputLoader(G4String filePath):
+BDSOutputLoader::BDSOutputLoader(const G4String& filePath):
   dataVersion(-1),
   badFilePath(true),
   rootEventFile(false),
