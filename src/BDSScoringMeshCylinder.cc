@@ -31,8 +31,9 @@ BDSScoringMeshCylinder::BDSScoringMeshCylinder(const G4String&          name,
     BDSScoringMeshCylinder(name, placementTransform.getTranslation(), placementTransform.getRotation())
 {
   // size of the scoring mesh
-  scorerSize[0] = recipe.ScoringMeshR();
-  scorerSize[1] = recipe.ScoringMeshZ();
+  scorerSize[0] = 0;  // RMin
+  scorerSize[1] = recipe.ScoringMeshR(); // RMax
+  scorerSize[2] = recipe.ScoringMeshZ(); // ZSize
   SetSize(scorerSize);
 
   // divisions of the scoring mesh
