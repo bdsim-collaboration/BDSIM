@@ -40,7 +40,16 @@ BDSSamplerRegistry* BDSSamplerRegistry::Instance()
 
 BDSSamplerRegistry::BDSSamplerRegistry():
   numberOfEntries(0)
-{;}
+{
+  samplerTypeToCategory = { {BDSSamplerType::plane,           BDSSamplerType::plane},
+                            {BDSSamplerType::cylinder,        BDSSamplerType::cylinder},
+                            {BDSSamplerType::cylinderforward, BDSSamplerType::cylinder},
+                            {BDSSamplerType::sphere,          BDSSamplerType::sphere},
+                            {BDSSamplerType::sphereforward,   BDSSamplerType::sphere} };
+  samplerIDsPerType[BDSSamplerType::plane]    = std::vector<G4int>();
+  samplerIDsPerType[BDSSamplerType::cylinder] = std::vector<G4int>();
+  samplerIDsPerType[BDSSamplerType::sphere]   = std::vector<G4int>();
+}
 
 BDSSamplerRegistry::~BDSSamplerRegistry()
 {
@@ -79,6 +88,9 @@ G4int BDSSamplerRegistry::RegisterSampler(BDSSamplerPlacementRecord& info)
 
   G4int index = numberOfEntries; // copy the number of entries / the index of this entry
   numberOfEntries++;
+  
+  // cache the ID for this type of sampler
+  samplerIDsPerType[samplerTypeToCategory[info.Type()]].push_back(index);
   return index;
 }
 
