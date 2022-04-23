@@ -57,12 +57,12 @@ void BDSElement::Build()
   BuildUserLimits();
   BuildContainerLogicalVolume(); // pure virtual provided by derived class
   AttachUserLimits();
-  // we purposively don't attach vis attributes to the container here as it would overwrite ones from geometry laoding
+  // we purposively don't attach vis attributes to the container here as it would overwrite ones from geometry loading
 }
 
 void BDSElement::BuildContainerLogicalVolume()
 {
-  // The horizontalWidth here is a suggested horizontalWidth for the factory. Each subfactory may treat this
+  // The horizontalWidth here is a suggested horizontalWidth for the factory. Each sub-factory may treat this
   // differently.
   BDSSDType sensitivityToAttach = markAsCollimator ? BDSSDType::collimatorcomplete : BDSSDType::energydep;
   geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr, autoColourGeometry,

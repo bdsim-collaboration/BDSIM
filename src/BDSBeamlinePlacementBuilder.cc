@@ -118,8 +118,6 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
 	}
       else
 	{// it's a bdsim-built component
-	  // component factory
-	  // factory->CreateComponent(parser->GetElement(placement.bdsimElement))
 	  const GMAD::Element* element = BDSParser::Instance()->GetPlacementElement(placement.bdsimElement);
 	  if (!element)
 	    {throw BDSException(__METHOD_NAME__, "no such element definition by name \"" + placement.bdsimElement + "\" found for placement.");}
