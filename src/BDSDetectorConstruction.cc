@@ -599,6 +599,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       
       BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(worldName,
 										worldGeometryFile,
+                    nullptr, // no field for the world
 										nullptr,
 										ac,
 										0, 0,
