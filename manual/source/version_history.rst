@@ -191,6 +191,7 @@ Bug Fixes
 
 **Fields**
 
+* Fix field maps being wrong if a GDML file was used multiple times with different fields.
 * Fix BDSIM-format field map loading with :code:`loopOrder> tzyx` in the header. It was not
   loaded correctly before. Also, there are corresponding fixes in the pybdsim package.
 * Fix lack of yoke fields for rbends.
@@ -211,7 +212,12 @@ Bug Fixes
   effective k1.
 
 **Geometry**
-  
+
+* Fix caching of loaded geometry. A loaded piece of geometry should only be reused (i.e. re-placed
+  rather than creating new logical volumes) if it will be used with the same field definition
+  (including none). If a different field is to be used on an already loaded piece of GDML it must
+  be reloaded again to create unique logical volumes as a logical volume can only have one field
+  definition. This fixes field maps being wrong if a GDML file was used multiple times with different fields.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.

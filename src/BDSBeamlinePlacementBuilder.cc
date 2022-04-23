@@ -93,8 +93,17 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
       
       if (geometrySpecified)
 	{// it's a geometryFile + optional field map placement
+	  hasAField = !placement.fieldAll.empty();
+	  BDSFieldInfo* fieldRecipe = nullptr;
+	  if (hasAField)
+	    {
+	      fieldRecipe = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(placement.fieldAll)));
+	      fieldRecipe->SetUsePlacementWorldTransform(true);
+	    }
+	  
 	  auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.name,
 								    placement.geometryFile,
+								    fieldRecipe,
 								    nullptr,
 								    placement.autoColour,
 								    0, 0,
@@ -106,12 +115,8 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
 	  chordLength = geom->GetExtent().DZ();
 	  comp = new BDSSimpleComponent(placement.name + "_" + geom->GetName(), geom, chordLength);
       
-	  hasAField = !placement.fieldAll.empty();
-	  BDSFieldInfo* fieldRecipe = nullptr;
 	  if (hasAField)
 	    {
-	      fieldRecipe = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(placement.fieldAll)));
-	      fieldRecipe->SetUsePlacementWorldTransform(true);
 	      comp->SetField(fieldRecipe);
 	      fieldPlacementName = comp->GetName() + "_" + fieldRecipe->NameOfParserDefinition();
 	    }

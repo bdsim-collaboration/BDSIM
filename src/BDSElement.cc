@@ -65,9 +65,16 @@ void BDSElement::BuildContainerLogicalVolume()
   // The horizontalWidth here is a suggested horizontalWidth for the factory. Each sub-factory may treat this
   // differently.
   BDSSDType sensitivityToAttach = markAsCollimator ? BDSSDType::collimatorcomplete : BDSSDType::energydep;
-  geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr, autoColourGeometry,
+  // The field isn't constructed here. It's registered through the base class SetField method in the component
+  // factory and built and attached in the Initialise() method of the base class. However, before Initialise()
+  // is called, the member fieldInfo will be set. We pass it in here to make sure we don't reuse the same
+  // geometry when a different field is required.
+  geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, fieldInfo,
+							   nullptr, autoColourGeometry,
 							   chordLength, horizontalWidth,
-							   &namedVacuumVolumes, true, sensitivityToAttach, stripOuterVolume, userLimits);
+							   &namedVacuumVolumes, true,
+							   sensitivityToAttach, stripOuterVolume,
+							   userLimits);
   
   if (!geometry)
     {throw BDSException(__METHOD_NAME__, "Error loading geometry in component \"" + name + "\"");}
