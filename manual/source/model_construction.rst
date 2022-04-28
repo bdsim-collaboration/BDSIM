@@ -191,9 +191,10 @@ Component Strength Scaling
 
 In the case of acceleration or energy degradation, the central energy of the beam may
 change. However, BDSIM constructs all fields with respect to the rigidity calculated
-from the particle species and the `energy` parameter in the beam definition (not `E0`,
-but `energy`). To easily scale the strengths, every beam line element has the parameter
-`scaling` that enables its strength to be directly scaled.
+from the particle species and the :code:`energy` parameter in the beam definition (i.e. not the
+central or mean energy of the beam :code:`E0`, but the design energy given by :code:`energy`).
+To easily scale the strengths, every beam line element has the parameter `scaling` that enables
+its strength to be directly scaled.
 
 In the case of a dipole, this scales the field but not the angle (the field may be calculated
 from the angle if none is specified). For example ::
@@ -203,12 +204,12 @@ from the angle if none is specified). For example ::
 
   sb1: sbend, l=2.5*m, angle=0.1;
   d1: drift, l=1*m;
-  cav1: rf, l=1*m, gradient=50, frequency=0;
+  cav1: rf, l=1*m, gradient=50*MV/m, frequency=0;
   sb2: sbend, l=2.5*m, angle=0.1, scaling=1.005;
 
   l1: line=(sb1,d1,cav1,d1,sb2,d1);
 
-In this example an rf cavity is used to accelerate the beam by 50 MeV (50 MeV / m for 1 m).
+In this example an rf cavity is used to accelerate the beam by 50 MeV (50 MV / m for 1 m).
 The particle passes through one bend, the cavity and then another. As the second bend is
 scaled (by a factor of (10 GeV + 50 MeV) / 10 GeV) = 1.005) a particle starting at (0,0) with
 perfect energy will appear at (0,0) after this lattice.
@@ -918,9 +919,10 @@ the edge effects are provided by default and are controllable with the option `i
 +================+===============================+==============+=====================+
 | `l`            | Length [m]                    | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
-| `E`            | Electric field strength       | 0            | Yes (or `gradient`) |
+| `E`            | Voltage [V] that will be      | 0            | Yes (or `gradient`) |
+|                | across the length `l`         |              |                     |
 +----------------+-------------------------------+--------------+---------------------+
-| `gradient`     | Field gradient [MV/m]         | 0            | Yes                 |
+| `gradient`     | Field gradient [V/m]          | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
 | `frequency`    | Frequency of oscillation (Hz) | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
@@ -933,6 +935,11 @@ the edge effects are provided by default and are controllable with the option `i
 | `cavityModel`  | Name of cavity model object   | ""           | No                  |
 +----------------+-------------------------------+--------------+---------------------+
 
+Either :code:`gradient` or :code:`E` should be specified. :code:`E` is given in Volts,
+and internally is divided by the length of the element (:code:`l`) to give the electric
+field in Volts/m. If :code:`gradient` is specified, this is already Volts/m and the length
+is not involved. The slight misnomer of `E` instead of say `voltage` is historical.
+
 .. note:: The design energy of the machine is not affected, so the strength and fields
 	  of components after an RF cavity in a lattice are calculated with respect to
 	  the design energy, the particle and therefore, design rigidity. The user should
@@ -944,7 +951,8 @@ the edge effects are provided by default and are controllable with the option `i
 	     deficiencies of the Geant4 visualisation system. The geometry exists
 	     and is fully functional.
 
-* The field is such that a positive E-field results in acceleration of the primary particle.
+* The field is such that a positive E-field results in acceleration of the primary particle
+  (depending on the primary particle charge).
 * The phase is calculated automatically such that zero phase results in the peak E-field at
   the centre of the component for its position in the lattice.
 * Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
@@ -974,7 +982,7 @@ the edge effects are provided by default and are controllable with the option `i
 Simple examples: ::
 
    rf1: rf, l=10*cm, E=10*MV, frequency=90*MHz, phase=0.02;
-   rf2: rf, l=10*cm, gradient=14*MV / m, frequency=450*MHz;
+   rf2: rf, l=10*cm, gradient=14*MV/m, frequency=450*MHz;
    rf3: rf, l=10*cm, E=10*MV, frequency=90*MHz, tOffset=3.2*ns;
 
 Rather than just a simple E-field, an electromagnetic field that is the solution to
