@@ -922,7 +922,7 @@ the edge effects are provided by default and are controllable with the option `i
 | `E`            | Voltage [V] that will be      | 0            | Yes (or `gradient`) |
 |                | across the length `l`         |              |                     |
 +----------------+-------------------------------+--------------+---------------------+
-| `gradient`     | Field gradient [V/m]          | 0            | Yes                 |
+| `gradient`     | Electric field [V/m]          | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
 | `frequency`    | Frequency of oscillation (Hz) | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
@@ -939,6 +939,10 @@ Either :code:`gradient` or :code:`E` should be specified. :code:`E` is given in 
 and internally is divided by the length of the element (:code:`l`) to give the electric
 field in Volts/m. If :code:`gradient` is specified, this is already Volts/m and the length
 is not involved. The slight misnomer of `E` instead of say `voltage` is historical.
+
+**Units** Since the value of `m` as a unit in GMAD is 1.0, it doesn't practically make a
+difference whether you write :code:`gradient=10*MV/m` or :code:`gradient=10*MV`. However,
+it is best to be explicit in units or none at all and assume the default ones.
 
 .. note:: The design energy of the machine is not affected, so the strength and fields
 	  of components after an RF cavity in a lattice are calculated with respect to
