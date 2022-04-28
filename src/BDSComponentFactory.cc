@@ -2502,9 +2502,9 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
     
   // scale factor to account for reduced body length due to fringe placement.
   G4double lengthScaling = cavityLength / (element->l * CLHEP::m);
-
+  
   if (BDS::IsFinite(el->gradient))
-    {(*st)["efield"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
+    {(*st)["efield"] = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
   else
     {(*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;}
   (*st)["efield"] /= lengthScaling;

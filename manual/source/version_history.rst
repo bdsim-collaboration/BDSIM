@@ -29,6 +29,11 @@ V1.7.0 - 2022 / XX / XX
 * New executable options :code:`--reference` and :code:`--citation` to display the citation
   in Bibtex syntax to cite BDSIM easily.
 * The default yoke fields have changed and are on average stronger (and more correct). See below.
+* :code:`gradient` in the :code:`rf` component has the units of **V/m** and not MV/m as was
+  written in the manual. In fact, it really was volts/m internally. So there should be no change
+  in behaviour, but the documentation has been fixed and is correct and consistent. The units
+  for :code:`E` have also been clarified as volts and that this voltage is assumed across the
+  length of the element :code:`l`.
 
 
 New Features
@@ -87,6 +92,7 @@ New Features
 * New materials (Inermet170, Inermet176, Inermet180, Copper-Diamond, MoGr).
 * Nicer visualisation colours for charged particles. Green for neutrals is by default now at
   20% opacity as there are usually so many gammas.
+* New units: `mV`, `GV`, `nrad`, `THz`.
 
 **Geometry**
 
