@@ -45,12 +45,14 @@ BDSElement::BDSElement(const G4String& nameIn,
   BDSAcceleratorComponent(nameIn, arcLengthIn, angleIn, markAsCollimatorIn ? "element-collimator" : "element"),
   horizontalWidth(horizontalWidthIn),
   geometryFileName(geometryIn),
-  namedVacuumVolumes(*namedVacuumVolumesIn),
   autoColourGeometry(autoColourGeometryIn),
   markAsCollimator(markAsCollimatorIn),
   stripOuterVolume(stripOuterVolumeIn),
   geometry(nullptr)
-{;}
+{
+  if (namedVacuumVolumesIn)
+    {namedVacuumVolumes = *namedVacuumVolumesIn;}
+}
 
 void BDSElement::Build()
 {
