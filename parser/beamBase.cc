@@ -116,6 +116,10 @@ BeamBase::BeamBase()
   haloYCutInner         = 0.0;
   haloXCutOuter         = 1e9;
   haloYCutOuter         = 1e9;
+  haloXpCutInner        = 0.0;
+  haloYpCutInner        = 0.0;
+  haloXpCutOuter        = 1e9;
+  haloYpCutOuter        = 1e9;
   haloPSWeightParameter = 1.0;
   haloPSWeightFunction  = "";
 

@@ -38,16 +38,19 @@ BDSBunchHalo::BDSBunchHalo():
   emitX(0.0), emitY(0.0),
   gammaX(0.0), gammaY(0.0),
   sigmaX(0.0), sigmaY(0.0),
+  sigmaXp(0.0), sigmaYp(0.0),
   haloNSigmaXInner(0.0), haloNSigmaXOuter(0.0),
   haloNSigmaYInner(0.0), haloNSigmaYOuter(0.0),
   haloXCutInner(0.0), 
   haloYCutInner(0.0),
   haloXCutOuter(0.0),
   haloYCutOuter(0.0),
+  haloXpCutInner(0.0),
+  haloYpCutInner(0.0),
+  haloXpCutOuter(0.0),
+  haloYpCutOuter(0.0),
   haloPSWeightParameter(0.0),
   weightFunction(""),  
-  haloNSigmaXpOuter(0.0),
-  haloNSigmaYpOuter(0.0),
   emitInnerX(0.0), emitInnerY(0.0),
   emitOuterX(0.0), emitOuterY(0.0),
   xMax(0.0), yMax(0.0),
@@ -82,6 +85,10 @@ void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
   haloYCutInner         = G4double(beam.haloYCutInner);  
   haloXCutOuter         = G4double(beam.haloXCutOuter);
   haloYCutOuter         = G4double(beam.haloYCutOuter);
+  haloXpCutInner        = G4double(beam.haloXpCutInner);
+  haloYpCutInner        = G4double(beam.haloYpCutInner);
+  haloXpCutOuter        = G4double(beam.haloXpCutOuter);
+  haloYpCutOuter        = G4double(beam.haloYpCutOuter);
   haloPSWeightParameter = G4double(beam.haloPSWeightParameter);
   weightFunction = G4String(beam.haloPSWeightFunction);
 
@@ -90,8 +97,8 @@ void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
 
   sigmaX                = std::sqrt(emitX * betaX);
   sigmaY                = std::sqrt(emitY * betaY);
-  haloNSigmaXpOuter     = std::sqrt(gammaX * emitX);
-  haloNSigmaYpOuter     = std::sqrt(gammaY * emitY);   
+  sigmaXp               = std::sqrt(gammaX * emitX);
+  sigmaYp               = std::sqrt(gammaY * emitY);
 
   emitInnerX = std::pow(haloNSigmaXInner, 2) * emitX;
   emitInnerY = std::pow(haloNSigmaYInner, 2) * emitY;
@@ -136,7 +143,11 @@ BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()
         (std::abs(dx)  < (haloXCutInner * sigmaX)) ||
 	(std::abs(dy)  < (haloYCutInner * sigmaY)) ||
         (std::abs(dx)  > (haloXCutOuter * sigmaX)) ||
-        (std::abs(dy)  > (haloYCutOuter * sigmaY)) )
+        (std::abs(dy)  > (haloYCutOuter * sigmaY)) ||
+        (std::abs(dxp)  < (haloXpCutInner * sigmaXp)) ||
+        (std::abs(dyp)  < (haloYpCutInner * sigmaYp)) ||
+        (std::abs(dxp)  > (haloXpCutOuter * sigmaXp)) ||
+        (std::abs(dyp)  > (haloYpCutOuter * sigmaYp)) )
       {
 	continue;
       }
@@ -240,10 +251,21 @@ void BDSBunchHalo::CheckParameters()
   if (haloYCutInner < 0)
     {throw BDSException(__METHOD_NAME__, "haloYCutInner < 0");}
 
-  if (haloXCutOuter < haloXCutInner)
+  if (haloXCutOuter <= haloXCutInner)
     {throw BDSException(__METHOD_NAME__, "haloXCutOuter must be greater than haloXCutInner!");}
 
-  if (haloYCutOuter < haloYCutInner)
+  if (haloYCutOuter <= haloYCutInner)
     {throw BDSException(__METHOD_NAME__, "haloYCutOuter must be greater than haloYCutInner!");}
 
+  if (haloXpCutInner < 0)
+    {throw BDSException(__METHOD_NAME__, "haloXpCutInner < 0");}
+
+  if (haloYpCutInner < 0)
+    {throw BDSException(__METHOD_NAME__, "haloYpCutInner < 0");}
+
+  if (haloXpCutOuter <= haloXpCutInner)
+    {throw BDSException(__METHOD_NAME__, "haloXpCutOuter must be greater than haloXpCutInner!");}
+
+  if (haloYpCutOuter <= haloYpCutInner)
+    {throw BDSException(__METHOD_NAME__, "haloYpCutOuter must be greater than haloYpCutInner!");}
 }

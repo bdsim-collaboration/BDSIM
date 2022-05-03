@@ -292,6 +292,10 @@ void Beam::PublishMembers()
   publish("haloYCutInner",         &Beam::haloYCutInner);
   publish("haloXCutOuter",         &Beam::haloXCutOuter);
   publish("haloYCutOuter",         &Beam::haloYCutOuter);
+  publish("haloXpCutInner",        &Beam::haloXpCutInner);
+  publish("haloYpCutInner",        &Beam::haloYpCutInner);
+  publish("haloXpCutOuter",        &Beam::haloXpCutOuter);
+  publish("haloYpCutOuter",        &Beam::haloYpCutOuter);
   publish("haloPSWeightParameter", &Beam::haloPSWeightParameter);
   publish("haloPSWeightFunction",  &Beam::haloPSWeightFunction);
 
