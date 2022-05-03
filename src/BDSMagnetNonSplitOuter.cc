@@ -120,7 +120,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
   
   // Create the Magnet outer
   G4double outerLength = chordLength - 2*lengthSafety;
-  outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, outerLength, chordLength, beamPipeTmp);
+  outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, outerFieldInfo, outerLength, chordLength, beamPipeTmp);
   
   delete beamPipeTmp;
   delete beamPipeInfoTmp;

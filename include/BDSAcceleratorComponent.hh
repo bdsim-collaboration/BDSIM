@@ -315,8 +315,6 @@ private:
   
   G4ThreeVector inputFaceNormal;  ///< Input face unit normal vector in incoming reference coordinate frame.
   G4ThreeVector outputFaceNormal; ///< Output face unit normal vector in outgoing reference coordinate frame.
-  BDSFieldInfo* fieldInfo;        ///< Recipe for field that could overlay this whole component.
-
 };
 
 #endif
