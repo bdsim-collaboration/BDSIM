@@ -225,6 +225,8 @@ private:
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF(G4double currentArcLength);
+  BDSAcceleratorComponent* CreateRFX(G4double currentArcLength);
+  BDSAcceleratorComponent* CreateRFY(G4double currentArcLength);
   BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend();
   BDSAcceleratorComponent* CreateKicker(KickerType type);
