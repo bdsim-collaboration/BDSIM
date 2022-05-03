@@ -42,6 +42,8 @@ BDSBunchHalo::BDSBunchHalo():
   haloNSigmaYInner(0.0), haloNSigmaYOuter(0.0),
   haloXCutInner(0.0), 
   haloYCutInner(0.0),
+  haloXCutOuter(0.0),
+  haloYCutOuter(0.0),
   haloPSWeightParameter(0.0),
   weightFunction(""),  
   haloNSigmaXpOuter(0.0),
@@ -78,6 +80,8 @@ void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
   haloNSigmaYOuter      = G4double(beam.haloNSigmaYOuter);
   haloXCutInner         = G4double(beam.haloXCutInner);
   haloYCutInner         = G4double(beam.haloYCutInner);  
+  haloXCutOuter         = G4double(beam.haloXCutOuter);
+  haloYCutOuter         = G4double(beam.haloYCutOuter);
   haloPSWeightParameter = G4double(beam.haloPSWeightParameter);
   weightFunction = G4String(beam.haloPSWeightFunction);
 
@@ -130,7 +134,9 @@ BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()
     if ((std::abs(emitXSp) < emitInnerX || std::abs(emitYSp) < emitInnerY) ||
 	(std::abs(emitXSp) > emitOuterX || std::abs(emitYSp) > emitOuterY)  ||
         (std::abs(dx)  < (haloXCutInner * sigmaX)) ||
-	(std::abs(dy)  < (haloYCutInner * sigmaY)) )
+	(std::abs(dy)  < (haloYCutInner * sigmaY)) ||
+        (std::abs(dx)  > (haloXCutOuter * sigmaX)) ||
+        (std::abs(dy)  > (haloYCutOuter * sigmaY)) )
       {
 	continue;
       }
@@ -233,4 +239,11 @@ void BDSBunchHalo::CheckParameters()
 
   if (haloYCutInner < 0)
     {throw BDSException(__METHOD_NAME__, "haloYCutInner < 0");}
+
+  if (haloXCutOuter < haloXCutInner)
+    {throw BDSException(__METHOD_NAME__, "haloXCutOuter must be greater than haloXCutInner!");}
+
+  if (haloYCutOuter < haloYCutInner)
+    {throw BDSException(__METHOD_NAME__, "haloYCutOuter must be greater than haloYCutInner!");}
+
 }

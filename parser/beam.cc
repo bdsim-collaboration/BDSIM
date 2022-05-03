@@ -290,6 +290,8 @@ void Beam::PublishMembers()
   publish("haloNSigmaYOuter",      &Beam::haloNSigmaYOuter);
   publish("haloXCutInner",         &Beam::haloXCutInner);
   publish("haloYCutInner",         &Beam::haloYCutInner);
+  publish("haloXCutOuter",         &Beam::haloXCutOuter);
+  publish("haloYCutOuter",         &Beam::haloYCutOuter);
   publish("haloPSWeightParameter", &Beam::haloPSWeightParameter);
   publish("haloPSWeightFunction",  &Beam::haloPSWeightFunction);
 

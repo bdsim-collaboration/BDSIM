@@ -118,6 +118,8 @@ namespace GMAD
       double haloNSigmaYOuter;
       double haloXCutInner;
       double haloYCutInner;
+      double haloXCutOuter;
+      double haloYCutOuter;
       double haloPSWeightParameter;
       std::string haloPSWeightFunction;
       ///@}
