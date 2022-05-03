@@ -200,6 +200,11 @@ void BDSBunchHalo::CheckParameters()
   if (emitY <= 0)
     {throw BDSException(__METHOD_NAME__, "emity must be finite!");}
   
+  if (betaX <= 0)
+    {throw BDSException(__METHOD_NAME__, "betx must be finite!");}
+  if (betaY <= 0)
+    {throw BDSException(__METHOD_NAME__, "bety must be finite!");}
+
   std::vector<G4String> weightFunctions = {"", "one", "flat","oneoverr", "oneoverrsqrd", "exp"};
   auto search = std::find(weightFunctions.begin(), weightFunctions.end(), weightFunction);
   if (search == weightFunctions.end())
