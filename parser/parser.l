@@ -92,6 +92,8 @@ std::string yyfilename;
 marker { return MARKER; } // reserved elements
 drift { return DRIFT; }
 rf { return RF; }
+rfx { return RFX; }
+rfy { return RFY; }
 rfcavity { return RF; }
 sbend { return SBEND; } 
 rbend {return RBEND; }
