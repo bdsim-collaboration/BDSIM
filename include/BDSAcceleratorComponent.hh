@@ -284,6 +284,9 @@ protected:
 
   G4int curvilinearSplitNumber;
 
+  
+  BDSFieldInfo* fieldInfo; ///< Recipe for field that could overlay this whole component.
+  
 private:
   /// Private default constructor to force use of provided constructors, which
   /// ensure an object meets the requirements for the rest of the construction
