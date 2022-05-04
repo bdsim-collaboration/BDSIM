@@ -188,6 +188,10 @@ void BDSBeamPipeFactoryElliptical::CreateGeneralAngledSolids(G4String      nameI
 
   // build the solid with angled faces for intersection
   G4double angledFaceRadius = (std::max(aper1In,aper2In) + beamPipeThicknessIn)*2.0; //huge for unambiguous intersection
+
+  // check faces of angled volume don't intersect - if it can be built, remaining angled volumes can be built
+  CheckAngledVolumeCanBeBuilt(lengthIn, inputfaceIn, outputfaceIn, angledFaceRadius, nameIn);
+
   angledFaceSolid = new G4CutTubs(nameIn + "_angled_face",       // name
 				  0,                             // inner radius
 				  angledFaceRadius,              // outer radius

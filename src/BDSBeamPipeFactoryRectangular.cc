@@ -175,6 +175,9 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
   // long length for unambiguous boolean - ensure no gaps in beam pipe geometry
   G4double angledVolumeLength = BDS::CalculateSafeAngledVolumeLength(inputfaceIn, outputfaceIn, lengthIn, angledFaceRadius);
 
+  // check extent of volume's angled face - if it can be built, remaining volumes can be built
+  CheckAngledVolumeCanBeBuilt(lengthIn, inputfaceIn, outputfaceIn, angledFaceRadius, nameIn);
+
   angledFaceSolid = new G4CutTubs(nameIn + "_angled_face",       // name
 				  0,                             // inner radius
 				  angledFaceRadius,              // outer radius
