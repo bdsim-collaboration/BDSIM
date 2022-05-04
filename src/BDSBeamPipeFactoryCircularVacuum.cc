@@ -81,6 +81,9 @@ BDSBeamPipe* BDSBeamPipeFactoryCircularVacuum::CreateBeamPipe(G4String      name
   inputFaceNormal  = inputFaceNormalIn;
   outputFaceNormal = outputFaceNormalIn;
 
+  // check faces of angled container volume don't intersect - if it can be built, remaining angled volumes can be built
+  CheckAngledVolumeCanBeBuilt(lengthIn, inputFaceNormal, outputFaceNormal, aper1In, nameIn);
+
   containerSolid = new G4CutTubs(nameIn + "_container_solid",  // name
 				 0,                            // inner radius
 				 aper1In,                      // outer radius

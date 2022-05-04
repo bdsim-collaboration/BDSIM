@@ -175,6 +175,9 @@ void BDSBeamPipeFactoryPoints::CreateSolidsAngled(G4String      name,
   G4double zHalfLength          = length*0.5 - lengthSafety;
   G4double zHalfLengthContainer = length*0.5;
   
+  // check faces of angled volume don't intersect - if it can be built, remaining angled volumes can be built
+  CheckAngledVolumeCanBeBuilt(length, inputFace, outputFace, intersectionRadius, name);
+
   G4VSolid* faceSolid = new G4CutTubs(name + "_face_solid", // name
 				      0,                    // inner radius
 				      intersectionRadius,   // outer radius

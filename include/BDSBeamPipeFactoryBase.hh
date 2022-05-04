@@ -107,7 +107,14 @@ protected:
   BDSBeamPipe* BuildBeamPipeAndRegisterVolumes(BDSExtent extent,
 					       G4double  containerRadius,
 					       G4bool    containerIsCircular = false);
-  
+
+  /// check if a beam pipe volume with angled faces can be constructed
+  static void CheckAngledVolumeCanBeBuilt(G4double length,
+                                          const G4ThreeVector &inputfaceAngle,
+                                          const G4ThreeVector &outputfaceAngle,
+                                          G4double horizontalWidth,
+                                          G4String name);
+
   // methods called by CommonConstruction, can be implemented by derived classes
   
   /// build logical volumes
