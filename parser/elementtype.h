@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -69,7 +69,8 @@ namespace GMAD
     _JCOL        = 71,
     _WIRESCANNER = 72,
     _USERCOMPONENT = 73,
-    _DUMP          = 74
+    _DUMP          = 74,
+    _CT            = 75
   };
 
   /// conversion from enum to string

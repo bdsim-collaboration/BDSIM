@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -93,31 +93,36 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
       
       if (geometrySpecified)
 	{// it's a geometryFile + optional field map placement
-	  auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.name,
-								    placement.geometryFile,
-								    nullptr,
-								    placement.autoColour,
-								    0, 0,
-								    nullptr,
-								    placement.sensitive);
-	  
-	  chordLength = geom->GetExtent().DZ();
-	  comp = new BDSSimpleComponent(placement.name + "_" + geom->GetName(), geom, chordLength);
-      
 	  hasAField = !placement.fieldAll.empty();
 	  BDSFieldInfo* fieldRecipe = nullptr;
 	  if (hasAField)
 	    {
 	      fieldRecipe = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(placement.fieldAll)));
 	      fieldRecipe->SetUsePlacementWorldTransform(true);
+	    }
+	  
+	  auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.name,
+								    placement.geometryFile,
+								    fieldRecipe,
+								    nullptr,
+								    placement.autoColour,
+								    0, 0,
+								    nullptr,
+								    placement.sensitive,
+								    BDSSDType::energydep,
+								    placement.stripOuterVolume);
+	  
+	  chordLength = geom->GetExtent().DZ();
+	  comp = new BDSSimpleComponent(placement.name + "_" + geom->GetName(), geom, chordLength);
+      
+	  if (hasAField)
+	    {
 	      comp->SetField(fieldRecipe);
 	      fieldPlacementName = comp->GetName() + "_" + fieldRecipe->NameOfParserDefinition();
 	    }
 	}
       else
 	{// it's a bdsim-built component
-	  // component factory
-	  // factory->CreateComponent(parser->GetElement(placement.bdsimElement))
 	  const GMAD::Element* element = BDSParser::Instance()->GetPlacementElement(placement.bdsimElement);
 	  if (!element)
 	    {throw BDSException(__METHOD_NAME__, "no such element definition by name \"" + placement.bdsimElement + "\" found for placement.");}

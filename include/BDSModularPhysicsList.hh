@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -202,6 +202,7 @@ private:
 #if G4VERSION_NUMBER > 1039
   void Channelling();
   void DNA();
+  void Radioactivation();
   void ShieldingLEND();
 #endif
   /// @}

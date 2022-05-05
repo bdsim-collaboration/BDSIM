@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -245,6 +245,9 @@ protected:
   /// Build(). Putting it here makes the same G4UserLimits object available to all derived
   /// classes potentially saving creation of a duplicate object.
   virtual void BuildUserLimits();
+
+  /// Doesn't change member variables, but may change their contents.
+  virtual void AttachUserLimits() const;
   
   ///@{ Const protected member variable that may not be changed by derived classes
   const G4String   name;
@@ -278,6 +281,9 @@ protected:
   BDSSimpleComponent* endPieceAfter;
 
   G4UserLimits* userLimits; ///< Cache of user limits.
+  
+  BDSFieldInfo* fieldInfo; ///< Recipe for field that could overlay this whole component.
+  
 
   G4int curvilinearSplitNumber;
 
@@ -309,8 +315,6 @@ private:
   
   G4ThreeVector inputFaceNormal;  ///< Input face unit normal vector in incoming reference coordinate frame.
   G4ThreeVector outputFaceNormal; ///< Output face unit normal vector in outgoing reference coordinate frame.
-  BDSFieldInfo* fieldInfo;        ///< Recipe for field that could overlay this whole component.
-
 };
 
 #endif

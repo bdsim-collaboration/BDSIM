@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2022.
 
 This file is part of BDSIM.
 
@@ -40,24 +40,43 @@ BDSElement::BDSElement(const G4String& nameIn,
 		       G4double        angleIn,
 		       std::vector<G4String>* namedVacuumVolumesIn,
 		       G4bool          autoColourGeometryIn,
-		       G4bool          markAsCollimatorIn):
+		       G4bool          markAsCollimatorIn,
+		       G4bool          stripOuterVolumeIn):
   BDSAcceleratorComponent(nameIn, arcLengthIn, angleIn, markAsCollimatorIn ? "element-collimator" : "element"),
   horizontalWidth(horizontalWidthIn),
   geometryFileName(geometryIn),
-  namedVacuumVolumes(*namedVacuumVolumesIn),
   autoColourGeometry(autoColourGeometryIn),
   markAsCollimator(markAsCollimatorIn),
+  stripOuterVolume(stripOuterVolumeIn),
   geometry(nullptr)
-{;}
+{
+  if (namedVacuumVolumesIn)
+    {namedVacuumVolumes = *namedVacuumVolumesIn;}
+}
+
+void BDSElement::Build()
+{
+  BuildUserLimits();
+  BuildContainerLogicalVolume(); // pure virtual provided by derived class
+  AttachUserLimits();
+  // we purposively don't attach vis attributes to the container here as it would overwrite ones from geometry loading
+}
 
 void BDSElement::BuildContainerLogicalVolume()
 {
-  // The horizontalWidth here is a suggested horizontalWidth for the factory. Each subfactory may treat this
+  // The horizontalWidth here is a suggested horizontalWidth for the factory. Each sub-factory may treat this
   // differently.
   BDSSDType sensitivityToAttach = markAsCollimator ? BDSSDType::collimatorcomplete : BDSSDType::energydep;
-  geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr, autoColourGeometry,
+  // The field isn't constructed here. It's registered through the base class SetField method in the component
+  // factory and built and attached in the Initialise() method of the base class. However, before Initialise()
+  // is called, the member fieldInfo will be set. We pass it in here to make sure we don't reuse the same
+  // geometry when a different field is required.
+  geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, fieldInfo,
+							   nullptr, autoColourGeometry,
 							   chordLength, horizontalWidth,
-							   &namedVacuumVolumes, true, sensitivityToAttach);
+							   &namedVacuumVolumes, true,
+							   sensitivityToAttach, stripOuterVolume,
+							   userLimits);
   
   if (!geometry)
     {throw BDSException(__METHOD_NAME__, "Error loading geometry in component \"" + name + "\"");}
@@ -68,6 +87,8 @@ void BDSElement::BuildContainerLogicalVolume()
   // make the beam pipe container, this object's container
   containerLogicalVolume = geometry->GetContainerLogicalVolume();
   containerSolid         = geometry->GetContainerSolid();
+  containerAssembly      = geometry->GetContainerAssemblyVolume();
+  containerIsAssembly    = geometry->ContainerIsAssembly();
 
   // register named vacuum volumes that have been identified
   SetAcceleratorVacuumLogicalVolume(geometry->VacuumVolumes());

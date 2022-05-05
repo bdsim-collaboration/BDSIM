@@ -94,6 +94,22 @@ calculated and constructed when using the :code:`--circular` executable option.
 Although the teleporter may not be required in a well-formed model that closes, the minimum
 gap of :math:`0.2 \mu m` is required for the terminator.
 
+Magnet Strength Polarity
+------------------------
+
+.. note:: BDSIM strictly follows the MAD-X definition of magnet strength parameter
+	  `k` - a **positive** `k` corresponds to **horizontal focussing** for a
+	  **positively** charged particle. This therefore indicates a positive `k`
+	  corresponds to horizontal defocussing for a negatively charged particle.
+	  However, MAD-X treats all particles as positively charged for tracking purposes.
+
+.. warning:: BDSIM currently treats k absolutely, so to convert a MAD-X lattice for
+	     negatively particles, the MAD-X k values must be multiplied by -1. The
+	     pybdsim converter provides an option called `flipmagnets` for this
+	     purpose. This may be revised in future releases depending on changes
+	     to MAD-X.
+
+
 .. _lattice-elements:
 
 Beamline Elements
@@ -142,6 +158,7 @@ The following elements may be defined
 * `element`_
 * `marker`_
 * `wirescanner`_
+* `ct`_
 
 .. TODO add screen, awakescreen
 
@@ -168,30 +185,16 @@ An element can also be defined by copying an existing element ::
 
 Element `d2` is a drift with the properties of `d1` and a length of 2 metres. Note that if `d1` is changed again, `d2` will **not** change.
 
-Magnet Strength Polarity
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. note:: BDSIM strictly follows the MAD-X definition of magnet strength parameter
-	  `k` - a **positive** `k` corresponds to **horizontal focussing** for a
-	  **positively** charged particle. This therefore indicates a positive `k`
-	  corresponds to horizontal defocussing for a negatively charged particle.
-	  However, MAD-X treats all particles as positively charged for tracking purposes.
-
-.. warning:: BDSIM currently treats k absolutely, so to convert a MAD-X lattice for
-	     negatively particles, the MAD-X k values must be multiplied by -1. The
-	     pybdsim converter provides an option called `flipmagnets` for this
-	     purpose. This may be revised in future releases depending on changes
-	     to MAD-X.
-
 
 Component Strength Scaling
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In the case of acceleration or energy degradation, the central energy of the beam may
 change. However, BDSIM constructs all fields with respect to the rigidity calculated
-from the particle species and the `energy` parameter in the beam definition (not `E0`,
-but `energy`). To easily scale the strengths, every beam line element has the parameter
-`scaling` that enables its strength to be directly scaled.
+from the particle species and the :code:`energy` parameter in the beam definition (i.e. not the
+central or mean energy of the beam :code:`E0`, but the design energy given by :code:`energy`).
+To easily scale the strengths, every beam line element has the parameter `scaling` that enables
+its strength to be directly scaled.
 
 In the case of a dipole, this scales the field but not the angle (the field may be calculated
 from the angle if none is specified). For example ::
@@ -201,12 +204,12 @@ from the angle if none is specified). For example ::
 
   sb1: sbend, l=2.5*m, angle=0.1;
   d1: drift, l=1*m;
-  cav1: rf, l=1*m, gradient=50, frequency=0;
+  cav1: rf, l=1*m, gradient=50*MV/m, frequency=0;
   sb2: sbend, l=2.5*m, angle=0.1, scaling=1.005;
 
   l1: line=(sb1,d1,cav1,d1,sb2,d1);
 
-In this example an rf cavity is used to accelerate the beam by 50 MeV (50 MeV / m for 1 m).
+In this example an rf cavity is used to accelerate the beam by 50 MeV (50 MV / m for 1 m).
 The particle passes through one bend, the cavity and then another. As the second bend is
 scaled (by a factor of (10 GeV + 50 MeV) / 10 GeV) = 1.005) a particle starting at (0,0) with
 perfect energy will appear at (0,0) after this lattice.
@@ -221,6 +224,41 @@ An example is included in `examples/features/components/scaling.gmad`.
 	  in sub-relativistic regimes. The fields should typically be scaled with momentum and
 	  not total energy of the particle.
 
+
+Magnet Yoke Field Scaling
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+As described in :ref:`yoke-multipole-field`, BDSIM uses by default an approximate magnetic
+field for the yoke or "outer" part of each magnet. This is a sum of infinite (in :math:`z`)
+current sources placed in the :math:`x, y` plane half way between each pole. This field is
+only approximate and field maps should be used if a very accurate model is desired.
+
+These fields are normalised to match the vacuum field at the pole tip, so the transition
+is smooth.
+
+However, to control this, an arbitrary scaling factor can be applied to all elements with
+a yoke field (i.e. all magnets). This can be applied individually, or as an option to all
+components. Individually specified parameters will take precedence.
+
+In both cases the parameter and option is :code:`scalingFieldOuter` and should be a numerical
+factor (e.g. 1.0 is the default).
+
+An example model is: ::
+
+  d1: drift, l=1*m;
+  q1: quadrupole, l=20*cm, k1=0.2, scalingFieldOuter=1.5;
+  q2: quadrupole, l=20*cm, k1=0.2;
+  l1: line=(d1,q1,d1,q2,d1);
+  use, l1;
+
+  beam, particle="proton", kineticEnergy=100*GeV;
+
+  option, scalingFieldOuter=2.0;
+
+Here, the "q1" element will have an arbitrary scaling factor of the 1.5 over the normal field inside
+the pole tip radius. For "q2", the default is picked up from the option with a value of 2.0.
+
+This is recommended only for systematic error studies.
 
 drift
 ^^^^^
@@ -881,9 +919,10 @@ the edge effects are provided by default and are controllable with the option `i
 +================+===============================+==============+=====================+
 | `l`            | Length [m]                    | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
-| `E`            | Electric field strength       | 0            | Yes (or `gradient`) |
+| `E`            | Voltage [V] that will be      | 0            | Yes (or `gradient`) |
+|                | across the length `l`         |              |                     |
 +----------------+-------------------------------+--------------+---------------------+
-| `gradient`     | Field gradient [MV/m]         | 0            | Yes                 |
+| `gradient`     | Electric field [V/m]          | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
 | `frequency`    | Frequency of oscillation (Hz) | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
@@ -896,6 +935,15 @@ the edge effects are provided by default and are controllable with the option `i
 | `cavityModel`  | Name of cavity model object   | ""           | No                  |
 +----------------+-------------------------------+--------------+---------------------+
 
+Either :code:`gradient` or :code:`E` should be specified. :code:`E` is given in Volts,
+and internally is divided by the length of the element (:code:`l`) to give the electric
+field in Volts/m. If :code:`gradient` is specified, this is already Volts/m and the length
+is not involved. The slight misnomer of `E` instead of say `voltage` is historical.
+
+**Units** Since the value of `m` as a unit in GMAD is 1.0, it doesn't practically make a
+difference whether you write :code:`gradient=10*MV/m` or :code:`gradient=10*MV`. However,
+it is best to be explicit in units or none at all and assume the default ones.
+
 .. note:: The design energy of the machine is not affected, so the strength and fields
 	  of components after an RF cavity in a lattice are calculated with respect to
 	  the design energy, the particle and therefore, design rigidity. The user should
@@ -907,7 +955,8 @@ the edge effects are provided by default and are controllable with the option `i
 	     deficiencies of the Geant4 visualisation system. The geometry exists
 	     and is fully functional.
 
-* The field is such that a positive E-field results in acceleration of the primary particle.
+* The field is such that a positive E-field results in acceleration of the primary particle
+  (depending on the primary particle charge).
 * The phase is calculated automatically such that zero phase results in the peak E-field at
   the centre of the component for its position in the lattice.
 * Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
@@ -937,7 +986,7 @@ the edge effects are provided by default and are controllable with the option `i
 Simple examples: ::
 
    rf1: rf, l=10*cm, E=10*MV, frequency=90*MHz, phase=0.02;
-   rf2: rf, l=10*cm, gradient=14*MV / m, frequency=450*MHz;
+   rf2: rf, l=10*cm, gradient=14*MV/m, frequency=450*MHz;
    rf3: rf, l=10*cm, E=10*MV, frequency=90*MHz, tOffset=3.2*ns;
 
 Rather than just a simple E-field, an electromagnetic field that is the solution to
@@ -965,32 +1014,39 @@ rcol
 An `rcol` defines a rectangular collimator. The aperture is rectangular and the external
 volume is square.
 
-+--------------------+-----------------------------------+----------------+---------------+
-| **Parameter**      | **Description**                   | **Default**    | **Required**  |
-+====================+===================================+================+===============+
-| `l`                | Length [m]                        | 0              | Yes           |
-+--------------------+-----------------------------------+----------------+---------------+
-| `xsize`            | Horizontal half aperture [m]      | 0              | Yes           |
-+--------------------+-----------------------------------+----------------+---------------+
-| `ysize`            | Half height of jaws [m]           | 0              | Yes           |
-+--------------------+-----------------------------------+----------------+---------------+
-| `material`         | Outer material                    | None           | Yes           |
-+--------------------+-----------------------------------+----------------+---------------+
-| `horizontalWidth`  | Outer full width [m]              | 0.5 m          | No            |
-+--------------------+-----------------------------------+----------------+---------------+
-| `xsizeOut`         | Horizontal exit half aperture [m] | `xsize` value  | No            |
-+--------------------+-----------------------------------+----------------+---------------+
-| `ysizeOut`         | Vertical exit half aperture [m]   | `ysize` value  | No            |
-+--------------------+-----------------------------------+----------------+---------------+
-| `colour`           | Name of colour desired for block  | ""             | No            |
-|                    | See :ref:`colours`.               |                |               |
-+--------------------+-----------------------------------+----------------+---------------+
+* If no `xsize` or `ysize` are provided, they are assumed to be 0 and **a solid block** is made.
+
+.. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
+
++------------------------+-----------------------------------+----------------+---------------+
+| **Parameter**          | **Description**                   | **Default**    | **Required**  |
++========================+===================================+================+===============+
+| `l`                    | Length [m]                        | 0              | Yes           |
++------------------------+-----------------------------------+----------------+---------------+
+| `xsize`                | Horizontal half aperture [m]      | 0              | Yes           |
++------------------------+-----------------------------------+----------------+---------------+
+| `ysize`                | Half height of jaws [m]           | 0              | Yes           |
++------------------------+-----------------------------------+----------------+---------------+
+| `material`             | Outer material                    | None           | Yes           |
++------------------------+-----------------------------------+----------------+---------------+
+| `horizontalWidth`      | Outer full width [m]              | 0.5 m          | No            |
++------------------------+-----------------------------------+----------------+---------------+
+| `xsizeOut`             | Horizontal exit half aperture [m] | `xsize` value  | No            |
++------------------------+-----------------------------------+----------------+---------------+
+| `ysizeOut`             | Vertical exit half aperture [m]   | `ysize` value  | No            |
++------------------------+-----------------------------------+----------------+---------------+
+| `colour`               | Name of colour desired for block  | ""             | No            |
+|                        | See :ref:`colours`                |                |               |
++------------------------+-----------------------------------+----------------+---------------+
+| `minimumKineticEnergy` | Minimum kinetic energy below      | 0              | No            |
+|                        | which to artificially kill        |                |               |
+|                        | particles in this collimator only |                |               |
++------------------------+-----------------------------------+----------------+---------------+
 
 Notes: 
 
 * `horizontalWidth` should be big enough to encompass the xsize and ysize.
-* If no `xsize` or `ysize` are provided, they are assumed to be 0 and a solid block is made.
-* The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
+* The parameter `minimumKineticEnergy` (in GeV by default) may be specified to artificially kill
   particles below this kinetic energy in the collimator. This is useful to match other simulations
   where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
   user should specify an energy greater than the total beam energy.
@@ -1052,26 +1108,32 @@ The horizontal position of each jaw can be set separately with the `xsizeLeft` a
 apertures which are the distances from the centre of element to the left and right jaws respectively.
 
 
-+--------------------+------------------------------+--------------+---------------+
-| **Parameter**      | **Description**              | **Default**  | **Required**  |
-+====================+==============================+==============+===============+
-| `l`                | Length [m]                   | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `xsize`            | Horizontal half aperture [m] | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `ysize`            | Half height of jaws [m]      | 0            | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `material`         | Outer material               | None         | Yes           |
-+--------------------+------------------------------+--------------+---------------+
-| `xsizeLeft`        | Left jaw aperture [m]        | 0            | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `xsizeRight`       | Right jaw aperture [m]       | 0            | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `horizontalWidth`  | Outer full width [m]         | 0.5 m        | No            |
-+--------------------+------------------------------+--------------+---------------+
-| `colour`           | Name of colour desired for   | ""           | No            |
-|                    | block. See :ref:`colours`.   |              |               |
-+--------------------+------------------------------+--------------+---------------+
+.. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
+
++------------------------+-----------------------------------+----------------+---------------+
+| **Parameter**          | **Description**                   | **Default**    | **Required**  |
++========================+===================================+================+===============+
+| `l`                    | Length [m]                        | 0              | Yes           |
++------------------------+-----------------------------------+----------------+---------------+
+| `xsize`                | Horizontal half aperture [m]      | 0              | Yes           |
++------------------------+-----------------------------------+----------------+---------------+
+| `ysize`                | Half height of jaws [m]           | 0              | Yes           |
++------------------------+-----------------------------------+----------------+---------------+
+| `material`             | Outer material                    | None           | Yes           |
++------------------------+-----------------------------------+----------------+---------------+
+| `xsizeLeft`            | Left jaw aperture [m]             | 0              | No            |
++------------------------+-----------------------------------+----------------+---------------+
+| `xsizeRight`           | Right jaw aperture [m]            | 0              | No            |
++------------------------+-----------------------------------+----------------+---------------+
+| `horizontalWidth`      | Outer full width [m]              | 0.5 m          | No            |
++------------------------+-----------------------------------+----------------+---------------+
+| `colour`               | Name of colour desired for        | ""             | No            |
+|                        | block. See :ref:`colours`.        |                |               |
++------------------------+-----------------------------------+----------------+---------------+
+| `minimumKineticEnergy` | Minimum kinetic energy below      | 0              | No            |
+|                        | which to artificially kill        |                |               |
+|                        | particles in this collimator only |                |               |
++------------------------+-----------------------------------+----------------+---------------+
 
 
 Notes: 
@@ -1084,9 +1146,9 @@ Notes:
   must be set to 0, with the other jaws half aperture set as appropriate.
 * If `xsize`, `xsizeLeft` and `xsizeRight` are not specified, the collimator will be constructed
   as a box with no aperture.
-* For **only one jaw**, specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
-  that jaw not being constructed. If both jaw apertures are greater than half the `horizontalWidth`,
-  no jaws will be built and BDSIM will exit.
+* For **only one jaw**, specifying a jaw aperture which is larger than half the `horizontalWidth` value
+  will result in that jaw not being constructed. If both jaw apertures are greater than
+  half the `horizontalWidth`, no jaws will be built and BDSIM will exit.
 * The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
   particles below this kinetic energy in the collimator. This is useful to match other simulations
   where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
@@ -1184,10 +1246,16 @@ a beam pipe in the middle. There is no magnetic field in the beam pipe.
 =================  ============================  ==========  ===========
 Parameter          Description                   Default     Required
 `l`                Length [m]                    0           Yes
-`B`                Magnetic field [T]            0           Yes
+`B`                Magnetic field [T]            0           No
 `material`         Outer material                Iron        No
 `horizontalWidth`  Outer full width [m]          global      No
 =================  ============================  ==========  ===========
+
+Notes:
+
+* The :ref:`aperture-parameters` may also be specified.
+* No field is constructed if B is the default 0.
+
 
 shield
 ^^^^^^
@@ -1234,7 +1302,7 @@ the beam.
 
 =================  ==================================  ===========  ===========
 Parameter          Description                         Default      Required
-`l`                Length [m]                          0            Yes
+`l`                Length [m]                          1 mm         No
 `horizontalWidth`  Outer full width [m]                global       No
 `apertureType`     Which shape                         rectangular  No
 =================  ==================================  ===========  ===========
@@ -1247,13 +1315,20 @@ necessary process is added automatically to enforce this.
 The dump may accept `apertureType` with the value of either `circular` or `rectangular` for
 the shape of the dump. By default it is rectangular.
 
+.. note:: Although the syntax is "rectangular", the shape for the dump will be square. This
+	  will be improved in future when any shape can be used.
+
 Examples: ::
 
-  d1: dump, l=0.2*m, horizontalWidth=20*cm;
-  d2: dump, l=0.4*m, horizontalWidth=30*cm, apertureType="circular";
+  d1: dump, horizontalWidth=20*cm;
+  d2: dump, horizontalWidth=30*cm, apertureType="circular";
   d3: dump, l=0.3*m, horizontalWidth=40*cm, apertureType="rectangular";
 
+Here, `d1` is a rectangular block 20 cm wide (full width) and 1 mm long in z. `d2` is a
+circular disk with diameter 30 cm and length of 1 mm in z. `d3` is 30 cm long in z and
+40 cm width (full width) in x and y with a square shape.
 
+  
 solenoid
 ^^^^^^^^
 
@@ -1263,7 +1338,11 @@ solenoid
 
 `solenoid` defines a solenoid magnet. This utilises a thick lens transfer map with a
 hard edge field profile. Fringes for the edge effects are provided by default and
-are controllable with the option `includeFringeFields`.
+are controllable with the option `includeFringeFields`. A field is supplied that is
+used in the case a particle cannot be tracked using the integrator. In this case, it
+is a perfect dipole field along the local :math:`z` axis inside the beam pipe with
+no spatial variation. Outside the beam pipe, in the *'yoke'*, a solenoidal field
+according to a cylindrical current source is constructed.
 
 =================  ============================  ==========  ===========
 Parameter          Description                   Default     Required
@@ -1277,11 +1356,28 @@ Parameter          Description                   Default     Required
 * A positive field corresponds to a field in along the direction of positive S.
 * The entrance / exit solenoid fringes are not constructed if the previous / next element is also a solenoid.
 * See `Magnet Strength Polarity`_ for polarity notes.
-* No yoke field is provided.
+
+A thin sheet cylinder is place also inside the yoke but of the same material. The
+colour is copper colour to indicate this is the shape used to calculate the solenoidal
+field for the yoke. This is of the same material so it has no effect on physics results.
+The 'current' cylinder is chosen to be :math:`0.8 \times l` and the radius is
+:math:`\frac{1}{3}` of the distance between the beam pipe radius and the outer radius.
 
 Examples: ::
 
    atlassol: solenoid, l=20*m, ks=0.004;
+
+
+Another visualisation:
+
+.. figure:: figures/solenoid2.png
+   :width: 70%
+   :align: center
+
+   A partially transparent visualiation of a solenoid showing the interior current
+   cylinder sheet - made of the same material as the yoke. The field is shown in the
+   :math:`x-z` plane.
+
 
 wirescanner
 ^^^^^^^^^^^
@@ -1628,6 +1724,8 @@ as required.
 An alternative strategy is to use the `gap`_ beam line element
 and make a placement at the appropriate point in global coordinates.
 
+.. tabularcolumns:: |p{4cm}|p{5cm}|p{2cm}|p{2cm}|
+
 +----------------------+----------------------------------+--------------+---------------+
 | **Parameter**        | **Description**                  | **Default**  | **Required**  |
 +======================+==================================+==============+===============+
@@ -1659,6 +1757,10 @@ and make a placement at the appropriate point in global coordinates.
 |                      | collimator so it appears in the  |              |               |
 |                      | collimator histograms and hits.  |              |               |
 +----------------------+----------------------------------+--------------+---------------+
+| `stripOuterVolume`   | 1 or 0. Whether to strip the     | 0            | No            |
+|                      | outermost volume from the loaded |              |               |
+|                      | geometry and make it an assembly |              |               |
++----------------------+----------------------------------+--------------+---------------+
 
 * `geometryFile` should be of the format `format:filename`, where `format` is the geometry
   format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
@@ -1669,6 +1771,8 @@ and make a placement at the appropriate point in global coordinates.
 * If marked as a collimator, the element will also appear in the collimator histograms
   and also have a collimator-specific branch made for it in the Event tree of the output
   as per the other collimators. The type in the output will be "element-collimator".
+* The outer volume can be stripped away and the geometry is made into an assembly volume
+  in Geant4 and placed in the world. Use the parameter :code:`stripOuterVolume=1` for this.
 
 .. note:: The length must be larger than the geometry so that it is contained within it and
 	  no overlapping geometry will be produced. However, care must be taken, as the length
@@ -1713,6 +1817,67 @@ then attach a sampler to the marker.
 Examples: ::
 
    m1: marker;
+
+ct
+^^^^
+
+.. figure:: figures/ct.png
+	    :width: 30%
+	    :align: center
+
+
+`ct` defines a Computed Tomographic (CT) image, saved in the international standard DICOM format. The DICOM module of
+BDSIM enables the conversion of CT images into Geant4 voxelized geometries. This conversion results in a regular mesh of
+voxels. In order to correctly allow the materials and densities to each individual voxel, a HUs-to-density (HUs stands
+for Hounsfield Units) table and a HUs-to-materials table must be provided. The data of this two tables must be provided
+into a single, two columns `data.dat` file. The required format for this file is illustrated below:
+
+.. figure:: figures/CTconversionFile.png
+	    :width: 40%
+	    :align: center
+
+The first line gives the level of compression of the image. For example :code:`:COMPRESSION 4` means that only one slice
+over four will be converted into the final voxelized geometry. The lines which start with :code:`:MATE` give data
+points for the HUs-to-materials curve, while the lines which start with :code:`:CT2D` give data points for the
+HUs-to-density curve. For each curve, a linear interpolation is done based on the data points to find the most
+appropriate density and material for each voxel. The user must give the path to this file in the definition of the `ct`
+element, as the parameter `dicomDataFile`. The user must also give the name of the dicom (.dcm) file to be converted.
+This must be done with the flag :code:`:FILE`, followed by the name of the file, which needs to be in the same folder
+as the interpolation data file. The last flag :code:`:FILE_OUT` is optional, and can be used to give a specific name to
+the temporary output file which is generated during the conversion CT image.
+
+An example of such a data file is provided in `bdsim/examples/features/dicom/data.dat` and can be used as a
+starting point.
+
+.. note:: For a correct visualization of the DICOM image, a path to a colourMap.dat file must also be given,
+    as the parameter `dicomDataPath`. This file will allow the mapping of each material to a specific color in the
+    viewer. Its first line should bethe number of materials used in the simulation. Each material given in the
+    `data.dat` file should then have a colour scheme which the user defines via four numbers with the syntax
+    :code:`:1MAT X Y Z A` where X, Y, Z and A are numbers between 0 and 1 respectively setting the amount of red, green,
+    blue and opacity of the colour defined for the material MAT. An example of such a colourMap.dat file is provided in
+    `bdsim/examples/features/dicom/colourMap.dat`.
+
+.. note:: To be able to load CT images, BDSIM must be compiled with the `USE_DICOM` variable set to ON. Moreover, the
+    conversion of the images requires the installation of the `DCMTK` package. This package is needed to easily extract
+    the HUs data from the images. Information to download and install DCMTK can be found
+    here: https://dicom.offis.de/dcmtk.php.en.
+
+Examples: ::
+
+    DICOM: ct, l=1*m, dicomDataPath="./", dicomDataFile="data.dat";
+
++-------------------------+--------------------------------------------------------------------+
+| **Parameter**           |  **Description**                                                   |
++-------------------------+--------------------------------------------------------------------+
+| `l`                     | Length of the CT element along the beamline.                       |
++-------------------------+--------------------------------------------------------------------+
+| `dicomDataFile`         | Name of the file which contains the conversion material-to-density |
+|                         | and material-to-HU tables.                                         |
++-------------------------+--------------------------------------------------------------------+
+| `dicomDataPath`         | Path to the colourMap.dat file. During the conversion of the CT    |
+|                         | image, the temporary .g4dcm file will also be stored in this path. |
++-------------------------+--------------------------------------------------------------------+
+
 
 .. _offsets-and-tilts:
 
@@ -1847,7 +2012,7 @@ beam line is produced by declaring a placement. The placement definition (see
 
 +------------------------+---------------------------------------------------------------+
 | **Parameter**          |  **Description**                                              |
-+------------------------+---------------------------------------------------------------+
++========================+===============================================================+
 | sequence               | Name of the sequence (with `line`) to use for the secondary   |
 |                        | beam line                                                     |
 +------------------------+---------------------------------------------------------------+
@@ -2200,4 +2365,3 @@ Examples
 		    blm1=20*cm,
 		    blm2=5*cm,
 		    scorerQuantity="blmdose";
-
