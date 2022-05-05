@@ -103,7 +103,6 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
     {
       Element el = Element(*element);
       el.magnetGeometryType = "none";
-      el.l -= lengthSafety;
       pipeLine = BDS::BuildSBendLine(elementName,&el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
       pipeLine->Initialise();
     }
@@ -113,10 +112,11 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(element->angle/2 + incomingFaceAngle, element->angle/2 + outgoingFaceAngle);
   beamPipeInfoTmp->inputFaceNormal = faces.first;
   beamPipeInfoTmp->outputFaceNormal = faces.second;
-  
+
+
   BDSBeamPipe* beamPipeTmp = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
-									    arcLength,
-									    beamPipeInfoTmp);
+                                                                            chordLength,
+                                                                            beamPipeInfoTmp);
   
   // Create the Magnet outer
   outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, chordLength, chordLength, beamPipeTmp);
