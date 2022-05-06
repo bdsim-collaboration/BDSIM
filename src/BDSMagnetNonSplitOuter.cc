@@ -80,17 +80,10 @@ BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType           typeIn,
   prevElement(prevElementIn),
   nextElement(nextElementIn)
 {
-  beamPipeInfo    = beamPipeInfoIn;
-  magnetOuterInfo = magnetOuterInfoIn;
-  vacuumFieldInfo = vacuumFieldInfoIn;
-  outerFieldInfo  = outerFieldInfoIn;
   namedVacuumVolumes = BDS::SplitOnWhiteSpace(G4String(element->namedVacuumVolumes));
 
-  // Calculate number of sbends to split parent into
-  G4int nSBends = BDS::CalculateNSBendSegments(arcLength, angle, incomingFaceAngle,
-                                                 outgoingFaceAngle);
-
-  curvilinearSplitNumber = nSBends;
+  // calculate number of sbends to split parent into
+  curvilinearSplitNumber = BDS::CalculateNSBendSegments(arcLength, angle, incomingFaceAngle, outgoingFaceAngle);
 }
 
 
