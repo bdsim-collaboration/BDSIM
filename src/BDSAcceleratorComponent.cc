@@ -63,8 +63,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(const G4String&      nameIn,
   endPieceBefore(nullptr),
   endPieceAfter(nullptr),
   userLimits(nullptr),
-  curvilinearSplitNumber(1),
   fieldInfo(fieldInfoIn),
+  curvilinearSplitNumber(1),
   copyNumber(-1), // -1 initialisation since it will be incremented when placed
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn)
