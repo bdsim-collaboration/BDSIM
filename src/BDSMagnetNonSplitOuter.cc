@@ -68,7 +68,7 @@ BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType           typeIn,
 					       G4bool                  buildFringeFieldsIn,
 					       const GMAD::Element*    prevElementIn,
 					       const GMAD::Element*    nextElementIn):
-  BDSMagnet(typeIn, elementIn->name, elementIn->l* CLHEP::m, beamPipeInfoIn,
+  BDSMagnet(typeIn, elementIn->name, elementIn->l*CLHEP::m, beamPipeInfoIn,
 	    magnetOuterInfoIn, vacuumFieldInfoIn, -elementIn->angle, outerFieldInfoIn, isThinIn),
   element(elementIn),
   st(stIn),
@@ -104,23 +104,30 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
       Element el = Element(*element);
       el.magnetGeometryType = "none";
       el.l -= lengthSafety;
-      pipeLine = BDS::BuildSBendLine(elementName,&el,st,brho,integratorSet,incomingFaceAngle,outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
+      pipeLine = BDS::BuildSBendLine(elementName,&el,st,brho,integratorSet,incomingFaceAngle,
+				     outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
       pipeLine->Initialise();
     }
   
   // Create of a beampipe for BDSMagnetOuterFactory::Instance()->CreateMagnetOuter() with the correct geometry information
   BDSBeamPipeInfo* beamPipeInfoTmp = new BDSBeamPipeInfo(*beamPipeInfo);
-  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(element->angle/2 + incomingFaceAngle, element->angle/2 + outgoingFaceAngle);
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(element->angle/2 + incomingFaceAngle,
+								     element->angle/2 + outgoingFaceAngle);
   beamPipeInfoTmp->inputFaceNormal = faces.first;
   beamPipeInfoTmp->outputFaceNormal = faces.second;
   
   BDSBeamPipe* beamPipeTmp = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
                                                                             arcLength - 2*lengthSafety,
-									                                        beamPipeInfoTmp);
+									    beamPipeInfoTmp);
   
   // Create the Magnet outer
   G4double outerLength = chordLength - 2*lengthSafety;
-  outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, outerFieldInfo, outerLength, chordLength, beamPipeTmp);
+  outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend,
+							       magnetOuterInfo,
+							       outerFieldInfo,
+							       outerLength,
+							       chordLength,
+							       beamPipeTmp);
   
   delete beamPipeTmp;
   delete beamPipeInfoTmp;
@@ -136,32 +143,22 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
   if (outerGDML) // the dynamic cast will only work if it's loaded as GDML//
       {
         vacuumVols = outerGDML->VacuumVolumes();
-
         for (auto vol : vacuumVols)
-        {
-
+	  {
             G4String name = vol->GetName();
-            const std::set<G4VPhysicalVolume *> &physicalVols = outerGDML->GetAllPhysicalVolumes();
-
+            const std::set<G4VPhysicalVolume*> &physicalVols = outerGDML->GetAllPhysicalVolumes();
             for (auto volp : physicalVols)
-            {
+	      {
                 if (name == volp->GetLogicalVolume()->GetName())
-                {
+		  {
                     G4RotationMatrix *mt = volp->GetRotation();
-                    if (!mt){
-                        mt = new G4RotationMatrix();
-                    }
-
+                    if (!mt)
+		      {mt = new G4RotationMatrix();}
                     CLHEP::Hep3Vector v = volp->GetTranslation();
-
-                    G4Transform3D *transform = new G4Transform3D(*mt, v);
-
+                    G4Transform3D* transform = new G4Transform3D(*mt, v);
                     outerFieldInfo->SetTransform(*transform);
-
-
                 }
             }
-
         }
 
         // determine key for this specific magnet instance
