@@ -141,6 +141,21 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
   // long length for unambiguous boolean - ensure no gaps in beam pipe geometry
   G4double angledVolumeLength = BDS::CalculateSafeAngledVolumeLength(inputfaceIn, outputfaceIn, lengthIn, aper1In);
 
+  G4double extraWidth = lengthSafetyLarge + beamPipeThicknessIn;
+  containerRadius = aper1In + extraWidth + lengthSafetyLarge;
+
+  // check faces of angled container volume don't intersect - if it can be built, remaining angled volumes can be built
+  CheckAngledVolumeCanBeBuilt(lengthIn, inputfaceIn, outputfaceIn, containerRadius, nameIn);
+
+  containerSolid = new G4CutTubs(nameIn + "_container_solid",  // name
+                                 0,                            // inner radius
+                                 containerRadius,              // outer radius
+                                 lengthIn*0.5,                 // half length - no -length safety!
+                                 0,                            // rotation start angle
+                                 CLHEP::twopi,                 // rotation finish angle
+                                 inputfaceIn,                  // input face normal
+                                 outputfaceIn);                // rotation finish angle
+
   // build the solids
   vacuumSolid   = new G4CutTubs(nameIn + "_vacuum_solid",      // name
 				0,                             // inner radius
@@ -163,7 +178,6 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
 				  inputfaceIn,                   // input face normal
 				  outputfaceIn);                 // output face normal
 
-  G4double extraWidth = lengthSafetyLarge + beamPipeThicknessIn;
   G4VSolid* outer = new G4CutTubs(nameIn + "_pipe_outer_solid",  // name
 				  0,                             // inner radius + length safety to avoid overlaps
 				  aper1In + extraWidth,          // outer radius
@@ -178,14 +192,4 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
   beamPipeSolid = new G4SubtractionSolid(nameIn + "_pipe_solid",
 					 outer,
 					 inner);
-  
-  containerRadius = aper1In + extraWidth + lengthSafetyLarge;
-  containerSolid = new G4CutTubs(nameIn + "_container_solid",  // name
-				 0,                            // inner radius
-				 containerRadius,              // outer radius
-				 lengthIn*0.5,                 // half length - no -length safety!
-				 0,                            // rotation start angle
-				 CLHEP::twopi,                 // rotation finish angle
-				 inputfaceIn,                  // input face normal
-				 outputfaceIn);                // rotation finish angle
 }

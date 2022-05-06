@@ -13,10 +13,10 @@ beam, particle              = "e-",
       haloNSigmaYOuter      = 2,
       haloPSWeightParameter = 1,
       haloPSWeightFunction  = "flat",
-      haloXCutInner         = 1.3,
-      haloYCutInner         = 0.5,
-      haloXCutOuter         = 1.9,
-      haloYCutOuter         = 1.0;
+      haloXpCutInner        = 1.3,
+      haloYpCutInner        = 0.5,
+      haloXpCutOuter        = 1.9,
+      haloYpCutOuter        = 1.0;
 
 include options.gmad
 include fodo.gmad;

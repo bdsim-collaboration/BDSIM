@@ -56,6 +56,10 @@ New Features
 * New bunch distribution type `halosigma` that samples a flat halo distribution
   flat in terms of sigma. This is useful for re-weighting distributions based on
   the particle's distance from the core in terms of sigma.
+* The `halo` distribution now has an outer position cut in both X and Y axes, specified
+  by `haloXCutOuter` and `haloYCutOuter` respectively. Similar inner and outer cuts of the X and Y
+  momentum are also now possible, specified by same options as the position cuts but with a `p`
+  after the axis, e.g `haloXpCutOuter`.
 
 **Components**
 
