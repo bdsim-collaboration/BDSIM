@@ -67,7 +67,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   if (!std::isfinite(fieldRatio))
     {fieldRatio = 1;}
   isScaled = scaling == 1 ? false : true;
-  zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);
+  zeroStrength = !BDS::IsFinite((*strengthIn)["field"]) && !BDS::IsFinite((*strengthIn)["k1"]);
   BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
   unitField = (dipoleField->FieldValue()).unit();
   delete dipoleField;
