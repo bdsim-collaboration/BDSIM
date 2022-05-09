@@ -41,7 +41,10 @@ BDSAuxiliaryNavigator::BDSAuxiliaryNavigator():
   globalToLocalCL(G4AffineTransform()),
   localToGlobalCL(G4AffineTransform()),
   bridgeVolumeWasUsed(false),
-  volumeMargin(0.1*CLHEP::mm)
+  volumeMargin(0.1*CLHEP::mm),
+  currentPVMassWorld(nullptr),
+  currentPVCurvilinearWorld(nullptr),
+  currentPVCurvilinearBridgeWorld(nullptr)
 {
   numberOfInstances++;
 }

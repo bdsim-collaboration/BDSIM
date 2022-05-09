@@ -281,6 +281,10 @@ private:
   /// real curvilinear volume. Therefore, this should be greater than
   /// lengthSafety or the geometrical tolerance.
   G4double volumeMargin;
+
+  mutable const G4VPhysicalVolume* currentPVMassWorld;
+  mutable const G4VPhysicalVolume* currentPVCurvilinearWorld;
+  mutable const G4VPhysicalVolume* currentPVCurvilinearBridgeWorld;
 };
 
 
