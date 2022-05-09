@@ -139,12 +139,12 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
         for (auto vol : vacuumVols)
         {
 
-            G4String name = vol->GetName();
+            G4String nameLocal = vol->GetName();
             const std::set<G4VPhysicalVolume *> &physicalVols = outerGDML->GetAllPhysicalVolumes();
 
             for (auto volp : physicalVols)
             {
-                if (name == volp->GetLogicalVolume()->GetName())
+                if (nameLocal == volp->GetLogicalVolume()->GetName())
                 {
                     G4RotationMatrix *mt = volp->GetRotation();
                     if (!mt){
@@ -218,13 +218,13 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
             {
 	      G4String placementName = el->GetPlacementName() + "_pv";
 	      G4Transform3D* placementTransform = el->GetPlacementTransform();
-	      G4int copyNumber = i;
+	      G4int copyNumberLocal = i;
 	      auto vv = new G4PVPlacement(*placementTransform,             // placement transform
                       el->GetAcceleratorComponent()->GetContainerLogicalVolume(), // volume to be placed
 					  placementName,                   // placement name
 					  containerLogicalVolume,          // volume to place it in
 					  false,                           // no boolean operation
-					  copyNumber,                      // copy number
+                                    copyNumberLocal,                      // copy number
 					  false);                          // overlap checking
 	      
 	      i++; // for incremental copy numbers
@@ -261,7 +261,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
         {
 	  const auto& pv = gdml_world->GetDaughter(j);
 	  G4String placementName = pv->GetName() + "_pv";
-	  G4int copyNumber = 1;
+	  G4int copyNumberLocal = 1;
 	  
 	  if (!element->includeGdmlWorldVolume)
             {
@@ -272,7 +272,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 					  placementName,                           // placement name
 					  containerLogicalVolume,                  // volume to place it in
 					  false,                                   // no boolean operation
-					  copyNumber,                              // copy number
+                                    copyNumberLocal,                     // copy number
 					  false);                                  // overlap checking
 	      
 	      if (vv->CheckOverlaps() && checkOverlaps)

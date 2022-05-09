@@ -350,7 +350,7 @@ void BDSMagnet::PlaceComponents()
               const auto& pv = gdml_world->GetDaughter(j);
               G4String placementName = pv->GetName() + "_pv";
               std::cout << "placing " << placementName << std::endl;
-              G4int copyNumber = 1;
+              G4int copyNumberLocal = 1;
 	      
               if (!magnetOuterInfo->includeGdmlWorldVolume)
 		{
@@ -359,7 +359,7 @@ void BDSMagnet::PlaceComponents()
                                               placementName,                            // placement name
                                               containerLogicalVolume,                   // volume to place it in
                                               false,                             // no boolean operation
-                                              copyNumber,                               // copy number
+                                              copyNumberLocal,                          // copy number
                                               false);                           // overlap checking
 		  
                   if (vv->CheckOverlaps() && checkOverlaps)
