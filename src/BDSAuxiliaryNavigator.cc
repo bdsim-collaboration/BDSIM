@@ -472,8 +472,8 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4bool massWorld,
 {
   if (massWorld)
     {
-      globalToLocal   = auxNavigator->GetGlobalToLocalTransform();
-      localToGlobal   = auxNavigator->GetLocalToGlobalTransform();
+      globalToLocal = auxNavigator->GetGlobalToLocalTransform();
+      localToGlobal = auxNavigator->GetLocalToGlobalTransform();
     }
   if (curvilinearWorld)
     {
@@ -500,8 +500,8 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosit
   localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
 }
 
-void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector &globalPosition,
-                                                const G4ThreeVector &globalMomentum,
+void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosition,
+                                                const G4ThreeVector& globalMomentum,
 						const G4double stepLength)
 {
   G4ThreeVector endPoint = globalPosition + globalMomentum.unit()*stepLength;

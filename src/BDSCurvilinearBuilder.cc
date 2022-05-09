@@ -99,16 +99,15 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
       G4double crRadius = std::min({CurvilinearRadius(pstEl),
                                     CurvilinearRadius(*element),
                                     CurvilinearRadius(nxtEl)});
-      G4int splitnumber = (*element)->GetCurvilinearSplitNumber();
-      if (splitnumber > 1)
-      {
-          CreateCurvilinearElementSplit(name, element, i, crRadius, splitnumber, result);
-      } else
-      {
+      G4int splitNumber = (*element)->GetCurvilinearSplitNumber();
+      if (splitNumber > 1)
+        {CreateCurvilinearElementSplit(name, element, i, crRadius, splitNumber, result);}
+      else
+        {
           BDSBeamlineElement* temp = CreateCurvilinearElement(name, element, element, i, crRadius);
           if (temp)
-          {result->AddBeamlineElement(temp);}
-      }
+            {result->AddBeamlineElement(temp);}
+        }
     }
 
   if (bonusSections)
@@ -205,7 +204,7 @@ void BDSCurvilinearBuilder::CreateCurvilinearElementSplit(const G4String&       
                                                                     BDSBeamline::const_iterator startElement,
                                                                     G4int    index,
                                                                     G4double crRadius,
-                                                                    G4int splitnumber,
+                                                                    G4int splitNumber,
                                                                     BDSBeamline* beamline)
 {
     // we'll take the tilt from the first element - they should only ever be the same when used here
@@ -217,12 +216,12 @@ void BDSCurvilinearBuilder::CreateCurvilinearElementSplit(const G4String&       
 
     // get total arc and angle then split
     G4double chordLength = (*startElement)->GetChordLength() + paddingLength;
-    G4double arcLength = (*startElement)->GetArcLength() + paddingLength;
+    G4double arcLength   = (*startElement)->GetArcLength() + paddingLength;
     G4double angle       = (*startElement)->GetAngle();
 
-    G4double chordLengthSplit = chordLength/splitnumber;
-    G4double arcLengthSplit = arcLength/splitnumber;
-    G4double angleSplit = angle/splitnumber;
+    G4double chordLengthSplit = chordLength / splitNumber;
+    G4double arcLengthSplit = arcLength / splitNumber;
+    G4double angleSplit = angle / splitNumber;
 
     BDSSimpleComponent* component = factory->CreateCurvilinearVolume(elementName+ std::to_string(index),
                                                                      arcLengthSplit,

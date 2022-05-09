@@ -66,7 +66,7 @@ private:
                                                BDSBeamline::const_iterator startElement,
                                                G4int                       index,
                                                G4double                    crRadius,
-                                               G4int splitnumber,
+                                               G4int splitNumber,
                                                BDSBeamline* beamline);
 
   BDSBeamlineElement* CreateCurvilinearElement(const G4String&             elementName,

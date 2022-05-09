@@ -97,8 +97,8 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
       Element el = Element(*element);
       el.magnetGeometryType = "none";
       el.l -= lengthSafety;
-      pipeLine = BDS::BuildSBendLine(elementName,&el,st,brho,integratorSet,incomingFaceAngle,
-				     outgoingFaceAngle,buildFringeFields,prevElement,nextElement);
+      pipeLine = BDS::BuildSBendLine(elementName, &el, st, brho, integratorSet, incomingFaceAngle,
+				     outgoingFaceAngle, buildFringeFields, prevElement ,nextElement);
       pipeLine->Initialise();
     }
   
@@ -273,7 +273,6 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
         }
     }
 }
-
 
 void BDSMagnetNonSplitOuter::Build()
 {
