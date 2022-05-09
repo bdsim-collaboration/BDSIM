@@ -256,6 +256,8 @@ private:
   /// a pure virtual const function from G4MagneticField that we have to
   /// implement and have to keep const. This function doesn't change the
   /// const pointer but does change the contents of what it points to.
+  /// This will try the CL world then the CL Bridge world and proceed
+  /// irrespective of the result in the Bridge world.
   void InitialiseTransform(const G4ThreeVector& globalPosition) const;
 
   /// This is used to forcibly initialise the transforms using a position,

@@ -495,12 +495,23 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4bool massWorld,
 
 void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosition) const
 {
-  auxNavigator->LocateGlobalPointAndSetup(globalPosition);
-  auxNavigatorCL->LocateGlobalPointAndSetup(globalPosition);
+  currentPVMassWorld = auxNavigator->LocateGlobalPointAndSetup(globalPosition);
+  currentPVCurvilinearWorld = auxNavigatorCL->LocateGlobalPointAndSetup(globalPosition);
+  if (currentPVCurvilinearWorld == curvilinearWorldPV)
+    {// try the bridge world next and setup the transforms from that one irrespective
+      bridgeVolumeWasUsed = true;
+      currentPVCurvilinearBridgeWorld = auxNavigatorCLB->LocateGlobalPointAndSetup(globalPosition);
+      globalToLocalCL = auxNavigatorCLB->GetGlobalToLocalTransform();
+      localToGlobalCL = auxNavigatorCLB->GetLocalToGlobalTransform();
+    }
+  else
+    {// setup the one CL transform from the first CL parallel world
+      bridgeVolumeWasUsed = false;
+      globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
+      localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
+    }
   globalToLocal = auxNavigator->GetGlobalToLocalTransform();
   localToGlobal = auxNavigator->GetLocalToGlobalTransform();
-  globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
-  localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
 }
 
 void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosition,

@@ -275,6 +275,11 @@ Bug Fixes
   is now not be applied as well. If finite fringe field quantities are specified, the thin elements will be built
   but will only apply the fringe kicks and not the pole face effects. If using a non-matrix integrator set
   and the option :code:`buildPoleFaceGeometry` is specified as false, thin pole face kicks will be applied.
+* Fix for potentially wrong curvilinear transform for fields. The coordinate conversion function
+  for fields (versus the one for integrators which includes a known direction) did not 'fall back'
+  to the curvilinear bridge world and therefore on a rare occasion, may have given the wrong
+  transform for the field. This has been fixed by falling back to the bridge world in the case
+  of finding the world physical volume in the curvilinear world.
 
 
 **Visualisation**
