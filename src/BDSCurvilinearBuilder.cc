@@ -231,7 +231,7 @@ void BDSCurvilinearBuilder::CreateCurvilinearElementSplit(const G4String&       
                                                                      to);
 //    for loop with the one component
 
-    for (int it = 0; it < splitnumber; it++)
+    for (G4int it = 0; it < splitNumber; ++it)
     {
         beamline->AddComponent(component);
         BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
