@@ -47,6 +47,10 @@ G4ThreeVector BDSFieldMagGlobal::GetField(const G4ThreeVector& position,
 					  const G4double       t) const
 {
   G4ThreeVector localPosition = ConvertToLocal(position);
+  if (localPosition.mag() > 6000)
+    {
+      G4ThreeVector localPosition2 = ConvertToLocal(position);
+    }
   G4ThreeVector localField    = field->GetFieldTransformed(localPosition,t);
   G4ThreeVector globalField   = ConvertAxisToGlobal(localField);
   return globalField;

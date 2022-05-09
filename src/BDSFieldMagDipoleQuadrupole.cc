@@ -44,6 +44,9 @@ G4ThreeVector BDSFieldMagDipoleQuadrupole::GetField(const G4ThreeVector &positio
 {  
   G4ThreeVector   quadField = quad->GetFieldTransformed(position, t);
   G4ThreeVector dipoleField = dipole->GetFieldTransformed(position, t);
+  G4cout << quadField.mag() << " " << dipoleField.mag() << G4endl;
+  if (quadField.mag() > 0.1)
+    {G4cout << "UH OH" << G4endl;}
   return quadField + dipoleField;
 }
 
