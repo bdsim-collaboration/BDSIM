@@ -115,11 +115,12 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 
 
   BDSBeamPipe* beamPipeTmp = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
-                                                                            chordLength,
+                                                                            chordLength - 2*lengthSafety,
                                                                             beamPipeInfoTmp);
   
   // Create the Magnet outer
-  outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, outerFieldInfo, chordLength, chordLength, beamPipeTmp);
+  G4double outerLength = chordLength - 2*lengthSafety;
+  outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend, magnetOuterInfo, outerFieldInfo, outerLength, chordLength, beamPipeTmp);
   
   delete beamPipeTmp;
   delete beamPipeInfoTmp;
