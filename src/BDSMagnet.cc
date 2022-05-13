@@ -369,12 +369,22 @@ void BDSMagnet::PlaceComponents()
 		}
 	    }
 
-        // place the vacuum field inside the GDML logical volumes defined by namedVacuumVolumes
+        // place the outer field inside the GDML logical volumes and the vacuum field inside the GDML logical volumes defined by namedVacuumVolumes
         BDSGeometryExternal* outerGDML = outer->ExternalGeometry();
         std::set<G4LogicalVolume*> vacuumVols;
+        std::set<G4LogicalVolume*> Vols;
 
         if (outerGDML) // the dynamic cast will only work if it's loaded as GDML//
         {
+            Vols = outerGDML->GetAllLogicalVolumes();
+
+            outerFieldInfo->SetScalingRadius(beamPipeInfo->aper1 + 2.5);
+            outerFieldInfo->SetBeamPipeRadius(beamPipeInfo->aper1 + 2.5);
+
+            BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
+                                                                      Vols,
+                                                                      true);
+
             vacuumVols = outerGDML->VacuumVolumes();
             BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
                                                                       vacuumVols,

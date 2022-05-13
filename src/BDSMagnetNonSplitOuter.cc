@@ -129,59 +129,6 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
   containerLogicalVolume = container->GetContainerLogicalVolume();
   containerSolid    = container->GetContainerSolid()->Clone();
   G4ThreeVector contOffset = container->GetPlacementOffset();
-
-  BDSGeometryExternal* outerGDML = outer->ExternalGeometry();
-  std::set<G4LogicalVolume*> vacuumVols;
-
-  if (outerGDML) // the dynamic cast will only work if it's loaded as GDML//
-      {
-        vacuumVols = outerGDML->VacuumVolumes();
-
-        for (auto vol : vacuumVols)
-        {
-
-            G4String nameLocal = vol->GetName();
-            const std::set<G4VPhysicalVolume *> &physicalVols = outerGDML->GetAllPhysicalVolumes();
-
-            for (auto volp : physicalVols)
-            {
-                if (nameLocal == volp->GetLogicalVolume()->GetName())
-                {
-                    G4RotationMatrix *mt = volp->GetRotation();
-                    if (!mt){
-                        mt = new G4RotationMatrix();
-                    }
-
-                    CLHEP::Hep3Vector v = volp->GetTranslation();
-
-                    G4Transform3D *transform = new G4Transform3D(*mt, v);
-
-                    outerFieldInfo->SetTransform(*transform);
-
-
-                }
-            }
-
-        }
-
-        // determine key for this specific magnet instance
-        G4String scalingKey = DetermineScalingKey(magnetType);
-
-        BDSMagnetStrength* scalingStrength = vacuumFieldInfo ? vacuumFieldInfo->MagnetStrength() : nullptr;
-        // Attach to the container but don't propagate to daughter volumes. This ensures
-        // any gap between the beam pipe and the outer also has a field.
-        BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
-                                                                  containerLogicalVolume,
-                                                                  false,
-                                                                  scalingStrength,
-                                                                  scalingKey);
-
-        BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-                                                                  vacuumVols,
-                                                                  true);
-
-      }
-
   
   // set the main offset of the whole magnet which is placed w.r.t. the
   // zero coordinate of the container solid
@@ -281,6 +228,29 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
 	      RegisterPhysicalVolume(vv);
             }
         }
+
+        // place the outer field inside the GDML logical volumes and the vacuum field inside the GDML logical volumes defined by namedVacuumVolumes
+        BDSGeometryExternal* outerGDML = outer->ExternalGeometry();
+        std::set<G4LogicalVolume*> vacuumVols;
+        std::set<G4LogicalVolume*> Vols;
+
+        if (outerGDML) // the dynamic cast will only work if it's loaded as GDML//
+        {
+            Vols = outerGDML->GetAllLogicalVolumes();
+
+            outerFieldInfo->SetScalingRadius(beamPipeInfo->aper1 + 2.5);
+            outerFieldInfo->SetBeamPipeRadius(beamPipeInfo->aper1 + 2.5);
+
+            BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
+                                                                      Vols,
+                                                                      true);
+
+            vacuumVols = outerGDML->VacuumVolumes();
+            BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+                                                                      vacuumVols,
+                                                                      true);
+        }
+
     }
 }
 
