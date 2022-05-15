@@ -674,7 +674,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   // quadrupole component
   if (BDS::IsFinite(element->k1))
-    {(*st)["k1"] = element->scaling*element->k1 / CLHEP::m2;}
+    {(*st)["k1"] = element->scaling*element->k1;}
 
 #ifdef BDSDEBUG
   G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
@@ -714,7 +714,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
-    {(*st)["k1"] = element->scaling * element->k1 / CLHEP::m2;}
+    {(*st)["k1"] = element->scaling * element->k1;}
 
   // geometric face angles (can be different from specification depending on integrator set used)
   G4double incomingFaceAngle = IncomingFaceAngle(element);
@@ -2541,9 +2541,9 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
     
   // scale factor to account for reduced body length due to fringe placement.
   G4double lengthScaling = cavityLength / (element->l * CLHEP::m);
-
+  
   if (BDS::IsFinite(el->gradient))
-    {(*st)["efield"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
+    {(*st)["efield"] = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
   else
     {(*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;}
   (*st)["efield"] /= lengthScaling;
@@ -2891,7 +2891,7 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
   
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
   G4double e2 = el->e2*CLHEP::rad;
-  if (BDS::IsFinite(e2))
+  if (BDS::IsFinite(e2) && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry())
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
       outgoingFaceAngle += factor * e2;
@@ -2931,7 +2931,7 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
 
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
   G4double e1 = el->e1*CLHEP::rad;
-  if (BDS::IsFinite(e1))
+  if (BDS::IsFinite(e1) && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry())
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
       incomingFaceAngle += factor * e1;

@@ -29,6 +29,11 @@ V1.7.0 - 2022 / XX / XX
 * New executable options :code:`--reference` and :code:`--citation` to display the citation
   in Bibtex syntax to cite BDSIM easily.
 * The default yoke fields have changed and are on average stronger (and more correct). See below.
+* :code:`gradient` in the :code:`rf` component has the units of **V/m** and not MV/m as was
+  written in the manual. In fact, it really was volts/m internally. So there should be no change
+  in behaviour, but the documentation has been fixed and is correct and consistent. The units
+  for :code:`E` have also been clarified as volts and that this voltage is assumed across the
+  length of the element :code:`l`.
 
 
 New Features
@@ -51,6 +56,10 @@ New Features
 * New bunch distribution type `halosigma` that samples a flat halo distribution
   flat in terms of sigma. This is useful for re-weighting distributions based on
   the particle's distance from the core in terms of sigma.
+* The `halo` distribution now has an outer position cut in both X and Y axes, specified
+  by `haloXCutOuter` and `haloYCutOuter` respectively. Similar inner and outer cuts of the X and Y
+  momentum are also now possible, specified by same options as the position cuts but with a `p`
+  after the axis, e.g `haloXpCutOuter`.
 
 **Components**
 
@@ -87,6 +96,7 @@ New Features
 * New materials (Inermet170, Inermet176, Inermet180, Copper-Diamond, MoGr).
 * Nicer visualisation colours for charged particles. Green for neutrals is by default now at
   20% opacity as there are usually so many gammas.
+* New units: `mV`, `GV`, `nrad`, `THz`.
 
 **Geometry**
 
@@ -158,6 +168,8 @@ General Updates
   Geant4 names (e.g. "e-").
 * Print out extent of loaded world when using an external geometry file.
 * **EMD** physics has a minimum applicable kinetic energy of 1 MeV to prevent crashes in Geant4.
+* Optional executable argument added to ptc2bdsim to control ROOT split-level of sampler branches. Same
+  functionality as the BDSIM option :code:`samplersSplitLevel`.
 
 Bug Fixes
 ---------
@@ -189,6 +201,7 @@ Bug Fixes
 
 **Fields**
 
+* Fix field maps being wrong if a GDML file was used multiple times with different fields.
 * Fix BDSIM-format field map loading with :code:`loopOrder> tzyx` in the header. It was not
   loaded correctly before. Also, there are corresponding fixes in the pybdsim package.
 * Fix lack of yoke fields for rbends.
@@ -203,16 +216,26 @@ Bug Fixes
 * Fix a bug in field map loading where a space was before the "!" character the columns
   wouldn't be parsed correctly.
 * Fix BDSIM field map format :code:`loopOrder` documentation. The variable can be either `xyzt` or `tzyx`.
+* The quadrupole field in an sbend or rbend with a k1 value specified was a factor of 1e6 too
+  low due to the placement of units. The integrator for tracking (which ignores the field) was
+  correct and still is, but the back up field used for non-paraxial particles had the wrong
+  effective k1.
 
 **Geometry**
-  
+
+* Fix caching of loaded geometry. A loaded piece of geometry should only be reused (i.e. re-placed
+  rather than creating new logical volumes) if it will be used with the same field definition
+  (including none). If a different field is to be used on an already loaded piece of GDML it must
+  be reloaded again to create unique logical volumes as a logical volume can only have one field
+  definition. This fixes field maps being wrong if a GDML file was used multiple times with different fields.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.
 * Fix missing magnet coil end pieces despite being available space when the sequence
   is a magnet, drift, element, or the reverse.
 * Fix overlaps with various parameter combinations for an octagonal beam / aperture shape.
-
+* Fixed issued where sections of an angled dipole were shorter than their containers, resulting in visual gaps
+  in the geometry.
 
 **Output**
 
@@ -247,12 +270,18 @@ Bug Fixes
   speed of some events with large numbers of tracks.
 * Fix lack of user limits for RF cavity geometry.
 * Fix maximum step length user limit for externally loaded geometry.
+* Fix logic of building thin dipole fringe elements when using non-matrix integrator sets. As the
+  rotated poleface geometry will be constructed in such circumstances, the thin integrated pole face kick
+  is now not be applied as well. If finite fringe field quantities are specified, the thin elements will be built
+  but will only apply the fringe kicks and not the pole face effects. If using a non-matrix integrator set
+  and the option :code:`buildPoleFaceGeometry` is specified as false, thin pole face kicks will be applied.
+
 
 **Visualisation**
 
 * GDML auto-colouring now works for G4 materials correctly. The name searching was broken. As a
   reminder, any material without a specific colour will default to a shade of grey according to
-  its density.
+  its density. The auto-colouring is also fixed when preprocessing is used (the default).
 * Fix visualisation of loaded GDML container volume.
   
 **General**

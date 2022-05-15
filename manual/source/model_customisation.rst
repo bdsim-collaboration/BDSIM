@@ -374,6 +374,10 @@ in the field definition in either :code:`magneticReflection` or :code:`electricR
 +-----------------------+------------------------------------------+
 | reflectyzdipole       | equivalent to `reflectx`                 |
 +-----------------------+------------------------------------------+
+| reflectzsolenoid      | Reflect about :math:`z = 0`. Also, for   |
+|                       | :math:`z < 0`, flip the x and y          |
+|                       | components of the field                  |
++-----------------------+------------------------------------------+
 
 * \* See pictorial representation below
 
@@ -398,7 +402,7 @@ simplify things.
 	    the page and the the coordinate system is right-handed.
 
 
-**reflectxydipole**
+**reflectxzdipole**
 
 .. figure:: figures/reflectxzdipole.jpg
 	    :width: 100%
@@ -656,6 +660,9 @@ centre the view nicely and make a quadrupole transparent.
   fields with the "magma" colour scale.
 * Both electric and magnetic fields may be visualised as defined by the query object.
 * A query done in the visualiser will not be written to file.
+* If the magnitude of the field is 0 at the given query point, a small circular point
+  is drawn instead of an arrow.
+* The arrow length does not depend on the field magnitude - only the spacing of the query points.
 
 Field Map Preparation
 ^^^^^^^^^^^^^^^^^^^^^
@@ -752,6 +759,10 @@ The following parameters can be used in a query object:
 +-------------------------+------------------------------------------------+
 | overwriteExistingFiles  | Whether to overwrite existing output files     |
 |                         | - default is True (1)                          |
++-------------------------+------------------------------------------------+
+| drawZeroValuePoints     | (1 or 0) whether to draw a point even if the   |
+|                         | queried field value is 0 in magnitude. Default |
+|                         | is true.                                       |
 +-------------------------+------------------------------------------------+
 | printTransform          | (1 or 0) whether to print out the calculated   |
 |                         | transform from the origin to the global        |
@@ -2461,10 +2472,23 @@ will be visible.
 Regions
 -------
 
-In Geant4, it is possible to drive different *regions* - each with their own production cuts and user limits.
-In BDSIM, there is one default region to which the options prodCutXXXX apply (see :ref:`bdsim-options`) that applies
-everywhere.  Additionally, the user may define additional regions (using the :code:`cutsregion` object)
-and attach these to the beam line elements desired.  For example::
+In Geant4, it is possible to have different *regions* - each with their own production cuts
+and user limits. A "region" in Geant4 terms is a collection of Logical Volumes that have the
+same set of production cuts and don't necessarily have to be beside each other.
+
+Production cuts are a length scale over which the simulation is considered correct and
+can roughly be thought of as the length a secondary would have to travel in that material
+to be tracked.
+
+In BDSIM, there is one default region that applies everywhere. It is controlled
+by :code:`option, defaultRangeCut` along with the other options :code:`prodCutXXXX`
+(see :ref:`physics-process-options`).
+
+The :code:`defaultRangeCut` acts as a default for the 4 possible range cuts for
+protons, photons, electrons and positrons, unless their :code:`prodCutXXXX` option
+is specified.  Aside from the global options, a :code:`custregion` object may be
+declared that defines a set of range cuts. This object can then be attached to
+beam line elements. For example::
 
   precisionRegion: cutsregion, prodCutProtons=1*m,
                                prodCutElectrons=10*m,
@@ -2473,7 +2497,7 @@ and attach these to the beam line elements desired.  For example::
 
   d1: drift, l=10*m, region="precisionRegion";
 
-The following parameters are available in the `cutsregion` object:
+The following parameters are available in the `cutsregion` object and as global options:
 
 +--------------------+----------------------------------------+
 | **Parameter**      | **Description**                        |
@@ -2489,11 +2513,8 @@ The following parameters are available in the `cutsregion` object:
 | prodCutPositrons   | The range cut for positrons.           |
 +--------------------+----------------------------------------+
 
-A range cut is a length that a secondary particle would have to travel in that
-material. If it would not travel that distance, then it is not tracked and its
-energy deposited there.
 
-Geant4 translates these to an energy scale per particle type per material. This
+Geant4 translates these range cuts into an energy per particle type per material. This
 method is documented as being much more physically accurate than a simple energy
 cut across all volumes for all particle types. i.e. the computation time can be
 reduced but the physical accuracy maintained in areas of vastly different
