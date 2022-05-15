@@ -42,7 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldObjects.hh"
 #include "BDSFieldQuery.hh"
 #include "BDSFieldQueryInfo.hh"
-#include "BDSFieldQueryPointsLoader.hh"
+#include "BDSFieldLoaderQueryPoints.hh"
 #include "BDSGap.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGeometryExternal.hh"
