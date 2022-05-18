@@ -105,7 +105,7 @@ std::vector<BDSFourVector<G4double>> BDSFieldLoaderQueryPoints<T>::Load(const G4
 
       if (!intoData)
 	{
-	  std::regex columnRow("^\\s*!"); // ignore any initial white space and look for '!'
+	  std::regex columnRow("^\\s*[!\\#]"); // ignore any initial white space and look for '!'
 	  if (std::regex_search(line, columnRow))
 	    {
 	      std::regex afterExclamation("\\s*!\\s*(.+)");
