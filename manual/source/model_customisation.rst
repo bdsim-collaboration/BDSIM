@@ -364,11 +364,11 @@ in the field definition in either :code:`magneticReflection` or :code:`electricR
 +-----------------------+------------------------------------------+
 | reflectt              | :math:`t \mapsto |t|`                    |
 +-----------------------+------------------------------------------+
-| reflectxydipole \*    | Reflect a positive x and y quadrant to   |
+| reflectxydipole (\*)  | Reflect a positive x and y quadrant to   |
 |                       | all four quadrants with appropriate      |
 |                       | flips to make a dipolar field            |
 +-----------------------+------------------------------------------+
-| reflectxzdipole \*    | Reflect a dipole field about the x-z     |
+| reflectxzdipole (\*)  | Reflect a dipole field about the x-z     |
 |                       | plane but don't reflect the y component  |
 |                       | of the field to make a dipolar field     |
 +-----------------------+------------------------------------------+
@@ -379,7 +379,7 @@ in the field definition in either :code:`magneticReflection` or :code:`electricR
 |                       | components of the field                  |
 +-----------------------+------------------------------------------+
 
-* \* See pictorial representation below
+* (\*) See pictorial representation below
 
 Examples: ::
 
