@@ -59,6 +59,9 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   types["clicpcl"]        = BDSBeamPipeType::clicpcl;
 
   apertureType = BDS::LowerCase(apertureType);
+  
+  if (BDS::StrContains(apertureType, "pointsfile"))
+    {return BDSBeamPipeType::pointsfile;}
 
   auto result = types.find(apertureType);
   if (result == types.end())
