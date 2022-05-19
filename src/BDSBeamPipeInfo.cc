@@ -87,7 +87,7 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(const BDSBeamPipeInfo* defaultInfo,
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn)
 {
-  if (beamPipeTypeIn == "")
+  if (beamPipeTypeIn.empty())
     {beamPipeType = defaultInfo->beamPipeType;}
   else 
     {beamPipeType = BDS::DetermineBeamPipeType(beamPipeTypeIn);}
