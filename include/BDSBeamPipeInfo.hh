@@ -51,6 +51,8 @@ public:
 		  G4Material*     beamPipeMaterialIn,
 		  const G4ThreeVector& inputFaceNormalIn  = G4ThreeVector(0,0,-1),
 		  const G4ThreeVector& outputFaceNormalIn = G4ThreeVector(0,0,1),
+      const G4String& pointsFileNameIn = "",
+      const G4String& pointsUnitIn = "mm");
 
   /// Constructor with string descriptors of materials and type. Automatically determined
   /// using BDSBeamPipeType and BDSMaterials
@@ -109,11 +111,16 @@ public:
   G4Material*     beamPipeMaterial;
   G4ThreeVector   inputFaceNormal;
   G4ThreeVector   outputFaceNormal;
+  G4String        pointsFileName;
+  G4String        pointsUnit;
   ///@}
   
 private:
   /// Private default constructor to ensure one of supplied constructors is used.
   BDSBeamPipeInfo() = delete;
+  
+  /// Parse the type string to extract the file name and the optional units and assign to member variables.
+  void CheckAndSetPointsInfo(const G4String& beamPipeTypeIn);
   
   /// Function to check whether a parameter is set (using BDSUtilities BDS::IsFinite() ). If the
   /// accompanying G4bool setAper1 (for example) is true, the parameter will be checked for
