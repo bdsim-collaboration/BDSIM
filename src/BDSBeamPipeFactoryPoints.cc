@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBeamPipeFactoryPoints.hh"
 #include "BDSBeamPipe.hh"
-#include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSUtilities.hh"
 
@@ -31,9 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TwoVector.hh"
 #include "G4VSolid.hh"
 
-#include <cmath>                           // sin, cos, fabs
-#include <set>
-#include <utility>                         // for std::pair
+#include <cmath>
 #include <vector>
 
 BDSBeamPipeFactoryPoints::BDSBeamPipeFactoryPoints()
@@ -73,7 +70,7 @@ void BDSBeamPipeFactoryPoints::AppendPoint(std::vector<G4TwoVector>& vec,
 					   G4double x,
 					   G4double y)
 {
-  vec.push_back(G4TwoVector(x,y));
+  vec.emplace_back(G4TwoVector(x,y));
 }
 
 void BDSBeamPipeFactoryPoints::AppendAngle(std::vector<G4TwoVector>& vec,
@@ -98,13 +95,6 @@ void BDSBeamPipeFactoryPoints::AppendAngleEllipse(std::vector<G4TwoVector>& vec,
   {
   G4double diff = finishAngle - startAngle;
   G4double delta = diff / (G4double)nPoints;
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "start angle:  " << startAngle  << G4endl;
-  G4cout << __METHOD_NAME__ << "finish angle: " << finishAngle << G4endl;
-  G4cout << __METHOD_NAME__ << "# of points:  " << nPoints     << G4endl;
-  G4cout << __METHOD_NAME__ << "diff angle:   " << diff        << G4endl;
-  G4cout << __METHOD_NAME__ << "delta angle:  " << delta       << G4endl;
-#endif
   for (G4double ang = startAngle; ang < finishAngle; ang += delta)
     { // l for local
       G4double xl = xOffset + radiusA*std::sin(ang);
@@ -281,8 +271,7 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(const G4String&      nameI
   outputFaceNormal = outputFaceNormalIn;
 
   // calculate and set the intersection solid radius
-  intersectionRadius = CalculateIntersectionRadius(aper1In, aper2In, aper3In, aper4In,
-						   beamPipeThicknessIn);
+  intersectionRadius = CalculateIntersectionRadius(aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn);
 
   // create solids based on the member vectors of points
   CreateSolidsAngled(nameIn, lengthIn, inputFaceNormal, outputFaceNormal);
