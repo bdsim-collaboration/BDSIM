@@ -1202,9 +1202,8 @@ Aperture Parameters
 
 For elements that contain a beam pipe, several aperture models can be used. These aperture
 parameters can be set as the default for every element using the :code:`option` command
-(see :ref:`bdsim-options`) and
-can be overridden for each element by specifying them with the element definition. The aperture
-is controlled through the following parameters:
+(see :ref:`bdsim-options`) but can also be overridden for each element by specifying
+them with the element definition. The aperture is controlled through the following parameters:
 
 * `apertureType`
 * `beampipeRadius` or `aper1`
@@ -1226,7 +1225,9 @@ can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MAD-X aperture definitions.
 The required parameters and their meaning are given in the following table.
 
-.. note:: If no beam pipe is desired, :code:`apertureType="circularvacuum"` can be used that makes
+A completely custom aperture can be used with `pointsfile`. See the notes below.
+
+.. note:: If **no beam pipe** is desired, :code:`apertureType="circularvacuum"` can be used that makes
 	  only the vacuum volume without any beam pipe. The vacuum material is the usual vacuum
 	  but can of course can be controlled with :code:`vacuumMaterial`. So you could create
 	  a magnet with air and no beam pipe.
@@ -1234,39 +1235,43 @@ The required parameters and their meaning are given in the following table.
 
 .. tabularcolumns:: |p{3cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|
 
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`        | `aper4`          |
-|                   | parameters   |                   |                 |                |                  |
-+===================+==============+===================+=================+================+==================+
-| `circular`        | 1            | radius            | NA              | NA             | NA               |
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `rectangular`     | 2            | x half-width      | y half-width    | NA             | NA               |
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `elliptical`      | 2            | x semi-axis       | y semi-axis     | NA             | NA               |
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `lhc`             | 3            | x half-width of   | y half-width of | radius of      | NA               |
-|                   |              | rectangle         | rectangle       | circle         |                  |
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `lhcdetailed` (\*)| 3            | x half-width of   | y half-width of | radius of      | NA               |
-|                   |              | rectangle         | rectangle       | circle         |                  |
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `rectellipse`     | 4            | x half-width of   | y half-width of | x semi-axis    | y semi-axis      |
-|                   |              | rectangle         | rectangle       | of ellipse     | of ellipse       |
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `racetrack`       | 3            | horizontal offset | vertical offset | radius of      | NA               |
-|                   |              | of circle         | of circle       | circular part  |                  |
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `octagonal`       | 4            | x half-width      | y half-width    | x point of     | y point of       |
-|                   |              |                   |                 | start of edge  | start of edge    |
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `clicpcl`         | 4            | x half-width      | top ellipse     | bottom ellipse | y separation     |
-|                   |              |                   | y half-height   | y half-height  | between ellipses |
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
-| `circularvacuum`  | 1            | radius            | NA              | NA             | NA               |
-+-------------------+--------------+-------------------+-----------------+----------------+------------------+
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| Aperture Model       | # of         | `aper1`           | `aper2`         | `aper3`        | `aper4`          |
+|                      | parameters   |                   |                 |                |                  |
++======================+==============+===================+=================+================+==================+
+| `circular`           | 1            | radius            | NA              | NA             | NA               |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `rectangular`        | 2            | x half-width      | y half-width    | NA             | NA               |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `elliptical`         | 2            | x semi-axis       | y semi-axis     | NA             | NA               |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `lhc`                | 3            | x half-width of   | y half-width of | radius of      | NA               |
+|                      |              | rectangle         | rectangle       | circle         |                  |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `lhcdetailed` (\*)   | 3            | x half-width of   | y half-width of | radius of      | NA               |
+|                      |              | rectangle         | rectangle       | circle         |                  |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `rectellipse`        | 4            | x half-width of   | y half-width of | x semi-axis    | y semi-axis      |
+|                      |              | rectangle         | rectangle       | of ellipse     | of ellipse       |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `racetrack`          | 3            | horizontal offset | vertical offset | radius of      | NA               |
+|                      |              | of circle         | of circle       | circular part  |                  |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `octagonal`          | 4            | x half-width      | y half-width    | x point of     | y point of       |
+|                      |              |                   |                 | start of edge  | start of edge    |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `clicpcl`            | 4            | x half-width      | top ellipse     | bottom ellipse | y separation     |
+|                      |              |                   | y half-height   | y half-height  | between ellipses |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `circularvacuum`     | 1            | radius            | NA              | NA             | NA               |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `pointsfile` (\*\*)  | 0            | NA                | NA              | NA             | NA               |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
 
 .. note:: (\*) :code:`lhcdetailed` aperture type will result in the :code:`beampipeMaterial` being ignored
 	  and LHC-specific materials at 2K being used.
+
+.. note:: (\*\*) For points file, use :code:`apertureType="pointsfile:pathtofile.dat:cm";`. See below.
 
 These parameters can be set with the *option* command, as the default parameters
 and also on a per element basis that overrides the defaults for that specific element.
@@ -1275,6 +1280,94 @@ In the case of `clicpcl` (CLIC Post Collision Line), the beam pipe is asymmetric
 the same as the geometric centre of the bottom ellipse. Therefore, *aper4*, the y separation
 between ellipses is added on to the 0 position. The parameterisation is taken from
 Phys. Rev. ST Accel. Beams **12**, 021001 (2009).
+
+**Custom Aperture**
+
+For **pointsfile**, a text file can be used to list a set of x,y transverse points to specify
+a custom shape. No other aperture parameters are required other than the aperture type. The
+syntax is: ::
+
+  pointsfile:filename.dat:units
+
+The string should contain no spaces and the values separated by colons :code:`:`. The second
+colon and units are optional and if not supplied will be mm.
+
+* At least 3 points are required
+* Each line should contain only 2 numbers
+* Empty lines will be ignored
+* Lines starting with :code:`!` or :code:`#` will be ignored.
+* Examples can be found in :code:`bdsim/examples/features/geometry/3_beampipes/12_pointsfile.gmad`.
+* The last point must not be duplicated.
+
+::
+
+   d1: drift, l=0.2*m, apertureType="pointsfile:12_points.dat:cm", beampipeThickness=2*mm;
+   d2: drift, l=0.2*m, apertureType="pointsfile:12_points.dat", beampipeThickness=2*mm;
+
+
+.. warning:: The user is entirely responsible for defining an enclosed shape and the points
+	     must not define lines that cross each other (self-intersecting). The shape may be non-convex.
+
+The example in :code:`bdsim/examples/features/geometry/3_beampipes/12_points.dat` is generated
+by the accompanying Python script :code:`createPoints.py`. It creates a circle of some radius
+with an oscillating boundary. This results in a star shape. The file contents are: ::
+
+  3.0     0.0
+  3.5594944939586357      0.44966872700413885
+  3.8269268103510368      0.982587799219406
+  3.6735994432667844      1.4544809126930356
+  3.144000183146753       1.7284287271798486
+  2.4270509831248424      1.7633557568774194
+  1.7584288736820426      1.6512746244216896
+  1.3060457301527224      1.5787380878937436
+  1.0978788199666678      1.7299802010673848
+  1.0270710863817312      2.1826371600832646
+  0.9270509831248422      2.85316954888546
+  0.6722839170258389      3.524235711679308
+  0.2480888913478514      3.943260008793256
+  -0.2480888913478518     3.943260008793256
+  -0.67228391702584       3.524235711679308
+  -0.9270509831248428     2.853169548885461
+  -1.0270710863817316     2.1826371600832646
+  -1.097878819966668      1.7299802010673846
+  -1.3060457301527224     1.5787380878937436
+  -1.7584288736820426     1.651274624421689
+  -2.4270509831248415     1.7633557568774194
+  -3.144000183146753      1.7284287271798482
+  -3.673599443266785      1.4544809126930345
+  -3.8269268103510368     0.982587799219406
+  -3.559494493958636      0.4496687270041383
+  -3.0000000000000004     -9.64873589805982e-16
+  -2.393193713928232      -0.3023306743816869
+  -1.98457215642075       -0.5095515237697232
+  -1.9050594720627234     -0.7542664034150331
+  -2.113839897116428      -1.162093317430443
+  -2.427050983124841      -1.7633557568774196
+  -2.6153828908464263     -2.4560080111504425
+  -2.518498208339415      -3.044341368760992
+  -2.117081949907311      -3.3359873519447065
+  -1.5276046630087032     -3.246325154712854
+  -0.9270509831248429     -2.8531695488854614
+  -0.4520039704885086     -2.3694877926928246
+  -0.12865422582802818    -2.044900361776374
+  0.12865422582802924     -2.0449003617763735
+  0.45200397048850954     -2.3694877926928233
+  0.9270509831248415      -2.85316954888546
+  1.5276046630087043      -3.2463251547128524
+  2.1170819499073117      -3.335987351944705
+  2.5184982083394165      -3.044341368760991
+  2.615382890846429       -2.456008011150442
+  2.4270509831248446      -1.7633557568774183
+  2.1138398971164296      -1.1620933174304438
+  1.9050594720627243      -0.7542664034150321
+  1.9845721564207497      -0.509551523769722
+  2.3931937139282304      -0.3023306743816855
+
+And this looks like:
+
+.. figure:: figures/12_pointsfile.png
+   :width: 50%
+   :align: center
 
 .. _magnet-geometry-parameters:
 
