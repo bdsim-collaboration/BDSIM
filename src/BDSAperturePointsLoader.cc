@@ -53,6 +53,9 @@ std::vector<G4TwoVector>* BDSAperturePointsLoader<T>::Load(const G4String& fileN
 {
   G4String functionName = "BDSAperturePointsLoader::Load> ";
   T file;
+  
+  if (fileName.empty())
+    {throw BDSException(functionName, "empty file name given");}
 
   file.open(fileName);
   
@@ -111,6 +114,9 @@ std::vector<G4TwoVector>* BDSAperturePointsLoader<T>::Load(const G4String& fileN
   file.close();
 
   G4cout << functionName << "loaded " << result->size() << " points" << G4endl;
+  
+  if (result->size() < 3)
+    {throw BDSException(functionName, "require at least 3 points to make an enclosed volume");}
 
   return result;
 }
