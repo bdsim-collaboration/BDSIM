@@ -108,6 +108,8 @@ New Features
   as required for NA62.
 * Ability to read GDML auxiliary information for the tag "colour" to provide colour information
   in the GDML file.
+* Beam pipe aperture may now be defined by a series of x,y points in a text file for an
+  arbitrary shaped beam pipe. This may also be used as the default one.
 
 **Physics**
 
