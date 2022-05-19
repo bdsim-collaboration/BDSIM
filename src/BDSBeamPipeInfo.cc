@@ -97,13 +97,18 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(const BDSBeamPipeInfo* defaultInfo,
   outputFaceNormal(outputFaceNormalIn)
 {
   if (beamPipeTypeIn.empty())
-    {beamPipeType = defaultInfo->beamPipeType;}
+    {
+      beamPipeType   = defaultInfo->beamPipeType;
+      pointsFileName = defaultInfo->pointsFileName; // copy even if empty
+      pointsUnit     = defaultInfo->pointsUnit;
+    }
   else 
-    {beamPipeType = BDS::DetermineBeamPipeType(beamPipeTypeIn);}
+    {
+      beamPipeType = BDS::DetermineBeamPipeType(beamPipeTypeIn);
+      if (beamPipeType == BDSBeamPipeType::pointsfile)
+        {CheckAndSetPointsInfo(beamPipeTypeIn);}
+    }
   
-  if (beamPipeType == BDSBeamPipeType::pointsfile)
-    {CheckAndSetPointsInfo(beamPipeTypeIn);}
-
   if (!BDS::IsFinite(aper1In))
     {aper1 = defaultInfo->aper1;}
   else

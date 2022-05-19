@@ -21,6 +21,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSBeamPipeFactoryPoints.hh"
 
+#include "G4Types.hh"
+
 /**
  * @brief Factory for beam pipe made from an list of x,y points in a file.
  * 
@@ -34,14 +36,9 @@ public:
   virtual ~BDSBeamPipeFactoryPointsFile(){;}
   
 private:
-  /// Generate quarters of a circle to represent the edges joined by straight lines.
-  /// Overloaded (required) from BDSBeamPipeFactoryPoints
-  virtual void GeneratePoints(G4double aper1,
-			      G4double aper2,
-			      G4double aper3,
-			      G4double aper4,
-			      G4double beamPipeThickness,
-			      G4int    pointsPerTwoPi = 40);
+  /// Purely to fulfill interface - should not be used!
+  virtual void GeneratePoints(G4double, G4double, G4double, G4double,
+			      G4double beamPipeThickness, G4int=40);
 
   /// Calculate the radius of the solid used for intersection for angled faces.
   virtual G4double CalculateIntersectionRadius(G4double aper1,
@@ -49,6 +46,8 @@ private:
 					       G4double aper3,
 					       G4double aper4,
 					       G4double beamPipeThickness);
+  
+  G4double maximumRadius;
 };
   
 #endif

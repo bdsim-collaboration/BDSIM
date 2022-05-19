@@ -64,6 +64,9 @@ void BDSBeamPipeFactoryPoints::CleanUpPoints()
 
   beamPipeInnerSolid = nullptr;
   beamPipeOuterSolid = nullptr;
+  
+  pointsFile = "";
+  pointsUnit = "";
 }
 
 void BDSBeamPipeFactoryPoints::AppendPoint(std::vector<G4TwoVector>& vec,
@@ -230,11 +233,14 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(const G4String& nameIn,
 						      G4Material* vacuumMaterialIn,
 						      G4double    beamPipeThicknessIn,
 						      G4Material* beamPipeMaterialIn,
-						      const G4String& /*pointsFileIn*/,
-						      const G4String& /*pointsUnitIn*/)
+						      const G4String& pointsFileIn,
+						      const G4String& pointsUnitIn)
 {
   // clean up after last usage
   CleanUp();
+  
+  pointsFile = pointsFileIn;
+  pointsUnit = pointsUnitIn;
   
   // generate extruded solid edges - provided by derived class
   GeneratePoints(aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn);
@@ -259,11 +265,14 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(const G4String&      nameI
 						      G4Material*   vacuumMaterialIn,
 						      G4double      beamPipeThicknessIn,
 						      G4Material*   beamPipeMaterialIn,
-						      const G4String& /*pointsFileIn*/,
-						      const G4String& /*pointsUnitIn*/)
+						      const G4String& pointsFileIn,
+						      const G4String& pointsUnitIn)
 {
   // clean up after last usage
   CleanUp();
+  
+  pointsFile = pointsFileIn;
+  pointsUnit = pointsUnitIn;
   
   // generate extruded solid edges - provided by derived class
   GeneratePoints(aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn);

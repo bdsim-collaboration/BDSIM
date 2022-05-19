@@ -146,6 +146,11 @@ protected:
   G4double extentX;
   G4double extentY;
   ///@}
+  
+  /// @{ Temporary copy of input variables.
+  G4String pointsFile;
+  G4String pointsUnit;
+  /// @}
 
 private:
   /// Radius of intersection cylinder for angled faced beam pipe pieces. Should
@@ -155,7 +160,7 @@ private:
   /// large angled faces.
   G4double intersectionRadius;
   
-  /// Solid for innter surface of beam pipe.
+  /// Solid for inner surface of beam pipe.
   G4VSolid* beamPipeInnerSolid;
   
   /// Solid for outer surface of beam pipe.
