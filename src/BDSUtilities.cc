@@ -562,9 +562,6 @@ G4ThreeVector BDS::RotateToReferenceFrame(G4ThreeVector faceNormal, G4double ful
 
 std::pair<G4String, G4String> BDS::SplitOnColon(const G4String& formatAndPath)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << formatAndPath << G4endl;
-#endif
   if(!formatAndPath.empty())
     {
       std::size_t found = formatAndPath.find(":");
@@ -577,10 +574,6 @@ std::pair<G4String, G4String> BDS::SplitOnColon(const G4String& formatAndPath)
 	{
 	  G4String format   = formatAndPath.substr(0,found);
 	  G4String filePath = formatAndPath.substr(found+1); // get everything after ":"
-#ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "format: " << format   << G4endl;
-	  G4cout << __METHOD_NAME__ << "file:   " << filePath << G4endl;
-#endif
 	  return std::make_pair(format,filePath);
 	}
     }
