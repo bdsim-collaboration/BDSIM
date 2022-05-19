@@ -38,6 +38,8 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType      beamPipeTypeIn,
 				 G4Material*          beamPipeMaterialIn,
 				 const G4ThreeVector& inputFaceNormalIn,
 				 const G4ThreeVector& outputFaceNormalIn,
+         const G4String&      pointsFileNameIn,
+         const G4String&      pointsUnitIn):
   beamPipeType(beamPipeTypeIn),
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
   aperOffsetX(0), aperOffsetY(0),
@@ -45,7 +47,9 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType      beamPipeTypeIn,
   beamPipeThickness(beamPipeThicknessIn),
   beamPipeMaterial(beamPipeMaterialIn),
   inputFaceNormal(inputFaceNormalIn),
-  outputFaceNormal(outputFaceNormalIn)
+  outputFaceNormal(outputFaceNormalIn),
+  pointsFileName(pointsFileNameIn),
+  pointsUnit(pointsUnitIn)
 {
   CheckApertureInfo();
 }
@@ -64,11 +68,16 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(const G4String&      beamPipeTypeIn,
   aperOffsetX(0), aperOffsetY(0),
   beamPipeThickness(beamPipeThicknessIn),
   inputFaceNormal(inputFaceNormalIn),
-  outputFaceNormal(outputFaceNormalIn)
+  outputFaceNormal(outputFaceNormalIn),
+  pointsFileName(""),
+  pointsUnit("mm")
 {
   beamPipeType     = BDS::DetermineBeamPipeType(beamPipeTypeIn);
   vacuumMaterial   = BDSMaterials::Instance()->GetMaterial(vacuumMaterialIn);
   beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(beamPipeMaterialIn);
+  
+  if (beamPipeType == BDSBeamPipeType::pointsfile)
+    {CheckAndSetPointsInfo(beamPipeTypeIn);}
   CheckApertureInfo();
 }
   
@@ -91,6 +100,9 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(const BDSBeamPipeInfo* defaultInfo,
     {beamPipeType = defaultInfo->beamPipeType;}
   else 
     {beamPipeType = BDS::DetermineBeamPipeType(beamPipeTypeIn);}
+  
+  if (beamPipeType == BDSBeamPipeType::pointsfile)
+    {CheckAndSetPointsInfo(beamPipeTypeIn);}
 
   if (!BDS::IsFinite(aper1In))
     {aper1 = defaultInfo->aper1;}
@@ -123,6 +135,23 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(const BDSBeamPipeInfo* defaultInfo,
     {beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(beamPipeMaterialIn);}
   
   CheckApertureInfo();
+}
+
+void BDSBeamPipeInfo::CheckAndSetPointsInfo(const G4String& beamPipeTypeIn)
+{
+  auto typeAndFileName = BDS::SplitOnColon(beamPipeTypeIn); // find first colon
+  G4String fname = typeAndFileName.second;
+  if (BDS::StrContains(fname, ":"))
+    {// optional second colon with units after it
+      auto fileNameAndUnit = BDS::SplitOnColon(fname);
+      pointsFileName = fileNameAndUnit.first;
+      pointsUnit = fileNameAndUnit.second;
+    }
+  else
+    {
+      pointsFileName = fname;
+      pointsUnit = "mm";
+    }
 }
   
 void BDSBeamPipeInfo::CheckApertureInfo()
