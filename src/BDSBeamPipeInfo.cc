@@ -28,16 +28,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Material.hh"
 
 
-BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
-				 G4double        aper1In,
-				 G4double        aper2In,
-				 G4double        aper3In,
-				 G4double        aper4In,
-				 G4Material*     vacuumMaterialIn,
-				 G4double        beamPipeThicknessIn,
-				 G4Material*     beamPipeMaterialIn,
-				 G4ThreeVector   inputFaceNormalIn,
-				 G4ThreeVector   outputFaceNormalIn):
+BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType      beamPipeTypeIn,
+				 G4double             aper1In,
+				 G4double             aper2In,
+				 G4double             aper3In,
+				 G4double             aper4In,
+				 G4Material*          vacuumMaterialIn,
+				 G4double             beamPipeThicknessIn,
+				 G4Material*          beamPipeMaterialIn,
+				 const G4ThreeVector& inputFaceNormalIn,
+				 const G4ThreeVector& outputFaceNormalIn,
   beamPipeType(beamPipeTypeIn),
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
   aperOffsetX(0), aperOffsetY(0),
@@ -50,42 +50,39 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
   CheckApertureInfo();
 }
 
-BDSBeamPipeInfo::BDSBeamPipeInfo(G4String      beamPipeTypeIn,
-				 G4double      aper1In,
-				 G4double      aper2In,
-				 G4double      aper3In,
-				 G4double      aper4In,
-				 G4String      vacuumMaterialIn,
-				 G4double      beamPipeThicknessIn,
-				 G4String      beamPipeMaterialIn,
-				 G4ThreeVector inputFaceNormalIn,
-				 G4ThreeVector outputFaceNormalIn):
+BDSBeamPipeInfo::BDSBeamPipeInfo(const G4String&      beamPipeTypeIn,
+				 G4double             aper1In,
+				 G4double             aper2In,
+				 G4double             aper3In,
+				 G4double             aper4In,
+				 const G4String&      vacuumMaterialIn,
+				 G4double             beamPipeThicknessIn,
+				 const G4String&      beamPipeMaterialIn,
+				 const G4ThreeVector& inputFaceNormalIn,
+				 const G4ThreeVector& outputFaceNormalIn):
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
   aperOffsetX(0), aperOffsetY(0),
   beamPipeThickness(beamPipeThicknessIn),
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "vacuum material: " << vacuumMaterialIn << G4endl;
-#endif
   beamPipeType     = BDS::DetermineBeamPipeType(beamPipeTypeIn);
   vacuumMaterial   = BDSMaterials::Instance()->GetMaterial(vacuumMaterialIn);
   beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(beamPipeMaterialIn);
   CheckApertureInfo();
 }
   
-BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeInfo* defaultInfo,
-				 G4String         beamPipeTypeIn,
-				 G4double         aper1In,
-				 G4double         aper2In,
-				 G4double         aper3In,
-				 G4double         aper4In,
-				 G4String         vacuumMaterialIn,
-				 G4double         beamPipeThicknessIn,
-				 G4String         beamPipeMaterialIn,
-				 G4ThreeVector    inputFaceNormalIn,
-				 G4ThreeVector    outputFaceNormalIn):
+BDSBeamPipeInfo::BDSBeamPipeInfo(const BDSBeamPipeInfo* defaultInfo,
+				 const G4String&      beamPipeTypeIn,
+				 G4double             aper1In,
+				 G4double             aper2In,
+				 G4double             aper3In,
+				 G4double             aper4In,
+				 const G4String&      vacuumMaterialIn,
+				 G4double             beamPipeThicknessIn,
+				 const G4String&      beamPipeMaterialIn,
+				 const G4ThreeVector& inputFaceNormalIn,
+				 const G4ThreeVector& outputFaceNormalIn):
   aperOffsetX(0), aperOffsetY(0),
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn)

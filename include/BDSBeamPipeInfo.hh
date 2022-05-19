@@ -40,7 +40,7 @@ class G4Material;
 class BDSBeamPipeInfo
 {
 public:
-  /// extra constructor to assign all members at once
+  /// extra constructor to assign all members at once.
   BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
 		  G4double        aper1In,
 		  G4double        aper2In,
@@ -49,35 +49,35 @@ public:
 		  G4Material*     vacuumMaterialIn,
 		  G4double        beamPipeThicknessIn,
 		  G4Material*     beamPipeMaterialIn,
-		  G4ThreeVector   inputFaceNormalIn  = G4ThreeVector(0,0,-1),
-		  G4ThreeVector   outputFaceNormalIn = G4ThreeVector(0,0,1));
+		  const G4ThreeVector& inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+		  const G4ThreeVector& outputFaceNormalIn = G4ThreeVector(0,0,1),
 
   /// Constructor with string descriptors of materials and type. Automatically determined
   /// using BDSBeamPipeType and BDSMaterials
-  BDSBeamPipeInfo(G4String      beamPipeTypeIn,
-		  G4double      aper1In,
-		  G4double      aper2In,
-		  G4double      aper3In,
-		  G4double      aper4In,
-		  G4String      vacuumMaterialIn,
-		  G4double      beamPipeThicknessIn,
-		  G4String      beamPipeMaterialIn,
-		  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
-		  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0,1));
+  BDSBeamPipeInfo(const G4String&      beamPipeTypeIn,
+		  G4double             aper1In,
+		  G4double             aper2In,
+		  G4double             aper3In,
+		  G4double             aper4In,
+		  const G4String&      vacuumMaterialIn,
+		  G4double             beamPipeThicknessIn,
+		  const G4String&      beamPipeMaterialIn,
+		  const G4ThreeVector& inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+		  const G4ThreeVector& outputFaceNormalIn = G4ThreeVector(0,0,1));
 
   /// Constructor that allows a default model to be used as backup. Checks on parameter
   /// validity are done after substituting unset values by values from defaultInfo.
-  BDSBeamPipeInfo(BDSBeamPipeInfo* defaultInfo,
-		  G4String      beamPipeTypeIn,
-		  G4double      aper1In,
-		  G4double      aper2In,
-		  G4double      aper3In,
-		  G4double      aper4In,
-		  G4String      vacuumMaterialIn,
-		  G4double      beamPipeThicknessIn,
-		  G4String      beamPipeMaterialIn,
-		  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
-		  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0,1));
+  BDSBeamPipeInfo(const BDSBeamPipeInfo* defaultInfo,
+		  const G4String&      beamPipeTypeIn,
+		  G4double             aper1In,
+		  G4double             aper2In,
+		  G4double             aper3In,
+		  G4double             aper4In,
+		  const G4String&      vacuumMaterialIn,
+		  G4double             beamPipeThicknessIn,
+		  const G4String&      beamPipeMaterialIn,
+		  const G4ThreeVector& inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+		  const G4ThreeVector& outputFaceNormalIn = G4ThreeVector(0,0,1));
 
   /// Function to check relevant aperture values are set.  This is really a dispatch function
   /// for other aperture specific methods below
