@@ -122,7 +122,9 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(const G4String&  name,
 			    bpi->aper4,
 			    bpi->vacuumMaterial,
 			    bpi->beamPipeThickness,
-			    bpi->beamPipeMaterial);
+			    bpi->beamPipeMaterial,
+			    bpi->pointsFileName,
+			    bpi->pointsUnit);
     }
   else
     {
@@ -135,7 +137,9 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(const G4String&  name,
 			    bpi->aper4,
 			    bpi->vacuumMaterial,
 			    bpi->beamPipeThickness,
-			    bpi->beamPipeMaterial);
+			    bpi->beamPipeMaterial,
+			    bpi->pointsFileName,
+			    bpi->pointsUnit);
     }
 }
   
@@ -148,11 +152,14 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
 						G4double        aper4,
 						G4Material*     vacuumMaterial,
 						G4double        beamPipeThickness,
-						G4Material*     beamPipeMaterial)
+						G4Material*     beamPipeMaterial,
+						const G4String& pointsFileIn,
+						const G4String& pointsUnitIn)
 {
   BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
   return factory->CreateBeamPipe(name,length,aper1,aper2,aper3,aper4,
-				 vacuumMaterial,beamPipeThickness,beamPipeMaterial);
+				 vacuumMaterial,beamPipeThickness,beamPipeMaterial,
+				 pointsFileIn,pointsUnitIn);
 }
 
 BDSBeamPipe*  BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
@@ -166,10 +173,12 @@ BDSBeamPipe*  BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
 						 G4double        aper4,
 						 G4Material*     vacuumMaterial,
 						 G4double        beamPipeThickness,
-						 G4Material*     beamPipeMaterial)
+						 G4Material*     beamPipeMaterial,
+						 const G4String& pointsFileIn,
+						 const G4String& pointsUnitIn)
 {
   BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
   return factory->CreateBeamPipe(name,length,inputFaceNormal,outputFaceNormal,aper1,
 				 aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,
-				 beamPipeMaterial);
+				 beamPipeMaterial,pointsFileIn,pointsUnitIn);
 }
