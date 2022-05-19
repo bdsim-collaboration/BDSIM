@@ -110,7 +110,7 @@ void BDSBeamPipeFactoryPoints::AppendAngleEllipse(std::vector<G4TwoVector>& vec,
     }
 }
 
-void BDSBeamPipeFactoryPoints::CreateSolids(G4String name,
+void BDSBeamPipeFactoryPoints::CreateSolids(const G4String& name,
 					    G4double length,
 					    G4bool   buildLongForIntersection)
 {
@@ -159,10 +159,10 @@ void BDSBeamPipeFactoryPoints::CreateSolids(G4String name,
 						  zOffsets, zScale);
 }
 
-void BDSBeamPipeFactoryPoints::CreateSolidsAngled(G4String      name,
-						  G4double      length,
-						  G4ThreeVector inputFace,
-						  G4ThreeVector outputFace)
+void BDSBeamPipeFactoryPoints::CreateSolidsAngled(const G4String&      name,
+						  G4double             length,
+						  const G4ThreeVector& inputFace,
+						  const G4ThreeVector& outputFace)
 {
   // long length for unambiguous boolean - ensure no gaps in beam pipe geometry
   // extra factor 2 to be safe
@@ -221,7 +221,7 @@ void BDSBeamPipeFactoryPoints::CreateSolidsAngled(G4String      name,
   // only used transversely
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(G4String    nameIn,
+BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(const G4String& nameIn,
 						      G4double    lengthIn,
 						      G4double    aper1In,
 						      G4double    aper2In,
@@ -229,7 +229,9 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(G4String    nameIn,
 						      G4double    aper4In,
 						      G4Material* vacuumMaterialIn,
 						      G4double    beamPipeThicknessIn,
-						      G4Material* beamPipeMaterialIn)
+						      G4Material* beamPipeMaterialIn,
+						      const G4String& /*pointsFileIn*/,
+						      const G4String& /*pointsUnitIn*/)
 {
   // clean up after last usage
   CleanUp();
@@ -246,17 +248,19 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(G4String    nameIn,
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn);
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(G4String      nameIn,
-						      G4double      lengthIn,
-						      G4ThreeVector inputFaceNormalIn,
-						      G4ThreeVector outputFaceNormalIn,
+BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(const G4String&      nameIn,
+						      G4double             lengthIn,
+						      const G4ThreeVector& inputFaceNormalIn,
+						      const G4ThreeVector& outputFaceNormalIn,
 						      G4double      aper1In,
 						      G4double      aper2In,
 						      G4double      aper3In,
 						      G4double      aper4In,
 						      G4Material*   vacuumMaterialIn,
 						      G4double      beamPipeThicknessIn,
-						      G4Material*   beamPipeMaterialIn)
+						      G4Material*   beamPipeMaterialIn,
+						      const G4String& /*pointsFileIn*/,
+						      const G4String& /*pointsUnitIn*/)
 {
   // clean up after last usage
   CleanUp();
@@ -277,7 +281,7 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(G4String      nameIn,
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn);
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryPoints::CommonFinalConstruction(G4String    nameIn,
+BDSBeamPipe* BDSBeamPipeFactoryPoints::CommonFinalConstruction(const G4String& nameIn,
 							       G4Material* vacuumMaterialIn,
 							       G4Material* beamPipeMaterialIn,
 							       G4double    lengthIn)
