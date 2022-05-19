@@ -92,14 +92,16 @@ void BDSBeamPipeFactoryPoints::AppendAngleEllipse(std::vector<G4TwoVector>& vec,
 						  G4int    nPoints,
 						  G4double xOffset,
 						  G4double yOffset)
-  {
+{
   G4double diff = finishAngle - startAngle;
   G4double delta = diff / (G4double)nPoints;
-  for (G4double ang = startAngle; ang < finishAngle; ang += delta)
+  G4double ang = startAngle;
+  for (G4int i = 0; i < nPoints; i++)
     { // l for local
       G4double xl = xOffset + radiusA*std::sin(ang);
       G4double yl = yOffset + radiusB*std::cos(ang);
       AppendPoint(vec, xl, yl);
+      ang += delta;
     }
 }
 
