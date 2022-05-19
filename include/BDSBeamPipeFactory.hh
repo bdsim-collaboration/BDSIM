@@ -98,6 +98,7 @@ private:
   BDSBeamPipeFactoryBase* octagonal;
   BDSBeamPipeFactoryBase* circularvacuum;
   BDSBeamPipeFactoryBase* clicpcl;
+  BDSBeamPipeFactoryBase* pointsfile;
   /// @}
 };
 

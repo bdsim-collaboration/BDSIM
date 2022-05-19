@@ -40,6 +40,8 @@ class G4Material;
 class BDSBeamPipeInfo
 {
 public:
+  /// Deleted default constructor to ensure one of supplied constructors is used.
+  BDSBeamPipeInfo() = delete;
   /// extra constructor to assign all members at once.
   BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
 		  G4double        aper1In,
@@ -116,9 +118,6 @@ public:
   ///@}
   
 private:
-  /// Private default constructor to ensure one of supplied constructors is used.
-  BDSBeamPipeInfo() = delete;
-  
   /// Parse the type string to extract the file name and the optional units and assign to member variables.
   void CheckAndSetPointsInfo(const G4String& beamPipeTypeIn);
   

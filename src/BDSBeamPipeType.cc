@@ -57,6 +57,7 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   types["octagonal"]      = BDSBeamPipeType::octagonal;
   types["circularvacuum"] = BDSBeamPipeType::circularvacuum;
   types["clicpcl"]        = BDSBeamPipeType::clicpcl;
+  types["pointsfile"]     = BDSBeamPipeType::pointsfile; // added so the error print out will be correct
 
   apertureType = BDS::LowerCase(apertureType);
   
