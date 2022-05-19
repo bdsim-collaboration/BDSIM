@@ -17,64 +17,24 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
-#include "BDSBeamPipeFactoryOctagonal.hh"
-#include "BDSBeamPipeFactoryPoints.hh"
+#include "BDSBeamPipeFactoryPointsFile.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4TwoVector.hh"
 
 #include <cmath>
 
-BDSBeamPipeFactoryOctagonal::BDSBeamPipeFactoryOctagonal()
+BDSBeamPipeFactoryPointsFile::BDSBeamPipeFactoryPointsFile()
 {;}
 
-void BDSBeamPipeFactoryOctagonal::GenerateOctagonal(std::vector<G4TwoVector>& vec,
-						    G4double x1,
-						    G4double y1,
-						    G4double x2,
-						    G4double y2)
-{
-  AppendPoint(vec, x1,  y2 );
-  AppendPoint(vec, x1,  -y2);
-  AppendPoint(vec, x2,  -y1);
-  AppendPoint(vec, -x2, -y1);
-  AppendPoint(vec, -x1, -y2);
-  AppendPoint(vec, -x1, y2 );
-  AppendPoint(vec, -x2, y1 );
-  AppendPoint(vec, x2,  y1 );
-}						    
-
-BDS::FourPoints BDSBeamPipeFactoryOctagonal::ExpandOctagon(G4double aper1,
-    G4double aper2,
-    G4double aper3,
-    G4double aper4,
-    G4double distance)
-{
-  // All calculations done in top right quadrant
-  G4TwoVector p1 = G4TwoVector(aper3, aper2);
-  G4TwoVector p1Unit = p1.unit();
-  G4TwoVector p1New = distance*p1Unit;
-  
-  G4TwoVector p2 = G4TwoVector(aper1, aper4);
-  G4TwoVector p2Unit = p2.unit();
-  G4TwoVector p2New = distance*p2Unit;
-  
-  G4double a1 = aper1 + distance;
-  G4double a2 = aper2 + distance;
-  G4double a3 = aper3 + p1New.x();
-  G4double a4 = aper4 + p2New.y();
-  
-  BDS::FourPoints result = {a1,a2,a3,a4};
-  return result;
-}
-
-void BDSBeamPipeFactoryOctagonal::GeneratePoints(G4double aper1,
+void BDSBeamPipeFactoryPointsFile::GeneratePoints(G4double aper1,
 						 G4double aper2,
 						 G4double aper3,
 						 G4double aper4,
 						 G4double beamPipeThickness,
 						 G4int    /*pointsPerTwoPi*/)
 {
+  /*
   GenerateOctagonal(vacuumEdge, aper1, aper2, aper3, aper4);
   BDS::FourPoints ai = ExpandOctagon(aper1, aper2, aper3, aper4, lengthSafetyLarge);
   GenerateOctagonal(beamPipeInnerEdge, ai.aper1, ai.aper2, ai.aper3, ai.aper4);
@@ -87,14 +47,16 @@ void BDSBeamPipeFactoryOctagonal::GeneratePoints(G4double aper1,
 
   extentX = acs.aper1;
   extentY = acs.aper2;
+   */
 }
 
-G4double BDSBeamPipeFactoryOctagonal::CalculateIntersectionRadius(G4double aper1,
+G4double BDSBeamPipeFactoryPointsFile::CalculateIntersectionRadius(G4double aper1,
 								  G4double aper2,
 								  G4double aper3,
 								  G4double aper4,
 								  G4double beamPipeThickness)
 {
+  /*
   // We calculate the expanded aper1234 parameters corresponding to the outermost octagon
   // this has to be the same as the last ExpandOctagon in GeneratePoints()
   BDS::FourPoints acs = ExpandOctagon(aper1, aper2, aper3, aper4, beamPipeThickness + 2*lengthSafetyLarge);
@@ -107,4 +69,6 @@ G4double BDSBeamPipeFactoryOctagonal::CalculateIntersectionRadius(G4double aper1
   G4double result = std::max({maxXY, r1,r2});
   result += lengthSafetyLarge;
   return result;
+   */
+  return 0;
 }

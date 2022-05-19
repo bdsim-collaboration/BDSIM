@@ -37,6 +37,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "src-external/gzstream/gzstream.h"
 #endif
 
+BDSAperturePointsCache* BDSAperturePointsCache::instance = nullptr;
+
 template <class T>
 BDSAperturePointsLoader<T>::BDSAperturePointsLoader()
 {;}
