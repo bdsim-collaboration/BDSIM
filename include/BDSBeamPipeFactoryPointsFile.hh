@@ -47,6 +47,10 @@ private:
 					       G4double aper4,
 					       G4double beamPipeThickness);
   
+  /// Calculate the determinant of 2x G4TwoVectors.
+  G4double Determinant(const G4TwoVector& v1,
+                       const G4TwoVector& v2) const;
+  
   G4double maximumRadius;
 };
   

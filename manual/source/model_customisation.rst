@@ -1298,6 +1298,9 @@ colon and units are optional and if not supplied will be mm.
 * Lines starting with :code:`!` or :code:`#` will be ignored.
 * Examples can be found in :code:`bdsim/examples/features/geometry/3_beampipes/12_pointsfile.gmad`.
 * The last point must not be duplicated.
+* The polygon given by the 2D points may be either clockwise or anti-clockwise wound
+  (the order of the points) and BDSIM will internally make it clockwise, which is
+  necessary to calculate the expansion of the polygon for the beam pipe shape.
 
 ::
 
@@ -1307,6 +1310,8 @@ colon and units are optional and if not supplied will be mm.
 
 .. warning:: The user is entirely responsible for defining an enclosed shape and the points
 	     must not define lines that cross each other (self-intersecting). The shape may be non-convex.
+	     If the shape does not show in the visualiser, check for warnings from Geant4
+	     that would indicate the shape is badly formed.
 
 The example in :code:`bdsim/examples/features/geometry/3_beampipes/12_points.dat` is generated
 by the accompanying Python script :code:`createPoints.py`. It creates a circle of some radius
