@@ -378,8 +378,44 @@ in the field definition in either :code:`magneticReflection` or :code:`electricR
 |                       | :math:`z < 0`, flip the x and y          |
 |                       | components of the field                  |
 +-----------------------+------------------------------------------+
+| reflectxyquadrupole   | Reflect a positive x and y quadrant to   |
+|                       | all four quadrants with appropriate      |
+|                       | flips to make a quadrupolar field        |
++-----------------------+------------------------------------------+
 
 * (\*) See pictorial representation below
+
+For :code:`reflectxydipole`, :math:`x \mapsto |x|` and :math:`y \mapsto |y|`
+for the array look up. Then the value found at that location if changed as follows:
+
+* if :math:`x < 0 \wedge y \geqslant 0`, :math:`B_x \mapsto -B_x`
+* if :math:`x \geqslant 0 \wedge y < 0`, :math:`B_x \mapsto -B_x`
+* :math:`\wedge` is logical AND
+
+
+For :code:`reflectxzdipole`, :math:`y \mapsto |y|` for the array look up. Then
+the value found at that location if changed as follows:
+
+* if :math:`y < 0`, :math:`B_x \mapsto -B_x`
+
+
+For :code:`reflectxzsolenoid`, :math:`z \mapsto |z|` for the array look up. Then
+the value found at that location if changed as follows:
+
+* if :math:`z < 0`, :math:`B_x \mapsto -B_x`
+* if :math:`z < 0`, :math:`B_y \mapsto -B_y`
+
+
+For :code:`reflectxyquadrupole`, :math:`x \mapsto |x|` and :math:`y \mapsto |y|`
+for the array look up. Then the value found at that location if changed as follows:
+
+* if :math:`x < 0`, :math:`B_y \mapsto -B_y`
+* if :math:`y < 0`, :math:`B_x \mapsto -B_x`
+
+
+This logic would also be applicable for a dual beam accelerator dipole
+such as the LHC dipole magnets where the dipole fields in each pipe have
+opposite directions to bend the counter-circulating beams.
 
 Examples: ::
 
