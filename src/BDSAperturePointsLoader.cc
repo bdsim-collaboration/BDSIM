@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TwoVector.hh"
 #include "G4Types.hh"
 #include "G4UnitsTable.hh"
+#include "G4Version.hh"
 
 #include <algorithm>
 #include <array>
@@ -129,10 +130,22 @@ std::vector<G4TwoVector>* BDS::LoadAperturePoints(const G4String& fileName,
   G4double unitAsNumber = 1.0;
   if (!unit.empty())
     {
+#if G4VERSION_NUMBER > 1029
       if (!G4UnitDefinition::IsUnitDefined(unit))
         {throw BDSException(functionName, "no such unit \"" + unit + "\"");}
       else
         {unitAsNumber = G4UnitDefinition::GetValueOf(unit);}
+#else
+      G4String unitLower = BDS::LowerCase(unit);
+      if (unitLower == "mm")
+        {unitAsNumber = 1.0;}
+      else if (unitLower == "cm")
+        {unitAsNumber = 10;}
+      else if (unitLower == "m")
+        {unitAsNumber = 1000;}
+      else
+        {throw BDSException(functionName, "Unknown unit \"" + unit + "\" (for this version of Geant4/BDSIM) - use one of (mm, cm, m)");}
+#endif
     }
     
   auto cachedResult = BDSAperturePointsCache::Instance()->FindCachedFile(fileName+unit); // can return nullptr
