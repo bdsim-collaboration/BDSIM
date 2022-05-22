@@ -651,7 +651,9 @@ You can find examples in :code:`bdsim/examples/features/field/yoke_scaling/`. Th
 a view point macro that can be loaded in the visualiser (open icon in the top left) to
 centre the view nicely and make a quadrupole transparent.
 
-* It may be required to make volumes partially transparent to see the field arrows.
+* The visualisation consists of arrows and a pixel / voxel for each query point. These
+  can be turned on or off individually, but one must be on.
+* It may be required to make geometry partially transparent to see the field arrows.
 * 4D queries will not work. Only up to 3D is supported.
 * The visualisation may become very slow if a large (e.g. > 100x100 in x,y) points is used.
   This is a limitation of the visualisation system in Geant4. Typically, the querying of
@@ -659,7 +661,7 @@ centre the view nicely and make a quadrupole transparent.
 * Magnetic fields are drawn with the matplotlib "viridis" colour scale and electric
   fields with the "magma" colour scale.
 * Both electric and magnetic fields may be visualised as defined by the query object.
-* A query done in the visualiser will not be written to file.
+* A query called in the visualiser will not be written to file.
 * If the magnitude of the field is 0 at the given query point, a small circular point
   is drawn instead of an arrow.
 * The arrow length does not depend on the field magnitude - only the spacing of the query points.
@@ -760,9 +762,20 @@ The following parameters can be used in a query object:
 | overwriteExistingFiles  | Whether to overwrite existing output files     |
 |                         | - default is True (1)                          |
 +-------------------------+------------------------------------------------+
+| drawArrows              | (1 or 0) Whether to draw arrows if used for    |
+|                         | visualisation. Default is true.                |
++-------------------------+------------------------------------------------+
 | drawZeroValuePoints     | (1 or 0) whether to draw a point even if the   |
 |                         | queried field value is 0 in magnitude. Default |
-|                         | is true.                                       |
+|                         | is true. Only applies to arrows.               |
++-------------------------+------------------------------------------------+
+| drawBoxes               | (1 or 0) Whether to draw pixels / voxel boxes  |
+|                         | for each query point in the visualiser.        |
+|                         | Default is true.                               |
++-------------------------+------------------------------------------------+
+| boxAlpha                | The transparency value for the boxes. Range    |
+|                         | from 0 to 1 where 0 is invisible. Default is   |
+|                         | 0.2.                                           |
 +-------------------------+------------------------------------------------+
 | printTransform          | (1 or 0) whether to print out the calculated   |
 |                         | transform from the origin to the global        |
