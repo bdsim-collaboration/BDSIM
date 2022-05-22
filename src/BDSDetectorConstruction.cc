@@ -1408,7 +1408,10 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
 						    G4bool(def.overwriteExistingFiles),
 						    G4String(def.fieldObject),
 						    def.checkParameters,
-						    def.drawZeroValuePoints));
+						    def.drawArrows,
+						    def.drawZeroValuePoints,
+						    def.drawBoxes,
+						    def.boxAlpha));
 	}
       else
 	{
@@ -1431,7 +1434,10 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
 						    G4String(def.fieldObject),
 						    G4bool(def.printTransform),
 						    def.checkParameters,
-						    def.drawZeroValuePoints));
+						    def.drawArrows,
+						    def.drawZeroValuePoints,
+						    def.drawBoxes,
+						    def.boxAlpha));
 	}
     }
   return result;
