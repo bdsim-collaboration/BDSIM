@@ -652,7 +652,8 @@ a view point macro that can be loaded in the visualiser (open icon in the top le
 centre the view nicely and make a quadrupole transparent.
 
 * The visualisation consists of arrows and a pixel / voxel for each query point. These
-  can be turned on or off individually, but one must be on.
+  can be turned on or off individually, but one must be on. If both magnetic and electric
+  fields are visualised in one query, it is recommended to switch off boxes with :code:`drawBoxes=0`.
 * It may be required to make geometry partially transparent to see the field arrows.
 * 4D queries will not work. Only up to 3D is supported.
 * The visualisation may become very slow if a large (e.g. > 100x100 in x,y) points is used.

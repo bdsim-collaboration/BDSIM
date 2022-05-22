@@ -118,6 +118,9 @@ void BDSVisFieldModel::DescribeYourselfTo(G4VGraphicsScene& sceneHandler)
       
       if (query->queryMagnetic)
 	{
+    G4Colour boxZeroColourB = pointVisB->GetColor();
+    boxZeroColourB.SetAlpha(boxAlpha);
+    G4VisAttributes* boxZeroVisB = new G4VisAttributes(boxZeroColourB);
 	  G4String arrowPrefix = query->name + "_B_";
 	  for (const auto& xyzBE: xyzBEs)
 	    {
@@ -147,7 +150,7 @@ void BDSVisFieldModel::DescribeYourselfTo(G4VGraphicsScene& sceneHandler)
 		    }
 		  if (drawBoxes)
 		    {
-		      boxPoly.SetVisAttributes(pointVisB);
+		      boxPoly.SetVisAttributes(boxZeroVisB);
 		      sceneHandler.AddPrimitive(boxPoly);
 		    }
 		  sceneHandler.EndPrimitives();
@@ -179,10 +182,14 @@ void BDSVisFieldModel::DescribeYourselfTo(G4VGraphicsScene& sceneHandler)
 		  FArrow.DescribeYourselfTo(sceneHandler);
 		}
 	    }
+    delete boxZeroVisB;
 	}
       
       if (query->queryElectric)
 	{
+    G4Colour boxZeroColourE = pointVisE->GetColor();
+    boxZeroColourE.SetAlpha(boxAlpha);
+    G4VisAttributes* boxZeroVisE = new G4VisAttributes(boxZeroColourE);
 	  G4String arrowPrefix = query->name + "_E_";
 	  for (const auto& xyzBE: xyzBEs)
 	    {
@@ -207,7 +214,7 @@ void BDSVisFieldModel::DescribeYourselfTo(G4VGraphicsScene& sceneHandler)
 		    }
 		  if (drawBoxes)
 		    {
-		      boxPoly.SetVisAttributes(pointVisE);
+		      boxPoly.SetVisAttributes(boxZeroVisE);
 		      sceneHandler.AddPrimitive(boxPoly);
 		    }
 		  sceneHandler.EndPrimitives();
@@ -240,6 +247,7 @@ void BDSVisFieldModel::DescribeYourselfTo(G4VGraphicsScene& sceneHandler)
 		  FArrow.DescribeYourselfTo(sceneHandler);
 		}
 	    }
+    delete boxZeroVisE;
 	}
       
       querier.CleanUp();
