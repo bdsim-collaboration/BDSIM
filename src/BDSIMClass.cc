@@ -317,7 +317,7 @@ int BDSIM::Initialise()
       bdsOutput->FillBeam(bb);
 
       bdsOutput->CloseFile();
-      return 2;
+      return 0;
     }
   
   /// Print the geometry tolerance
