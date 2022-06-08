@@ -459,20 +459,6 @@ void BDSMaterials::DefineScintillators()
     2.44,    2.41,    2.38,    2.35  };
   std::reverse(ups923a_PhotonEnergy.begin(), ups923a_PhotonEnergy.end());
   
-#if G4VERSION_NUMBER < 1079
-  const G4int ups923a_numentries = 67;
-  G4double ups923a_emission[ups923a_numentries]   = {
-    0,       0.04,    0.11,    0.2,     0.3,     0.4,     0.52,
-    0.62,    0.67,    0.68,    0.67,    0.62,    0.53,    0.48,
-    0.44,    0.42,    0.4,     0.41,    0.42,    0.51,    0.46,
-    0.57,    0.67,    0.78,    0.91,    0.93,    0.95,    0.96,
-    0.94,    0.91,    0.85,    0.76,    0.67,    0.61,    0.57,
-    0.55,    0.52,    0.51,    0.52,    0.54,    0.57,    0.58,
-    0.6,     0.6,     0.59,    0.58,    0.55,    0.48,    0.42,
-    0.37,    0.33,    0.31,    0.29,    0.28,    0.26,    0.24,
-    0.2,     0.17,    0.12,    0.09,    0.08,    0.07,
-    0.06,    0.04,    0.02,    0.01,    0.01  };
-#endif
   // AUG 21 - these were previously just one number as a const property but they should be non-const
   // which requires vs energy numbers - so just use arrays the same shape
   std::vector<G4double> ups923a_RINDEX(ups923a_PhotonEnergy.size(), 1.52);
@@ -490,8 +476,20 @@ void BDSMaterials::DefineScintillators()
   birks = (0.014/1.06)*CLHEP::cm/CLHEP::MeV;
   tmpMaterial->GetIonisation()->SetBirksConstant(birks);
 #if G4VERSION_NUMBER < 1079
+  const G4int ups923a_numentries = 67;
+  G4double ups923a_emission[ups923a_numentries]   = {
+    0,       0.04,    0.11,    0.2,     0.3,     0.4,     0.52,
+    0.62,    0.67,    0.68,    0.67,    0.62,    0.53,    0.48,
+    0.44,    0.42,    0.4,     0.41,    0.42,    0.51,    0.46,
+    0.57,    0.67,    0.78,    0.91,    0.93,    0.95,    0.96,
+    0.94,    0.91,    0.85,    0.76,    0.67,    0.61,    0.57,
+    0.55,    0.52,    0.51,    0.52,    0.54,    0.57,    0.58,
+    0.6,     0.6,     0.59,    0.58,    0.55,    0.48,    0.42,
+    0.37,    0.33,    0.31,    0.29,    0.28,    0.26,    0.24,
+    0.2,     0.17,    0.12,    0.09,    0.08,    0.07,
+    0.06,    0.04,    0.02,    0.01,    0.01  };
   ups923a_mt->AddConstProperty("FASTTIMECONSTANT",3.3*CLHEP::ns);
-  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy.data(), ups923a_emission.data(), ups923a_numentries)->SetSpline(true);
+  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy.data(), ups923a_emission, ups923a_numentries)->SetSpline(true);
   ups923a_mt->AddConstProperty("YIELDRATIO",1.0);
 #endif
   ups923a_mt->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
