@@ -491,7 +491,7 @@ void BDSMaterials::DefineScintillators()
   tmpMaterial->GetIonisation()->SetBirksConstant(birks);
 #if G4VERSION_NUMBER < 1079
   ups923a_mt->AddConstProperty("FASTTIMECONSTANT",3.3*CLHEP::ns);
-  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries)->SetSpline(true);
+  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy.data(), ups923a_emission.data(), ups923a_numentries)->SetSpline(true);
   ups923a_mt->AddConstProperty("YIELDRATIO",1.0);
 #endif
   ups923a_mt->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
