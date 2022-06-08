@@ -26,12 +26,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "G4NistManager.hh"
 #include "G4Version.hh"
+#include "BDSWarning.hh"
 
-#include <chrono>
 #include <iomanip>
 #include <list>
 #include <map>
-#include <thread>
+#include <vector>
 
 BDSMaterials* BDSMaterials::instance = nullptr;
 
@@ -1134,12 +1134,9 @@ void BDSMaterials::DensityCheck(G4double  density,
 {
   if (density > 1e2)
     {// so greater than 100g / cm3, the densest natural material is around 23g/cm3
-      G4cout << G4endl << G4endl;
-      G4cout << __METHOD_NAME__ << "material \"" << materialName
-	     << "\" has a density higher than 100g/cm3! Perhaps check this!" << G4endl
-	     << "Density: " << density << "g/cm3" << G4endl << G4endl;
-      std::this_thread::sleep_for(std::chrono::seconds(2));
-      G4cout << "Proceeding..." << G4endl;
+      G4String msg = "material \"" + materialName + "\"has a density higher than 100g/cm3! Perhaps check this!\n";
+      msg += "Density: " + std::to_string(density) + " g/cm3... proceeding";
+      BDS::Warning(__METHOD_NAME__, msg);
     }
 }
 
