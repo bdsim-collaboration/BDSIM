@@ -205,7 +205,11 @@ void DataLoader::BuildEventBranchNameList()
   
   TTree* mt = (TTree*)f->Get("Model");
   if (!mt)
-    {return;}
+    {
+      f->Close();
+      delete f;
+      return;
+    }
   
   if (mt->GetEntries() == 0)
     {
