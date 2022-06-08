@@ -460,6 +460,7 @@ void BDSMaterials::DefineScintillators()
   std::reverse(ups923a_PhotonEnergy.begin(), ups923a_PhotonEnergy.end());
   
 #if G4VERSION_NUMBER < 1079
+  const G4int ups923a_numentries = 67;
   G4double ups923a_emission[ups923a_numentries]   = {
     0,       0.04,    0.11,    0.2,     0.3,     0.4,     0.52,
     0.62,    0.67,    0.68,    0.67,    0.62,    0.53,    0.48,
