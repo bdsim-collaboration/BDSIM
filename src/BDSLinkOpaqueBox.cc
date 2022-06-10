@@ -129,24 +129,27 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
 		    1,
 		    true);
 
-  G4RotationMatrix* rm = nullptr;
+  G4ThreeVector of = G4ThreeVector(ox,oy,0);
+  G4RotationMatrix* rm = new G4RotationMatrix();
   if (BDS::IsFinite(tilt))
     {
       rm = new G4RotationMatrix();
       rm->rotateZ(tilt);
       RegisterRotationMatrix(rm);
     }
-  // auto componentPlacement =
-  G4cout << "Component placed at " << G4ThreeVector(ox,oy,0) << " inside opaque box" << G4endl;
-  new G4PVPlacement(rm,
-		    G4ThreeVector(ox,oy,0),
+    G4Transform3D* placementTransform = new G4Transform3D(*rm, of);
+
+  new G4PVPlacement(*placementTransform,
 		    component->GetContainerLogicalVolume(),
 		    component->GetName() + "_pv",
 		    containerLogicalVolume,
 		    false,
 		    1,
 		    true);
-  
+
+  // auto componentPlacement =
+  // G4cout << "Component placed at " << G4ThreeVector(ox,oy,0) << " inside opaque box" << G4endl;
+
   outerExtent = BDSExtent(xsize, ysize, zsize);
 
   //G4TwoVector xy = G4TwoVector(component->Sagitta(),0);
