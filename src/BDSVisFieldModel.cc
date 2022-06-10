@@ -119,8 +119,8 @@ void BDSVisFieldModel::DescribeYourselfTo(G4VGraphicsScene& sceneHandler)
       if (query->queryMagnetic)
 	{
     G4Colour boxZeroColourB = pointVisB->GetColor();
-    boxZeroColourB.SetAlpha(boxAlpha);
-    G4VisAttributes* boxZeroVisB = new G4VisAttributes(boxZeroColourB);
+    G4Colour boxZeroColourB2(boxZeroColourB.GetRed(), boxZeroColourB.GetGreen(), boxZeroColourB.GetBlue(), boxAlpha);
+    G4VisAttributes* boxZeroVisB = new G4VisAttributes(boxZeroColourB2);
 	  G4String arrowPrefix = query->name + "_B_";
 	  for (const auto& xyzBE: xyzBEs)
 	    {
@@ -164,8 +164,7 @@ void BDSVisFieldModel::DescribeYourselfTo(G4VGraphicsScene& sceneHandler)
 	      G4Colour arrowColour = bFieldColour.GetValue(normalisedValue);
 	      if (drawBoxes)
 		{
-		  G4Colour boxColour(arrowColour);
-		  boxColour.SetAlpha(boxAlpha);
+		  G4Colour boxColour(arrowColour.GetRed(), arrowColour.GetGreen(), arrowColour.GetBlue(), boxAlpha);
 		  sceneHandler.BeginPrimitives();
 		  boxPoly.SetVisAttributes(G4VisAttributes(boxColour));
 		  sceneHandler.AddPrimitive(boxPoly);
@@ -188,8 +187,11 @@ void BDSVisFieldModel::DescribeYourselfTo(G4VGraphicsScene& sceneHandler)
       if (query->queryElectric)
 	{
     G4Colour boxZeroColourE = pointVisE->GetColor();
-    boxZeroColourE.SetAlpha(boxAlpha);
-    G4VisAttributes* boxZeroVisE = new G4VisAttributes(boxZeroColourE);
+    G4Colour boxZeroColourE2(boxZeroColourE.GetRed(),
+                             boxZeroColourE.GetGreen(),
+                             boxZeroColourE.GetBlue(),
+                             boxAlpha);
+    G4VisAttributes* boxZeroVisE = new G4VisAttributes(boxZeroColourE2);
 	  G4String arrowPrefix = query->name + "_E_";
 	  for (const auto& xyzBE: xyzBEs)
 	    {
@@ -228,8 +230,7 @@ void BDSVisFieldModel::DescribeYourselfTo(G4VGraphicsScene& sceneHandler)
 	      G4Colour arrowColour = eFieldColour.GetValue(normalisedValue);
 	      if (drawBoxes)
 		{
-		  G4Colour boxColour(arrowColour);
-		  boxColour.SetAlpha(boxAlpha);
+		  G4Colour boxColour(arrowColour.GetRed(), arrowColour.GetGreen(), arrowColour.GetBlue(), boxAlpha);
 		  sceneHandler.BeginPrimitives();
 		  boxPoly.SetVisAttributes(G4VisAttributes(boxColour));
 		  sceneHandler.AddPrimitive(boxPoly);
