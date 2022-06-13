@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryGeneral.hh"
 #include "BDSBeamPipeFactoryLHCDetailed.hh"
+#include "BDSBeamPipeFactoryPointsFile.hh"
 #include "BDSBeamPipeInfo2.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
@@ -32,12 +33,15 @@ BDSBeamPipeFactory::BDSBeamPipeFactory()
 {
   general     = new BDSBeamPipeFactoryGeneral();
   lhcdetailed = new BDSBeamPipeFactoryLHCDetailed();
+  pointsfile  = new BDSBeamPipeFactoryPointsFile();
 }
 
 BDSBeamPipeFactory::~BDSBeamPipeFactory()
 {
   delete general;
   delete lhcdetailed;
+  delete pointsfile;
+  instance = nullptr;
 }
 
 BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeType type)
@@ -57,6 +61,8 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
       {result = general; break;}
     case BDSBeamPipeType::lhcdetailed:
       {result = lhcdetailed; break;}
+    case BDSBeamPipeType::pointsfile:
+      {return pointsfile; break;}
     default:
       {
 	throw BDSException(__METHOD_NAME__, "unimplemented beam pipe type.");

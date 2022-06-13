@@ -59,9 +59,9 @@ private:
 				       G4double    length,
 				       G4double    containerRadius);
   G4double CreateGeneralAngledSolids(const G4String&      name,
-				     G4double      length,
-				     G4ThreeVector inputface,
-				     G4ThreeVector outputface);
+				     G4double             length,
+				     const G4ThreeVector& inputface,
+				     const G4ThreeVector& outputface);
 
   void  BuildLogicalVolumes(const G4String&    nameIn,
 					    G4Material* vacuumMaterialIn,

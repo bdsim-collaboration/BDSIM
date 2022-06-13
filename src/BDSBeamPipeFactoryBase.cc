@@ -77,7 +77,7 @@ void BDSBeamPipeFactoryBase::CommonConstruction(const G4String&    nameIn,
   if (beamPipeSolid)
     {allSolids.insert(beamPipeSolid);}
   /// build logical volumes
-  BuildLogicalVolumes(nameIn,vacuumMaterialIn,beamPipeMaterialIn);
+  BuildLogicalVolumes(nameIn, vacuumMaterialIn, beamPipeMaterialIn);
   /// set visual attributes
   SetVisAttributes(beamPipeMaterialIn);
   /// set user limits
@@ -209,7 +209,7 @@ void BDSBeamPipeFactoryBase::CheckAngledVolumeCanBeBuilt(G4double length,
                                                          const G4ThreeVector &inputface,
                                                          const G4ThreeVector &outputface,
                                                          G4double beampipeRadius,
-                                                         G4String name)
+                                                         const G4String& name)
 {
   G4bool intersects = BDS::WillIntersect(inputface.angle(), outputface.angle(), beampipeRadius*2, length);
 

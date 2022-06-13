@@ -44,7 +44,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldObjects.hh"
 #include "BDSFieldQuery.hh"
 #include "BDSFieldQueryInfo.hh"
-#include "BDSFieldQueryPointsLoader.hh"
+#include "BDSFieldLoaderQueryPoints.hh"
 #include "BDSGap.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGeometryExternal.hh"
@@ -1393,7 +1393,10 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
 						    G4bool(def.overwriteExistingFiles),
 						    G4String(def.fieldObject),
 						    def.checkParameters,
-						    def.drawZeroValuePoints));
+						    def.drawArrows,
+						    def.drawZeroValuePoints,
+						    def.drawBoxes,
+						    def.boxAlpha));
 	}
       else
 	{
@@ -1416,7 +1419,10 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
 						    G4String(def.fieldObject),
 						    G4bool(def.printTransform),
 						    def.checkParameters,
-						    def.drawZeroValuePoints));
+						    def.drawArrows,
+						    def.drawZeroValuePoints,
+						    def.drawBoxes,
+						    def.boxAlpha));
 	}
     }
   return result;

@@ -92,7 +92,7 @@ protected:
                                           const G4ThreeVector &inputfaceAngle,
                                           const G4ThreeVector &outputfaceAngle,
                                           G4double horizontalWidth,
-                                          G4String name);
+                                          const G4String& name);
 
   // methods called by CommonConstruction, can be implemented by derived classes
   

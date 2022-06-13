@@ -65,6 +65,8 @@ New Features
 
 * A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into
   voxelized geometries.
+* New `target` beam line component. We could always create a block of material with a closed
+  `rcol` but this is more intuitive.
 
 **Fields**
 
@@ -108,6 +110,8 @@ New Features
   as required for NA62.
 * Ability to read GDML auxiliary information for the tag "colour" to provide colour information
   in the GDML file.
+* Beam pipe aperture may now be defined by a series of x,y points in a text file for an
+  arbitrary shaped beam pipe. This may also be used as the default one.
 
 **Physics**
 
@@ -170,6 +174,8 @@ General Updates
 * **EMD** physics has a minimum applicable kinetic energy of 1 MeV to prevent crashes in Geant4.
 * Optional executable argument added to ptc2bdsim to control ROOT split-level of sampler branches. Same
   functionality as the BDSIM option :code:`samplersSplitLevel`.
+* The green colour for collimators and the new target component has been adjusted very slightly
+  to be a little brighter.
 
 Bug Fixes
 ---------
@@ -179,6 +185,8 @@ Bug Fixes
 **Analysis**
 
 * rebdsim will now explicitly exit if a duplicate histogram name is detected whereas it didn't before.
+* If an electron was used as the beam particle, the mass might not be set correctly for optics analysis
+  (only) resulting in wrong results for sub-relativistic electron optics.
 * Fix warning when using sampler data in analysis in Python: ::
 
     input_line_154:2:36: warning: instantiation of variable 'BDSOutputROOTEventSampler<float>::particleTable' required here, but no

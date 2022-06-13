@@ -53,6 +53,7 @@ private:
   /// @{ Factory instance.
   BDSBeamPipeFactoryBase* general;
   BDSBeamPipeFactoryBase* lhcdetailed;
+  BDSBeamPipeFactoryBase* pointsfile;
   /// @}
 };
 
