@@ -174,6 +174,8 @@ General Updates
 * **EMD** physics has a minimum applicable kinetic energy of 1 MeV to prevent crashes in Geant4.
 * Optional executable argument added to ptc2bdsim to control ROOT split-level of sampler branches. Same
   functionality as the BDSIM option :code:`samplersSplitLevel`.
+* The green colour for collimators and the new target component has been adjusted very slightly
+  to be a little brighter.
 
 Bug Fixes
 ---------
