@@ -60,7 +60,8 @@ public:
 			      G4double        tilt,
 			      G4double        offsetX,
 			      G4double        offsetY,
-			      unsigned int    nPoints) const;
+			      unsigned int    nPoints,
+			      const G4String& pointsFileAndString = "") const;
   
   /// Create any aperture shape with flat ends. The apertureOut is optionally
   /// for defining the possibly different aperture shape at the output end.
@@ -98,6 +99,15 @@ public:
                                                   G4double           lengthExtraForBoolean = 0);
 
 private:
+  /// Check N points > 0 and throw an exception if not.
+  void CheckNPoints(int nPoints,
+		    const G4String& typeName,
+		    const G4String& objectName) const;
+  
+  void ParsePointsFileAndUnits(const G4String& beamPipeType,
+                               G4String& pointsFileName,
+                               G4String& pointsUnit) const;
+  
   /// @{ Flat faced construction function.
   G4VSolid* CreateCircle()      const;
   G4VSolid* CreateRectangle()   const;

@@ -61,7 +61,7 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
   apertureType = BDS::LowerCase(apertureType);
 
   if (BDS::StrContains(apertureType, "pointsfile"))
-    {return BDSApertureType::pointsfile;}
+    {return BDSApertureType::points;}
 
   auto result = types.find(apertureType);
   if (result == types.end())

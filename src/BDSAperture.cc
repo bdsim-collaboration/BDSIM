@@ -55,7 +55,7 @@ void BDSAperture::CheckRequiredParametersSet(G4double aper1, G4bool aper1Set,
 }
 
 void BDSAperture::CheckParameterIsPositive(G4double        parameter,
-					                       const G4String& nameToWarn) const
+					   const G4String& nameToWarn) const
 {
   if (parameter <= 0)
     {throw BDSException(__METHOD_NAME__, "parameter \"" + nameToWarn + "\" is not >= 0");}

@@ -170,12 +170,12 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(const G4String&    na
 							   G4double    aper1,
 							   G4double    aper2,
 							   G4double    aper3,
-							   G4double    /*aper4*//*,
+							   G4double    aper4,
 							   G4Material* vacuumMaterial,
 							   G4double    beamPipeThickness,
 							   G4Material* beamPipeMaterial,
-							   const G4String& /*pointsFileIn*/,
-							   const G4String& /*pointsUnitIn*/)
+							   const G4String& pointsFileIn,
+							   const G4String& pointsUnitIn)
 {
   // clean up after last usage
   CleanUp();
@@ -347,12 +347,12 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(const G4String&      
 							   G4double      aper1,
 							   G4double      aper2,
 							   G4double      aper3,
-							   G4double      /*aper4*//*,
+							   G4double      aper4,
 							   G4Material*   vacuumMaterial,
 							   G4double      beamPipeThickness,
 							   G4Material*   beamPipeMaterial,
-							   const G4String& /*pointsFileIn*/,
-							   const G4String& /*pointsUnitIn*/)
+							   const G4String& pointsFileIn,
+							   const G4String& pointsUnitIn)
 {
   // clean up after last usage
   CleanUp();

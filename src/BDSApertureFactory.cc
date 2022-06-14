@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureEllipse.hh"
 #include "BDSApertureFactory.hh"
 #include "BDSApertureOctagon.hh"
+#include "BDSAperturePoints.hh"
 #include "BDSApertureRaceTrack.hh"
 #include "BDSApertureRectangle.hh"
 #include "BDSApertureRectCircle.hh"
@@ -92,7 +93,8 @@ BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Element& el) const
 			el.aper2 * CLHEP::m,
 			el.aper3 * CLHEP::m,
 			el.aper4 * CLHEP::m,
-			0, 0, 0, 0);
+			0, 0, 0, 0,
+			el.apertureType);
 }
 
 BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Aperture& ap) const
@@ -106,7 +108,8 @@ BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Aperture& ap) const
 			ap.tilt  * CLHEP::rad,
 			ap.offsetX * CLHEP::m,
 			ap.offsetY * CLHEP::m,
-			(unsigned int)ap.nPoints);
+			(unsigned int)ap.nPoints,
+			ap.apertureType);
 }
 
 BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::SamplerPlacement& sp) const
@@ -120,7 +123,8 @@ BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::SamplerPlacement& sp
 			sp.tilt  * CLHEP::rad,
 			0,
 			0,
-			(unsigned int)sp.nPoints);
+			(unsigned int)sp.nPoints,
+			sp.shape);
 }
 
 BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
@@ -131,7 +135,8 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
 						G4double        tilt,
 						G4double        offsetX,
 						G4double        offsetY,
-						unsigned int    nPoints) const
+						unsigned int    nPoints,
+						const G4String& pointsFileString) const
 {
   BDSAperture* result = nullptr;
   switch (at.underlying())
@@ -152,6 +157,14 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
       {result = new BDSApertureOctagon(a1, a2, a3, a4);              break;}
     case BDSApertureType::clicpcl:
       {result = new BDSApertureClicPCL(a1, a2, a3, a4, nPoints);     break;}
+    case BDSApertureType::points:
+      {
+	G4String pointsFile;
+	G4String unitsStr;
+	ParsePointsFileAndUnits(pointsFileString, pointsFile, unitsStr);
+	result = new BDSAperturePoints(pointsFile, unitsStr);
+	break;
+      }
     default:
       {break;}
     }
@@ -170,6 +183,26 @@ void BDSApertureFactory::CheckNPoints(int nPoints,
   if (nPoints < 0)
     {throw BDSException(__METHOD_NAME__, "negative \"nPoints\" in " + typeName +" definition \"" + objectName + "\"");}
 }
+
+void BDSApertureFactory::ParsePointsFileAndUnits(const G4String& beamPipeType,
+						G4String& pointsFileName,
+						G4String& pointsUnit) const
+{
+  auto typeAndFileName = BDS::SplitOnColon(beamPipeType); // find first colon
+  G4String fname = typeAndFileName.second;
+  if (BDS::StrContains(fname, ":"))
+    {// optional second colon with units after it
+      auto fileNameAndUnit = BDS::SplitOnColon(fname);
+      pointsFileName = fileNameAndUnit.first;
+      pointsUnit = fileNameAndUnit.second;
+    }
+  else
+    {
+      pointsFileName = fname;
+      pointsUnit = "mm";
+    }
+}
+
 G4VSolid* BDSApertureFactory::CreateSolid(const G4String&    name,
                                           G4double           length,
                                           const BDSAperture* apertureIn,
@@ -215,6 +248,8 @@ G4VSolid* BDSApertureFactory::CreateSolid(const G4String&    name,
       {product = CreateOctagonal();   break;}
     case BDSApertureType::clicpcl:
       {product = CreateClicPCL();     break;}
+    case BDSApertureType::points:
+      {product = CreateExtrudedSolid(); break;}
     default:
       {break;}
     }
