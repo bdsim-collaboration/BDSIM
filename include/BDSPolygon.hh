@@ -39,8 +39,9 @@ class BDSTiltOffset;
 class BDSPolygon
 {
 public:
+  BDSPolygon() = delete;
   explicit BDSPolygon(const std::vector<G4TwoVector>& pointsIn);
-  ~BDSPolygon();
+  ~BDSPolygon() noexcept;
   /// Implement the copy constructor because we may have an extent object.
   BDSPolygon(const BDSPolygon& other);
 
@@ -65,27 +66,47 @@ public:
   /// What type of interpolation to use between points (e.g. linear, cubic).
   BDSInterpolatorType Interpolation() const {return interpolation;}
   
-  /// Access the extent.
-  BDSExtent Extent() const;
+  BDSExtent Extent() const;           ///< Access the extent.
+  G4double RadiusToEncompass() const; ///< Maximum radius of any point with no margin. Dynamically calculated on first access.
 
-  /// Return true if any segments that make this polyon intersect with
+  /// Return true if any segments that make this polgyon intersect with
   /// any others. Optional arguments for indices of lines that intersect.
   G4bool SelfIntersecting(G4int* const indexOfIntersectionA = nullptr,
 			  G4int* const indexOfIntersectionB = nullptr) const;
   
   /// Return a copy with a tilt and offset applied.
   BDSPolygon ApplyTiltOffset(const BDSTiltOffset& to) const;
+  
+  
+  /// Expands the polygon points by 'value' along the direction of the
+  /// vertex normal.
+  BDSPolygon ExpandByValueUsingVertexNormals(G4double value) const;
+  
+  /// Same as above but done on this instance.
+  void ExpandByValueUsingVertexNormalsInPlace(G4double value);
+  
+  /// Multiply each 2-vector point by scale. Return a new polygon.
+  BDSPolygon ScaleByValue(G4double scale) const;
+  
+  /// Same as above but apply in place to the points in this instance.
+  void ScaleByValueInPlace(G4double scale);
 
-  /// Calculate the intersection of other and this polygons. Throws BDSException
-  /// if no valid intersection found - ie shapes not overlapping.
-  BDSPolygon Intersection(const BDSPolygon& other) const;
-
+  
+  // Boolean operations
+  /// Calculate the union of 'other' polygon with this one and return as a copy.
+  BDSPolygon Union(const BDSPolygon& other) const;
+  
   /// Calculate subtraction of other from this polygon. This may produce more than
   /// one resultant polygon, therefore a vector is returned.
   std::vector<BDSPolygon*> Subtraction(const BDSPolygon& other) const;
-
-  /// Calculate the union of 'other' polygon with this one and return as a copy.
-  BDSPolygon Union(const BDSPolygon& other) const;
+  
+  /// Calculate the intersection of other and this polygons. Throws BDSException
+  /// if no valid intersection found - ie shapes not overlapping.
+  BDSPolygon Intersection(const BDSPolygon& other) const;
+  //
+  
+  /// Resample the polygon and generate a new one using nPoints points.
+  BDSPolygon InterpolateWithNPoints(unsigned int nPoints) const;
 
   ///@{ Iterator mechanics.
   typedef std::vector<G4TwoVector>::iterator               iterator;
@@ -136,13 +157,27 @@ protected:
 						   G4int* nInside = nullptr);
   
 private:
-  BDSPolygon() = delete;
-
+  /// Calculate the normal at each vertex (point) in the polygon. Populates the
+  /// member vector vertexNormals. If it already exists, it will be deleted and
+  /// calculated afresh.
+  void CalculateVertexNormals() const;
+  
+  /// Calculate the determinant of 2x G4TwoVectors.
+  G4double Determinant(const G4TwoVector& v1,
+                       const G4TwoVector& v2) const;
+  
   /// Polygon 2D coordinates.
   std::vector<G4TwoVector> points;
+  
+  /// Outward-pointing normals. Calculated only when needed.
+  mutable std::vector<G4TwoVector>* vertexNormals;
 
   /// Cache of extent if calculated - initialised on first call to Extent().
   mutable BDSExtent* extent;
+  
+  /// Cache of maximum radius of any point.
+  mutable G4double radiusToEncompass;
+  mutable bool     recalculateRadiusToEncompass;
 
   /// Which interpolation scheme to use if interpolating between points.
   BDSInterpolatorType interpolation;
