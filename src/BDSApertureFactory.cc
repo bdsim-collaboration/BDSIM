@@ -70,7 +70,7 @@ BDSApertureFactory::BDSApertureFactory():
 {
   specialisations = {
 		     {MakePair(BDSApertureType::circle, BDSApertureType::circle),
-          &BDSApertureFactory::CreateDifferentEndsCircleToCircle}
+		      &BDSApertureFactory::CreateDifferentEndsCircleToCircle}
   };
   
   hollowSpecialisations = {
@@ -88,17 +88,16 @@ BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Element& el) const
   BDSBeamPipeType bpt = BDS::DetermineBeamPipeType(el.apertureType);
   BDSApertureType apt = BDS::ApertureTypeFromBeamPipeType(bpt);
   return CreateAperture(apt,
-    el.aper1 * CLHEP::m,
-    el.aper2 * CLHEP::m,
-    el.aper3 * CLHEP::m,
-    el.aper4 * CLHEP::m,
-    0, 0, 0, 0);
+			el.aper1 * CLHEP::m,
+			el.aper2 * CLHEP::m,
+			el.aper3 * CLHEP::m,
+			el.aper4 * CLHEP::m,
+			0, 0, 0, 0);
 }
 
 BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Aperture& ap) const
 {
-  if (ap.nPoints < 0)
-    {throw BDSException(__METHOD_NAME__, "negative \"nPoints\" in aperture definition \"" + ap.name + "\"");}
+  CheckNPoints(ap.nPoints, "aperture", ap.name);
   return CreateAperture(BDS::DetermineApertureType(ap.apertureType),
 			ap.aper1 * CLHEP::m,
 			ap.aper2 * CLHEP::m,
@@ -112,6 +111,7 @@ BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::Aperture& ap) const
 
 BDSAperture* BDSApertureFactory::CreateAperture(const GMAD::SamplerPlacement& sp) const
 {
+  CheckNPoints(sp.nPoints, "samplerplacement", sp.name);
   return CreateAperture(BDS::DetermineApertureType(sp.shape),
 			sp.aper1 * CLHEP::m,
 			sp.aper2 * CLHEP::m,
@@ -163,6 +163,13 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
   return result;
 }
 
+void BDSApertureFactory::CheckNPoints(int nPoints,
+				      const G4String& typeName,
+				      const G4String& objectName) const
+{
+  if (nPoints < 0)
+    {throw BDSException(__METHOD_NAME__, "negative \"nPoints\" in " + typeName +" definition \"" + objectName + "\"");}
+}
 G4VSolid* BDSApertureFactory::CreateSolid(const G4String&    name,
                                           G4double           length,
                                           const BDSAperture* apertureIn,
@@ -533,7 +540,7 @@ G4VSolid* BDSApertureFactory::CreateDifferentEndsCircleToCircle() const
   G4VSolid* product;
   if (angledFaces)
   {
-    productNormalIn.theta()
+    productNormalIn.theta();
     // make longer cone, then intersect with cut tubs
     G4Cons* cons = new G4Cons(productName + "_base_cons",
                               0, ap1->radius,
