@@ -38,8 +38,8 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType      beamPipeTypeIn,
 				 G4Material*          beamPipeMaterialIn,
 				 const G4ThreeVector& inputFaceNormalIn,
 				 const G4ThreeVector& outputFaceNormalIn,
-         const G4String&      pointsFileNameIn,
-         const G4String&      pointsUnitIn):
+				 const G4String&      pointsFileNameIn,
+				 const G4String&      pointsUnitIn):
   beamPipeType(beamPipeTypeIn),
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
   aperOffsetX(0), aperOffsetY(0),
