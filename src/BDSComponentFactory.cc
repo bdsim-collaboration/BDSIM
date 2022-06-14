@@ -2248,11 +2248,20 @@ BDSBeamPipeInfo2* BDSComponentFactory::PrepareBeamPipeInfo2(Element const* el,
   BDSBeamPipeInfo2* result;
   if (!BDSGlobalConstants::Instance()->IgnoreLocalAperture())
     {
-      result = new BDSBeamPipeInfo2(BDS::DetermineBeamPipeType(el->apertureType),
-				    apFac.CreateAperture(*el),
-				    BDSMaterials::Instance()->GetMaterial(el->vacuumMaterial),
-				    el->beampipeThickness * CLHEP::m,
-				    BDSMaterials::Instance()->GetMaterial(el->beampipeMaterial));
+      try
+	{
+	  result = new BDSBeamPipeInfo2(BDS::DetermineBeamPipeType(el->apertureType),
+					apFac.CreateAperture(*el),
+					BDSMaterials::Instance()->GetMaterial(el->vacuumMaterial),
+					el->beampipeThickness * CLHEP::m,
+					BDSMaterials::Instance()->GetMaterial(el->beampipeMaterial));
+	}
+      catch (BDSException& e)
+	{
+	  G4String msg = "\nProblem in element: \"" + el->name + "\"";
+	  e.AppendToMessage(msg);
+	  throw e;
+	}
     }
   else
     {// ignore the aperture model from the element and use the global one
