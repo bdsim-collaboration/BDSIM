@@ -13,46 +13,37 @@ RUN apt-get update
 RUN DEBIAN_FRONTEND="noninteractive" apt -y install build-essential
 
 # required packages
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake cmake-curses-gui wget xorg-dev freeglut3-dev qt5-default python2.7-dev libssl-dev liblz4-dev git
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install cmake cmake-curses-gui wget xorg-dev freeglut3-dev qt5-default python2.7-dev libssl-dev liblz4-dev git \
+    libxerces-c-dev bison flex python3-pip python-tk x11vnc xvfb fvwm
 
-# up to date cmake
-# RUN wget https://github.com/Kitware/CMake/releases/download/v3.16.4/cmake-3.16.4.tar.gz && \
-#     tar zxf cmake-3.16.4.tar.gz && rm -rfv cmake-3.16.4.tar.gz && cd cmake-3.16.4 && \
-#     ./bootstrap && make install && cd ../ && rm -rfv cmake-3.16.4  
+# python packages
+RUN pip install scipy matplotlib==2.0 numpy ipython
 
+# clhep
 RUN wget http://proj-clhep.web.cern.ch/proj-clhep/dist1/clhep-2.4.1.3.tgz && \
     tar -xf clhep-2.4.1.3.tgz && rm -rf clhep-2.4.1.3.tgz && \
     mkdir 2.4.1.3-build && cd 2.4.1.3-build && cmake ../2.4.1.3/CLHEP/ && \
     make -j6 && make install && cd ../ && rm -rfv 2.4.1.3 2.4.1.3-build
 
-# RUN apt-get -y install liblz4-dev libssl1.0-dev
+# root
+RUN nproc
+RUN wget https://root.cern/download/root_v6.20.00.source.tar.gz && \
+    tar zxf root_v6.20.00.source.tar.gz && mkdir root-6.20.00-build && \
+    cd root-6.20.00-build && cmake ../root-6.20.00 && make -j`nproc` && make install 
+    #  && \ cd ../ && rm -rfv root-6.20.00-build root-6.20.00
 
-RUN wget https://root.cern/download/root_v6.20.00.source.tar.gz 
-RUN tar zxf root_v6.20.00.source.tar.gz && mkdir root-6.20.00-build 
-RUN cd root-6.20.00-build && cmake ../root-6.20.00 && make -j6 && make install 
-## && cd ../ && rm -rfv root-6.20.00-build root-6.20.00
-
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install libxerces-c-dev
-
+# geant4
 RUN wget https://github.com/Geant4/geant4/archive/v10.4.3.tar.gz && \
     tar zxf v10.4.3.tar.gz && mkdir geant4-10.4.3-build && cd geant4-10.4.3-build && \
     cmake ../geant4-10.4.3 -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_GDML=ON -DGEANT4_USE_OPENGL_X11=ON \
-    -DGEANT4_USE_SYSTEM_CLHEP=ON -DGEANT4_USE_QT=ON -DGEANT4_USE_RAYTRACER_X11=ON && make -j6 && make install 
+    -DGEANT4_USE_SYSTEM_CLHEP=ON -DGEANT4_USE_QT=ON -DGEANT4_USE_RAYTRACER_X11=ON && make -j`nproc` && make install 
 
 SHELL ["/bin/bash", "-c"]
 
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install bison flex
-RUN git clone https://stewartboogert@bitbucket.org/jairhul/bdsim.git && cd bdsim && git checkout develop 
-RUN . /usr/local/bin/thisroot.sh && mkdir bdsim-build && cd bdsim-build && cmake ../bdsim && make -j6 && make install
-## && cd ../ && rm -rfv bdsim-build bdsim 
-
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install python3-pip
-RUN pip install scipy 
-RUN pip install matplotlib==2.0
-RUN pip install numpy 
-RUN pip install ipython
-
-RUN export DEBIAN_FRONTEND=noninteractive && apt-get -y install python-tk
+# bdsim 
+RUN git clone https://stewartboogert@bitbucket.org/jairhul/bdsim.git && cd bdsim && git checkout develop && cd ../ && \
+    . /usr/local/bin/thisroot.sh && mkdir bdsim-build && cd bdsim-build && cmake ../bdsim && make -j`nproc` && make install
+    # && \ cd ../ && rm -rfv bdsim-build bdsim 
 
 # Python support tools (pybdsim, pymadx, pymad8, pytransport, pyg4ometry)
 RUN git clone https://stewartboogert@bitbucket.org/jairhul/pymadx.git && \
@@ -71,4 +62,6 @@ RUN git clone https://stewartboogert@bitbucket.org/jairhul/pybdsim.git && \
     cd pybdsim && \
     make develop
 
-RUN apt install x11vnc xvfb fvwm
+RUN echo 'source /usr/local/bin/geant4.sh' >> ~/.bashrc && \
+    echo 'export PYTHONPATH=$PYTHONPATH:/usr/local/lib' >> ~/.bashrc
+   
