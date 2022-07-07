@@ -4189,8 +4189,17 @@ A `scorer` defines a quantity to be recorded. The syntax is: ::
 | scorePrimariesOnly      | No            | If true, only score the quantity for the       |
 |                         |               | the primary particle(s) with Parent ID == 0.   |
 +-------------------------+---------------+------------------------------------------------+
-
+| logicalVolumesNames     | No            | A space separated list of the names of the     |
+|                         |               | logical volumes to be scored. Any name not     |
+|                         |               | matching this will be ignored.                 |
+|                         |               | (string, case sensitive).                      |
++-------------------------+---------------+------------------------------------------------+
 .. _scorer-types:
+
+.. note::
+    logicalVolumesNames = "World_lv" is equivalent to set `scoreWorldVolumeOnly=1`.
+.. warning::
+    If the user has set the option `preProcessGDML` to 1, the logical volume name must be preceded by the element name.
 
 Scorer Types
 ************

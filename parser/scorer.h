@@ -50,8 +50,10 @@ namespace GMAD
     std::string materialToExclude;
     bool        scoreWorldVolumeOnly;
     bool        scorePrimariesOnly;
-    
-    /// Constructor
+    std::string logicalVolumesNames;
+
+
+      /// Constructor
     Scorer();
     /// Reset
     void clear();

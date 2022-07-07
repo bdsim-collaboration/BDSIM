@@ -41,6 +41,7 @@ void Scorer::clear()
   materialToExclude    = "";
   scoreWorldVolumeOnly = false;
   scorePrimariesOnly   = false;
+  logicalVolumesNames  = "";
 }
 
 void Scorer::PublishMembers()
@@ -59,6 +60,8 @@ void Scorer::PublishMembers()
   publish("materialToExclude",    &Scorer::materialToExclude);
   publish("scoreWorldVolumeOnly", &Scorer::scoreWorldVolumeOnly);
   publish("scorePrimariesOnly",   &Scorer::scorePrimariesOnly);
+  publish("logicalVolumesNames",  &Scorer::logicalVolumesNames);
+
 }
 
 void Scorer::print()const
@@ -77,5 +80,6 @@ void Scorer::print()const
 	    << "materialToInclude "     << materialToInclude    << std::endl
 	    << "materialToExclude "     << materialToExclude    << std::endl
 	    << "scoreWorldVolumeOnly "  << scoreWorldVolumeOnly << std::endl
-	    << "scorePrimariesOnly"     << scorePrimariesOnly   << std::endl;
+	    << "scorePrimariesOnly"     << scorePrimariesOnly   << std::endl
+      << "logicalVolumesNames"    << logicalVolumesNames  << std::endl;
 }

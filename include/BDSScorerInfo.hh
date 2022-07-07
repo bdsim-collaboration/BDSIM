@@ -70,6 +70,7 @@ public:
   std::vector<G4Material*> materialsToExclude; /// Which materials to exclude for scoring.
   G4bool        worldVolumeOnly;     ///< Whether to score from the world volume only
   G4bool        primariesOnly;
+  std::vector<G4String> volumesToInclude;
 };
 
 #endif

@@ -49,7 +49,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPrimitiveScorer.hh"
 
 BDSScorerFactory::BDSScorerFactory()
-{;}
+{}
 
 G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*    info,
 						   const BDSHistBinMapper* mapper,
@@ -183,7 +183,8 @@ BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String&      name,
     }
   if (info->worldVolumeOnly)
     {
-      auto worldLVFilter = new BDSSDFilterLogicalVolume("world_lv_only", worldLV);
+      std::vector<G4String> worldName({"World_lv"});
+      auto worldLVFilter = new BDSSDFilterLogicalVolume("world_lv_only", worldName);
       result->RegisterFilter(worldLVFilter);
     }
   if (info->primariesOnly)
@@ -191,7 +192,10 @@ BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String&      name,
       auto primaryFilter = new BDSSDFilterPrimary("primary_filter");
       result->RegisterFilter(primaryFilter);
     }
-
+  if (!(info->volumesToInclude.empty())) {
+    auto volumefilter = new BDSSDFilterLogicalVolume("volumeName_filter",info->volumesToInclude);
+    result->RegisterFilter(volumefilter);
+  }
   // if we didn't register any filters, just delete it
   if (result->size() == 0)
     {

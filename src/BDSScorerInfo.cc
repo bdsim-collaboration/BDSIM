@@ -88,6 +88,7 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
   worldVolumeOnly = scorer.scoreWorldVolumeOnly;
   primariesOnly = scorer.scorePrimariesOnly;
 
+
   if (scorer.particlePDGID != 0)
     {
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
@@ -107,6 +108,10 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
 
   for (const auto& me : BDS::SplitOnWhiteSpace(scorer.materialToExclude))
     {materialsToExclude.push_back(BDSMaterials::Instance()->GetMaterial(me));} 
+
+  for (const auto& vi : BDS::SplitOnWhiteSpace(scorer.logicalVolumesNames))
+    {volumesToInclude.push_back(vi);}
+
 }
 
 void BDSScorerInfo::CheckParticle(G4ParticleDefinition* particleIn,
