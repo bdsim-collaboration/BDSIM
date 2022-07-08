@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include <regex>
 #include "BDSSDFilterLogicalVolume.hh"
 
 #include "G4Step.hh"
@@ -38,6 +40,8 @@ G4bool BDSSDFilterLogicalVolume::Accept(const G4Step* aStep) const
   G4LogicalVolume* stepLV = realWorldStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume();
   G4String nameLV = stepLV->GetName();
 
-  G4bool found = std::find(referenceLV.begin(), referenceLV.end(), nameLV) != referenceLV.end();
-  return found;
+  return std::any_of(referenceLV.begin(), referenceLV.end(), [&nameLV](const G4String& rlv){
+        return regex_match (nameLV, std::regex(rlv) );
+    });
+
 }
