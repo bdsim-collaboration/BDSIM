@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSScorerFactory.hh"
 #include "BDSScorerInfo.hh"
+#include "BDSAcceleratorModel.hh"
 #include "BDSPSCellFluxScaledPerParticle3D.hh"
 #include "BDSPSPopulationScaled.hh"
 #include "BDSPSBLMEnergyDeposit.hh"
@@ -53,13 +54,12 @@ BDSScorerFactory::BDSScorerFactory()
 
 G4VPrimitiveScorer* BDSScorerFactory::CreateScorer(const BDSScorerInfo*    info,
 						   const BDSHistBinMapper* mapper,
-						   G4double*               unit,
-						   G4LogicalVolume*        worldLV)
+						   G4double*               unit)
 {
   // here we create the scorer with the information from BDSScorerInfo.
   G4VPrimitiveScorer* primitiveScorer = GetAppropriateScorer(*info, mapper, unit);
 
-  BDSSDFilterAnd* filter = CreateFilter(info->name + "_scorer_filter", info, worldLV);
+  BDSSDFilterAnd* filter = CreateFilter(info->name + "_scorer_filter", info);
   if (filter)
     {primitiveScorer->SetFilter(filter);}
 
@@ -146,8 +146,7 @@ G4VPrimitiveScorer* BDSScorerFactory::GetAppropriateScorer(const BDSScorerInfo& 
 }
 
 BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String&      name,
-					                                     const BDSScorerInfo* info,
-                                               G4LogicalVolume*     worldLV) const
+					                                     const BDSScorerInfo* info) const
 {
   BDSSDFilterAnd* result = new BDSSDFilterAnd(name, /*ownsFilters=*/true);
 
@@ -183,7 +182,7 @@ BDSSDFilterAnd* BDSScorerFactory::CreateFilter(const G4String&      name,
     }
   if (info->worldVolumeOnly)
     {
-      std::vector<G4String> worldName({"World_lv"});
+      std::vector<G4String> worldName({BDSAcceleratorModel::Instance()->WorldLV()->GetName()});
       auto worldLVFilter = new BDSSDFilterLogicalVolume("world_lv_only", worldName);
       result->RegisterFilter(worldLVFilter);
     }

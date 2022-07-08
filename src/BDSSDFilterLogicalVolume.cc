@@ -21,13 +21,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Step.hh"
 
 BDSSDFilterLogicalVolume::BDSSDFilterLogicalVolume(const G4String& name,
-                                                           const std::vector<G4String>& referenceLVIn):
+                                                   const std::vector<G4String>& referenceLVIn):
         G4VSDFilter(name),
         referenceLV(referenceLVIn)
-{;}
+{}
 
 BDSSDFilterLogicalVolume::~BDSSDFilterLogicalVolume()
-{;}
+{}
 
 G4bool BDSSDFilterLogicalVolume::Accept(const G4Step* aStep) const
 {

@@ -1284,8 +1284,6 @@ G4bool BDSDetectorConstruction::UnsuitableFirstElement(GMAD::FastList<GMAD::Elem
 
 void BDSDetectorConstruction::ConstructScoringMeshes()
 {
-  // needed for filtering
-  G4LogicalVolume* worldLV = acceleratorModel->WorldLV();
 
   std::vector<GMAD::ScorerMesh> scoringMeshes = BDSParser::Instance()->GetScorerMesh();
   std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
@@ -1353,7 +1351,7 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
 	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for mesh \"" + meshName + "\" not found.");}
 
 	  G4double psUnit = 1.0;
-	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper, &psUnit, worldLV);
+	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper, &psUnit);
 	  // The mesh internally creates a multifunctional detector which is an SD and has
 	  // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
 	  // the hits map we need the full name of the unique primitive scorer so we build that

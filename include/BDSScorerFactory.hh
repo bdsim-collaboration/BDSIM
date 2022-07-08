@@ -42,13 +42,12 @@ class BDSScorerFactory
 {
 public:
   BDSScorerFactory();
-  ~BDSScorerFactory(){;}
+  ~BDSScorerFactory(){}
   
   /// Main function to create a scorer.
   G4VPrimitiveScorer* CreateScorer(const BDSScorerInfo*    info,
-				   const BDSHistBinMapper* mapper,
-				   G4double*               unit    = nullptr,
-				   G4LogicalVolume*        worldLV = nullptr);
+                                   const BDSHistBinMapper* mapper,
+                                   G4double* unit = nullptr);
   
 private:  
   ///@{ Unused default constructors.
@@ -63,8 +62,7 @@ private:
 
   /// Create a combined filter with AND logic for the scorer.
   BDSSDFilterAnd* CreateFilter(const G4String&      name,
-			       const BDSScorerInfo* info,
-			       G4LogicalVolume*     worldLV = nullptr) const;
+                               const BDSScorerInfo* info) const;
 };
 
 #endif
