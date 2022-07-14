@@ -30,10 +30,10 @@ V1.7.0 - 2022 / XX / XX
   in Bibtex syntax to cite BDSIM easily.
 * The default yoke fields have changed and are on average stronger (and more correct). See below.
 * :code:`gradient` in the :code:`rf` component has the units of **V/m** and not MV/m as was
-  written in the manual. In fact, it really was volts/m internally. So there should be no change
-  in behaviour, but the documentation has been fixed and is correct and consistent. The units
-  for :code:`E` have also been clarified as volts and that this voltage is assumed across the
-  length of the element :code:`l`.
+  written in the manual. Any rf component in an existing model that is defined with a :code:`gradient` but
+  without units should be updated to include units of MV/m. The documentation has been fixed and is correct
+  and consistent. The units for :code:`E` have also been clarified as volts and that this voltage is assumed
+  across the length of the element :code:`l`.
 
 
 New Features
