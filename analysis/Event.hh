@@ -85,7 +85,9 @@ public:
 #else
   BDSOutputROOTEventSampler<float>*  GetSampler(int index);
 #endif
+  BDSOutputROOTEventSamplerC*        GetSamplerC(const std::string& name);
   BDSOutputROOTEventSamplerC*        GetSamplerC(int index);
+  BDSOutputROOTEventSamplerS*        GetSamplerS(const std::string& name);
   BDSOutputROOTEventSamplerS*        GetSamplerS(int index);
   BDSOutputROOTEventAperture*        GetAperture() {return ApertureImpacts;}
   BDSOutputROOTEventCollimator*      GetCollimator(const std::string& name);
