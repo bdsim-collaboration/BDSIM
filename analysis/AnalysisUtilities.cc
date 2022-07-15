@@ -22,9 +22,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Rtypes.h" // for classdef
 
+#include "TH1D.h"
+
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <iostream>
 
 ClassImp(AnalysisUtilities)
 
@@ -49,6 +52,12 @@ std::vector<double> AnalysisUtilities::LinSpace(double start,
 						bool   includeLastPoint)
 {
   return RBDS::LinSpace(start, stop, nBins, includeLastPoint);
+}
+
+void AnalysisUtilities::FillTH1D(TH1D &h1d, std::vector<float> &values, std::vector<float> &weights) {
+    for(int i=0;i<values.size();i++) {
+        h1d.Fill(values[i],weights[i]);
+    }
 }
 
 std::string RBDS::DefaultOutputName(const std::string& inputFilePath,

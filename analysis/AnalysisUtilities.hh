@@ -66,7 +66,9 @@ public:
 			       double stop,
 			       int    nBins,
 			       bool   includeLastPoint = true);
-  
+
+  void FillTH1D(TH1D &h1d, std::vector<float> &values, std::vector<float> &weights);
+
   ClassDef(AnalysisUtilities,1);
 };
 
