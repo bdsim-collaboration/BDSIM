@@ -54,10 +54,12 @@ std::vector<double> AnalysisUtilities::LinSpace(double start,
   return RBDS::LinSpace(start, stop, nBins, includeLastPoint);
 }
 
-void AnalysisUtilities::FillTH1D(TH1D &h1d, std::vector<float> &values, std::vector<float> &weights) {
-    for(int i=0;i<values.size();i++) {
-        h1d.Fill(values[i],weights[i]);
-    }
+void AnalysisUtilities::FillTH1D(TH1D& h1d,
+				 const std::vector<float>& values,
+				 const std::vector<float>& weights)
+{
+  for (int i=0; i < (int)values.size(); i++)
+    {h1d.Fill(values[i],weights[i]);}
 }
 
 std::string RBDS::DefaultOutputName(const std::string& inputFilePath,
