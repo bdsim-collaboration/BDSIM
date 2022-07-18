@@ -156,14 +156,10 @@ BDSOutputROOTEventSampler<float>* Event::GetSampler(int index)
   return index >= (int) Samplers.size() ? nullptr : Samplers[index];
 }
 
-BDSOutputROOTEventSamplerC* Event::GetSamplerC(const std::string& name) {
-    auto found = samplerCMap.find(name);
-    if (found != samplerCMap.end()) {
-        return found->second;
-    }
-    else {
-        return nullptr;
-    }
+BDSOutputROOTEventSamplerC* Event::GetSamplerC(const std::string& name)
+{
+  auto found = samplerCMap.find(name);
+  return found != samplerCMap.end() ? found->second : nullptr;
 }
 
 BDSOutputROOTEventSamplerC* Event::GetSamplerC(int index)
@@ -171,14 +167,10 @@ BDSOutputROOTEventSamplerC* Event::GetSamplerC(int index)
   return index >= (int) SamplersC.size() ? nullptr : SamplersC[index];
 }
 
-BDSOutputROOTEventSamplerS* Event::GetSamplerS(const std::string& name) {
-    auto found = samplerSMap.find(name);
-    if (found != samplerSMap.end()) {
-        return found->second;
-    }
-    else {
-        return nullptr;
-    }
+BDSOutputROOTEventSamplerS* Event::GetSamplerS(const std::string& name)
+{
+  auto found = samplerSMap.find(name);
+  return found != samplerSMap.end() ? found->second : nullptr;
 }
 
 BDSOutputROOTEventSamplerS* Event::GetSamplerS(int index)
