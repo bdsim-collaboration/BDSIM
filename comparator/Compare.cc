@@ -480,40 +480,40 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
     {
       // only one z / S entry, so only check once
       if (Diff(e1->z, e2->z))
-        {rs.passed = false; rs.offendingLeaves.push_back("z");}
+        {rs.passed = false; rs.offendingLeaves.emplace_back("z");}
       if (Diff(e1->S, e2->S))
-        {rs.passed = false; rs.offendingLeaves.push_back("S");}
+        {rs.passed = false; rs.offendingLeaves.emplace_back("S");}
       
       for (int i = 0; i < e1->n; i++)
 	{
 	  if (Diff(e1->energy, e2->energy, i))
-        {rs.passed = false; rs.offendingLeaves.push_back("energy");}
+        {rs.passed = false; rs.offendingLeaves.emplace_back("energy");}
 	  if (Diff(e1->x, e2->x, i))
-	    {rs.passed = false; rs.offendingLeaves.push_back("x");}
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("x");}
 	  if (Diff(e1->y, e2->y, i))
-	    {rs.passed = false; rs.offendingLeaves.push_back("y");}
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("y");}
 	  if (Diff(e1->xp, e2->xp, i))
-	    {rs.passed = false; rs.offendingLeaves.push_back("xp");}
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("xp");}
 	  if (Diff(e1->yp, e2->yp, i))
-	    {rs.passed = false; rs.offendingLeaves.push_back("yp");}
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("yp");}
 	  if (Diff(e1->zp, e2->zp, i))
-	    {rs.passed = false; rs.offendingLeaves.push_back("zp");}
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("zp");}
       if (Diff(e1->p, e2->p, i))
-        {rs.passed = false; rs.offendingLeaves.push_back("p");}
+        {rs.passed = false; rs.offendingLeaves.emplace_back("p");}
 	  if (Diff(e1->T, e2->T, i))
-	    {rs.passed = false; rs.offendingLeaves.push_back("T");}
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("T");}
       if (Diff(e1->partID, e2->partID, i))
-        {rs.passed = false; rs.offendingLeaves.push_back("partID");}
+        {rs.passed = false; rs.offendingLeaves.emplace_back("partID");}
       if (Diff(e1->charge, e2->charge, i))
-        {rs.passed = false; rs.offendingLeaves.push_back("charge");}
+        {rs.passed = false; rs.offendingLeaves.emplace_back("charge");}
       if (Diff(e1->isIon, e2->isIon, i))
-        {rs.passed = false; rs.offendingLeaves.push_back("isIon");}
+        {rs.passed = false; rs.offendingLeaves.emplace_back("isIon");}
       if (Diff(e1->ionA, e2->ionA, i))
-        {rs.passed = false; rs.offendingLeaves.push_back("ionA");}
+        {rs.passed = false; rs.offendingLeaves.emplace_back("ionA");}
       if (Diff(e1->ionZ, e2->ionZ, i))
-        {rs.passed = false; rs.offendingLeaves.push_back("ionZ");}
+        {rs.passed = false; rs.offendingLeaves.emplace_back("ionZ");}
       if (Diff(e1->nElectrons, e2->nElectrons, i))
-        {rs.passed = false; rs.offendingLeaves.push_back("nElectrons");}
+        {rs.passed = false; rs.offendingLeaves.emplace_back("nElectrons");}
 	}
     }
 
