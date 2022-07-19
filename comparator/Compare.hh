@@ -93,7 +93,7 @@ namespace Compare
   void PrintNoMatching(std::string className, std::string objectName);
 
   /// Loop over results and print any failed ones. Returns true if all passed.
-  bool Summarise(std::vector<Result*> results);
+  bool Summarise(const std::vector<Result*>& results);
 
   /// Check whether a string is prefixed with another string.
   bool StringStartsWith(std::string aString, std::string prefix);

@@ -526,7 +526,7 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
   re->samplerResults.push_back(rs);
 }
 
-bool Compare::Summarise(std::vector<Result*> results)
+bool Compare::Summarise(const std::vector<Result*>& results)
 {
   bool allPassed = true;
   const int titleWidth = 20;
