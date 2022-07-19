@@ -201,14 +201,27 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
       TTree* modTree = dynamic_cast<TTree*>(dir->Get("Model"));
       if (!modTree)
 	{return;} // shouldn't really happen, but we can't compare the samplers
-      
-      Model* mod = new Model();
-      mod->SetBranchAddress(modTree);
-      modTree->GetEntry(0);
-      std::vector<std::string> names = mod->SamplerNames();
-      delete mod;
-      
-      Compare::EventTree(t1, t2, results, names);
+      std::vector<std::string> samplerNames;
+      std::vector<std::string> samplerCNames;
+      std::vector<std::string> samplerSNames;
+      bool warn = false;
+      if (!modTree)
+	{warn = true;}
+      else if (modTree->GetEntries() == 0)
+	{warn = true;}
+      else
+	{
+	  Model* mod = new Model();
+	  mod->SetBranchAddress(modTree);
+	  modTree->GetEntry(0);
+	  samplerNames = mod->SamplerNames();
+	  samplerCNames = mod->SamplerCNames();
+	  samplerSNames = mod->SamplerSNames();
+	  delete mod;
+	}
+      if (warn)
+	{std::cout << "Model not stored so can't compare sampler branches." << std::endl;}
+      Compare::EventTree(t1, t2, results, samplerNames, samplerCNames, samplerSNames);
       return;
     }
   
@@ -301,7 +314,7 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 
   // loop over branches
   // for each branch loop over all entries and compare to reference file
-  for(int j = 0; j<oa1->GetSize(); ++j)
+  for (int j = 0; j< oa1->GetSize(); ++j)
     {
       TBranch* b1 = (TBranch*)(*oa1)[j];
       std::string branchName = std::string(b1->GetName());
@@ -404,7 +417,9 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 }
 
 void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
-			const std::vector<std::string>& samplerNames)
+			const std::vector<std::string>& samplerNames,
+			const std::vector<std::string>& samplerCNames,
+			const std::vector<std::string>& samplerSNames)
 {
   ResultEventTree* ret = new ResultEventTree();
   ret->name            = t1->GetName();
@@ -426,8 +441,8 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
   G4bool processSamplers = !samplerNames.empty();
   Event* evtLocal1 = new Event(/*debug=*/false, processSamplers, BDSIM_DATA_VERSION);
   Event* evtLocal2 = new Event(/*debug=*/false, processSamplers, BDSIM_DATA_VERSION);
-  evtLocal1->SetBranchAddress(t1, &samplerNames);
-  evtLocal2->SetBranchAddress(t2, &samplerNames);
+  evtLocal1->SetBranchAddress(t1, &samplerNames, false, nullptr, nullptr, &samplerCNames, &samplerSNames);
+  evtLocal2->SetBranchAddress(t2, &samplerNames, false, nullptr, nullptr, &samplerCNames, &samplerSNames);
 
   for (auto i = 0; i < t1->GetEntries(); i++)
     {
