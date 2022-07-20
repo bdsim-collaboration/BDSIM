@@ -484,13 +484,13 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 		      ResultEvent* re)
 #endif
 {
-  ResultSampler rs(e1->samplerName);
+  std::string samplerName = e1->samplerName;
+  if (samplerName == "sampler") // the default name in BDSOutputROOTEventSampler.cc
+    {samplerName = e2->samplerName;} // could still be the default value but worth a try
+  ResultSampler rs(samplerName);
   
   if (e1->n != e2->n)
-    {
-      rs.passed = true;
-      rs.offendingLeaves.push_back("n");
-    }
+    {rs.passed = false; rs.offendingLeaves.emplace_back("n");}
   else
     {
       // only one z / S entry, so only check once
