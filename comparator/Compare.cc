@@ -69,7 +69,7 @@ void Compare::Directories(TDirectory* d1,
   
   // get list of keys for file 1 & loop over
   TList* d1k = d1->GetListOfKeys();
-  for(int i = 0; i < d1k->GetEntries(); ++i)
+  for (int i = 0; i < d1k->GetEntries(); ++i)
     {
       TObject* keyObject = d1k->At(i); // key object in list of keys
       TObject* d1o       = d1->Get(keyObject->GetName()); // object in file
@@ -80,9 +80,9 @@ void Compare::Directories(TDirectory* d1,
       // get storePrimaries from options tree.
       if (objectName == "Options" && className == "TTree")
         {
-          std::vector<const char *> names;
-          TTree *options = (TTree *) d1->Get(objectName.c_str());
-          Options *optLocal = new Options();
+          std::vector<const char*> names;
+          TTree* options = (TTree*) d1->Get(objectName.c_str());
+          Options* optLocal = new Options();
           optLocal->SetBranchAddress(options);
           options->GetEntry(0);
           hasPrimaries = optLocal->options->storePrimaries;
@@ -502,7 +502,7 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
       for (int i = 0; i < e1->n; i++)
 	{
 	  if (Diff(e1->energy, e2->energy, i))
-        {rs.passed = false; rs.offendingLeaves.emplace_back("energy");}
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("energy");}
 	  if (Diff(e1->x, e2->x, i))
 	    {rs.passed = false; rs.offendingLeaves.emplace_back("x");}
 	  if (Diff(e1->y, e2->y, i))
@@ -513,25 +513,25 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 	    {rs.passed = false; rs.offendingLeaves.emplace_back("yp");}
 	  if (Diff(e1->zp, e2->zp, i))
 	    {rs.passed = false; rs.offendingLeaves.emplace_back("zp");}
-      if (Diff(e1->p, e2->p, i))
-        {rs.passed = false; rs.offendingLeaves.emplace_back("p");}
+	  if (Diff(e1->p, e2->p, i))
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("p");}
 	  if (Diff(e1->T, e2->T, i))
 	    {rs.passed = false; rs.offendingLeaves.emplace_back("T");}
-      if (Diff(e1->partID, e2->partID, i))
-        {rs.passed = false; rs.offendingLeaves.emplace_back("partID");}
-      if (Diff(e1->charge, e2->charge, i))
-        {rs.passed = false; rs.offendingLeaves.emplace_back("charge");}
-      if (Diff(e1->isIon, e2->isIon, i))
-        {rs.passed = false; rs.offendingLeaves.emplace_back("isIon");}
-      if (Diff(e1->ionA, e2->ionA, i))
-        {rs.passed = false; rs.offendingLeaves.emplace_back("ionA");}
-      if (Diff(e1->ionZ, e2->ionZ, i))
-        {rs.passed = false; rs.offendingLeaves.emplace_back("ionZ");}
-      if (Diff(e1->nElectrons, e2->nElectrons, i))
-        {rs.passed = false; rs.offendingLeaves.emplace_back("nElectrons");}
+	  if (Diff(e1->partID, e2->partID, i))
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("partID");}
+	  if (Diff(e1->charge, e2->charge, i))
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("charge");}
+	  if (Diff(e1->isIon, e2->isIon, i))
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("isIon");}
+	  if (Diff(e1->ionA, e2->ionA, i))
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("ionA");}
+	  if (Diff(e1->ionZ, e2->ionZ, i))
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("ionZ");}
+	  if (Diff(e1->nElectrons, e2->nElectrons, i))
+	    {rs.passed = false; rs.offendingLeaves.emplace_back("nElectrons");}
 	}
     }
-
+  
   // update parent result status
   if (!rs.passed)
     {
