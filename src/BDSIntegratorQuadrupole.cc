@@ -116,7 +116,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   if (BDS::IsFiniteStrength(localAMag))
     {radiusOfCurvature = 1./localAMag;} // avoid division by 0
 
-  // if we have a low enery particle that makes it into the paraxial cuts
+  // if we have a low energy particle that makes it into the paraxial cuts
   // it could cause problems later in paraxial algorithm so use backup integrator
   if (std::abs(radiusOfCurvature) < minimumRadiusOfCurvature)
     {
@@ -183,7 +183,10 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   zp1 = std::sqrt(1 - xp1*xp1 - yp1*yp1);
   if (std::isnan(zp1))
     {zp1 = zp;} // ensure not nan
-  
+
+  // new z position will be projection of h onto the z axis
+  z1 = z0 + std::sqrt(std::pow(h,2) - std::pow(x1-x0,2) - std::pow(y1-y0,2));
+
   localPos.setX(x1);
   localPos.setY(y1);
   localPos.setZ(z1);
