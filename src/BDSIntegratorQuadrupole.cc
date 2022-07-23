@@ -125,11 +125,11 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
       return;
     }
 
-  G4double h2  = h*h; // safer than pow
+  G4double h2  = h*h;
   // initialise output variables with input position as default
   G4double x1  = x0;
   G4double y1  = y0;
-  G4double z1  = z0 + h; // new z position will be along z by step length h
+  // z1 calculated below
   G4double xp1 = xp;
   G4double yp1 = yp;
   G4double zp1 = zp;
@@ -185,7 +185,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
     {zp1 = zp;} // ensure not nan
 
   // new z position will be projection of h onto the z axis
-  z1 = z0 + std::sqrt(std::pow(h,2) - std::pow(x1-x0,2) - std::pow(y1-y0,2));
+  z1 = z0 + std::sqrt(h2 - std::pow(x1-x0,2) - std::pow(y1-y0,2));
 
   localPos.setX(x1);
   localPos.setY(y1);
