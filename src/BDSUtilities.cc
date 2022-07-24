@@ -104,11 +104,11 @@ G4String BDS::StrStrip(const G4String& str,
     {
 #if G4VERSION_NUMBER > 1099
     case StringStripType::leading:
-      {G4StrUtil::lstrip(result, ch);}
+      {G4StrUtil::lstrip(result, ch); break;}
     case StringStripType::trailing:
-      {G4StrUtil::rstrip(result, ch);}
+      {G4StrUtil::rstrip(result, ch); break;}
     case StringStripType::both:
-      {G4StrUtil::strip(result, ch);}
+      {G4StrUtil::strip(result, ch); break;}
 #else
     case StringStripType::leading:
       {result.strip(G4String::stripType::leading, ch); break;}
@@ -371,6 +371,14 @@ void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
 
 G4bool BDS::Geant4EnvironmentIsSet()
 {
+#if G4VERSION_NUMBER > 1102
+  // Since V4.11.p03, there is just 1 environmental variable to check for
+  std::string entireDataDir = "GEANT4_DATA_DIR";
+  const char* envVar = std::getenv( entireDataDir.c_str() );
+  if (envVar)
+    {return true;}
+#endif
+
   std::vector<G4String> variables = {//"G4ABLADATA",
 				     "G4NEUTRONHPDATA",
 				     "G4RADIOACTIVEDATA",

@@ -16,41 +16,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COMPRESULTSAMPLER_H
-#define COMPRESULTSAMPLER_H
+#include "BDSTarget.hh"
 
-#include "Result.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 
-#include <sstream>
-#include <string>
-
-/**
- * @brief Result of comparison of a sampler branch.
- * 
- * @author Laurie Nevay
- */
-
-class ResultSampler: public Result
-{ 
-public:
-  ResultSampler(std::string nameIn):
-    Result(nameIn, "Sampler")
-  {;}
-  
-  virtual ~ResultSampler() {}
-
-  std::vector<std::string> offendingLeaves;
-
-  virtual std::string print() const
-  {
-    std::stringstream ss; 
-    ss << Result::print();
-    ss << "Offending leaves: ";
-    for (const auto& leafName : offendingLeaves)
-      {ss << "\"" << leafName << "\" ";}
-    ss << "\n";
-    return ss.str();
-  }
-};
-
-#endif
+BDSTarget::BDSTarget(const G4String& nameIn,
+		     G4double    lengthIn,
+		     G4double    horizontalWidthIn,
+		     G4Material* materialIn,
+		     G4Colour*   colourIn,
+		     G4bool      circularOuterIn):
+  BDSCollimator(nameIn, lengthIn, horizontalWidthIn, "target",
+                materialIn, nullptr, 0, 0, 0, 0, colourIn, circularOuterIn)
+{;}
