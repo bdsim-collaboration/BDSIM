@@ -30,10 +30,10 @@ V1.7.0 - 2022 / XX / XX
   in Bibtex syntax to cite BDSIM easily.
 * The default yoke fields have changed and are on average stronger (and more correct). See below.
 * :code:`gradient` in the :code:`rf` component has the units of **V/m** and not MV/m as was
-  written in the manual. In fact, it really was volts/m internally. So there should be no change
-  in behaviour, but the documentation has been fixed and is correct and consistent. The units
-  for :code:`E` have also been clarified as volts and that this voltage is assumed across the
-  length of the element :code:`l`.
+  written in the manual. Any rf component in an existing model that is defined with a :code:`gradient` but
+  without units should be updated to include units of MV/m. The documentation has been fixed and is correct
+  and consistent. The units for :code:`E` have also been clarified as volts and that this voltage is assumed
+  across the length of the element :code:`l`.
 
 
 New Features
@@ -65,6 +65,8 @@ New Features
 
 * A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into
   voxelized geometries.
+* New `target` beam line component. We could always create a block of material with a closed
+  `rcol` but this is more intuitive.
 
 **Fields**
 
@@ -172,6 +174,8 @@ General Updates
 * **EMD** physics has a minimum applicable kinetic energy of 1 MeV to prevent crashes in Geant4.
 * Optional executable argument added to ptc2bdsim to control ROOT split-level of sampler branches. Same
   functionality as the BDSIM option :code:`samplersSplitLevel`.
+* The green colour for collimators and the new target component has been adjusted very slightly
+  to be a little brighter.
 
 Bug Fixes
 ---------
@@ -227,11 +231,10 @@ Bug Fixes
 
 **Geometry**
 
-* Fix caching of loaded geometry. A loaded piece of geometry should only be reused (i.e. re-placed
-  rather than creating new logical volumes) if it will be used with the same field definition
-  (including none). If a different field is to be used on an already loaded piece of GDML it must
-  be reloaded again to create unique logical volumes as a logical volume can only have one field
-  definition. This fixes field maps being wrong if a GDML file was used multiple times with different fields.
+* Fix caching of loaded geometry. A loaded piece of geometry will be reloaded (and possibly preprocessed)
+  if loaded in another beam line component to ensure we generate a unique set of logical volumes. This
+  fixes field maps, biasing, range cuts, regions and more being wrong if the same GDML file was reused
+  in different components.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.
@@ -279,7 +282,10 @@ Bug Fixes
   is now not be applied as well. If finite fringe field quantities are specified, the thin elements will be built
   but will only apply the fringe kicks and not the pole face effects. If using a non-matrix integrator set
   and the option :code:`buildPoleFaceGeometry` is specified as false, thin pole face kicks will be applied.
-
+* Fix calculation of the z position in the quadrupole integrator. Previously the step always advanced along z by the
+  step length h regardless of the step's direction. Now, it advances along z by the projection of the step h onto
+  the z axis. This change will only produce a noticable impact on particles with a large transverse momentum,
+  particularly those in low energy machines.
 
 **Visualisation**
 

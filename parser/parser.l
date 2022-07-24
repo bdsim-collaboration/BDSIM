@@ -129,6 +129,7 @@ undulator { return UNDULATOR; }
 usercomponent { return USERCOMPONENT; }
 dump { return DUMP; }
 ct { return CT; }
+target { return TARGET; }
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
