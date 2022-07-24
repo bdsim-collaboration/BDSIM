@@ -133,11 +133,11 @@ BDSLinkOpaqueBox::BDSLinkOpaqueBox(BDSAcceleratorComponent* acceleratorComponent
   G4RotationMatrix* rm = new G4RotationMatrix();
   if (BDS::IsFinite(tilt))
     {
-      rm = new G4RotationMatrix();
       rm->rotateZ(tilt);
       RegisterRotationMatrix(rm);
     }
-    G4Transform3D* placementTransform = new G4Transform3D(*rm, of);
+  G4Transform3D* placementTransform = new G4Transform3D(*rm, of);
+  delete rm;
 
   new G4PVPlacement(*placementTransform,
 		    component->GetContainerLogicalVolume(),
