@@ -303,7 +303,7 @@ G4int BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& colli
                                         el.tilt * CLHEP::rad);
   auto extentTiltOffset = component->GetExtent().TiltOffset(to);
   G4double encompassingRadius = extentTiltOffset.TransverseBoundingRadius();
-  BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, to, encompassingRadius));
+  BDSLinkOpaqueBox* opaqueBox = new BDSLinkOpaqueBox(component, to, encompassingRadius);
   
   // add to beam line
   BDSLinkComponent* comp = new BDSLinkComponent(opaqueBox->GetName(),
