@@ -265,6 +265,10 @@ Bug Fixes
   is the access and update of a variable inside a defined object such as a field or scorer.
 * Fix parser :code:`print` command for all objects in the parser. Previously, only beam line elements
   would work with this command or variables in the input GMAD.
+* The parser will reject any variable name that is the same as an option name. When editing
+  option in input, a really common (hidden) error is that there's a semi-colon after an option.
+  Therefore, the next option gets interpreted as a new constant or variable resulting in it
+  having no effect at all. The parser will not prevent this from happening by complaining.
 
 **Sensitivity**
 
