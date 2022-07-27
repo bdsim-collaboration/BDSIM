@@ -42,17 +42,12 @@ Symtab * SymbolMap::symcreate(std::string s)
 Symtab * SymbolMap::symlook(std::string s)
 {
   std::map<std::string,Symtab*>::iterator it = symtab_map.find(s);
-  if (it==symtab_map.end()) {
-    return nullptr;
-  } 
-  return (*it).second;
+  return it == symtab_map.end() ? nullptr : (*it).second;
 }
 
 void SymbolMap::clear()
 {
-  std::map<std::string,Symtab*>::iterator it;
-  for(it=symtab_map.begin();it!=symtab_map.end();++it) {
-    delete (*it).second;
-  }
+  for (auto& kv : symtab_map)
+    {delete kv.second;}
   symtab_map.clear();
 }
