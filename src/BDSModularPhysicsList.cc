@@ -504,7 +504,7 @@ void BDSModularPhysicsList::CutsAndLimits()
 {
   if (!physicsActivated["cuts_and_limits"])
     {
-      constructors.push_back(new BDSPhysicsCutsAndLimits());
+      constructors.push_back(new BDSPhysicsCutsAndLimits(BDSGlobalConstants::Instance()->ParticlesToExcludeFromCutsAsSet()));
       physicsActivated["cuts_and_limits"] = true;
     }
 }
