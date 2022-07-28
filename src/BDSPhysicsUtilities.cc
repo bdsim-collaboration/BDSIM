@@ -302,7 +302,7 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
                                                        {"pion0", "pi0"} };
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  std::regex ionParticle("ion\\s");
+  std::regex ionParticle("(ion\\s).*");
   if (std::regex_match(particleName, ionParticle))
     {
       G4GenericIon::GenericIonDefinition(); // construct general ion particle
