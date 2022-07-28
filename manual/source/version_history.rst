@@ -231,11 +231,10 @@ Bug Fixes
 
 **Geometry**
 
-* Fix caching of loaded geometry. A loaded piece of geometry should only be reused (i.e. re-placed
-  rather than creating new logical volumes) if it will be used with the same field definition
-  (including none). If a different field is to be used on an already loaded piece of GDML it must
-  be reloaded again to create unique logical volumes as a logical volume can only have one field
-  definition. This fixes field maps being wrong if a GDML file was used multiple times with different fields.
+* Fix caching of loaded geometry. A loaded piece of geometry will be reloaded (and possibly preprocessed)
+  if loaded in another beam line component to ensure we generate a unique set of logical volumes. This
+  fixes field maps, biasing, range cuts, regions and more being wrong if the same GDML file was reused
+  in different components.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.
@@ -266,6 +265,10 @@ Bug Fixes
   is the access and update of a variable inside a defined object such as a field or scorer.
 * Fix parser :code:`print` command for all objects in the parser. Previously, only beam line elements
   would work with this command or variables in the input GMAD.
+* The parser will reject any variable name that is the same as an option name. When editing
+  option in input, a really common (hidden) error is that there's a semi-colon after an option.
+  Therefore, the next option gets interpreted as a new constant or variable resulting in it
+  having no effect at all. The parser will not prevent this from happening by complaining.
 
 **Sensitivity**
 

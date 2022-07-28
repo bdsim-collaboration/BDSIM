@@ -444,16 +444,27 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
   evtLocal1->SetBranchAddress(t1, &samplerNames, false, nullptr, nullptr, &samplerCNames, &samplerSNames);
   evtLocal2->SetBranchAddress(t2, &samplerNames, false, nullptr, nullptr, &samplerCNames, &samplerSNames);
 
-  for (auto i = 0; i < t1->GetEntries(); i++)
+  for (long int i = 0; i < (long int)t1->GetEntries(); i++)
     {
       ResultEvent re = ResultEvent();
       re.name    = std::to_string(i);
       re.passed  = true; // default true
       re.objtype = "Event of Event Tree";
-      
+
+#ifdef DEBUGOUTPUT
+      Int_t bytesLoaded1 = t1->GetEntry(i);
+      Int_t bytesLoaded2 = t2->GetEntry(i);
+      std::cout << "Bytes loaded (1) " << bytesLoaded1 << std::endl;
+      std::cout << "Bytes loaded (2) " << bytesLoaded2 << std::endl;
+      std::cout << evtLocal1->GetPrimaries()->n << std::endl;
+      std::cout << evtLocal2->GetPrimaries()->n << std::endl;
+      std::cout << evtLocal1 << " " << evtLocal2 << std::endl;
+      std::cout << evtLocal1->GetPrimaries() << " " << evtLocal2->GetPrimaries() << std::endl;
+#else
       t1->GetEntry(i);
       t2->GetEntry(i);
-
+#endif
+      
       if (hasPrimaries)
         {Compare::Sampler(evtLocal1->GetPrimaries(), evtLocal2->GetPrimaries(), &re);}
       for (auto j = 0; j < (int)evtLocal1->Samplers.size(); j++)

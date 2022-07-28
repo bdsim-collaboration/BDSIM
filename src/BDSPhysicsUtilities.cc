@@ -140,8 +140,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
 	    {
 	      G4cout << "\nAdding cuts and limits physics process to Geant4 reference physics list" << G4endl;
 	      G4cout << "This is to enforce BDSIM range cuts and the minimumKinetic energy option.\n";
-	      G4cout
-		<< "This is done by default for the functionality of BDSIM tracking and should not affect the physics greatly.\n";
+	      G4cout << "This is done by default for the functionality of BDSIM tracking and should not affect the physics greatly.\n";
 	      G4cout << "See the BDSIM manual about Geant4 reference physics lists for details." << G4endl;
 	      result->RegisterPhysics(new BDSPhysicsCutsAndLimits());
 	    }
