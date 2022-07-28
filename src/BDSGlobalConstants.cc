@@ -231,6 +231,23 @@ void BDSGlobalConstants::InitVisAttributes()
 
 void BDSGlobalConstants::InitDefaultUserLimits()
 {
+  auto pteAsVector = BDS::SplitOnWhiteSpace(ParticlesToExcludeFromCuts());
+  // construct the set of PDG IDs
+  for (G4int i = 0; i < (G4int)pteAsVector.size(); i++)
+    {
+      try
+        {
+          G4int pdgID = std::stoi(pteAsVector[i]);
+          particlesToExcludeFromCutsAsSet.insert(pdgID);
+        }
+      catch (std::logic_error& e)
+        {
+          G4String msg = "Particle ID " + pteAsVector[i] + " at index " + std::to_string(i);
+          msg += " in the option particlesToExcludeFromCutsAsSet cannot be converted to an integer";
+          throw BDSException(__METHOD_NAME__, msg);
+        }
+    }
+  
   defaultUserLimits = new G4UserLimits("default_cuts");
   const G4double maxTime = MaxTime();
   if (maxTime > 0)
