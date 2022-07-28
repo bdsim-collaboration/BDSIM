@@ -131,7 +131,7 @@ as it is in Geant4 (exactly) or by its PDG ID. The follow are available by defau
 * `gamma`
 * `neutron`
 * `mu-` or `mu+`
-* `pi-` or `pi+`
+* `pi-` or `pi+` or `pi0`
 * `photon` or `gamma`
 * `kaon-`, `kaon+` or `kaon0L`
 
@@ -2761,6 +2761,11 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 | minimumRange                     | A particle that would not travel this range           |
 |                                  | (a distance) in the current material will be cut [m]  |
 +----------------------------------+-------------------------------------------------------+
+| particlesToExcludeFromCuts       | A white space separated string containing PDG IDs for |
+|                                  | particles to be excluded from `minimumKineticEnergy`, |
+|                                  | `minimumRange`, `maximumTrackingTime`, and            |
+|                                  | `maximumTrackLength`. e.g. `"13 -13"`.                |
++----------------------------------+-------------------------------------------------------+
 | ptcOneTurnMapFileName            | File name for a one turn map prepared in PTC that is  |
 |                                  | used in the teleporter to improve the accuracy of     |
 |                                  | circular tracking. See :ref:`one-turn-map`.           |
@@ -4539,6 +4544,21 @@ particles are tracked to zero energy (allowing for the above range cuts). ::
 
 .. warning:: This will affect the location of energy deposition - i.e. the curve of
 	     energy deposition of a particle showering in a material will be different.
+
+
+Certain particles can be excluded from this using :code:`option, particlesToExcludeFromCuts="1 2 3";`
+where 1, 2, 3 are the PDG IDs of the particles to be excluded separated by white space in a string.
+For example: ::
+
+  option, minimumKineticEnergy=1*GeV,
+          particlesToExcludeFromCuts="13 -13";
+
+This will remove all particles below 1 GeV kinetic energy apart from muons (both charges) which will
+be tracked down to zero energy.
+
+.. note:: The option `particlesToExcludeFromCuts` applies to the options `minimumKineticEnergy`,
+	  `minimumRange`, `maximumTrackingTime`, and `maximumTrackLength`.
+
 
 Minimum Range
 ^^^^^^^^^^^^^
