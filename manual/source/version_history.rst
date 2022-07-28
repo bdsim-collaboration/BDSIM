@@ -22,6 +22,8 @@ V1.7.0 - 2022 / XX / XX
   a name. In this case, the one it finds may be ambiguous or unexpected. The code was revised to
   purposively protect against this. This was always the case with beam line elements, but now it
   is also the case with all objects defined in the parser.
+* The input parser will now reject any variable names that are the same as an option name as
+  this is a common mistake where we put a semi-colon before another option then it has no effect.
 * GGMAD Geometry format is now deprecated. This was not maintained for a long time and with
   pyg4ometry and GDML we support much better geometry. The code is old and hard to maintain
   and really needs to be rewritten. The functionality was broken in making BDSIM compatible
@@ -117,6 +119,8 @@ New Features
 
 * New muon-splitting biasing scheme.
 * New radioactivation physics list.
+* New option for excluding certain particles from cuts, e.g. exclude muons from the
+  minimumKineticEnergy option. See :code:`particlesToExcludeFromCuts` in :ref:`options-tracking`.
 
 **Sensitivity & Output**
 
@@ -265,6 +269,10 @@ Bug Fixes
   is the access and update of a variable inside a defined object such as a field or scorer.
 * Fix parser :code:`print` command for all objects in the parser. Previously, only beam line elements
   would work with this command or variables in the input GMAD.
+* The parser will reject any variable name that is the same as an option name. When editing
+  option in input, a really common (hidden) error is that there's a semi-colon after an option.
+  Therefore, the next option gets interpreted as a new constant or variable resulting in it
+  having no effect at all. The parser will not prevent this from happening by complaining.
 
 **Sensitivity**
 
@@ -307,6 +315,9 @@ Bug Fixes
   materials have no effect when BDSIM is compiled with respect to Geant4 V11 onwards.
 * Fix uncaught Geant4 exceptions by introducing our own exception handler to intercept
   the Geant4 one and throw our own, safely handled exceptions a la standard C++.
+* Fix a bug where a particle could be misidentified as an ion and end up being a proton.
+  An example would be "pion+" which doesn't match the correct "pi+" name in Geant4 but
+  would pass through and become a proton despite its name.
 
 
 
