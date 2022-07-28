@@ -311,6 +311,9 @@ Bug Fixes
   materials have no effect when BDSIM is compiled with respect to Geant4 V11 onwards.
 * Fix uncaught Geant4 exceptions by introducing our own exception handler to intercept
   the Geant4 one and throw our own, safely handled exceptions a la standard C++.
+* Fix a bug where a particle could be misidentified as an ion and end up being a proton.
+  An example would be "pion+" which doesn't match the correct "pi+" name in Geant4 but
+  would pass through and become a proton despite its name.
 
 
 
