@@ -296,7 +296,10 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
 
   std::map<G4String, G4String> commonSubstitutions = { {"photon", "gamma"},
 						       {"electron", "e-"},
-						       {"positron", "e+"} };
+						       {"positron", "e+"},
+                                                       {"pion+", "pi+"},
+                                                       {"pion-", "pi-"},
+                                                       {"pion0", "pi0"} };
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   std::regex ionParticle("ion\\s");
@@ -370,6 +373,8 @@ void BDS::ConstructBeamParticleG4(const G4String& name)
     {G4PionMinus::PionMinusDefinition();}
   else if (name == "pi+")
     {G4PionPlus::PionPlusDefinition();}
+  else if (name == "pi0")
+    {G4PionZero::PionZeroDefinition();}
   else if (name == "neutron")
     {G4Neutron::NeutronDefinition();}
   else if (name == "photon" || name == "gamma")

@@ -131,7 +131,7 @@ as it is in Geant4 (exactly) or by its PDG ID. The follow are available by defau
 * `gamma`
 * `neutron`
 * `mu-` or `mu+`
-* `pi-` or `pi+`
+* `pi-` or `pi+` or `pi0`
 * `photon` or `gamma`
 * `kaon-`, `kaon+` or `kaon0L`
 
