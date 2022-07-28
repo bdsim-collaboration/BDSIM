@@ -61,6 +61,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleTableIterator.hh"
 #include "G4PionMinus.hh"
 #include "G4PionPlus.hh"
+#include "G4PionZero.hh"
 #include "G4Positron.hh"
 #include "G4ProductionCutsTable.hh"
 #include "G4Proton.hh"
@@ -87,6 +88,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iomanip>
 #include <map>
+#include <regex>
 #include <set>
 #include <stdexcept>
 #include <string> // for stoi
@@ -297,7 +299,8 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
 						       {"positron", "e+"} };
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  if (BDS::StrContains(particleName, "ion"))
+  std::regex ionParticle("ion\\s");
+  if (std::regex_match(particleName, ionParticle))
     {
       G4GenericIon::GenericIonDefinition(); // construct general ion particle
       auto ionDef = new BDSIonDefinition(particleName); // parse the ion definition
