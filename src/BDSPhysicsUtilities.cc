@@ -144,7 +144,7 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList, G4int verb
 	      G4cout << "This is to enforce BDSIM range cuts and the minimumKinetic energy option.\n";
 	      G4cout << "This is done by default for the functionality of BDSIM tracking and should not affect the physics greatly.\n";
 	      G4cout << "See the BDSIM manual about Geant4 reference physics lists for details." << G4endl;
-	      result->RegisterPhysics(new BDSPhysicsCutsAndLimits());
+	      result->RegisterPhysics(new BDSPhysicsCutsAndLimits(g->ParticlesToExcludeFromCutsAsSet()));
 	    }
 	  else if (!g->G4PhysicsUseBDSIMCutsAndLimits() && g->Circular())
 	    {
@@ -521,7 +521,7 @@ G4VModularPhysicsList* BDS::ChannellingPhysicsComplete(G4bool useEMD,
       G4cout << "\nWARNING - adding cuts and limits physics process to \"COMPLETE\" physics list" << G4endl;
       G4cout << "This is to enforce BDSIM range cuts and the minimumKinetic energy option.\n";
       G4cout << "This can be turned off by setting option, g4PhysicsUseBDSIMCutsAndLimits=0;\n" << G4endl;
-      physlist->RegisterPhysics(new BDSPhysicsCutsAndLimits());
+      physlist->RegisterPhysics(new BDSPhysicsCutsAndLimits(BDSGlobalConstants::Instance()->ParticlesToExcludeFromCutsAsSet()));
     }
   return physlist;
 }
