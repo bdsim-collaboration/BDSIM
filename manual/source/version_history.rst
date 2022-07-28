@@ -117,6 +117,8 @@ New Features
 
 * New muon-splitting biasing scheme.
 * New radioactivation physics list.
+* New option for excluding certain particles from cuts, e.g. exclude muons from the
+  minimumKineticEnergy option. See :code:`particlesToExcludeFromCuts` in :ref:`options-tracking`.
 
 **Sensitivity & Output**
 
