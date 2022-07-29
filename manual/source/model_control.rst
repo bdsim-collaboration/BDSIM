@@ -1539,6 +1539,8 @@ Examples: ::
 |                              | G4ShortLivedConstructor, G4MesonConstructor, G4BaryonConstructor and   |
 |                              | G4IonConstructor.                                                      |
 +------------------------------+------------------------------------------------------------------------+
+| annihi_to_mumu               | Only annihilation to a muon pair for positrons is registered.          |
++------------------------------+------------------------------------------------------------------------+
 | charge_exchange              | `G4ChargeExchangePhysics`                                              |
 +------------------------------+------------------------------------------------------------------------+
 | channelling                  | This constructs the `G4Channelling` and attaches it to all charged     |
@@ -1610,6 +1612,8 @@ Examples: ::
 +------------------------------+------------------------------------------------------------------------+
 | ftfp_bert_hp                 | Similar to `FTFP_BERT`, but with the high precision neutron package.   |
 |                              | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
++------------------------------+------------------------------------------------------------------------+
+| gamma_to_mumu                | Only gamma to a muon pair for gammas is registered.                    |
 +------------------------------+------------------------------------------------------------------------+
 | hadronic_elastic             | Elastic hadronic processes. This is provided by                        |
 |                              | `G4HadronElasticPhysics.`                                              |
