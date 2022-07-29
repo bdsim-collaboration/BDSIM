@@ -1412,6 +1412,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
                               element->ysize*CLHEP::m,
                               element->xsizeLeft*CLHEP::m,
                               element->xsizeRight*CLHEP::m,
+                              element->leftJawTilt*CLHEP::rad,
+                              element->rightJawTilt*CLHEP::rad,
 			      true,
 			      true,
 			      PrepareMaterial(element),

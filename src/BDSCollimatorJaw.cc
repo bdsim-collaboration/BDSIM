@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
+#include "G4Para.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
@@ -42,6 +43,8 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
 				   G4double    yHalfHeightIn,
 				   G4double    xSizeLeftIn,
 				   G4double    xSizeRightIn,
+                   G4double    leftJawTiltIn,
+                   G4double    rightJawTiltIn,
 				   G4bool      buildLeftJawIn,
 				   G4bool      buildRightJawIn,
 				   G4Material* collimatorMaterialIn,
@@ -62,6 +65,8 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
   xSizeLeft(xSizeLeftIn),
   xSizeRight(xSizeRightIn),
   xHalfGap(xHalfGapIn),
+  leftJawTilt(leftJawTiltIn),
+  rightJawTilt(rightJawTiltIn),
   jawHalfWidth(0),
   yHalfHeight(yHalfHeightIn),
   buildLeftJaw(buildLeftJawIn),
@@ -112,7 +117,13 @@ void BDSCollimatorJaw::CheckParameters()
 	     << "will not be constructed" << G4endl;
       buildRightJaw = false;
     }
-  
+
+  if ( std::abs(leftJawTilt) > 0 &&  std::tan(std::abs(leftJawTilt)) * chordLength / 2. > xSizeLeft)
+    {throw BDSException(__METHOD_NAME__, "tilted left jaw cannot intercept the zero axis: \"" + name + "\"");}
+
+  if ( std::abs(rightJawTilt) > 0 && std::tan(std::abs(rightJawTilt)) * chordLength / 2. > xSizeRight)
+    {throw BDSException(__METHOD_NAME__, "tilted right jaw cannot intercept the zero axis: \"" + name + "\"");}
+
   if (!buildLeftJaw && !buildRightJaw)
     {throw BDSException(__METHOD_NAME__, "no jaws being built: \"" + name + "\"");}
   
@@ -169,13 +180,31 @@ void BDSCollimatorJaw::Build()
   // get appropriate user limits for jaw material
   G4UserLimits* collUserLimits = CollimatorUserLimits();
 
+
   // build jaws as appropriate
+
   if (buildLeftJaw && buildAperture)
     {
-      G4VSolid* leftJawSolid = new G4Box(name + "_leftjaw_solid",
-					 leftJawWidth * 0.5 - lengthSafety,
-					 yHalfHeight - lengthSafety,
-					 chordLength * 0.5 - lengthSafety);
+      G4VSolid* leftJawSolid = nullptr;
+
+      if (leftJawTilt != 0)
+      {
+          leftJawSolid = new G4Para(name + "_leftjaw_solid",
+                                    leftJawWidth * 0.5 - lengthSafety,
+                                    yHalfHeight - lengthSafety,
+                                    chordLength * 0.5 - lengthSafety,
+                                    0,
+                                    leftJawTilt,
+                                    0);
+      }
+      else
+      {
+          leftJawSolid = new G4Box(name + "_leftjaw_solid",
+                                   leftJawWidth * 0.5 - lengthSafety,
+                                   yHalfHeight - lengthSafety,
+                                   chordLength * 0.5 - lengthSafety);
+      }
+
       RegisterSolid(leftJawSolid);
       
       G4LogicalVolume* leftJawLV = new G4LogicalVolume(leftJawSolid,       // solid
@@ -206,10 +235,26 @@ void BDSCollimatorJaw::Build()
     }
   if (buildRightJaw && buildAperture)
     {
-      G4VSolid* rightJawSolid = new G4Box(name + "_rightjaw_solid",
-					  rightJawWidth * 0.5 - lengthSafety,
-					  yHalfHeight - lengthSafety,
-					  chordLength * 0.5 - lengthSafety);
+      G4VSolid* rightJawSolid = nullptr;
+
+      if (rightJawTilt != 0)
+      {
+          rightJawSolid = new G4Para(name + "_rightjaw_solid",
+                                     rightJawWidth * 0.5 - lengthSafety,
+                                     yHalfHeight - lengthSafety,
+                                     chordLength * 0.5 - lengthSafety,
+                                     0,
+                                     rightJawTilt,
+                                     0);
+      }
+      else
+      {
+          rightJawSolid = new G4Box(name + "_rightjaw_solid",
+                                    rightJawWidth * 0.5 - lengthSafety,
+                                    yHalfHeight - lengthSafety,
+                                    chordLength * 0.5 - lengthSafety);
+      }
+
       RegisterSolid(rightJawSolid);
       
       G4LogicalVolume* rightJawLV = new G4LogicalVolume(rightJawSolid,      // solid

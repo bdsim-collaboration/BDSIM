@@ -150,6 +150,8 @@ void Element::PublishMembers()
   publish("xsizeRight",       &Element::xsizeRight);
   publish("offsetX",     &Element::offsetX);
   publish("offsetY",     &Element::offsetY);
+  publish("leftJawTilt",     &Element::leftJawTilt);
+  publish("rightJawTilt",     &Element::rightJawTilt);
 
   // screen parameters
   publish("tscint",          &Element::tscint);
@@ -513,6 +515,8 @@ void Element::flush()
   xsizeRight = 0;
   offsetX = 0;
   offsetY = 0;
+  leftJawTilt = 0;
+  rightJawTilt = 0;
 
   // screen parameters
   tscint = 0.0003;
