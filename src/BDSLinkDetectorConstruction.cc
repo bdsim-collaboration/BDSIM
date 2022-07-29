@@ -238,6 +238,8 @@ G4int BDSLinkDetectorConstruction::AddLinkCollimatorJaw(const std::string& colli
   el.offsetX  = xOffset / CLHEP::m;
   el.offsetY  = yOffset / CLHEP::m;
   el.horizontalWidth = 2.0; // m
+  el.leftJawTilt = 0.1; // rad
+  el.rightJawTilt = 0.1; // rad
 
   // if we don't want to build a jaw, then we set it to outside the width.
   if (!buildLeftJaw)

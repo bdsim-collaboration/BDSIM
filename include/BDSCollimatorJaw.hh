@@ -43,6 +43,8 @@ public:
                    G4double    yHalfHeightIn,
                    G4double    xsizeLeftIn,
                    G4double    xsizeRightIn,
+                   G4double    leftJawTiltIn,
+                   G4double    rightJawTiltIn,
                    G4bool      buildLeftJawIn,
                    G4bool      buildRightJawIn,
                    G4Material* collimatorMaterialIn,
@@ -68,6 +70,8 @@ protected:
   G4double  xSizeLeft;       ///< Offset of jaw 1
   G4double  xSizeRight;      ///< Offset of jaw 2
   G4double  xHalfGap;        ///< Half gap separation between jaws.
+  G4double  leftJawTilt;     ///< Tilt of jaw 1 (angle in x-z plane)
+  G4double  rightJawTilt;    ///< Tilt of jaw 2 (angle in x-z plane)
   G4double  jawHalfWidth;    ///< Half width of each jaw.
   G4double  yHalfHeight;     ///< Half height of each jaw.
   G4bool    buildLeftJaw;    ///< Build left jaw or not.
