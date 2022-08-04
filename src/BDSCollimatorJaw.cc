@@ -133,15 +133,23 @@ void BDSCollimatorJaw::CheckParameters()
 
 void BDSCollimatorJaw::BuildContainerLogicalVolume()
 {
+    G4double horizontalHalfWidth = horizontalWidth * 0.5;
+    if (jawTiltLeft != 0 || jawTiltRight != 0){
+        // The box must encompass everything, so pick the largest absolute angle
+        horizontalHalfWidth = horizontalWidth * 0.5 + chordLength * 0.5 * std::sin(std::max(jawTiltLeft, jawTiltRight));
+    }
+
+    // For the case of jaw tilt, adjust the horizontal size, but keep the container length the same
+    // This results in small drifts either side of the collimator, but preserves the overall size
   containerSolid = new G4Box(name + "_container_solid",
-			     horizontalWidth*0.5,
-			     yHalfHeight,
-			     chordLength*0.5);
+                             horizontalHalfWidth,
+			                 yHalfHeight,
+                             chordLength*0.5);
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       vacuumMaterial,
 					       name + "_container_lv");
-  BDSExtent ext(horizontalWidth * 0.5, yHalfHeight, chordLength*0.5);
+  BDSExtent ext(horizontalHalfWidth, yHalfHeight, chordLength*0.5);
   SetExtent(ext);
 }
 
@@ -187,19 +195,19 @@ void BDSCollimatorJaw::Build()
     {
       G4VSolid* leftJawSolid = nullptr;
 
-      if (leftJawTilt != 0)
+      if (jawTiltLeft != 0)
       {
           // Adjust the length of the parallelepiped to match the inside edges in Z
           // Due to the straight parallelepiped edges, it will never match the volume an angled box,
           // so it is chosen to underestimate the volume, but preserve the jaw x-y cutting plane.
-          G4double leftHalfLength = chordLength * 0.5 * std::cos(leftJawTilt);
+          G4double leftHalfLength = chordLength * 0.5 * std::cos(jawTiltLeft);
 
           leftJawSolid = new G4Para(name + "_leftjaw_solid",
                                     leftJawWidth * 0.5 - lengthSafety,
                                     yHalfHeight - lengthSafety,
                                     leftHalfLength - lengthSafety,
                                     0,
-                                    leftJawTilt,
+                                    jawTiltLeft,
                                     0);
       }
       else
@@ -242,19 +250,19 @@ void BDSCollimatorJaw::Build()
     {
       G4VSolid* rightJawSolid = nullptr;
 
-      if (rightJawTilt != 0)
+      if (jawTiltRight != 0)
       {
           // Adjust the length of the parallelepiped to match the inside edges in Z
           // Due to the straight parallelepiped edges, it will never match the volume an angled box,
           // so it is chosen to underestimate the volume, but preserve the jaw x-y cutting plane.
-          G4double rightHalfLength = chordLength * 0.5 * std::cos(rightJawTilt);
+          G4double rightHalfLength = chordLength * 0.5 * std::cos(jawTiltRight);
 
           rightJawSolid = new G4Para(name + "_rightjaw_solid",
                                      rightJawWidth * 0.5 - lengthSafety,
                                      yHalfHeight - lengthSafety,
                                      rightHalfLength  - lengthSafety,
                                      0,
-                                     rightJawTilt,
+                                     jawTiltRight,
                                      0);
       }
       else
