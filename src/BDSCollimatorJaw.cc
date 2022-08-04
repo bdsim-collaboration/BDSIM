@@ -50,7 +50,7 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
 				   G4Material* collimatorMaterialIn,
 				   G4Material* vacuumMaterialIn,
 				   G4Colour*   colourIn):
-  BDSCollimator(nameIn,
+        BDSCollimator(nameIn,
 		lengthIn,
 		horizontalWidthIn,
 		"jcol",
@@ -61,17 +61,17 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
 		xHalfGapIn,
 		yHalfHeightIn,
 		colourIn),
-  jawSolid(nullptr),
-  xSizeLeft(xSizeLeftIn),
-  xSizeRight(xSizeRightIn),
-  xHalfGap(xHalfGapIn),
-  leftJawTilt(leftJawTiltIn),
-  rightJawTilt(rightJawTiltIn),
-  jawHalfWidth(0),
-  yHalfHeight(yHalfHeightIn),
-  buildLeftJaw(buildLeftJawIn),
-  buildRightJaw(buildRightJawIn),
-  buildAperture(true)
+        jawSolid(nullptr),
+        xSizeLeft(xSizeLeftIn),
+        xSizeRight(xSizeRightIn),
+        xHalfGap(xHalfGapIn),
+        jawTiltLeft(leftJawTiltIn),
+        jawTiltRight(rightJawTiltIn),
+        jawHalfWidth(0),
+        yHalfHeight(yHalfHeightIn),
+        buildLeftJaw(buildLeftJawIn),
+        buildRightJaw(buildRightJawIn),
+        buildAperture(true)
 {
   jawHalfWidth = 0.5 * (0.5*horizontalWidth - lengthSafetyLarge - xHalfGap);
 }
@@ -118,10 +118,10 @@ void BDSCollimatorJaw::CheckParameters()
       buildRightJaw = false;
     }
 
-  if ( std::abs(leftJawTilt) > 0 &&  std::tan(std::abs(leftJawTilt)) * chordLength / 2. > xSizeLeft)
+  if (std::abs(jawTiltLeft) > 0 && std::tan(std::abs(jawTiltLeft)) * chordLength / 2. > xSizeLeft)
     {throw BDSException(__METHOD_NAME__, "tilted left jaw cannot intercept the zero axis: \"" + name + "\"");}
 
-  if ( std::abs(rightJawTilt) > 0 && std::tan(std::abs(rightJawTilt)) * chordLength / 2. > xSizeRight)
+  if (std::abs(jawTiltRight) > 0 && std::tan(std::abs(jawTiltRight)) * chordLength / 2. > xSizeRight)
     {throw BDSException(__METHOD_NAME__, "tilted right jaw cannot intercept the zero axis: \"" + name + "\"");}
 
   if (!buildLeftJaw && !buildRightJaw)
