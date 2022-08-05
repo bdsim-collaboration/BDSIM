@@ -118,10 +118,11 @@ void BDSCollimatorJaw::CheckParameters()
       buildRightJaw = false;
     }
 
-  if (std::abs(jawTiltLeft) > 0 && std::tan(std::abs(jawTiltLeft)) * chordLength / 2. > xSizeLeft)
+  G4cout << std::tan(std::abs(jawTiltLeft)) * chordLength / 2. << " " << xSizeLeft << G4endl;
+  if (std::abs(jawTiltLeft) > 0 && std::tan(std::abs(jawTiltLeft)) * chordLength / 2. > std::max(xHalfGap, xSizeLeft))
     {throw BDSException(__METHOD_NAME__, "tilted left jaw cannot intercept the zero axis: \"" + name + "\"");}
 
-  if (std::abs(jawTiltRight) > 0 && std::tan(std::abs(jawTiltRight)) * chordLength / 2. > xSizeRight)
+  if (std::abs(jawTiltRight) > 0 && std::tan(std::abs(jawTiltRight)) * chordLength / 2. > std::max(xHalfGap, xSizeLeft))
     {throw BDSException(__METHOD_NAME__, "tilted right jaw cannot intercept the zero axis: \"" + name + "\"");}
 
   if (!buildLeftJaw && !buildRightJaw)
