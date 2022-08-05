@@ -120,10 +120,10 @@ void BDSCollimatorJaw::CheckParameters()
 
   G4cout << std::tan(std::abs(jawTiltLeft)) * chordLength / 2. << " " << xSizeLeft << G4endl;
   if (std::abs(jawTiltLeft) > 0 && std::tan(std::abs(jawTiltLeft)) * chordLength / 2. > std::max(xHalfGap, xSizeLeft))
-    {throw BDSException(__METHOD_NAME__, "tilted left jaw cannot intercept the zero axis: \"" + name + "\"");}
+    {throw BDSException(__METHOD_NAME__, "tilted left jaw not allowed to cross the mid-plane: \"" + name + "\"");}
 
   if (std::abs(jawTiltRight) > 0 && std::tan(std::abs(jawTiltRight)) * chordLength / 2. > std::max(xHalfGap, xSizeLeft))
-    {throw BDSException(__METHOD_NAME__, "tilted right jaw cannot intercept the zero axis: \"" + name + "\"");}
+    {throw BDSException(__METHOD_NAME__, "tilted right jaw not allowed to cross the mid-plane: \"" + name + "\"");}
 
   if (!buildLeftJaw && !buildRightJaw)
     {throw BDSException(__METHOD_NAME__, "no jaws being built: \"" + name + "\"");}
