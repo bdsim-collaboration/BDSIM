@@ -1144,6 +1144,9 @@ jcol
 If a vertical `jcol` is required, the `tilt` parameter should be used to rotate it by :math:`\pi/2`.
 The horizontal position of each jaw can be set separately with the `xsizeLeft` and `xsizeRight`
 apertures which are the distances from the centre of element to the left and right jaws respectively.
+The collimator jaws can be individually tilted in a plane perpendicular to the jaw opening plane with the
+`jawTiltLeft` and `jawTiltRight` arguments. In this case, the set aperture is in the middle of the collimator.
+This feature can be useful for example in aligning the jaws to the beam envelope.
 
 
 .. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
@@ -1162,6 +1165,10 @@ apertures which are the distances from the centre of element to the left and rig
 | `xsizeLeft`            | Left jaw aperture [m]             | 0              | No            |
 +------------------------+-----------------------------------+----------------+---------------+
 | `xsizeRight`           | Right jaw aperture [m]            | 0              | No            |
++------------------------+-----------------------------------+----------------+---------------+
+| `jawTiltLeft`          | Left jaw tilt angle [rad]         | 0              | No            |
++------------------------+-----------------------------------+----------------+---------------+
+| `jawTiltRight`         | Right jaw tilt angle [rad]        | 0              | No            |
 +------------------------+-----------------------------------+----------------+---------------+
 | `horizontalWidth`      | Outer full width [m]              | 0.5 m          | No            |
 +------------------------+-----------------------------------+----------------+---------------+
@@ -1187,6 +1194,10 @@ Notes:
 * For **only one jaw**, specifying a jaw aperture which is larger than half the `horizontalWidth` value
   will result in that jaw not being constructed. If both jaw apertures are greater than
   half the `horizontalWidth`, no jaws will be built and BDSIM will exit.
+* To preserve the longitudinal dimensions, jaw tilt specified with `jawTiltLeft` or `jawTiltRight` and `xsizeRight`
+  uses parallelepipeds instead of boxes for the collimator jaws. Relative to using angled boxes, this can introduce and
+  error in the material traversed by incident particles, which scales as $b\tan(\alpha)$, where b is
+  the impact parameter (depth of impact) and $\alpha$ is the jaw tilt angle.
 * The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
   particles below this kinetic energy in the collimator. This is useful to match other simulations
   where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
