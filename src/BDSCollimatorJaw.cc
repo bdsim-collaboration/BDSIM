@@ -380,6 +380,10 @@ void BDSCollimatorJaw::Build()
           vacuumSolid = new G4GenericTrap(name + "_vacuum_solid",
                                           chordLength * 0.5 - lengthSafety,
                                           vertices);
+          // The for tilted jaws, the vacuum trapezoid is constructed from absolute coordinates
+          // need to rese the vacuum offset, which is intended for a box
+          vacuumOffset = G4ThreeVector(0, 0, 0);
+
       }
       else
       {
