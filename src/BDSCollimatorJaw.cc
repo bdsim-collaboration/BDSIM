@@ -352,17 +352,21 @@ void BDSCollimatorJaw::Build()
   if (buildAperture) {
       if (jawTiltLeft != 0 || jawTiltRight != 0)
       {
+          /// If the jaw is not built, do not take it's tilt into account for the vacuum box
+          G4double tiltLeft = buildLeftJaw ? jawTiltLeft : 0.;
+          G4double tiltRight = buildRightJaw ? jawTiltRight : 0.;
+
           /// The vacuum volume should extend from edge to edge, but the tilted jaws themselves don't
           /// Compute an effective length to correctly obtain the vacuum size at the edges
-          G4double halfLengthLeftEff = (chordLength  * 0.5) / std::cos(jawTiltLeft);
-          G4double halfLengthRightEff = (chordLength  * 0.5) / std::cos(jawTiltRight);
+          G4double halfLengthLeftEff = (chordLength  * 0.5) / std::cos(tiltLeft);
+          G4double halfLengthRightEff = (chordLength  * 0.5) / std::cos(tiltRight);
 
           /// Rotate about y (from the z to the x axis) at x = 0 and translate
           /// The right jaw is at a negative half-gap
-          G4double xGapLeftUpstream = -halfLengthLeftEff * std::sin(jawTiltLeft) + leftJawHalfGap;
-          G4double xGapLeftDownstream = halfLengthLeftEff * std::sin(jawTiltLeft) + leftJawHalfGap;
-          G4double xGapRightUpstream = -halfLengthRightEff * std::sin(jawTiltRight) - rightJawHalfGap;
-          G4double xGapRightDownstream = halfLengthRightEff * std::sin(jawTiltRight) - rightJawHalfGap;
+          G4double xGapLeftUpstream = -halfLengthLeftEff * std::sin(tiltLeft) + leftJawHalfGap;
+          G4double xGapLeftDownstream = halfLengthLeftEff * std::sin(tiltLeft) + leftJawHalfGap;
+          G4double xGapRightUpstream = -halfLengthRightEff * std::sin(tiltRight) - rightJawHalfGap;
+          G4double xGapRightDownstream = halfLengthRightEff * std::sin(tiltRight) - rightJawHalfGap;
 
           std::vector<G4TwoVector> vertices {G4TwoVector(xGapRightUpstream + lengthSafety, -(yHalfHeight - lengthSafety)),
                                              G4TwoVector(xGapRightUpstream + lengthSafety, (yHalfHeight - lengthSafety)),
