@@ -166,11 +166,23 @@ void BDSCollimatorJaw::Build()
   G4double rightJawHalfGap = xHalfGap;
 
   // update jaw half gap with offsets
+  // if one jaw is not constructed, use the mirror of the other jaw gap to construct the vacuum aperture volume
   if (BDS::IsFinite(xSizeLeft))
-    {leftJawHalfGap = xSizeLeft;}
+  {
+      if (buildLeftJaw)
+      { leftJawHalfGap = xSizeLeft; }
+      else
+      { leftJawHalfGap = 0.5 * horizontalWidth; }
+  }
+
   if (BDS::IsFinite(xSizeRight))
-    {rightJawHalfGap = xSizeRight;}
-  
+  {
+      if (buildRightJaw)
+      { rightJawHalfGap = xSizeRight; }
+      else
+      { rightJawHalfGap = 0.5 * horizontalWidth; }
+  }
+
   // jaws have to fit inside containerLogicalVolume so calculate full jaw widths given offsets
   G4double leftJawWidth = 0.5 * horizontalWidth - leftJawHalfGap;
   G4double rightJawWidth = 0.5 * horizontalWidth - rightJawHalfGap;
