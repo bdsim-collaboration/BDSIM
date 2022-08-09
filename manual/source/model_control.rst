@@ -2837,7 +2837,8 @@ Physics Processes
 |                                  | default.                                              |
 +----------------------------------+-------------------------------------------------------+
 | minimumKineticEnergy             | A particle below this energy will be killed and the   |
-|                                  | energy deposition recorded at that location [GeV]     |
+|                                  | energy deposition recorded at that location. [GeV]    |
+|                                  | See also, `particlesToExcludeFromCuts`.               |
 +----------------------------------+-------------------------------------------------------+
 | minimumKineticEnergyTunnel       | A particle below this energy in any BDSIM-generated   |
 |                                  | tunnel sections will be killed and the energy         |
@@ -2856,6 +2857,11 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | neutronKineticEnergyLimit        | Minimum allowed energy for neutrons when using the    |
 |                                  | `neutron_tracking_cut` physics list [GeV]             |
++----------------------------------+-------------------------------------------------------+
+| particlesToExcludeFromCuts       | A white space separated string containing PDG IDs for |
+|                                  | particles to be excluded from `minimumKineticEnergy`, |
+|                                  | `minimumRange`, `maximumTrackingTime`, and            |
+|                                  | `maximumTrackLength`. e.g. `"13 -13"`.                |
 +----------------------------------+-------------------------------------------------------+
 | physicsEnergyLimitLow            | Optional lower energy level for all physics models.   |
 |                                  | This is usually 990 eV by default in Geant4. The user |
