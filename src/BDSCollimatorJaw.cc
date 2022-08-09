@@ -28,11 +28,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Box.hh"
 #include "G4Para.hh"
+#include "G4GenericTrap.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
 
 #include <cmath>
+#include <vector>
 #include <map>
 #include <set>
 
@@ -189,9 +191,7 @@ void BDSCollimatorJaw::Build()
   // get appropriate user limits for jaw material
   G4UserLimits* collUserLimits = CollimatorUserLimits();
 
-
   // build jaws as appropriate
-
   if (buildLeftJaw && buildAperture)
     {
       G4VSolid* leftJawSolid = nullptr;
@@ -337,13 +337,42 @@ void BDSCollimatorJaw::Build()
     }
   
   // build and place the vacuum volume only if the aperture is finite.
-  if (buildAperture)
-    {
-      vacuumSolid = new G4Box(name + "_vacuum_solid",               // name
-			      vacuumWidth - lengthSafety,           // x half width
-			      yHalfHeight - lengthSafety,           // y half width
-			      chordLength * 0.5);                   // z half length
-      
+  if (buildAperture) {
+      if (jawTiltLeft != 0 || jawTiltRight != 0)
+      {
+          /// The vacuum volume should extend from edge to edge, but the tilted jaws themselves don't
+          /// Compute an effective length to correctly obtain the vacuum size at the edges
+          G4double halfLengthLeftEff = (chordLength  * 0.5) / std::cos(jawTiltLeft);
+          G4double halfLengthRightEff = (chordLength  * 0.5) / std::cos(jawTiltRight);
+
+          /// Rotate about y (from the z to the x axis) at x = 0 and translate
+          /// The right jaw is at a negative half-gap
+          G4double xGapLeftUpstream = -halfLengthLeftEff * std::sin(jawTiltLeft) + leftJawHalfGap;
+          G4double xGapLeftDownstream = halfLengthLeftEff * std::sin(jawTiltLeft) + leftJawHalfGap;
+          G4double xGapRightUpstream = -halfLengthRightEff * std::sin(jawTiltRight) - rightJawHalfGap;
+          G4double xGapRightDownstream = halfLengthRightEff * std::sin(jawTiltRight) - rightJawHalfGap;
+
+          std::vector<G4TwoVector> vertices {G4TwoVector(xGapRightUpstream + lengthSafety, -(yHalfHeight - lengthSafety)),
+                                             G4TwoVector(xGapRightUpstream + lengthSafety, (yHalfHeight - lengthSafety)),
+                                             G4TwoVector(xGapLeftUpstream - lengthSafety, (yHalfHeight - lengthSafety)),
+                                             G4TwoVector(xGapLeftUpstream - lengthSafety, -(yHalfHeight - lengthSafety)),
+                                             G4TwoVector(xGapRightDownstream + lengthSafety, -(yHalfHeight - lengthSafety)),
+                                             G4TwoVector(xGapRightDownstream + lengthSafety, (yHalfHeight - lengthSafety)),
+                                             G4TwoVector(xGapLeftDownstream - lengthSafety, (yHalfHeight - lengthSafety)),
+                                             G4TwoVector(xGapLeftDownstream - lengthSafety, -(yHalfHeight - lengthSafety))};
+
+          vacuumSolid = new G4GenericTrap(name + "_vacuum_solid",
+                                          chordLength * 0.5 - lengthSafety,
+                                          vertices);
+      }
+      else
+      {
+          vacuumSolid = new G4Box(name + "_vacuum_solid",               // name
+                                   vacuumWidth - lengthSafety,           // x half width
+                                   yHalfHeight - lengthSafety,           // y half width
+                                   chordLength * 0.5);                   // z half length
+      }
+
       RegisterSolid(vacuumSolid);
       
       G4LogicalVolume* vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
