@@ -137,7 +137,7 @@ void BDSCollimatorJaw::BuildContainerLogicalVolume()
     G4double horizontalHalfWidth = horizontalWidth * 0.5;
     if (jawTiltLeft != 0 || jawTiltRight != 0){
         // The box must encompass everything, so pick the largest absolute angle
-        horizontalHalfWidth = horizontalWidth * 0.5 + chordLength * 0.5 * std::sin(std::max(jawTiltLeft, jawTiltRight));
+        horizontalHalfWidth = horizontalWidth * 0.5 + chordLength * 0.5 * std::sin(std::max(std::abs(jawTiltLeft), std::abs(jawTiltRight)));
     }
 
     // For the case of jaw tilt, adjust the horizontal size, but keep the container length the same
