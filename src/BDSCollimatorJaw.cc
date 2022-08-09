@@ -166,7 +166,7 @@ void BDSCollimatorJaw::Build()
   G4double rightJawHalfGap = xHalfGap;
 
   // update jaw half gap with offsets
-  // if one jaw is not constructed, use the mirror of the other jaw gap to construct the vacuum aperture volume
+  // if one jaw is not constructed, set the opening to xSize/2 for the aperture vacuum volume creation
   if (BDS::IsFinite(xSizeLeft))
   {
       if (buildLeftJaw)
@@ -383,7 +383,6 @@ void BDSCollimatorJaw::Build()
           // The for tilted jaws, the vacuum trapezoid is constructed from absolute coordinates
           // need to rese the vacuum offset, which is intended for a box
           vacuumOffset = G4ThreeVector(0, 0, 0);
-
       }
       else
       {
