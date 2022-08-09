@@ -418,3 +418,11 @@ void BDSCollimatorJaw::Build()
       RegisterPhysicalVolume(vacPV);
     }
 }
+
+G4double BDSCollimatorJaw::getJawTiltLeft() const {
+    return jawTiltLeft;
+}
+
+G4double BDSCollimatorJaw::getJawTiltRight() const {
+    return jawTiltRight;
+}

@@ -52,6 +52,9 @@ public:
                    G4Colour*   colourIn = nullptr);
   virtual ~BDSCollimatorJaw();
 
+  G4double getJawTiltLeft() const;
+  G4double getJawTiltRight() const;
+
 protected:
   /// Check and update parameters before construction. Called at the start of Build() as
   /// we can't call a virtual function in a constructor.
@@ -65,7 +68,7 @@ protected:
 
   /// To fulfill inheritance but unused.
   virtual void BuildInnerCollimator() final {;}
-  
+
   G4VSolid* jawSolid;        ///< Jaw solid.
   G4double  xSizeLeft;       ///< Offset of jaw 1
   G4double  xSizeRight;      ///< Offset of jaw 2
