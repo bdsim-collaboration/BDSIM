@@ -72,7 +72,7 @@ namespace GMAD
     std::list<double> knl; ///< multipole expansion coefficients
     std::list<double> ksl; ///< skew multipole expansion
     double gradient;  ///< for rf cavities in V / m
-    double E;         ///< electric field amplitude for rf cavities in V
+    double E;         ///< voltage for rf cavities in V that will be assumed over length l
     double frequency; ///< frequency for rf cavity in Hz
     double phase;     ///< phase of rf cavity (rad)
     double tOffset;   ///< time offset used for phase calculation (ns)

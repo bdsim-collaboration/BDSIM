@@ -2604,7 +2604,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   G4double frequency = std::abs(el->frequency * CLHEP::hertz);
   (*st)["frequency"] = frequency;
 
-  // set the phase from the element even if zero frequency, field should be cos(phi) = constant.
+  // set the phase from the element even if zero frequency, field should be cos(0 + phi) = constant.
   G4double phase = el->phase * CLHEP::rad;
   (*st)["phase"] = phase;
 

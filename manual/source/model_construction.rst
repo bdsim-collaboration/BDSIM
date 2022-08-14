@@ -923,7 +923,7 @@ the edge effects are provided by default and are controllable with the option `i
 | `E`            | Voltage [V] that will be      | 0            | Yes (or `gradient`) |
 |                | across the length `l`         |              |                     |
 +----------------+-------------------------------+--------------+---------------------+
-| `gradient`     | Electric field [V/m]          | 0            | Yes                 |
+| `gradient`     | Electric field [V/m]          | 0            | Yes (or `E`)        |
 +----------------+-------------------------------+--------------+---------------------+
 | `frequency`    | Frequency of oscillation (Hz) | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
@@ -936,7 +936,7 @@ the edge effects are provided by default and are controllable with the option `i
 | `cavityModel`  | Name of cavity model object   | ""           | No                  |
 +----------------+-------------------------------+--------------+---------------------+
 
-Either :code:`gradient` or :code:`E` should be specified. :code:`E` is given in Volts,
+Either :code:`gradient` or :code:`E` should be specified. :code:`E` (the *voltage* is given in Volts,
 and internally is divided by the length of the element (:code:`l`) to give the electric
 field in Volts/m. If :code:`gradient` is specified, this is already Volts/m and the length
 is not involved. The slight misnomer of `E` instead of say `voltage` is historical.
@@ -949,7 +949,7 @@ it is best to be explicit in units or none at all and assume the default ones.
 	  of components after an RF cavity in a lattice are calculated with respect to
 	  the design energy, the particle and therefore, design rigidity. The user should
 	  scale the strength values appropriately if they wish to match the increased
-	  energy of the particle.
+	  momentum of the particle.
 
 .. warning:: The elliptical cavity geometry may not render or appear in the Geant4
 	     QT visualiser.  The geometry exists and is valid, but this is due to
