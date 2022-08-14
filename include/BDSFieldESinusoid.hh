@@ -38,6 +38,7 @@ class BDSMagnetStrength;
 class BDSFieldESinusoid: public BDSFieldE
 {
 public:
+  BDSFieldESinusoid() = delete;
   /// Construct with a BDSMagnetStrength instance for convenience.
   BDSFieldESinusoid(BDSMagnetStrength const* strength,
 		    G4double                 brho);
@@ -57,10 +58,8 @@ protected:
   /// Amplitude of electric field in V/m.
   G4double eField;
   
-private:
-  /// Private default constructor to force use of supplied one.
-  BDSFieldESinusoid() = delete;
   
+private:
   /// Angular frequency of field.
   G4double angularFrequency;
 
