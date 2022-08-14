@@ -570,7 +570,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   // for time offset from s=0 position
   BDSMagnetStrength* stIn  = nullptr;
   BDSMagnetStrength* stOut = nullptr;
-  BDSMagnetStrength* st = PrepareCavityStrength(element, cavityLength, currentArcLength, stIn, stOut);
+  BDSMagnetStrength* st = PrepareCavityStrength(element, fieldType, cavityLength, currentArcLength, stIn, stOut);
   G4Transform3D fieldTrans = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
@@ -2581,6 +2581,7 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
 }
 
 BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*      el,
+							      BDSFieldType        fieldType,
 							      G4double            cavityLength,
 							      G4double            currentArcLength,
 							      BDSMagnetStrength*& fringeIn,
@@ -2592,6 +2593,18 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   G4double scaling       = el->scaling;
   (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   (*st)["length"]        = chordLength;
+  
+  switch (fieldType.underlying())
+    {
+    case BDSFieldType::rf:
+      {(*st)["ez"] = 1.0; break;}
+    case BDSFieldType::rfx:
+      {(*st)["ex"] = 1.0; break;}
+    case BDSFieldType::rfy:
+      {(*st)["ey"] = 1.0; break;}
+    default:
+      {(*st)["ez"] = 1.0; break;}
+    }
     
   // scale factor to account for reduced body length due to fringe placement.
   G4double lengthScaling = cavityLength / (element->l * CLHEP::m);
