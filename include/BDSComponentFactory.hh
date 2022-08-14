@@ -223,10 +223,11 @@ private:
   /// Private enum for kicker types.
   enum class KickerType {horizontal, vertical, general};
   
+  /// Private enum for RF cavity principle accelerating direction
+  enum class RFFieldDirection {x, y, z};
+  
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
-  BDSAcceleratorComponent* CreateRF(G4double currentArcLength);
-  BDSAcceleratorComponent* CreateRFX(G4double currentArcLength);
-  BDSAcceleratorComponent* CreateRFY(G4double currentArcLength);
+  BDSAcceleratorComponent* CreateRF(RFFieldDirection direction, G4double currentArcLength);
   BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend();
   BDSAcceleratorComponent* CreateKicker(KickerType type);
