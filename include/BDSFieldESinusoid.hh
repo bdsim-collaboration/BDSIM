@@ -43,8 +43,9 @@ public:
   BDSFieldESinusoid(BDSMagnetStrength const* strength,
 		    G4double                 brho);
 
-  /// Construct from E amplitude, frequency (G4Units) and phase.
+  /// Construct from E amplitude, unit direction vector, frequency (G4Units) and phase.
   BDSFieldESinusoid(G4double eFieldAmplitude,
+                    const G4ThreeVector& unitDirectionIn,
 		    G4double frequencyIn,
 		    G4double phaseOffsetIn);
 
@@ -58,6 +59,8 @@ protected:
   /// Amplitude of electric field in V/m.
   G4double eField;
   
+  /// Unit vector for direction of field.
+  const G4ThreeVector unitDirection;
   
 private:
   /// Angular frequency of field.
