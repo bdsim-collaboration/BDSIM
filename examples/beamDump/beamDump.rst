@@ -28,7 +28,7 @@ following visualisation is produced. ::
 
   /run/beamOn 100
 
-.. figure:: beamDump-10events.png
+.. figure:: beamDump-100events.png
 	    :width: 100%
 	    :align: center
 
@@ -47,6 +47,11 @@ Then using the included rebdsim analysis configuration file :code:`histogram.txt
 
 
 We can see a 2D x-y distribution in :code:`r1_ana.root` (automatically named by rebdsim).
+An included plotting script :code:`plotXY.py` can be used: ::
+
+  python plotXY.py r1_ana.root
+
+
 
 .. figure:: xy-distribution.png
 	    :width: 70%
