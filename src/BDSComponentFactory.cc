@@ -277,7 +277,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     }
 
   BDSAcceleratorComponent* component = nullptr;
-  try {
+  try
+  {
   switch(element->type)
     {
     case ElementType::_DRIFT:
@@ -322,12 +323,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     case ElementType::_MULT:
       {
         if(!BDS::IsFinite(element->l))
-        {
-          component = CreateThinMultipole(angleIn);
-          break;
-        }
-          component = CreateMultipole();
-        break;}
+	  {
+	    component = CreateThinMultipole(angleIn);
+	    break;
+	  }
+	component = CreateMultipole();
+        break;
+      }
     case ElementType::_THINMULT:
       {component = CreateThinMultipole(angleIn); break;}
     case ElementType::_ELEMENT:
@@ -423,6 +425,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       e.AppendToMessage("\nError in creating component \"" + elementName + "\"");
       throw e;
     }
+  
   // note this test will only be reached (and therefore the component registered)
   // if both the component didn't exist and it has been constructed
   if (component)
@@ -2493,7 +2496,6 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
   G4double aper1     = aperture->aper1;
   G4double horizontalWidth = PrepareHorizontalWidth(el);
   
-  /// TBC this is a mess - doesn't use aper1 and ambiguous whether to use aper1, horizontalWidth or default
   G4double defaultHorizontalWidth = 20*CLHEP::cm;
   if (aper1 < defaultHorizontalWidth) // only do if the aperture will fit
     {horizontalWidth = std::min(defaultHorizontalWidth, horizontalWidth);} // better default
