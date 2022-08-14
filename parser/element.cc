@@ -84,6 +84,10 @@ void Element::PublishMembers()
   publish("frequency", &Element::frequency);
   publish("phase",     &Element::phase);
   publish("tOffset",   &Element::tOffset);
+  publish("frequencyModulator", &Element::frequencyModulator);
+  publish("phaseModulator",     &Element::phaseModulator);
+  publish("tOffsetModulator",   &Element::tOffsetModulator);
+  publish("modulatorAmplitudeOffset", &Element::modulatorAmplitudeOffset);
 
   // rmatrix elements, only 4x4
   publish("kick1",     &Element::kick1);
@@ -463,6 +467,10 @@ void Element::flush()
   frequency = 0;
   phase     = 0;
   tOffset   = 0;
+  frequencyModulator = 0;
+  phaseModulator = 0;
+  tOffsetModulator = 0;
+  modulatorAmplitudeOffset = 0;
 
   // rmatrix
   kick1 = 0;
