@@ -277,10 +277,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     }
 
   BDSAcceleratorComponent* component = nullptr;
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - creating \"" << elementName << "\"" << G4endl;
-  element->print();
-#endif
+  try {
   switch(element->type)
     {
     case ElementType::_DRIFT:
@@ -336,16 +333,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     case ElementType::_ELEMENT:
       {component = CreateElement(); break;}
     case ElementType::_SOLENOID:
-      {component = CreateSolenoid(); break;} 
+      {component = CreateSolenoid(); break;}
     case ElementType::_ECOL:
-      {component = CreateEllipticalCollimator(); break;} 
+      {component = CreateEllipticalCollimator(); break;}
     case ElementType::_RCOL:
       {component = CreateRectangularCollimator(); break;}
     case ElementType::_TARGET:
       {component = CreateTarget(); break;}
     case ElementType::_JCOL:
       {component = CreateJawCollimator(); break;}
-    case ElementType::_MUONSPOILER:    
+    case ElementType::_MUONSPOILER:
       {component = CreateMuonSpoiler(); break;}
     case ElementType::_SHIELD:
       {component = CreateShield(); break;}
@@ -358,9 +355,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     case ElementType::_CRYSTALCOL:
       {component = CreateCrystalCollimator(); break;}
     case ElementType::_LASER:
-      {component = CreateLaser(); break;} 
+      {component = CreateLaser(); break;}
     case ElementType::_SCREEN:
-      {component = CreateScreen(); break;} 
+      {component = CreateScreen(); break;}
     case ElementType::_TRANSFORM3D:
       {component = CreateTransform3D(); break;}
     case ElementType::_THINRMATRIX:
@@ -398,7 +395,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 #endif
     case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
-      {component = CreateAwakeScreen(); break;} 
+      {component = CreateAwakeScreen(); break;}
 #else
       throw BDSException(__METHOD_NAME__, "Awake Screen can't be used - not compiled with AWAKE module!");
 #endif
@@ -420,7 +417,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	break;
       }
     }
-
+  }
+  catch (BDSException& e)
+    {
+      e.AppendToMessage("\nError in creating component \"" + elementName + "\"");
+      throw e;
+    }
   // note this test will only be reached (and therefore the component registered)
   // if both the component didn't exist and it has been constructed
   if (component)
@@ -537,11 +539,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
   switch (direction)
     {// simple sinusoidal E field only
     case RFFieldDirection::x:
-      {fieldType = BDSFieldType::rfx;}
+      {fieldType = BDSFieldType::rfx; break;}
     case RFFieldDirection::y:
-      {fieldType = BDSFieldType::rfy;}
+      {fieldType = BDSFieldType::rfy; break;}
     case RFFieldDirection::z:
-      {fieldType = BDSFieldType::rf;}
+      {fieldType = BDSFieldType::rf; break;}
     }
   // optional more complex cavity field along z
   if (!(element->fieldVacuum.empty()))
@@ -582,7 +584,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
   
   // supply currentArcLength (not element length) to strength as it's needed
   // for time offset from s=0 position
-  BDSMagnetStrength* stIn  = nullptr;
+  BDSMagnetStrength* stIn  = nullptr; // deleted later if not needed
   BDSMagnetStrength* stOut = nullptr;
   BDSMagnetStrength* st = PrepareCavityStrength(element, fieldType, cavityLength, currentArcLength, stIn, stOut);
   G4Transform3D fieldTrans = CreateFieldTransform(element);
@@ -2442,7 +2444,6 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* el,
 {
   // If the cavity model name (identifier) has been defined, return a *copy* of
   // that model - so that the component will own that info object.
-
   G4String modelName = G4String(el->cavityModel);
 
   // no specific model - prepare a default based on element parameters
@@ -2461,20 +2462,20 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* el,
   G4double cavityRadius = info->equatorRadius + info->thickness + lengthSafety;
   G4double horizontalWidth = PrepareHorizontalWidth(el);
   if (cavityRadius > horizontalWidth)
-	{
-	  throw BDSException(__METHOD_NAME__, "Cavity horizontalWidth for element \"" + elementName + "\" is smaller " +
-	                                      "than the cavity model radius.");
-	}
-
+    {
+      G4String msg = "Cavity horizontalWidth for element \"" + elementName + "\" is smaller " + "than the cavity model radius.";
+      throw BDSException(__METHOD_NAME__, msg);
+    }
+  
   // If no material specified, we take the material from the element. If no material at
   // all, we exit with warning.
   if (!info->material)
     {
       if (el->material.empty())
 	{
-	  G4cout << "ERROR: Cavity material is not defined for cavity \"" << elementName << "\""
-		 << "or for cavity model \"" << el->cavityModel << "\" - please define it" << G4endl;
-	  throw BDSException(__METHOD_NAME__, "");
+	  G4String msg = "cavity material is not defined for cavity \"" + elementName + "\"";
+	  msg += " or for cavity model \"" + el->cavityModel + "\" - please define it";
+	  throw BDSException(__METHOD_NAME__, msg);
 	}
       else
 	{info->material = BDSMaterials::Instance()->GetMaterial(el->material);}
@@ -2491,6 +2492,8 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
 
   G4double aper1     = aperture->aper1;
   G4double horizontalWidth = PrepareHorizontalWidth(el);
+  
+  /// TBC this is a mess - doesn't use aper1 and ambiguous whether to use aper1, horizontalWidth or default
   G4double defaultHorizontalWidth = 20*CLHEP::cm;
   if (aper1 < defaultHorizontalWidth) // only do if the aperture will fit
     {horizontalWidth = std::min(defaultHorizontalWidth, horizontalWidth);} // better default
@@ -2498,8 +2501,8 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
   G4double equatorRadius = horizontalWidth - thickness;
   if (equatorRadius <= 0)
     {
-      throw BDSException(__METHOD_NAME__, "combination of horizontalWidth and beampipeThickness for element \"" +
-			 el->name + "\" produce 0 size cavity");
+      G4String msg = "horizontalWidth - beampipeThickness <= 0 for element \"" + el->name + "\" -> this quantity must be positive";
+      throw BDSException(__METHOD_NAME__, msg);
     }
 
   // assume single cell cavity
@@ -2565,7 +2568,11 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   if (BDS::IsFinite(el->gradient))
     {(*st)["efield"] = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
   else
-    {(*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;}
+    {
+      if (fieldType == BDSFieldType::rfx || fieldType == BDSFieldType::rfy)
+        {throw BDSException(__METHOD_NAME__, "only \"gradient\" is accepted for rfx or rfy components and not \"E\"");}
+      (*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;
+    }
   (*st)["efield"] /= lengthScaling;
 
   G4double frequency = std::abs(el->frequency * CLHEP::hertz);
