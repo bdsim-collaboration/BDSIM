@@ -532,14 +532,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::rfcavity);
-
   BDSFieldType fieldType = BDSFieldType::rf; // simple sinusoidal E field only
   if (!(element->fieldVacuum.empty()))
     {
       BDSFieldInfo* field = BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum);
       fieldType = field->FieldType();
     }
+  
+  BDSIntegratorType intType = integratorSet->Integrator(fieldType);
+  
   // note cavity length is not the same as currentArcLength
   G4double cavityLength = element->l * CLHEP::m;
 
