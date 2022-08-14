@@ -287,19 +287,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       {component = CreateDrift(angleIn, angleOut); break;}
     case ElementType::_RF:
       {
-	component = CreateRF(currentArcLength);
+	component = CreateRF(RFFieldDirection::z,  currentArcLength);
 	differentFromDefinition = true; // unique phase for every placement in beam line
 	break;
       }
-      case ElementType::_RFX:
+    case ElementType::_RFX:
       {
-        component = CreateRFX(currentArcLength);
+        component = CreateRF(RFFieldDirection::x, currentArcLength);
         differentFromDefinition = true; // unique phase for every placement in beam line
         break;
       }
-      case ElementType::_RFY:
+    case ElementType::_RFY:
       {
-        component = CreateRFY(currentArcLength);
+        component = CreateRF(RFFieldDirection::y, currentArcLength);
         differentFromDefinition = true; // unique phase for every placement in beam line
         break;
       }
@@ -527,12 +527,23 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
 		       beamPipeInfo));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength)
+BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection direction,
+                                                       G4double currentArcLength)
 {
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
-
-  BDSFieldType fieldType = BDSFieldType::rf; // simple sinusoidal E field only
+  
+  BDSFieldType fieldType;
+  switch (direction)
+    {// simple sinusoidal E field only
+    case RFFieldDirection::x:
+      {fieldType = BDSFieldType::rfx;}
+    case RFFieldDirection::y:
+      {fieldType = BDSFieldType::rfy;}
+    case RFFieldDirection::z:
+      {fieldType = BDSFieldType::rf;}
+    }
+  // optional more complex cavity field along z
   if (!(element->fieldVacuum.empty()))
     {
       BDSFieldInfo* field = BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum);
@@ -546,6 +557,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
 
   // use cavity fringe option, includeFringeFields does not affect cavity fringes
   G4bool buildCavityFringes = BDSGlobalConstants::Instance()->IncludeFringeFieldsCavities();
+  // don't build fringes for transverse rf cavities - none provided
+  if (fieldType == BDSFieldType::rfx || fieldType == BDSFieldType::rfy)
+    {buildCavityFringes = false;}
 
   G4bool buildIncomingFringe = buildCavityFringes;
   // only check if trying to build fringes to begin with as this check should only ever turn off fringe building
@@ -663,67 +677,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
     {delete stOut;}
 
   return cavityLine;
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateRFX(G4double currentArcLength)
-{
-  if (!HasSufficientMinimumLength(element))
-  {return nullptr;}
-  
-  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::rfcavity);
-  
-  BDSFieldType fieldType = BDSFieldType::rf; // simple sinusoidal E field only
-  if (!(element->fieldVacuum.empty()))
-  {
-    BDSFieldInfo* field = BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum);
-    fieldType = field->FieldType();
-  }
-  // note cavity length is not the same as currentArcLength
-  G4double cavityLength = element->l * CLHEP::m;
-  
-  // supply currentArcLength (not element length) to strength as it's needed
-  // for time offset from s=0 position
-  BDSMagnetStrength* stIn  = nullptr;
-  BDSMagnetStrength* stOut = nullptr;
-  BDSMagnetStrength* st = PrepareCavityStrength(element, cavityLength, currentArcLength, stIn, stOut);
-  G4Transform3D fieldTrans = CreateFieldTransform(element);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
-                                               brho,
-                                               intType,
-                                               st,
-                                               true,
-                                               fieldTrans);
-  
-  // limit step length in field - crucial to this component
-  // to get the motion correct this has to be less than one oscillation.
-  // Don't set if frequency is zero as the field will have no oscillation, so we can integrate
-  // safely over longer steps without the field changing.
-  if (BDS::IsFinite(element->frequency))
-  {
-    auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
-    G4double stepFraction  = 0.025;
-    G4double period = 1. / (element->frequency*CLHEP::hertz);
-    // choose the smallest length scale based on the length of the component of the distance
-    // travelled in one period - so improved for high frequency fields
-    G4double limit = std::min((*st)["length"], CLHEP::c_light*period) * stepFraction;
-    auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
-    if (ul != defaultUL)
-    {vacuumField->SetUserLimits(ul);}
-  }
-  
-  G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
-  
-  auto cavity = new BDSCavityElement(elementName,
-                                     cavityLength,
-                                     vacuumMaterial,
-                                     vacuumField,
-                                     nullptr);
-  return cavity;
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateRFY(G4double currentArcLength)
-{
-  return CreateRFX(currentArcLength);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
