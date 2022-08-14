@@ -2446,7 +2446,7 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* el,
   G4String modelName = G4String(el->cavityModel);
 
   // no specific model - prepare a default based on element parameters
-  if (modelName == "")
+  if (modelName.empty())
     {return PrepareCavityModelInfoForElement(el, frequency);}
 
   // cavity model name specified - match up with parser object already translated here
