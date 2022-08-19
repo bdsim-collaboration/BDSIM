@@ -207,6 +207,11 @@ Bug Fixes
     translation unit
     BDSOutputROOTEventSampler<float>::particleTable;
 
+**Beam**
+
+* Fixed generation of circular beam distribution type. The beam previously was circular but was non-uniform with a strong
+  peak at the centre. The distribution is now uniform in x, y, xp & yp.
+
 **Biasing**
 
 * Fixed huge amount of print out for bias objects attached to a whole beam line. Now, bias

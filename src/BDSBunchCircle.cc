@@ -78,8 +78,8 @@ BDSParticleCoordsFull BDSBunchCircle::GetNextParticleLocal()
   G4double z     = Z0 + dz;
   G4double phiR  = flatGen->shoot() * CLHEP::twopi;
   G4double phiRp = flatGen->shoot() * CLHEP::twopi;
-  G4double r     = flatGen->shoot() * envelopeR;
-  G4double rp    = flatGen->shoot() * envelopeRp; 
+  G4double r     = std::sqrt(flatGen->shoot()) * envelopeR;
+  G4double rp    = std::sqrt(flatGen->shoot()) * envelopeRp;
 
   G4double x  = X0  + std::cos(phiR)  * r;
   G4double y  = Y0  + std::sin(phiR)  * r;
