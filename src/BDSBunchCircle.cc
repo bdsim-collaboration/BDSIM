@@ -61,7 +61,7 @@ void BDSBunchCircle::CheckParameters()
   BDSBunch::CheckParameters();
   if (envelopeR <= 0)
     {throw BDSException(__METHOD_NAME__, "envelopeR <= 0");}
-  if (envelopeRp <= 0)
+  if (envelopeRp < 0)
     {throw BDSException(__METHOD_NAME__, "envelopeRp <= 0");}
   if (envelopeT < 0)
     {throw BDSException(__METHOD_NAME__, "envelopeT < 0");}

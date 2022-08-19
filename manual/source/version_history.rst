@@ -62,6 +62,8 @@ New Features
   by `haloXCutOuter` and `haloYCutOuter` respectively. Similar inner and outer cuts of the X and Y
   momentum are also now possible, specified by same options as the position cuts but with a `p`
   after the axis, e.g `haloXpCutOuter`.
+* The radius of the transverse momentum distribution of a circular beam no longer has to be finite.
+  This is useful for generation of an idealised pencil beam.
 
 **Components**
 
