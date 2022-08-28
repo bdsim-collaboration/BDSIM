@@ -27,12 +27,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSFieldEM::BDSFieldEM():
   finiteStrength(true),
   transform(G4Transform3D::Identity),
+  transformIsNotIdentity(false),
   inverseTransform(G4Transform3D::Identity)
 {;}
 
 BDSFieldEM::BDSFieldEM(G4Transform3D transformIn):
   finiteStrength(true),
   transform(transformIn),
+  transformIsNotIdentity(transformIn != G4Transform3D::Identity),
   inverseTransform(transformIn.inverse())
 {;}
 
@@ -41,7 +43,7 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEM::GetFieldTransformed(const G4T
 {
   if (!finiteStrength)
     {return std::make_pair(G4ThreeVector(), G4ThreeVector());} // quicker than query
-  else if (transform != G4Transform3D::Identity)
+  else if (transformIsNotIdentity)
     {
       G4ThreeVector transformedPosition = transform * (HepGeom::Point3D<G4double>)position;
       auto field = GetField(transformedPosition, t);
@@ -68,5 +70,6 @@ void BDSFieldEM::GetFieldValue(const G4double point[4],
 void BDSFieldEM::SetTransform(const G4Transform3D& transformIn)
 {
   transform = transformIn;
+  transformIsNotIdentity = transformIn != G4Transform3D::Identity;
   inverseTransform = transformIn.inverse();
 }

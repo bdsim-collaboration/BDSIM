@@ -27,12 +27,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSFieldMag::BDSFieldMag():
   finiteStrength(true),
   transform(G4Transform3D::Identity),
+  transformIsNotIdentity(false),
   inverseTransform(G4Transform3D::Identity)
 {;}
 
 BDSFieldMag::BDSFieldMag(G4Transform3D transformIn):
   finiteStrength(true),
   transform(transformIn),
+  transformIsNotIdentity(transformIn != G4Transform3D::Identity),
   inverseTransform(transformIn.inverse())
 {;}
 
@@ -41,7 +43,7 @@ G4ThreeVector BDSFieldMag::GetFieldTransformed(const G4ThreeVector& position,
 {
   if (!finiteStrength)
     {return G4ThreeVector();} // quicker than query
-  else if (transform != G4Transform3D::Identity)
+  else if (transformIsNotIdentity)
     {
       G4ThreeVector transformedPosition = inverseTransform * (HepGeom::Point3D<G4double>)position;
       G4ThreeVector field = GetField(transformedPosition, t);
@@ -70,5 +72,6 @@ void BDSFieldMag::GetFieldValue(const G4double point[4],
 void BDSFieldMag::SetTransform(const G4Transform3D& transformIn)
 {
   transform = transformIn;
+  transformIsNotIdentity = transformIn != G4Transform3D::Identity;
   inverseTransform = transformIn.inverse();
 }
