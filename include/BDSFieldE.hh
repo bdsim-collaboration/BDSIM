@@ -75,6 +75,8 @@ protected:
 
   /// Transform to apply for the field relative to the local coordinates of the geometry.
   G4Transform3D transform;
+  
+  G4bool transformIsNotIdentity; ///< Cache of whether to use transform at all.
 
 private:
 
