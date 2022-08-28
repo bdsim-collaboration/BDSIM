@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitSampler.hh"
 #include "BDSHitThinThing.hh"
 #include "BDSOutput.hh"
+#include "BDSModulator.hh"
 #include "BDSNavigatorPlacements.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerPlacementRecord.hh"
@@ -142,6 +143,8 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   BDSStackingAction::energyKilled = 0;
   primaryAbsorbedInCollimator = false; // reset flag
   currentEventIndex = evt->GetEventID();
+
+  BDSModulator::SetEventIndex(currentEventIndex);
   
   // reset navigators to ensure no mis-navigating and that events are truly independent
   BDSAuxiliaryNavigator::ResetNavigatorStates();
