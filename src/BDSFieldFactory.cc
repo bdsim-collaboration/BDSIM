@@ -427,9 +427,6 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
 					      const BDSMagnetStrength* scalingStrength,
 					      const G4String&          scalingKey)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << info << G4endl;
-#endif
   // Forward on to delegate functions for the main types of field
   // such as E, EM and Magnetic
   BDSFieldObjects* field = nullptr;

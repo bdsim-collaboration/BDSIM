@@ -46,6 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectoriesToStore.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryFilter.hh"
+#include "BDSTrajectoryPointHit.hh"
 #include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
 #include "BDSWrapperMuonSplitting.hh"
@@ -63,7 +64,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4THitsMap.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4TrajectoryPoint.hh"
-#include "BDSTrajectoryPointHit.hh"
 #include "G4TransportationManager.hh"
 
 #include <algorithm>
