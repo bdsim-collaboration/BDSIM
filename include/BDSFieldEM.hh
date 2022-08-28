@@ -26,6 +26,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <utility>
 
+class BDSModulator;
+
 /**
  * @brief Interface for BDSIM electro-magnetic fields that may or may not be local.
  * 
@@ -71,6 +73,9 @@ public:
 
   /// Required overload by Geant4.
   virtual G4bool DoesFieldChangeEnergy() const {return true;}
+  
+  /// Set the optional modulator.
+  void SetModulator(BDSModulator* modulatorIn) {modulator = modulatorIn;}
 
   /// Accessor.
   inline G4bool FiniteStrength() const {return finiteStrength;}
@@ -82,6 +87,7 @@ protected:
   G4Transform3D transform;
   
   G4bool transformIsNotIdentity; ///< Cache of whether to use transform at all.
+  BDSModulator* modulator; ///< Optional modulator;
 
 private:
   /// The complimentary transform used to initially rotate the point of query.
