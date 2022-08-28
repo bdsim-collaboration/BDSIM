@@ -62,6 +62,8 @@ New Features
   by `haloXCutOuter` and `haloYCutOuter` respectively. Similar inner and outer cuts of the X and Y
   momentum are also now possible, specified by same options as the position cuts but with a `p`
   after the axis, e.g `haloXpCutOuter`.
+* The radius of the transverse momentum distribution of a circular beam no longer has to be finite.
+  This is useful for generation of an idealised pencil beam.
 
 **Components**
 
@@ -206,6 +208,13 @@ Bug Fixes
     'BDSOutputROOTEventSampler<float>::particleTable' is explicitly instantiated in another
     translation unit
     BDSOutputROOTEventSampler<float>::particleTable;
+
+**Beam**
+
+* Fixed generation of circular beam distribution type. The beam previously was circular but was non-uniform with a strong
+  peak at the centre. The distribution is now uniform in x, y, xp & yp.
+* Fixed generation of ring beam distribution type. Similarly to the circular distribution, the beam had a higher density
+  of particles towards the ring's inner radius. The distribution is now uniform in x & y.
 
 **Biasing**
 
