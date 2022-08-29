@@ -115,5 +115,5 @@ void Field::print()const
 	    << "magneticSubField "     << magneticSubField     << std::endl
 	    << "magneticReflection "   << magneticReflection   << std::endl
 	    << "electricReflection "   << electricReflection   << std::endl
-      << "fieldParameters "      << fieldParameters      << std::endl;
+	    << "fieldParameters "      << fieldParameters      << std::endl;
 }
