@@ -2667,7 +2667,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 		 << "Can only have fieldOuter and or fieldVacuum specified." << G4endl;
 	  throw BDSException(__METHOD_NAME__, "");
 	}
-      if (!(el->fieldOuter.empty())) // ie variable isn't ""
+      if (!(el->fieldOuter.empty()))
 	{
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldOuter)));
 	  if (info->ProvideGlobal())
