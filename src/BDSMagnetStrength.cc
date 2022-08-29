@@ -61,6 +61,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k12", "k12s",
   "frequency",       // frequency for time varying field (presumably em)
   "phase",           // phase for time varying field
+  "synchronousT0",   // global T0 for the synchronous particle at the centre of the object
   "equatorradius",   // radius from axis at which field goes to 0
   "nominalenergy",   // nominal beam energy needed by some integrators
   "scaling",         // field scaling factor needed by dipolequadrupole integrator
@@ -138,6 +139,7 @@ const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::uni
     {"k12s"          , {"",    1.0}},
     {"frequency"     , {"",    CLHEP::megahertz}},
     {"phase"         , {"rad", CLHEP::rad}},
+    {"synchronousT0" , {"s",   CLHEP::s}},
     {"equatorradius" , {"m",   CLHEP::m}},
     {"nominalenergy" , {"GeV", CLHEP::GeV}},
     {"scaling"       , {"",    1.0}},
