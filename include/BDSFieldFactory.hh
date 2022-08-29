@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 namespace GMAD
 {
   class Field;
+  class Modulator;
 }
 
 class BDSFieldE;
@@ -38,6 +39,8 @@ class BDSFieldInfo;
 class BDSFieldMag;
 class BDSFieldObjects;
 class BDSMagnetStrength;
+class BDSModulator;
+class BDSModulatorInfo;
 class BDSParticleDefinition;
 class BDSPrimaryGeneratorAction;
 
@@ -86,8 +89,14 @@ public:
 			       const G4String&          scalingKey      = "none");
 
   /// Return a BDSFieldInfo instance from the parser definitions. Will
-  /// exit if no matching field definition found.
+  /// exit if no matching field definition is found but will return nullptr
+  /// if empty string supplied.
   BDSFieldInfo* GetDefinition(const G4String& name) const;
+  
+  /// Return a BDSModulatorInfo instance from the parser definitions. Will
+  /// exit if no matching modulator definition is found but will return nullptr
+  /// if empty string supplied.
+  BDSModulatorInfo* GetModulatorDefinition(const G4String& modulatorName) const;
 
   /// Suggest a default interpolator.
   static BDSInterpolatorType DefaultInterpolatorType(G4int numberOfDimensions);
@@ -159,6 +168,9 @@ private:
   void PrepareFieldDefinitions(const std::vector<GMAD::Field>& definitions,
                                G4double defaultBRho);
   
+  /// Prepare all required modulator definitions that can be used dynamically.
+  void PrepareModulatorDefinitions(const std::vector<GMAD::Modulator>& definitions);
+  
   /// Convert the string 'value' to a double. Throw an exception including the parameterNameForError if it doesn't work.
   G4double ConvertToDoubleWithException(const G4String& value,
                                         const G4String& parameterNameForError) const;
@@ -171,6 +183,7 @@ private:
 
   /// BDSFieldInfo definitions prepare from parser vector of definitions.
   std::map<G4String, BDSFieldInfo*> parserDefinitions;
+  std::map<G4String, BDSModulatorInfo*> parserModulatorDefinitions;
 
   /// Cache of design particle for fields.
   static const BDSParticleDefinition* designParticle;
