@@ -38,18 +38,25 @@ public:
   BDSModulatorInfo(BDSModulatorType modulatorTypeIn,
 		   G4double frequencyIn,
 		   G4double phaseIn = 0,
+       G4double tOffsetIn = 0,
 		   G4double scaleIn = 1.0,
 		   G4double amplitudeOffsetIn = 0.0);
 
   ~BDSModulatorInfo() = default;
+  
+  /// output stream
+  friend std::ostream& operator<< (std::ostream &out, BDSModulatorInfo const &info);
 
   ///@{ Public member for direct access
   BDSModulatorType modulatorType;
   G4double frequency;
   G4double phase;
+  G4double tOffset;
   G4double scale;
   G4double amplitudeOffset;
   ///@}
+  
+  G4String nameOfParserDefinition;
 };
 
 #endif

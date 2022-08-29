@@ -19,15 +19,34 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSModulatorInfo.hh"
 #include "BDSModulatorType.hh"
 
+#include "globals.hh"
+
+#include <ostream>
 
 BDSModulatorInfo::BDSModulatorInfo(BDSModulatorType modulatorTypeIn,
 				   G4double         frequencyIn,
 				   G4double         phaseIn,
+           G4double         tOffsetIn,
 				   G4double         scaleIn,
 				   G4double         amplitudeOffsetIn):
   modulatorType(modulatorTypeIn),
   frequency(frequencyIn),
   phase(phaseIn),
+  tOffset(tOffsetIn),
   scale(scaleIn),
-  amplitudeOffset(amplitudeOffsetIn)
+  amplitudeOffset(amplitudeOffsetIn),
+  nameOfParserDefinition("")
 {;}
+
+std::ostream& operator<< (std::ostream& out, BDSModulatorInfo const& info)
+{
+  out << "Parser definition name: \"" << info.nameOfParserDefinition << "\"\n";
+  out << "modulator type : \"" << info.modulatorType << "\n";
+  out << "frequency: " << info.frequency << "\n";
+  out << "phase: " << info.phase << "\n";
+  out << "tOffset: " << info.tOffset << "\n";
+  out << "scale: " << info.scale << "\n";
+  out << "amplitudeOffset: " << info.amplitudeOffset << "\n";
+  out << G4endl;
+  return out;
+}
