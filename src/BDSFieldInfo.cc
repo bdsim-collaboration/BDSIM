@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorType.hh"
 #include "BDSInterpolatorType.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSModulatorInfo.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -64,6 +65,7 @@ BDSFieldInfo::BDSFieldInfo():
   secondFieldOnLeft(false),
   magneticSubFieldName(""),
   electricSubFieldName(""),
+  modulatorInfo(nullptr),
   usePlacementWorldTransform(false),
   transformBeamline(nullptr),
   nameOfParserDefinition("")
@@ -118,6 +120,7 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   secondFieldOnLeft(leftIn),
   magneticSubFieldName(magneticSubFieldNameIn),
   electricSubFieldName(electricSubFieldNameIn),
+  modulatorInfo(nullptr),
   usePlacementWorldTransform(false),
   transformBeamline(nullptr),
   nameOfParserDefinition("")
@@ -136,6 +139,7 @@ BDSFieldInfo::~BDSFieldInfo()
   delete magnetStrength;
   delete transform;
   delete stepLimit;
+  delete modulatorInfo;
   delete transformBeamline;
 }
 
@@ -166,6 +170,7 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   magneticSubFieldName(other.magneticSubFieldName),
   electricSubFieldName(other.electricSubFieldName),
   usePlacementWorldTransform(other.usePlacementWorldTransform),
+  modulatorInfo(nullptr),
   transformBeamline(nullptr),
   nameOfParserDefinition(other.nameOfParserDefinition)
 {
@@ -181,6 +186,9 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
     {stepLimit = new G4UserLimits(*other.stepLimit);}
   else
     {stepLimit = nullptr;}
+  
+  if (other.modulatorInfo)
+    {modulatorInfo = new BDSModulatorInfo(*other.modulatorInfo);}
 
   if (other.transformBeamline)
     {transformBeamline = new G4Transform3D(*other.transformBeamline);}
@@ -242,6 +250,8 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "Second field on left " << info.secondFieldOnLeft        << G4endl;
   out << "Magnetic Sub Field   " << info.magneticSubFieldName     << G4endl;
   out << "Electric Sub Field   " << info.electricSubFieldName     << G4endl;
+  if (info.modulatorInfo)
+    {out << "Modulator            " << *(info.modulatorInfo) << G4endl;}
   out << "Use Placement World Transform " << info.usePlacementWorldTransform << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:     " << *(info.magnetStrength)      << G4endl;}
@@ -291,4 +301,10 @@ void BDSFieldInfo::SetTransformBeamline(const G4Transform3D& transformIn)
 {
   delete transformBeamline;
   transformBeamline = new G4Transform3D(transformIn);
+}
+
+void BDSFieldInfo::SetModulatorInfo(BDSModulatorInfo* modulatorInfoIn)
+{
+  delete modulatorInfo;
+  modulatorInfo = modulatorInfoIn;
 }

@@ -784,7 +784,15 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
   // Do this before wrapping in global converter BDSFieldMagGlobal so that the sub-field
   // has it and not the global wrapper.
   if (field)
-    {field->SetTransform(info.TransformComplete());}
+    {
+      field->SetTransform(info.TransformComplete());
+  
+      if (info.ModulatorInfo())
+        {
+          BDSModulator* modulator = CreateModulator(info.ModulatorInfo(), info);
+          field->SetModulator(modulator);
+        }
+    }
   
   if (!info.MagneticSubFieldName().empty() && field)
     {
@@ -836,7 +844,15 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
   
   // Set transform for local geometry offset
   if (field)
-    {field->SetTransform(info.TransformComplete());}
+    {
+      field->SetTransform(info.TransformComplete());
+  
+      if (info.ModulatorInfo())
+        {
+          BDSModulator* modulator = CreateModulator(info.ModulatorInfo(), info);
+          field->SetModulator(modulator);
+        }
+    }
   
   if (!field)
     {return nullptr;}
@@ -910,7 +926,15 @@ BDSFieldE* BDSFieldFactory::CreateFieldERaw(const BDSFieldInfo& info)
   
   // Set transform for local geometry offset
   if (field)
-    {field->SetTransform(info.TransformComplete());}
+    {
+      field->SetTransform(info.TransformComplete());
+  
+      if (info.ModulatorInfo())
+        {
+          BDSModulator* modulator = CreateModulator(info.ModulatorInfo(), info);
+          field->SetModulator(modulator);
+        }
+    }
   
   if (!info.ElectricSubFieldName().empty() && field)
     {
@@ -1204,5 +1228,30 @@ G4double BDSFieldFactory::GetOuterScaling(const BDSMagnetStrength* st) const
   G4double result = 1.0;
   if (st->KeyHasBeenSet("scalingOuter"))
     {result = (*st)["scalingOuter"];}
+  return result;
+}
+
+BDSModulator* BDSFieldFactory::CreateModulator(const BDSModulatorInfo* modulatorRecipe,
+                                               const BDSFieldInfo& info) const
+{
+  if (!modulatorRecipe)
+    {return nullptr;}
+  BDSModulator* result = nullptr;
+  switch (modulatorRecipe->modulatorType.underlying())
+  {
+    case BDSModulatorType::sint:
+    {
+      G4double globalPhase = CalculateGlobalPhase(*modulatorRecipe, info);
+      result = new BDSModulatorSin(modulatorRecipe->frequency,
+                                   globalPhase,
+                                   modulatorRecipe->amplitudeOffset,
+                                   modulatorRecipe->scale);
+      break;
+    }
+    case BDSModulatorType::none:
+    default:
+      {break;}
+  }
+
   return result;
 }
