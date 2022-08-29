@@ -7,5 +7,5 @@ m1: modulator, type="sint",
 print, m1;
 
 ! extend and change properties
-m1: type="none", tOffset=1.0;
+m1: tOffset=1.0, type="none";
 print, m1;

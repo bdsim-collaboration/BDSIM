@@ -76,10 +76,7 @@ namespace GMAD
     double frequency; ///< frequency for rf cavity in Hz
     double phase;     ///< phase of rf cavity (rad)
     double tOffset;   ///< time offset used for phase calculation (ns)
-    double frequencyModulator; ///< frequency of modulation on top of rf cavity in Hz
-    double phaseModulator;     ///< phase of modulation oscillator on top of rf cavity
-    double tOffsetModulator;   ///< time offset used for phase calculation (ns) for modulator on top of rf cavity
-    double modulatorAmplitudeOffset; ///< numerical value added to -1 -> 1 modulator as offset
+    std::string fieldModulator;
 
     ///@{ rmatrix elements, only 4x4
     double kick1;

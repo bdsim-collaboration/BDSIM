@@ -7,5 +7,5 @@ m1: modulator, type="sint",
 
 print, m1;
 
-d1: drift, l=0.5*m, aper1=4*cm, modulator="m1";
+d1: drift, l=0.5*m, aper1=4*cm, fieldModulator="m1";
 print, d1;
