@@ -2594,25 +2594,13 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
 
   // for finite frequency, construct it so that phase is w.r.t. the centre of the cavity
   // and that it's 0 by default
-  G4double period = 1. / frequency;
   G4double tOffset = 0;
   if (BDS::IsFinite(el->tOffset)) // use the one specified
     {tOffset = el->tOffset * CLHEP::s;}
   else // this gives 0 phase at the middle of cavity assuming relativistic particle with v = c
     {tOffset = (currentArcLength + 0.5 * chordLength) / CLHEP::c_light;}
 
-  // use a cheeky lambda to avoid repeating the calculation code
-  auto getPhaseFromT = [](G4double tOffsetIn, G4double periodIn)
-		       {
-			 G4double nPeriods = tOffsetIn / periodIn;
-			 // phase is the remainder from total phase / N*2pi, where n is unknown.
-			 G4double integerPart = 0;
-			 G4double fractionalPart = std::modf(nPeriods, &integerPart);
-			 G4double phaseOffset = fractionalPart * CLHEP::twopi;
-			 return phaseOffset;
-		       };
-
-  G4double phaseOffset = getPhaseFromT(tOffset, period);
+  G4double phaseOffset = BDSFieldFactory::CalculateGlobalPhase(frequency, tOffset);
   (*st)["phase"] -= phaseOffset;
 
   // sort phase / timing for each fringe
@@ -2624,8 +2612,8 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   // this gives correct phase at the end of cavity
   tOffsetOut += tHalfCavity;
 
-  G4double phaseOffsetIn  = getPhaseFromT(tOffsetIn, period);
-  G4double phaseOffsetOut = getPhaseFromT(tOffsetOut, period);
+  G4double phaseOffsetIn  = BDSFieldFactory::CalculateGlobalPhase(frequency, tOffsetIn);
+  G4double phaseOffsetOut = BDSFieldFactory::CalculateGlobalPhase(frequency, tOffsetOut);
   (*fringeIn)["phase"] = phaseOffsetIn;
   (*fringeOut)["phase"] = phaseOffsetOut;
   
