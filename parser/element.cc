@@ -84,10 +84,7 @@ void Element::PublishMembers()
   publish("frequency", &Element::frequency);
   publish("phase",     &Element::phase);
   publish("tOffset",   &Element::tOffset);
-  publish("frequencyModulator", &Element::frequencyModulator);
-  publish("phaseModulator",     &Element::phaseModulator);
-  publish("tOffsetModulator",   &Element::tOffsetModulator);
-  publish("modulatorAmplitudeOffset", &Element::modulatorAmplitudeOffset);
+  publish("fieldModulator", &Element::fieldModulator);
 
   // rmatrix elements, only 4x4
   publish("kick1",     &Element::kick1);
@@ -418,10 +415,13 @@ void Element::print(int ident) const
     case ElementType::_TKICKER:
     case ElementType::_UNDULATOR:
     case ElementType::_RF:
+    case ElementType::_RFX:
+    case ElementType::_RFY:
       {
         std::cout << "scaling = " << scaling << std::endl;
         if (scalingFieldOuter != 1)
           {std::cout << "scalingFieldOuter = " << scalingFieldOuter << std::endl;}
+	std::cout << "fieldModulator = \"" << fieldModulator << "\"" << std::endl;
 	break;
       }
     default:
@@ -467,10 +467,7 @@ void Element::flush()
   frequency = 0;
   phase     = 0;
   tOffset   = 0;
-  frequencyModulator = 0;
-  phaseModulator = 0;
-  tOffsetModulator = 0;
-  modulatorAmplitudeOffset = 0;
+  fieldModulator = "";
 
   // rmatrix
   kick1 = 0;

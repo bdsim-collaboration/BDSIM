@@ -280,7 +280,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : modulator" << std::endl;
              Parser::Instance()->SetValue<Modulator>("name", *($1));
-             Parser::Instance()->Add<Modulator>(true, "query");
+             Parser::Instance()->Add<Modulator>(true, "modulator");
          }
      }
      | VARIABLE ':' query
