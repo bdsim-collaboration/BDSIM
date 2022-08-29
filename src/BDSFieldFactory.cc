@@ -86,12 +86,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetOuterFactoryLHC.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
+#include "BDSModulator.hh"
+#include "BDSModulatorInfo.hh"
+#include "BDSModulatorSin.hh"
+#include "BDSModulatorType.hh"
 #include "BDSParser.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 #include "BDSFieldMagUndulator.hh"
 
 #include "parser/field.h"
+#include "parser/modulator.h"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4EquationOfMotion.hh"
@@ -162,12 +167,15 @@ BDSFieldFactory::BDSFieldFactory():
   if (designParticle)
     {defaultRigidity = designParticle->BRho();}
   PrepareFieldDefinitions(BDSParser::Instance()->GetFields(), defaultRigidity);
+  PrepareModulatorDefinitions(BDSParser::Instance()->GetModulators());
   useOldMultipoleOuterFields = BDSGlobalConstants::Instance()->UseOldMultipoleOuterFields();
 }
 
 BDSFieldFactory::~BDSFieldFactory()
 {
   for (auto& info : parserDefinitions)
+    {delete info.second;}
+  for (auto& info : parserModulatorDefinitions)
     {delete info.second;}
 }
 
@@ -355,6 +363,30 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
     }
 }
 
+void BDSFieldFactory::PrepareModulatorDefinitions(const std::vector<GMAD::Modulator>& definitions)
+{
+  for (const auto& definition : definitions)
+    {
+      if (definition.type.empty())
+        {
+          G4String msg = "\"type\" not specified in modulator definition \"";
+          msg += definition.name + "\", but required.";
+          throw BDSException(__METHOD_NAME__, msg);
+        }
+      BDSModulatorType modulatorType = BDS::DetermineModulatorType(definition.type);
+      
+      // We can't calculate any global phase here because this one modulator info may
+      // be used by multiple beam line elements at different locations
+      BDSModulatorInfo* info = new BDSModulatorInfo(modulatorType,
+                                                    definition.frequency * CLHEP::hertz,
+                                                    definition.phase * CLHEP::rad,
+                                                    definition.tOffset * CLHEP::s,
+                                                    definition.amplitudeScale,
+                                                    definition.amplitudeOffset);
+      info->nameOfParserDefinition = definition.name;
+      parserModulatorDefinitions[G4String(definition.name)] = info;
+    }
+}
 G4double BDSFieldFactory::ConvertToDoubleWithException(const G4String& value,
                                                        const G4String& parameterNameForError) const
 {
@@ -421,6 +453,24 @@ BDSFieldInfo* BDSFieldFactory::GetDefinition(const G4String& name) const
       throw BDSException(__METHOD_NAME__, "invalid field name");
     }
   return result->second;
+}
+
+BDSModulatorInfo* BDSFieldFactory::GetModulatorDefinition(const G4String& modulatorName) const
+{
+  if (modulatorName.empty())
+    {return nullptr;}
+  
+  auto search = parserModulatorDefinitions.find(modulatorName);
+  if (search == parserModulatorDefinitions.end())
+    {
+      G4cerr << __METHOD_NAME__ << "\"" << modulatorName << "\" is not a valid modulator definition name" << G4endl;
+      G4cout << "Defined modulator definitions are:" << G4endl;
+      for (const auto& it : parserModulatorDefinitions)
+        {G4cout << "\"" << it.first << "\"" << G4endl;}
+      throw BDSException(__METHOD_NAME__, "invalid modulator name");
+    }
+  else
+    {return search->second;}
 }
 
 BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
