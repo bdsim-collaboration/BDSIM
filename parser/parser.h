@@ -37,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "field.h"
 #include "fastlist.h"
 #include "material.h"
+#include "modulator.h"
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
@@ -253,6 +254,7 @@ namespace GMAD
     FastList<Aperture> aperture_list;
     /// List of parser defined blms.
     FastList<BLMPlacement> blm_list;
+    FastList<Modulator> modulator_list;
 
   private:
     // *****************
@@ -300,6 +302,7 @@ namespace GMAD
     Aperture aperture;
     /// BLM instance.
     BLMPlacement blm;
+    Modulator modulator;
     
     /// Find object by name in list
     template <class C>
