@@ -158,6 +158,10 @@ private:
   /// Return the parameter "outerScaling" from strength st, but default to 1
   G4double GetOuterScaling(const BDSMagnetStrength* st) const;
   
+  /// Create the necessary modulator.
+  BDSModulator* CreateModulator(const BDSModulatorInfo* modulatorRecipe,
+                                const BDSFieldInfo& info) const;
+  
   /// Private default constructor as singleton class.
   BDSFieldFactory();
 
