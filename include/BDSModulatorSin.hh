@@ -31,14 +31,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @author Laurie Nevay
  */
 
-class BDSModulatorSin
+class BDSModulatorSin: public BDSModulator
 {
 public:
   BDSModulatorSin() = delete;
   explicit BDSModulatorSin(G4double frequencyIn,
 			   G4double phaseIn   = 0,
-			   G4double offsetIn  = 0,
-			   G4double scaleIn   = 1.0);
+			   G4double amplitudeOffsetIn  = 0,
+			   G4double amplitudeScaleIn   = 1.0);
   virtual ~BDSModulatorSin() = default;
 
   /// Returns value of equation in brief at the top of this file.
