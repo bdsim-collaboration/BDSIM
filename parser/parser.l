@@ -148,6 +148,7 @@ xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }
 aperture {return APERTURE; }
 blm {return BLM;}
+modulator {return MODULATOR;}
 
 matdef { return MATERIAL; }
 atom { return ATOM; }
