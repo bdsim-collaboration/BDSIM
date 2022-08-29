@@ -387,6 +387,34 @@ void BDSFieldFactory::PrepareModulatorDefinitions(const std::vector<GMAD::Modula
       parserModulatorDefinitions[G4String(definition.name)] = info;
     }
 }
+
+G4double BDSFieldFactory::CalculateGlobalPhase(G4double oscillatorFrequency,
+                                               G4double tOffsetIn)
+{
+  if (!BDS::IsFinite(oscillatorFrequency))
+    {return 0;} // prevent division by 0 for period
+  G4double period = 1. / oscillatorFrequency;
+  G4double nPeriods = tOffsetIn / period;
+  // phase is the remainder from total phase / N*2pi, where n is unknown.
+  G4double integerPart = 0;
+  G4double fractionalPart = std::modf(nPeriods, &integerPart);
+  G4double phaseOffset = fractionalPart * CLHEP::twopi;
+  return phaseOffset;
+}
+
+G4double BDSFieldFactory::CalculateGlobalPhase(const BDSModulatorInfo& modulatorInfo,
+                                               const BDSFieldInfo& fieldInfo)
+{
+  G4double synchronousT0 = 0.0;
+  auto magnetStrength = fieldInfo.MagnetStrength();
+  if (magnetStrength)
+    {synchronousT0 = (*magnetStrength)["synchronousT0"];}
+  
+  
+  // TBC
+  return 0;
+}
+
 G4double BDSFieldFactory::ConvertToDoubleWithException(const G4String& value,
                                                        const G4String& parameterNameForError) const
 {
