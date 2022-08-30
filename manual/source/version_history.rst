@@ -250,7 +250,8 @@ Bug Fixes
 * Fix caching of loaded geometry. A loaded piece of geometry will be reloaded (and possibly preprocessed)
   if loaded in another beam line component to ensure we generate a unique set of logical volumes. This
   fixes field maps, biasing, range cuts, regions and more being wrong if the same GDML file was reused
-  in different components.
+  in different components. However, this can be explicitly circumvented with the new parameter
+  :code:`dontReloadGeometry` in a placement.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.
