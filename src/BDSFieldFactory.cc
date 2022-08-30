@@ -166,8 +166,8 @@ BDSFieldFactory::BDSFieldFactory():
   G4double defaultRigidity = std::numeric_limits<double>::max();
   if (designParticle)
     {defaultRigidity = designParticle->BRho();}
-  PrepareFieldDefinitions(BDSParser::Instance()->GetFields(), defaultRigidity);
   PrepareModulatorDefinitions(BDSParser::Instance()->GetModulators());
+  PrepareFieldDefinitions(BDSParser::Instance()->GetFields(), defaultRigidity);
   useOldMultipoleOuterFields = BDSGlobalConstants::Instance()->UseOldMultipoleOuterFields();
 }
 
@@ -327,6 +327,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    G4bool(definition.autoScale),
 					    fieldLimit);
       info->SetScalingRadius(poleTipRadius);
+      info->SetModulatorInfo(GetModulatorDefinition(definition.fieldModulator));
       
       if (!definition.magneticSubField.empty())
 	{
