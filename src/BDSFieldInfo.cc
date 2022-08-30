@@ -65,8 +65,8 @@ BDSFieldInfo::BDSFieldInfo():
   secondFieldOnLeft(false),
   magneticSubFieldName(""),
   electricSubFieldName(""),
-  modulatorInfo(nullptr),
   usePlacementWorldTransform(false),
+  modulatorInfo(nullptr),
   transformBeamline(nullptr),
   nameOfParserDefinition("")
 {;}
@@ -120,8 +120,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   secondFieldOnLeft(leftIn),
   magneticSubFieldName(magneticSubFieldNameIn),
   electricSubFieldName(electricSubFieldNameIn),
-  modulatorInfo(nullptr),
   usePlacementWorldTransform(false),
+  modulatorInfo(nullptr),
   transformBeamline(nullptr),
   nameOfParserDefinition("")
 {
