@@ -476,9 +476,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4double   
 						   true,
 						   transformIn);
   
-  G4cout << "---->creating Teleporter, "
-	 << "l = " << teleporterLength/CLHEP::m << "m"
-	 << G4endl;
+  G4cout << "---->creating Teleporter, " << "l = " << teleporterLength/CLHEP::m << "m" << G4endl;
 
   return( new BDSTeleporter(teleporterLength, teleporterHorizontalWidth, vacuumFieldInfo));
 }
@@ -775,6 +773,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 					   includeFringeFields);
   return rbendline;
 }
+
 void BDSComponentFactory::GetKickValue(G4double& hkick,
 				       G4double& vkick,
 				       const KickerType type) const
