@@ -117,6 +117,7 @@ BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designPart
   thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
   includeFringeFields(BDSGlobalConstants::Instance()->IncludeFringeFields()),
   yokeFields(BDSGlobalConstants::Instance()->YokeFields()),
+  currentArcLength(0),
   integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
   if (!designParticle)
@@ -154,11 +155,12 @@ BDSComponentFactory::~BDSComponentFactory()
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* elementIn,
 							      Element const* prevElementIn,
 							      Element const* nextElementIn,
-							      G4double currentArcLength)
+							      G4double currentArcLengthIn)
 {
   element = elementIn;
   prevElement = prevElementIn;
   nextElement = nextElementIn;
+  currentArcLength = currentArcLengthIn;
   G4double angleIn  = 0.0;
   G4double angleOut = 0.0;
   G4bool registered = false;
@@ -285,19 +287,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       {component = CreateDrift(angleIn, angleOut); break;}
     case ElementType::_RF:
       {
-	component = CreateRF(RFFieldDirection::z,  currentArcLength);
+	component = CreateRF(RFFieldDirection::z);
 	differentFromDefinition = true; // unique phase for every placement in beam line
 	break;
       }
     case ElementType::_RFX:
       {
-        component = CreateRF(RFFieldDirection::x, currentArcLength);
+        component = CreateRF(RFFieldDirection::x);
         differentFromDefinition = true; // unique phase for every placement in beam line
         break;
       }
     case ElementType::_RFY:
       {
-        component = CreateRF(RFFieldDirection::y, currentArcLength);
+        component = CreateRF(RFFieldDirection::y);
         differentFromDefinition = true; // unique phase for every placement in beam line
         break;
       }
@@ -383,7 +385,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 								 element,
 								 prevElement,
 								 nextElement,
-								 currentArcLength);
+								 currentArcLengthIn);
 	  }
 	break;
       }
@@ -532,8 +534,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
 		       beamPipeInfo));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection direction,
-                                                       G4double currentArcLength)
+BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection direction)
 {
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -589,7 +590,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
   // for time offset from s=0 position
   BDSMagnetStrength* stIn  = nullptr; // deleted later if not needed
   BDSMagnetStrength* stOut = nullptr;
-  BDSMagnetStrength* st = PrepareCavityStrength(element, fieldType, cavityLength, currentArcLength, stIn, stOut);
+  BDSMagnetStrength* st = PrepareCavityStrength(element, fieldType, cavityLength, stIn, stOut);
   G4Transform3D fieldTrans = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
@@ -838,8 +839,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
                                                                element->e2,
                                                                element->fintx,
                                                                true);
+  AddSynchronousTimeInformation(fringeStIn, 0);
   BDSMagnetStrength* fringeStOut = new BDSMagnetStrength(*fringeStIn);
   (*fringeStOut)["isentrance"] = false;
+  AddSynchronousTimeInformation(fringeStOut, 2*element->l); // as this is x0.5 for the middle internally
 
   // check if the fringe effect is finite
   G4bool finiteEntrFringe = false;
@@ -927,6 +930,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       // sin(angle) = dP -> angle = sin^-1(dP)
       G4double angleX = std::asin(hkick * scaling);
       G4double angleY = std::asin(vkick * scaling);
+      AddSynchronousTimeInformation(st, chordLength);
 
       if (std::isnan(angleX))
         {throw BDSException(__METHOD_NAME__, "hkick too strong for element \"" + element->name + "\" ");}
@@ -1246,7 +1250,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   (*st)["bz"]    = 1;
-  (*st)["length"] = element->l * CLHEP::m * 0.8; // arbitrary fraction of 0.7 for current length of full length
+  G4double chordLength = element->l * CLHEP::m;
+  // arbitrary fraction of 0.8 for current length of full length - used for the yoke field that varies in z
+  (*st)["length"] = chordLength * 0.8;
+  AddSynchronousTimeInformation(st, chordLength);
   const G4double scaling = element->scaling;
   if (BDS::IsFinite(element->B))
     {
@@ -1302,6 +1309,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (buildIncomingFringe)
     {
       auto stIn        = strength(s);
+      AddSynchronousTimeInformation(stIn, 0);
       auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
       bLine->AddComponent(solenoidIn);
     }
@@ -1360,6 +1368,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (buildOutgoingFringe)
     {
       auto stOut       = strength(-s);
+      AddSynchronousTimeInformation(stOut, 2*chordLength);
       auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
       bLine->AddComponent(solenoidOut);
     }
@@ -1462,6 +1471,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
     {
       BDSMagnetStrength* st = new BDSMagnetStrength();
       (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
+      AddSynchronousTimeInformation(st, elLength);
       BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::muonspoiler);
       G4Transform3D fieldTrans = CreateFieldTransform(element);
       outerField = new BDSFieldInfo(BDSFieldType::muonspoiler,
@@ -1591,6 +1601,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
+  AddSynchronousTimeInformation(st, element->l * CLHEP::m);
   (*st)["length"] = element->undulatorPeriod * CLHEP::m;
   (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
 
@@ -1964,6 +1975,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
   BDSIntegratorType intType = integratorSet->Integrator(fieldType);
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
+  AddSynchronousTimeInformation(st, element->l*CLHEP::m);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
 					       intType,
@@ -2541,7 +2553,6 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
 BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*      el,
 							      BDSFieldType        fieldType,
 							      G4double            cavityLength,
-							      G4double            currentArcLength,
 							      BDSMagnetStrength*& fringeIn,
 							      BDSMagnetStrength*& fringeOut) const
 {
@@ -2599,7 +2610,8 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
     {tOffset = el->tOffset * CLHEP::s;}
   else // this gives 0 phase at the middle of cavity assuming relativistic particle with v = c
     {tOffset = (currentArcLength + 0.5 * chordLength) / CLHEP::c_light;}
-
+  
+  AddSynchronousTimeInformation(st, chordLength);
   G4double phaseOffset = BDSFieldFactory::CalculateGlobalPhase(frequency, tOffset);
   (*st)["phase"] -= phaseOffset;
 
@@ -2702,7 +2714,9 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   G4double scaling = el->scaling;
-  (*st)["length"] = el->l * CLHEP::m; // length needed for thin multipoles
+  G4double arcLength = el->l * CLHEP::m;
+  (*st)["length"] = arcLength; // length needed for thin multipoles
+  AddSynchronousTimeInformation(st, arcLength);
   // component strength is only normalised by length for thick multipoles
   if (el->type == ElementType::_THINMULT || (el->type == ElementType::_MULT && !BDS::IsFinite(el->l)))
     {(*st)["length"] = 1*CLHEP::m;}
@@ -2724,6 +2738,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
 BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForRMatrix(Element const* el) const
 {
   BDSMagnetStrength* st = new BDSMagnetStrength();
+  AddSynchronousTimeInformation(st, 0);
   G4double scaling = el->scaling;
   // G4double length  = el->l;
 
@@ -2955,4 +2970,10 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
     }
   
   return incomingFaceAngle;
+}
+
+void BDSComponentFactory::AddSynchronousTimeInformation(BDSMagnetStrength* st,
+                                                        G4double elementArcLength) const
+{
+  (*st)["synchronousT0"] =  (currentArcLength + 0.5 * elementArcLength) / CLHEP::c_light;
 }
