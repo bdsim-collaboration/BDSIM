@@ -50,6 +50,7 @@ class BDSFieldInfo;
 class BDSIntegratorSet;
 class BDSMagnet;
 class BDSMagnetOuterInfo;
+class BDSModulatorInfo;
 class BDSParticleDefinition;
 class BDSTiltOffset;
 
@@ -141,7 +142,8 @@ public:
 						   const G4Transform3D&      fieldTransform,
 						   const BDSIntegratorSet*   integratorSetIn,
 						   G4double                  brhoIn,
-						   G4double                  outerFieldScaling = 1.0);
+						   G4double                  outerFieldScaling = 1.0,
+                                                   BDSModulatorInfo*         modulatorInfo = nullptr);
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle

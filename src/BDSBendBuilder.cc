@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSFieldFactory.hh"
 #include "BDSFieldType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorSet.hh"
@@ -181,7 +182,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 									fieldTiltOffset,
 									integratorSet,
 									brho,
-									BDSComponentFactory::ScalingFieldOuter(element));
+									BDSComponentFactory::ScalingFieldOuter(element),
+									BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
 	}
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 baseName,
@@ -273,7 +275,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 									fieldTiltOffset,
 									integratorSet,
 									brho,
-									BDSComponentFactory::ScalingFieldOuter(element));
+									BDSComponentFactory::ScalingFieldOuter(element),
+                                                                        BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
     }
   mgInfo->name = centralName;
   BDSMagnet* centralWedge = new BDSMagnet(BDSMagnetType::sectorbend,
@@ -742,7 +745,8 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 								    fieldTiltOffset,
 								    integratorSet,
 								    brho,
-								    BDSComponentFactory::ScalingFieldOuter(element));
+								    BDSComponentFactory::ScalingFieldOuter(element),
+                                                                    BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
     }
   
   // Here we change from the strength angle convention of +ve angle corresponds to
