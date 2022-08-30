@@ -411,9 +411,16 @@ G4double BDSFieldFactory::CalculateGlobalPhase(const BDSModulatorInfo& modulator
   if (magnetStrength)
     {synchronousT0 = (*magnetStrength)["synchronousT0"];}
   
+  // for finite frequency, construct it so that phase is w.r.t. the centre of the cavity
+  // and that it's 0 by default
+  G4double tOffset = 0;
+  if (BDS::IsFinite(modulatorInfo.tOffset)) // use the one specified
+    {tOffset = modulatorInfo.tOffset;}
+  else // this gives 0 phase at the middle of cavity assuming relativistic particle with v = c
+    {tOffset = synchronousT0;}
   
-  // TBC
-  return 0;
+  G4double globalPhase = CalculateGlobalPhase(modulatorInfo.frequency, tOffset);
+  return globalPhase;
 }
 
 G4double BDSFieldFactory::ConvertToDoubleWithException(const G4String& value,
