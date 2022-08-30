@@ -303,7 +303,7 @@ Bug Fixes
   and the option :code:`buildPoleFaceGeometry` is specified as false, thin pole face kicks will be applied.
 * Fix calculation of the z position in the quadrupole integrator. Previously the step always advanced along z by the
   step length h regardless of the step's direction. Now, it advances along z by the projection of the step h onto
-  the z axis. This change will only produce a noticable impact on particles with a large transverse momentum,
+  the z axis. This change will only produce a noticeable impact on particles with a large transverse momentum,
   particularly those in low energy machines.
 
 **Visualisation**
