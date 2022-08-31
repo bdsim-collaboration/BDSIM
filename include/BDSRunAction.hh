@@ -52,6 +52,7 @@ public:
   
   virtual void BeginOfRunAction(const G4Run*);
   virtual void EndOfRunAction(const G4Run*);
+  void ParticleCount(G4String, G4double, G4double);
 
 private:
   BDSRunAction() = delete;
@@ -69,6 +70,20 @@ private:
   /// Check whether various trajectory options that are geometry dependent make
   /// sense and warn if not. Done now because geometry is built before run.
   void CheckTrajectoryOptions() const;
+
+  struct ParticleData {
+        ParticleData()
+                : fCount(0), fEmean(0.), fEmin(0.), fEmax(0.), fTmean(-1.) {}
+        ParticleData(G4int count, G4double ekin, G4double emin, G4double emax,
+                     G4double meanLife)
+                : fCount(count), fEmean(ekin), fEmin(emin), fEmax(emax),
+                  fTmean(meanLife) {}
+        G4int     fCount;
+        G4double  fEmean;
+        G4double  fEmin;
+        G4double  fEmax;
+        G4double  fTmean;
+  };
   
   BDSOutput*    output;           ///< Cache of output instance. Not owned by this class.
   time_t        starttime;
@@ -79,6 +94,10 @@ private:
   std::clock_t  cpuStartTime;     ///< Start time of run.
   BDSEventAction* eventAction;    ///< Event action for updating information at start of run.
   G4String        trajectorySamplerID; ///< Copy of option.
+
+  std::map<G4String,ParticleData>  fParticleDataMap;
+  const G4Run* run;
+
 };
 
 #endif

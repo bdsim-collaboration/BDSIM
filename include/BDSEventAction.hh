@@ -68,6 +68,8 @@ public:
   /// Append this trajectory to vector of primaries we keep to avoid sifting at the end of event.
   void RegisterPrimaryTrajectory(const BDSTrajectoryPrimary* trajectoryIn);
 
+  void AddDecayChain(G4String val) {fDecayChain += val;};
+
 protected:
   /// Sift through all trajectories (if any) and mark for storage.
   BDSTrajectoriesToStore* IdentifyTrajectoriesForStorage(const G4Event* evt,
@@ -152,6 +154,9 @@ private:
   /// leading to more than one temporary object per final one trajectory. Therefore
   /// we can't end up with degenerate ones here.
   std::map<G4int, const BDSTrajectoryPrimary*> primaryTrajectoriesCache;// Cache of primary trajectories as constructed
+
+  G4String fDecayChain;
+
 };
 
 #endif

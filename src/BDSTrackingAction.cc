@@ -25,11 +25,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
+#include "BDSRunAction.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4RunManager.hh"
 
 #include <set>
 
@@ -55,6 +57,36 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
+
+  BDSRunAction* aRun = (BDSRunAction *) (G4RunManager::GetRunManager()->GetUserRunAction());
+
+  G4ParticleDefinition* particle = track->GetDefinition();
+  G4String name   = particle->GetParticleName();
+  fCharge = particle->GetPDGCharge();
+
+  G4double Ekin = track->GetKineticEnergy();
+  G4int ID      = track->GetTrackID();
+
+  G4double meanLife = particle->GetPDGLifeTime();
+
+  aRun->ParticleCount(name, Ekin, meanLife);
+
+  fFullChain = 1;
+
+  if (fCharge > 2.) {
+      //build decay chain
+      if (ID == 1) eventAction->AddDecayChain(name);
+       else       eventAction->AddDecayChain(" ---> " + name);
+        //
+        //full chain: put at rest; if not: kill secondary
+      G4Track* tr = (G4Track*) track;
+      if (fFullChain) { tr->SetKineticEnergy(0.);
+                        tr->SetTrackStatus(fStopButAlive);}
+      else if (ID>1) tr->SetTrackStatus(fStopAndKill);
+
+      fTime_birth = track->GetGlobalTime();
+    }
+
   eventAction->IncrementNTracks();
   G4int  eventIndex = eventAction->CurrentEventIndex();
   G4bool verboseSteppingThisEvent = BDS::VerboseThisEvent(eventIndex, verboseSteppingEventStart, verboseSteppingEventStop);

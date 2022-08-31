@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ProcessVector.hh"
 #include "G4Run.hh"
 #include "G4Version.hh"
+#include "G4UnitsTable.hh"
 
 #include "CLHEP/Random/Random.h"
 
@@ -78,6 +79,8 @@ BDSRunAction::~BDSRunAction()
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
+  run = aRun;
+
   if (BDSGlobalConstants::Instance()->PrintPhysicsProcesses())
     {PrintAllProcessesForAllParticles();}
 
@@ -157,6 +160,43 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 
   // note difftime only calculates to the integer second
   G4cout << __METHOD_NAME__ << "Run Duration >> " << (int)duration << " s" << G4endl;
+
+  G4int nbEvents = aRun->GetNumberOfEvent();
+  G4String partName = bunchGenerator->ParticleDefinition()->ParticleDefinition()->GetParticleName();
+
+  G4cout << "\n ======================== run summary ======================";
+  G4cout << "\n The run was " << nbEvents << " " << partName << " of "
+         << G4BestUnit(bunchGenerator->ParticleDefinition()->KineticEnergy(),"Energy");
+  G4cout << "\n ===========================================================\n";
+  G4cout << G4endl;
+  if (nbEvents == 0) { return; }
+
+  G4int prec = 4, wid = prec + 2;
+  G4int dfprec = G4cout.precision(prec);
+
+  //particle count
+  //
+  G4cout << " Nb of generated particles: \n" << G4endl;
+
+  std::map<G4String,ParticleData>::iterator it;
+  for (it = fParticleDataMap.begin(); it != fParticleDataMap.end(); it++) {
+      G4String name = it->first;
+      ParticleData data = it->second;
+      G4int count = data.fCount;
+      G4double eMean = data.fEmean / count;
+      G4double eMin = data.fEmin;
+      G4double eMax = data.fEmax;
+      G4double meanLife = data.fTmean;
+
+      G4cout << "  " << std::setw(15) << name << ": " << std::setw(7) << count
+             << "  Emean = " << std::setw(wid) << G4BestUnit(eMean, "Energy")
+             << "\t( " << G4BestUnit(eMin, "Energy")
+             << " --> " << G4BestUnit(eMax, "Energy") << ")";
+      if (meanLife > 0.)
+          G4cout << "\tmean life = " << G4BestUnit(meanLife, "Time") << G4endl;
+      else if (meanLife < 0.) G4cout << "\tstable" << G4endl;
+      else G4cout << G4endl;
+  }
 }
 
 void BDSRunAction::PrintAllProcessesForAllParticles() const
@@ -222,5 +262,24 @@ void BDSRunAction::CheckTrajectoryOptions() const
     {
       if (range.first > maxS)
 	{throw BDSException(__METHOD_NAME__, "S coordinate " + std::to_string(range.first / CLHEP::m) + "m in option storeTrajectoryElossSRange is beyond the length of the beam line (2m margin).");}
+    }
+}
+
+void BDSRunAction::ParticleCount(G4String name, G4double Ekin, G4double meanLife)
+{
+    std::map<G4String, ParticleData>::iterator it = fParticleDataMap.find(name);
+    if ( it == fParticleDataMap.end()) {
+        fParticleDataMap[name] = ParticleData(1, Ekin, Ekin, Ekin, meanLife);
+    }
+    else {
+        ParticleData& data = it->second;
+        data.fCount++;
+        data.fEmean += Ekin;
+        //update min max
+        G4double emin = data.fEmin;
+        if (Ekin < emin) data.fEmin = Ekin;
+        G4double emax = data.fEmax;
+        if (Ekin > emax) data.fEmax = Ekin;
+        data.fTmean = meanLife;
     }
 }

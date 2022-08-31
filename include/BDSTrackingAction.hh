@@ -69,6 +69,13 @@ private:
   G4int  verboseSteppingEventStop;
   G4bool verboseSteppingPrimaryOnly;
   G4int  verboseSteppingLevel;
+
+  G4double fCharge;
+  G4bool   fFullChain;
+
+  G4double fTime_birth,  fTime_end;
+  G4double fTimeWindow1, fTimeWindow2;
+
 };
 
 #endif
