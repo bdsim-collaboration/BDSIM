@@ -221,7 +221,7 @@ BDSParticleCoordsFullGlobal BDSBunch::GetNextParticleValid(G4int maxTries)
       flag = flag || particleDefinitionHasBeenUpdated;
       
       // ensure total energy is greater than the rest mass
-      if ((coords.local.totalEnergy - particleDefinition->Mass()) > 0)
+      if ((coords.local.totalEnergy - particleDefinition->Mass()) >= 0)
 	{break;}
     }
   if (n >= maxTries)

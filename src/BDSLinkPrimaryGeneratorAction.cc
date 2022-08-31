@@ -112,7 +112,7 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // check that kinetic energy is positive and finite anyway and abort if not.
   // get the mass from the beamParticle as this takes into account any electrons
   G4double EK = cg.local.totalEnergy - bunch->ParticleDefinition()->Mass();
-  if (EK <= 0)
+  if (EK < 0)
     {
       G4cout << __METHOD_NAME__ << "Event #" << anEvent->GetEventID()
 	     << " - Particle kinetic energy smaller than 0! "
