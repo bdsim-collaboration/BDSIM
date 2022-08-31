@@ -31,17 +31,65 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UAtomicDeexcitation.hh"
 #include "G4VAtomDeexcitation.hh"
 
+#include "G4ParticleTypes.hh"
+#include "G4NuclearLevelData.hh"
+#include "G4DeexPrecoParameters.hh"
+#include "G4IonConstructor.hh"
+
 BDSPhysicsRadioactivation::BDSPhysicsRadioactivation(G4bool atomicRearrangementIn):
   G4VPhysicsConstructor("BDSPhysicsRadioactivation"),
   atomicRearrangement(atomicRearrangementIn)
-{;}
+{//add new units for radioActive decays
+    //
+    const G4double minute = 60*CLHEP::second;
+    const G4double hour   = 60*CLHEP::minute;
+    const G4double day    = 24*CLHEP::hour;
+    const G4double year   = 365*CLHEP::day;
+    new G4UnitDefinition("minute", "min", "Time", minute);
+    new G4UnitDefinition("hour",   "h",   "Time", hour);
+    new G4UnitDefinition("day",    "d",   "Time", day);
+    new G4UnitDefinition("year",   "y",   "Time", year);
+
+    // mandatory for G4NuclideTable
+    //
+    G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(0.1*CLHEP::picosecond);
+    G4NuclideTable::GetInstance()->SetLevelTolerance(1.0*CLHEP::eV);
+
+    //read new PhotonEvaporation data set
+    //
+    G4DeexPrecoParameters* deex =
+            G4NuclearLevelData::GetInstance()->GetParameters();
+    deex->SetCorrelatedGamma(false);
+    deex->SetStoreAllLevels(true);
+    deex->SetIsomerProduction(true);
+    deex->SetMaxLifeTime(G4NuclideTable::GetInstance()->GetThresholdOfHalfLife()
+                         /std::log(2.));}
 
 BDSPhysicsRadioactivation::~BDSPhysicsRadioactivation()
 {;}
 
 void BDSPhysicsRadioactivation::ConstructParticle()
-{ 
-  G4GenericIon::GenericIon();
+{
+    // pseudo-particles
+    G4Geantino::GeantinoDefinition();
+
+    // gamma
+    G4Gamma::GammaDefinition();
+
+    // leptons
+    G4Electron::ElectronDefinition();
+    G4Positron::PositronDefinition();
+
+    G4NeutrinoE::NeutrinoEDefinition();
+    G4AntiNeutrinoE::AntiNeutrinoEDefinition();
+
+    // baryons
+    G4Proton::ProtonDefinition();
+    G4Neutron::NeutronDefinition();
+
+    // ions
+    G4IonConstructor iConstructor;
+    iConstructor.ConstructParticle();
 }
 
 void BDSPhysicsRadioactivation::ConstructProcess()
@@ -60,7 +108,8 @@ void BDSPhysicsRadioactivation::ConstructProcess()
   G4VAtomDeexcitation* ad = man->AtomDeexcitation();
   if(!ad)
     {
-      G4EmParameters::Instance()->SetAuger(true);
+      G4EmParameters::Instance()->SetAugerCascade(true);
+      G4EmParameters::Instance()->SetDeexcitationIgnoreCut(true);
       ad = new G4UAtomicDeexcitation();
       ad->InitialiseAtomicDeexcitation();
       man->SetAtomDeexcitation(ad);
