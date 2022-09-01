@@ -261,6 +261,8 @@ namespace GMAD
     double   muonSplittingThresholdParentEk2;
     bool     muonSplittingExcludeWeight1Particles;
     double   muonSplittingExclusionWeight;
+    bool     radioactiveDecay;
+    bool     fullChain;
     ///@}
 
     // biasing options

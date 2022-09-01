@@ -58,34 +58,37 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
 
-  BDSRunAction* aRun = (BDSRunAction *) (G4RunManager::GetRunManager()->GetUserRunAction());
+  if (BDSGlobalConstants::Instance()->RadioactiveDecay())
+  {
+      BDSRunAction* aRun = (BDSRunAction *) (G4RunManager::GetRunManager()->GetUserRunAction());
 
-  G4ParticleDefinition* particle = track->GetDefinition();
-  G4String name   = particle->GetParticleName();
-  fCharge = particle->GetPDGCharge();
+      G4ParticleDefinition* particle = track->GetDefinition();
+      G4String name   = particle->GetParticleName();
+      fCharge = particle->GetPDGCharge();
 
-  G4double Ekin = track->GetKineticEnergy();
-  G4int ID      = track->GetTrackID();
+      G4double Ekin = track->GetKineticEnergy();
+      G4int ID      = track->GetTrackID();
 
-  G4double meanLife = particle->GetPDGLifeTime();
+      G4double meanLife = particle->GetPDGLifeTime();
 
-  aRun->ParticleCount(name, Ekin, meanLife);
+      aRun->ParticleCount(name, Ekin, meanLife);
 
-  fFullChain = 1;
+      fFullChain = BDSGlobalConstants::Instance()->FullChain();
 
-  if (fCharge > 2.) {
-      //build decay chain
-      if (ID == 1) eventAction->AddDecayChain(name);
-       else       eventAction->AddDecayChain(" ---> " + name);
-        //
-        //full chain: put at rest; if not: kill secondary
-      G4Track* tr = (G4Track*) track;
-      if (fFullChain) { tr->SetKineticEnergy(0.);
-                        tr->SetTrackStatus(fStopButAlive);}
-      else if (ID>1) tr->SetTrackStatus(fStopAndKill);
+      if (fCharge > 2.) {
+          //build decay chain
+          if (ID == 1) eventAction->AddDecayChain(name);
+          else       eventAction->AddDecayChain(" ---> " + name);
+          //
+          //full chain: put at rest; if not: kill secondary
+          G4Track* tr = (G4Track*) track;
+          if (fFullChain) { tr->SetKineticEnergy(0.);
+              tr->SetTrackStatus(fStopButAlive);}
+          else if (ID>1) tr->SetTrackStatus(fStopAndKill);
 
-      fTime_birth = track->GetGlobalTime();
-    }
+          fTime_birth = track->GetGlobalTime();
+      }
+  }
 
   eventAction->IncrementNTracks();
   G4int  eventIndex = eventAction->CurrentEventIndex();

@@ -346,6 +346,8 @@ void Options::PublishMembers()
   publish("muonSplittingThresholdParentEk2", &Options::muonSplittingThresholdParentEk2);
   publish("muonSplittingExcludeWeight1Particles", &Options::muonSplittingExcludeWeight1Particles);
   publish("muonSplittingExclusionWeight",    &Options::muonSplittingExclusionWeight);
+  publish("radioactiveDecay",    &Options::radioactiveDecay);
+  publish("fullChain",    &Options::fullChain);
   
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);

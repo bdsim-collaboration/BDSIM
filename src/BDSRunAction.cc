@@ -161,42 +161,46 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   // note difftime only calculates to the integer second
   G4cout << __METHOD_NAME__ << "Run Duration >> " << (int)duration << " s" << G4endl;
 
-  G4int nbEvents = aRun->GetNumberOfEvent();
-  G4String partName = bunchGenerator->ParticleDefinition()->ParticleDefinition()->GetParticleName();
+  if (BDSGlobalConstants::Instance()->RadioactiveDecay())
+  {
+      G4int nbEvents = aRun->GetNumberOfEvent();
+      G4String partName = bunchGenerator->ParticleDefinition()->ParticleDefinition()->GetParticleName();
 
-  G4cout << "\n ======================== run summary ======================";
-  G4cout << "\n The run was " << nbEvents << " " << partName << " of "
-         << G4BestUnit(bunchGenerator->ParticleDefinition()->KineticEnergy(),"Energy");
-  G4cout << "\n ===========================================================\n";
-  G4cout << G4endl;
-  if (nbEvents == 0) { return; }
+      G4cout << "\n ======================== run summary ======================";
+      G4cout << "\n The run was " << nbEvents << " " << partName << " of "
+             << G4BestUnit(bunchGenerator->ParticleDefinition()->KineticEnergy(),"Energy");
+      G4cout << "\n ===========================================================\n";
+      G4cout << G4endl;
+      if (nbEvents == 0) { return; }
 
-  G4int prec = 4, wid = prec + 2;
-  G4int dfprec = G4cout.precision(prec);
+      G4int prec = 4, wid = prec + 2;
+      G4int dfprec = G4cout.precision(prec);
 
-  //particle count
-  //
-  G4cout << " Nb of generated particles: \n" << G4endl;
+      //particle count
+      //
+      G4cout << " Nb of generated particles: \n" << G4endl;
 
-  std::map<G4String,ParticleData>::iterator it;
-  for (it = fParticleDataMap.begin(); it != fParticleDataMap.end(); it++) {
-      G4String name = it->first;
-      ParticleData data = it->second;
-      G4int count = data.fCount;
-      G4double eMean = data.fEmean / count;
-      G4double eMin = data.fEmin;
-      G4double eMax = data.fEmax;
-      G4double meanLife = data.fTmean;
+      std::map<G4String,ParticleData>::iterator it;
+      for (it = fParticleDataMap.begin(); it != fParticleDataMap.end(); it++) {
+          G4String name = it->first;
+          ParticleData data = it->second;
+          G4int count = data.fCount;
+          G4double eMean = data.fEmean / count;
+          G4double eMin = data.fEmin;
+          G4double eMax = data.fEmax;
+          G4double meanLife = data.fTmean;
 
-      G4cout << "  " << std::setw(15) << name << ": " << std::setw(7) << count
-             << "  Emean = " << std::setw(wid) << G4BestUnit(eMean, "Energy")
-             << "\t( " << G4BestUnit(eMin, "Energy")
-             << " --> " << G4BestUnit(eMax, "Energy") << ")";
-      if (meanLife > 0.)
-          G4cout << "\tmean life = " << G4BestUnit(meanLife, "Time") << G4endl;
-      else if (meanLife < 0.) G4cout << "\tstable" << G4endl;
-      else G4cout << G4endl;
+          G4cout << "  " << std::setw(15) << name << ": " << std::setw(7) << count
+                 << "  Emean = " << std::setw(wid) << G4BestUnit(eMean, "Energy")
+                 << "\t( " << G4BestUnit(eMin, "Energy")
+                 << " --> " << G4BestUnit(eMax, "Energy") << ")";
+          if (meanLife > 0.)
+              G4cout << "\tmean life = " << G4BestUnit(meanLife, "Time") << G4endl;
+          else if (meanLife < 0.) G4cout << "\tstable" << G4endl;
+          else G4cout << G4endl;
+      }
   }
+
 }
 
 void BDSRunAction::PrintAllProcessesForAllParticles() const

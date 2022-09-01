@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLinkRegistry.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSRandom.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "G4Event.hh"
 #include "G4IonTable.hh"
@@ -112,7 +113,7 @@ void BDSLinkPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // check that kinetic energy is positive and finite anyway and abort if not.
   // get the mass from the beamParticle as this takes into account any electrons
   G4double EK = cg.local.totalEnergy - bunch->ParticleDefinition()->Mass();
-  if (EK < 0)
+  if (EK < 0 or (EK == 0 and !BDSGlobalConstants::Instance()->RadioactiveDecay()))
     {
       G4cout << __METHOD_NAME__ << "Event #" << anEvent->GetEventID()
 	     << " - Particle kinetic energy smaller than 0! "

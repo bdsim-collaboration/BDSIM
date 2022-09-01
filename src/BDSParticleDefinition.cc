@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicalConstants.hh"
 #include "BDSUtilities.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "G4ParticleDefinition.hh"
 
@@ -100,7 +101,8 @@ void BDSParticleDefinition::SetEnergies(G4double totalEnergyIn,
 {
   if (BDS::IsFinite(totalEnergyIn))
     {
-      if (totalEnergyIn < mass)
+
+      if (totalEnergyIn < mass or (!(BDSGlobalConstants::Instance()->RadioactiveDecay()) and totalEnergyIn == mass))
         {
           throw BDSException(__METHOD_NAME__, "total energy (" + std::to_string(totalEnergyIn / CLHEP::GeV)
                                               + " GeV) is less than or equal to the mass (" + std::to_string(mass / CLHEP::GeV)
@@ -134,14 +136,14 @@ void BDSParticleDefinition::SetEnergies(G4double totalEnergyIn,
         {throw BDSException(__METHOD_NAME__, "sqrt(-ve) encountered in calculating total energy");}
       kineticEnergy = totalEnergy - mass;
     }
-  else if (kineticEnergyIn == 0)
+  else if (kineticEnergyIn == 0 and BDSGlobalConstants::Instance()->RadioactiveDecay())
     {
       kineticEnergy = kineticEnergyIn;
       totalEnergy   = mass + kineticEnergyIn;
       CalculateMomentum();
     }
-//  else
-//    {throw BDSException(__METHOD_NAME__, "total energy, kinetic energy and momentum 0 - one must be non-zero.");}
+  else
+    {throw BDSException(__METHOD_NAME__, "total energy, kinetic energy and momentum 0 - one must be non-zero.");}
   CalculateRigidity(ffact);
   CalculateLorentzFactors();
 }

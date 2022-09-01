@@ -340,6 +340,8 @@ public:
   inline G4double DEThresholdForScattering() const {return G4double(options.dEThresholdForScattering)*CLHEP::GeV;}
   inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
   inline G4double BackupStepperMomLimit()    const {return G4double(options.backupStepperMomLimit)*CLHEP::rad;}
+  inline G4bool RadioactiveDecay()    const {return G4bool(options.radioactiveDecay);}
+  inline G4bool FullChain()    const {return G4bool(options.fullChain);}
 
   /// @{ options that require some implementation.
   G4bool StoreTrajectoryTransportationSteps() const;
