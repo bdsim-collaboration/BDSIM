@@ -59,6 +59,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k11", "k11s",
   "k12", "k12s",
   "frequency",       // frequency for time varying field (presumably em)
+  "tOffset",         // tOffset resulting in a phase for time varying field
   "phase",           // phase for time varying field
   "equatorradius",   // radius from axis at which field goes to 0
   "nominalenergy",   // nominal beam energy needed by some integrators
@@ -133,6 +134,7 @@ const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::uni
     {"k11s"          , {"",    1.0}},
     {"k12s"          , {"",    1.0}},
     {"frequency"     , {"",    CLHEP::megahertz}},
+    {"tOffset"       , {"s",   CLHEP::s}},
     {"phase"         , {"rad", CLHEP::rad}},
     {"equatorradius" , {"m",   CLHEP::m}},
     {"nominalenergy" , {"GeV", CLHEP::GeV}},

@@ -18,24 +18,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDimensionType.hh"
 #include "BDSFieldMagInterpolated2D.hh"
+#include "BDSFieldModulator.hh"
 #include "BDSInterpolator2D.hh"
 
 #include "G4ThreeVector.hh"
 
 BDSFieldMagInterpolated2D::BDSFieldMagInterpolated2D(BDSInterpolator2D*   interpolatorIn,
 						     const G4Transform3D& offset,
-						     G4double             scalingIn):
+						     G4double             scalingIn,
+                 BDSFieldModulator* modulatorIn):
   BDSFieldMagInterpolated(interpolatorIn, offset, scalingIn),
   interpolator(interpolatorIn),
   firstDimensionIndex((interpolatorIn->FirstDimension()).underlying()),
   firstTime((interpolatorIn->FirstDimension()).underlying() > 2),
   secondDimensionIndex((interpolatorIn->SecondDimension()).underlying()),
-  secondTime((interpolatorIn->SecondDimension()).underlying() > 2)
+  secondTime((interpolatorIn->SecondDimension()).underlying() > 2),
+  modulator(modulatorIn)
 {;}
 
 BDSFieldMagInterpolated2D::~BDSFieldMagInterpolated2D()
 {
   delete interpolator;
+  delete modulator;
 }
 
 G4ThreeVector BDSFieldMagInterpolated2D::GetField(const G4ThreeVector& position,
@@ -51,5 +55,8 @@ G4ThreeVector BDSFieldMagInterpolated2D::GetField(const G4ThreeVector& position,
     {sCoordinate = t;}
   else
     {sCoordinate = position[secondDimensionIndex];}
-  return interpolator->GetInterpolatedValue(fCoordinate, sCoordinate) * Scaling();
+  G4double modulation = 1.0;
+  if(modulator)
+    {modulation = modulator->GetValue(t);}
+  return interpolator->GetInterpolatedValue(fCoordinate, sCoordinate) * Scaling() * modulation;
 }

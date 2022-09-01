@@ -18,22 +18,26 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDimensionType.hh"
 #include "BDSFieldMagInterpolated1D.hh"
+#include "BDSFieldModulator.hh"
 #include "BDSInterpolator1D.hh"
 
 #include "G4ThreeVector.hh"
 
 BDSFieldMagInterpolated1D::BDSFieldMagInterpolated1D(BDSInterpolator1D*   interpolatorIn,
 						     const G4Transform3D& offset,
-						     G4double             scalingIn):
+						     G4double             scalingIn,
+                 BDSFieldModulator* modulatorIn):
   BDSFieldMagInterpolated(interpolatorIn, offset, scalingIn),
   interpolator(interpolatorIn),
   dimensionIndex((interpolatorIn->FirstDimension()).underlying()),
-  time((interpolatorIn->FirstDimension()).underlying() > 2)
+  time((interpolatorIn->FirstDimension()).underlying() > 2),
+  modulator(modulatorIn)
 {;}
 
 BDSFieldMagInterpolated1D::~BDSFieldMagInterpolated1D()
 {
   delete interpolator;
+  delete modulator;
 }
 
 G4ThreeVector BDSFieldMagInterpolated1D::GetField(const G4ThreeVector& position,
@@ -44,5 +48,8 @@ G4ThreeVector BDSFieldMagInterpolated1D::GetField(const G4ThreeVector& position,
     {coordinate = t;}
   else
     {coordinate = position[dimensionIndex];}
-  return interpolator->GetInterpolatedValue(coordinate) * Scaling();
+  G4double modulation = 1.0;
+  if(modulator)
+    {modulation = modulator->GetValue(t);}
+  return interpolator->GetInterpolatedValue(coordinate) * Scaling() * modulation;
 }

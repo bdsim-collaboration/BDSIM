@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDimensionType.hh"
 #include "BDSFieldEMInterpolated1D.hh"
+#include "BDSFieldModulator.hh"
 #include "BDSInterpolator1D.hh"
 
 #include "G4ThreeVector.hh"
@@ -29,20 +30,23 @@ BDSFieldEMInterpolated1D::BDSFieldEMInterpolated1D(BDSInterpolator1D*   eInterpo
 						   BDSInterpolator1D*   bInterpolatorIn,
 						   const G4Transform3D& offset,
 						   G4double             eScalingIn,
-						   G4double             bScalingIn):
+						   G4double             bScalingIn,
+               BDSFieldModulator* modulatorIn):
   BDSFieldEMInterpolated(eInterpolatorIn, bInterpolatorIn, offset, eScalingIn, bScalingIn),
   eInterpolator(eInterpolatorIn),
   bInterpolator(bInterpolatorIn),
   eDimensionIndex((eInterpolatorIn->FirstDimension()).underlying()),
   eTime((eInterpolatorIn->FirstDimension()).underlying() > 2),
   bDimensionIndex((bInterpolatorIn->FirstDimension()).underlying()),
-  bTime((bInterpolatorIn->FirstDimension()).underlying() > 2)
+  bTime((bInterpolatorIn->FirstDimension()).underlying() > 2),
+  modulator(modulatorIn)
 {;}
 
 BDSFieldEMInterpolated1D::~BDSFieldEMInterpolated1D()
 {
   delete eInterpolator;
   delete bInterpolator;
+  delete modulator;
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMInterpolated1D::GetField(const G4ThreeVector& position,
@@ -58,7 +62,10 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMInterpolated1D::GetField(const 
     {bCoordinate = t;}
   else
     {bCoordinate = position[bDimensionIndex];}
-  G4ThreeVector e = eInterpolator->GetInterpolatedValue(eCoordinate) * EScaling();
-  G4ThreeVector b = bInterpolator->GetInterpolatedValue(bCoordinate) * BScaling();
+  G4double modulation = 1.0;
+  if(modulator)
+    {modulation = modulator->GetValue(t);}
+  G4ThreeVector e = eInterpolator->GetInterpolatedValue(eCoordinate) * EScaling() * modulation;
+  G4ThreeVector b = bInterpolator->GetInterpolatedValue(bCoordinate) * BScaling() * modulation;
   return std::make_pair(b,e);
 }

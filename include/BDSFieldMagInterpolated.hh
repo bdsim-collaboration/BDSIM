@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSFIELDMAGINTERPOLATED_H
 #include "BDSExtent.hh"
 #include "BDSFieldMag.hh"
+#include "BDSFieldModulator.hh"
 
 #include "G4Transform3D.hh"
 #include "G4Types.hh"
@@ -38,12 +39,14 @@ public:
   BDSFieldMagInterpolated() = delete;
   BDSFieldMagInterpolated(const BDSInterpolator* interpolator,
 			  const G4Transform3D&   offset,
-			  G4double               scalingIn = 1.0);
+			  G4double               scalingIn = 1.0,
+        BDSFieldModulator* modulatorIn = nullptr);
 
   virtual ~BDSFieldMagInterpolated(){;}
 
   inline G4double Scaling() const {return scaling;}
   inline void     SetScaling(G4double scalingIn) {scaling = scalingIn;}
+  inline void     SetModulator(BDSFieldModulator* modulatorIn) {modulator = modulatorIn;}
   
   /// Extent of field without any offset (ie in its own coordinate frame).
   inline BDSExtent ExtentNoOffset() const {return extentNoOffset;}
@@ -57,6 +60,7 @@ private:
   G4double  scaling;        ///< Field value scaling.
   BDSExtent extentNoOffset; ///< Extent without offset.
   G4double  smallestSpatialStep;
+  BDSFieldModulator* modulator;
 };
 
 #endif

@@ -2534,6 +2534,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   // set the phase from the element even if zero frequency, field should be cos(phi) = constant.
   G4double phase = el->phase * CLHEP::rad;
   (*st)["phase"] = phase;
+  (*st)["tOffset"] = 0;
 
   // fringe strengths
   fringeIn  = new BDSMagnetStrength(*st);
@@ -2565,6 +2566,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
 
   G4double phaseOffset = getPhaseFromT(tOffset, period);
   (*st)["phase"] -= phaseOffset;
+  (*st)["tOffset"] = tOffset;
 
   // sort phase / timing for each fringe
   G4double tOffsetIn   = tOffset; // copy central T0

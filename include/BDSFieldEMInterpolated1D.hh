@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDEMINTERPOLATED1D_H
 #define BDSFIELDEMINTERPOLATED1D_H
 #include "BDSFieldEMInterpolated.hh"
+#include "BDSFieldModulator.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
@@ -27,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 
 class BDSInterpolator1D;
+class BDSFieldModulator;
 
 /**
  * @brief A 1D field from an interpolated array with any interpolation.
@@ -47,7 +49,8 @@ public:
 			   BDSInterpolator1D*   bInterpolatorIn,
   			   const G4Transform3D& offset     = G4Transform3D::Identity,
 			   G4double             eScalingIn = 1.0,
-			   G4double             bScalingIn = 1.0);
+			   G4double             bScalingIn = 1.0, 
+         BDSFieldModulator* modulatorIn = nullptr);
 
   virtual ~BDSFieldEMInterpolated1D();
 
@@ -65,6 +68,7 @@ private:
   const G4bool eTime;               ///< E Cache of whether to use time coordinate.
   const G4int  bDimensionIndex;     ///< B Integer index to dimension to use.
   const G4bool bTime;               ///< B Cache of whether to use time coordinate.
+  BDSFieldModulator* modulator;
 };
 
 #endif

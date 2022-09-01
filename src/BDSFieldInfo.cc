@@ -66,7 +66,11 @@ BDSFieldInfo::BDSFieldInfo():
   electricSubFieldName(""),
   usePlacementWorldTransform(false),
   transformBeamline(nullptr),
-  nameOfParserDefinition("")
+  nameOfParserDefinition(""),
+  frequency(0),
+  tOffset(0),
+  phase(0),
+  modulator("")
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -87,6 +91,10 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4double                 timeOffsetIn,
 			   G4bool                   autoScaleIn,
 			   G4UserLimits*            stepLimitIn,
+         G4String                 modulatorIn,
+         G4double                 frequencyIn,
+         G4double                 tOffsetIn,
+         G4double                 phaseIn,
 			   G4double                 poleTipRadiusIn,
 			   G4double                 beamPipeRadiusIn,
 			   G4bool                   leftIn,
@@ -120,7 +128,11 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   electricSubFieldName(electricSubFieldNameIn),
   usePlacementWorldTransform(false),
   transformBeamline(nullptr),
-  nameOfParserDefinition("")
+  nameOfParserDefinition(""),
+  frequency(frequencyIn),
+  tOffset(tOffsetIn),
+  phase(phaseIn),
+  modulator(modulatorIn)
 {
   if (transformIn != G4Transform3D::Identity)
     {transform = new G4Transform3D(transformIn);}
@@ -167,7 +179,11 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   electricSubFieldName(other.electricSubFieldName),
   usePlacementWorldTransform(other.usePlacementWorldTransform),
   transformBeamline(nullptr),
-  nameOfParserDefinition(other.nameOfParserDefinition)
+  nameOfParserDefinition(other.nameOfParserDefinition),
+  frequency(other.frequency),
+  tOffset(other.tOffset),
+  phase(other.phase),
+  modulator(other.modulator)
 {
   if (other.transform)
     {transform = new G4Transform3D(*other.transform);}
@@ -242,7 +258,12 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "Second field on left " << info.secondFieldOnLeft        << G4endl;
   out << "Magnetic Sub Field   " << info.magneticSubFieldName     << G4endl;
   out << "Electric Sub Field   " << info.electricSubFieldName     << G4endl;
+  out << "frequency:           " << info.frequency << G4endl;
+  out << "tOffset:             " << info.tOffset << G4endl;
+  out << "phase:               " << info.phase << G4endl;
+  out << "modulator:           " << info.modulator << G4endl;
   out << "Use Placement World Transform " << info.usePlacementWorldTransform << G4endl;
+
   if (info.magnetStrength)
     {out << "Magnet strength:     " << *(info.magnetStrength)      << G4endl;}
   if (info.stepLimit)

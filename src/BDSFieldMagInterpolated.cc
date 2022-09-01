@@ -18,17 +18,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSExtent.hh"
 #include "BDSFieldMagInterpolated.hh"
+#include "BDSFieldModulator.hh"
 #include "BDSInterpolator.hh"
 
 #include <limits>
 
 BDSFieldMagInterpolated::BDSFieldMagInterpolated(const BDSInterpolator* interpolator,
 						 const G4Transform3D&   offset,
-						 G4double               scalingIn):
+						 G4double               scalingIn,
+             BDSFieldModulator* modulatorIn):
   BDSFieldMag(offset),
   scaling(scalingIn),
   extentNoOffset(BDSExtent()),
-  smallestSpatialStep(std::numeric_limits<double>::max())
+  smallestSpatialStep(std::numeric_limits<double>::max()),
+  modulator(modulatorIn)
 {
   if (interpolator)
     {
