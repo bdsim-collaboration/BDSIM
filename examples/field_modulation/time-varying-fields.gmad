@@ -1,0 +1,31 @@
+time_varying_field: field, type = "emap2d", eScaling = 1.0, integrator = "g4dormandprince745",
+                electricFile = "bdsim2d:e_field.dat.gz", electricInterpolator = "linear",
+                frequency = 1.0 * GHz, phase = 0.5 * pi, tOffset = 0.0, modulator = "sin", maximumStepLength = 0.1 * mm;
+
+time_varying_drift: drift, l = 1.0 * m, aper1 = 1.0 * m, fieldAll = "time_varying_field";
+
+time_variation: line = (time_varying_drift);
+use, period = time_variation;
+
+beam,	particle = "proton",
+	momentum = 1.0 * GeV,
+	P0 = 1.0 * GeV,
+	envelopeE = 0.0,
+	distrType = "square",
+	X0 = 0.0 * cm,
+	envelopeX = 0.0 * mm,
+	Y0 = 0.0 * cm,
+	envelopeY = 0.0 * mm,
+	T0 = 0.0,
+	envelopeT = 0.0 * s,
+	Xp0 = 0.0,
+	envelopeXp = 0.0 * mrad,
+	Yp0 = 0.0,
+	envelopeYp = 0.0 * mrad;
+
+option, physicsList = "ftfp_bert",
+	ngenerate = 1,
+	stopSecondaries = 1,
+	vacuumMaterial = "vacuum";
+
+sample, all;

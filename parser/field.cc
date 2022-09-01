@@ -57,6 +57,10 @@ void Field::clear()
   magneticReflection = "";
   electricReflection = "";
   fieldParameters = "";
+  frequency = 0;
+  tOffset   = 0;
+  phase     = 0;
+  modulator = "";
 }
 
 void Field::PublishMembers()
@@ -90,6 +94,10 @@ void Field::PublishMembers()
   publish("magneticReflection",   &Field::magneticReflection);
   publish("electricReflection",   &Field::electricReflection);
   publish("fieldParameters",      &Field::fieldParameters);
+  publish("frequency",            &Field::frequency);
+  publish("tOffset",              &Field::tOffset);
+  publish("phase",                &Field::phase);
+  publish("modulator",            &Field::modulator);
 }
 
 void Field::print()const
@@ -98,7 +106,7 @@ void Field::print()const
 	    << "name "                 << name                 << std::endl
 	    << "type "                 << type                 << std::endl
 	    << "eScaling "             << eScaling             << std::endl
-    	    << "bScaling "             << bScaling             << std::endl
+    	<< "bScaling "             << bScaling             << std::endl
 	    << "integrator "           << integrator           << std::endl
 	    << "magneticFile "         << magneticFile         << std::endl
 	    << "magneticInterpolator " << magneticInterpolator << std::endl
@@ -115,5 +123,7 @@ void Field::print()const
 	    << "magneticSubField "     << magneticSubField     << std::endl
 	    << "magneticReflection "   << magneticReflection   << std::endl
 	    << "electricReflection "   << electricReflection   << std::endl
-      << "fieldParameters "      << fieldParameters      << std::endl;
+      << "fieldParameters "      << fieldParameters      << std::endl
+      << "frequency, tOffset, phase " << frequency << " " << tOffset << " " << phase << std::endl
+      << "modulator " << modulator << std::endl;
 }

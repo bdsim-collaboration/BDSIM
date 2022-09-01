@@ -19,11 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDEINTERPOLATED3D_H
 #define BDSFIELDEINTERPOLATED3D_H
 #include "BDSFieldEInterpolated.hh"
+#include "BDSFieldModulator.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
 class BDSInterpolator3D;
+class BDSFieldModulator;
 
 /**
  * @brief A 3D field from an interpolated array with any interpolation.
@@ -42,7 +44,8 @@ public:
   BDSFieldEInterpolated3D() = delete;
   explicit BDSFieldEInterpolated3D(BDSInterpolator3D*   interpolatorIn,
 				   const G4Transform3D& offset     = G4Transform3D::Identity,
-				   G4double             eScalingIn = 1.0);
+				   G4double             eScalingIn = 1.0, 
+           BDSFieldModulator* modulatorIn = nullptr);
 
   virtual ~BDSFieldEInterpolated3D();
 
@@ -60,6 +63,7 @@ private:
   const G4bool secondTime;           ///< Cache of whether to use time coordinate.
   const G4int  thirdDimensionIndex;  ///< Integer index to dimension to use.
   const G4bool thirdTime;            ///< Cache of whether to use time coordinate.
+  BDSFieldModulator* modulator;
 };
 
 #endif

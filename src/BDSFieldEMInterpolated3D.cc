@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSFieldEMInterpolated3D.hh"
+#include "BDSFieldModulator.hh"
 #include "BDSInterpolator3D.hh"
 
 #include "G4ThreeVector.hh"
@@ -28,7 +29,8 @@ BDSFieldEMInterpolated3D::BDSFieldEMInterpolated3D(BDSInterpolator3D*   eInterpo
 						   BDSInterpolator3D*   bInterpolatorIn,
 						   const G4Transform3D& offset,
 						   G4double             eScalingIn,
-						   G4double             bScalingIn):
+						   G4double             bScalingIn,
+               BDSFieldModulator* modulatorIn):
   BDSFieldEMInterpolated(eInterpolatorIn, bInterpolatorIn, offset, eScalingIn, bScalingIn),
   eInterpolator(eInterpolatorIn),
   bInterpolator(bInterpolatorIn),
@@ -43,13 +45,15 @@ BDSFieldEMInterpolated3D::BDSFieldEMInterpolated3D(BDSInterpolator3D*   eInterpo
   bSecondDimensionIndex((bInterpolatorIn->SecondDimension()).underlying()),
   bSecondTime((bInterpolatorIn->SecondDimension()).underlying() > 2),
   bThirdDimensionIndex((bInterpolatorIn->ThirdDimension()).underlying()),
-  bThirdTime((bInterpolatorIn->ThirdDimension()).underlying() > 2)
+  bThirdTime((bInterpolatorIn->ThirdDimension()).underlying() > 2),
+  modulator(modulatorIn)
 {;}
 
 BDSFieldEMInterpolated3D::~BDSFieldEMInterpolated3D()
 {
   delete eInterpolator;
   delete bInterpolator;
+  delete modulator;
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMInterpolated3D::GetField(const G4ThreeVector& position,
@@ -85,12 +89,14 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMInterpolated3D::GetField(const 
     {bTCoordinate = t;}
   else
     {bTCoordinate = position[bThirdDimensionIndex];}
-  
+  G4double modulation = 1.0;
+  if(modulator)
+    {modulation = modulator->GetValue(t);}
   G4ThreeVector e = eInterpolator->GetInterpolatedValue(eFCoordinate,
 							eSCoordinate,
-							eTCoordinate) * EScaling();
+							eTCoordinate) * EScaling() * modulation;
   G4ThreeVector b = bInterpolator->GetInterpolatedValue(bFCoordinate,
 							bSCoordinate,
-							bTCoordinate) * BScaling();
+							bTCoordinate) * BScaling() * modulation;
   return std::make_pair(b,e);
 }

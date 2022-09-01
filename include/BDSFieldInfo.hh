@@ -84,6 +84,10 @@ public:
 	       G4double                 timeOffsetIn               = 0,
 	       G4bool                   autoScaleIn                = false,
 	       G4UserLimits*            stepLimitIn                = nullptr,
+         G4String                 modulatorIn                = "",
+         G4double                 frequencyIn                = 0,
+         G4double                 tOffsetIn                  = 0,
+         G4double                 phaseIn                    = 0,
 	       G4double                 poleTipRadiusIn            = 1,
 	       G4double                 beamPipeRadiusIn           = 0,
 	       G4bool                   left                       = true,
@@ -123,6 +127,10 @@ public:
   inline G4String            ElectricSubFieldName()     const {return electricSubFieldName;}
   inline G4String            NameOfParserDefinition()   const {return nameOfParserDefinition;}
   inline G4bool              UsePlacementWorldTransform() const {return usePlacementWorldTransform;}
+  inline G4double            Frequency()                const {return frequency;}
+  inline G4double            TOffset()                  const {return tOffset;}
+  inline G4double            Phase()                    const {return phase;}
+  inline G4String            Modulator()                const {return modulator;}
   inline const BDSArrayReflectionTypeSet& MagneticArrayReflectionType() const {return magneticArrayReflectionTypeSet;}
   inline const BDSArrayReflectionTypeSet& ElectricArrayReflectionType() const {return electricArrayReflectionTypeSet;}
   /// @}
@@ -147,6 +155,10 @@ public:
   inline void SetMagneticSubField(const G4String& mfnIn) {magneticSubFieldName = mfnIn;}
   inline void SetElectricSubField(const G4String& efnIn) {electricSubFieldName = efnIn;}
   inline void SetUsePlacementWorldTransform(G4bool use) {usePlacementWorldTransform = use;}
+  inline void SetFrequency(G4double frequencyIn) {frequency = frequencyIn;}
+  inline void SetTOffset(G4double tOffsetIn) {tOffset = tOffsetIn;}
+  inline void SetPhase(G4double phaseIn) {phase = phaseIn;}
+  inline void SetModulator(G4String modulatorIn) {modulator = modulatorIn;}
 
   /// *= for BScaling.
   inline void CompoundBScaling(G4double extraBScalingIn) {bScaling *= extraBScalingIn;}
@@ -211,6 +223,11 @@ private:
   G4Transform3D*           transformBeamline;
 
   G4String nameOfParserDefinition;
+
+  G4double frequency; // Used for the time-varying component of an EM-, E- or B-field
+  G4double tOffset;
+  G4double phase;
+  G4String modulator;
   
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;

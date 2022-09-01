@@ -19,6 +19,7 @@ add_subdirectory(simpleMachine)
 add_subdirectory(beamLoss)
 add_subdirectory(collimation)
 add_subdirectory(target)
+add_subdirectory(field_modulation)
 
 
 if(USE_AWAKE)

@@ -61,6 +61,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagSolenoidSheet.hh"
 #include "BDSFieldMagSkewOwn.hh"
 #include "BDSFieldMagZero.hh"
+#include "BDSFieldModulator.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
 #include "BDSGlobalConstants.hh"
@@ -317,9 +318,13 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    G4double(definition.bScaling),
 					    G4double(definition.t*CLHEP::s),
 					    G4bool(definition.autoScale),
-					    fieldLimit);
+					    fieldLimit,
+              definition.modulator,
+              definition.frequency*CLHEP::hertz,
+              definition.tOffset*CLHEP::s,
+              definition.phase);
       info->SetScalingRadius(poleTipRadius);
-      
+
       if (!definition.magneticSubField.empty())
 	{
 	  if (definition.magneticSubField == definition.name)
@@ -516,9 +521,11 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
     case BDSFieldType::bmap4d:
     case BDSFieldType::mokka:
       {
+  BDSFieldModulator* field_modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
 	BDSFieldMagInterpolated* ff = BDSFieldLoader::Instance()->LoadMagField(info,
 									       scalingStrength,
 									       scalingKey);
+  ff->SetModulator(field_modulator);
 	if (ff)
 	  {info.UpdateUserLimitsLengthMaximumStepSize(ff->SmallestSpatialStep(), true);}
 	field = ff;
@@ -775,6 +782,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
     case BDSFieldType::ebmap4d:
       {
 	BDSFieldEMInterpolated* ff = BDSFieldLoader::Instance()->LoadEMField(info);
+  BDSFieldModulator* field_modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
+  ff->SetModulator(field_modulator);
 	if (ff)
 	  {info.UpdateUserLimitsLengthMaximumStepSize(ff->SmallestSpatialStep(), true);}
 	field = ff;
@@ -847,6 +856,8 @@ BDSFieldE* BDSFieldFactory::CreateFieldERaw(const BDSFieldInfo& info)
     case BDSFieldType::emap4d:
       {
 	BDSFieldEInterpolated* ff = BDSFieldLoader::Instance()->LoadEField(info);
+  BDSFieldModulator* field_modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
+  ff->SetModulator(field_modulator);
 	if (ff)
 	  {info.UpdateUserLimitsLengthMaximumStepSize(ff->SmallestSpatialStep(), true);}
 	field = ff;
