@@ -117,7 +117,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 	      G4String colourString = colourName + ":";
 	      for (const auto& c : colVals)
 		{colourString += " " + c;}
-	      // false = don't normalie to 255 as already done so
+	      // false = don't normalise to 255 as already done so
 	      G4Colour* colour = BDSColours::Instance()->GetColour(colourString, false);
 	      gdmlColours[lv->GetName()] = colour;
 	    }

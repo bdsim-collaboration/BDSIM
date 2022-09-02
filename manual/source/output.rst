@@ -886,7 +886,7 @@ Event Tree
 ^^^^^^^^^^
 
 .. figure:: figures/rootevent_event_tree.png
-	    :width: 35%
+	    :width: 40%
 	    :align: center
 
 This tree contains information on a per-event basis.  Everything shown in the above tree has a

@@ -134,6 +134,7 @@ as it is in Geant4 (exactly) or by its PDG ID. The follow are available by defau
 * `pi-` or `pi+` or `pi0`
 * `photon` or `gamma`
 * `kaon-`, `kaon+` or `kaon0L`
+* `nu_e`, `nu_mu`, `nu_tau`, `anti_nu_e`, `anti_nu_mu`, `anti_nu_tau`
 
 In fact, the user may specify any particle that is available through the physics list
 used. If given by name, the particle must be given by the Geant4 name exactly (case sensitive).
