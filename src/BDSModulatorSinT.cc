@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSModulatorSinT.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -23,17 +25,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 
 BDSModulatorSinT::BDSModulatorSinT(G4double frequencyIn,
-				 G4double phaseIn,
-				 G4double amplitudeOffsetIn,
-				 G4double amplitudeScaleIn):
+				   G4double phaseIn,
+				   G4double amplitudeOffsetIn,
+				   G4double amplitudeScaleIn):
   angularFrequency(CLHEP::twopi * frequencyIn),
   phase(phaseIn),
   offset(amplitudeOffsetIn),
   scale(amplitudeScaleIn)
-{;}
+{
+  if (frequency < 0)
+    {throw BDSException(__METHOD_NAME__, "\frequency\" must be >= 0");}
+}
 
 G4double BDSModulatorSinT::Factor(const G4ThreeVector& /*xyz*/,
-				 G4double T) const
+				  G4double T) const
 {
   G4double factor = offset + scale*std::sin(angularFrequency*T + phase);
   return factor;
