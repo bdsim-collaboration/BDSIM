@@ -212,6 +212,7 @@ Bug Fixes
 
 **Beam**
 
+* Fixed time (T) coordinate of beam which wasn't offset if the beam was offset in curvilinear S.
 * Fixed generation of circular beam distribution type. The beam previously was circular but was non-uniform with a strong
   peak at the centre. The distribution is now uniform in x, y, xp & yp.
 * Fixed generation of ring beam distribution type. Similarly to the circular distribution, the beam had a higher density

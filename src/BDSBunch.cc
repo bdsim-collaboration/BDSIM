@@ -335,10 +335,12 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
   G4ThreeVector cMom = G4ThreeVector(localIn.xp, localIn.yp, localIn.zp).transform(cTrans.getRotation());
   // translation contains displacement from origin already - including any local offset
   G4ThreeVector cPos = cTrans.getTranslation();
+  
+  G4double tOffset = S / CLHEP::c_light; // we assume the velocity of light for timing
 
   BDSParticleCoords global = BDSParticleCoords(cPos.x(), cPos.y(), cPos.z(),
 					       cMom.x(), cMom.y(), cMom.z(),
-					       localIn.T);
+					       localIn.T + tOffset);
 
   BDSParticleCoordsFullGlobal result = BDSParticleCoordsFullGlobal(localIn, global);
   result.beamlineIndex = beamlineIndex;
