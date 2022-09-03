@@ -40,7 +40,7 @@ BDSModulatorType BDS::DetermineModulatorType(G4String mType)
   std::map<G4String, BDSModulatorType> types;
   types["none"]             = BDSModulatorType::none;
   types["sint"]             = BDSModulatorType::sint;
-  types["tophatt"]          = BDSModulatorType::tophatt
+  types["tophatt"]          = BDSModulatorType::tophatt;
   
   mType = BDS::LowerCase(mType);
 
