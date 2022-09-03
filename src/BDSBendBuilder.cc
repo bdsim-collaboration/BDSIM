@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSModulatorInfo.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/element.h"
@@ -59,7 +60,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 					     G4double                outgoingFaceAngle,
 					     G4bool                  buildFringeFields,
 					     const GMAD::Element*    prevElement,
-					     const GMAD::Element*    nextElement)
+					     const GMAD::Element*    nextElement,
+					     BDSModulatorInfo*       fieldModulator)
 {
   const G4String             baseName = elementName;
   const G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
@@ -499,7 +501,8 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 				 G4double                 brho,
 				 const BDSIntegratorSet*  integratorSet,
 				 G4bool                   yokeOnLeft,
-				 const BDSFieldInfo*      outerFieldIn)
+				 const BDSFieldInfo*      outerFieldIn,
+                                 BDSModulatorInfo*        fieldModulator)
 {
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   
@@ -548,7 +551,8 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 			     const BDSIntegratorSet* integratorSet,
 			     G4double                incomingFaceAngle,
 			     G4double                outgoingFaceAngle,
-			     G4bool                  buildFringeFields)
+			     G4bool                  buildFringeFields,
+                             BDSModulatorInfo*       fieldModulator)
 {
   const G4String name = elementName;
   BDSLine* rbendline  = new BDSLine(name); // line for resultant rbend
@@ -795,7 +799,8 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 				  BDSMagnetStrength*       st,
 				  G4double                 brho,
 				  const BDSIntegratorSet*  integratorSet,
-				  BDSFieldType             dipoleFieldType)
+				  BDSFieldType             dipoleFieldType,
+                                  BDSModulatorInfo*        fieldModulator)
 {
   BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
