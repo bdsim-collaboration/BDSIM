@@ -267,7 +267,8 @@ private:
 					     const G4String&          name,
 					     BDSIntegratorType        intType = BDSIntegratorType::rmatrixthin,
 					     BDSFieldType             fieldType = BDSFieldType::rmatrix,
-					     G4double                 beamPipeRadius = 0);
+					     G4double                 beamPipeRadius = 0,
+					     BDSModulatorInfo*        fieldModulator = nullptr);
   BDSAcceleratorComponent* CreateUndulator();
   BDSAcceleratorComponent* CreateDump();
 #ifdef USE_DICOM
@@ -276,7 +277,8 @@ private:
   BDSAcceleratorComponent* CreateCavityFringe(G4double                 angleIn,
 					      BDSMagnetStrength*       stIn,
 					      const G4String&          name,
-					      G4double                 irisRadius);
+					      G4double                 irisRadius,
+					      BDSModulatorInfo*        fieldModulator = nullptr);
 
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
