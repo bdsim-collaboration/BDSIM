@@ -99,7 +99,6 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   stops(0),
   cpuStartTime(std::clock_t()),
   primaryAbsorbedInCollimator(false),
-  seedStateAtStart(""),
   currentEventIndex(0),
   eventInfo(nullptr),
   nTracks(0)
