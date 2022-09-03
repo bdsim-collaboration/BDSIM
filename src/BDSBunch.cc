@@ -216,7 +216,7 @@ void BDSBunch::SetEventIndexForBunchIndex(G4int eventIndex)
 {
   if (!useBunchTiming)
     {return;}
-  if (eventIndex % eventsPerBunch == 0)
+  if (eventIndex % eventsPerBunch == 0 && eventIndex > 0)
     {currentBunchIndex++;}
 }
 
