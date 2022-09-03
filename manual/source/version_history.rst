@@ -53,6 +53,8 @@ New Features
 
 **Beam**
 
+* New bunches feature allows offset in time for different bunches at a given repetition rate
+  or period with a certain number of events at a fixed bunch index generated. See :ref:`beam-bunches`.
 * The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
 * New bunch distribution type `halosigma` that samples a flat halo distribution
