@@ -149,8 +149,7 @@ public:
   inline void SetMagneticSubField(const G4String& mfnIn) {magneticSubFieldName = mfnIn;}
   inline void SetElectricSubField(const G4String& efnIn) {electricSubFieldName = efnIn;}
   inline void SetUsePlacementWorldTransform(G4bool use) {usePlacementWorldTransform = use;}
-  
-  void SetModulatorInfo(BDSModulatorInfo* modulatorInfoIn);///< Takes ownership of this input object
+  inline void SetModulatorInfo(BDSModulatorInfo* modulatorInfoIn) {modulatorInfo = modulatorInfoIn;}
 
   /// *= for BScaling.
   inline void CompoundBScaling(G4double extraBScalingIn) {bScaling *= extraBScalingIn;}
