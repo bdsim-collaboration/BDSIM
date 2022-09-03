@@ -114,7 +114,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   G4bool bpf = BDS::IsFinite(beam.bunchPeriod);
   if (bff && bpf)
     {throw BDSException(__METHOD_NAME__, "only one of \"bunchFrequency\" and \"bunchPeriod\" can be set");}
-  if (bff || bpf)
+  else if (bff || bpf)
     {
       useBunchTiming = true;
       eventsPerBunch = beam.eventsPerBunch;
@@ -122,6 +122,8 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
         {throw BDSException(__METHOD_NAME__, "\"eventsPerBunch\" < 0. Must be >= 0");}
       bunchPeriod = bpf ? beam.bunchPeriod*CLHEP::s : (1.0 / beam.bunchFrequency)*CLHEP::s;
     }
+  else if (!bff && !bpf && beam.eventsPerBunch > 0) // eventsPerBunch > 0 implies expecting bunches but no frequency or period given
+    {throw BDSException(__METHOD_NAME__, "one of \"bunchFrequency\" or \"bunchPeriod\" must be specified if \"eventsPerBunch\" > 0");}
 
   finiteTilt   = BDS::IsFinite(tilt);
   finiteSigmaE = BDS::IsFinite(sigmaE);
