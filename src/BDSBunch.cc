@@ -118,6 +118,8 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
     {
       useBunchTiming = true;
       eventsPerBunch = beam.eventsPerBunch;
+      if (eventsPerBunch < 0)
+        {throw BDSException(__METHOD_NAME__, "\"eventsPerBunch\" < 0. Must be >= 0");}
       bunchPeriod = bpf ? beam.bunchPeriod*CLHEP::s : 1.0/(beam.bunchFrequency*CLHEP::hertz);
     }
 
