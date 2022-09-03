@@ -67,7 +67,7 @@ public:
   /// Fill from another instance.
   void Fill(const BDSOutputROOTEventInfo* other);
   
-  ClassDef(BDSOutputROOTEventInfo, 6);
+  ClassDef(BDSOutputROOTEventInfo, 7);
 };
 
 #endif
