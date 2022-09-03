@@ -65,6 +65,10 @@ class G4Mag_EqRhs;
  *
  * This also makes use of BDSParser singleton class to create a series of BDSFieldInfo 
  * field specifications as defined by the parser.
+ *
+ * This owns the converted modulator definitions (BDSModulatorInfo*) despite the design
+ * of a factory that should give up ownership. This is so we don't duplicate the instance
+ * for the sake of ownership.
  * 
  * @author Laurie Nevay
  */

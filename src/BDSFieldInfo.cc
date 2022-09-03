@@ -139,7 +139,6 @@ BDSFieldInfo::~BDSFieldInfo()
   delete magnetStrength;
   delete transform;
   delete stepLimit;
-  delete modulatorInfo;
   delete transformBeamline;
 }
 
@@ -170,7 +169,7 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   magneticSubFieldName(other.magneticSubFieldName),
   electricSubFieldName(other.electricSubFieldName),
   usePlacementWorldTransform(other.usePlacementWorldTransform),
-  modulatorInfo(nullptr),
+  modulatorInfo(other.modulatorInfo),
   transformBeamline(nullptr),
   nameOfParserDefinition(other.nameOfParserDefinition)
 {
@@ -186,9 +185,6 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
     {stepLimit = new G4UserLimits(*other.stepLimit);}
   else
     {stepLimit = nullptr;}
-  
-  if (other.modulatorInfo)
-    {modulatorInfo = new BDSModulatorInfo(*other.modulatorInfo);}
 
   if (other.transformBeamline)
     {transformBeamline = new G4Transform3D(*other.transformBeamline);}
@@ -301,10 +297,4 @@ void BDSFieldInfo::SetTransformBeamline(const G4Transform3D& transformIn)
 {
   delete transformBeamline;
   transformBeamline = new G4Transform3D(transformIn);
-}
-
-void BDSFieldInfo::SetModulatorInfo(BDSModulatorInfo* modulatorInfoIn)
-{
-  delete modulatorInfo;
-  modulatorInfo = modulatorInfoIn;
 }
