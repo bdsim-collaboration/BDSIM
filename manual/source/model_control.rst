@@ -354,6 +354,10 @@ respect to the bunch (and therefore z) will still be randomly generated.
 
 An example can be found in :code:`bdsim/examples/features/beam/bunch-frequency.gmad`.
 
+.. note:: For :code:`--generatePrimariesOnly` the "event number" will be advanced even though
+	  no events are actually simulated and therefore the time coordinate will be consistent
+	  with a full run of BDSIM.
+
 
 Beam Tilt
 ^^^^^^^^^
