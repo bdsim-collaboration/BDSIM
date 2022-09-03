@@ -27,7 +27,6 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   stopTime(time_t()),
   durationWall(0),
   durationCPU(0),
-  seedStateAtStart(""),
   index(-1),
   aborted(false),
   primaryHitMachine(false),
