@@ -141,6 +141,10 @@ public:
 			    G4double&         emittNormalisedY);
   
   inline G4String Name() const {return name;}
+  inline G4int CurrentBunchIndex() const {return currentBunchIndex;}
+  
+  void SetEventIndexForBunchIndex(G4int eventIndex);
+  inline void SetCurrentBunchIndexForRecreation(G4int currentBunchIndexIn) {currentBunchIndex = currentBunchIndexIn;}
 
 protected:
   /// Apply either the curvilinear transform if we're using curvilinear coordinates or
@@ -150,6 +154,9 @@ protected:
 
   /// Apply a rotation about unitZ for the local coordinates according to member variable tilt.
   void ApplyTilt(BDSParticleCoordsFull& localIn) const;
+  
+  /// Add on the offset in T for the current bunch number (i*bunchPeriod).
+  void ApplyBunchTiming(BDSParticleCoordsFull& localIn) const;
 
   /// Calculate the global coordinates from curvilinear coordinates of a beam line.
   BDSParticleCoordsFullGlobal ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const;
@@ -173,6 +180,13 @@ protected:
   G4double sigmaE;
   G4double sigmaEk;
   ///@}
+  
+  /// @{ Bunch offset in time parameters.
+  bool useBunchTiming;
+  G4int currentBunchIndex;
+  G4int eventsPerBunch;
+  G4double bunchPeriod;
+  /// @}
   
   /// Whether to ignore z and use s and transform for curvilinear coordinates
   G4bool useCurvilinear;

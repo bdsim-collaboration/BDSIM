@@ -57,6 +57,10 @@ BDSBunch::BDSBunch(const G4String& nameIn):
   Xp0(0.0), Yp0(0.0), Zp0(0.0), E0(0.0), P0(0.0),
   tilt(0.0),
   sigmaT(0.0), sigmaP(0.0), sigmaE(0.0), sigmaEk(0.0),
+  useBunchTiming(false),
+  currentBunchIndex(0),
+  eventsPerBunch(0),
+  bunchPeriod(0),
   useCurvilinear(false),
   particleDefinition(nullptr),
   particleDefinitionHasBeenUpdated(false),
@@ -104,6 +108,18 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   sigmaP = beam.sigmaP;
   sigmaE = beam.sigmaE;
   sigmaEk = beam.sigmaEk;
+  
+  // bunch offset timing parameters
+  G4bool bff = BDS::IsFinite(beam.bunchFrequency);
+  G4bool bpf = BDS::IsFinite(beam.bunchPeriod);
+  if (bff && bpf)
+    {throw BDSException(__METHOD_NAME__, "only one of \"bunchFrequency\" and \"bunchPeriod\" can be set");}
+  if (bff || bpf)
+    {
+      useBunchTiming = true;
+      eventsPerBunch = beam.eventsPerBunch;
+      bunchPeriod = bpf ? beam.bunchPeriod*CLHEP::s : 1.0/(beam.bunchFrequency*CLHEP::hertz);
+    }
 
   finiteTilt   = BDS::IsFinite(tilt);
   finiteSigmaE = BDS::IsFinite(sigmaE);
@@ -192,6 +208,14 @@ void BDSBunch::SetEmittances(const BDSParticleDefinition* beamParticle,
 	 << ", Normalised (y): " << emittNormalisedY << G4endl;
 }
 
+void BDSBunch::SetEventIndexForBunchIndex(G4int eventIndex)
+{
+  if (!useBunchTiming)
+    {return;}
+  if (eventIndex % eventsPerBunch == 0)
+    {currentBunchIndex++;}
+}
+
 void BDSBunch::CheckParameters()
 {
   if (sigmaE < 0)
@@ -237,6 +261,8 @@ BDSParticleCoordsFullGlobal BDSBunch::GetNextParticle()
   BDSParticleCoordsFull local = GetNextParticleLocal();
   if (finiteTilt)
     {ApplyTilt(local);}
+  if (useBunchTiming)
+    {ApplyBunchTiming(local);}
   BDSParticleCoordsFullGlobal all = ApplyTransform(local);
   return all;
 }
@@ -273,6 +299,12 @@ void BDSBunch::ApplyTilt(BDSParticleCoordsFull& localIn) const
   localIn.y = xy.y();
   localIn.xp = xpyp.x();
   localIn.yp = xpyp.y();
+}
+
+void BDSBunch::ApplyBunchTiming(BDSParticleCoordsFull& localIn) const
+{
+  G4double tOffset = ((G4double)currentBunchIndex) * bunchPeriod;
+  localIn.T += tOffset;
 }
 
 BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const
