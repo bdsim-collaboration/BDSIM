@@ -286,7 +286,75 @@ Event Tree, as described in :ref:`output-event-tree`.
 	     precision numbers are used so that the beam distribution is accurate. A float typically
 	     has seven significant figures and a double 15.
 
-	     
+
+.. _beam-bunches:
+
+Bunches and Time Offset
+^^^^^^^^^^^^^^^^^^^^^^^
+
+* This does not apply to :code:`eventgeneratorfile` and :code:`bdsimsampler` distributions.
+
+BDSIM offers the feature to simulate multiple bunches at a fixed frequency. This is done as
+a final step after generating the coordinates for a single particle from a bunch distribution.
+The user specifies how many particles to generate for one bunch before moving on to the next.
+For a given bunch, a global time offset is calculated that is added to the T coordinate of each
+particle. The 'bunches' all start in the same location. The time added can be expressed as:
+::
+
+   T = T0 + t*floor(EI / eventsPerBunch)
+
+
+where :code:`T0` is the offset specified in the beam distribution, :code:`t` is the
+period of the bunches, :code:`floor` is the mathematical floor function, :code:`EI` is the
+event index (zero counting) and `eventsPerBunch` is the beam parameter specified in the input.
+
+This does not affect the 'local' time of the coordinates (i.e. the lower case t in the
+Primary coordinates in the output), but it does affect the 'global' time (i.e. the upper
+case T in the PrimaryGlobal coordinates in the output), which is the one used to place
+the particle in the model at the start of an event.
+
+.. note:: For BDSIM-generated distributions, 1 event = 1 primary particle.
+
+
+Relevant beam parameters:
+
+
+.. tabularcolumns:: |p{5cm}|p{6cm}|p{2cm}|
+		      
++----------------------------------+-------------------------------------------------------+----------+
+| Option                           | Description                                           | Default  |
++==================================+=======================================================+==========+
+| `bunchFrequency`                 | Frequency in Hz of bunches                            | 0 \*     |
++----------------------------------+-------------------------------------------------------+----------+
+| `bunchPeriod`                    | Separation in time (s) of bunches                     | 0 \*     |
++----------------------------------+-------------------------------------------------------+----------+
+| `eventsPerBunch`                 | Number of events to simulate with each bunch index    | 0        |
++----------------------------------+-------------------------------------------------------+----------+
+
+* \* One and only one of :code:`bunchFrequency` and :code:`bunchPeriod` must be specified if
+  :code:`eventsPerBunch` is greater than 0 which implies we want bunches.
+
+Example:
+::
+
+   beam, particle="e-",
+         kineticEnergy=1*GeV,
+	 distrType="gauss",
+	 sigmaX=10*um,
+	 sigmaY=10*um,
+	 sigmaT=5*ps,
+	 bunchFrequency=357*MHz,
+	 eventsPerBunch=100;
+
+This will generate particles in a Gaussian distribution with a sigma in time of 5 picoseconds
+and therefore a correlated position in z (e.g. sigma z is around 1.5 mm at the speed of light).
+The first 100 particles will be centred on T0, which is 0 s by default. The next hundred will have
+a similar x,y,z but will have a time centred on 2.8 ns (1 period of 357 MHz). The local time with
+respect to the bunch (and therefore z) will still be randomly generated.
+
+An example can be found in :code:`bdsim/examples/features/beam/bunch-frequency.gmad`.
+
+
 Beam Tilt
 ^^^^^^^^^
 
