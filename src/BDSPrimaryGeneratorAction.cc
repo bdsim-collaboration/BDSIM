@@ -106,15 +106,15 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
 #endif
     }
   else if (useSamplerLoader)
-  {
-    if (beam.distrFile.empty())
-    {throw BDSException(__METHOD_NAME__, "no distrFile specified for event generator beam distribution.");}
-    G4String filename = BDS::GetFullPath(beam.distrFile, false, beam.distrFileFromExecOptions);
-    BDSBunchEventGenerator* beg = dynamic_cast<BDSBunchEventGenerator*>(bunchIn);
-    if (!beg)
-    {throw BDSException(__METHOD_NAME__, "must be used with a BDSBunchEventGenerator instance");}
-    samplerReader = new BDSROOTSamplerReader(beam.distrType, filename, beg, beam.eventGeneratorWarnSkippedParticles);
-  }
+    {
+      if (beam.distrFile.empty())
+	{throw BDSException(__METHOD_NAME__, "no distrFile specified for event generator beam distribution.");}
+      G4String filename = BDS::GetFullPath(beam.distrFile, false, beam.distrFileFromExecOptions);
+      BDSBunchEventGenerator* beg = dynamic_cast<BDSBunchEventGenerator*>(bunchIn);
+      if (!beg)
+	{throw BDSException(__METHOD_NAME__, "must be used with a BDSBunchEventGenerator instance");}
+      samplerReader = new BDSROOTSamplerReader(beam.distrType, filename, beg, beam.eventGeneratorWarnSkippedParticles);
+    }
 }
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
@@ -160,11 +160,11 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     }
 #endif
   if (useSamplerLoader)
-  {
-    samplerReader->GeneratePrimaryVertex(anEvent);
-    return; // don't need any further steps
-  }
-
+    {
+      samplerReader->GeneratePrimaryVertex(anEvent);
+      return; // don't need any further steps
+    }
+  
   // update particle definition in the special case of an ion - can only be done here
   // and not before due to Geant4 ion information availability only at run time
   if (ionPrimary && !ionCached)
@@ -249,8 +249,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   vertex->SetWeight(coords.local.weight);
 
   // associate full set of coordinates with vertex for writing to output after event
-  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords,
-							     bunch->ParticleDefinition()));
+  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords, bunch->ParticleDefinition()));
 
 #ifdef BDSDEBUG
   vertex->Print();
