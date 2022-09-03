@@ -302,6 +302,7 @@ int BDSIM::Initialise()
 	{
 	  if (i%printModulo == 0)
 	    {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
+    bdsBunch->SetEventIndexForBunchIndex(i); // let i be the event index
 	  BDSParticleCoordsFullGlobal coords = bdsBunch->GetNextParticleValid();
 	  // always pull particle definition in case it's updated
 	  const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
