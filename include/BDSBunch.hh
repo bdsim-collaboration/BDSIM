@@ -156,7 +156,7 @@ protected:
   void ApplyTilt(BDSParticleCoordsFull& localIn) const;
   
   /// Add on the offset in T for the current bunch number (i*bunchPeriod).
-  void ApplyBunchTiming(BDSParticleCoordsFull& localIn) const;
+  void ApplyBunchTiming(BDSParticleCoordsFullGlobal& localIn) const;
 
   /// Calculate the global coordinates from curvilinear coordinates of a beam line.
   BDSParticleCoordsFullGlobal ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const;
