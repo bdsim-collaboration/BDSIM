@@ -54,6 +54,7 @@ public:
   GMAD::Beam     Beam();
 
   G4String SeedState(G4int eventNumber = 0);
+  G4int    BunchIndex(G4int eventNumber = 0);
   
 protected:
   TFile* file;

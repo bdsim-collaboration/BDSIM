@@ -57,6 +57,7 @@ public:
   double energyTotal;                   ///< Sum of above 5 variables that totals all energy.
   int    nCollimatorsInteracted;        ///< Number of collimators primary interacted with.
   long long int nTracks;                ///< Number of tracks in the event.
+  int    bunchIndex;                    ///< Bunch index for this event.
   
   BDSOutputROOTEventInfo();
 
