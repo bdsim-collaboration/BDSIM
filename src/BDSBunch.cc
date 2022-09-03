@@ -263,8 +263,6 @@ BDSParticleCoordsFullGlobal BDSBunch::GetNextParticle()
   BDSParticleCoordsFull local = GetNextParticleLocal();
   if (finiteTilt)
     {ApplyTilt(local);}
-  if (useBunchTiming)
-    {ApplyBunchTiming(local);}
   BDSParticleCoordsFullGlobal all = ApplyTransform(local);
   return all;
 }
@@ -285,10 +283,14 @@ void BDSBunch::SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn)
 
 BDSParticleCoordsFullGlobal BDSBunch::ApplyTransform(const BDSParticleCoordsFull& localIn) const
 {
+  BDSParticleCoordsFullGlobal result;
   if (useCurvilinear) // i.e. S0 is finite - use beam line
-    {return ApplyCurvilinearTransform(localIn);}
+    {result = ApplyCurvilinearTransform(localIn);}
   else // just general beam line offset
-    {return BDSParticleCoordsFullGlobal(localIn,(BDSParticleCoords)localIn.ApplyTransform(beamlineTransform));}
+    {result= BDSParticleCoordsFullGlobal(localIn,(BDSParticleCoords)localIn.ApplyTransform(beamlineTransform));}
+  if (useBunchTiming)
+    {ApplyBunchTiming(result);}
+  return result;
 }
 
 void BDSBunch::ApplyTilt(BDSParticleCoordsFull& localIn) const
@@ -303,10 +305,10 @@ void BDSBunch::ApplyTilt(BDSParticleCoordsFull& localIn) const
   localIn.yp = xpyp.y();
 }
 
-void BDSBunch::ApplyBunchTiming(BDSParticleCoordsFull& localIn) const
+void BDSBunch::ApplyBunchTiming(BDSParticleCoordsFullGlobal& coordsIn) const
 {
   G4double tOffset = ((G4double)currentBunchIndex) * bunchPeriod;
-  localIn.T += tOffset;
+  coordsIn.global.T += tOffset;
 }
 
 BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const
