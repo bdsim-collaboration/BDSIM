@@ -44,6 +44,10 @@ BeamBase::BeamBase()
   nlinesIgnore         = 0;
   nlinesSkip           = 0;
   
+  bunchFrequency = 0;
+  bunchPeriod = 0;
+  eventsPerBunch = 0;
+  
   X0  = 0.0;
   Y0  = 0.0;
   Z0  = 0.0;
