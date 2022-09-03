@@ -589,6 +589,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
   BDSMagnetStrength* stIn  = nullptr; // deleted later if not needed
   BDSMagnetStrength* stOut = nullptr;
   BDSMagnetStrength* st = PrepareCavityStrength(element, fieldType, cavityLength, stIn, stOut);
+  // st already has the synchronous time information in it
   G4Transform3D fieldTrans = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
@@ -596,7 +597,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
 					       st,
 					       true,
 					       fieldTrans);
-  vacuumField->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator)); // works even if none
+  auto modulator = BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator);
+  vacuumField->SetModulatorInfo(modulator); // works even if none
 
   // limit step length in field - crucial to this component
   // to get the motion correct this has to be less than one oscillation.
@@ -649,7 +651,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
       (*stIn)["rmat44"] = 1;
       (*stIn)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
       (*stIn)["isentrance"] = true;
-      auto cavityFringeIn  = CreateCavityFringe(0, stIn, elementName + "_fringe_in", cavityApertureRadius);
+      auto cavityFringeIn  = CreateCavityFringe(0, stIn, elementName + "_fringe_in", cavityApertureRadius, modulator);
       cavityLine->AddComponent(cavityFringeIn);
     }
   else
@@ -675,7 +677,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
       (*stOut)["rmat44"] = 1;
       (*stOut)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
       (*stOut)["isentrance"] = false;
-      auto cavityFringeIn = CreateCavityFringe(0, stOut, elementName + "_fringe_out", cavityApertureRadius);
+      auto cavityFringeIn = CreateCavityFringe(0, stOut, elementName + "_fringe_out", cavityApertureRadius, modulator);
       cavityLine->AddComponent(cavityFringeIn);
     }
   else
@@ -703,6 +705,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = element->l * CLHEP::m; // arc length
   (*st)["scaling"]= element->scaling;
+  AddSynchronousTimeInformation(st, 0); // add no arc length so it's at the beginning
+  auto modulator = BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator);
 
   // quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -718,7 +722,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   auto sBendLine = BDS::BuildSBendLine(elementName, element, st, brho, integratorSet,
                                        incomingFaceAngle, outgoingFaceAngle,
-				       includeFringeFields, prevElement, nextElement);
+				       includeFringeFields, prevElement, nextElement, modulator);
   
   return sBendLine;
 }
@@ -770,7 +774,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   BDSLine* rbendline = BDS::BuildRBendLine(elementName, element, prevElement, nextElement,
 					   brho, st, integratorSet,
 					   incomingFaceAngle, outgoingFaceAngle,
-					   includeFringeFields);
+					   includeFringeFields,
+             BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
   return rbendline;
 }
 
@@ -1308,12 +1313,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   G4double lengthScaling = solenoidBodyLength / (element->l * CLHEP::m);
   G4double s = 0.5*(*st)["ks"] * lengthScaling; // already includes scaling
   BDSLine* bLine = new BDSLine(elementName);
+  
+  auto modulator = BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator);
 
   if (buildIncomingFringe)
     {
       auto stIn        = strength(s);
       AddSynchronousTimeInformation(stIn, 0);
-      auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
+      auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in",
+                                           BDSIntegratorType::rmatrixthin, BDSFieldType::rmatrix, 0, modulator);
       bLine->AddComponent(solenoidIn);
     }
 
@@ -1329,7 +1337,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
                                                st,
                                                true,
                                                fieldTrans);
-  vacuumField->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
+  vacuumField->SetModulatorInfo(modulator);
 
   BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName + "_centre", element, st, bpInfo);
   vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
@@ -1348,7 +1356,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 					       integratorSet,
 					       brho,
                                                ScalingFieldOuter(element),
-                                               BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
+                                               modulator);
       
       // determine a suitable radius for the current carrying coil of the solenoid
       // this defines the field geometry
@@ -1374,7 +1382,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
     {
       auto stOut       = strength(-s);
       AddSynchronousTimeInformation(stOut, 2*chordLength);
-      auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
+      auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out",
+                                           BDSIntegratorType::rmatrixthin, BDSFieldType::rmatrix, 0, modulator);
       bLine->AddComponent(solenoidOut);
     }
   
@@ -1915,7 +1924,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
 								const G4String& name)
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
-  return CreateThinRMatrix(angleIn, st, name);
+  auto modulator = BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator);
+  return CreateThinRMatrix(angleIn, st, name, BDSIntegratorType::rmatrixthin, BDSFieldType::rmatrix, 0, modulator);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double                 angleIn,
@@ -1923,7 +1933,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
 								const G4String&          name,
 								BDSIntegratorType        intType,
 								BDSFieldType             fieldType,
-								G4double                 beamPipeRadius)
+								G4double                 beamPipeRadius,
+                BDSModulatorInfo*        fieldModulator)
 {
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
@@ -1944,7 +1955,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
                                                true,
                                                fieldTrans);
   vacuumField->SetBeamPipeRadius(beamPipeInfo->aper1);
-  vacuumField->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
+  vacuumField->SetModulatorInfo(fieldModulator);
 
   BDSMagnet* thinRMatrix =  new BDSMagnet(BDSMagnetType::rmatrix,
                                           name,
@@ -1965,11 +1976,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
 BDSAcceleratorComponent* BDSComponentFactory::CreateCavityFringe(G4double                 angleIn,
 								 BDSMagnetStrength*       st,
 								 const G4String&          name,
-								 G4double                 irisRadius)
+								 G4double                 irisRadius,
+                 BDSModulatorInfo*        fieldModulator)
 {
   BDSIntegratorType intType = integratorSet->cavityFringe;
   BDSFieldType fieldType = BDSFieldType::cavityfringe;
-  BDSAcceleratorComponent* cavityFringe = CreateThinRMatrix(angleIn, st, name, intType,fieldType, irisRadius);
+  BDSAcceleratorComponent* cavityFringe = CreateThinRMatrix(angleIn, st, name, intType,fieldType, irisRadius, fieldModulator);
   return cavityFringe;
 }
 
