@@ -16,13 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSModulatorSin.hh"
+#include "BDSModulatorSinT.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <cmath>
 
-BDSModulatorSin::BDSModulatorSin(G4double frequencyIn,
+BDSModulatorSinT::BDSModulatorSinT(G4double frequencyIn,
 				 G4double phaseIn,
 				 G4double amplitudeOffsetIn,
 				 G4double amplitudeScaleIn):
@@ -32,7 +32,7 @@ BDSModulatorSin::BDSModulatorSin(G4double frequencyIn,
   scale(amplitudeScaleIn)
 {;}
 
-G4double BDSModulatorSin::Factor(const G4ThreeVector& /*xyz*/,
+G4double BDSModulatorSinT::Factor(const G4ThreeVector& /*xyz*/,
 				 G4double T) const
 {
   G4double factor = offset + scale*std::sin(angularFrequency*T + phase);

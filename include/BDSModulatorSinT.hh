@@ -16,30 +16,29 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSMODULATORSIN_H
-#define BDSMODULATORSIN_H
-
+#ifndef BDSMODULATORSINT_H
+#define BDSMODULATORSINT_H
 #include "BDSModulator.hh"
 
 #include "G4Types.hh"
 
 /**
- * @brief Sinusoidal modulator.
+ * @brief Sinusoidal modulator as a function of global time.
  * 
- * factor = offset + scale * sin(2pi*frequency + phase)
+ * factor = offset + scale * sin(2pi*frequency*T + phase)
  * 
  * @author Laurie Nevay
  */
 
-class BDSModulatorSin: public BDSModulator
+class BDSModulatorSinT: public BDSModulator
 {
 public:
-  BDSModulatorSin() = delete;
-  explicit BDSModulatorSin(G4double frequencyIn,
-			   G4double phaseIn   = 0,
-			   G4double amplitudeOffsetIn  = 0,
-			   G4double amplitudeScaleIn   = 1.0);
-  virtual ~BDSModulatorSin() = default;
+  BDSModulatorSinT() = delete;
+  explicit BDSModulatorSinT(G4double frequencyIn,
+                            G4double phaseIn            = 0,
+                            G4double amplitudeOffsetIn  = 0,
+                            G4double amplitudeScaleIn   = 1.0);
+  virtual ~BDSModulatorSinT() = default;
 
   /// Returns value of equation in brief at the top of this file.
   virtual G4double Factor(const G4ThreeVector& xyz,
