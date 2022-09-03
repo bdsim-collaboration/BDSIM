@@ -43,6 +43,9 @@ namespace GMAD
     double tOffset;         ///< time offset used for phase calculation (ns) for modulator on top of rf cavity
     double amplitudeOffset; ///< numerical value added to -1 -> 1 modulator as offset
     double amplitudeScale;  ///< multiplier for amplitude of modulation
+
+    double T0;  ///< 'on' time
+    double T1;  ///< 'off' time
     
     /// Constructor
     Modulator();

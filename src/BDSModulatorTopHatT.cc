@@ -16,34 +16,33 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSMODULATORTYPE_H
-#define BDSMODULATORTYPE_H
-
-#include "BDSTypeSafeEnum.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSModulatorTopHatT.hh"
 
 #include "G4String.hh"
 
-/**
- * @brief Type definition for field modulators.
- * 
- * @author Laurie Nevay
- */
+#include <string>
 
-struct modulatortypes_def
+BDSModulatorTopHatT::BDSModulatorTopHatT(G4double T0In,
+					 G4double T1In,
+					 G4double amplitudeOffsetIn,
+					 G4double amplitudeScaleIn):
+  T0(T0In),
+  T1(T1In),
+  offset(amplitudeOffsetIn),
+  scale(amplitudeScaleIn)
 {
-  enum type {none,
-	     sint,
-	     tophatt};
-};
-
-typedef BDSTypeSafeEnum<modulatortypes_def,int> BDSModulatorType;
-
-namespace BDS
-{
-  /// Function that gives corresponding enum value for string (case-insensitive)
-  BDSModulatorType DetermineModulatorType(G4String mType);
+  if (T1 < T0)
+    {
+      G4String msg = "T1 (" + std::to_string(T1) + ") must be greater equal than T0 (";
+      msg += std::to_string(T0) + ")";
+      throw BDSException(__METHOD_NAME__, msg);
+    }
 }
 
-#endif
-
-
+G4double BDSModulatorTopHatT::Factor(const G4ThreeVector& /*xyz*/,
+				 G4double T) const
+{
+  return T <= T1 && T >= T0 ? offset + scale : 0;
+}

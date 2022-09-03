@@ -35,6 +35,8 @@ void Modulator::clear()
   tOffset = 0;
   amplitudeOffset = 0;
   amplitudeScale = 0;
+  T0 = 0;
+  T1 = 0;
 }
 
 void Modulator::PublishMembers()
@@ -46,6 +48,8 @@ void Modulator::PublishMembers()
   publish("tOffset",         &Modulator::tOffset);
   publish("amplitudeOffset", &Modulator::amplitudeOffset);
   publish("amplitudeScale",  &Modulator::amplitudeScale);
+  publish("T0",              &Modulator::T0);
+  publish("T1",              &Modulator::T1);
 }
 
 void Modulator::print()const
@@ -57,5 +61,7 @@ void Modulator::print()const
 	    << "phase "           << phase           << std::endl
 	    << "tOffset "         << tOffset         << std::endl
 	    << "amplitudeOffset " << amplitudeOffset << std::endl
-	    << "amplitudeScale "  << amplitudeScale  << std::endl;
+	    << "amplitudeScale "  << amplitudeScale  << std::endl
+	    << "T0 "              << T0              << std::endl
+    	    << "T1 "              << T1              << std::endl;
 }
