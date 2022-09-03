@@ -89,6 +89,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSModulator.hh"
 #include "BDSModulatorInfo.hh"
 #include "BDSModulatorSinT.hh"
+#include "BDSModulatorTopHatT.hh"
 #include "BDSModulatorType.hh"
 #include "BDSParser.hh"
 #include "BDSParticleDefinition.hh"
@@ -383,7 +384,9 @@ void BDSFieldFactory::PrepareModulatorDefinitions(const std::vector<GMAD::Modula
                                                     definition.phase * CLHEP::rad,
                                                     definition.tOffset * CLHEP::s,
                                                     definition.amplitudeScale,
-                                                    definition.amplitudeOffset);
+                                                    definition.amplitudeOffset,
+                                                    definition.T0,
+                                                    definition.T1);
       info->nameOfParserDefinition = definition.name;
       parserModulatorDefinitions[G4String(definition.name)] = info;
     }
@@ -1273,21 +1276,37 @@ BDSModulator* BDSFieldFactory::CreateModulator(const BDSModulatorInfo* modulator
   if (!modulatorRecipe)
     {return nullptr;}
   BDSModulator* result = nullptr;
-  switch (modulatorRecipe->modulatorType.underlying())
-  {
-    case BDSModulatorType::sint:
+  try
     {
-      G4double globalPhase = CalculateGlobalPhase(*modulatorRecipe, info);
-      result = new BDSModulatorSin(modulatorRecipe->frequency,
-                                   globalPhase,
-                                   modulatorRecipe->amplitudeOffset,
-                                   modulatorRecipe->scale);
-      break;
+      switch (modulatorRecipe->modulatorType.underlying())
+	{
+	case BDSModulatorType::sint:
+	  {
+	    G4double globalPhase = CalculateGlobalPhase(*modulatorRecipe, info);
+	    result = new BDSModulatorSinT(modulatorRecipe->frequency,
+					  globalPhase,
+					  modulatorRecipe->amplitudeOffset,
+					  modulatorRecipe->scale);
+	    break;
+	  }
+	case BDSModulatorType::tophatt:
+	  {
+	    result = new BDSModulatorTopHatT(modulatorRecipe->T0,
+					     modulatorRecipe->T1,
+					     modulatorRecipe->amplitudeOffset,
+					     modulatorRecipe->scale);
+	    break;
+	  }
+	case BDSModulatorType::none:
+	default:
+	  {break;}
+	}
     }
-    case BDSModulatorType::none:
-    default:
-      {break;}
-  }
-
+  catch (BDSException& e)
+    {
+      G4String extraMsg = "\nProblem in field definition for component \"" + info.NameOfParserDefinition() + "\"";
+      e.AppendToMessage(extraMsg);
+      throw e;
+    }
   return result;
 }
