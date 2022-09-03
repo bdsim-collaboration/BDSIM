@@ -88,7 +88,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetType.hh"
 #include "BDSModulator.hh"
 #include "BDSModulatorInfo.hh"
-#include "BDSModulatorSin.hh"
+#include "BDSModulatorSinT.hh"
 #include "BDSModulatorType.hh"
 #include "BDSParser.hh"
 #include "BDSParticleDefinition.hh"
