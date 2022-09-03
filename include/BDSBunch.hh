@@ -144,6 +144,8 @@ public:
   inline G4int CurrentBunchIndex() const {return currentBunchIndex;}
   
   void SetEventIndexForBunchIndex(G4int eventIndex);
+  
+  /// This can be used for recreation or for generate primaries only to purposively set the current index.
   inline void SetCurrentBunchIndexForRecreation(G4int currentBunchIndexIn) {currentBunchIndex = currentBunchIndexIn;}
 
 protected:
