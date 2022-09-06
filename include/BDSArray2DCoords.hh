@@ -75,6 +75,13 @@ public:
   /// This override gives infinite limit in z, but accurate in x,y. TODO - check for
   /// if not in x,y,z order.
   virtual BDSExtent Extent() const;
+
+  BDSDimensionType GetDimension1() const;
+  BDSDimensionType GetDimension2() const;
+
+private:
+  BDSDimensionType dimension1;
+  BDSDimensionType dimension2;
 };
 
 #endif

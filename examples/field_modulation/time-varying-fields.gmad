@@ -1,5 +1,5 @@
 time_varying_field: field, type = "emap2d", eScaling = 1.0, integrator = "g4dormandprince745",
-                electricFile = "bdsim2d:e_field.dat.gz", electricInterpolator = "linear",
+                electricFile = "bdsim2d:e-field.dat.gz", electricInterpolator = "linear",
                 frequency = 1.0 * GHz, phase = 0.5 * pi, tOffset = 0.0, modulator = "sin", maximumStepLength = 0.1 * mm;
 
 time_varying_drift: drift, l = 1.0 * m, aper1 = 1.0 * m, fieldAll = "time_varying_field";

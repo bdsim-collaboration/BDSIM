@@ -830,7 +830,20 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM1DB(const G4String&      fileP
   BDSArray1DCoords*  array = LoadBDSIM1D(filePath);
   BDSArray1DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator1D*    ar = CreateInterpolator1D(arrayR, interpolatorType);
-  BDSFieldMagInterpolated* result = new BDSFieldMagInterpolated1D(ar, transform, bScalingUnits, modulator);
+  BDSFieldMagInterpolated* result;
+  if((array->GetDimension() == BDSDimensionType::t) and (modulator))
+  {
+    result = new BDSFieldMagInterpolated1D(ar, transform, bScalingUnits);
+    BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
+  }
+  else if((array->GetDimension() != BDSDimensionType::t) and (modulator))
+  {
+    result = new BDSFieldMagInterpolated1D(ar, transform, bScalingUnits, modulator);
+  }
+  else
+  {
+    result = new BDSFieldMagInterpolated1D(ar, transform, bScalingUnits);
+  }
   return result;
 }
 
@@ -845,7 +858,20 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM2DB(const G4String&      fileP
   BDSArray2DCoords*  array = LoadBDSIM2D(filePath);
   BDSArray2DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator2D*    ar = CreateInterpolator2D(arrayR, interpolatorType);
-  BDSFieldMagInterpolated* result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits, modulator);
+  BDSFieldMagInterpolated* result;
+  if(((array->GetDimension1() == BDSDimensionType::t) or (array->GetDimension2() == BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);
+    BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
+  }
+  else if(((array->GetDimension1() != BDSDimensionType::t) and (array->GetDimension2() != BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits, modulator);
+  }
+  else
+  {
+    result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);
+  }
   return result;
 }
 
@@ -860,7 +886,20 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM3DB(const G4String&      fileP
   BDSArray3DCoords*  array = LoadBDSIM3D(filePath);
   BDSArray3DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator3D*    ar = CreateInterpolator3D(arrayR, interpolatorType);
-  BDSFieldMagInterpolated* result = new BDSFieldMagInterpolated3D(ar, transform, bScalingUnits, modulator);
+  BDSFieldMagInterpolated* result;
+  if(((array->GetDimension1() == BDSDimensionType::t) or (array->GetDimension2() == BDSDimensionType::t) or (array->GetDimension3() == BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldMagInterpolated3D(ar, transform, bScalingUnits);
+    BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
+  }
+  else if(((array->GetDimension1() != BDSDimensionType::t) and (array->GetDimension2() != BDSDimensionType::t) and (array->GetDimension3() != BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldMagInterpolated3D(ar, transform, bScalingUnits, modulator);
+  }
+  else
+  {
+    result = new BDSFieldMagInterpolated3D(ar, transform, bScalingUnits);
+  }
   return result;
 }
 
@@ -935,7 +974,20 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM1DE(const G4String&      filePat
   BDSArray1DCoords*  array = LoadBDSIM1D(filePath);
   BDSArray1DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator1D*    ar = CreateInterpolator1D(arrayR, interpolatorType);
-  BDSFieldEInterpolated* result = new BDSFieldEInterpolated1D(ar, transform, eScalingUnits, modulator);
+  BDSFieldEInterpolated* result;
+  if((array->GetDimension() == BDSDimensionType::t) and (modulator))
+  {
+    result = new BDSFieldEInterpolated1D(ar, transform, eScalingUnits);
+    BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
+  }
+  else if((array->GetDimension() != BDSDimensionType::t) and (modulator))
+  {
+    result = new BDSFieldEInterpolated1D(ar, transform, eScalingUnits, modulator);
+  }
+  else
+  {
+    result = new BDSFieldEInterpolated1D(ar, transform, eScalingUnits);
+  }
   return result;
 }
 
@@ -950,7 +1002,20 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM2DE(const G4String&      filePat
   BDSArray2DCoords*  array = LoadBDSIM2D(filePath);
   BDSArray2DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator2D*    ar = CreateInterpolator2D(arrayR, interpolatorType);
-  BDSFieldEInterpolated* result = new BDSFieldEInterpolated2D(ar, transform, eScalingUnits, modulator);
+  BDSFieldEInterpolated* result;
+  if(((array->GetDimension1() == BDSDimensionType::t) or (array->GetDimension2() == BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldEInterpolated2D(ar, transform, eScalingUnits);
+    BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
+  }
+  else if(((array->GetDimension1() != BDSDimensionType::t) and (array->GetDimension2() != BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldEInterpolated2D(ar, transform, eScalingUnits, modulator);
+  }
+  else
+  {
+    result = new BDSFieldEInterpolated2D(ar, transform, eScalingUnits);
+  }
   return result;
 }
 
@@ -965,7 +1030,20 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM3DE(const G4String&      filePat
   BDSArray3DCoords*  array = LoadBDSIM3D(filePath);
   BDSArray3DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator3D*    ar = CreateInterpolator3D(arrayR, interpolatorType);
-  BDSFieldEInterpolated* result = new BDSFieldEInterpolated3D(ar, transform, eScalingUnits, modulator);
+  BDSFieldEInterpolated* result;
+  if(((array->GetDimension1() == BDSDimensionType::t) or (array->GetDimension2() == BDSDimensionType::t) or (array->GetDimension3() == BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldEInterpolated3D(ar, transform, eScalingUnits);
+    BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
+  }
+  else if(((array->GetDimension1() != BDSDimensionType::t) and (array->GetDimension2() != BDSDimensionType::t) and (array->GetDimension3() != BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldEInterpolated3D(ar, transform, eScalingUnits, modulator);
+  }
+  else
+  {
+    result = new BDSFieldEInterpolated3D(ar, transform, eScalingUnits);
+  }
   return result;
 }
 
@@ -1002,8 +1080,20 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM1DEM(const G4String&      eFile
   BDSArray1DCoords* bArrayR = CreateArrayReflected(bArray, bReflection);
   BDSInterpolator1D*   eInt = CreateInterpolator1D(eArrayR, eInterpolatorType);
   BDSInterpolator1D*   bInt = CreateInterpolator1D(bArrayR, bInterpolatorType);
-  BDSFieldEMInterpolated* result = new BDSFieldEMInterpolated1D(eInt, bInt, transform,
-								eScalingUnits, bScalingUnits, modulator);
+  BDSFieldEMInterpolated* result;
+  if((eArray->GetDimension() == BDSDimensionType::t) and (modulator))
+  {
+    result = new BDSFieldEMInterpolated1D(eInt, bInt, transform, eScalingUnits, bScalingUnits);
+    BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
+  }
+  else if((eArray->GetDimension() != BDSDimensionType::t) and (modulator))
+  {
+    result = new BDSFieldEMInterpolated1D(eInt, bInt, transform, eScalingUnits, bScalingUnits, modulator);
+  }
+  else
+  {
+    result = new BDSFieldEMInterpolated1D(eInt, bInt, transform, eScalingUnits, bScalingUnits);
+  }
   return result;
 }
 
@@ -1026,8 +1116,20 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM2DEM(const G4String&      eFile
   BDSArray2DCoords* bArrayR = CreateArrayReflected(bArray, bReflection);
   BDSInterpolator2D*   eInt = CreateInterpolator2D(eArrayR, eInterpolatorType);
   BDSInterpolator2D*   bInt = CreateInterpolator2D(bArrayR, bInterpolatorType);
-  BDSFieldEMInterpolated* result = new BDSFieldEMInterpolated2D(eInt, bInt, transform,
-								eScalingUnits, bScalingUnits, modulator);
+  BDSFieldEMInterpolated* result;
+  if(((eArray->GetDimension1() == BDSDimensionType::t) or (eArray->GetDimension2() == BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldEMInterpolated2D(eInt, bInt, transform, eScalingUnits, bScalingUnits);
+    BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
+  }
+  else if(((eArray->GetDimension1() != BDSDimensionType::t) and (eArray->GetDimension2() != BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldEMInterpolated2D(eInt, bInt, transform, eScalingUnits, bScalingUnits, modulator);
+  }
+  else
+  {
+    result = new BDSFieldEMInterpolated2D(eInt, bInt, transform, eScalingUnits, bScalingUnits);
+  }
   return result;
 }
 
@@ -1050,8 +1152,20 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM3DEM(const G4String&      eFile
   BDSArray3DCoords* bArrayR = CreateArrayReflected(bArray, bReflection);
   BDSInterpolator3D*   eInt = CreateInterpolator3D(eArrayR, eInterpolatorType);
   BDSInterpolator3D*   bInt = CreateInterpolator3D(bArrayR, bInterpolatorType);
-  BDSFieldEMInterpolated* result = new BDSFieldEMInterpolated3D(eInt, bInt, transform,
-								eScalingUnits, bScalingUnits, modulator);
+  BDSFieldEMInterpolated* result;
+  if(((eArray->GetDimension1() == BDSDimensionType::t) or (eArray->GetDimension2() == BDSDimensionType::t) or (eArray->GetDimension3() == BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldEMInterpolated3D(eInt, bInt, transform, eScalingUnits, bScalingUnits);
+    BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
+  }
+  else if(((eArray->GetDimension1() != BDSDimensionType::t) and (eArray->GetDimension2() != BDSDimensionType::t) and (eArray->GetDimension3() != BDSDimensionType::t)) and (modulator))
+  {
+    result = new BDSFieldEMInterpolated3D(eInt, bInt, transform, eScalingUnits, bScalingUnits, modulator);
+  }
+  else
+  {
+    result = new BDSFieldEMInterpolated3D(eInt, bInt, transform, eScalingUnits, bScalingUnits, modulator);
+  }
   return result;
 }
 
