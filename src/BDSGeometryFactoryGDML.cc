@@ -124,7 +124,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 	}
     }
 
-  G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
+  G4cout << "Loaded GDML file \"" << processedFile << "\" containing:" << G4endl;
   G4cout << pvsGDML.size() << " physical volumes, and " << lvsGDML.size() << " logical volumes" << G4endl;
 
   // resolve loaded map with possible external map with minimal copying
