@@ -152,7 +152,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   ApplyUserLimits(lvsGDML, ul);
   
   // make sure container is visible - Geant4 always makes the container invisible.
-  G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(containerLV->GetMaterial());
+  G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(containerLV->GetMaterial(), preprocessNameToStrip);
   G4VisAttributes* vis = new G4VisAttributes(*c);
   vis->SetVisibility(true);
   visesGDML.insert(vis);
