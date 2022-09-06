@@ -40,6 +40,9 @@ BDSArray2DCoords::BDSArray2DCoords(G4int nXIn, G4int nYIn,
 		   xDimensionIn,
 		   yDimensionIn)
 {
+  BDSArray2DCoords::dimension1 = xDimensionIn;
+  BDSArray2DCoords::dimension2 = yDimensionIn;
+  
   std::set<BDSDimensionType> allDims = {BDSDimensionType::x,
                                         BDSDimensionType::y,
                                         BDSDimensionType::z,
@@ -126,4 +129,14 @@ BDSExtent BDSArray2DCoords::Extent() const
   G4double limitMax = std::numeric_limits<double>::max();
   G4double limitMin = std::numeric_limits<double>::lowest();
   return BDSExtent(xMin, xMax, yMin, yMax, limitMin, limitMax);
+}
+
+BDSDimensionType BDSArray2DCoords::GetDimension1() const
+{
+  return BDSArray2DCoords::dimension1;
+}
+
+BDSDimensionType BDSArray2DCoords::GetDimension2() const
+{
+  return BDSArray2DCoords::dimension2;
 }

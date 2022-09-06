@@ -215,6 +215,17 @@ When defining a :code:`field`, the following parameters can be specified. Exampl
 |                      | :code:`parameter=value` when using a pure field type. See       |
 |                      | :ref:`fields-pure-field-types`.                                 |
 +----------------------+-----------------------------------------------------------------+
+| frequency            | Frequency (Hz) of the time-varying modulation of the field .    |
++----------------------+-----------------------------------------------------------------+
+| phase                | Phase offset (rad) of the time-dependent modulation. It is      |
+|                      | connected to tOffset and can be converted into it.              |
++----------------------+-----------------------------------------------------------------+
+| tOffset              | **Global** time offset (s) of the time-dependent modulation.    |
+|                      | It is internally translated into the phase offset.              |
++----------------------+-----------------------------------------------------------------+
+| modulator            | Function that describes the time-variation of the field.        |
+|                      | Currently, sin/SIN/Sin and cos/COS/Cos can be used.             |
++----------------------+-----------------------------------------------------------------+
 
 Simple example: ::
 
@@ -241,6 +252,13 @@ for the spatial distance calculated from this.
 	  of the field map. Use `axisAngle=1` to use the axis angle rotation scheme.
 
 .. Note:: A right-handed coordinate system is used in Geant4, so positive x is out of a ring.
+
+.. Note:: The time-modulation of the fields is off by default. It is implemented for field maps
+    (E, B and EM) in up to all three spatial dimensions. It is not necessary to define both,
+    phase and tOffset, as they have the same physical meaning. The modulation is calculated
+    according to :math:`\sin(2\pi ft-\varphi)` or :math:`\cos(2\pi ft-\varphi)` with :math:`f`
+    being the frequency of the modulation, :math:`t` the global time of the particle and
+    :math:`\varphi` the shift wrt. the beginning of the oscillation.
 
 Field Types
 ***********
