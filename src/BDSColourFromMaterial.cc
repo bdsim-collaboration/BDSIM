@@ -75,6 +75,7 @@ BDSColourFromMaterial::BDSColourFromMaterial()
   defines["stainless-steel"] = defines["stainlesssteel"];
   defines["sulphur"]     = c->GetColour("yellow");
   defines["s"]           = defines["sulphur"];
+  defines["vacuum"]      = defines["air"];
   defines["water"]       = c->GetColour("water:0 102 204 0.5");
   
   // for older versions of Geant4 < V11 we have to use G4DataVector which
