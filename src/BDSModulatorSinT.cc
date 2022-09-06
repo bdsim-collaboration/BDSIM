@@ -33,7 +33,7 @@ BDSModulatorSinT::BDSModulatorSinT(G4double frequencyIn,
   offset(amplitudeOffsetIn),
   scale(amplitudeScaleIn)
 {
-  if (frequency < 0)
+  if (frequencyIn < 0)
     {throw BDSException(__METHOD_NAME__, "\frequency\" must be >= 0");}
 }
 
