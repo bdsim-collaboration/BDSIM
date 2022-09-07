@@ -50,6 +50,8 @@ New Features
 * rebdsim will now default to <inputfilename>_ana.root if no outputfile name is specified.
 * Similarly, rebdsimHistoMerge will default to <inputfilename>_histos.root; rebdsimOptics to
   <intputfilename>_optics.root and bdskim to <inputfilename>_skimmed.root.
+* bdsimCombine will now produce an extra tree in the output called "EventCombineInfo" that
+  contains an index to which file the event came from.
 
 **Beam**
 

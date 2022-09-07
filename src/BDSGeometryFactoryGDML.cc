@@ -124,7 +124,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 	}
     }
 
-  G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
+  G4cout << "Loaded GDML file \"" << processedFile << "\" containing:" << G4endl;
   G4cout << pvsGDML.size() << " physical volumes, and " << lvsGDML.size() << " logical volumes" << G4endl;
 
   // resolve loaded map with possible external map with minimal copying
@@ -152,7 +152,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   ApplyUserLimits(lvsGDML, ul);
   
   // make sure container is visible - Geant4 always makes the container invisible.
-  G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(containerLV->GetMaterial());
+  G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(containerLV->GetMaterial(), preprocessNameToStrip);
   G4VisAttributes* vis = new G4VisAttributes(*c);
   vis->SetVisibility(true);
   visesGDML.insert(vis);
