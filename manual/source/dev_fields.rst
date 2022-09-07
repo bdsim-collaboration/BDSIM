@@ -671,11 +671,13 @@ Electric Fields From Equations
 Sinusoidal Electric Field
 -------------------------
 
-This field provides an electric field along local `z` direction with an amplitude
-`E` that does not vary with position (`x`, `y`, `z`), but only varies sinusoidally
+This field provides an electric field along local unit `u` direction (e.g. unit `z` or unit `x`)
+with an amplitude `E` that does not vary with position (`x`, `y`, `z`), but only varies sinusoidally
 with time (`t`). A cosine is used so when the default phase is zero, a maximum acceleration
-is provided. Aside from the field amplitude `E`, the frequency `f` (Hz) along with
-the phase :math:`\phi` are used.
+is provided for a synchronous particle at the centre of the object. Aside from the field amplitude `E`,
+the frequency `f` (Hz) along with the phase :math:`\phi` are used. Typically, a global phase is
+calculated for the arrival time of the synchronous particle to the centre of the object the
+field is attached to (assuming the particle velocity is c, the speed of light).
 
 .. math::
 

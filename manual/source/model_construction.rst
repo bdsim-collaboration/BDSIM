@@ -12,6 +12,8 @@ The following sections describe the basics of how to prepare a BDSIM model.
 
 * :ref:`lattice-description`
 * :ref:`circular-machines`
+* :ref:`magnet-strength-polarity`
+* :ref:`synchronous-time-and-phase`
 * :ref:`lattice-elements`
 * :ref:`offsets-and-tilts`
 * :ref:`lattice-sequence`
@@ -94,6 +96,8 @@ calculated and constructed when using the :code:`--circular` executable option.
 Although the teleporter may not be required in a well-formed model that closes, the minimum
 gap of :math:`0.2 \mu m` is required for the terminator.
 
+.. _magnet-strength-polarity:
+
 Magnet Strength Polarity
 ------------------------
 
@@ -108,6 +112,26 @@ Magnet Strength Polarity
 	     pybdsim converter provides an option called `flipmagnets` for this
 	     purpose. This may be revised in future releases depending on changes
 	     to MAD-X.
+
+.. _synchronous-time-and-phase:
+	     
+Synchronous Time and Phase
+--------------------------
+
+Some components have time dependent fields, such as an `rf` cavity element. By default, these
+are given a synchronous global time in their construction so that local time is zero at the
+centre of the component for a synchronous particle. The time is calculated for a particle
+travelling at the speed of light from the start of the accelerator.
+
+If the element is reused several times in a machine, it is constructed uniquely for
+each instance so that the fields are unique with their own synchronous time or phase.
+
+.. warning:: This currently does not calculate the time based on the true velocity of
+	     the particle that may vary (with acceleration) throughout the accelerator.
+	     The speed of light in vacuum is used to calculate this time and the user
+	     should calculate an appropriate global `tOffset` for the component if
+	     the beam is sub-relativistic. This may be improved upon in future.
+
 
 
 .. _lattice-elements:
@@ -899,6 +923,8 @@ can be used.
 
 .. note:: Pole face rotation and fringe fields kicks are unavailable for tkickers
 
+.. _component-rf:
+	  
 rf
 ^^^^
 
@@ -914,6 +940,7 @@ field for a pill-box cavity may be used (see :ref:`field-pill-box`). The `G4Clas
 numerical integrator is used to calculate the motion of particles in both cases. Fringes for
 the edge effects are provided by default and are controllable with the option `includeFringeFieldsCavities`.
 
+.. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
 
 +----------------+-------------------------------+--------------+---------------------+
 | **Parameter**  | **Description**               | **Default**  | **Required**        |
@@ -1003,6 +1030,50 @@ Pill-box field example::
 Elliptical SRF cavity geometry is also provided and may be specified by use of another
 'cavity' object in the parser. This cavity object can then be attached to an `rf`
 object by name. Details can be found in :ref:`cavity-geometry-parameters`.
+
+rfx \& rfy
+^^^^^^^^^^
+
+.. figure:: figures/rfx.png
+	    :width: 60%
+	    :align: center
+
+`rfx` or `rfy` define an RF cavity with a time varying electric (only) field that is transverse
+to the S direction the accelerator is built along. Particularly, for `rfx` it is in the local
+`x` direction and for `rfy` it is in the local `y` direction. The cavity will look like a cylindrical
+pillbox cavity much the same way as `rf`.
+
+* A positive `gradient` or field value causes a positive deflection in that direction.
+* Only `gradient` can be specified because if we specify voltage only, we need the length
+  to calculate a gradient for the electric field and the exact width of the cavity can be
+  ambiguous given a combination of parameters.
+
+.. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
+  
++----------------+-------------------------------+--------------+---------------------+
+| **Parameter**  | **Description**               | **Default**  | **Required**        |
++================+===============================+==============+=====================+
+| `l`            | Length [m]                    | 0            | Yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `gradient`     | Electric field [V/m]          | 0            | Yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `frequency`    | Frequency of oscillation (Hz) | 0            | Yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `phase`        | Phase offset (rad)            | 0            | No                  |
++----------------+-------------------------------+--------------+---------------------+
+| `tOffset`      | Offset in time (s)            | 0            | No                  |
++----------------+-------------------------------+--------------+---------------------+
+| `material`     | Outer material                | ""           | Yes                 |
++----------------+-------------------------------+--------------+---------------------+
+
+See :ref:`component-rf` for details about `phase` and `tOffset`. The field is the same
+as :ref:`field-sinusoid-efield`, but pointing transversely.
+
+Examples: ::
+
+  rf1: rfx, l=20*cm, gradient=12*MV / m, frequency=450*MHz;
+
+
 
 target
 ^^^^^^
