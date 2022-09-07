@@ -146,7 +146,7 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
   BDSArrayReflectionTypeSet reflection = info.MagneticArrayReflectionType();
   BDSArrayReflectionTypeSet* reflectionPointer = reflection.empty() ? nullptr : &reflection;
   BDSFieldModulator* modulator = nullptr;
-  if(BDS::IsFinite(info.Frequency()))
+  if((info.Modulator().compare("") != 0) and ((BDS::IsFinite(info.Frequency())) or (BDS::IsFinite(info.Phase()))))
   {
     modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
   }
@@ -233,7 +233,7 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadEField(const BDSFieldInfo& info)
   BDSArrayReflectionTypeSet reflection = info.ElectricArrayReflectionType();
   BDSArrayReflectionTypeSet* reflectionPointer = reflection.empty() ? nullptr : &reflection;
   BDSFieldModulator* modulator = nullptr;
-  if((BDS::IsFinite(info.Frequency())) or (BDS::IsFinite(info.TOffset())) or (BDS::IsFinite(info.Phase())))
+  if((info.Modulator().compare("") != 0) and ((BDS::IsFinite(info.Frequency())) or (BDS::IsFinite(info.Phase()))))
   {
     modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
   }
@@ -281,7 +281,7 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadEMField(const BDSFieldInfo& info)
   BDSArrayReflectionTypeSet eReflection = info.ElectricArrayReflectionType();
   BDSArrayReflectionTypeSet* eReflectionPointer = eReflection.empty() ? nullptr : &eReflection;
   BDSFieldModulator* modulator = nullptr;
-  if(BDS::IsFinite(info.Frequency()))
+  if((info.Modulator().compare("") != 0) and ((BDS::IsFinite(info.Frequency())) or (BDS::IsFinite(info.Phase()))))
   {
     modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
   }
