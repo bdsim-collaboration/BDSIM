@@ -304,7 +304,7 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
 
   BDSParticleCoords global = BDSParticleCoords(cPos.x(), cPos.y(), cPos.z(),
 					       cMom.x(), cMom.y(), cMom.z(),
-					       localIn.T);
+					       localIn.T + S / CLHEP::c_light);
 
   BDSParticleCoordsFullGlobal result = BDSParticleCoordsFullGlobal(localIn, global);
   result.beamlineIndex = beamlineIndex;
