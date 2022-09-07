@@ -69,12 +69,6 @@ public:
   /// This override gives infinite limit in y,z, but accurate in x. TODO - check for
   /// if not in x,y,z order.
   virtual BDSExtent Extent() const;
-
-  // Return the dimension the field is varied in.
-  BDSDimensionType GetDimension() const;
-
-private:
-  BDSDimensionType dimension;
 };
 
 #endif

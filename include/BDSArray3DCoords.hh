@@ -76,15 +76,6 @@ public:
 
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSArray3DCoords const &a);
-
-  BDSDimensionType GetDimension1() const;
-  BDSDimensionType GetDimension2() const;
-  BDSDimensionType GetDimension3() const;
-
-private:
-  BDSDimensionType dimension1;
-  BDSDimensionType dimension2;
-  BDSDimensionType dimension3;
 };
 
 #endif

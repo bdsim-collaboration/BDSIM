@@ -233,7 +233,7 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadEField(const BDSFieldInfo& info)
   BDSArrayReflectionTypeSet reflection = info.ElectricArrayReflectionType();
   BDSArrayReflectionTypeSet* reflectionPointer = reflection.empty() ? nullptr : &reflection;
   BDSFieldModulator* modulator = nullptr;
-  if(BDS::IsFinite(info.Frequency()))
+  if((BDS::IsFinite(info.Frequency())) or (BDS::IsFinite(info.TOffset())) or (BDS::IsFinite(info.Phase())))
   {
     modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
   }
@@ -831,12 +831,12 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM1DB(const G4String&      fileP
   BDSArray1DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator1D*    ar = CreateInterpolator1D(arrayR, interpolatorType);
   BDSFieldMagInterpolated* result;
-  if((array->GetDimension() == BDSDimensionType::t) and (modulator))
+  if((array->FirstDimension() == BDSDimensionType::t) and (modulator))
   {
     result = new BDSFieldMagInterpolated1D(ar, transform, bScalingUnits);
     BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
   }
-  else if((array->GetDimension() != BDSDimensionType::t) and (modulator))
+  else if((array->FirstDimension() != BDSDimensionType::t) and (modulator))
   {
     result = new BDSFieldMagInterpolated1D(ar, transform, bScalingUnits, modulator);
   }
@@ -859,12 +859,12 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM2DB(const G4String&      fileP
   BDSArray2DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator2D*    ar = CreateInterpolator2D(arrayR, interpolatorType);
   BDSFieldMagInterpolated* result;
-  if(((array->GetDimension1() == BDSDimensionType::t) or (array->GetDimension2() == BDSDimensionType::t)) and (modulator))
+  if(((array->FirstDimension() == BDSDimensionType::t) or (array->SecondDimension() == BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);
     BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
   }
-  else if(((array->GetDimension1() != BDSDimensionType::t) and (array->GetDimension2() != BDSDimensionType::t)) and (modulator))
+  else if(((array->FirstDimension() != BDSDimensionType::t) and (array->SecondDimension() != BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits, modulator);
   }
@@ -887,12 +887,12 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM3DB(const G4String&      fileP
   BDSArray3DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator3D*    ar = CreateInterpolator3D(arrayR, interpolatorType);
   BDSFieldMagInterpolated* result;
-  if(((array->GetDimension1() == BDSDimensionType::t) or (array->GetDimension2() == BDSDimensionType::t) or (array->GetDimension3() == BDSDimensionType::t)) and (modulator))
+  if(((array->FirstDimension() == BDSDimensionType::t) or (array->SecondDimension() == BDSDimensionType::t) or (array->ThirdDimension() == BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldMagInterpolated3D(ar, transform, bScalingUnits);
     BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
   }
-  else if(((array->GetDimension1() != BDSDimensionType::t) and (array->GetDimension2() != BDSDimensionType::t) and (array->GetDimension3() != BDSDimensionType::t)) and (modulator))
+  else if(((array->FirstDimension() != BDSDimensionType::t) and (array->SecondDimension() != BDSDimensionType::t) and (array->ThirdDimension() != BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldMagInterpolated3D(ar, transform, bScalingUnits, modulator);
   }
@@ -975,12 +975,12 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM1DE(const G4String&      filePat
   BDSArray1DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator1D*    ar = CreateInterpolator1D(arrayR, interpolatorType);
   BDSFieldEInterpolated* result;
-  if((array->GetDimension() == BDSDimensionType::t) and (modulator))
+  if((array->FirstDimension() == BDSDimensionType::t) and (modulator))
   {
     result = new BDSFieldEInterpolated1D(ar, transform, eScalingUnits);
     BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
   }
-  else if((array->GetDimension() != BDSDimensionType::t) and (modulator))
+  else if((array->FirstDimension() != BDSDimensionType::t) and (modulator))
   {
     result = new BDSFieldEInterpolated1D(ar, transform, eScalingUnits, modulator);
   }
@@ -1003,12 +1003,12 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM2DE(const G4String&      filePat
   BDSArray2DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator2D*    ar = CreateInterpolator2D(arrayR, interpolatorType);
   BDSFieldEInterpolated* result;
-  if(((array->GetDimension1() == BDSDimensionType::t) or (array->GetDimension2() == BDSDimensionType::t)) and (modulator))
+  if(((array->FirstDimension() == BDSDimensionType::t) or (array->SecondDimension() == BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldEInterpolated2D(ar, transform, eScalingUnits);
     BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
   }
-  else if(((array->GetDimension1() != BDSDimensionType::t) and (array->GetDimension2() != BDSDimensionType::t)) and (modulator))
+  else if(((array->FirstDimension() != BDSDimensionType::t) and (array->SecondDimension() != BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldEInterpolated2D(ar, transform, eScalingUnits, modulator);
   }
@@ -1031,12 +1031,12 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM3DE(const G4String&      filePat
   BDSArray3DCoords* arrayR = CreateArrayReflected(array, reflection);
   BDSInterpolator3D*    ar = CreateInterpolator3D(arrayR, interpolatorType);
   BDSFieldEInterpolated* result;
-  if(((array->GetDimension1() == BDSDimensionType::t) or (array->GetDimension2() == BDSDimensionType::t) or (array->GetDimension3() == BDSDimensionType::t)) and (modulator))
+  if(((array->FirstDimension() == BDSDimensionType::t) or (array->SecondDimension() == BDSDimensionType::t) or (array->ThirdDimension() == BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldEInterpolated3D(ar, transform, eScalingUnits);
     BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
   }
-  else if(((array->GetDimension1() != BDSDimensionType::t) and (array->GetDimension2() != BDSDimensionType::t) and (array->GetDimension3() != BDSDimensionType::t)) and (modulator))
+  else if(((array->FirstDimension() != BDSDimensionType::t) and (array->SecondDimension() != BDSDimensionType::t) and (array->ThirdDimension() != BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldEInterpolated3D(ar, transform, eScalingUnits, modulator);
   }
@@ -1081,12 +1081,19 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM1DEM(const G4String&      eFile
   BDSInterpolator1D*   eInt = CreateInterpolator1D(eArrayR, eInterpolatorType);
   BDSInterpolator1D*   bInt = CreateInterpolator1D(bArrayR, bInterpolatorType);
   BDSFieldEMInterpolated* result;
-  if((eArray->GetDimension() == BDSDimensionType::t) and (modulator))
+
+  /*
+  ToDo: Does it make sense to have different dimensions for the electric and magnetic field map? In case the answer is yes,
+  we need to check the dimension of bArray too! FOr the time being we assume that the electric and magentic field maps
+  vary in the same coordinates.
+  */
+
+  if((eArray->FirstDimension() == BDSDimensionType::t) and (modulator))
   {
     result = new BDSFieldEMInterpolated1D(eInt, bInt, transform, eScalingUnits, bScalingUnits);
     BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
   }
-  else if((eArray->GetDimension() != BDSDimensionType::t) and (modulator))
+  else if((eArray->FirstDimension() != BDSDimensionType::t) and (modulator))
   {
     result = new BDSFieldEMInterpolated1D(eInt, bInt, transform, eScalingUnits, bScalingUnits, modulator);
   }
@@ -1117,12 +1124,19 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM2DEM(const G4String&      eFile
   BDSInterpolator2D*   eInt = CreateInterpolator2D(eArrayR, eInterpolatorType);
   BDSInterpolator2D*   bInt = CreateInterpolator2D(bArrayR, bInterpolatorType);
   BDSFieldEMInterpolated* result;
-  if(((eArray->GetDimension1() == BDSDimensionType::t) or (eArray->GetDimension2() == BDSDimensionType::t)) and (modulator))
+
+  /*
+  ToDo: Does it make sense to have different dimensions for the electric and magnetic field map? In case the answer is yes,
+  we need to check the dimension of bArray too! FOr the time being we assume that the electric and magentic field maps
+  vary in the same coordinates.
+  */
+
+  if(((eArray->FirstDimension() == BDSDimensionType::t) or (eArray->SecondDimension() == BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldEMInterpolated2D(eInt, bInt, transform, eScalingUnits, bScalingUnits);
     BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
   }
-  else if(((eArray->GetDimension1() != BDSDimensionType::t) and (eArray->GetDimension2() != BDSDimensionType::t)) and (modulator))
+  else if(((eArray->FirstDimension() != BDSDimensionType::t) and (eArray->SecondDimension() != BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldEMInterpolated2D(eInt, bInt, transform, eScalingUnits, bScalingUnits, modulator);
   }
@@ -1153,12 +1167,19 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM3DEM(const G4String&      eFile
   BDSInterpolator3D*   eInt = CreateInterpolator3D(eArrayR, eInterpolatorType);
   BDSInterpolator3D*   bInt = CreateInterpolator3D(bArrayR, bInterpolatorType);
   BDSFieldEMInterpolated* result;
-  if(((eArray->GetDimension1() == BDSDimensionType::t) or (eArray->GetDimension2() == BDSDimensionType::t) or (eArray->GetDimension3() == BDSDimensionType::t)) and (modulator))
+
+  /*
+  ToDo: Does it make sense to have different dimensions for the electric and magnetic field map? In case the answer is yes,
+  we need to check the dimension of bArray too! FOr the time being we assume that the electric and magentic field maps
+  vary in the same coordinates.
+  */
+
+  if(((eArray->FirstDimension() == BDSDimensionType::t) or (eArray->SecondDimension() == BDSDimensionType::t) or (eArray->ThirdDimension() == BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldEMInterpolated3D(eInt, bInt, transform, eScalingUnits, bScalingUnits);
     BDS::Warning("You're trying to use a time-modulation on a field map that varies already in time. \n The modulation is omitted and the given field map is used only.");
   }
-  else if(((eArray->GetDimension1() != BDSDimensionType::t) and (eArray->GetDimension2() != BDSDimensionType::t) and (eArray->GetDimension3() != BDSDimensionType::t)) and (modulator))
+  else if(((eArray->FirstDimension() != BDSDimensionType::t) and (eArray->SecondDimension() != BDSDimensionType::t) and (eArray->ThirdDimension() != BDSDimensionType::t)) and (modulator))
   {
     result = new BDSFieldEMInterpolated3D(eInt, bInt, transform, eScalingUnits, bScalingUnits, modulator);
   }
