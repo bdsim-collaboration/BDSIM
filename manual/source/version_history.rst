@@ -74,6 +74,7 @@ New Features
 
 * A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into
   voxelized geometries.
+* New `rfx` and `rfy` components for transverse RF fields.
 * New `target` beam line component. We could always create a block of material with a closed
   `rcol` but this is more intuitive.
 
