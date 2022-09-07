@@ -55,7 +55,6 @@ public:
 
   /// Access the seed state for a given event index in the file (0 counting).
   G4String SeedState(G4int eventNumber = 0);
-  G4int    BunchIndex(G4int eventNumber = 0);
   
 protected:
   TFile* file;
