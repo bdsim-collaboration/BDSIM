@@ -41,10 +41,6 @@ BDSArray3DCoords::BDSArray3DCoords(G4int nXIn, G4int nYIn, G4int nZIn,
 		   yDimensionIn,
 		   zDimensionIn)
 {
-  BDSArray3DCoords::dimension1 = xDimensionIn;
-  BDSArray3DCoords::dimension2 = yDimensionIn;
-  BDSArray3DCoords::dimension3 = zDimensionIn;
-
   std::set<BDSDimensionType> allDims = {BDSDimensionType::x,
                                         BDSDimensionType::y,
                                         BDSDimensionType::z,
@@ -129,19 +125,4 @@ BDSFieldValue BDSArray3DCoords::ExtractNearest(G4double x,
 std::ostream& operator<< (std::ostream& out, BDSArray3DCoords const &a)
 {
   return a.Print(out);
-}
-
-BDSDimensionType BDSArray3DCoords::GetDimension1() const
-{
-  return BDSArray3DCoords::dimension1;
-}
-
-BDSDimensionType BDSArray3DCoords::GetDimension2() const
-{
-  return BDSArray3DCoords::dimension2;
-}
-
-BDSDimensionType BDSArray3DCoords::GetDimension3() const
-{
-  return BDSArray3DCoords::dimension3;
 }
