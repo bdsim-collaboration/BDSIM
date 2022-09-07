@@ -131,7 +131,8 @@ public:
   /// Prepare the element horizontal width in Geant4 units - if not set, use the global default.
   static G4double PrepareHorizontalWidth(GMAD::Element const* el,
 					 G4double defaultHorizontalWidth = -1);
-  
+
+  /// Get the scaling factor for a particular outer field depending on the global and individual setting.
   static G4double ScalingFieldOuter(const GMAD::Element* ele);
   
   /// Prepare the field definition for the yoke of a magnet.

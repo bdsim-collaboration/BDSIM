@@ -36,9 +36,9 @@ class BDSModulatorTopHatT: public BDSModulator
 public:
   BDSModulatorTopHatT() = delete;
   explicit BDSModulatorTopHatT(G4double T0,
-			    G4double T1,
-                            G4double amplitudeOffsetIn  = 0,
-                            G4double amplitudeScaleIn   = 1.0);
+			       G4double T1,
+			       G4double amplitudeOffsetIn  = 0,
+			       G4double amplitudeScaleIn   = 1.0);
   virtual ~BDSModulatorTopHatT() = default;
 
   /// Returns value of equation in brief at the top of this file.
