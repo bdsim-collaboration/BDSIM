@@ -59,7 +59,7 @@ BDSBunch::BDSBunch(const G4String& nameIn):
   sigmaT(0.0), sigmaP(0.0), sigmaE(0.0), sigmaEk(0.0),
   useBunchTiming(false),
   currentBunchIndex(0),
-  eventsPerBunch(0),
+  eventsPerBunch(1), // so we don't have 0 division
   bunchPeriod(0),
   useCurvilinear(false),
   particleDefinition(nullptr),
@@ -118,8 +118,8 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
     {
       useBunchTiming = true;
       eventsPerBunch = beam.eventsPerBunch;
-      if (eventsPerBunch < 0)
-        {throw BDSException(__METHOD_NAME__, "\"eventsPerBunch\" < 0. Must be >= 0");}
+      if (eventsPerBunch <= 0)
+        {throw BDSException(__METHOD_NAME__, "\"eventsPerBunch\" <= 0. Must be > 0");}
       bunchPeriod = bpf ? beam.bunchPeriod*CLHEP::s : (1.0 / beam.bunchFrequency)*CLHEP::s;
     }
   else if (!bff && !bpf && beam.eventsPerBunch > 0) // eventsPerBunch > 0 implies expecting bunches but no frequency or period given
@@ -212,12 +212,12 @@ void BDSBunch::SetEmittances(const BDSParticleDefinition* beamParticle,
 	 << ", Normalised (y): " << emittNormalisedY << G4endl;
 }
 
-void BDSBunch::SetEventIndexForBunchIndex(G4int eventIndex)
+void BDSBunch::CalculateBunchIndex(G4int eventIndex)
 {
   if (!useBunchTiming)
     {return;}
-  if (eventIndex % eventsPerBunch == 0 && eventIndex > 0)
-    {currentBunchIndex++;}
+  // calculate this freshly each time so it doesn't rely on incremental event indices
+  currentBunchIndex = (G4int)std::floor((G4double)eventIndex / (G4double)eventsPerBunch);
 }
 
 void BDSBunch::CheckParameters()
@@ -275,6 +275,11 @@ BDSParticleCoordsFull BDSBunch::GetNextParticleLocal()
 			      Xp0, Yp0, Zp0,
 			      T0, S0, E0, /*weight=*/1.0);
   return local;
+}
+
+void BDSBunch::RecreateAdvanceToEvent(G4int eventOffset)
+{
+  CalculateBunchIndex(eventOffset);
 }
 
 void BDSBunch::BeginOfRunAction(G4int /*numberOfEvents*/)

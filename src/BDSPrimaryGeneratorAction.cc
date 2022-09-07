@@ -132,14 +132,14 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4int thisEventID = anEvent->GetEventID();
   
   // update the bunch distribution for which event we're on for different bunch timings
-  bunch->SetEventIndexForBunchIndex(thisEventID);
+  bunch->CalculateBunchIndex(thisEventID);
   
   if (recreate) // load seed state if recreating.
     {
       G4cout << __METHOD_NAME__ << "setting seed state from file" << G4endl;
       BDSRandom::SetSeedState(recreateFile->SeedState(thisEventID + eventOffset));
-      bunch->SetCurrentBunchIndexForRecreation(recreateFile->BunchIndex(thisEventID + eventOffset));
-   }
+      bunch->CalculateBunchIndex(thisEventID + eventOffset); // correct bunch index
+    }
 
   // save the seed state in a file to recover potentially unrecoverable events
   if (writeASCIISeedState)
