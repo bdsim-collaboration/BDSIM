@@ -38,11 +38,11 @@ public:
   BDSModulatorInfo(BDSModulatorType modulatorTypeIn,
 		   G4double frequencyIn,
 		   G4double phaseIn = 0,
-       G4double tOffsetIn = 0,
+		   G4double tOffsetIn = 0,
 		   G4double scaleIn = 1.0,
 		   G4double amplitudeOffsetIn = 0,
-       G4double T0In = 0,
-       G4double T1In = 0);
+		   G4double T0In = 0,
+		   G4double T1In = 0);
 
   ~BDSModulatorInfo() = default;
   
