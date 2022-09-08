@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDimensionType.hh"
 #include "BDSFieldEMInterpolated2D.hh"
-#include "BDSFieldModulator.hh"
 #include "BDSInterpolator2D.hh"
 
 #include "G4ThreeVector.hh"
@@ -30,8 +29,7 @@ BDSFieldEMInterpolated2D::BDSFieldEMInterpolated2D(BDSInterpolator2D*   eInterpo
 						   BDSInterpolator2D*   bInterpolatorIn,
 						   const G4Transform3D& offset,
 						   G4double             eScalingIn,
-						   G4double             bScalingIn,
-               BDSFieldModulator* modulatorIn):
+						   G4double             bScalingIn):
   BDSFieldEMInterpolated(eInterpolatorIn, bInterpolatorIn, offset, eScalingIn, bScalingIn),
   eInterpolator(eInterpolatorIn),
   bInterpolator(bInterpolatorIn),
@@ -42,15 +40,13 @@ BDSFieldEMInterpolated2D::BDSFieldEMInterpolated2D(BDSInterpolator2D*   eInterpo
   bFirstDimensionIndex((bInterpolatorIn->FirstDimension()).underlying()),
   bFirstTime((bInterpolatorIn->FirstDimension()).underlying() > 2),
   bSecondDimensionIndex((bInterpolatorIn->SecondDimension()).underlying()),
-  bSecondTime((bInterpolatorIn->SecondDimension()).underlying() > 2),
-  modulator(modulatorIn)
+  bSecondTime((bInterpolatorIn->SecondDimension()).underlying() > 2)
 {;}
 
 BDSFieldEMInterpolated2D::~BDSFieldEMInterpolated2D()
 {
   delete eInterpolator;
   delete bInterpolator;
-  delete modulator;
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMInterpolated2D::GetField(const G4ThreeVector& position,
@@ -76,12 +72,9 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMInterpolated2D::GetField(const 
     {bSCoordinate = t;}
   else
     {bSCoordinate = position[bSecondDimensionIndex];}
-  G4double modulation = 1.0;
-  if(modulator)
-    {modulation = modulator->GetValue(t);}
   G4ThreeVector e = eInterpolator->GetInterpolatedValue(eFCoordinate,
-							eSCoordinate) * EScaling() * modulation;
+							eSCoordinate) * EScaling();
   G4ThreeVector b = bInterpolator->GetInterpolatedValue(bFCoordinate,
-							bSCoordinate) * BScaling() * modulation;
+							bSCoordinate) * BScaling();
   return std::make_pair(b,e);
 }

@@ -39,7 +39,7 @@ BDSArray2DCoords::BDSArray2DCoords(G4int nXIn, G4int nYIn,
 		   0,   1,
 		   xDimensionIn,
 		   yDimensionIn)
-{ 
+{
   std::set<BDSDimensionType> allDims = {BDSDimensionType::x,
                                         BDSDimensionType::y,
                                         BDSDimensionType::z,

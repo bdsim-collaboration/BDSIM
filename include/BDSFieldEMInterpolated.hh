@@ -19,7 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDEMINTERPOLATED_H
 #define BDSFIELDEMINTERPOLATED_H
 #include "BDSFieldEM.hh"
-#include "BDSFieldModulator.hh"
 
 #include "G4Transform3D.hh"
 #include "G4Types.hh"
@@ -40,8 +39,7 @@ public:
 			 const BDSInterpolator* bInterpolator,
 			 const G4Transform3D&   offset,
 			 G4double               eScalingIn = 1.0,
-			 G4double               bScalingIn = 1.0,
-       BDSFieldModulator* modulatorIn = nullptr);
+			 G4double               bScalingIn = 1.0);
   virtual ~BDSFieldEMInterpolated(){;}
 
   /// @{ Accessor.
@@ -52,7 +50,6 @@ public:
   /// @{ Setter.
   inline void     SetEScaling(G4double eScalingIn) {eScaling = eScalingIn;}
   inline void     SetBScaling(G4double bScalingIn) {bScaling = bScalingIn;}
-  inline void     SetModulator(BDSFieldModulator* modulatorIn) {modulator = modulatorIn;}
   /// @}
 
   inline G4double SmallestSpatialStep() const {return smallestSpatialStep;}
@@ -61,7 +58,6 @@ private:
   G4double eScaling; ///< E field scaling value.
   G4double bScaling; ///< B field scaling value.
   G4double smallestSpatialStep;
-  BDSFieldModulator* modulator;
 };
 
 #endif

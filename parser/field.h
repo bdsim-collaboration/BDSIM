@@ -77,11 +77,6 @@ namespace GMAD
     std::string electricReflection;
     
     std::string fieldParameters;
-
-    double frequency;
-    double tOffset;
-    double phase;
-    std::string modulator;
     
     /// Constructor
     Field();

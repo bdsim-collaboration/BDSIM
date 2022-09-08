@@ -21,7 +21,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSArrayReflectionType.hh"
 #include "BDSInterpolatorType.hh"
-#include "BDSFieldModulator.hh"
 #include "G4String.hh"
 #include "G4Transform3D.hh"
 
@@ -156,24 +155,21 @@ private:
 					BDSInterpolatorType  interpolatorType,
 					const G4Transform3D& transform,
 					G4double             bScaling,
-					const BDSArrayReflectionTypeSet* reflection = nullptr,
-                                        BDSFieldModulator* modulator = nullptr);
+					const BDSArrayReflectionTypeSet* reflection = nullptr);
   
   /// Load a 2D BDSIM format magnetic field.
   BDSFieldMagInterpolated* LoadBDSIM2DB(const G4String&      filePath,
 					BDSInterpolatorType  interpolatorType,
 					const G4Transform3D& transform,
 					G4double             bScaling,
-                                        const BDSArrayReflectionTypeSet* reflection = nullptr,
-                                        BDSFieldModulator* modulator = nullptr);
+                                        const BDSArrayReflectionTypeSet* reflection = nullptr);
   
   /// Load a 3D BDSIM format magnetic field.
   BDSFieldMagInterpolated* LoadBDSIM3DB(const G4String&      filePath,
 					BDSInterpolatorType  interpolatorType,
 					const G4Transform3D& transform,
 					G4double             bScaling,
-                                        const BDSArrayReflectionTypeSet* reflection = nullptr,
-                                        BDSFieldModulator* modulator = nullptr);
+                                        const BDSArrayReflectionTypeSet* reflection = nullptr);
   
   /// Load a 4D BDSIM format magnetic field.
   BDSFieldMagInterpolated* LoadBDSIM4DB(const G4String&      filePath,
@@ -210,24 +206,21 @@ private:
 				      BDSInterpolatorType  interpolatorType,
 				      const G4Transform3D& transform,
 				      G4double             eScaling,
-                                      const BDSArrayReflectionTypeSet* reflection = nullptr,
-                                      BDSFieldModulator* modulator = nullptr);
+                                      const BDSArrayReflectionTypeSet* reflection = nullptr);
   
   /// Load a 2D BDSIM format electric field.
   BDSFieldEInterpolated* LoadBDSIM2DE(const G4String&      filePath,
 				      BDSInterpolatorType  interpolatorType,
 				      const G4Transform3D& transform,
 				      G4double             eScaling,
-                                      const BDSArrayReflectionTypeSet* reflection = nullptr,
-                                      BDSFieldModulator* modulator = nullptr);
+                                      const BDSArrayReflectionTypeSet* reflection = nullptr);
   
   /// Load a 3D BDSIM format electric field.
   BDSFieldEInterpolated* LoadBDSIM3DE(const G4String&      filePath,
 				      BDSInterpolatorType  interpolatorType,
 				      const G4Transform3D& transform,
 				      G4double             eScaling,
-                                      const BDSArrayReflectionTypeSet* reflection = nullptr,
-                                      BDSFieldModulator* modulator = nullptr);
+                                      const BDSArrayReflectionTypeSet* reflection = nullptr);
 
   /// Load a 4D BDSIM format electric field.
   BDSFieldEInterpolated* LoadBDSIM4DE(const G4String&      filePath,
@@ -245,8 +238,7 @@ private:
 					G4double             eScaling,
 					G4double             bScaling,
                                         const BDSArrayReflectionTypeSet* eReflection = nullptr,
-                                        const BDSArrayReflectionTypeSet* bReflection = nullptr,
-                                        BDSFieldModulator* modulator = nullptr);
+                                        const BDSArrayReflectionTypeSet* bReflection = nullptr);
 
   /// Load a 2D BDSIM format electro-magnetic field.
   BDSFieldEMInterpolated* LoadBDSIM2DEM(const G4String&      eFilePath,
@@ -257,8 +249,7 @@ private:
 					G4double             eScaling,
 					G4double             bScaling,
                                         const BDSArrayReflectionTypeSet* eReflection = nullptr,
-                                        const BDSArrayReflectionTypeSet* bReflection = nullptr,
-                                        BDSFieldModulator* modulator = nullptr);
+                                        const BDSArrayReflectionTypeSet* bReflection = nullptr);
   
   /// Load a 3D BDSIM format electro-magnetic field.
   BDSFieldEMInterpolated* LoadBDSIM3DEM(const G4String&      eFilePath,
@@ -269,8 +260,7 @@ private:
 					G4double             eScaling,
 					G4double             bScaling,
                                         const BDSArrayReflectionTypeSet* eReflection = nullptr,
-                                        const BDSArrayReflectionTypeSet* bReflection = nullptr,
-                                        BDSFieldModulator* modulator = nullptr);
+                                        const BDSArrayReflectionTypeSet* bReflection = nullptr);
 
   /// Load a 4D BDSIM format electro-magnetic field.
   BDSFieldEMInterpolated* LoadBDSIM4DEM(const G4String&      eFilePath,

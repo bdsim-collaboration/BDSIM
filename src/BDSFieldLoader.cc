@@ -62,7 +62,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagInterpolated2D.hh"
 #include "BDSFieldMagInterpolated3D.hh"
 #include "BDSFieldMagInterpolated4D.hh"
-#include "BDSFieldModulator.hh"
 #include "BDSFieldValue.hh"
 #include "BDSInterpolator1D.hh"
 #include "BDSInterpolator1DCubic.hh"
@@ -145,11 +144,6 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
   G4double                    bScaling = info.BScaling();
   BDSArrayReflectionTypeSet reflection = info.MagneticArrayReflectionType();
   BDSArrayReflectionTypeSet* reflectionPointer = reflection.empty() ? nullptr : &reflection;
-  BDSFieldModulator* modulator = nullptr;
-  if((info.Modulator().compare("") != 0) and ((BDS::IsFinite(info.Frequency())) or (BDS::IsFinite(info.Phase()))))
-  {
-    modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
-  }
   
   BDSFieldMagInterpolated* result = nullptr;
   try
@@ -157,11 +151,11 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
   switch (format.underlying())
     {
     case BDSFieldFormat::bdsim1d:
-      {result = LoadBDSIM1DB(filePath, interpolatorType, transform, bScaling, reflectionPointer, modulator); break;}
+      {result = LoadBDSIM1DB(filePath, interpolatorType, transform, bScaling, reflectionPointer); break;}
     case BDSFieldFormat::bdsim2d:
-      {result = LoadBDSIM2DB(filePath, interpolatorType, transform, bScaling, reflectionPointer, modulator); break;}
+      {result = LoadBDSIM2DB(filePath, interpolatorType, transform, bScaling, reflectionPointer); break;}
     case BDSFieldFormat::bdsim3d:
-      {result = LoadBDSIM3DB(filePath, interpolatorType, transform, bScaling, reflectionPointer, modulator); break;}
+      {result = LoadBDSIM3DB(filePath, interpolatorType, transform, bScaling, reflectionPointer); break;}
     case BDSFieldFormat::bdsim4d:
       {result = LoadBDSIM4DB(filePath, interpolatorType, transform, bScaling, reflectionPointer); break;}
     case BDSFieldFormat::poisson2d:
@@ -232,11 +226,6 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadEField(const BDSFieldInfo& info)
   G4double                    eScaling = info.EScaling();
   BDSArrayReflectionTypeSet reflection = info.ElectricArrayReflectionType();
   BDSArrayReflectionTypeSet* reflectionPointer = reflection.empty() ? nullptr : &reflection;
-  BDSFieldModulator* modulator = nullptr;
-  if((info.Modulator().compare("") != 0) and ((BDS::IsFinite(info.Frequency())) or (BDS::IsFinite(info.Phase()))))
-  {
-    modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
-  }
   
   BDSFieldEInterpolated* result = nullptr;
   try
@@ -244,11 +233,11 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadEField(const BDSFieldInfo& info)
   switch (format.underlying())
     {
     case BDSFieldFormat::bdsim1d:
-      {result = LoadBDSIM1DE(filePath, interpolatorType, transform, eScaling, reflectionPointer, modulator); break;}
+      {result = LoadBDSIM1DE(filePath, interpolatorType, transform, eScaling, reflectionPointer); break;}
     case BDSFieldFormat::bdsim2d:
-      {result = LoadBDSIM2DE(filePath, interpolatorType, transform, eScaling, reflectionPointer, modulator); break;}
+      {result = LoadBDSIM2DE(filePath, interpolatorType, transform, eScaling, reflectionPointer); break;}
     case BDSFieldFormat::bdsim3d:
-      {result = LoadBDSIM3DE(filePath, interpolatorType, transform, eScaling, reflectionPointer, modulator); break;}
+      {result = LoadBDSIM3DE(filePath, interpolatorType, transform, eScaling, reflectionPointer); break;}
     case BDSFieldFormat::bdsim4d:
       {result = LoadBDSIM4DE(filePath, interpolatorType, transform, eScaling, reflectionPointer); break;}
     default:
@@ -280,11 +269,6 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadEMField(const BDSFieldInfo& info)
   BDSArrayReflectionTypeSet* bReflectionPointer = bReflection.empty() ? nullptr : &bReflection;
   BDSArrayReflectionTypeSet eReflection = info.ElectricArrayReflectionType();
   BDSArrayReflectionTypeSet* eReflectionPointer = eReflection.empty() ? nullptr : &eReflection;
-  BDSFieldModulator* modulator = nullptr;
-  if((info.Modulator().compare("") != 0) and ((BDS::IsFinite(info.Frequency())) or (BDS::IsFinite(info.Phase()))))
-  {
-    modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
-  }
 
   // As the different dimension interpolators don't inherit each other, it's very
   // very hard to make a compact polymorphic construction routine here.  In future,
@@ -301,19 +285,19 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadEMField(const BDSFieldInfo& info)
     case BDSFieldFormat::bdsim1d:
       {
         result = LoadBDSIM1DEM(eFilePath, bFilePath, eIntType, bIntType, transform,
-                               eScaling, bScaling, eReflectionPointer, bReflectionPointer, modulator);
+                               eScaling, bScaling, eReflectionPointer, bReflectionPointer);
         break;
       }
     case BDSFieldFormat::bdsim2d:
       {
         result = LoadBDSIM2DEM(eFilePath, bFilePath, eIntType, bIntType, transform,
-                               eScaling, bScaling, eReflectionPointer, bReflectionPointer, modulator);
+                               eScaling, bScaling, eReflectionPointer, bReflectionPointer);
         break;
       }
     case BDSFieldFormat::bdsim3d:
       {
         result = LoadBDSIM3DEM(eFilePath, bFilePath, eIntType, bIntType, transform,
-                               eScaling, bScaling, eReflectionPointer, bReflectionPointer, modulator);
+                               eScaling, bScaling, eReflectionPointer, bReflectionPointer);
         break;
       }
     case BDSFieldFormat::bdsim4d:
@@ -1068,9 +1052,8 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM1DEM(const G4String&      eFile
 						      const G4Transform3D& transform,
 						      G4double             eScaling,
 						      G4double             bScaling,
-                  const                BDSArrayReflectionTypeSet* eReflection,
-                  const                BDSArrayReflectionTypeSet* bReflection,
-                  BDSFieldModulator*   modulator)
+                                                      const BDSArrayReflectionTypeSet* eReflection,
+                                                      const BDSArrayReflectionTypeSet* bReflection)
 {
   G4double    eScalingUnits = eScaling * CLHEP::volt / CLHEP::m;
   G4double    bScalingUnits = bScaling * CLHEP::tesla;
