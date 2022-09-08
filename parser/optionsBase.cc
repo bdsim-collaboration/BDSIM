@@ -232,6 +232,7 @@ OptionsBase::OptionsBase()
 
   // tracking options
   integratorSet            = "bdsimmatrix";
+  fieldModulator           = "";
   lengthSafety             = 1e-9;   // be very careful adjusting this as it affects all the geometry
   lengthSafetyLarge        = 1e-6;   // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
