@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDimensionType.hh"
 #include "BDSFieldEInterpolated3D.hh"
-#include "BDSFieldModulator.hh"
 #include "BDSInterpolator3D.hh"
 
 #include "G4ThreeVector.hh"
@@ -26,8 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSFieldEInterpolated3D::BDSFieldEInterpolated3D(BDSInterpolator3D*   interpolatorIn,
 						 const G4Transform3D& offset,
-						 G4double             eScalingIn,
-             BDSFieldModulator* modulatorIn):
+						 G4double             eScalingIn):
   BDSFieldEInterpolated(interpolatorIn, offset, eScalingIn),
   interpolator(interpolatorIn),
   firstDimensionIndex((interpolatorIn->FirstDimension()).underlying()),
@@ -35,14 +33,12 @@ BDSFieldEInterpolated3D::BDSFieldEInterpolated3D(BDSInterpolator3D*   interpolat
   secondDimensionIndex((interpolatorIn->SecondDimension()).underlying()),
   secondTime((interpolatorIn->SecondDimension()).underlying() > 2),
   thirdDimensionIndex((interpolatorIn->ThirdDimension()).underlying()),
-  thirdTime((interpolatorIn->ThirdDimension()).underlying() > 2),
-  modulator(modulatorIn)
+  thirdTime((interpolatorIn->ThirdDimension()).underlying() > 2)
 {;}
 
 BDSFieldEInterpolated3D::~BDSFieldEInterpolated3D()
 {
   delete interpolator;
-  delete modulator;
 }
 
 G4ThreeVector BDSFieldEInterpolated3D::GetField(const G4ThreeVector& position,
@@ -63,8 +59,5 @@ G4ThreeVector BDSFieldEInterpolated3D::GetField(const G4ThreeVector& position,
     {tCoordinate = t;}
   else
     {tCoordinate = position[thirdDimensionIndex];}
-  G4double modulation = 1.0;
-  if(modulator)
-    {modulation = modulator->GetValue(t);}
-  return interpolator->GetInterpolatedValue(fCoordinate, sCoordinate, tCoordinate) * EScaling() * modulation;
+  return interpolator->GetInterpolatedValue(fCoordinate, sCoordinate, tCoordinate) * EScaling();
 }

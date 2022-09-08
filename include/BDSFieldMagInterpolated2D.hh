@@ -20,13 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSFIELDMAGINTERPOLATED2D_H
 
 #include "BDSFieldMagInterpolated.hh"
-#include "BDSFieldModulator.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
 class BDSInterpolator2D;
-class BDSFieldModulator;
 
 /**
  * @brief A 2D field from an interpolated array with any interpolation.
@@ -45,8 +43,7 @@ public:
   BDSFieldMagInterpolated2D() = delete;
   explicit BDSFieldMagInterpolated2D(BDSInterpolator2D*   interpolatorIn,
 				     const G4Transform3D& offset    = G4Transform3D::Identity,
-				     G4double             scalingIn = 1.0, 
-             BDSFieldModulator* modulatorIn = nullptr);
+				     G4double             scalingIn = 1.0);
 
   virtual ~BDSFieldMagInterpolated2D();
 
@@ -63,7 +60,6 @@ private:
   const G4bool firstTime;            ///< Cache of whether to use time coordinate.
   const G4int  secondDimensionIndex; ///< Integer index to dimension to use.
   const G4bool secondTime;           ///< Cache of whether to use time coordinate.
-  BDSFieldModulator* modulator;
 };
 
 #endif

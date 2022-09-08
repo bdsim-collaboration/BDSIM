@@ -44,8 +44,7 @@ public:
   BDSFieldEInterpolated3D() = delete;
   explicit BDSFieldEInterpolated3D(BDSInterpolator3D*   interpolatorIn,
 				   const G4Transform3D& offset     = G4Transform3D::Identity,
-				   G4double             eScalingIn = 1.0, 
-           BDSFieldModulator* modulatorIn = nullptr);
+				   G4double             eScalingIn = 1.0);
 
   virtual ~BDSFieldEInterpolated3D();
 
@@ -63,7 +62,6 @@ private:
   const G4bool secondTime;           ///< Cache of whether to use time coordinate.
   const G4int  thirdDimensionIndex;  ///< Integer index to dimension to use.
   const G4bool thirdTime;            ///< Cache of whether to use time coordinate.
-  BDSFieldModulator* modulator;
 };
 
 #endif

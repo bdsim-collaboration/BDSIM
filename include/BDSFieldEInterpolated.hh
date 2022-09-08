@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSFIELDEINTERPOLATED_H
 #include "BDSExtent.hh"
 #include "BDSFieldE.hh"
-#include "BDSFieldModulator.hh"
 
 #include "G4Transform3D.hh"
 #include "G4Types.hh"
@@ -39,15 +38,12 @@ public:
   BDSFieldEInterpolated() = delete;
   BDSFieldEInterpolated(const BDSInterpolator* interpolator,
 			const G4Transform3D&   offset,
-			G4double               eScalingIn = 1.0,
-      BDSFieldModulator* modulatorIn = nullptr);
+			G4double               eScalingIn = 1.0);
 
   virtual ~BDSFieldEInterpolated(){;}
   
   inline G4double EScaling() const {return eScaling;}
   inline void     SetEScaling(G4double eScalingIn) {eScaling = eScalingIn;}
-
-  inline void     SetModulator(BDSFieldModulator* modulatorIn) {modulator = modulatorIn;}
 
   /// Extent of field without any offset (ie in its own coordinate frame).
   inline BDSExtent ExtentNoOffset() const {return extentNoOffset;}
@@ -61,7 +57,6 @@ private:
   G4double eScaling; ///< E field scaling value.
   BDSExtent extentNoOffset; ///< Extent without offset.
   G4double smallestSpatialStep;
-  BDSFieldModulator* modulator;
 };
 
 #endif
