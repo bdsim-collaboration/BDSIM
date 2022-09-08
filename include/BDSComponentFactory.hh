@@ -406,7 +406,10 @@ private:
 
   /// Return the modulator definition for a given element if one is specified
   /// in fieldModulator, else return the global default which could also be nullptr.
-  BDSModulatorInfo* ModulatorDefinition(const GMAD::Element* el) const;
+  BDSModulatorInfo* ModulatorDefinition(const GMAD::Element* el, G4bool inDevelopment=false) const; // TBC
+  
+  /// TBC - remove when modulators are implemented fully.
+  void INDEVELOPMENTERROR() const;
   
   /// Pull out the right value - either 'kick' or 'h/vkick' for the appropriate
   /// type of kicker from the current member element.
