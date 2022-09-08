@@ -117,6 +117,7 @@ BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designPart
   thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
   includeFringeFields(BDSGlobalConstants::Instance()->IncludeFringeFields()),
   yokeFields(BDSGlobalConstants::Instance()->YokeFields()),
+  defaultModulator(nullptr),
   currentArcLength(0),
   integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
@@ -132,6 +133,8 @@ BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designPart
   PrepareColours();      // prepare colour definitions from parser
   PrepareCavityModels(); // prepare rf cavity model info from parser
   PrepareCrystals();     // prepare crystal model info from parser
+
+  defaultModulator = BDSFieldFactory::Instance()->GetModulatorDefinition(BDSGlobalConstants::Instance()->FieldModulator());
 }
 
 BDSComponentFactory::~BDSComponentFactory()
@@ -597,7 +600,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
 					       st,
 					       true,
 					       fieldTrans);
-  auto modulator = BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator);
+  auto modulator = ModulatorDefinition(element);
   vacuumField->SetModulatorInfo(modulator); // works even if none
 
   // limit step length in field - crucial to this component
@@ -706,7 +709,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   (*st)["length"] = element->l * CLHEP::m; // arc length
   (*st)["scaling"]= element->scaling;
   AddSynchronousTimeInformation(st, 0); // add no arc length so it's at the beginning
-  auto modulator = BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator);
+  auto modulator = ModulatorDefinition(element);
 
   // quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -775,7 +778,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 					   brho, st, integratorSet,
 					   incomingFaceAngle, outgoingFaceAngle,
 					   includeFringeFields,
-             BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
+					   ModulatorDefinition(element));
   return rbendline;
 }
 
@@ -1040,7 +1043,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 					       st,
 					       true,
 					       fieldTrans);
-  vacuumField->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator)); // works even if none
+  vacuumField->SetModulatorInfo(ModulatorDefinition(element)); // works even if none
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   auto bpInf = PrepareBeamPipeInfo(element);
@@ -1073,7 +1076,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 					       integratorSet,
 					       brho,
 					       ScalingFieldOuter(element),
-					       BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
+					       ModulatorDefinition(element));
     }
   
   if (!HasSufficientMinimumLength(element, false))
@@ -1213,7 +1216,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 					       st,
 					       true,
 					       fieldTrans);
-  vacuumField->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
+  vacuumField->SetModulatorInfo(ModulatorDefinition(element));
   
   BDSMagnet* thinMultipole =  new BDSMagnet(BDSMagnetType::thinmultipole,
 					    elementName,
@@ -1314,8 +1317,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   G4double s = 0.5*(*st)["ks"] * lengthScaling; // already includes scaling
   BDSLine* bLine = new BDSLine(elementName);
   
-  auto modulator = BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator);
-
+  auto modulator = ModulatorDefinition(element);
+  
   if (buildIncomingFringe)
     {
       auto stIn        = strength(s);
@@ -1494,7 +1497,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 				    st,
 				    true,
 				    fieldTrans);
-      outerField->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
+      outerField->SetModulatorInfo(ModulatorDefinition(element));
       auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
       G4double limit = elLength / 20.0;
       auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
@@ -1625,7 +1628,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
                                                    st,
                                                    true,
                                                    fieldTrans);
-  vacuumFieldInfo->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
+  vacuumFieldInfo->SetModulatorInfo(ModulatorDefinition(element));
   //BDSFieldInfo* outerFieldInfo = PrepareMagnetOuterFieldInfo(st, undField, bpInfo, 0, fieldTrans);
   BDSFieldInfo* outerFieldInfo = nullptr;
   // limit step length in field - crucial to this component
@@ -1834,7 +1837,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 				    awakeStrength,
 				    true,
 				    fieldTrans);
-      awakeField->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
+      awakeField->SetModulatorInfo(ModulatorDefinition(element));
     }
   else
     {awakeField = BDSFieldFactory::Instance()->GetDefinition(element->fieldAll);}
@@ -1924,7 +1927,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
 								const G4String& name)
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
-  auto modulator = BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator);
+  auto modulator = ModulatorDefinition(element);
   return CreateThinRMatrix(angleIn, st, name, BDSIntegratorType::rmatrixthin, BDSFieldType::rmatrix, 0, modulator);
 }
 
@@ -1934,7 +1937,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
 								BDSIntegratorType        intType,
 								BDSFieldType             fieldType,
 								G4double                 beamPipeRadius,
-                BDSModulatorInfo*        fieldModulator)
+								BDSModulatorInfo*        fieldModulator)
 {
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
@@ -1977,7 +1980,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCavityFringe(G4double       
 								 BDSMagnetStrength*       st,
 								 const G4String&          name,
 								 G4double                 irisRadius,
-                 BDSModulatorInfo*        fieldModulator)
+								 BDSModulatorInfo*        fieldModulator)
 {
   BDSIntegratorType intType = integratorSet->cavityFringe;
   BDSFieldType fieldType = BDSFieldType::cavityfringe;
@@ -2002,7 +2005,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					       st,
 					       true,
 					       fieldTrans);
-  vacuumField->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(el->fieldModulator));
+  vacuumField->SetModulatorInfo(ModulatorDefinition(el));
 
   BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName + nameSuffix, element, st, bpInfo);
   vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
@@ -2021,7 +2024,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					       integratorSet,
 					       brho,
                                                ScalingFieldOuter(element),
-                                               BDSFieldFactory::Instance()->GetModulatorDefinition(element->fieldModulator));
+					       ModulatorDefinition(element));
     }
 
   return new BDSMagnet(magnetType,
@@ -2708,7 +2711,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  if (info->ProvideGlobal())
 	    {info->SetTransformBeamline(fieldTrans);}
 	  info->CompoundBScaling(ScalingFieldOuter(el));
-	  info->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(el->fieldModulator)); // works even if none
+	  info->SetModulatorInfo(ModulatorDefinition(el)); // works even if none
 	  mag->SetOuterField(info);
 	}
       if (!(el->fieldVacuum.empty()))
@@ -2716,7 +2719,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldVacuum)));
 	  if (info->ProvideGlobal())
 	    {info->SetTransformBeamline(fieldTrans);}
-	  info->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(el->fieldModulator)); // works even if none
+	  info->SetModulatorInfo(ModulatorDefinition(element)); // works even if none
 	  mag->SetVacuumField(info);
 	}
     }
@@ -2727,7 +2730,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldAll)));
 	  if (info->ProvideGlobal())
 	    {info->SetTransformBeamline(fieldTrans);}
-	  info->SetModulatorInfo(BDSFieldFactory::Instance()->GetModulatorDefinition(el->fieldModulator)); // works even if none
+	  info->SetModulatorInfo(ModulatorDefinition(element)); // works even if none
 	  if (el->scalingFieldOuter != 1)
 	    {BDS::Warning("component \"" + el->name + "\" has \"scalingFieldOuter\" != 1.0 -> this will have no effect for \"fieldAll\"");}
 	  component->SetField(info);
@@ -3002,4 +3005,9 @@ void BDSComponentFactory::AddSynchronousTimeInformation(BDSMagnetStrength* st,
                                                         G4double elementArcLength) const
 {
   (*st)["synchronousT0"] =  (currentArcLength + 0.5 * elementArcLength) / CLHEP::c_light;
+}
+
+BDSModulatorInfo* BDSComponentFactory::ModulatorDefinition(const GMAD::Element* el) const
+{
+  return el->fieldModulator.empty() ? defaultModulator : BDSFieldFactory::Instance()->GetModulatorDefinition(el->fieldModulator);
 }

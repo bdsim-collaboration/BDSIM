@@ -213,6 +213,7 @@ private:
   G4double thinElementLength; ///< Length of a thin element.
   G4bool includeFringeFields; ///< Cache of whether to include fringe fields.
   G4bool yokeFields;          ///< Cache of whether to include yoke magnetic fields.
+  BDSModulatorInfo* defaultModulator; ///< Default modulator for all components.
   
   /// Updated each time CreateComponent is called - supplied from outside. Only here to pass around all functions easily.
   G4double currentArcLength;
@@ -403,6 +404,10 @@ private:
   void AddSynchronousTimeInformation(BDSMagnetStrength* st,
                                      G4double elementArcLength) const;
 
+  /// Return the modulator definition for a given element if one is specified
+  /// in fieldModulator, else return the global default which could also be nullptr.
+  BDSModulatorInfo* ModulatorDefinition(const GMAD::Element* el) const;
+  
   /// Pull out the right value - either 'kick' or 'h/vkick' for the appropriate
   /// type of kicker from the current member element.
   void GetKickValue(G4double& hkick,

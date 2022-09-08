@@ -273,6 +273,7 @@ namespace GMAD
 
     // tracking related parameters
     std::string integratorSet;
+    std::string fieldModulator;
     double   lengthSafety;
     double   lengthSafetyLarge;
     double   maximumTrackingTime; ///< Maximum tracking time per track [s].
