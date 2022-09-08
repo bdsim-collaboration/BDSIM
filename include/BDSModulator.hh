@@ -30,7 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * Turn number can also be used and should be accessed through BDSGlobalConstants
  * in the derived class that would wish to use this (static) variable.
  * 
- * @author Laurie Nevay
+ * @author Fabian Metzger
  */
 
 class BDSModulator

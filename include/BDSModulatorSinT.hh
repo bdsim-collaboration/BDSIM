@@ -27,7 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * factor = offset + scale * sin(2pi*frequency*T + phase)
  * 
- * @author Laurie Nevay
+ * @author Fabian Metzger
  */
 
 class BDSModulatorSinT: public BDSModulator
