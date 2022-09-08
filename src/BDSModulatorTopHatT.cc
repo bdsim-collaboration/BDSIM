@@ -26,11 +26,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSModulatorTopHatT::BDSModulatorTopHatT(G4double T0In,
 					 G4double T1In,
-					 G4double amplitudeOffsetIn,
 					 G4double amplitudeScaleIn):
   T0(T0In),
   T1(T1In),
-  offset(amplitudeOffsetIn),
   scale(amplitudeScaleIn)
 {
   if (T1 < T0)
@@ -44,5 +42,5 @@ BDSModulatorTopHatT::BDSModulatorTopHatT(G4double T0In,
 G4double BDSModulatorTopHatT::Factor(const G4ThreeVector& /*xyz*/,
 				 G4double T) const
 {
-  return T <= T1 && T >= T0 ? offset + scale : 0;
+  return T <= T1 && T >= T0 ? scale : 0;
 }

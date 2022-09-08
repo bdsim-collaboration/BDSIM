@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @brief Top-hat modulator as a function of T
  * 
- * factor = amplitudeOffset + amplitudeScale, T0 <= T <= T1 ; else 0
+ * factor = amplitudeScale, T0 <= T <= T1 ; else 0
  * 
  * @author Laurie Nevay
  */
@@ -37,7 +37,6 @@ public:
   BDSModulatorTopHatT() = delete;
   explicit BDSModulatorTopHatT(G4double T0,
 			       G4double T1,
-			       G4double amplitudeOffsetIn  = 0,
 			       G4double amplitudeScaleIn   = 1.0);
   virtual ~BDSModulatorTopHatT() = default;
 
@@ -48,7 +47,6 @@ public:
 private:
   G4double T0;
   G4double T1;
-  G4double offset;
   G4double scale;
 };
 
