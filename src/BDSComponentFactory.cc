@@ -1489,7 +1489,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
     {
       BDSMagnetStrength* st = new BDSMagnetStrength();
       (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-      AddSynchronousTimeInformation(st, elLength);
       BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::muonspoiler);
       G4Transform3D fieldTrans = CreateFieldTransform(element);
       outerField = new BDSFieldInfo(BDSFieldType::muonspoiler,
@@ -1498,7 +1497,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 				    st,
 				    true,
 				    fieldTrans);
-      outerField->SetModulatorInfo(ModulatorDefinition(element));
       auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
       G4double limit = elLength / 20.0;
       auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
