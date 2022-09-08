@@ -19,13 +19,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDEINTERPOLATED3D_H
 #define BDSFIELDEINTERPOLATED3D_H
 #include "BDSFieldEInterpolated.hh"
-#include "BDSFieldModulator.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
 class BDSInterpolator3D;
-class BDSFieldModulator;
 
 /**
  * @brief A 3D field from an interpolated array with any interpolation.
