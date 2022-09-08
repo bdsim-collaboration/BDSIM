@@ -311,6 +311,8 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
     case BDSFieldType::rfcavity:
       {return rfcavity;         break;}
     case BDSFieldType::rf:
+    case BDSFieldType::rfx:
+    case BDSFieldType::rfy:
       {return rf;               break;}
     case BDSFieldType::rmatrix:
       {return rmatrixThin;      break;}

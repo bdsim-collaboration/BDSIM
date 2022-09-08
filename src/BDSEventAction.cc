@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHitSampler.hh"
 #include "BDSHitThinThing.hh"
 #include "BDSOutput.hh"
+#include "BDSModulator.hh"
 #include "BDSNavigatorPlacements.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerPlacementRecord.hh"
@@ -45,6 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectoriesToStore.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryFilter.hh"
+#include "BDSTrajectoryPointHit.hh"
 #include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
 #include "BDSWrapperMuonSplitting.hh"
@@ -62,7 +64,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4THitsMap.hh"
 #include "G4TrajectoryContainer.hh"
 #include "G4TrajectoryPoint.hh"
-#include "BDSTrajectoryPointHit.hh"
 #include "G4TransportationManager.hh"
 
 #include <algorithm>
@@ -98,7 +99,6 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   stops(0),
   cpuStartTime(std::clock_t()),
   primaryAbsorbedInCollimator(false),
-  seedStateAtStart(""),
   currentEventIndex(0),
   eventInfo(nullptr),
   nTracks(0)
@@ -142,6 +142,8 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   BDSStackingAction::energyKilled = 0;
   primaryAbsorbedInCollimator = false; // reset flag
   currentEventIndex = evt->GetEventID();
+
+  BDSModulator::SetEventIndex(currentEventIndex);
   
   // reset navigators to ensure no mis-navigating and that events are truly independent
   BDSAuxiliaryNavigator::ResetNavigatorStates();

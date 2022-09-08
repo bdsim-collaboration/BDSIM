@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorType.hh"
 #include "BDSInterpolatorType.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSModulatorInfo.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -65,12 +66,9 @@ BDSFieldInfo::BDSFieldInfo():
   magneticSubFieldName(""),
   electricSubFieldName(""),
   usePlacementWorldTransform(false),
+  modulatorInfo(nullptr),
   transformBeamline(nullptr),
-  nameOfParserDefinition(""),
-  frequency(0),
-  tOffset(0),
-  phase(0),
-  modulator("")
+  nameOfParserDefinition("")
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -91,10 +89,6 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4double                 timeOffsetIn,
 			   G4bool                   autoScaleIn,
 			   G4UserLimits*            stepLimitIn,
-         G4String                 modulatorIn,
-         G4double                 frequencyIn,
-         G4double                 tOffsetIn,
-         G4double                 phaseIn,
 			   G4double                 poleTipRadiusIn,
 			   G4double                 beamPipeRadiusIn,
 			   G4bool                   leftIn,
@@ -127,12 +121,9 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   magneticSubFieldName(magneticSubFieldNameIn),
   electricSubFieldName(electricSubFieldNameIn),
   usePlacementWorldTransform(false),
+  modulatorInfo(nullptr),
   transformBeamline(nullptr),
-  nameOfParserDefinition(""),
-  frequency(frequencyIn),
-  tOffset(tOffsetIn),
-  phase(phaseIn),
-  modulator(modulatorIn)
+  nameOfParserDefinition("")
 {
   if (transformIn != G4Transform3D::Identity)
     {transform = new G4Transform3D(transformIn);}
@@ -178,12 +169,9 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   magneticSubFieldName(other.magneticSubFieldName),
   electricSubFieldName(other.electricSubFieldName),
   usePlacementWorldTransform(other.usePlacementWorldTransform),
+  modulatorInfo(other.modulatorInfo),
   transformBeamline(nullptr),
-  nameOfParserDefinition(other.nameOfParserDefinition),
-  frequency(other.frequency),
-  tOffset(other.tOffset),
-  phase(other.phase),
-  modulator(other.modulator)
+  nameOfParserDefinition(other.nameOfParserDefinition)
 {
   if (other.transform)
     {transform = new G4Transform3D(*other.transform);}
@@ -258,10 +246,8 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "Second field on left " << info.secondFieldOnLeft        << G4endl;
   out << "Magnetic Sub Field   " << info.magneticSubFieldName     << G4endl;
   out << "Electric Sub Field   " << info.electricSubFieldName     << G4endl;
-  out << "frequency:           " << info.frequency << G4endl;
-  out << "tOffset:             " << info.tOffset << G4endl;
-  out << "phase:               " << info.phase << G4endl;
-  out << "modulator:           " << info.modulator << G4endl;
+  if (info.modulatorInfo)
+    {out << "Modulator            " << *(info.modulatorInfo) << G4endl;}
   out << "Use Placement World Transform " << info.usePlacementWorldTransform << G4endl;
 
   if (info.magnetStrength)

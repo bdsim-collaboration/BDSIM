@@ -333,6 +333,7 @@ void BDSBunchUserFile<T>::EndOfFileAction()
 template<class T>
 void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
 {
+  BDSBunch::RecreateAdvanceToEvent(eventOffset);
   G4cout << "BDSBunchUserFile::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
   if (InputBunchFile.eof())
     {EndOfFileAction();}

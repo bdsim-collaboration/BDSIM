@@ -357,6 +357,7 @@ void Options::PublishMembers()
 
   // options which influence tracking
   publish("integratorSet",            &Options::integratorSet);
+  publish("fieldModulator",           &Options::fieldModulator);
   publish("lengthSafety",             &Options::lengthSafety);
   publish("lengthSafetyLarge",        &Options::lengthSafetyLarge);
   publish("maximumTrackingTime",      &Options::maximumTrackingTime);
