@@ -38,6 +38,7 @@ void Field::clear()
   magneticInterpolator = "cubic";
   electricFile         = "";
   electricInterpolator = "cubic";
+  fieldModulator       = "";
   x         = 0;
   y         = 0;
   z         = 0;
@@ -57,10 +58,6 @@ void Field::clear()
   magneticReflection = "";
   electricReflection = "";
   fieldParameters = "";
-  frequency = 0;
-  tOffset   = 0;
-  phase     = 0;
-  modulator = "";
 }
 
 void Field::PublishMembers()
@@ -75,6 +72,7 @@ void Field::PublishMembers()
   publish("magneticInterpolator", &Field::magneticInterpolator);
   publish("electricFile",         &Field::electricFile);
   publish("electricInterpolator", &Field::electricInterpolator);
+  publish("fieldModulator",       &Field::fieldModulator);
   publish("x",                    &Field::x);
   publish("y",                    &Field::y);
   publish("z",                    &Field::z);
@@ -94,10 +92,6 @@ void Field::PublishMembers()
   publish("magneticReflection",   &Field::magneticReflection);
   publish("electricReflection",   &Field::electricReflection);
   publish("fieldParameters",      &Field::fieldParameters);
-  publish("frequency",            &Field::frequency);
-  publish("tOffset",              &Field::tOffset);
-  publish("phase",                &Field::phase);
-  publish("modulator",            &Field::modulator);
 }
 
 void Field::print()const
@@ -112,6 +106,7 @@ void Field::print()const
 	    << "magneticInterpolator " << magneticInterpolator << std::endl
 	    << "electricFile "         << electricFile         << std::endl
 	    << "electricInterpolator " << electricInterpolator << std::endl
+        << "fieldModulator "       << fieldModulator       << std::endl
 	    << "x, y, z,t "            << x << " " << y << " " << z << " " << t << std::endl
 	    << "phi, theta, psi "      << phi   << " " << theta << " " << psi   << std::endl
 	    << "axisX, Y, Z "          << axisX << " " << axisY << " " << axisZ << std::endl
@@ -123,7 +118,5 @@ void Field::print()const
 	    << "magneticSubField "     << magneticSubField     << std::endl
 	    << "magneticReflection "   << magneticReflection   << std::endl
 	    << "electricReflection "   << electricReflection   << std::endl
-      << "fieldParameters "      << fieldParameters      << std::endl
-      << "frequency, tOffset, phase " << frequency << " " << tOffset << " " << phase << std::endl
-      << "modulator " << modulator << std::endl;
+	    << "fieldParameters "      << fieldParameters      << std::endl;
 }

@@ -61,7 +61,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagSolenoidSheet.hh"
 #include "BDSFieldMagSkewOwn.hh"
 #include "BDSFieldMagZero.hh"
-#include "BDSFieldModulator.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
 #include "BDSGlobalConstants.hh"
@@ -87,12 +86,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetOuterFactoryLHC.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
+#include "BDSModulator.hh"
+#include "BDSModulatorInfo.hh"
+#include "BDSModulatorSinT.hh"
+#include "BDSModulatorTopHatT.hh"
+#include "BDSModulatorType.hh"
 #include "BDSParser.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 #include "BDSFieldMagUndulator.hh"
 
 #include "parser/field.h"
+#include "parser/modulator.h"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4EquationOfMotion.hh"
@@ -162,6 +167,7 @@ BDSFieldFactory::BDSFieldFactory():
   G4double defaultRigidity = std::numeric_limits<double>::max();
   if (designParticle)
     {defaultRigidity = designParticle->BRho();}
+  PrepareModulatorDefinitions(BDSParser::Instance()->GetModulators());
   PrepareFieldDefinitions(BDSParser::Instance()->GetFields(), defaultRigidity);
   useOldMultipoleOuterFields = BDSGlobalConstants::Instance()->UseOldMultipoleOuterFields();
 }
@@ -169,6 +175,8 @@ BDSFieldFactory::BDSFieldFactory():
 BDSFieldFactory::~BDSFieldFactory()
 {
   for (auto& info : parserDefinitions)
+    {delete info.second;}
+  for (auto& info : parserModulatorDefinitions)
     {delete info.second;}
 }
 
@@ -318,13 +326,10 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    G4double(definition.bScaling),
 					    G4double(definition.t*CLHEP::s),
 					    G4bool(definition.autoScale),
-					    fieldLimit,
-              definition.modulator,
-              definition.frequency*CLHEP::hertz,
-              definition.tOffset*CLHEP::s,
-              definition.phase);
+					    fieldLimit);
       info->SetScalingRadius(poleTipRadius);
-
+      info->SetModulatorInfo(GetModulatorDefinition(definition.fieldModulator));
+      
       if (!definition.magneticSubField.empty())
 	{
 	  if (definition.magneticSubField == definition.name)
@@ -358,6 +363,67 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
         }
       parserDefinitions[G4String(definition.name)] = info;
     }
+}
+
+void BDSFieldFactory::PrepareModulatorDefinitions(const std::vector<GMAD::Modulator>& definitions)
+{
+  for (const auto& definition : definitions)
+    {
+      if (definition.type.empty())
+        {
+          G4String msg = "\"type\" not specified in modulator definition \"";
+          msg += definition.name + "\", but required.";
+          throw BDSException(__METHOD_NAME__, msg);
+        }
+      BDSModulatorType modulatorType = BDS::DetermineModulatorType(definition.type);
+      
+      // We can't calculate any global phase here because this one modulator info may
+      // be used by multiple beam line elements at different locations
+      BDSModulatorInfo* info = new BDSModulatorInfo(modulatorType,
+                                                    definition.frequency * CLHEP::hertz,
+                                                    definition.phase * CLHEP::rad,
+                                                    definition.tOffset * CLHEP::s,
+                                                    definition.amplitudeScale,
+                                                    definition.amplitudeOffset,
+                                                    definition.T0,
+                                                    definition.T1);
+      info->nameOfParserDefinition = definition.name;
+      parserModulatorDefinitions[G4String(definition.name)] = info;
+    }
+}
+
+G4double BDSFieldFactory::CalculateGlobalPhase(G4double oscillatorFrequency,
+                                               G4double tOffsetIn)
+{
+  if (!BDS::IsFinite(oscillatorFrequency))
+    {return 0;} // prevent division by 0 for period
+  G4double period = 1. / oscillatorFrequency;
+  G4double nPeriods = tOffsetIn / period;
+  // phase is the remainder from total phase / N*2pi, where n is unknown.
+  G4double integerPart = 0;
+  G4double fractionalPart = std::modf(nPeriods, &integerPart);
+  G4double phaseOffset = fractionalPart * CLHEP::twopi;
+  return phaseOffset;
+}
+
+G4double BDSFieldFactory::CalculateGlobalPhase(const BDSModulatorInfo& modulatorInfo,
+                                               const BDSFieldInfo& fieldInfo)
+{
+  G4double synchronousT0 = 0.0;
+  auto magnetStrength = fieldInfo.MagnetStrength();
+  if (magnetStrength)
+    {synchronousT0 = (*magnetStrength)["synchronousT0"];}
+  
+  // for finite frequency, construct it so that phase is w.r.t. the centre of the cavity
+  // and that it's 0 by default
+  G4double tOffset = 0;
+  if (BDS::IsFinite(modulatorInfo.tOffset)) // use the one specified
+    {tOffset = modulatorInfo.tOffset;}
+  else // this gives 0 phase at the middle of cavity assuming relativistic particle with v = c
+    {tOffset = synchronousT0;}
+  
+  G4double globalPhase = CalculateGlobalPhase(modulatorInfo.frequency, tOffset);
+  return globalPhase;
 }
 
 G4double BDSFieldFactory::ConvertToDoubleWithException(const G4String& value,
@@ -428,13 +494,28 @@ BDSFieldInfo* BDSFieldFactory::GetDefinition(const G4String& name) const
   return result->second;
 }
 
+BDSModulatorInfo* BDSFieldFactory::GetModulatorDefinition(const G4String& modulatorName) const
+{
+  if (modulatorName.empty())
+    {return nullptr;}
+  
+  auto search = parserModulatorDefinitions.find(modulatorName);
+  if (search == parserModulatorDefinitions.end())
+    {
+      G4cerr << __METHOD_NAME__ << "\"" << modulatorName << "\" is not a valid modulator definition name" << G4endl;
+      G4cout << "Defined modulator definitions are:" << G4endl;
+      for (const auto& it : parserModulatorDefinitions)
+        {G4cout << "\"" << it.first << "\"" << G4endl;}
+      throw BDSException(__METHOD_NAME__, "invalid modulator name");
+    }
+  else
+    {return search->second;}
+}
+
 BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
 					      const BDSMagnetStrength* scalingStrength,
 					      const G4String&          scalingKey)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << info << G4endl;
-#endif
   // Forward on to delegate functions for the main types of field
   // such as E, EM and Magnetic
   BDSFieldObjects* field = nullptr;
@@ -521,11 +602,9 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
     case BDSFieldType::bmap4d:
     case BDSFieldType::mokka:
       {
-  BDSFieldModulator* field_modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
 	BDSFieldMagInterpolated* ff = BDSFieldLoader::Instance()->LoadMagField(info,
 									       scalingStrength,
 									       scalingKey);
-  ff->SetModulator(field_modulator);
 	if (ff)
 	  {info.UpdateUserLimitsLengthMaximumStepSize(ff->SmallestSpatialStep(), true);}
 	field = ff;
@@ -744,7 +823,15 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
   // Do this before wrapping in global converter BDSFieldMagGlobal so that the sub-field
   // has it and not the global wrapper.
   if (field)
-    {field->SetTransform(info.TransformComplete());}
+    {
+      field->SetTransform(info.TransformComplete());
+  
+      if (info.ModulatorInfo())
+        {
+          BDSModulator* modulator = CreateModulator(info.ModulatorInfo(), info);
+          field->SetModulator(modulator);
+        }
+    }
   
   if (!info.MagneticSubFieldName().empty() && field)
     {
@@ -782,8 +869,6 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
     case BDSFieldType::ebmap4d:
       {
 	BDSFieldEMInterpolated* ff = BDSFieldLoader::Instance()->LoadEMField(info);
-  BDSFieldModulator* field_modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
-  ff->SetModulator(field_modulator);
 	if (ff)
 	  {info.UpdateUserLimitsLengthMaximumStepSize(ff->SmallestSpatialStep(), true);}
 	field = ff;
@@ -798,7 +883,15 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
   
   // Set transform for local geometry offset
   if (field)
-    {field->SetTransform(info.TransformComplete());}
+    {
+      field->SetTransform(info.TransformComplete());
+  
+      if (info.ModulatorInfo())
+        {
+          BDSModulator* modulator = CreateModulator(info.ModulatorInfo(), info);
+          field->SetModulator(modulator);
+        }
+    }
   
   if (!field)
     {return nullptr;}
@@ -849,6 +942,8 @@ BDSFieldE* BDSFieldFactory::CreateFieldERaw(const BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rf:
+    case BDSFieldType::rfx:
+    case BDSFieldType::rfy:
       {field = new BDSFieldESinusoid(info.MagnetStrength(), info.BRho()); break;}
     case BDSFieldType::emap1d:
     case BDSFieldType::emap2d:
@@ -856,8 +951,6 @@ BDSFieldE* BDSFieldFactory::CreateFieldERaw(const BDSFieldInfo& info)
     case BDSFieldType::emap4d:
       {
 	BDSFieldEInterpolated* ff = BDSFieldLoader::Instance()->LoadEField(info);
-  BDSFieldModulator* field_modulator = new BDSFieldModulator(info.Frequency(), info.TOffset(), info.Phase(), info.Modulator());
-  ff->SetModulator(field_modulator);
 	if (ff)
 	  {info.UpdateUserLimitsLengthMaximumStepSize(ff->SmallestSpatialStep(), true);}
 	field = ff;
@@ -872,7 +965,15 @@ BDSFieldE* BDSFieldFactory::CreateFieldERaw(const BDSFieldInfo& info)
   
   // Set transform for local geometry offset
   if (field)
-    {field->SetTransform(info.TransformComplete());}
+    {
+      field->SetTransform(info.TransformComplete());
+  
+      if (info.ModulatorInfo())
+        {
+          BDSModulator* modulator = CreateModulator(info.ModulatorInfo(), info);
+          field->SetModulator(modulator);
+        }
+    }
   
   if (!info.ElectricSubFieldName().empty() && field)
     {
@@ -1166,5 +1267,55 @@ G4double BDSFieldFactory::GetOuterScaling(const BDSMagnetStrength* st) const
   G4double result = 1.0;
   if (st->KeyHasBeenSet("scalingOuter"))
     {result = (*st)["scalingOuter"];}
+  return result;
+}
+
+BDSModulator* BDSFieldFactory::CreateModulator(const BDSModulatorInfo* modulatorRecipe,
+                                               const BDSFieldInfo& info) const
+{
+  if (!modulatorRecipe)
+    {return nullptr;}
+  BDSModulator* result = nullptr;
+  try
+    {
+      switch (modulatorRecipe->modulatorType.underlying())
+	{
+	case BDSModulatorType::sint:
+	  {
+	    G4double globalPhase = CalculateGlobalPhase(*modulatorRecipe, info);
+	    result = new BDSModulatorSinT(modulatorRecipe->frequency,
+					  globalPhase,
+					  modulatorRecipe->amplitudeOffset,
+					  modulatorRecipe->scale);
+	    break;
+	  }
+	case BDSModulatorType::singlobalt:
+	  {
+	    // calculate phase with no synchronous offset
+	    G4double globalPhase = BDS::IsFinite(modulatorRecipe->phase) ? modulatorRecipe->phase : CalculateGlobalPhase(modulatorRecipe->frequency, modulatorRecipe->tOffset);;
+	    result = new BDSModulatorSinT(modulatorRecipe->frequency,
+					  globalPhase,
+					  modulatorRecipe->amplitudeOffset,
+					  modulatorRecipe->scale);
+	    break;
+	  }
+	case BDSModulatorType::tophatt:
+	  {
+	    result = new BDSModulatorTopHatT(modulatorRecipe->T0,
+					     modulatorRecipe->T1,
+					     modulatorRecipe->scale);
+	    break;
+	  }
+	case BDSModulatorType::none:
+	default:
+	  {break;}
+	}
+    }
+  catch (BDSException& e)
+    {
+      G4String extraMsg = "\nProblem in field definition for component \"" + info.NameOfParserDefinition() + "\"";
+      e.AppendToMessage(extraMsg);
+      throw e;
+    }
   return result;
 }

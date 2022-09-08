@@ -182,6 +182,11 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 	    {*no.second = false;}
 	}
     }
+  
+  // TBC
+  if (options.HasBeenSet("fieldModulator"))
+    {throw BDSException(__METHOD_NAME__, "the option \"fieldModulator\" cannot be used currently - in development");}
+  
 #if G4VERSION_NUMBER > 1079
   if (options.HasBeenSet("scintYieldFactor"))
     {BDS::Warning("The option \"scintYieldFactor\" has no effect with Geant4 11.0 onwards");}

@@ -173,6 +173,10 @@ void Beam::PublishMembers()
   publish("nLinesIgnore",         &Beam::nlinesIgnore); // for consistency
   publish("nlinesSkip",           &Beam::nlinesSkip);
   publish("nLinesSkip",           &Beam::nlinesSkip);   // for consistency
+  
+  publish("bunchFrequency",       &Beam::bunchFrequency);
+  publish("bunchPeriod",          &Beam::bunchPeriod);
+  publish("eventsPerBunch",       &Beam::eventsPerBunch);
 
   // aliases
   publish("distribution",         &Beam::distrType);

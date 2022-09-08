@@ -172,6 +172,8 @@ When defining a :code:`field`, the following parameters can be specified. Exampl
 +----------------------+-----------------------------------------------------------------+
 | electricReflection   | String of white-space separate relfection names to use.         |
 +----------------------+-----------------------------------------------------------------+
+| fieldModulator       | Name of modulator object to apply to the field definition.      |
++----------------------+-----------------------------------------------------------------+
 | x                    | x-offset from element it's attached to                          |
 +----------------------+-----------------------------------------------------------------+
 | y                    | y-offset from element it's attached to                          |
@@ -464,6 +466,98 @@ simplify things.
 
 	    Original dipole field from positive y half (*left*), reflected using
 	    :code:`reflectxzdipole` (*right*). 
+
+
+.. _field-modulators:
+
+Modulators
+**********
+
+It is possible to scale or 'modulate' the field of any component in bdsim using a
+"modulator" object. This conceptually can be a function of time, event number and
+turn number for example. Only certain functions are provided but more can be added
+easily by the developers if required - see :ref:`feature-request`.
+
+* Whatever magnetic or electric field would be provided by the original field object
+  is multiplied by the (scalar) numerical factor from the modulator.
+
+A modulator is defined in the in put as follows: ::
+
+  objectname: modulator, parameter1=value, parameters=value,... ;
+
+The modulator is then 'attahced' to the beam line element in its definition: ::
+
+  m1: modulator, type="sint", frequency=1*kHz, amplitudeOffset=1, phase=pi/2;
+  rf1: rfcavity, l=1*m, frequency=450*MHz, fieldModulator="m1";
+
+The function is described by the :code:`type` parameter which can be one of the following:
+
+* :code:`sint` - sinusoid as a function of (local) time
+* :code:`singlobal` - sinusoid as a function of (global) time with no synchronous offset in time
+* :code:`tophatt` - a top hat function as a function of time
+
+Each is described below.
+
+**sint**
+
+A sinusoidal modulator as a function of time T of the particle. The factor is
+described by the equation:
+
+.. math::
+
+  factor = \text{amplitudeOffset} + \text{amplitudeScale} * \sin (2 \pi f t + \phi)
+
+The oscillator will by default have a zero phase that is synchronous with the centre
+of the object it's attached to in the beam line.
+
+* `tOffset` will take precedence over `phase`
+
++--------------------+------------------------------------------+---------------+--------------+------------+
+| **Parameter**      | **Description**                          | **Required**  | **Default**  | **Units**  |
++====================+==========================================+===============+==============+============+
+| `amplitudeOffset`  | Offset of numerical factor               | No            | 0            | None       |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `amplitudeScale`   | Multiplier of scale                      | No            | 1            | None       |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `frequency`        | Frequency of oscillator in (>= 0)        | Yes           | 0            | Hz         |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `phase`            | Phase relative to synchronous phase      | No            | 0            | rad        |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `tOffset`          | Optional time to use in place of phase   | No            | 0            | s          |
++--------------------+------------------------------------------+---------------+--------------+------------+
+
+**singlobalt**
+
+This has the same equation as `sint`, however, no synchronous offset is added to the phase.
+So, if one instance of this modulator is used on several elements, they will all oscillate
+at the same time with the same phase, so a beam particle may see a different effect as it
+passes each element.
+
+* The same parameters as `sint` apply.
+* `phase` takes precedence over `offsetT`.
+
+
+**tophatt**
+
+A function that is on at a constant value inside a time window and 0 everywhere else in time.
+It is described by the equation:
+
+.. math::
+
+    factor &= \textrm{amplitudeScale} \quad \textrm{if} \quad T0 <= T <= T1 \\
+    factor &= 0 \quad \textrm{otherwise} \\
+
+
+
++--------------------+------------------------------------------+---------------+--------------+------------+
+| **Parameter**      | **Description**                          | **Required**  | **Default**  | **Units**  |
++====================+==========================================+===============+==============+============+
+| `T0`               | Global starting time for 'on'            | Yes           | 0            | s          |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `T1`               | Global time for 'off'                    | Yes           | 0            | s          |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `amplitudeScale`   | Multiplier of scale                      | No            | 1            | None       |
++--------------------+------------------------------------------+---------------+--------------+------------+
 
 
 Integrators

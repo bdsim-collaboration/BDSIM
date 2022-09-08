@@ -55,6 +55,8 @@ New Features
 
 **Beam**
 
+* New bunches feature allows offset in time for different bunches at a given repetition rate
+  or period with a certain number of events at a fixed bunch index generated. See :ref:`beam-bunches`.
 * The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
 * New bunch distribution type `halosigma` that samples a flat halo distribution
@@ -72,6 +74,7 @@ New Features
 
 * A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into
   voxelized geometries.
+* New `rfx` and `rfy` components for transverse RF fields.
 * New `target` beam line component. We could always create a block of material with a closed
   `rcol` but this is more intuitive.
 
@@ -88,6 +91,7 @@ New Features
   See :ref:`fields-transforms`.
 * "linearmag" experimental interpolation.
 * New ability to arbitrarily scale the yoke fields.
+* New `modulator` object to modulate RF components (see :ref:`field-modulators`).
   
 **General**
 
@@ -214,6 +218,7 @@ Bug Fixes
 
 **Beam**
 
+* Fixed time (T) coordinate of beam which wasn't offset if the beam was offset in curvilinear S.
 * Fixed generation of circular beam distribution type. The beam previously was circular but was non-uniform with a strong
   peak at the centre. The distribution is now uniform in x, y, xp & yp.
 * Fixed generation of ring beam distribution type. Similarly to the circular distribution, the beam had a higher density
@@ -369,7 +374,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventHistograms      | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventInfo            | N           | 6               | 6               |
+| BDSOutputROOTEventInfo            | Y           | 7               | 6               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventLoss            | N           | 5               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+

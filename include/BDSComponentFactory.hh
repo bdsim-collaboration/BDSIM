@@ -50,6 +50,7 @@ class BDSFieldInfo;
 class BDSIntegratorSet;
 class BDSMagnet;
 class BDSMagnetOuterInfo;
+class BDSModulatorInfo;
 class BDSParticleDefinition;
 class BDSTiltOffset;
 
@@ -88,7 +89,7 @@ public:
   BDSAcceleratorComponent* CreateComponent(GMAD::Element const* elementIn,
 					   GMAD::Element const* prevElementIn,
 					   GMAD::Element const* nextElementIn,
-					   G4double currentArcLength = 0);
+					   G4double currentArcLengthIn = 0);
   
   /// Public creation for object that dynamically stops all particles once the primary
   /// has completed a certain number of turns.
@@ -130,7 +131,8 @@ public:
   /// Prepare the element horizontal width in Geant4 units - if not set, use the global default.
   static G4double PrepareHorizontalWidth(GMAD::Element const* el,
 					 G4double defaultHorizontalWidth = -1);
-  
+
+  /// Get the scaling factor for a particular outer field depending on the global and individual setting.
   static G4double ScalingFieldOuter(const GMAD::Element* ele);
   
   /// Prepare the field definition for the yoke of a magnet.
@@ -141,7 +143,8 @@ public:
 						   const G4Transform3D&      fieldTransform,
 						   const BDSIntegratorSet*   integratorSetIn,
 						   G4double                  brhoIn,
-						   G4double                  outerFieldScaling = 1.0);
+						   G4double                  outerFieldScaling = 1.0,
+                                                   BDSModulatorInfo*         modulatorInfo = nullptr);
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle
@@ -197,18 +200,23 @@ public:
   /// Utility function to prepare crystal recipe for an element. Produces a unique object
   /// this class doesn't own.
   BDSCrystalInfo* PrepareCrystalInfo(const G4String& crystalName) const;
+  
 private:
   /// No default constructor
   BDSComponentFactory() = delete;
 
   const BDSParticleDefinition* designParticle; ///< Particle w.r.t. which elements are built.
   G4double brho;              ///< Rigidity in T*m (G4units) for beam particles.
-  G4double beta0;             ///< Cache of relativisitic beta for primary particle.
+  G4double beta0;             ///< Cache of relativistic beta for primary particle.
   BDSComponentFactoryUser* userComponentFactory; ///< User component factory if any.
   G4double lengthSafety;      ///< Length safety from global constants.
   G4double thinElementLength; ///< Length of a thin element.
   G4bool includeFringeFields; ///< Cache of whether to include fringe fields.
   G4bool yokeFields;          ///< Cache of whether to include yoke magnetic fields.
+  BDSModulatorInfo* defaultModulator; ///< Default modulator for all components.
+  
+  /// Updated each time CreateComponent is called - supplied from outside. Only here to pass around all functions easily.
+  G4double currentArcLength;
 
   /// Simple setter used to add Beta0 to a strength instance.
   inline void SetBeta0(BDSMagnetStrength* stIn) const {(*stIn)["beta0"] = beta0;} 
@@ -223,8 +231,11 @@ private:
   /// Private enum for kicker types.
   enum class KickerType {horizontal, vertical, general};
   
+  /// Private enum for RF cavity principle accelerating direction
+  enum class RFFieldDirection {x, y, z};
+  
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
-  BDSAcceleratorComponent* CreateRF(G4double currentArcLength);
+  BDSAcceleratorComponent* CreateRF(RFFieldDirection direction);
   BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend();
   BDSAcceleratorComponent* CreateKicker(KickerType type);
@@ -258,7 +269,8 @@ private:
 					     const G4String&          name,
 					     BDSIntegratorType        intType = BDSIntegratorType::rmatrixthin,
 					     BDSFieldType             fieldType = BDSFieldType::rmatrix,
-					     G4double                 beamPipeRadius = 0);
+					     G4double                 beamPipeRadius = 0,
+					     BDSModulatorInfo*        fieldModulator = nullptr);
   BDSAcceleratorComponent* CreateUndulator();
   BDSAcceleratorComponent* CreateDump();
 #ifdef USE_DICOM
@@ -267,7 +279,8 @@ private:
   BDSAcceleratorComponent* CreateCavityFringe(G4double                 angleIn,
 					      BDSMagnetStrength*       stIn,
 					      const G4String&          name,
-					      G4double                 irisRadius);
+					      G4double                 irisRadius,
+					      BDSModulatorInfo*        fieldModulator = nullptr);
 
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
@@ -315,10 +328,10 @@ private:
   /// Utility function to prepare field strength object for rf cavity. This takes a pointer
   /// for both incoming and outgoing strengths that this function will allocate by reference.
   BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* el,
-					   G4double cavityLength,
-					   G4double currentArcLength,
-					   BDSMagnetStrength*& fringeIn,
-					   BDSMagnetStrength*& fringeOut) const;
+                                           BDSFieldType         fieldType,
+					   G4double             cavityLength,
+					   BDSMagnetStrength*&  fringeIn,
+					   BDSMagnetStrength*&  fringeOut) const;
   
   /// Set the field definition on a BDSAcceleratorComponent from the string definition
   /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum
@@ -386,7 +399,18 @@ private:
   /// incoming curvilinear coordinates, so for an rbend with e1=0, the returned
   /// angle will be half the bend angle. For an sbend, with e1=0, it'll be 0.
   G4double IncomingFaceAngle(const GMAD::Element* el) const;
+  
+  /// Update the BDSMagnetStrength key synchronousT0 with the time at the centre of the element.
+  void AddSynchronousTimeInformation(BDSMagnetStrength* st,
+                                     G4double elementArcLength) const;
 
+  /// Return the modulator definition for a given element if one is specified
+  /// in fieldModulator, else return the global default which could also be nullptr.
+  BDSModulatorInfo* ModulatorDefinition(const GMAD::Element* el, G4bool inDevelopment=false) const; // TBC
+  
+  /// TBC - remove when modulators are implemented fully.
+  void INDEVELOPMENTERROR() const;
+  
   /// Pull out the right value - either 'kick' or 'h/vkick' for the appropriate
   /// type of kicker from the current member element.
   void GetKickValue(G4double& hkick,

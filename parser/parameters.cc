@@ -65,6 +65,7 @@ Parameters::Parameters()
   setMap["frequency"] = false;
   setMap["phase"]     = false;
   setMap["tOffset"]   = false;
+  setMap["fieldModulator"] = false;
 
   setMap["kick1"]     = false;
   setMap["kick2"]     = false;
