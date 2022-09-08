@@ -91,6 +91,7 @@ New Features
   See :ref:`fields-transforms`.
 * "linearmag" experimental interpolation.
 * New ability to arbitrarily scale the yoke fields.
+* New `modulator` object to modulate RF components (see :ref:`field-modulators`).
   
 **General**
 
