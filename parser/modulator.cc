@@ -34,7 +34,7 @@ void Modulator::clear()
   phase = 0;
   tOffset = 0;
   amplitudeOffset = 0;
-  amplitudeScale = 0;
+  amplitudeScale = 1.0;
   T0 = 0;
   T1 = 0;
 }
