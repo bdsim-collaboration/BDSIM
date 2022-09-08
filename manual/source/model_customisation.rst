@@ -474,22 +474,25 @@ The modulator is then 'attahced' to the beam line element in its definition: ::
 
 The function is described by the :code:`type` parameter which can be one of the following:
 
-* :code:`sint` - sinusoid as a function of time
-* :code:`tophatt` - a top hat functio as a function of time
+* :code:`sint` - sinusoid as a function of (local) time
+* :code:`singlobal` - sinusoid as a function of (global) time with no synchronous offset in time
+* :code:`tophatt` - a top hat function as a function of time
 
 Each is described below.
 
 **sint**
 
-A sinusoidal modualtor as a function of global T of the particle. The factor is
+A sinusoidal modulator as a function of time T of the particle. The factor is
 described by the equation:
 
 .. math::
 
-  factor = amplitudeOffset + amplitudeScale * \sin (2 \pi f t + \phi)
+  factor = \text{amplitudeOffset} + \text{amplitudeScale} * \sin (2 \pi f t + \phi)
 
 The oscillator will by default have a zero phase that is synchronous with the centre
 of the object it's attached to in the beam line.
+
+* `tOffset` will take precedence over `phase`
 
 +--------------------+------------------------------------------+---------------+--------------+------------+
 | **Parameter**      | **Description**                          | **Required**  | **Default**  | **Units**  |
@@ -505,8 +508,38 @@ of the object it's attached to in the beam line.
 | `tOffset`          | Optional time to use in place of phase   | No            | 0            | s          |
 +--------------------+------------------------------------------+---------------+--------------+------------+
 
+**singlobalt**
+
+This has the same equation as `sint`, however, no synchronous offset is added to the phase.
+So, if one instance of this modulator is used on several elements, they will all oscillate
+at the same time with the same phase, so a beam particle may see a different effect as it
+passes each element.
+
+* The same parameters as `sint` apply.
+* `phase` takes precedence over `offsetT`.
+
 
 **tophatt**
+
+A function that is on at a constant value inside a time window and 0 everywhere else in time.
+It is described by the equation:
+
+.. math::
+
+    factor &= \textrm{amplitudeScale} \quad \textrm{if} \quad T0 <= T <= T1 \\
+    factor &= 0 \quad \textrm{otherwise} \\
+
+
+
++--------------------+------------------------------------------+---------------+--------------+------------+
+| **Parameter**      | **Description**                          | **Required**  | **Default**  | **Units**  |
++====================+==========================================+===============+==============+============+
+| `T0`               | Global starting time for 'on'            | Yes           | 0            | s          |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `T1`               | Global time for 'off'                    | Yes           | 0            | s          |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `amplitudeScale`   | Multiplier of scale                      | No            | 1            | None       |
++--------------------+------------------------------------------+---------------+--------------+------------+
 
 
 Integrators
