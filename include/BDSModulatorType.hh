@@ -33,6 +33,7 @@ struct modulatortypes_def
 {
   enum type {none,
 	     sint,
+	     singlobalt,
 	     tophatt};
 };
 

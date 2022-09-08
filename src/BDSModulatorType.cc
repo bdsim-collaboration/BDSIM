@@ -32,6 +32,7 @@ std::map<BDSModulatorType, std::string>* BDSModulatorType::dictionary =
   new std::map<BDSModulatorType, std::string> ({
 						{BDSModulatorType::none,              "none"},
 						{BDSModulatorType::sint,              "sint"},
+						{BDSModulatorType::singlobalt,        "singlobalt"},
 						{BDSModulatorType::tophatt,           "tophatt"}
     });	
 
@@ -40,6 +41,7 @@ BDSModulatorType BDS::DetermineModulatorType(G4String mType)
   std::map<G4String, BDSModulatorType> types;
   types["none"]             = BDSModulatorType::none;
   types["sint"]             = BDSModulatorType::sint;
+  types["singlobalt"]       = BDSModulatorType::singlobalt;
   types["tophatt"]          = BDSModulatorType::tophatt;
   
   mType = BDS::LowerCase(mType);
