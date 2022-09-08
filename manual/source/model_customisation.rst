@@ -1851,7 +1851,9 @@ geometry can be used in several ways:
 .. note:: If a given geometry file is reused in different components, it will be reloaded on purpose
 	  to generate a unique set of logical volumes so we have the possibility of different fields,
 	  cuts, regions, colours etc. It will only be loaded once though, if the same component
-	  is used repeatedly.
+	  is used repeatedly. **However**, specifically for a `placement`, this can be overridden
+	  by specifying the parameter :code:`dontReloadGeometry` in the placement definition -
+	  see :ref:`placements`.
 
 .. warning:: If including any external geometry, overlaps must be checked in the visualiser by
 	     running :code:`/geometry/test/run` before the model is used for a physics study.
@@ -2127,6 +2129,10 @@ The following parameters may be specified with a placement in BDSIM:
 | fieldAll                | Name of field object definition to be used as the field for the    |
 |                         | whole geometry including all daughter volumes.                     |
 +-------------------------+--------------------------------------------------------------------+
+| dontReloadGeometry      | (Boolean) Purposively circumvent BDSIM's reloading of the same     |
+|                         | geometry file for each placement, i.e. reuse it. This will mean    |
+|                         | any cuts or fields or sensitivity will be the same.                |
++-------------------------+--------------------------------------------------------------------+
 
 
 * Only one of :code:`bdsimElement` or :code:`geometryFile` should be used in a placement.
@@ -2148,6 +2154,9 @@ The following parameters may be specified with a placement in BDSIM:
   is executed from or an absolute path.
 * The main beam line begins at (0,0,0) by default but may be offset.  See
   :ref:`beamline-offset` for more details.
+* :code:`dontReloadGeometry` is useful when you have lots of repeated placements of the same thing
+  that is essentially passive material with the same sensitivity e.g. shielding. Specifically,
+  when you don't want to reload the geometry and don't want to preprocess it.
 
 
 `referenceElementNumber` is the occurrence of that element in the sequence. For example, if a sequence

@@ -134,6 +134,7 @@ as it is in Geant4 (exactly) or by its PDG ID. The follow are available by defau
 * `pi-` or `pi+` or `pi0`
 * `photon` or `gamma`
 * `kaon-`, `kaon+` or `kaon0L`
+* `nu_e`, `nu_mu`, `nu_tau`, `anti_nu_e`, `anti_nu_mu`, `anti_nu_tau`
 
 In fact, the user may specify any particle that is available through the physics list
 used. If given by name, the particle must be given by the Geant4 name exactly (case sensitive).
@@ -2837,7 +2838,8 @@ Physics Processes
 |                                  | default.                                              |
 +----------------------------------+-------------------------------------------------------+
 | minimumKineticEnergy             | A particle below this energy will be killed and the   |
-|                                  | energy deposition recorded at that location [GeV]     |
+|                                  | energy deposition recorded at that location. [GeV]    |
+|                                  | See also, `particlesToExcludeFromCuts`.               |
 +----------------------------------+-------------------------------------------------------+
 | minimumKineticEnergyTunnel       | A particle below this energy in any BDSIM-generated   |
 |                                  | tunnel sections will be killed and the energy         |
@@ -2856,6 +2858,11 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | neutronKineticEnergyLimit        | Minimum allowed energy for neutrons when using the    |
 |                                  | `neutron_tracking_cut` physics list [GeV]             |
++----------------------------------+-------------------------------------------------------+
+| particlesToExcludeFromCuts       | A white space separated string containing PDG IDs for |
+|                                  | particles to be excluded from `minimumKineticEnergy`, |
+|                                  | `minimumRange`, `maximumTrackingTime`, and            |
+|                                  | `maximumTrackLength`. e.g. `"13 -13"`.                |
 +----------------------------------+-------------------------------------------------------+
 | physicsEnergyLimitLow            | Optional lower energy level for all physics models.   |
 |                                  | This is usually 990 eV by default in Geant4. The user |

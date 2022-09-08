@@ -50,6 +50,8 @@ New Features
 * rebdsim will now default to <inputfilename>_ana.root if no outputfile name is specified.
 * Similarly, rebdsimHistoMerge will default to <inputfilename>_histos.root; rebdsimOptics to
   <intputfilename>_optics.root and bdskim to <inputfilename>_skimmed.root.
+* bdsimCombine will now produce an extra tree in the output called "EventCombineInfo" that
+  contains an index to which file the event came from.
 
 **Beam**
 
@@ -62,6 +64,9 @@ New Features
   by `haloXCutOuter` and `haloYCutOuter` respectively. Similar inner and outer cuts of the X and Y
   momentum are also now possible, specified by same options as the position cuts but with a `p`
   after the axis, e.g `haloXpCutOuter`.
+* The radius of the transverse momentum distribution of a circular beam no longer has to be finite.
+  This is useful for generation of an idealised pencil beam.
+* All neutrinos can be used as beam particles now (useful for visualisation of neutrino lines).
 
 **Components**
 
@@ -207,6 +212,13 @@ Bug Fixes
     translation unit
     BDSOutputROOTEventSampler<float>::particleTable;
 
+**Beam**
+
+* Fixed generation of circular beam distribution type. The beam previously was circular but was non-uniform with a strong
+  peak at the centre. The distribution is now uniform in x, y, xp & yp.
+* Fixed generation of ring beam distribution type. Similarly to the circular distribution, the beam had a higher density
+  of particles towards the ring's inner radius. The distribution is now uniform in x & y.
+
 **Biasing**
 
 * Fixed huge amount of print out for bias objects attached to a whole beam line. Now, bias
@@ -240,7 +252,8 @@ Bug Fixes
 * Fix caching of loaded geometry. A loaded piece of geometry will be reloaded (and possibly preprocessed)
   if loaded in another beam line component to ensure we generate a unique set of logical volumes. This
   fixes field maps, biasing, range cuts, regions and more being wrong if the same GDML file was reused
-  in different components.
+  in different components. However, this can be explicitly circumvented with the new parameter
+  :code:`dontReloadGeometry` in a placement.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.
@@ -294,7 +307,7 @@ Bug Fixes
   and the option :code:`buildPoleFaceGeometry` is specified as false, thin pole face kicks will be applied.
 * Fix calculation of the z position in the quadrupole integrator. Previously the step always advanced along z by the
   step length h regardless of the step's direction. Now, it advances along z by the projection of the step h onto
-  the z axis. This change will only produce a noticable impact on particles with a large transverse momentum,
+  the z axis. This change will only produce a noticeable impact on particles with a large transverse momentum,
   particularly those in low energy machines.
 
 **Visualisation**
