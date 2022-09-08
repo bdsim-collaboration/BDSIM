@@ -1289,11 +1289,20 @@ BDSModulator* BDSFieldFactory::CreateModulator(const BDSModulatorInfo* modulator
 					  modulatorRecipe->scale);
 	    break;
 	  }
+	case BDSModulatorType::singlobalt:
+	  {
+	    // calculate phase with no synchronous offset
+	    G4double globalPhase = BDS::IsFinite(modulatorRecipe->phase) ? modulatorRecipe->phase : CalculateGlobalPhase(modulatorRecipe->frequency, modulatorRecipe->tOffset);;
+	    result = new BDSModulatorSinT(modulatorRecipe->frequency,
+					  globalPhase,
+					  modulatorRecipe->amplitudeOffset,
+					  modulatorRecipe->scale);
+	    break;
+	  }
 	case BDSModulatorType::tophatt:
 	  {
 	    result = new BDSModulatorTopHatT(modulatorRecipe->T0,
 					     modulatorRecipe->T1,
-					     modulatorRecipe->amplitudeOffset,
 					     modulatorRecipe->scale);
 	    break;
 	  }
