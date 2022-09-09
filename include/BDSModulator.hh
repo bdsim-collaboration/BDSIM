@@ -47,6 +47,9 @@ public:
   /// Setter for the static counter so we can trace where it's used.
   static void SetEventIndex(G4int eventIndexIn);
   
+  /// Each derived class should override this.
+  virtual G4bool VariesWithTime() const = 0;
+  
 protected:
   static G4int eventIndex;
 };

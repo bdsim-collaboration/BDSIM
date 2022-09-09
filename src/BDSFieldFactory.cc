@@ -60,6 +60,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagSolenoidSheet.hh"
 #include "BDSFieldMagSkewOwn.hh"
+#include "BDSFieldMagUndulator.hh"
 #include "BDSFieldMagZero.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
@@ -94,7 +95,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParser.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
-#include "BDSFieldMagUndulator.hh"
+#include "BDSWarning.hh"
 
 #include "parser/field.h"
 #include "parser/modulator.h"
@@ -829,6 +830,8 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
       if (info.ModulatorInfo())
         {
           BDSModulator* modulator = CreateModulator(info.ModulatorInfo(), info);
+          if (modulator->VariesWithTime() && field->TimeVarying())
+            {BDS::Warning(__METHOD_NAME__, "using a time varying modulation on a time varying field for field \"" + info.NameOfParserDefinition() + "\"");}
           field->SetModulator(modulator);
         }
     }
@@ -889,6 +892,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
       if (info.ModulatorInfo())
         {
           BDSModulator* modulator = CreateModulator(info.ModulatorInfo(), info);
+          if (modulator->VariesWithTime() && field->TimeVarying())
+            {BDS::Warning(__METHOD_NAME__, "using a time varying modulation on a time varying field for field \"" + info.NameOfParserDefinition() + "\"");}
           field->SetModulator(modulator);
         }
     }
@@ -971,6 +976,8 @@ BDSFieldE* BDSFieldFactory::CreateFieldERaw(const BDSFieldInfo& info)
       if (info.ModulatorInfo())
         {
           BDSModulator* modulator = CreateModulator(info.ModulatorInfo(), info);
+          if (modulator->VariesWithTime() && field->TimeVarying())
+            {BDS::Warning(__METHOD_NAME__, "using a time varying modulation on a time varying field for field \"" + info.NameOfParserDefinition() + "\"");}
           field->SetModulator(modulator);
         }
     }

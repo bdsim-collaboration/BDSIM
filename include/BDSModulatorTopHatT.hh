@@ -43,6 +43,8 @@ public:
   /// Returns value of equation in brief at the top of this file.
   virtual G4double Factor(const G4ThreeVector& xyz,
                           G4double T) const;
+  
+  virtual G4bool VariesWithTime() const {return true;}
 
 private:
   G4double T0;
