@@ -50,6 +50,8 @@ public:
 		    G4double phaseOffsetIn);
 
   virtual ~BDSFieldESinusoid(){;}
+  
+  virtual G4bool TimeVarying() const {return true;}
 
   /// Accessor for field value.
   virtual G4ThreeVector GetField(const G4ThreeVector& position,
