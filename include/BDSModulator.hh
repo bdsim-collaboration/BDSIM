@@ -50,6 +50,9 @@ public:
   /// Each derived class should override this.
   virtual G4bool VariesWithTime() const = 0;
   
+  /// Must return the smallest spatial
+  virtual G4double RecommendedMaxStepLength() const = 0;
+  
 protected:
   static G4int eventIndex;
 };

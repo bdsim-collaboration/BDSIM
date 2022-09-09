@@ -20,9 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSModulatorSinT.hh"
 
+#include "CLHEP/Units/PhysicalConstants.h"
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <cmath>
+#include <limits>
 
 BDSModulatorSinT::BDSModulatorSinT(G4double frequencyIn,
 				   G4double phaseIn,
@@ -42,4 +44,15 @@ G4double BDSModulatorSinT::Factor(const G4ThreeVector& /*xyz*/,
 {
   G4double factor = offset + scale*std::sin(angularFrequency*T + phase);
   return factor;
+}
+
+G4double BDSModulatorSinT::RecommendedMaxStepLength() const
+{
+  if (angularFrequency == 0)
+    {return std::numeric_limits<double>::max();}
+  else
+    {
+      G4double wavelength = CLHEP::twopi * CLHEP::c_light / angularFrequency;
+      return wavelength / 20;
+    }
 }

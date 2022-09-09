@@ -45,6 +45,9 @@ public:
                           G4double T) const;
   
   virtual G4bool VariesWithTime() const {return true;}
+  
+  /// Return difference in T0, T1 / 20.
+  virtual G4double RecommendedMaxStepLength() const;
 
 private:
   G4double T0;

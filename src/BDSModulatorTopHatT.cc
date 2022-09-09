@@ -44,3 +44,9 @@ G4double BDSModulatorTopHatT::Factor(const G4ThreeVector& /*xyz*/,
 {
   return T <= T1 && T >= T0 ? scale : 0;
 }
+
+G4double BDSModulatorTopHatT::RecommendedMaxStepLength() const
+{
+  G4double dT = T1 - T0;
+  return dT / 20;
+}
