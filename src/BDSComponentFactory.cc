@@ -2711,7 +2711,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  if (info->ProvideGlobal())
 	    {info->SetTransformBeamline(fieldTrans);}
 	  info->CompoundBScaling(ScalingFieldOuter(el));
-	  info->SetModulatorInfo(ModulatorDefinition(el)); // works even if none
+	  SetModulatorDefinition(el, info);
 	  mag->SetOuterField(info);
 	}
       if (!(el->fieldVacuum.empty()))
@@ -2719,7 +2719,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldVacuum)));
 	  if (info->ProvideGlobal())
 	    {info->SetTransformBeamline(fieldTrans);}
-	  info->SetModulatorInfo(ModulatorDefinition(element)); // works even if none
+	  SetModulatorDefinition(el, info);
 	  mag->SetVacuumField(info);
 	}
     }
@@ -2730,10 +2730,25 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldAll)));
 	  if (info->ProvideGlobal())
 	    {info->SetTransformBeamline(fieldTrans);}
-	  info->SetModulatorInfo(ModulatorDefinition(element)); // works even if none
+	  SetModulatorDefinition(element, info);
 	  if (el->scalingFieldOuter != 1)
 	    {BDS::Warning("component \"" + el->name + "\" has \"scalingFieldOuter\" != 1.0 -> this will have no effect for \"fieldAll\"");}
 	  component->SetField(info);
+	}
+    }
+}
+
+void BDSComponentFactory::SetModulatorDefinition(Element const* el,
+						 BDSFieldInfo* info) const
+{
+  if (!el->fieldModulator.empty())
+    {
+      if (info->ModulatorInfo()) // already exists
+	{throw BDSException(__METHOD_NAME__, "\""+elementName+"\" uses a field map with a modulator but also a modulator\ndouble modulation is not allowed");}
+      else
+	{
+	  auto modDef = ModulatorDefinition(el);
+	  info->SetModulatorInfo(modDef); // works even if none
 	}
     }
 }
