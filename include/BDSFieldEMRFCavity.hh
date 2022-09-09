@@ -52,6 +52,8 @@ public:
   virtual std::pair<G4ThreeVector, G4ThreeVector> GetField(const G4ThreeVector& position,
 							   const G4double       t) const;
   
+  virtual G4bool VariesWithTime() const {return true;}
+  
 private:
   /// Private constructor to force use of provided one.
   BDSFieldEMRFCavity();  
