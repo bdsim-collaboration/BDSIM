@@ -338,6 +338,11 @@ private:
   /// and outer field in place of the one general field.
   void SetFieldDefinitions(GMAD::Element const* el,
 			   BDSAcceleratorComponent* component) const;
+
+  /// Check the info doesn't already have a modulator definition (exception if it does).
+  /// and update it.
+  void SetModulatorDefinition(GMAD::Element const* el,
+			      BDSFieldInfo* info) const;
   
   /// Prepare magnet strength for multipoles
   BDSMagnetStrength* PrepareMagnetStrengthForMultipoles(GMAD::Element const* el) const;
