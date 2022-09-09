@@ -5,7 +5,8 @@ time_varying_field: field, type="emap2d",
 
 m1: modulator, type="sint", frequency=0.1*GHz, phase=pi/2;
 
-time_varying_drift: drift, l=3.0*m, aper1=1.0*m, fieldAll="time_varying_field";
+time_varying_drift: drift, l=3.0*m, aper1=1.0*m, fieldAll="time_varying_field", fieldModulator="m1";
+! ERROR - 2x field modulator (could be a different one) - we don't allow this
 
 l1: line = (time_varying_drift);
 use, l1;
