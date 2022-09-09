@@ -226,6 +226,8 @@ public:
   inline BDSDimensionType FourthDimension() const {return tDimension;}
   /// @}
 
+  virtual G4bool TimeVarying() const {return timeVarying;}
+  
   /// Return the index to be used in array arguments for a given spatial dimension.
   /// e.g. DimensionIndex((spatial) z) -> index 0 for 1D array holding spatial z.
   G4int DimensionIndex(BDSDimensionType spatialDimension) const;
@@ -262,6 +264,7 @@ protected:
   BDSDimensionType zDimension;
   BDSDimensionType tDimension;
   std::array<G4int, 4> dimensions;
+  G4bool timeVarying;
   
 private:
   static void CheckStep(G4double step, const G4String& name);
