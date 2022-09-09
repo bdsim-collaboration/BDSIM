@@ -833,6 +833,7 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
           if (modulator->VariesWithTime() && field->TimeVarying())
             {BDS::Warning(__METHOD_NAME__, "using a time varying modulation on a time varying field for field \"" + info.NameOfParserDefinition() + "\"");}
           field->SetModulator(modulator);
+          info.UpdateUserLimitsLengthMaximumStepSize(modulator->RecommendedMaxStepLength(), true);
         }
     }
   
@@ -895,6 +896,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
           if (modulator->VariesWithTime() && field->TimeVarying())
             {BDS::Warning(__METHOD_NAME__, "using a time varying modulation on a time varying field for field \"" + info.NameOfParserDefinition() + "\"");}
           field->SetModulator(modulator);
+          info.UpdateUserLimitsLengthMaximumStepSize(modulator->RecommendedMaxStepLength(), true);
         }
     }
   
@@ -979,6 +981,7 @@ BDSFieldE* BDSFieldFactory::CreateFieldERaw(const BDSFieldInfo& info)
           if (modulator->VariesWithTime() && field->TimeVarying())
             {BDS::Warning(__METHOD_NAME__, "using a time varying modulation on a time varying field for field \"" + info.NameOfParserDefinition() + "\"");}
           field->SetModulator(modulator);
+          info.UpdateUserLimitsLengthMaximumStepSize(modulator->RecommendedMaxStepLength(), true);
         }
     }
   

@@ -45,6 +45,9 @@ public:
                           G4double T) const;
   
   virtual G4bool VariesWithTime() const {return true;}
+  
+  /// Return the wavlength / 20 of the oscillator.
+  virtual G4double RecommendedMaxStepLength() const;
 
 private:
   G4double angularFrequency;
