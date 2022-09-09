@@ -53,6 +53,10 @@ public:
   virtual std::pair<G4ThreeVector,G4ThreeVector> GetField(const G4ThreeVector& position,
 							  const G4double       t = 0) const = 0;
   
+  /// Each derived class should override this if needs be. Used to warn about
+  /// time modulation with a time-varying field.
+  virtual G4bool TimeVarying() const {return false;}
+  
   /// Implement interface to this class's GetField to fulfill G4ElectroMagneticField
   /// inheritance and allow a BDSFieldEM instance to be passed around in the field
   /// factory even if it's not wrapped in a BDSFieldGlobal instance and is in fact
