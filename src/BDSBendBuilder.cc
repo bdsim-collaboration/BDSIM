@@ -180,7 +180,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 					 st,
 					 true,
 					 fieldTiltOffset);
-    vacuumField->SetModulatorInfo(fieldModulator);
+	  vacuumField->SetModulatorInfo(fieldModulator);
 	  outerField = BDSComponentFactory::PrepareMagnetOuterFieldInfo(st,
 									BDSFieldType::dipole,
 									bpInfo,

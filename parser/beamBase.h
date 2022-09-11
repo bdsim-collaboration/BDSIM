@@ -62,6 +62,7 @@ namespace GMAD
       double bunchFrequency;
       double bunchPeriod;
       int    eventsPerBunch;
+      /// @}
       
       ///@{ initial beam centroid
       double X0, Y0, Z0, S0;
