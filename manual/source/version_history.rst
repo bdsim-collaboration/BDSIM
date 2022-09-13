@@ -187,6 +187,8 @@ General Updates
   functionality as the BDSIM option :code:`samplersSplitLevel`.
 * The green colour for collimators and the new target component has been adjusted very slightly
   to be a little brighter.
+* Parser error messages for samplers have been improved to give line numbers and exact
+  strings in quotes.
 
 Bug Fixes
 ---------

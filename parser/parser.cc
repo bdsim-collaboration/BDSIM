@@ -493,8 +493,8 @@ void Parser::set_sampler(const std::string& name,
       auto itPair = beamline_list.equal_range(name);
       if (itPair.first == itPair.second)
 	{
-	  std::cerr<<"current beamline doesn't contain element "<< name << std::endl;
-	  exit(1);
+	  std::string msg = "parser> SetSampler> current beamline doesn't contain element \"" + name + "\"";
+	  yyerror2(msg.c_str());
 	}
       for (auto it = itPair.first; it != itPair.second; ++it)
 	{
@@ -515,7 +515,7 @@ void Parser::set_sampler(const std::string& name,
 	  
 	      if (elementIt==beamline_list.begin())
 		{
-		  std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+		  std::cout << "parser> SetSampler> WARNING: no element before marker " << name << ", no sampler added" << std::endl;
 		  continue;
 		}
 	    }
@@ -527,8 +527,8 @@ void Parser::set_sampler(const std::string& name,
       auto it = beamline_list.find(name,count);
       if (it==beamline_list.end())
 	{
-	  std::cerr<<"current beamline doesn't contain element "<<name<<" with number "<<count<<std::endl;
-	  exit(1);
+	  std::string msg = "parser> SetSampler> current beamline doesn't contain element \"" + name + "\" with number " + std::to_string(count);
+	  yyerror2(msg.c_str());
 	}
       // if sampler is attached to a marker, really attach it to the previous element with the name of marker
       std::string samplerName = (*it).name;
@@ -541,7 +541,7 @@ void Parser::set_sampler(const std::string& name,
 	      it--;
 	      if (it == beamline_list.begin())
 		{
-		  std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+		  std::cout << "parser> SetSampler> WARNING: no element before marker " << name << ", no sampler added" << std::endl;
 		  return;
 		}
 	    }
