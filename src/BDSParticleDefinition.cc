@@ -228,6 +228,7 @@ std::ostream& operator<<(std::ostream& out, const BDSParticleDefinition& def)
   out << "Momentum:        " << std::setprecision(pre) << def.momentum/CLHEP::GeV          << " GeV" << G4endl;
   out << "Gamma:           " << std::setprecision(pre) << def.gamma                                  << G4endl;
   out << "Beta:            " << std::setprecision(pre) << def.beta                                   << G4endl;
+  out << "FFact:           " << std::setprecision(pre) << def.ffact                                  << G4endl;
   out << "Rigidity (Brho): " << std::setprecision(pre) << def.brho/(CLHEP::tesla*CLHEP::m) << " T*m" << G4endl;
   return out;
 }
