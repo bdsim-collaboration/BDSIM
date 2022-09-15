@@ -33,7 +33,7 @@ struct bunchtypes_def
 {
   enum type {reference, gaussmatrix, gauss, gausstwiss, circle, square, ring, eshell,
 	     halo, composite, userfile, ptc, sixtrack, eventgeneratorfile, sphere,
-	     compositesde, box, bdsimsampler, halosigma};
+	     compositesde, box, bdsimsampler, halosigma, radioactivedecaysource};
 };
 
 typedef BDSTypeSafeEnum<bunchtypes_def,int> BDSBunchType;

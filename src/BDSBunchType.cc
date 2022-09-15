@@ -49,7 +49,8 @@ std::map<BDSBunchType, std::string>* BDSBunchType::dictionary =
       {BDSBunchType::compositesde,"compositespacedirectionenergy"},
       {BDSBunchType::box,         "box"},
       {BDSBunchType::halosigma,   "halosigma"},
-      {BDSBunchType::bdsimsampler, "bdsimsampler"}
+      {BDSBunchType::bdsimsampler, "bdsimsampler"},
+      {BDSBunchType::radioactivedecaysource, "radioactivedecaysource" }
 });
 
 BDSBunchType BDS::DetermineBunchType(G4String distrType)
@@ -76,6 +77,7 @@ BDSBunchType BDS::DetermineBunchType(G4String distrType)
   types["box"]            = BDSBunchType::box;
   types["halosigma"]      = BDSBunchType::halosigma;
   types["bdsimsampler"]   = BDSBunchType::bdsimsampler;
+  types["radioactivedecaysource"] = BDSBunchType::radioactivedecaysource;
 
   distrType = BDS::LowerCase(distrType);
 

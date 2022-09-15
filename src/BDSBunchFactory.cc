@@ -35,6 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunchTwiss.hh"
 #include "BDSBunchType.hh"
 #include "BDSBunchUserFile.hh"
+#include "BDSBunchRadioactiveDecaySource.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSUtilities.hh"
@@ -134,6 +135,8 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
       {bdsBunch = new BDSBunchBox(); break;}
     case BDSBunchType::halosigma:
       {bdsBunch = new BDSBunchHaloFlatSigma(); break;}
+    case BDSBunchType::radioactivedecaysource:
+      {bdsBunch = new BDSBunchRadioactiveDecaySource(); break;}
     default:
       {bdsBunch = new BDSBunch(); break;}
     }

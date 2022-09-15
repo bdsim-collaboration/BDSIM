@@ -110,6 +110,11 @@ namespace GMAD
       ///@{ for the ring beam distribution
       double Rmin, Rmax;
       ///@}
+
+      ///@{ for the radioactiveDecaySource beam distribution
+      std::string radioactiveDecaySourceFile;
+      std::string radioactiveDecaySourceName;
+      ///@}
       
       ///@{ for the halo distribution
       double haloNSigmaXInner;
