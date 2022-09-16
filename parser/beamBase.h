@@ -112,7 +112,6 @@ namespace GMAD
       ///@}
 
       ///@{ for the radioactiveDecaySource beam distribution
-      std::string radioactiveDecaySourceFile;
       std::string radioactiveDecaySourceName;
       ///@}
       

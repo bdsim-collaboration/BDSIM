@@ -51,7 +51,7 @@ void BDSBunchRadioactiveDecaySource::SetOptions(const BDSParticleDefinition* bea
                                      G4Transform3D beamlineTransformIn,
                                      const G4double beamlineSIn)
 {
-    radioactiveDecaySourceFile = beam.radioactiveDecaySourceFile;
+    radioactiveDecaySourceFile = beam.distrFile;
     radioactiveDecaySourceName = beam.radioactiveDecaySourceName;
 
     TFile* myFile = TFile::Open(radioactiveDecaySourceFile.c_str());

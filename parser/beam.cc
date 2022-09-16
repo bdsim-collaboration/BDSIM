@@ -284,7 +284,6 @@ void Beam::PublishMembers()
   publish("Rmax",&Beam::Rmax);
 
   // options for beam distrType="radioactivedecaysource"
-  publish("radioactiveDecaySourceFile",&Beam::radioactiveDecaySourceFile);
   publish("radioactiveDecaySourceName",&Beam::radioactiveDecaySourceName);
 
   // options for beam distrType="halo"
