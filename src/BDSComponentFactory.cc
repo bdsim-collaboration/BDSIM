@@ -2696,7 +2696,9 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
       for (auto comp : *line)
 	{SetFieldDefinitions(el, comp);}
     }
-  if (BDSMagnet* mag = dynamic_cast<BDSMagnet*>(component))
+  // RF can ues fieldVacuum for the cavity field model but this would overwrite it which is wrong
+  BDSMagnet* mag = dynamic_cast<BDSMagnet*>(component);
+  if (mag && el->type != ElementType::_RF)
     {
       if (!(el->fieldAll.empty()))
 	{
