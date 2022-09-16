@@ -1983,7 +1983,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCavityFringe(G4double       
 {
   BDSIntegratorType intType = integratorSet->cavityFringe;
   BDSFieldType fieldType = BDSFieldType::cavityfringe;
-  BDSAcceleratorComponent* cavityFringe = CreateThinRMatrix(angleIn, st, name, intType,fieldType, irisRadius, fieldModulator);
+  BDSAcceleratorComponent* cavityFringe = CreateThinRMatrix(angleIn, st, name, intType, fieldType, irisRadius, fieldModulator);
   return cavityFringe;
 }
 
@@ -2623,6 +2623,8 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   // fringe strengths
   fringeIn  = new BDSMagnetStrength(*st);
   fringeOut = new BDSMagnetStrength(*st);
+  // fringe phase - here the values are copied into the fringe strengths - so only the raw input
+  // phase that are provided from the input that generally modulate the fringe
 
   // if frequency is 0, don't update phase with offset. Fringes should have the same phase.
   if (!BDS::IsFinite(frequency))
@@ -2649,11 +2651,6 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   tOffsetIn  -= tHalfCavity;
   // this gives correct phase at the end of cavity
   tOffsetOut += tHalfCavity;
-
-  G4double phaseOffsetIn  = BDSFieldFactory::CalculateGlobalPhase(frequency, tOffsetIn);
-  G4double phaseOffsetOut = BDSFieldFactory::CalculateGlobalPhase(frequency, tOffsetOut);
-  (*fringeIn)["phase"] = phaseOffsetIn;
-  (*fringeOut)["phase"] = phaseOffsetOut;
   
   return st;
 }
