@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSCavityInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSFieldEMRFCavity.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSUtilities.hh"
@@ -54,7 +56,11 @@ BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldAmplitude,
   cavityRadius(cavityRadiusIn),
   normalisedCavityRadius(j0FirstZero/cavityRadius),
   angularFrequency(CLHEP::twopi * frequencyIn)
-{;}
+{
+  // this would cause NANs to be propagated into tracking which is really bad
+  if (!BDS::IsFinite(cavityRadiusIn) || std::isnan(normalisedCavityRadius) || std::isinf(normalisedCavityRadius))
+    {throw BDSException(__METHOD_NAME__, "no cavity radius supplied - required for pill box model");}
+}
 
 std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4ThreeVector& position,
                                                                      const G4double       t) const
