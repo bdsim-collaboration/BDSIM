@@ -525,6 +525,8 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
     {return field;} // as nullptr
 
   BDSFieldClassType clas = BDS::DetermineFieldClassType(info.FieldType());
+  try
+  {
   switch (clas.underlying())
     {
     case BDSFieldClassType::magnetic:
@@ -538,6 +540,12 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
     default:
       {break;} // this will return nullptr
     }
+  }
+  catch (BDSException& e)
+  {
+    e.AppendToMessage("\nProblem with field possibly named \"" + info.NameOfParserDefinition() + "\"");
+    throw e;
+  }
   return field;
 }
 
