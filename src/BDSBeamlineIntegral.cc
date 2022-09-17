@@ -72,7 +72,7 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
         G4double eField = BDSComponentFactory::EFieldFromElement(&componentAsDefined, thisComponentArcLength);
         switch (tp.underlying())
 	  {
-          case BDSCavityFieldType::constantintz:
+          case BDSCavityFieldType::constantinz:
 	    {
 	      dEk = particleCharge * eField * thisComponentArcLength * cosPhase;
 	      break;

@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace GMAD
 {
-  class Element;
+  struct Element;
 }
 
 /**

@@ -31,7 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template<>
 std::map<BDSCavityFieldType, std::string>* BDSCavityFieldType::dictionary =
   new std::map<BDSCavityFieldType, std::string> ({
-  {BDSCavityFieldType::elliptical,  "constantinz"},
+  {BDSCavityFieldType::constantinz, "constantinz"},
   {BDSCavityFieldType::pillbox,     "pillbox"}
 });
 

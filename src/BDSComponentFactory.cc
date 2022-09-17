@@ -2598,7 +2598,6 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   G4double chordLength   = cavityLength; // length may be reduced for fringe placement.
-  G4double scaling       = el->scaling;
   (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   (*st)["length"]        = chordLength;
   
@@ -2620,7 +2619,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   if ((fieldType == BDSFieldType::rfconstantinx || fieldType == BDSFieldType::rfconstantinty) && BDS::IsFinite(el->E) )
     {throw BDSException(__METHOD_NAME__, "only \"gradient\" is accepted for rfconstantinx or rfconstantinty components and not \"E\"");}
   
-  G4double eField = EFieldFromElement(el, chordLength);
+  G4double eField = EFieldFromElement(el, chordLength); // includes scaling
   (*st)["efield"] = eField / lengthScaling;
 
   G4double frequency = std::abs(el->frequency * CLHEP::hertz);

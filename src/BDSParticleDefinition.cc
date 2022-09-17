@@ -266,14 +266,14 @@ void BDSParticleDefinition::CalculateLorentzFactors()
   beta = std::sqrt(1 - (1./std::pow(gamma,2)) );
 }
 
-void BDSParticleDefinition::ApplyChangeInKineticEnergy(G4double dEK)
+void BDSParticleDefinition::ApplyChangeInKineticEnergy(G4double dEk)
 {
   G4double newEk = kineticEnergy + dEk;
-  if (newEK < 0)
+  if (newEk < 0)
     {
       forwards = !forwards;
       newEk = std::abs(newEk);
-      BDSWarning(__METHOD_NAME__, "particle change of direction");
+      BDS::Warning(__METHOD_NAME__, "particle change of direction");
     }
   SetEnergies(0,newEk,0);
 }
