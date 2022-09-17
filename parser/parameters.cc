@@ -184,6 +184,7 @@ Parameters::Parameters()
   setMap["markAsCollimator"] = false;
   setMap["spec"]           = false;
   setMap["cavityModel"]    = false;
+  setMap["cavityFieldType"] = false;
 
   setMap["dicomDataPath"]  = false;
   setMap["dicomDataFile"]  = false;

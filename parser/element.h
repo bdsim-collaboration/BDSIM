@@ -216,8 +216,9 @@ namespace GMAD
     std::string material;
     std::string namedVacuumVolumes; ///< For imported geometry - identify vacuum volumes.
     bool        markAsCollimator;
-    std::string spec;  ///< arbitrary specification to pass to beamline builder
-    std::string cavityModel; ///< model for rf cavities
+    std::string spec;            ///< Arbitrary specification to pass to beamline builder.
+    std::string cavityModel;     ///< Name of geometry model object for rfconstantinz cavities.
+    std::string cavityFieldType; ///< Name for type of field to use in a cavity.
 
     std::string dicomDataPath; ///< for CT, file for DICOM construction data
     std::string dicomDataFile; ///< for CT, file for DICOM construction data

@@ -244,6 +244,7 @@ void Element::PublishMembers()
   publish("markAsCollimator",    &Element::markAsCollimator);
   publish("spec",                &Element::spec);
   publish("cavityModel",         &Element::cavityModel);
+  publish("cavityFieldType",     &Element::cavityFieldType);
 
   publish("dicomDataPath",       &Element::dicomDataPath);
   publish("dicomDataFile",       &Element::dicomDataFile);
@@ -601,6 +602,7 @@ void Element::flush()
   markAsCollimator = false;
   spec = "";
   cavityModel = "";
+  cavityFieldType = "constantinz";
   
   dicomDataFile = "";
   dicomDataPath = "";
