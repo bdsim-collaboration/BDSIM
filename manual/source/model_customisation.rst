@@ -716,7 +716,7 @@ Inside the domain of the sub-field, only its interpolated value is used. The tra
 and main field is hard and it is left to the user to ensure that the field values are continuous to
 make physical sense.
 
-* Currently only sub-magnetic fields are supported.
+* Currently only sub-magnetic and sub-electric fields are supported (no sub-electromagnetic fields).
 * The tilt or rotation of the field map (with respect to the element it is attached to) does not
   apply to the region of applicability for the sub-field. However, the field is tilted appropriately.
 * The spatial (only) offset (x,y,z) of the sub-field applies to it independently of the offset of the
