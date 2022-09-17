@@ -2575,6 +2575,18 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
   return defaultCI;
 }
 
+G4double BDSComponentFactory::EFieldFromElement(Element const* el,
+                                                G4double cavityLength)
+{
+  G4double eField = 0;
+  G4double scaling = el->scaling;
+  if (BDS::IsFinite(el->gradient))
+    {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
+  else
+    {eField = scaling * el->E * CLHEP::volt / cavityLength;}
+  return eField;
+}
+
 BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*      el,
 							      BDSFieldType        fieldType,
 							      G4double            cavityLength,
@@ -2603,15 +2615,11 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   // scale factor to account for reduced body length due to fringe placement.
   G4double lengthScaling = cavityLength / (element->l * CLHEP::m);
   
-  if (BDS::IsFinite(el->gradient))
-    {(*st)["efield"] = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
-  else
-    {
-      if (fieldType == BDSFieldType::rfx || fieldType == BDSFieldType::rfy)
-        {throw BDSException(__METHOD_NAME__, "only \"gradient\" is accepted for rfx or rfy components and not \"E\"");}
-      (*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;
-    }
-  (*st)["efield"] /= lengthScaling;
+  if ((fieldType == BDSFieldType::rfconstantinx || fieldType == BDSFieldType::rfconstantinty) && BDS::IsFinite(el->E) )
+    {throw BDSException(__METHOD_NAME__, "only \"gradient\" is accepted for rfconstantinx or rfconstantinty components and not \"E\"");}
+  
+  G4double eField = EFieldFromElement(el, chordLength);
+  (*st)["efield"] = eField / lengthScaling;
 
   G4double frequency = std::abs(el->frequency * CLHEP::hertz);
   (*st)["frequency"] = frequency;
