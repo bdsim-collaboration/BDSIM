@@ -85,7 +85,7 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   G4double hMax = -eFieldMax/Z0;
   G4double Bmax = hMax * CLHEP::mu0;
 
-  // Calculating field components.  Frequency in rad/s or /s?
+  // Calculating field components.
   G4double Ez   = eFieldMax * J0r * std::cos(angularFrequency*t + phase);
   G4double Bphi = Bmax * J1r * std::sin(angularFrequency*t + phase);
 
