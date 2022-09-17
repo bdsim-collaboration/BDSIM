@@ -53,21 +53,21 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::solenoidsheet,                "solenoidsheet"},
       {BDSFieldType::dipole,           	           "dipole"},
       {BDSFieldType::quadrupole,       	           "quadrupole"},
-      {BDSFieldType::dipolequadrupole, 	           "dipolequadrupole"},
-      {BDSFieldType::sextupole,        	           "sextupole"},
-      {BDSFieldType::octupole,         	           "octupole"},
-      {BDSFieldType::decapole,         	           "decapole"},
-      {BDSFieldType::multipole,        	           "multipole"},
-      {BDSFieldType::muonspoiler,      	           "muonspoiler"},
-      {BDSFieldType::skewquadrupole,   	           "skewquadrupole"},
-      {BDSFieldType::skewsextupole,    	           "skewsextupole"},
-      {BDSFieldType::skewoctupole,     	           "skewoctupole"},
-      {BDSFieldType::skewdecapole,     	           "skewdecapole"},
-      {BDSFieldType::rfcavity,         	           "rfcavity"},
-      {BDSFieldType::rf,               	           "rf"},
-      {BDSFieldType::rfx,               	         "rfx"},
-      {BDSFieldType::rfy,               	         "rfy"},
-      {BDSFieldType::undulator,               	   "undulator"},
+      {BDSFieldType::dipolequadrupole,             "dipolequadrupole"},
+      {BDSFieldType::sextupole,                    "sextupole"},
+      {BDSFieldType::octupole,                     "octupole"},
+      {BDSFieldType::decapole,                     "decapole"},
+      {BDSFieldType::multipole,                    "multipole"},
+      {BDSFieldType::muonspoiler,                  "muonspoiler"},
+      {BDSFieldType::skewquadrupole,               "skewquadrupole"},
+      {BDSFieldType::skewsextupole,                "skewsextupole"},
+      {BDSFieldType::skewoctupole,                 "skewoctupole"},
+      {BDSFieldType::skewdecapole,                 "skewdecapole"},
+      {BDSFieldType::rfpillbox,                    "rfpillbox"},
+      {BDSFieldType::rfconstantinz,                "rfconstantinz"},
+      {BDSFieldType::rfconstantinx,                "rfconstantinx"},
+      {BDSFieldType::rfconstantinty,               "rfconstantinty"},
+      {BDSFieldType::undulator,                    "undulator"},
       {BDSFieldType::rmatrix,                      "rmatrix"},
       {BDSFieldType::paralleltransporter,          "paralleltransporter"},
       {BDSFieldType::cavityfringe,                 "cavityfringe"},
@@ -83,8 +83,8 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::skewmultipoleouterdecapole,   "skewmultipoleouterdecapole"},
       {BDSFieldType::multipoleouterdipole3d,       "multipoleouterdipole3d"},
       {BDSFieldType::multipoleouterdipolelhc,      "multipoleouterdipolelhc"},
-      {BDSFieldType::multipoleouterquadrupolelhc, "multipoleouterquadrupolelhc"},
-      {BDSFieldType::multipoleoutersextupolelhc,  "multipoleoutersextupolelhc"}
+      {BDSFieldType::multipoleouterquadrupolelhc,  "multipoleouterquadrupolelhc"},
+      {BDSFieldType::multipoleoutersextupolelhc,   "multipoleoutersextupolelhc"}
 });	
 
 BDSFieldType BDS::DetermineFieldType(G4String bType)
@@ -122,10 +122,10 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["skewsextupole"]    = BDSFieldType::skewsextupole;
   types["skewoctupole"]     = BDSFieldType::skewoctupole;
   types["skewdecapole"]     = BDSFieldType::skewdecapole;
-  types["rfcavity"]         = BDSFieldType::rfcavity;
-  types["rf"]               = BDSFieldType::rf;
-  types["rfx"]              = BDSFieldType::rfx;
-  types["rfy"]              = BDSFieldType::rfy;
+  types["rfpillbox"]        = BDSFieldType::rfpillbox;
+  types["rfconstantinz"]    = BDSFieldType::rfconstantinz;
+  types["rfconstantinx"]    = BDSFieldType::rfconstantinx;
+  types["rfconstantinty"]   = BDSFieldType::rfconstantinty;
   types["undulator"]        = BDSFieldType::undulator;
   types["rmatrix"]          = BDSFieldType::rmatrix;
   types["paralleltransporter"] = BDSFieldType::paralleltransporter;

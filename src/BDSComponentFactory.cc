@@ -545,11 +545,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
   switch (direction)
     {// simple sinusoidal E field only
     case RFFieldDirection::x:
-      {fieldType = BDSFieldType::rfx; break;}
+      {fieldType = BDSFieldType::rfconstantinx; break;}
     case RFFieldDirection::y:
-      {fieldType = BDSFieldType::rfy; break;}
+      {fieldType = BDSFieldType::rfconstantinty; break;}
     case RFFieldDirection::z:
-      {fieldType = BDSFieldType::rf; break;}
+      {fieldType = BDSFieldType::rfconstantinz; break;}
     }
   // optional more complex cavity field along z
   if (!(element->fieldVacuum.empty()))
@@ -566,7 +566,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
   // use cavity fringe option, includeFringeFields does not affect cavity fringes
   G4bool buildCavityFringes = BDSGlobalConstants::Instance()->IncludeFringeFieldsCavities();
   // don't build fringes for transverse rf cavities - none provided
-  if (fieldType == BDSFieldType::rfx || fieldType == BDSFieldType::rfy)
+  if (fieldType == BDSFieldType::rfconstantinx || fieldType == BDSFieldType::rfconstantinty)
     {buildCavityFringes = false;}
 
   G4bool buildIncomingFringe = buildCavityFringes;
@@ -2590,11 +2590,11 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   
   switch (fieldType.underlying())
     {
-    case BDSFieldType::rf:
+    case BDSFieldType::rfconstantinz:
       {(*st)["ez"] = 1.0; break;}
-    case BDSFieldType::rfx:
+    case BDSFieldType::rfconstantinx:
       {(*st)["ex"] = 1.0; break;}
-    case BDSFieldType::rfy:
+    case BDSFieldType::rfconstantinty:
       {(*st)["ey"] = 1.0; break;}
     default:
       {(*st)["ez"] = 1.0; break;}
