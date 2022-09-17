@@ -30,7 +30,7 @@ class BDSCavityInfo;
 class BDSMagnetStrength;
 
 /**
- * @brief Pill box cavity electro-magnetic field.
+ * @brief Pill box cavity electromagnetic field.
  *
  * @author Stuart Walker
  */
