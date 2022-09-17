@@ -90,8 +90,8 @@ namespace BDS
 			 BDSIntegratorType::decapole,         // decapole
 			 BDSIntegratorType::g4classicalrk4,   // thick multipole
 			 BDSIntegratorType::g4classicalrk4,   // muon spoiler
-			 BDSIntegratorType::g4classicalrk4,   // rfcavity
-			 BDSIntegratorType::g4classicalrk4,   // rf
+			 BDSIntegratorType::g4classicalrk4,   // rfpillbox
+			 BDSIntegratorType::g4classicalrk4,   // rfconstantinz
 			 BDSIntegratorType::g4classicalrk4,   // general
 			 BDSIntegratorType::g4classicalrk4,   // skew quadrupole
 			 BDSIntegratorType::g4classicalrk4,   // skew sextupole
@@ -115,8 +115,8 @@ namespace BDS
 			 BDSIntegratorType::euler,            // decapole
 			 BDSIntegratorType::g4classicalrk4,   // (thick) multipole
 			 BDSIntegratorType::g4classicalrk4,   // muonspoiler
-			 BDSIntegratorType::g4classicalrk4,   // rfcavity
-			 BDSIntegratorType::g4classicalrk4,   // rf
+			 BDSIntegratorType::g4classicalrk4,   // rfpillbox
+			 BDSIntegratorType::g4classicalrk4,   // rfconstantinz
 			 BDSIntegratorType::g4classicalrk4,   // general
 			 BDSIntegratorType::g4classicalrk4,   // skew quadrupole
 			 BDSIntegratorType::g4classicalrk4,   // skew sextupole
@@ -140,8 +140,8 @@ namespace BDS
 			 BDSIntegratorType::euler,               // decapole
 			 BDSIntegratorType::g4classicalrk4,      // thick multipole
 			 BDSIntegratorType::g4classicalrk4,      // muon spoiler
-			 BDSIntegratorType::g4classicalrk4,      // rfcavity
-			 BDSIntegratorType::g4classicalrk4,      // rf
+			 BDSIntegratorType::g4classicalrk4,      // rfpillbox
+			 BDSIntegratorType::g4classicalrk4,      // rfconstantinz
 			 BDSIntegratorType::g4classicalrk4,      // general
 			 BDSIntegratorType::g4classicalrk4,      // skew quadrupole
 			 BDSIntegratorType::g4classicalrk4,      // skew sextupole
@@ -164,8 +164,8 @@ namespace BDS
 			 BDSIntegratorType::euler,               // decapole
 			 BDSIntegratorType::g4classicalrk4,      // thick multipole
 			 BDSIntegratorType::g4classicalrk4,      // muon spoiler
-			 BDSIntegratorType::g4classicalrk4,      // rfcavity
-			 BDSIntegratorType::g4classicalrk4,      // rf
+			 BDSIntegratorType::g4classicalrk4,      // rfpillbox
+			 BDSIntegratorType::g4classicalrk4,      // rfconstantinz
 			 BDSIntegratorType::g4classicalrk4,      // general
 			 BDSIntegratorType::g4classicalrk4,      // skew quadrupole
 			 BDSIntegratorType::g4classicalrk4,      // skew sextupole
@@ -188,8 +188,8 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4,    // decapole
 			 BDSIntegratorType::g4classicalrk4,    // thick multipole
 			 BDSIntegratorType::g4classicalrk4,    // muon spoiler
-			 BDSIntegratorType::g4classicalrk4,    // rfcavity
-			 BDSIntegratorType::g4classicalrk4,    // rf
+			 BDSIntegratorType::g4classicalrk4,    // rfpillbox
+			 BDSIntegratorType::g4classicalrk4,    // rfconstantinz
 			 BDSIntegratorType::g4classicalrk4,    // general
 			 BDSIntegratorType::g4classicalrk4,    // skew quadrupole
 			 BDSIntegratorType::g4classicalrk4,    // skew sextupole
@@ -213,8 +213,8 @@ namespace BDS
 			 BDSIntegratorType::g4dormandprince745, // decapole
 			 BDSIntegratorType::g4dormandprince745, // thick multipole
 			 BDSIntegratorType::g4dormandprince745, // muon spoiler
-			 BDSIntegratorType::g4dormandprince745, // rfcavity
-			 BDSIntegratorType::g4dormandprince745, // rf
+			 BDSIntegratorType::g4dormandprince745, // rfpillbox
+			 BDSIntegratorType::g4dormandprince745, // rfconstantinz
 			 BDSIntegratorType::g4dormandprince745, // general
 			 BDSIntegratorType::g4dormandprince745, // skew quadrupole
 			 BDSIntegratorType::g4dormandprince745, // skew sextupole
@@ -308,11 +308,11 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
       {return skewOctupole;     break;}
     case BDSFieldType::skewdecapole:
       {return skewDecapole;     break;}
-    case BDSFieldType::rfcavity:
+    case BDSFieldType::rfpillbox:
       {return rfcavity;         break;}
-    case BDSFieldType::rf:
-    case BDSFieldType::rfx:
-    case BDSFieldType::rfy:
+    case BDSFieldType::rfconstantinz:
+    case BDSFieldType::rfconstantinx:
+    case BDSFieldType::rfconstantinty:
       {return rf;               break;}
     case BDSFieldType::rmatrix:
       {return rmatrixThin;      break;}
