@@ -196,7 +196,12 @@ public:
   /// Check whether the pole face rotation angles are too big for practical construction.
   static void PoleFaceRotationsNotTooLarge(const GMAD::Element* el,
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
-
+  
+  /// Get either the "gradient" member or the voltage and divide by the cavityLength
+  /// argument (provided in case of reduced length) to get the E field in Geant4 units.
+  static G4double EFieldFromElement(GMAD::Element const* el,
+                                    G4double cavityLength);
+  
   /// Utility function to prepare crystal recipe for an element. Produces a unique object
   /// this class doesn't own.
   BDSCrystalInfo* PrepareCrystalInfo(const G4String& crystalName) const;
