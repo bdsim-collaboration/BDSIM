@@ -624,6 +624,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
   // update 0 point of field with geometry
+  // this relies on BDSFieldInfo not copying the strength so when we update the contents of *st
+  // it is applied inside vaccumFieldInfo
   (*st)["equatorradius"] = cavityInfo->equatorRadius;
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
 
