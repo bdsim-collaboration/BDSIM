@@ -462,7 +462,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 									   prevElement,
 									   nextElement,
                      *integral);
-      if(temp)
+      if (temp)
 	{
           G4bool forceNoSamplerOnThisElement = false;
           if ((!canSampleAngledFaces) && (BDS::IsFinite((*elementIt).e2)))
@@ -1204,11 +1204,11 @@ void BDSDetectorConstruction::BuildPhysicsBias()
     {return;} // no biasing used -> dont attach as just overhead for no reason
   
   // apply per element biases
-  std::map<G4String, BDSAcceleratorComponent*> allAcceleratorComponents = registry->AllComponentsIncludingUnique();
+  std::unordered_map<ACRegistryKey, BDSAcceleratorComponent*> allAcceleratorComponents = registry->AllComponentsIncludingUnique();
   for (auto const & item : allAcceleratorComponents)
     {
       if (debug)
-        {G4cout << __METHOD_NAME__ << "checking component named: " << item.first << G4endl;}
+        {G4cout << __METHOD_NAME__ << "checking component named: " << item.first.componentName << G4endl;}
       BDSAcceleratorComponent* accCom = item.second;
       BDSLine* l = dynamic_cast<BDSLine*>(accCom);
       if (l)
