@@ -2581,14 +2581,18 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
 }
 
 G4double BDSComponentFactory::EFieldFromElement(Element const* el,
-                                                G4double cavityLength)
+                                                G4double cavityLength,
+                                                G4double brho)
 {
+  // the sign of the field to be accelerating is handled inside
   G4double eField = 0;
   G4double scaling = el->scaling;
+  G4int acceleratingFieldDirectionFactor = BDS::Sign(brho);
   if (BDS::IsFinite(el->gradient))
     {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
   else
     {eField = scaling * el->E * CLHEP::volt / cavityLength;}
+  eField *= acceleratingFieldDirectionFactor;
   return eField;
 }
 
@@ -2622,7 +2626,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   if ((fieldType == BDSFieldType::rfconstantinx || fieldType == BDSFieldType::rfconstantinty) && BDS::IsFinite(el->E) )
     {throw BDSException(__METHOD_NAME__, "only \"gradient\" is accepted for rfconstantinx or rfconstantinty components and not \"E\"");}
   
-  G4double eField = EFieldFromElement(el, chordLength); // includes scaling
+  G4double eField = EFieldFromElement(el, chordLength, integralUpToThisComponent->designParticle.BRho()); // includes scaling
   (*st)["efield"] = eField / lengthScaling;
 
   G4double frequency = std::abs(el->frequency * CLHEP::hertz);

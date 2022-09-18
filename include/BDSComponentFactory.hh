@@ -199,8 +199,11 @@ public:
   
   /// Get either the "gradient" member or the voltage and divide by the cavityLength
   /// argument (provided in case of reduced length) to get the E field in Geant4 units.
+  /// BRho is required to ensure the field is accelerating for the given particle. This
+  /// is a static function so we can't use the member variable integral.
   static G4double EFieldFromElement(GMAD::Element const* el,
-                                    G4double cavityLength);
+                                    G4double cavityLength,
+                                    G4double brho);
   
   /// Utility function to prepare crystal recipe for an element. Produces a unique object
   /// this class doesn't own.

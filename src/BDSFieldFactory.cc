@@ -874,7 +874,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rfpillbox:
-      {field = new BDSFieldEMRFCavity(info.MagnetStrength(), info.BRho()); break;}
+      {field = new BDSFieldEMRFCavity(info.MagnetStrength()); break;}
     case BDSFieldType::ebmap1d:
     case BDSFieldType::ebmap2d:
     case BDSFieldType::ebmap3d:
@@ -959,7 +959,7 @@ BDSFieldE* BDSFieldFactory::CreateFieldERaw(const BDSFieldInfo& info)
     case BDSFieldType::rfconstantinz:
     case BDSFieldType::rfconstantinx:
     case BDSFieldType::rfconstantinty:
-      {field = new BDSFieldESinusoid(info.MagnetStrength(), info.BRho()); break;}
+      {field = new BDSFieldESinusoid(info.MagnetStrength()); break;}
     case BDSFieldType::emap1d:
     case BDSFieldType::emap2d:
     case BDSFieldType::emap3d:

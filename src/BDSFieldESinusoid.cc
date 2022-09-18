@@ -27,16 +27,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSFieldESinusoid::BDSFieldESinusoid(BDSMagnetStrength const* strength,
-				     G4double                 brho):
+BDSFieldESinusoid::BDSFieldESinusoid(BDSMagnetStrength const* strength):
   BDSFieldESinusoid((*strength)["efield"],
 		    G4ThreeVector( (*strength)["ex"], (*strength)["ey"], (*strength)["ez"]),
 		    (*strength)["frequency"],
 		    (*strength)["phase"])
-{
-  G4int sign = BDS::Sign(brho);
-  eField *= sign;
-}
+{;}
 
 BDSFieldESinusoid::BDSFieldESinusoid(G4double eFieldAmplitudeIn,
                                      const G4ThreeVector& unitDirectionIn,

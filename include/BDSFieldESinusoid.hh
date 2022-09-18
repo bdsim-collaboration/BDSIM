@@ -40,8 +40,7 @@ class BDSFieldESinusoid: public BDSFieldE
 public:
   BDSFieldESinusoid() = delete;
   /// Construct with a BDSMagnetStrength instance for convenience.
-  BDSFieldESinusoid(BDSMagnetStrength const* strength,
-		    G4double                 brho);
+  explicit BDSFieldESinusoid(BDSMagnetStrength const* strength);
 
   /// Construct from E amplitude, unit direction vector, frequency (G4Units) and phase.
   BDSFieldESinusoid(G4double eFieldAmplitude,
