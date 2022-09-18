@@ -43,7 +43,8 @@ public:
   BDSBeamlineIntegral() = delete;
   explicit BDSBeamlineIntegral(const BDSParticleDefinition& incomingParticle,
 			       G4double T0In = 0,
-			       G4double integratedArcLength = 0);
+			       G4double integratedArcLength = 0,
+			       G4bool   integrateKineticEnergyIn = true);
   ~BDSBeamlineIntegral();
 
   /// Increment all quantities in this class by adding this element
@@ -60,6 +61,7 @@ public:
   /// element. Similar to above function.
   G4double ProvideSynchronousTAtEndOfNextElement(const GMAD::Element* el) const;
   
+  G4bool   integrateKineticEnergy; ///< On by default, but allow control to not integrate it for old behaviour.
   G4double synchronousTAtEnd;
   G4double synchronousTAtMiddleOfLastElement;
   G4double arcLength;

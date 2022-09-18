@@ -36,7 +36,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSBeamlineIntegral::BDSBeamlineIntegral(const BDSParticleDefinition& incomingParticle,
 					 G4double T0In,
-					 G4double integratedArcLength):
+					 G4double integratedArcLength,
+					 G4bool   integrateKineticEnergyIn):
+  integrateKineticEnergy(integrateKineticEnergyIn),
   synchronousTAtEnd(T0In),
   synchronousTAtMiddleOfLastElement(T0In),
   arcLength(integratedArcLength),
@@ -97,7 +99,8 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
     }
   
   // momentum and therefore BRho
-  designParticle.ApplyChangeInKineticEnergy(dEk);
+  if (integrateKineticEnergy)
+    {designParticle.ApplyChangeInKineticEnergy(dEk);}
 
   G4double v1 = designParticle.Velocity(); // velocity at the end
   G4double vMean = (v1 + v0) / 2.0;

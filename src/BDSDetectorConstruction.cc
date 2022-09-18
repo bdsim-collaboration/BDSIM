@@ -316,9 +316,10 @@ void BDSDetectorConstruction::BuildBeamlines()
   // build main beam line
   if (verbose || debug)
     {G4cout << "parsing the beamline element list..."<< G4endl;}
-  G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
+  auto g = BDSGlobalConstants::Instance();
+  G4Transform3D initialTransform = g->BeamlineTransform();
   
-  BDSBeamlineIntegral startingPoint(*designParticle, 0, BDSGlobalConstants::Instance()->BeamlineS());
+  BDSBeamlineIntegral startingPoint(*designParticle, 0, g->BeamlineS(), g->ScaleRigidityWithMomentum());
   BDSBeamlineIntegral* finishingPoint = new BDSBeamlineIntegral(startingPoint);
   
   BDSBeamlineSet mainBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
@@ -366,7 +367,7 @@ void BDSDetectorConstruction::BuildBeamlines()
       
       /// TODO - we use the initial design particle... if this splits off the main beam line it
       /// should be the particle at that point
-      BDSBeamlineIntegral thisBeamlineStartingPoint(startingPoint.designParticle, 0, startS);
+      BDSBeamlineIntegral thisBeamlineStartingPoint(startingPoint.designParticle, 0, startS, g->ScaleRigidityWithMomentum());
       BDSBeamlineIntegral* thisBeamlineFinishingPoint = new BDSBeamlineIntegral(thisBeamlineStartingPoint);
 
       // aux beam line must be non-circular by definition to branch off of beam line (for now)

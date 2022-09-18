@@ -141,6 +141,7 @@ OptionsBase::OptionsBase()
   yokeFieldsMatchLHCGeometry = true;
   useOldMultipoleOuterFields = false;
   scalingFieldOuter    = 1.0;
+  scaleRigidityWithMomentum = true;
   
   // beam pipe / aperture
   beampipeThickness    = 0.0025;
