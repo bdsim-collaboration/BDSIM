@@ -158,6 +158,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 							      Element const* nextElementIn,
 							      BDSBeamlineIntegral& integral)
 {
+  switch (elementIn->type)
+  {
+    case ElementType::_MARKER:
+    case ElementType::_LINE:
+    case ElementType::_REV_LINE:
+      {return nullptr;}
+    default:
+      {break;}
+  }
+  
   element = elementIn;
   prevElement = prevElementIn;
   nextElement = nextElementIn;
