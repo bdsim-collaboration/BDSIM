@@ -196,7 +196,7 @@ void BDSVisFieldModel::DescribeYourselfTo(G4VGraphicsScene& sceneHandler)
 	  for (const auto& xyzBE: xyzBEs)
 	    {
 	      // x y z Bx By Bz Ex Ey Ez
-	      G4ThreeVector E(xyzBE[3], xyzBE[4], xyzBE[5]);
+	      G4ThreeVector E(xyzBE[6], xyzBE[7], xyzBE[8]);
 	      G4ThreeVector unitE = E.unit();
 	      G4double eMag = E.mag();
 	      G4ThreeVector midPoint(xyzBE[0], xyzBE[1], xyzBE[2]);
