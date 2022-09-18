@@ -312,7 +312,7 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
       {return rfcavity;         break;}
     case BDSFieldType::rfconstantinz:
     case BDSFieldType::rfconstantinx:
-    case BDSFieldType::rfconstantinty:
+    case BDSFieldType::rfconstantiny:
       {return rf;               break;}
     case BDSFieldType::rmatrix:
       {return rmatrixThin;      break;}

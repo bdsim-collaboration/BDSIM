@@ -66,7 +66,7 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::rfpillbox,                    "rfpillbox"},
       {BDSFieldType::rfconstantinz,                "rfconstantinz"},
       {BDSFieldType::rfconstantinx,                "rfconstantinx"},
-      {BDSFieldType::rfconstantinty,               "rfconstantinty"},
+      {BDSFieldType::rfconstantiny,                "rfconstantiny"},
       {BDSFieldType::undulator,                    "undulator"},
       {BDSFieldType::rmatrix,                      "rmatrix"},
       {BDSFieldType::paralleltransporter,          "paralleltransporter"},
@@ -125,7 +125,7 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["rfpillbox"]        = BDSFieldType::rfpillbox;
   types["rfconstantinz"]    = BDSFieldType::rfconstantinz;
   types["rfconstantinx"]    = BDSFieldType::rfconstantinx;
-  types["rfconstantinty"]   = BDSFieldType::rfconstantinty;
+  types["rfconstantint"]    = BDSFieldType::rfconstantiny;
   types["undulator"]        = BDSFieldType::undulator;
   types["rmatrix"]          = BDSFieldType::rmatrix;
   types["paralleltransporter"] = BDSFieldType::paralleltransporter;
