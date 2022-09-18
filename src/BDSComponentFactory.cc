@@ -62,6 +62,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBendBuilder.hh"
 #include "BDSLine.hh"
 #include "BDSCavityInfo.hh"
+#include "BDSCavityFieldType.hh"
 #include "BDSCavityType.hh"
 #include "BDSCrystalInfo.hh"
 #include "BDSCrystalType.hh"
@@ -566,15 +567,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
     case RFFieldDirection::y:
       {fieldType = BDSFieldType::rfconstantiny; break;}
     case RFFieldDirection::z:
-      {fieldType = BDSFieldType::rfconstantinz; break;}
-    }
-    
-  // TBC - translation from BDSCavityFieldType to BDSFieldType
-  // optional more complex cavity field along z
-  if (!(element->fieldVacuum.empty()))
-    {
-      BDSFieldInfo* field = BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum);
-      fieldType = field->FieldType();
+      {
+        BDSCavityFieldType cft = BDS::DetermineCavityFieldType(element->cavityFieldType);
+        fieldType = BDS::FieldTypeFromCavityFieldType(cft);
+  
+        // optional more complex cavity field along z - done here only for the body and purposively
+        // excluded from the general setting of fieldVacuum later on which would overwrite it
+        if (!(element->fieldVacuum.empty()))
+          {
+            BDSFieldInfo* field = BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum);
+            fieldType = field->FieldType();
+          }
+        break;
+      }
     }
   
   BDSIntegratorType intType = integratorSet->Integrator(fieldType);
@@ -2626,6 +2631,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   
   switch (fieldType.underlying())
     {
+    case BDSFieldType::rfpillbox:
     case BDSFieldType::rfconstantinz:
       {(*st)["ez"] = 1.0; break;}
     case BDSFieldType::rfconstantinx:
