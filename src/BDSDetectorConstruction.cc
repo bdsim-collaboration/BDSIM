@@ -1403,8 +1403,14 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
   const std::vector<GMAD::Query>& parserQueries = BDSParser::Instance()->GetQuery();
   for (const auto& def : parserQueries)
     {
+      G4bool assumeQueryMagnetic = false;
       if (!def.queryMagneticField && !def.queryElectricField)
-	{throw BDSException(__METHOD_NAME__, "neither \"queryMagneticField\" nor \"queryElectricField\" are true (=1) - one must be turned on.");}
+        {
+          assumeQueryMagnetic = true;
+          G4cout << __METHOD_NAME__ << "neither \"queryMagneticField\" nor \"queryElectricField are turned on for definition \""
+          << def.name << "\"" << G4endl;
+          G4cout << "-> querying magnetic field by default" << G4endl;
+        }
 
       if (!def.pointsFile.empty())
 	{
@@ -1413,7 +1419,7 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
 	  result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
 						    G4String(def.outfileMagnetic),
 						    G4String(def.outfileElectric),
-						    G4bool(def.queryMagneticField),
+						    G4bool(def.queryMagneticField) || assumeQueryMagnetic,
 						    G4bool(def.queryElectricField),
 						    points,
 						    columnNames,
@@ -1435,7 +1441,7 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
 	  result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
 						    G4String(def.outfileMagnetic),
 						    G4String(def.outfileElectric),
-						    G4bool(def.queryMagneticField),
+						    G4bool(def.queryMagneticField) || assumeQueryMagnetic,
 						    G4bool(def.queryElectricField),
 						    {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
 						    {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
