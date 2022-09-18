@@ -57,15 +57,17 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
   // calculate change in velocity and kinetic energy
   G4double dEk = 0;
   
-  G4double particleCharge = designParticle.Charge();
-  G4double phase = componentAsDefined.phase * CLHEP::rad;
-  G4double cosPhase = std::cos(phase);
-  G4double frequency = componentAsDefined.frequency * CLHEP::hertz;
-  
   switch (componentAsDefined.type)
     {
     case GMAD::ElementType::_RF:
       {
+        // by construction, 0 phase accelerates whichever charge of particle we have so we only need
+        // the absolute value of charge to scale the change in energy
+        G4double particleCharge = std::abs(designParticle.Charge());
+        G4double phase = componentAsDefined.phase * CLHEP::rad;
+        G4double cosPhase = std::cos(phase);
+        G4double frequency = componentAsDefined.frequency * CLHEP::hertz;
+        
         // field model
         BDSCavityFieldType tp = BDS::DetermineCavityFieldType(componentAsDefined.cavityFieldType);
         G4double eField = BDSComponentFactory::EFieldFromElement(&componentAsDefined, thisComponentArcLength,
