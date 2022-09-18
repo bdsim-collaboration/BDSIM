@@ -1,0 +1,4 @@
+rf1: rf, l=10*cm, gradient=25*MV/m, frequency=1200*MHz, phase=0.02, cavityFieldType="pillbox";
+lat: line = (rf1);
+
+include optionsTest.gmad;
