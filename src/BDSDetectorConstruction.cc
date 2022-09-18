@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineBLMBuilder.hh"
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSBeamlineIntegral.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
 #include "BDSBeamlineSet.hh"
 #include "BDSBeamPipeInfo.hh"
@@ -232,10 +233,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
   // construct placement geometry from parser
   BDSBeamline* mainBeamLine = BDSAcceleratorModel::Instance()->BeamlineSetMain().massWorld;
-  auto componentFactory = new BDSComponentFactory(designParticle, userComponentFactory);
+  auto componentFactory = new BDSComponentFactory(userComponentFactory);
   placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements(),
                                             mainBeamLine,
-                                            componentFactory);
+                                            componentFactory,
+                                            designParticle);
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
   delete componentFactory;
 
@@ -315,14 +317,19 @@ void BDSDetectorConstruction::BuildBeamlines()
   if (verbose || debug)
     {G4cout << "parsing the beamline element list..."<< G4endl;}
   G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
-  G4double      initialS         = BDSGlobalConstants::Instance()->BeamlineS();
+  
+  BDSBeamlineIntegral startingPoint(*designParticle, 0, BDSGlobalConstants::Instance()->BeamlineS());
+  BDSBeamlineIntegral* finishingPoint = new BDSBeamlineIntegral(startingPoint);
   
   BDSBeamlineSet mainBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
 					      "main beam line",
+                startingPoint,
+                finishingPoint,
 					      initialTransform,
-					      initialS,
 					      circular);
 
+  // TODO - don't need this finish integral for now - for multiple beamlines may need ot pass it off
+  delete finishingPoint;
 #ifdef BDSDEBUG
   G4cout << "Registry size "
 	 << BDSAcceleratorComponentRegistry::Instance()->size() << G4endl;
@@ -356,6 +363,11 @@ void BDSDetectorConstruction::BuildBeamlines()
       // but this could be any beam line in future if we find the right beam line to pass in.
       G4Transform3D startTransform = CreatePlacementTransform(placement, mbl);
       G4double      startS         = mbl ? mbl->back()->GetSPositionEnd() : 0;
+      
+      /// TODO - we use the initial design particle... if this splits off the main beam line it
+      /// should be the particle at that point
+      BDSBeamlineIntegral thisBeamlineStartingPoint(startingPoint.designParticle, 0, startS);
+      BDSBeamlineIntegral* thisBeamlineFinishingPoint = new BDSBeamlineIntegral(thisBeamlineStartingPoint);
 
       // aux beam line must be non-circular by definition to branch off of beam line (for now)
       // TODO - the naming convention here is repeated in BDSParallelWorldInfo which is registered
@@ -364,11 +376,13 @@ void BDSDetectorConstruction::BuildBeamlines()
       G4String beamlineName = placement.name + "_" + placement.sequence;
       BDSBeamlineSet extraBeamline = BuildBeamline(parserLine,
                                                    beamlineName,
+                                       thisBeamlineStartingPoint,
+                                       thisBeamlineFinishingPoint,
 						                           startTransform,
-						                           startS,
 						                           false, // circular
 						                           true); // is placement
-      
+      // TODO - make use of this finishing transform
+      delete thisBeamlineFinishingPoint;
       acceleratorModel->RegisterBeamlineSetExtra(beamlineName, extraBeamline);
     }
 }
@@ -385,19 +399,18 @@ BDSSamplerInfo* BDSDetectorConstruction::BuildSamplerInfo(const GMAD::Element* e
 }
 
 BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD::Element>& beamLine,
-						      const G4String&      name,
-						      const G4Transform3D& initialTransform,
-						      G4double             initialS,
-						      G4bool               beamlineIsCircular,
-						      G4bool               isPlacementBeamline)
+                                                      const G4String&            name,
+                                                      const BDSBeamlineIntegral& startingIntegral,
+                                                      BDSBeamlineIntegral*&      integral,
+                                                      const G4Transform3D&       initialTransform,
+                                                      G4bool                     beamlineIsCircular,
+                                                      G4bool                     isPlacementBeamline)
 {
   if (beamLine.empty()) // note a line always has a 'line' element first so an empty line will not be 'empty'
     {return BDSBeamlineSet();}
-
-  if (userComponentFactory)
-    {userComponentFactory->SetDesignParticle(designParticle);}
-  BDSComponentFactory* theComponentFactory = new BDSComponentFactory(designParticle, userComponentFactory);
-  BDSBeamline* massWorld = new BDSBeamline(initialTransform, initialS);
+  
+  BDSComponentFactory* theComponentFactory = new BDSComponentFactory(userComponentFactory);
+  BDSBeamline* massWorld = new BDSBeamline(initialTransform, startingIntegral.arcLength);
     
   if (beamlineIsCircular)
     {
@@ -445,11 +458,10 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 	    }
 	  ++nextIt;
 	}
-      G4double currentArcLength = massWorld->GetTotalArcLength();
       BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt),
 									   prevElement,
 									   nextElement,
-									   currentArcLength);
+                     *integral);
       if(temp)
 	{
           G4bool forceNoSamplerOnThisElement = false;

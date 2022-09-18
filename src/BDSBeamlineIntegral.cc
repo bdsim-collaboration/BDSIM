@@ -34,7 +34,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-
 BDSBeamlineIntegral::BDSBeamlineIntegral(const BDSParticleDefinition& incomingParticle,
 					 G4double T0In,
 					 G4double integratedArcLength):
@@ -108,4 +107,20 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
   
   // time - now at the start of the next component / end of this component
   synchronousTAtEnd += dT;
+}
+
+G4double BDSBeamlineIntegral::ProvideSynchronousTAtCentreOfNextElement(const GMAD::Element* el) const
+{
+  BDSBeamlineIntegral copy(*this);
+  copy.Integrate(*el);
+  G4double synchronousTAtMiddle = copy.synchronousTAtMiddleOfLastElement;
+  return synchronousTAtMiddle;
+}
+
+G4double BDSBeamlineIntegral::ProvideSynchronousTAtEndOfNextElement(const GMAD::Element* el) const
+{
+  BDSBeamlineIntegral copy(*this);
+  copy.Integrate(*el);
+  G4double synchronousTAtEndLocal = copy.synchronousTAtEnd;
+  return synchronousTAtEndLocal;
 }

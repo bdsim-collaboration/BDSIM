@@ -19,12 +19,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSCOMPONENTFACTORY_H
 #define BDSCOMPONENTFACTORY_H
 
+#include "BDSBeamlineIntegral.hh"
 #include "BDSFieldType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSIntegratorType.hh"
 #include "BDSIntegratorSetType.hh"
+#include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -51,7 +53,6 @@ class BDSIntegratorSet;
 class BDSMagnet;
 class BDSMagnetOuterInfo;
 class BDSModulatorInfo;
-class BDSParticleDefinition;
 class BDSTiltOffset;
 
 /**
@@ -76,9 +77,8 @@ class BDSTiltOffset;
 class BDSComponentFactory
 {
 public:
-  explicit BDSComponentFactory(const BDSParticleDefinition* designParticleIn,
-			       BDSComponentFactoryUser* userComponentFactoryIn = nullptr,
-			       G4bool usualPrintOut = true);
+  explicit BDSComponentFactory(BDSComponentFactoryUser* userComponentFactoryIn = nullptr,
+                               G4bool usualPrintOut = true);
   ~BDSComponentFactory();
 
   /// Create component from parser Element pointers to next and previous Element
@@ -89,7 +89,7 @@ public:
   BDSAcceleratorComponent* CreateComponent(GMAD::Element const* elementIn,
 					   GMAD::Element const* prevElementIn,
 					   GMAD::Element const* nextElementIn,
-					   G4double currentArcLengthIn = 0);
+					   BDSBeamlineIntegral& integral);
   
   /// Public creation for object that dynamically stops all particles once the primary
   /// has completed a certain number of turns.
@@ -209,22 +209,22 @@ public:
 private:
   /// No default constructor
   BDSComponentFactory() = delete;
-
-  const BDSParticleDefinition* designParticle; ///< Particle w.r.t. which elements are built.
-  G4double brho;              ///< Rigidity in T*m (G4units) for beam particles.
-  G4double beta0;             ///< Cache of relativistic beta for primary particle.
+  
   BDSComponentFactoryUser* userComponentFactory; ///< User component factory if any.
   G4double lengthSafety;      ///< Length safety from global constants.
   G4double thinElementLength; ///< Length of a thin element.
   G4bool includeFringeFields; ///< Cache of whether to include fringe fields.
   G4bool yokeFields;          ///< Cache of whether to include yoke magnetic fields.
   BDSModulatorInfo* defaultModulator; ///< Default modulator for all components.
-  
-  /// Updated each time CreateComponent is called - supplied from outside. Only here to pass around all functions easily.
-  G4double currentArcLength;
+  BDSBeamlineIntegral* integralUpToThisComponent; ///< To save passing it through many functions arguments.
+  G4double synchronousTAtStartOfThisComponent;
+  G4double synchronousTAtMiddleOfThisComponent;
+  G4double synchronousTAtEndOfThisComponent;
 
   /// Simple setter used to add Beta0 to a strength instance.
-  inline void SetBeta0(BDSMagnetStrength* stIn) const {(*stIn)["beta0"] = beta0;} 
+  inline void SetBeta0(BDSMagnetStrength* stIn) const {(*stIn)["beta0"] = integralUpToThisComponent->designParticle.Beta();}
+  /// Simple accessor to simplify repetitive code.
+  inline G4double BRho() const {return integralUpToThisComponent->designParticle.BRho();}
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;
@@ -409,10 +409,6 @@ private:
   /// incoming curvilinear coordinates, so for an rbend with e1=0, the returned
   /// angle will be half the bend angle. For an sbend, with e1=0, it'll be 0.
   G4double IncomingFaceAngle(const GMAD::Element* el) const;
-  
-  /// Update the BDSMagnetStrength key synchronousT0 with the time at the centre of the element.
-  void AddSynchronousTimeInformation(BDSMagnetStrength* st,
-                                     G4double elementArcLength) const;
 
   /// Return the modulator definition for a given element if one is specified
   /// in fieldModulator, else return the global default which could also be nullptr.

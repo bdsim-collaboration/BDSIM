@@ -44,12 +44,21 @@ public:
   explicit BDSBeamlineIntegral(const BDSParticleDefinition& incomingParticle,
 			       G4double T0In = 0,
 			       G4double integratedArcLength = 0);
-
   ~BDSBeamlineIntegral();
 
   /// Increment all quantities in this class by adding this element
   /// onto the beam line.
   void Integrate(const GMAD::Element& componentAsDefined);
+  
+  /// Provide the next synchronous T at the centre if we were to add on this new
+  /// element to the beam line (i.e. integrate it). Doesn't change the current
+  /// contents though. Constructs a copy of this instance, does the calculation,
+  /// then does away with the copy.
+  G4double ProvideSynchronousTAtCentreOfNextElement(const GMAD::Element* el) const;
+
+  /// Provide the next synchronous T at the middle if we were to add on this new
+  /// element. Similar to above function.
+  G4double ProvideSynchronousTAtEndOfNextElement(const GMAD::Element* el) const;
   
   G4double synchronousTAtEnd;
   G4double synchronousTAtMiddleOfLastElement;
