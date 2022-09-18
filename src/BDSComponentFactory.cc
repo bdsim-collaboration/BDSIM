@@ -568,7 +568,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
       {fieldType = BDSFieldType::rfconstantiny; break;}
     case RFFieldDirection::z:
       {
-        BDSCavityFieldType cft = BDS::DetermineCavityFieldType(element->cavityFieldType);
+        G4String cftName = element->cavityFieldType.empty() ? BDSGlobalConstants::Instance()->CavityFieldType() : element->cavityFieldType;
+        BDSCavityFieldType cft = BDS::DetermineCavityFieldType(cftName);
         fieldType = BDS::FieldTypeFromCavityFieldType(cft);
   
         // optional more complex cavity field along z - done here only for the body and purposively

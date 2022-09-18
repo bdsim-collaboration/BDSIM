@@ -172,6 +172,8 @@ namespace GMAD
     bool      useOldMultipoleOuterFields;
     double    scalingFieldOuter;
     bool      scaleRigidityWithMomentum;
+    
+    std::string cavityFieldType;
 
     bool        includeFringeFields;
     bool        includeFringeFieldsCavities;

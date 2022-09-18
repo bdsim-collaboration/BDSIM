@@ -602,7 +602,7 @@ void Element::flush()
   markAsCollimator = false;
   spec = "";
   cavityModel = "";
-  cavityFieldType = "constantinz";
+  cavityFieldType = "";
   
   dicomDataFile = "";
   dicomDataPath = "";

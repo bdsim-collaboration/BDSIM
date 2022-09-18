@@ -257,6 +257,7 @@ void Options::PublishMembers()
   publish("useOldMultipoleOuterFields", &Options::useOldMultipoleOuterFields);
   publish("scalingFieldOuter",    &Options::scalingFieldOuter);
   publish("scaleRigidityWithMomentum", &Options::scaleRigidityWithMomentum);
+  publish("cavityFieldType",      &Options::cavityFieldType);
   publish("includeFringeFields",  &Options::includeFringeFields);
   publish("includeFringeFieldsCavities", &Options::includeFringeFieldsCavities);
   publish("beampipeRadius",       &Options::aper1);

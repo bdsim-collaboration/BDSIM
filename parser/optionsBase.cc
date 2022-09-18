@@ -143,6 +143,8 @@ OptionsBase::OptionsBase()
   scalingFieldOuter    = 1.0;
   scaleRigidityWithMomentum = true;
   
+  cavityFieldType = "constantinz";
+  
   // beam pipe / aperture
   beampipeThickness    = 0.0025;
   apertureType         = "circular";
