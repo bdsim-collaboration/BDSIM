@@ -64,5 +64,9 @@ examples/features/scoring/*build
 
 examples/features/interfaces/*build
 
+# Known field map files #
+#########################
+examples/features/components/*.dat
+
 .build*
 .install*
