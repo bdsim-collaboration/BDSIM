@@ -105,7 +105,7 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
   G4double vMean = (v1 + v0) / 2.0;
   G4double dT = thisComponentArcLength / vMean;
 
-  G4double dTMiddle = thisComponentArcLength / ( (0.5*(v1-v0) + v0 ) / 2.0);
+  G4double dTMiddle = 0.5*thisComponentArcLength / (0.5*(v1-v0) + v0);
   synchronousTAtMiddleOfLastElement = synchronousTAtEnd + dTMiddle;
   
   // time - now at the start of the next component / end of this component
