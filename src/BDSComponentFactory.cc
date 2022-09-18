@@ -1342,7 +1342,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (buildIncomingFringe)
     {
       auto stIn        = strength(s);
-      (*stIn)["syncrhonousT0"] = synchronousTAtStartOfThisComponent;
+      (*stIn)["synchronousT0"] = synchronousTAtStartOfThisComponent;
       auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in",
                                            BDSIntegratorType::rmatrixthin, BDSFieldType::rmatrix, 0, modulator);
       bLine->AddComponent(solenoidIn);
