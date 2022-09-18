@@ -2617,6 +2617,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   G4double chordLength   = cavityLength; // length may be reduced for fringe placement.
   (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   (*st)["length"]        = chordLength;
+  (*st)["synchronousT0"] = synchronousTAtMiddleOfThisComponent;
   
   switch (fieldType.underlying())
     {
@@ -2649,8 +2650,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   // fringe strengths
   fringeIn  = new BDSMagnetStrength(*st);
   fringeOut = new BDSMagnetStrength(*st);
-  (*fringeIn)["synchronousT0"] = synchronousTAtStartOfThisComponent;
-  (*fringeOut)["synchronousT0"] = synchronousTAtEndOfThisComponent;
+  // fringe synchronousT0 - should be the same as the centre of the component they're linked to
   // fringe phase - here the values are copied into the fringe strengths - so only the raw input
   // phase that are provided from the input that generally modulate the fringe
 
@@ -2666,7 +2666,6 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   else // this gives 0 phase at the middle of cavity assuming relativistic particle with v = c
     {tOffset = synchronousTAtMiddleOfThisComponent;}
   
-  (*st)["synchronousT0"] = synchronousTAtMiddleOfThisComponent;
   G4double phaseOffset = BDSFieldFactory::CalculateGlobalPhase(frequency, tOffset);
   (*st)["phase"] -= phaseOffset;
   (*st)["tOffset"] = tOffset;
