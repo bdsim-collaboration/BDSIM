@@ -93,7 +93,7 @@ public:
   /// constructed as we go along in the component factory.
   void BuildPhysicsBias();
 
-  /// Set the design particle definition.
+  /// Set the (intial) design particle definition.
   inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
 
   /// Public access to the world extent.

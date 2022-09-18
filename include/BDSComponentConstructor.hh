@@ -30,12 +30,12 @@ namespace GMAD
 /**
  * @brief Interface class the developer should derive to construct their element.
  * 
+ * One BDSComponentConstructor per one class that inherits BDSAcceleratorComponent.
+ *
  * When creating a custom beam line component that inherits BDSAcceleratorComponent,
  * the developer should also create a class that inherits this one. This will implement
  * the one pure virtual method Construct() that will specify how to construct their
  * component from the parser element class (GMAD::Element) provided by the parser.
- *
- * One BDSComponentConstructer per one class that inherits BDSAcceleratorComponent.
  * 
  * @author Laurie Nevay
  */

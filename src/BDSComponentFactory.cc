@@ -551,6 +551,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
     case RFFieldDirection::z:
       {fieldType = BDSFieldType::rfconstantinz; break;}
     }
+    
+  // TBC - translation from BDSCavityFieldType to BDSFieldType
   // optional more complex cavity field along z
   if (!(element->fieldVacuum.empty()))
     {
@@ -887,7 +889,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       // Fringe and poleface effects for a thin kicker require an effective bending radius, rho.
       // Lack of length and angle knowledge means the field is the only way rho can be calculated.
       // A zero field would lead to div by zero errors in the integrator constructor, therefore
-      // do not replace the kicker magnetstrength with the fringe magnetstrength which should prevent
+      // do not replace the kicker magnet strength with the fringe magnet strength which should prevent
       // any fringe/poleface effects from ever being applied.
       if (!BDS::IsFinite(element->B))
         {
@@ -900,11 +902,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
           buildEntranceFringe = false;
           buildExitFringe = false;
         }
-      // A thin kicker or tkicker element has possible hkick and vkick combination, meaning the
-      // field direction cannot be assumed. Therefore we are unsure of poleface angle and fringe
-      // effects so don't replace the kicker magnetstrength with the fringe magnetstrength
       else if (type == KickerType::general)
         {
+          // A thin kicker or tkicker element has possible hkick and vkick combination, meaning the
+          // field direction cannot be assumed. Therefore, we are unsure of poleface angle and fringe
+          // effects so don't replace the kicker magnet strength with the fringe magnet strength
+        
           // only print warning if a poleface or fringe field effect was specified
           if (buildEntranceFringe || buildExitFringe)
             {
@@ -914,12 +917,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
           buildEntranceFringe = false;
           buildExitFringe = false;
         }
-      // Good to apply fringe effects.
+      
       else
-        {
+        {// Good to apply fringe effects.
           // overwrite magnet strength with copy of fringe strength. Should be safe as it has the
           // kicker information from copying previously.
-	  delete st;
+	        delete st;
           st = new BDSMagnetStrength(*fringeStIn);
           // supply the scaled field for a thin kicker field as it is required to calculate
           // the effective bending radius needed for fringe field and poleface effects
@@ -2863,10 +2866,10 @@ void BDSComponentFactory::CalculateAngleAndFieldSBend(Element const* el,
   // un-split sbends are effectively rbends - don't construct a >pi/2 degree rbend
   // also cannot construct sbends with angles > pi/2
   if (BDSGlobalConstants::Instance()->DontSplitSBends() && (std::abs(angle) > CLHEP::pi/2.0))
-    {throw BDSException("Error: the unsplit sbend "+ el->name + " cannot be constucted as its bending angle is defined to be greater than pi/2.");}
+    {throw BDSException("Error: the unsplit sbend "+ el->name + " cannot be constructed as its bending angle is defined to be greater than pi/2.");}
 
   else if (std::abs(angle) > CLHEP::pi*2.0)
-    {throw BDSException("Error: the sbend "+ el->name +" cannot be constucted as its bending angle is defined to be greater than 2 pi.");}
+    {throw BDSException("Error: the sbend "+ el->name +" cannot be constructed as its bending angle is defined to be greater than 2 pi.");}
 }
 
 void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* el,
