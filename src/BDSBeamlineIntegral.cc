@@ -61,9 +61,7 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
     {
     case GMAD::ElementType::_RF:
       {
-        // by construction, 0 phase accelerates whichever charge of particle we have so we only need
-        // the absolute value of charge to scale the change in energy
-        G4double particleCharge = std::abs(designParticle.Charge());
+        G4double particleCharge = designParticle.Charge();
         G4double phase = componentAsDefined.phase * CLHEP::rad;
         G4double cosPhase = std::cos(phase);
         G4double frequency = componentAsDefined.frequency * CLHEP::hertz;
