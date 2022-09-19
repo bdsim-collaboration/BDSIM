@@ -121,9 +121,13 @@ parameters required.
 +---------------------------------+--------------------------------------------+
 | skewdecapole                    | k4                                         |
 +---------------------------------+--------------------------------------------+
-| rfcavity                        | equatroradius, efield, frequency, phase    |
-+---------------------------------+--------------------------------------------+
 | rf                              | efield, frequency, phase                   |
++---------------------------------+--------------------------------------------+
+| rfx                             | efield, frequency, phase                   |
++---------------------------------+--------------------------------------------+
+| rfy                             | efield, frequency, phase                   |
++---------------------------------+--------------------------------------------+
+| rfpillbox                       | equatroradius, efield, frequency, phase    |
 +---------------------------------+--------------------------------------------+
 | undulator                       | length, field                              |
 +---------------------------------+--------------------------------------------+
@@ -161,6 +165,72 @@ Example for a dipole field: ::
 
   fieldParameters="field=1.0, by=1";
 
+
+.. _fields-beamline-integration:
+
+Synchronous Time \& Rigidity With Acceleration
+==============================================
+
+To calculate the real value of fields in the model, it is typically required to know
+the magnetic rigidity of the design particle at that point in the beamline or
+the relative time of arrival of a particle. Both require 'keeping track' of the
+particle velocity, or more formally integrating changes to it throughout the
+beamline.
+
+Initially, a 'design' particle definition is given. As each component is constructed,
+its effect on the beam is integrated.
+
+Time Integration
+----------------
+
+If the kinetic energy is unchanged, the synchronous time at the centre of the component
+is given by:
+
+.. math::
+
+   t_{mid} = t_0 + \frac{l_i}{2} / v_{0}
+
+
+In the case where the velocity changes, the synchronous time at the centre of the component
+is given by:
+
+.. math::
+
+   t_{mid} = t_0 + \frac{l_i}{2} / ( \frac{1}{2}(v_{1} - v_{0}) + v_0 )
+
+where :math:`v_0` is the velocity of the incoming particle and :math:`v_1` the
+outgoing velocity. :math:`l_i` is the length of the i-th component being considered.
+
+Energy, Momentum and Rigidity
+-----------------------------
+
+The kinetic energy of the particle is integrated across each component. From this the
+design particle definition is updated including re-calculation of the total energy,
+momentum, relativistic gamma and beta, and the rigidity.
+
+The change in kinetic energy is calculated depending on the field used.
+
+**Sinusoidal Electric Field** (see :ref:`field-sinusoid-efield`)
+
+.. math::
+
+   dE_k = charge \cdot |E| \cdot l_i  \cdot \cos(\phi)
+
+**Pillbox Electromagnetic Field** (see :ref:`field-pill-box`)
+
+.. math::
+
+   \lambda_{RF} = c / f
+
+   f_1 = \frac{\pi l_i}{\beta \lambda}
+
+   TTF = \frac{\sin(f_1)}{f_1}
+
+   dE_k = charge \cdot |E| \cdot l_i \cdot TTF \cdot \cos{\phi}
+
+
+where :math:`l_i` is the length of the component, :math:`\beta` is the ratio of
+the velocity to the speed of light. `TTF` is the transit time factor.
 
 
 Pure Magnetic Fields From Equations
@@ -672,12 +742,19 @@ Sinusoidal Electric Field
 -------------------------
 
 This field provides an electric field along local unit `u` direction (e.g. unit `z` or unit `x`)
-with an amplitude `E` that does not vary with position (`x`, `y`, `z`), but only varies sinusoidally
-with time (`t`). A cosine is used so when the default phase is zero, a maximum acceleration
-is provided for a synchronous particle at the centre of the object. Aside from the field amplitude `E`,
-the frequency `f` (Hz) along with the phase :math:`\phi` are used. Typically, a global phase is
-calculated for the arrival time of the synchronous particle to the centre of the object the
-field is attached to (assuming the particle velocity is c, the speed of light).
+with an amplitude `E` that **does not vary** with position (`x`, `y`, `z`), but only varies sinusoidally
+with time (`t`). Therefore, this field does not represent a realistic cavity with no variation in say
+`z` in the strength of electric field, but is useful nonetheless.
+
+A cosine is used so when the default phase is zero, a maximum acceleration
+is provided for a synchronous particle at the centre of the object. An rf cavity using this
+field can be constructed with `E` as peak voltage (subsequently divided by length), or the
+field itself as `gradient`.
+
+The field is given by the combination of the peak field `E`, the frequency `f` (Hz) along
+with the phase :math:`\phi`. Typically, the synchronous time at the centre of the element
+it is attached to as well as the frequency are used to calculate a global phase for the
+arrival time of the synchronous particle to the centre of the object.
 
 .. math::
 
@@ -704,8 +781,8 @@ Electromagnetic Fields From Equations
 Pill-Box Cavity
 ---------------
 
-The pill-box cavity field is constructed with an electric field amplitude :math:`E`, a
-frequency :math:`f`, phase :math:`\psi` and cavity radius. The cavity radius is used to
+The pill-box cavity field is constructed with a peak electric field :math:`E`, a
+frequency :math:`f`, phase :math:`\psi` and a cavity radius. The cavity radius is used to
 normalise the Bessel function so that the field drops to zero at this point. The field
 is time-dependent and the :math:`E_z` and :math:`B_{\phi}` components are calculated
 and then returned in 3D Cartesian coordinates. The cavity radius is used to calculate

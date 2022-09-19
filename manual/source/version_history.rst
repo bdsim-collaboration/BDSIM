@@ -16,6 +16,8 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.7.0 - 2022 / XX / XX
 =======================
 
+* For models with acceleration, the rigidity and synchronous time are now calculated
+  along the beamline and pre-calculated **scaling factors are no longer needed**.
 * The input parser will now reject any duplicate object names (e.g. a field with the same name),
   whereas it didn't before. In the past, multiple objects would be created ignoring their name.
   However, after the input is loaded, BDSIM itself may look through the objects for one matching
@@ -32,10 +34,11 @@ V1.7.0 - 2022 / XX / XX
   in Bibtex syntax to cite BDSIM easily.
 * The default yoke fields have changed and are on average stronger (and more correct). See below.
 * :code:`gradient` in the :code:`rf` component has the units of **V/m** and not MV/m as was
-  written in the manual. Any rf component in an existing model that is defined with a :code:`gradient` but
-  without units should be updated to include units of MV/m. The documentation has been fixed and is correct
-  and consistent. The units for :code:`E` have also been clarified as volts and that this voltage is assumed
-  across the length of the element :code:`l`.
+  written in the manual. Any rf component in an existing model that is defined with
+  a :code:`gradient` but without units should be updated to include units of MV/m. The
+  documentation has been fixed and is correct and consistent. The units for :code:`E` have
+  also been clarified as volts and that this voltage is assumed across the length of
+  the element :code:`l`.
 
 
 New Features
@@ -80,6 +83,12 @@ New Features
 
 **Fields**
 
+* The `rf` beamline element now has the parameter :code:`cavityFieldType` to specify which
+  field model to use rather than specifying :code:`fieldVacuum` and a corresonding field
+  definition.
+* The option :code:`cavityFieldType` may be used to set the default field model for all `rf`
+  elements.
+* The "rfcavity" field is now "rfpillbox".
 * New ability to use any "pure" field (i.e. one from equations inside BDSIM) as a field
   and attach it to placements, or beam line geometry, as well as query it to generate
   an external field map.
@@ -151,6 +160,18 @@ New Features
 * Materials are now stored for each trajectory step point (optionally) as described
   by an integer ID.
 
+New Options
+-----------
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+
++----------------------------------+-------------------------------------------------------+
+| **Option**                       | **Function**                                          |
++==================================+=======================================================+
+| cavityFieldType                  | Default cavity field type ('constantinz', 'pillbox')  |
+|                                  | to use for all rf elements unless otherwise specified.|
++----------------------------------+-------------------------------------------------------+
+  
 
 General Updates
 ---------------
@@ -340,9 +361,6 @@ Bug Fixes
 * Fix a bug where a particle could be misidentified as an ion and end up being a proton.
   An example would be "pion+" which doesn't match the correct "pi+" name in Geant4 but
   would pass through and become a proton despite its name.
-
-
-
 
 Output Changes
 --------------

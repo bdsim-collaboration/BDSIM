@@ -120,8 +120,9 @@ Synchronous Time and Phase
 
 Some components have time dependent fields, such as an `rf` cavity element. By default, these
 are given a synchronous global time in their construction so that local time is zero at the
-centre of the component for a synchronous particle. The time is calculated for a particle
-travelling at the speed of light from the start of the accelerator.
+centre of the component for a synchronous particle. The time is calculated from the integration
+of the design particle throughout the beamline as it is constructed including acceleration
+and deceleration. See :ref:`fields-beamline-integration`.
 
 If the element is reused several times in a machine, it is constructed uniquely for
 each instance so that the fields are unique with their own synchronous time or phase.
@@ -132,6 +133,30 @@ each instance so that the fields are unique with their own synchronous time or p
 	     should calculate an appropriate global `tOffset` for the component if
 	     the beam is sub-relativistic. This may be improved upon in future.
 
+
+.. _acceleration:
+	     
+Acceleration
+------------
+
+BDSIM includes acceleration of particles. Along a beamline the nominal momentum of the
+beam may change. Up until BDSIM V1.7 it was the user's responsibility to recalculate
+normalised magnet strengths (such as k1 for a quadrupole) and scaling factors for
+dipoles externally to the program. Since V1.7, BDSIM calculates the change in kinetic
+energy and therefore momentum and rigidity of the nominal 'design' beam particle along
+the beamline and adjusts the rigidity used to calculate real field gradients from normalised
+strengths.
+
+The old behaviour (i.e. no rolling rigidity adjustment) can be restored with the option: ::
+
+  option, scaleRigidityWithMomentum=0;
+
+
+which is turned on by default.
+
+If a change in energy is detected by any component along the beamline, the design particle
+properties will be printed out once more at the end of construction of the beamline, even
+if it ends up being similar (e.g. through the input parameters) to the starting ones.
 
 
 .. _lattice-elements:
@@ -956,7 +981,7 @@ the edge effects are provided by default and are controllable with the option `i
 +----------------+-------------------------------+--------------+---------------------+
 | `phase`        | Phase offset (rad)            | 0            | No                  |
 +----------------+-------------------------------+--------------+---------------------+
-| `tOffset`      | Offset in time (s)            | 0            | No                  |
+| `tOffset`      | Offset in global time (s)     | 0            | No                  |
 +----------------+-------------------------------+--------------+---------------------+
 | `material`     | Outer material                | ""           | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
@@ -1000,9 +1025,7 @@ it is best to be explicit in units or none at all and assume the default ones.
   of the element length and the wavelength (given the frequency). In the case of 0 frequency,
   only the length is considered. This is to ensure accurate numerical integration of the
   motion through the varying field.
-* If `tOffset` is specified, a phase offset is calculated from this time for the **speed
-  of light in a vacuum**. Otherwise, the curvilinear S-coordinate of the centre of the rf
-  element is used to find the phase offset.
+* If `tOffset` is specified, a phase offset is calculated from this and the frequency provided.
 * In the case where `frequency` is not set, the phase offset is ignored and only the `phase` is
   used. See the developer documentation :ref:`field-sinusoid-efield` for a description of the field.
   
