@@ -88,7 +88,7 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
 	      if (!BDS::IsFinite(frequency)) // protect against zero division
 		{throw BDSException(__METHOD_NAME__, "for a pillbox cavity field, the frequency must be non-zero");}
 	      G4double rfWavelength = CLHEP::c_light / frequency;
-	      G4double piGOverBetaLambda = CLHEP::pi * thisComponentArcLength / designParticle.Beta() * rfWavelength;
+	      G4double piGOverBetaLambda = (CLHEP::pi * thisComponentArcLength) / (designParticle.Beta() * rfWavelength);
 	      G4double transitTimeFactor = std::sin(piGOverBetaLambda) / piGOverBetaLambda;
 	      dEk = particleCharge * eField * thisComponentArcLength * transitTimeFactor * cosPhase;
 	      break;
