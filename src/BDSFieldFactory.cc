@@ -526,26 +526,26 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
 
   BDSFieldClassType clas = BDS::DetermineFieldClassType(info.FieldType());
   try
-  {
-  switch (clas.underlying())
     {
-    case BDSFieldClassType::magnetic:
-      {field = CreateFieldMag(info, scalingStrength, scalingKey); break;}
-    case BDSFieldClassType::electromagnetic:
-      {field = CreateFieldEM(info); break;}
-    case BDSFieldClassType::electric:
-      {field = CreateFieldE(info); break;}
-    case BDSFieldClassType::irregular:
-      {field = CreateFieldIrregular(info); break;}
-    default:
-      {break;} // this will return nullptr
+      switch (clas.underlying())
+	{
+	case BDSFieldClassType::magnetic:
+	  {field = CreateFieldMag(info, scalingStrength, scalingKey); break;}
+	case BDSFieldClassType::electromagnetic:
+	  {field = CreateFieldEM(info); break;}
+	case BDSFieldClassType::electric:
+	  {field = CreateFieldE(info); break;}
+	case BDSFieldClassType::irregular:
+	  {field = CreateFieldIrregular(info); break;}
+	default:
+	  {break;} // this will return nullptr
+	}
     }
-  }
   catch (BDSException& e)
-  {
-    e.AppendToMessage("\nProblem with field possibly named \"" + info.NameOfParserDefinition() + "\"");
-    throw e;
-  }
+    {
+      e.AppendToMessage("\nProblem with field possibly named \"" + info.NameOfParserDefinition() + "\"");
+      throw e;
+    }
   return field;
 }
 

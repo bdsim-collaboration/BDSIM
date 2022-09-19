@@ -117,16 +117,16 @@ std::vector<BDSFieldObjects*> BDSFieldBuilder::CreateAndAttachAll()
       BDSFieldObjects* field = nullptr;
       const BDSFieldInfo* currentInf = infos[i];
       try
-      {
-        if (currentInf->AutoScale())
-	  {
-	    field = BDSFieldFactory::Instance()->CreateField(*(infos[i]),
-							     scalingStrengths[i],
-							     scalingKeys[i]);
-	  }
-        else
-	  {field = BDSFieldFactory::Instance()->CreateField(*(infos[i]));}
-      }
+	{
+	  if (currentInf->AutoScale())
+	    {
+	      field = BDSFieldFactory::Instance()->CreateField(*(infos[i]),
+							       scalingStrengths[i],
+							       scalingKeys[i]);
+	    }
+	  else
+	    {field = BDSFieldFactory::Instance()->CreateField(*(infos[i]));}
+	}
       catch (BDSException& e)
 	{
 	  e.AppendToMessage("\nField would be attached to logical volume named \"" + lvs[i][0]->GetName() + "\"");

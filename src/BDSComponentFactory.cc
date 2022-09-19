@@ -678,7 +678,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
       (*stIn)["rmat44"] = 1;
       (*stIn)["length"] = BDSGlobalConstants::Instance()->ThinElementLength();
       (*stIn)["isentrance"] = true;
-      auto cavityFringeIn  = CreateCavityFringe(0, stIn, elementName + "_fringe_in", cavityApertureRadius, modulator);
+      auto cavityFringeIn = CreateCavityFringe(0, stIn, elementName + "_fringe_in", cavityApertureRadius, modulator);
       cavityLine->AddComponent(cavityFringeIn);
     }
   else
