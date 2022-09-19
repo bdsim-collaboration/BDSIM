@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 
@@ -68,8 +69,10 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
         G4double cosPhase = std::cos(phase);
         G4double frequency = componentAsDefined.frequency * CLHEP::hertz;
         
-        // field model
-        BDSCavityFieldType tp = BDS::DetermineCavityFieldType(componentAsDefined.cavityFieldType);
+        // field model - reproduce behaviour in component factory of default in global constants
+        G4String compCFTN = componentAsDefined.cavityFieldType;
+        G4String cftName = compCFTN.empty() ? BDSGlobalConstants::Instance()->CavityFieldType() : compCFTN;
+        BDSCavityFieldType tp = BDS::DetermineCavityFieldType(cftName);
         G4double eField = BDSComponentFactory::EFieldFromElement(&componentAsDefined, thisComponentArcLength,
                                                                  designParticle.BRho());
         switch (tp.underlying())
