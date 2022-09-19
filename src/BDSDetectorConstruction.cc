@@ -328,6 +328,9 @@ void BDSDetectorConstruction::BuildBeamlines()
                 finishingPoint,
 					      initialTransform,
 					      circular);
+  
+  if (finishingPoint->changeOfEnergyEncountered)
+    {G4cout << "Design particle properties at end of beam line: " << G4endl << finishingPoint->designParticle;}
 
   // TODO - don't need this finish integral for now - for multiple beamlines may need ot pass it off
   delete finishingPoint;

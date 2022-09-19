@@ -66,6 +66,7 @@ public:
   G4double synchronousTAtMiddleOfLastElement;
   G4double arcLength;
   BDSParticleDefinition designParticle;
+  G4bool   changeOfEnergyEncountered;
 };
 
 #endif

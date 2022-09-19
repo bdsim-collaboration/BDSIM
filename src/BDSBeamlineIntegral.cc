@@ -43,7 +43,8 @@ BDSBeamlineIntegral::BDSBeamlineIntegral(const BDSParticleDefinition& incomingPa
   synchronousTAtEnd(T0In),
   synchronousTAtMiddleOfLastElement(T0In),
   arcLength(integratedArcLength),
-  designParticle(incomingParticle)
+  designParticle(incomingParticle),
+  changeOfEnergyEncountered(false)
 {;}
 
 BDSBeamlineIntegral::~BDSBeamlineIntegral()
@@ -100,6 +101,8 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
     default:
       {break;} // no action
     }
+  
+  changeOfEnergyEncountered = changeOfEnergyEncountered || BDS::IsFinite(dEk, 1e-7);
   
   // momentum and therefore BRho
   if (integrateKineticEnergy)
