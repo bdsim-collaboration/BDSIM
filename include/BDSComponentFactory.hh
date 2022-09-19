@@ -220,9 +220,7 @@ private:
   G4bool yokeFields;          ///< Cache of whether to include yoke magnetic fields.
   BDSModulatorInfo* defaultModulator; ///< Default modulator for all components.
   BDSBeamlineIntegral* integralUpToThisComponent; ///< To save passing it through many functions arguments.
-  G4double synchronousTAtStartOfThisComponent;
   G4double synchronousTAtMiddleOfThisComponent;
-  G4double synchronousTAtEndOfThisComponent;
 
   /// Simple setter used to add Beta0 to a strength instance.
   inline void SetBeta0(BDSMagnetStrength* stIn) const {(*stIn)["beta0"] = integralUpToThisComponent->designParticle.Beta();}

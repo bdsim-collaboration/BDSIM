@@ -119,9 +119,7 @@ BDSComponentFactory::BDSComponentFactory(BDSComponentFactoryUser* userComponentF
   yokeFields(BDSGlobalConstants::Instance()->YokeFields()),
   defaultModulator(nullptr),
   integralUpToThisComponent(nullptr),
-  synchronousTAtStartOfThisComponent(0),
   synchronousTAtMiddleOfThisComponent(0),
-  synchronousTAtEndOfThisComponent(0),
   integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
   integratorSet = BDS::IntegratorSet(integratorSetType);
@@ -173,9 +171,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   prevElement = prevElementIn;
   nextElement = nextElementIn;
   integralUpToThisComponent = &integral; // <- this is used for brho and beta throughout this factory for the current call of it
-  synchronousTAtStartOfThisComponent = integralUpToThisComponent->synchronousTAtEnd;
   synchronousTAtMiddleOfThisComponent = integralUpToThisComponent->ProvideSynchronousTAtCentreOfNextElement(elementIn);
-  synchronousTAtEndOfThisComponent = integralUpToThisComponent->ProvideSynchronousTAtEndOfNextElement(elementIn);
   G4double angleIn  = 0.0;
   G4double angleOut = 0.0;
   G4bool registered = false;
@@ -736,7 +732,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = element->l * CLHEP::m; // arc length
   (*st)["scaling"]= element->scaling;
-  (*st)["synchronousT0"] = synchronousTAtStartOfThisComponent; // add no arc length so it's at the beginning
+  (*st)["synchronousT0"] = synchronousTAtMiddleOfThisComponent;
   auto modulator = ModulatorDefinition(element, true);
 
   // quadrupole component
@@ -778,7 +774,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = arcLength;
   (*st)["scaling"]= element->scaling;
-  (*st)["synchronousT0"] = synchronousTAtStartOfThisComponent; // add no arc length so it's at the beginning
+  (*st)["synchronousT0"] = synchronousTAtMiddleOfThisComponent;
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -877,10 +873,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
                                                                element->e2,
                                                                element->fintx,
                                                                true);
-  (*fringeStIn)["synchronousT0"] = synchronousTAtStartOfThisComponent;
   BDSMagnetStrength* fringeStOut = new BDSMagnetStrength(*fringeStIn);
   (*fringeStOut)["isentrance"] = false;
-  (*fringeStOut)["synchronousT0"] = synchronousTAtEndOfThisComponent;
 
   // check if the fringe effect is finite
   G4bool finiteEntrFringe = false;
@@ -1348,7 +1342,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (buildIncomingFringe)
     {
       auto stIn        = strength(s);
-      (*stIn)["synchronousT0"] = synchronousTAtStartOfThisComponent;
       auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in",
                                            BDSIntegratorType::rmatrixthin, BDSFieldType::rmatrix, 0, modulator);
       bLine->AddComponent(solenoidIn);
@@ -1410,7 +1403,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (buildOutgoingFringe)
     {
       auto stOut = strength(-s);
-      (*stOut)["synchronousT0"] = synchronousTAtEndOfThisComponent;
       auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out",
                                            BDSIntegratorType::rmatrixthin, BDSFieldType::rmatrix, 0, modulator);
       bLine->AddComponent(solenoidOut);
