@@ -226,7 +226,7 @@ The change in kinetic energy is calculated depending on the field used.
 
    TTF = \frac{\sin(f_1)}{f_1}
 
-   dE_k = charge \cdot |E| \cdot l_i \cdot TTF \cdot \cos{\phi}
+   dE_k = charge \cdot |E| \cdot l_i \cdot TTF
 
 
 where :math:`l_i` is the length of the component, :math:`\beta` is the ratio of

@@ -67,9 +67,7 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
       {
         G4double particleCharge = designParticle.Charge();
         G4double phase = componentAsDefined.phase * CLHEP::rad;
-        G4double cosPhase = std::cos(phase);
         G4double frequency = componentAsDefined.frequency * CLHEP::hertz;
-        
         // field model - reproduce behaviour in component factory of default in global constants
         G4String compCFTN = componentAsDefined.cavityFieldType;
         G4String cftName = compCFTN.empty() ? BDSGlobalConstants::Instance()->CavityFieldType() : compCFTN;
@@ -80,7 +78,7 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
 	  {
           case BDSCavityFieldType::constantinz:
 	    {
-	      dEk = particleCharge * eField * thisComponentArcLength * cosPhase;
+	      dEk = particleCharge * eField * thisComponentArcLength * std::cos(phase);
 	      break;
 	    }
           case BDSCavityFieldType::pillbox:
@@ -90,7 +88,7 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
 	      G4double rfWavelength = CLHEP::c_light / frequency;
 	      G4double piGOverBetaLambda = (CLHEP::pi * thisComponentArcLength) / (designParticle.Beta() * rfWavelength);
 	      G4double transitTimeFactor = std::sin(piGOverBetaLambda) / piGOverBetaLambda;
-	      dEk = particleCharge * eField * thisComponentArcLength * transitTimeFactor * cosPhase;
+	      dEk = particleCharge * eField * thisComponentArcLength * transitTimeFactor;
 	      break;
 	    }
           default:
