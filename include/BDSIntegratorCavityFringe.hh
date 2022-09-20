@@ -41,9 +41,11 @@ class BDSMagnetStrength;
 class BDSIntegratorCavityFringe: public BDSIntegratorRMatrixThin
 {
 public:
+  BDSIntegratorCavityFringe() = delete;
 	BDSIntegratorCavityFringe(BDSMagnetStrength const* strength,
-			   G4Mag_EqRhs* eqOfMIn,
-			   G4double maximumRadiusIn);
+                            G4Mag_EqRhs* eqOfMIn,
+                            G4double brho,
+                            G4double maximumRadiusIn);
 
   virtual ~BDSIntegratorCavityFringe(){;}
 
