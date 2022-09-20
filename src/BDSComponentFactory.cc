@@ -69,6 +69,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSException.hh"
 #include "BDSExecOptions.hh"
+#include "BDSFieldEMRFCavity.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldType.hh"
@@ -2594,17 +2595,44 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
 }
 
 G4double BDSComponentFactory::EFieldFromElement(Element const* el,
+                                                BDSFieldType fieldType,
                                                 G4double cavityLength,
-                                                G4double brho)
+                                                const BDSParticleDefinition& incomingParticle,
+                                                G4bool normaliseTransitTimeFactorOut)
 {
-  // the sign of the field to be accelerating is handled inside
-  G4double eField = 0;
+  G4double eField = 0; // - result variable
   G4double scaling = el->scaling;
-  G4int acceleratingFieldDirectionFactor = BDS::Sign(brho);
-  if (BDS::IsFinite(el->gradient))
-    {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
-  else
-    {eField = scaling * el->E * CLHEP::volt / cavityLength;}
+  G4double frequency = el->frequency * CLHEP::rad;
+  G4double phase = el->phase * CLHEP::rad;
+  
+  // the sign of the field to be accelerating is handled here - each field class just uses the value
+  G4int acceleratingFieldDirectionFactor = BDS::Sign(incomingParticle.BRho());
+  
+  switch (fieldType.underlying())
+    {
+    case BDSFieldType::rfconstantinz:
+      {
+	if (BDS::IsFinite(el->gradient))
+	  {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
+	else
+	  {eField = scaling * el->E * CLHEP::volt / cavityLength;}
+	break;
+      }
+    case BDSFieldType::rfpillbox:
+      {
+	if (BDS::IsFinite(el->gradient))
+	  {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
+	else
+	  {
+	    G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, cavityLength, incomingParticle.Beta(), el->phaseCavityMode*CLHEP::rad);
+	    eField = scaling * el->E * CLHEP::volt / cavityLength;
+	    eField /= transitTimeFactor;
+	  }
+	break;
+      }
+    default:
+      {break;} // shouldn't happen
+    }
   eField *= acceleratingFieldDirectionFactor;
   return eField;
 }
@@ -2640,10 +2668,10 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   
   if ((fieldType == BDSFieldType::rfconstantinx || fieldType == BDSFieldType::rfconstantiny) && BDS::IsFinite(el->E) )
     {throw BDSException(__METHOD_NAME__, "only \"gradient\" is accepted for rfconstantinx or rfconstantiny components and not \"E\"");}
-  
-  G4double eField = EFieldFromElement(el, chordLength, integralUpToThisComponent->designParticle.BRho()); // includes scaling
-  (*st)["efield"] = eField / lengthScaling;
 
+  G4double eField = EFieldFromElement(el, fieldType, chordLength, integralUpToThisComponent->designParticle); // includes scaling
+  (*st)["efield"] = eField / lengthScaling;
+  
   G4double frequency = std::abs(el->frequency * CLHEP::hertz);
   (*st)["frequency"] = frequency;
 

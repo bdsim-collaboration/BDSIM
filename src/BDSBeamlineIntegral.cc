@@ -72,8 +72,8 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
         G4String compCFTN = componentAsDefined.cavityFieldType;
         G4String cftName = compCFTN.empty() ? BDSGlobalConstants::Instance()->CavityFieldType() : compCFTN;
         BDSCavityFieldType tp = BDS::DetermineCavityFieldType(cftName);
-        G4double eField = BDSComponentFactory::EFieldFromElement(&componentAsDefined, thisComponentArcLength,
-                                                                 designParticle.BRho());
+        BDSFieldType fieldType = BDS::FieldTypeFromCavityFieldType(tp);
+        G4double eField = BDSComponentFactory::EFieldFromElement(&componentAsDefined, fieldType, thisComponentArcLength, designParticle);
         switch (tp.underlying())
 	  {
           case BDSCavityFieldType::constantinz:
