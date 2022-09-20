@@ -54,6 +54,12 @@ public:
   
   virtual G4bool TimeVarying() const {return true;}
   
+  /// General function put here as it represents the equations in this class.
+  static G4double TransitTimeFactor(G4double frequency,
+                                    G4double zLength,
+                                    G4double beta,
+                                    G4double phaseCavityMode = 0);
+  
 private:
   G4double eFieldMax;    ///< Maximum field in V/m.
   G4double phase;        ///< Phase offset of the oscillator.
