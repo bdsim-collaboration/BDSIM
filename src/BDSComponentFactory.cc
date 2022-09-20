@@ -637,7 +637,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
       G4double period = 1. / (element->frequency*CLHEP::hertz);
       // choose the smallest length scale based on the length of the component of the distance
       // travelled in one period - so improved for high frequency fields
-      G4double limit = std::min((*st)["length"], CLHEP::c_light*period) * stepFraction;
+      G4double limit = std::min((*st)["length"], integralUpToThisComponent->designParticle.Velocity()*period) * stepFraction;
       auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
       if (ul != defaultUL)
 	{vacuumField->SetUserLimits(ul);}
