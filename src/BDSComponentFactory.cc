@@ -2610,6 +2610,12 @@ G4double BDSComponentFactory::EFieldFromElement(Element const* el,
   
   switch (fieldType.underlying())
     {
+    case BDSFieldType::rfconstantinx:
+    case BDSFieldType::rfconstantiny:
+      {// voltage is not used for these
+        eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;
+        break;
+      }
     case BDSFieldType::rfconstantinz:
       {
 	if (BDS::IsFinite(el->gradient))
