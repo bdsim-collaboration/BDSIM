@@ -86,9 +86,11 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   G4double Bphi = Bmax * J1r * std::sin(angularFrequency*t + phase);
 
   // Converting Bphi into cartesian coordinates:
-  G4double Bx = Bphi*std::sin(phi);
-  G4double By = Bphi*std::cos(phi);
-
+  G4TwoVector bxby(0,Bphi); // this is equivalent to a pi/2 rotation of (1,0)
+  bxby.rotate(phi);
+  G4double Bx = bxby.x();
+  G4double By = bxby.y();
+  
   // Local B and E fields:
   G4ThreeVector LocalB = G4ThreeVector(Bx, By, 0);
   G4ThreeVector LocalE = G4ThreeVector(0,  0,  Ez);
