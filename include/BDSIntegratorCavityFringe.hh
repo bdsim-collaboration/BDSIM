@@ -56,10 +56,8 @@ public:
                        G4double       yErr[]);
 
 private:
-  BDSIntegratorCavityFringe();
-
   const	G4double phase;
-  const	G4double efield;
+  G4double efield;
   const	G4double isentrance;
 
 protected:
