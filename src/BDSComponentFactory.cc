@@ -1881,26 +1881,30 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 {
   if (element->axisAngle)
-  {
-    return new BDSTransform3D(elementName,
-                              element->xdir * CLHEP::m,
-                              element->ydir * CLHEP::m,
-                              element->zdir * CLHEP::m,
-                              element->axisX,
-                              element->axisY,
-                              element->axisZ,
-                              element->angle * CLHEP::rad);
-  }
+    {
+      if (BDS::IsFinite(element->phi) || BDS::IsFinite(element->theta) || BDS::IsFinite(element->psi))
+	{BDS::Warning(__METHOD_NAME__, "component \""+element->name+"\" has axisAngle=1 but one or more of (phi,theta,psi) are non-zero - check");}
+      return new BDSTransform3D(elementName,
+				element->xdir * CLHEP::m,
+				element->ydir * CLHEP::m,
+				element->zdir * CLHEP::m,
+				element->axisX,
+				element->axisY,
+				element->axisZ,
+				element->angle * CLHEP::rad);
+    }
   else
-  {
-    return new BDSTransform3D(elementName,
-                              element->xdir * CLHEP::m,
-                              element->ydir * CLHEP::m,
-                              element->zdir * CLHEP::m,
-                              element->phi   * CLHEP::rad,
-                              element->theta * CLHEP::rad,
-                              element->psi   * CLHEP::rad);
-  }
+    {
+      if (BDS::IsFinite(element->angle) || BDS::IsFinite(element->axisX) || BDS::IsFinite(element->axisY) || BDS::IsFinite(element->axisZ))
+	{BDS::Warning(__METHOD_NAME__, "component \""+element->name+"\" does not have axisAngle=1 but one or more axisAngle variables are non-zero - check");}
+      return new BDSTransform3D(elementName,
+				element->xdir * CLHEP::m,
+				element->ydir * CLHEP::m,
+				element->zdir * CLHEP::m,
+				element->phi   * CLHEP::rad,
+				element->theta * CLHEP::rad,
+				element->psi   * CLHEP::rad);
+    }
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator(const G4double width)
