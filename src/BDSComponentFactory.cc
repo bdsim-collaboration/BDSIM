@@ -268,6 +268,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
 #endif
+      integral.Integrate(*elementIn); // update beamline integral for this component
       return BDSAcceleratorComponentRegistry::Instance()->GetComponent(element->name, integral.designParticle.BRho());
     }
 
