@@ -52,40 +52,86 @@ void BDSBunchRadioactiveDecaySource::SetOptions(const BDSParticleDefinition* bea
                                      const G4double beamlineSIn)
 {
     radioactiveDecaySourceFile = beam.distrFile;
-    radioactiveDecaySourceName = beam.radioactiveDecaySourceName;
+    radioactiveDecaySourceName = BDS::SplitOnWhiteSpace(beam.radioactiveDecaySourceName);
+
+    int numberOfSources = radioactiveDecaySourceName.size();
+
+    activity = new TH1D("activity", "activity", numberOfSources, 0.0, numberOfSources);
 
     TFile* myFile = TFile::Open(radioactiveDecaySourceFile.c_str());
 
-    std::string treeName = "RadioactiveDecaySource/translation";
-    TTree* tree = (TTree*) myFile->Get(treeName.c_str());
-    TBranch* branch = tree->GetBranch(radioactiveDecaySourceName.c_str());
+    std::string treeNameTranslation = "RadioactiveDecaySource/translation";
+    TTree* treeTranslation = (TTree*) myFile->Get(treeNameTranslation.c_str());
 
-    double value;
-    branch->SetAddress(& value);
-    std::vector<double> v;
-    v.reserve(3);
-    for (auto i = 0; i < 3; ++i) {
-        branch->GetEntry(i);
-        v.push_back(value*CLHEP::m);
-    }
-    translation = G4ThreeVector(v[0],v[1],v[2]);
+    std::string treeNameRotation = "RadioactiveDecaySource/rotation";
+    TTree* treeRotation = (TTree*) myFile->Get(treeNameRotation.c_str());
 
     std::string treeNameBins = "RadioactiveDecaySource/bins";
     TTree* treeBins = (TTree*) myFile->Get(treeNameBins.c_str());
-    TBranch* branchBins = treeBins->GetBranch(radioactiveDecaySourceName.c_str());
 
-    double valueBins;
-    branchBins->SetAddress(& valueBins);
-    std::vector<double> vBins;
-    v.reserve(3);
-    for (auto i = 0; i < 3; ++i) {
-        branchBins->GetEntry(i);
-        vBins.push_back(valueBins*CLHEP::m);
+    std::string treeNameActivity = "RadioactiveDecaySource/activity";
+    TTree* treeActivity = (TTree*) myFile->Get(treeNameActivity.c_str());
+
+    for (int j = 0; j < numberOfSources; ++j){
+
+        TBranch* branchTranslation = treeTranslation->GetBranch(radioactiveDecaySourceName[j]);
+
+        double valueTranslation;
+        branchTranslation->SetAddress(& valueTranslation);
+        std::vector<double> vTranslation;
+        vTranslation.reserve(3);
+        for (auto i = 0; i < 3; ++i) {
+            branchTranslation->GetEntry(i);
+            vTranslation.push_back(valueTranslation*CLHEP::m);
+        }
+        translation.push_back(G4ThreeVector(vTranslation[0], vTranslation[1], vTranslation[2]));
+
+        TBranch* branchRotation = treeRotation->GetBranch(radioactiveDecaySourceName[j]);
+
+        double valueRotation;
+        branchRotation->SetAddress(& valueRotation);
+        std::vector<double> vRotation;
+        vRotation.reserve(9);
+        for (auto i = 0; i < 9; ++i) {
+            branchRotation->GetEntry(i);
+            vRotation.push_back(valueRotation);
+        }
+        CLHEP::HepRotation rot = CLHEP::HepRotation();
+        G4ThreeVector row_1 = G4ThreeVector(vRotation[0], vRotation[1], vRotation[2]);
+        G4ThreeVector row_2 = G4ThreeVector(vRotation[3], vRotation[4], vRotation[5]);
+        G4ThreeVector row_3 = G4ThreeVector(vRotation[6], vRotation[7], vRotation[8]);
+        rot.setRows(row_1, row_2, row_3);
+        rotation.push_back(rot);
+
+        TBranch* branchBins = treeBins->GetBranch(radioactiveDecaySourceName[j]);
+
+        double valueBins;
+        branchBins->SetAddress(& valueBins);
+        std::vector<double> vBins;
+        vBins.reserve(3);
+        for (auto i = 0; i < 3; ++i) {
+            branchBins->GetEntry(i);
+            vBins.push_back(valueBins*CLHEP::m);
+        }
+        bins.push_back(G4ThreeVector(vBins[0],vBins[1],vBins[2]));
+
+        TBranch* branchActivity = treeActivity->GetBranch(radioactiveDecaySourceName[j]);
+
+        double valueActivity;
+        branchActivity->SetAddress(& valueActivity);
+        std::vector<double> vActivity;
+        vActivity.reserve(1);
+        for (auto i = 0; i < 1; ++i) {
+            branchActivity->GetEntry(i);
+            vActivity.push_back(valueActivity);
+        }
+        activity->Fill(j,vActivity[0]);
+
+        std::string histTreeName = "RadioactiveDecaySource/histograms/" + radioactiveDecaySourceName[j];
+        histVector.push_back((TH3D*) myFile->Get(histTreeName.c_str()));
+
     }
-    bins = G4ThreeVector(vBins[0],vBins[1],vBins[2]);
 
-    std::string histTreeName = "RadioactiveDecaySource/histograms/" + radioactiveDecaySourceName;
-    hist = (TH3D*) myFile->Get(histTreeName.c_str());
     myFile->Close();
 
     BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
@@ -93,7 +139,13 @@ void BDSBunchRadioactiveDecaySource::SetOptions(const BDSParticleDefinition* bea
 
 BDSParticleCoordsFull BDSBunchRadioactiveDecaySource::GetNextParticleLocal()
 {
-    hist->GetRandom3(x,y,z);
+
+    double h = activity->GetRandom();
+    int bin_h = ((TAxis*)activity->GetXaxis())->FindBin(h)-1;
+
+    TH3D* hist = histVector[bin_h];
+
+    hist->GetRandom3(x, y, z);
 
     double bin_x = ((TAxis*)hist->GetXaxis())->FindBin(x);
     double bin_y = ((TAxis*)hist->GetYaxis())->FindBin(y);
@@ -104,14 +156,13 @@ BDSParticleCoordsFull BDSBunchRadioactiveDecaySource::GetNextParticleLocal()
     double bin_centerz = ((TAxis*)hist->GetZaxis())->GetBinCenter(bin_z)*CLHEP::m;
 
     G4ThreeVector bin_center = G4ThreeVector(bin_centerx, bin_centery, bin_centerz);
-    CLHEP::HepRotation mt = CLHEP::HepRotation();
-    G4Transform3D transform = G4Transform3D(mt, translation);
+    G4Transform3D transform = G4Transform3D(rotation[bin_h], translation[bin_h]);
     const HepGeom::Point3D<G4double> bin_center_new = transform * (HepGeom::Point3D<G4double>) bin_center;
 
     G4double t  = T0;
-    G4double z  = Z0 + bin_center_new.z() + (flatGen->shoot()-0.5)* bins[2];
-    G4double x  = X0 + bin_center_new.x() + (flatGen->shoot()-0.5)* bins[0];
-    G4double y  = Y0 + bin_center_new.y() + (flatGen->shoot()-0.5)* bins[1];
+    G4double z  = Z0 + bin_center_new.z() + (flatGen->shoot()-0.5)* bins[bin_h][2];
+    G4double x  = X0 + bin_center_new.x() + (flatGen->shoot()-0.5)* bins[bin_h][0];
+    G4double y  = Y0 + bin_center_new.y() + (flatGen->shoot()-0.5)* bins[bin_h][1];
     G4double xp = Xp0;
     G4double yp = Yp0;
     G4double zp = CalculateZp(xp,yp,Zp0);

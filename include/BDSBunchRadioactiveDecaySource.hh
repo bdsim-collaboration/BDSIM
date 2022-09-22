@@ -50,10 +50,12 @@ public:
 
 protected:
     std::string radioactiveDecaySourceFile;
-    std::string radioactiveDecaySourceName;
+    std::vector<G4String> radioactiveDecaySourceName;
     CLHEP::RandFlat* flatGen;
-    TH3D* hist;
-    G4ThreeVector translation, bins;
+    std::vector<TH3D*> histVector;
+    TH1D* activity;
+    std::vector<CLHEP::HepRotation> rotation;
+    std::vector<G4ThreeVector> translation, bins;
     double x,y,z;
 };
 

@@ -36,6 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4DeexPrecoParameters.hh"
 #include "G4IonConstructor.hh"
 
+#include "BDSGlobalConstants.hh"
+
 BDSPhysicsRadioactivation::BDSPhysicsRadioactivation(G4bool atomicRearrangementIn):
   G4VPhysicsConstructor("BDSPhysicsRadioactivation"),
   atomicRearrangement(atomicRearrangementIn)
@@ -98,10 +100,11 @@ void BDSPhysicsRadioactivation::ConstructProcess()
     {return;}
 
   G4Radioactivation* ra = new G4Radioactivation();
-  //G4AutoDelete::Register(ra); // this cause a double deletion error somehow
-  
+
   // atomic rearrangement
   ra->SetARM(atomicRearrangement);
+  ra->SetAnalogueMonteCarlo(BDSGlobalConstants::Instance()->AnalogueMC());
+  ra->SetBRBias(BDSGlobalConstants::Instance()->BRBias());
 
   // initialise atomic deexcitation
   G4LossTableManager* man = G4LossTableManager::Instance();
