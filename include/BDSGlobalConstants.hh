@@ -284,6 +284,7 @@ public:
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR*CLHEP::m);}
   inline G4bool   StopSecondaries()          const {return G4bool  (options.stopSecondaries);}
   inline G4bool   KillNeutrinos()            const {return G4bool  (options.killNeutrinos);}
+  inline G4bool   PhotonsAndIonsOnly()       const {return G4bool  (options.photonsAndIonsOnly);}
   inline G4bool   KilledParticlesMassAddedToEloss() const {return G4bool(options.killedParticlesMassAddedToEloss);}
   inline G4double MinimumRadiusOfCurvature() const {return G4double(options.minimumRadiusOfCurvature*CLHEP::m);}
   inline G4double ScintYieldFactor()         const {return G4double(options.scintYieldFactor);}

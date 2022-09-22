@@ -51,9 +51,10 @@ private:
   /// Force use of supplied constructor.
   BDSStackingAction() = delete;
 
-  G4bool killNeutrinos;     ///< Local copy of whether to kill neutrinos for tracking efficiency.
-  G4bool stopSecondaries;   ///< Whether particles with parentID > 0 will be killed.
-  G4long maxTracksPerEvent; ///< Maximum number of tracks before start killing.
+  G4bool killNeutrinos;      ///< Local copy of whether to kill neutrinos for tracking efficiency.
+  G4bool photonsAndIonsOnly; ///< Local copy of whether to keep only photons and ions for tracking efficiency.
+  G4bool stopSecondaries;    ///< Whether particles with parentID > 0 will be killed.
+  G4long maxTracksPerEvent;  ///< Maximum number of tracks before start killing.
   G4double minimumEK;
   std::set<G4int> particlesToExcludeFromCuts;
  };

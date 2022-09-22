@@ -375,6 +375,7 @@ void Options::PublishMembers()
   publish("deltaOneStep",             &Options::deltaOneStep);
   publish("stopSecondaries",          &Options::stopSecondaries);
   publish("killNeutrinos",            &Options::killNeutrinos);
+  publish("photonsAndIonsOnly",       &Options::photonsAndIonsOnly);
   publish("killedParticlesMassAddedToEloss", &Options::killedParticlesMassAddedToEloss);
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("sampleElementsWithPoleface",  &Options::sampleElementsWithPoleface);

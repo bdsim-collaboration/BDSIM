@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDEnergyDeposition.hh"
 #include "BDSSDEnergyDepositionGlobal.hh"
 #include "BDSStackingAction.hh"
+#include "BDSPhysicsUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Run.hh"
@@ -43,9 +44,10 @@ G4double BDSStackingAction::energyKilled = 0;
 
 BDSStackingAction::BDSStackingAction(const BDSGlobalConstants* globals)
 {
-  killNeutrinos     = globals->KillNeutrinos();
-  stopSecondaries   = globals->StopSecondaries();
-  maxTracksPerEvent = globals->MaximumTracksPerEvent();
+  killNeutrinos      = globals->KillNeutrinos();
+  photonsAndIonsOnly = globals->PhotonsAndIonsOnly();
+  stopSecondaries    = globals->StopSecondaries();
+  maxTracksPerEvent  = globals->MaximumTracksPerEvent();
   if (maxTracksPerEvent == 0) // 0 is default -> no action - set maximum possible number
     {maxTracksPerEvent = LONG_MAX;}
   minimumEK = globals->MinimumKineticEnergy();
@@ -84,6 +86,12 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
       G4int pdgNr = std::abs(pdgCode);
       if( pdgNr == 12 || pdgNr == 14 || pdgNr == 16)
 	{classification = fKill;}
+    }
+
+  if (photonsAndIonsOnly)
+    {
+        if (!BDS::IsIon(aTrack->GetParticleDefinition()) && pdgCode != 22)
+        {classification = fKill;}
     }
 
   // Optionally kill secondaries

@@ -290,6 +290,7 @@ namespace GMAD
     double   deltaOneStep;
     bool     stopSecondaries;
     bool     killNeutrinos;
+    bool     photonsAndIonsOnly;
     bool     killedParticlesMassAddedToEloss;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature.
     bool     sampleElementsWithPoleface;
