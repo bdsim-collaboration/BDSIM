@@ -67,6 +67,7 @@ public:
   G4double arcLength;
   BDSParticleDefinition designParticle;
   G4bool   changeOfEnergyEncountered;
+  G4int    rigidityCount;  ///< Which change in rigidity we're at. Starts at 0, +1 after each change. Used for naming.
 };
 
 #endif

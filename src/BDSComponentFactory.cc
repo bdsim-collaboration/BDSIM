@@ -167,6 +167,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     default:
       {break;}
   }
+#ifdef BDSDEBUG
+  G4cout << elementIn->name << "\t " << integral.arcLength/CLHEP::m << "\t " << integral.synchronousTAtEnd << G4endl;
+#endif
   
   element = elementIn;
   prevElement = prevElementIn;
@@ -183,8 +186,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
 #endif
-
-  if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name, integral.designParticle.BRho()))
+  G4String searchName = element->name;
+  if (integral.rigidityCount > 0)
+    {searchName += "_" + std::to_string(integral.rigidityCount);}
+  if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(searchName, integral.designParticle.BRho()))
     {registered = true;}
 
   if (element->type == ElementType::_DRIFT)
@@ -269,16 +274,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
 #endif
       integral.Integrate(*elementIn); // update beamline integral for this component
-      return BDSAcceleratorComponentRegistry::Instance()->GetComponent(element->name, integral.designParticle.BRho());
+      return BDSAcceleratorComponentRegistry::Instance()->GetComponent(searchName, integral.designParticle.BRho());
     }
 
   // Update name for this component
-  elementName = element->name;
-  
-  // In case the same component is reconstructed at a different rigidity
-  G4int nameCount = BDSAcceleratorComponentRegistry::Instance()->AlreadyRegisteredNameCount(elementName);
-  if (nameCount != 0)
-    {elementName += "_"+std::to_string(nameCount);} // we're 0 counting so if there's 1 instance already, the next should have _1
+  elementName = searchName;
 
   if (differentFromDefinition)
     {

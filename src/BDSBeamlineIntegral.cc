@@ -44,7 +44,8 @@ BDSBeamlineIntegral::BDSBeamlineIntegral(const BDSParticleDefinition& incomingPa
   synchronousTAtMiddleOfLastElement(T0In),
   arcLength(integratedArcLength),
   designParticle(incomingParticle),
-  changeOfEnergyEncountered(false)
+  changeOfEnergyEncountered(false),
+  rigidityCount(0)
 {;}
 
 BDSBeamlineIntegral::~BDSBeamlineIntegral()
@@ -100,7 +101,11 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
       {break;} // no action
     }
   
-  changeOfEnergyEncountered = changeOfEnergyEncountered || BDS::IsFinite(dEk, 1e-7);
+  G4bool changeOfEnergyEncounteredThisTime = BDS::IsFinite(dEk, 1e-7);
+  changeOfEnergyEncountered = changeOfEnergyEncountered || changeOfEnergyEncounteredThisTime;
+  // count the number of times rigidity changes so we can uniquely name reused components
+  if (changeOfEnergyEncounteredThisTime)
+    {rigidityCount++;}
   
   // momentum and therefore BRho
   if (integrateKineticEnergy)
