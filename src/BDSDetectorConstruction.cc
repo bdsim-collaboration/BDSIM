@@ -486,6 +486,13 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
   // Add teleporter to account for slight ring offset
   if (beamlineIsCircular && !massWorld->empty())
     {
+      if (integral->changeOfEnergyEncountered && integral->integrateKineticEnergy)
+	{
+	  G4String msg = "a change in energy was encountered in a circular machine and both\n";
+	  msg +=         "scaleRigidityWithMomentum=1 (default is 1) and circular options were used.\n";
+	  msg +=         "This will be wrong for more than one turn...";
+	  BDS::Warning(__METHOD_NAME__, msg);
+	}
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
