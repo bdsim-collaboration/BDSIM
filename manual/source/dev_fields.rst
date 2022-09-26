@@ -556,7 +556,7 @@ Wire locations:
 
 .. math::
 
-   \mathbf{c}_i =
+
    \begin{bmatrix}
    x \\
    y \\
@@ -785,6 +785,14 @@ The pill-box cavity field is constructed with a peak electric field :math:`E`, a
 frequency :math:`f`, phase :math:`\psi` and a cavity radius. It represents the
 TM010 mode of a simple pill-box cavity.
 
+Geant4 queries the field in (local) Cartesian coordinates and we require cylindrical
+coordinates for the field description. These are converted as:
+
+.. math::
+
+     \phi & = \tan^{-1} ( \frac{y}{x} ) \\
+     r    & = \sqrt{x^2 + y^2}
+
 The cavity radius is used to
 normalise the Bessel function so that the field drops to zero at this point. The field
 is time-dependent and the :math:`E_z` and :math:`B_{\phi}` components are calculated
@@ -799,33 +807,45 @@ The electric field is calculated as:
 
 .. math::
 
-   E_z      & = E \, J_{0}(r_n) \cos(2\,\pi\,f\,t + \psi)\,\cos(\frac{2\,\pi\,f\,z}{c})\\
+   E_z(r_n, z ,t) & = E \, J_{0}(r_n) \cos(2\,\pi\,f\,t + \psi)\,\cos(\frac{2\,\pi\,f\,z}{c})\\
 
-The B-field amplitude is calculated from the E-field amplitude.
+The radial B-field amplitude is calculated from the E-field amplitude.
 
 .. math::
 
-   H & = \frac{E}{Z_{0}} \, J_{1}(r_n) \sin(2\,\pi\,f\,t + \psi)\,\cos(\frac{2\,\pi\,f\,z}{c})\\
-   B & = \mu_{0} H
+   H_{\phi}(r_n, z, t) & = \frac{E}{Z_{0}} \, J_{1}(r_n) \sin(2\,\pi\,f\,t + \psi)\,\cos(\frac{2\,\pi\,f\,z}{c})\\
+   B_{\phi}(r_n, z, t) & = \mu_{0} H_{\phi}
 
 where :math:`Z_{0}` is the impedance of free space. To calculate B, a vacuum is assumed
 and therefore only the vacuum permeability is used to calculate B from H.
-
-The radial magnetic field in the pill-box field is:
-
-.. math::
-
-   B_{\phi} = \frac{E \, \mu_0 } { Z_0 } J_{1}(r_n) \sin(2\,\pi\,f\,t + \psi)
-
 
 The 3D Cartesian field vectors are therefore:
 
 .. math::
 
-   \mathbf{B} & = (B_{\phi}\cos(\phi),\, B_{\phi}\sin(\phi), \,0) \\
+   \begin{bmatrix}
+   B_x \\
+   B_y \\
+   \end{bmatrix}
+   =
+   \begin{bmatrix}
+   0  \\
+   B_{\phi} \\
+   \end{bmatrix}
+   \begin{bmatrix}
+   \cos \phi & - \sin \phi \\
+   \sin \phi & \cos \phi   \\
+   \end{bmatrix}
+
+The final 3-vectors are constructed as:
+
+.. math::
+
+   \mathbf{B} & = (B_x,\, B_y \,0) \\
    \mathbf{E} & = (0, \,0, \,E_z)
 
-Where :math:`\phi` is the polar coordinate.
+
+
 
 .. _field-map-formats:
 

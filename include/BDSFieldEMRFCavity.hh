@@ -56,9 +56,9 @@ public:
   
   /// General function put here as it represents the equations in this class.
   static G4double TransitTimeFactor(G4double frequency,
+                                    G4double phase,
                                     G4double zLength,
-                                    G4double beta,
-                                    G4double phaseCavityMode = 0);
+                                    G4double beta);
   
 private:
   G4double eFieldMax;    ///< Maximum field in V/m.

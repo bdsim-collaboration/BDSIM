@@ -102,11 +102,12 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
 }
 
 G4double BDSFieldEMRFCavity::TransitTimeFactor(G4double frequency,
+                                               G4double phase,
                                                G4double zLength,
                                                G4double beta)
 {
   G4double rfWavelength = CLHEP::c_light / frequency;
   G4double piGOverBetaLambda = (CLHEP::pi * zLength) / (beta * rfWavelength);
-  G4double transitTimeFactor = std::sin(piGOverBetaLambda) / piGOverBetaLambda;
+  G4double transitTimeFactor = std::sin(piGOverBetaLambda + phase) / piGOverBetaLambda;
   return transitTimeFactor;
 }
