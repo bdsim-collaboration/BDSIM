@@ -216,7 +216,7 @@ The change in kinetic energy is calculated depending on the field used.
 
    dE_k = charge \cdot |E| \cdot l_i  \cdot \cos(\phi)
 
-**Pillbox Electromagnetic Field** (see :ref:`field-pill-box`)
+**Pill-box Electromagnetic Field** (see :ref:`field-pill-box`)
 
 .. math::
 
@@ -782,7 +782,10 @@ Pill-Box Cavity
 ---------------
 
 The pill-box cavity field is constructed with a peak electric field :math:`E`, a
-frequency :math:`f`, phase :math:`\psi` and a cavity radius. The cavity radius is used to
+frequency :math:`f`, phase :math:`\psi` and a cavity radius. It represents the
+TM010 mode of a simple pill-box cavity.
+
+The cavity radius is used to
 normalise the Bessel function so that the field drops to zero at this point. The field
 is time-dependent and the :math:`E_z` and :math:`B_{\phi}` components are calculated
 and then returned in 3D Cartesian coordinates. The cavity radius is used to calculate
@@ -796,13 +799,13 @@ The electric field is calculated as:
 
 .. math::
 
-   E_z      & = E \, J_{0}(r_n) \cos(2\,\pi\,f\,t + \psi) \\
+   E_z      & = E \, J_{0}(r_n) \cos(2\,\pi\,f\,t + \psi)\,\cos(\frac{2\,\pi\,f\,z}{c})\\
 
 The B-field amplitude is calculated from the E-field amplitude.
 
 .. math::
 
-   H & = \frac{E_z}{Z_{0}} \\
+   H & = \frac{E}{Z_{0}} \, J_{1}(r_n) \sin(2\,\pi\,f\,t + \psi)\,\cos(\frac{2\,\pi\,f\,z}{c})\\
    B & = \mu_{0} H
 
 where :math:`Z_{0}` is the impedance of free space. To calculate B, a vacuum is assumed

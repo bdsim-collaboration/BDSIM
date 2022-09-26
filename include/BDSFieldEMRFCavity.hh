@@ -64,6 +64,7 @@ private:
   G4double eFieldMax;    ///< Maximum field in V/m.
   G4double phase;        ///< Phase offset of the oscillator.
   G4double cavityRadius; ///< Radius at maximum extent of cavity.
+  G4double wavelength;
 
   /// X coordinate of first 0 point for bessel J0.
   static const G4double j0FirstZero;

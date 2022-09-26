@@ -50,6 +50,7 @@ BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldAmplitude,
   eFieldMax(eFieldAmplitude),
   phase(phaseOffset),
   cavityRadius(cavityRadiusIn),
+  wavelength(CLHEP::c_light / frequencyIn),
   normalisedCavityRadius(j0FirstZero/cavityRadius),
   angularFrequency(CLHEP::twopi * frequencyIn)
 {
@@ -82,8 +83,9 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   G4double Bmax = hMax * CLHEP::mu0;
 
   // Calculating field components.
-  G4double Ez   = eFieldMax * J0r * std::cos(angularFrequency*t + phase);
-  G4double Bphi = Bmax * J1r * std::sin(angularFrequency*t + phase);
+  G4double zFactor = std::cos(CLHEP::twopi*position.z() / wavelength);
+  G4double Ez   = eFieldMax * J0r * std::cos(angularFrequency*t + phase) * zFactor;
+  G4double Bphi = Bmax * J1r * std::sin(angularFrequency*t + phase) * zFactor;
 
   // Converting Bphi into cartesian coordinates:
   G4TwoVector bxby(0,Bphi); // this is equivalent to a pi/2 rotation of (1,0)
