@@ -2602,8 +2602,7 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
 G4double BDSComponentFactory::EFieldFromElement(Element const* el,
                                                 BDSFieldType fieldType,
                                                 G4double cavityLength,
-                                                const BDSParticleDefinition& incomingParticle,
-                                                G4bool normaliseTransitTimeFactorOut)
+                                                const BDSParticleDefinition& incomingParticle)
 {
   G4double eField = 0; // - result variable
   G4double scaling = el->scaling;
@@ -2635,7 +2634,7 @@ G4double BDSComponentFactory::EFieldFromElement(Element const* el,
 	  {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
 	else
 	  {
-	    G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, cavityLength, incomingParticle.Beta(), el->phaseCavityMode*CLHEP::rad);
+	    G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, cavityLength, incomingParticle.Beta());
 	    eField = scaling * el->E * CLHEP::volt / cavityLength;
 	    eField /= transitTimeFactor;
 	  }

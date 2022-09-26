@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSFieldEMRFCavity.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
@@ -86,9 +87,7 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
 	    {
 	      if (!BDS::IsFinite(frequency)) // protect against zero division
 		{throw BDSException(__METHOD_NAME__, "for a pillbox cavity field, the frequency must be non-zero");}
-	      G4double rfWavelength = CLHEP::c_light / frequency;
-	      G4double piGOverBetaLambda = (CLHEP::pi * thisComponentArcLength) / (designParticle.Beta() * rfWavelength);
-	      G4double transitTimeFactor = std::sin(piGOverBetaLambda) / piGOverBetaLambda;
+        G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, thisComponentArcLength, designParticle.Beta());
 	      dEk = particleCharge * eField * thisComponentArcLength * transitTimeFactor;
 	      break;
 	    }

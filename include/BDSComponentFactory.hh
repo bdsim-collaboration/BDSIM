@@ -204,8 +204,7 @@ public:
   static G4double EFieldFromElement(GMAD::Element const* el,
                                     BDSFieldType fieldType,
                                     G4double cavityLength,
-                                    const BDSParticleDefinition& incomingParticle,
-                                    G4bool normaliseTransitTimeFactorOut = true);
+                                    const BDSParticleDefinition& incomingParticle);
   
   /// Utility function to prepare crystal recipe for an element. Produces a unique object
   /// this class doesn't own.
