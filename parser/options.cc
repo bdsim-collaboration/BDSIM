@@ -349,7 +349,6 @@ void Options::PublishMembers()
   publish("radioactiveDecay",    &Options::radioactiveDecay);
   publish("fullChain",    &Options::fullChain);
   publish("analogueMC", &Options::analogueMC);
-  publish("bRBias", &Options::bRBias);
   
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);

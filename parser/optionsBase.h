@@ -264,7 +264,6 @@ namespace GMAD
     bool     radioactiveDecay;
     bool     fullChain;
     bool     analogueMC;
-    bool     bRBias;
     ///@}
 
     // biasing options

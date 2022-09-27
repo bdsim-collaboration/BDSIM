@@ -76,17 +76,11 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
       fFullChain = BDSGlobalConstants::Instance()->FullChain();
 
       if (fCharge > 2.) {
-          //build decay chain
-          if (ID == 1) eventAction->AddDecayChain(name);
-          else       eventAction->AddDecayChain(" ---> " + name);
-          //
           //full chain: put at rest; if not: kill secondary
           G4Track* tr = (G4Track*) track;
           if (fFullChain) { tr->SetKineticEnergy(0.);
-              tr->SetTrackStatus(fStopButAlive);}
+              tr->SetTrackStatus(fStopButAlive);} //need to keep it for the daughter nuclides to be at rest and decay.
           else if (ID>1) tr->SetTrackStatus(fStopAndKill);
-
-          fTime_birth = track->GetGlobalTime();
       }
   }
 

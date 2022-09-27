@@ -223,8 +223,7 @@ OptionsBase::OptionsBase()
   muonSplittingExclusionWeight = 1e99;
   radioactiveDecay = false;
   fullChain = true;
-  analogueMC = true;
-  bRBias = false;
+  analogueMC = false;
   
   // biasing options
   defaultBiasVacuum        = "";

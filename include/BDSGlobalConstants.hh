@@ -344,7 +344,6 @@ public:
   inline G4bool RadioactiveDecay()    const {return G4bool(options.radioactiveDecay);}
   inline G4bool FullChain()    const {return G4bool(options.fullChain);}
   inline G4bool AnalogueMC()    const {return G4bool(options.analogueMC);}
-  inline G4bool BRBias()    const {return G4bool(options.bRBias);}
 
   /// @{ options that require some implementation.
   G4bool StoreTrajectoryTransportationSteps() const;

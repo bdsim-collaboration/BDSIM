@@ -72,10 +72,6 @@ private:
 
   G4double fCharge;
   G4bool   fFullChain;
-
-  G4double fTime_birth,  fTime_end;
-  G4double fTimeWindow1, fTimeWindow2;
-
 };
 
 #endif

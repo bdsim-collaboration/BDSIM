@@ -104,7 +104,6 @@ void BDSPhysicsRadioactivation::ConstructProcess()
   // atomic rearrangement
   ra->SetARM(atomicRearrangement);
   ra->SetAnalogueMonteCarlo(BDSGlobalConstants::Instance()->AnalogueMC());
-  ra->SetBRBias(BDSGlobalConstants::Instance()->BRBias());
 
   // initialise atomic deexcitation
   G4LossTableManager* man = G4LossTableManager::Instance();
