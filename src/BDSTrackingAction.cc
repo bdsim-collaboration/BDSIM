@@ -64,23 +64,23 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 
       G4ParticleDefinition* particle = track->GetDefinition();
       G4String name   = particle->GetParticleName();
-      fCharge = particle->GetPDGCharge();
-
       G4double Ekin = track->GetKineticEnergy();
-      G4int ID      = track->GetTrackID();
-
       G4double meanLife = particle->GetPDGLifeTime();
 
       aRun->ParticleCount(name, Ekin, meanLife);
 
+      G4bool IsIon = track->GetDefinition()->IsGeneralIon();
+      G4int ParentID = track->GetParentID();
+
       fFullChain = BDSGlobalConstants::Instance()->FullChain();
 
-      if (fCharge > 2.) {
-          //full chain: put at rest; if not: kill secondary
+      if (IsIon){
           G4Track* tr = (G4Track*) track;
-          if (fFullChain) { tr->SetKineticEnergy(0.);
-              tr->SetTrackStatus(fStopButAlive);} //need to keep it for the daughter nuclides to be at rest and decay.
-          else if (ID>1) tr->SetTrackStatus(fStopAndKill);
+          if (fFullChain and ParentID > 0 and Ekin > 0){
+              tr->SetTrackStatus(fStopButAlive);
+          } else if (ParentID > 0){
+              tr->SetTrackStatus(fStopAndKill);
+          }
       }
   }
 

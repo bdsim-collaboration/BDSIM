@@ -69,8 +69,6 @@ private:
   G4int  verboseSteppingEventStop;
   G4bool verboseSteppingPrimaryOnly;
   G4int  verboseSteppingLevel;
-
-  G4double fCharge;
   G4bool   fFullChain;
 };
 
