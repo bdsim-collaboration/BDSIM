@@ -56,7 +56,7 @@ protected:
     TH1D* activity;
     std::vector<CLHEP::HepRotation> rotation;
     std::vector<G4ThreeVector> translation, bins;
-    double x,y,z;
+    double hx,hy,hz;
 };
 
 #endif

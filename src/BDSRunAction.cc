@@ -174,8 +174,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
       if (nbEvents == 0) { return; }
 
       G4int prec = 4, wid = prec + 2;
-      G4int dfprec = G4cout.precision(prec);
-
+ 
       //particle count
       //
       G4cout << " Nb of generated particles: \n" << G4endl;

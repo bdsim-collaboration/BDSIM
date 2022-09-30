@@ -145,11 +145,11 @@ BDSParticleCoordsFull BDSBunchRadioactiveDecaySource::GetNextParticleLocal()
 
     TH3D* hist = histVector[bin_h];
 
-    hist->GetRandom3(x, y, z);
+    hist->GetRandom3(hx, hy, hz);
 
-    double bin_x = ((TAxis*)hist->GetXaxis())->FindBin(x);
-    double bin_y = ((TAxis*)hist->GetYaxis())->FindBin(y);
-    double bin_z = ((TAxis*)hist->GetZaxis())->FindBin(z);
+    double bin_x = ((TAxis*)hist->GetXaxis())->FindBin(hx);
+    double bin_y = ((TAxis*)hist->GetYaxis())->FindBin(hy);
+    double bin_z = ((TAxis*)hist->GetZaxis())->FindBin(hz);
 
     double bin_centerx = ((TAxis*)hist->GetXaxis())->GetBinCenter(bin_x)*CLHEP::m;
     double bin_centery = ((TAxis*)hist->GetYaxis())->GetBinCenter(bin_y)*CLHEP::m;
