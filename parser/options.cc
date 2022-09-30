@@ -348,8 +348,7 @@ void Options::PublishMembers()
   publish("muonSplittingExclusionWeight",    &Options::muonSplittingExclusionWeight);
   publish("radioactiveDecay",    &Options::radioactiveDecay);
   publish("fullChain",    &Options::fullChain);
-  publish("analogueMC", &Options::analogueMC);
-  
+
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
   publish("defaultBiasMaterial", &Options::defaultBiasMaterial);
@@ -357,6 +356,10 @@ void Options::PublishMembers()
   publish("biasForWorldContents",&Options::biasForWorldContents);
   publish("biasForWorldVacuum",  &Options::biasForWorldVacuum);
   publish("worldVacuumVolumeNames",&Options::worldVacuumVolumeNames);
+  publish("analogueMC", &Options::analogueMC);
+  publish("nSplit", &Options::nSplit);
+  publish("bRBias", &Options::bRBias);
+  publish("decayBiasFilename", &Options::decayBiasFilename);
 
   // options which influence tracking
   publish("integratorSet",            &Options::integratorSet);

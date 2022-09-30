@@ -41,17 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSPhysicsRadioactivation::BDSPhysicsRadioactivation(G4bool atomicRearrangementIn):
   G4VPhysicsConstructor("BDSPhysicsRadioactivation"),
   atomicRearrangement(atomicRearrangementIn)
-{//add new units for radioActive decays
-    //
-    const G4double minute = 60*CLHEP::second;
-    const G4double hour   = 60*CLHEP::minute;
-    const G4double day    = 24*CLHEP::hour;
-    const G4double year   = 365*CLHEP::day;
-    new G4UnitDefinition("minute", "min", "Time", minute);
-    new G4UnitDefinition("hour",   "h",   "Time", hour);
-    new G4UnitDefinition("day",    "d",   "Time", day);
-    new G4UnitDefinition("year",   "y",   "Time", year);
-
+{
     // mandatory for G4NuclideTable
     //
     G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(0.1*CLHEP::picosecond);
@@ -103,7 +93,17 @@ void BDSPhysicsRadioactivation::ConstructProcess()
 
   // atomic rearrangement
   ra->SetARM(atomicRearrangement);
-  ra->SetAnalogueMonteCarlo(BDSGlobalConstants::Instance()->AnalogueMC());
+  ra->SetAnalogueMonteCarlo(BDSGlobalConstants::Instance()->AnalogueMC()); // if FALSE: means that BRBias is activated per default, NSplit = 1 and Time Biasing between [0,1] sec.
+
+  if (!BDSGlobalConstants::Instance()->AnalogueMC())
+  {
+      ra->SetSplitNuclei(BDSGlobalConstants::Instance()->NSplit());
+      ra->SetBRBias(BDSGlobalConstants::Instance()->BRBias());
+
+      if (!BDSGlobalConstants::Instance()->DecayBiasFilename().empty()){
+          ra->SetDecayBias(BDSGlobalConstants::Instance()->DecayBiasFilename());
+      }
+  }
 
   // initialise atomic deexcitation
   G4LossTableManager* man = G4LossTableManager::Instance();

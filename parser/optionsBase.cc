@@ -222,8 +222,6 @@ OptionsBase::OptionsBase()
   muonSplittingExcludeWeight1Particles = false;
   muonSplittingExclusionWeight = 1e99;
   radioactiveDecay = false;
-  fullChain = true;
-  analogueMC = false;
   
   // biasing options
   defaultBiasVacuum        = "";
@@ -232,6 +230,11 @@ OptionsBase::OptionsBase()
   biasForWorldContents     = "";
   biasForWorldVacuum       = "";
   worldVacuumVolumeNames   = "";
+  fullChain = true;
+  analogueMC = true;
+  nSplit = 1;
+  bRBias = true;
+  decayBiasFilename = "";
 
   // tracking options
   integratorSet            = "bdsimmatrix";

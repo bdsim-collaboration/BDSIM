@@ -262,8 +262,6 @@ namespace GMAD
     bool     muonSplittingExcludeWeight1Particles;
     double   muonSplittingExclusionWeight;
     bool     radioactiveDecay;
-    bool     fullChain;
-    bool     analogueMC;
     ///@}
 
     // biasing options
@@ -273,6 +271,11 @@ namespace GMAD
     std::string biasForWorldContents;
     std::string biasForWorldVacuum;
     std::string worldVacuumVolumeNames;
+    bool        fullChain;
+    bool        analogueMC;
+    int         nSplit;
+    bool        bRBias;
+    std::string decayBiasFilename;
 
     // tracking related parameters
     std::string integratorSet;
