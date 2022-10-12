@@ -86,7 +86,15 @@ public:
 
   /// Update the G4 particle definition member. Developer responsibility to ensure
   /// this matches the contents of the class.
-  void UpdateG4ParticleDefinition(G4ParticleDefinition* particleIn) {particle = particleIn;}
+  void UpdateG4ParticleDefinition(G4ParticleDefinition* particleIn, G4double *massIn = nullptr) {
+      particle = particleIn;
+      if (massIn) {
+          totalEnergy = totalEnergy - mass + *massIn;
+          mass = *massIn;
+          kineticEnergy = totalEnergy - mass;
+          CalculateMomentum();
+      }
+  }
 
   /// @{ Accessor.
   inline G4ParticleDefinition* ParticleDefinition() const {return particle;}

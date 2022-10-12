@@ -57,7 +57,7 @@ BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
   ffact(ffactIn)
 {
   charge = particle->GetPDGCharge();
-  if (ionDefinition) // may be nullptr
+  if (ionDefinitionIn) // may be nullptr
     {
       ionDefinition = new BDSIonDefinition(*ionDefinitionIn);
       if (ionDefinition->OverrideCharge()) // if override for ions

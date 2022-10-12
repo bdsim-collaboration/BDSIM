@@ -339,7 +339,9 @@ void BDSBunch::UpdateIonDefinition()
   G4ParticleDefinition* ionParticleDef = ionTable->GetIon(ionDefinition->Z(),
 							  ionDefinition->A(),
 							  ionDefinition->ExcitationEnergy());
-  particleDefinition->UpdateG4ParticleDefinition(ionParticleDef);
+  G4double* ionMass = new G4double(ionParticleDef->GetPDGMass()); // mass changes if excited state
+  particleDefinition->UpdateG4ParticleDefinition(ionParticleDef, ionMass);
+  E0 = particleDefinition->TotalEnergy();
   // Note we don't need to take care of electrons here. These are automatically
   // allocated by Geant4 when it converts the primary vertex to a dynamic particle
   // (in the process of constructing a track from it) (done in G4PrimaryTransformer)

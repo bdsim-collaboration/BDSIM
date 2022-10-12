@@ -40,7 +40,8 @@ BDSPrimaryVertexInformation:: BDSPrimaryVertexInformation(const BDSParticleCoord
   auto thisParticle = new BDSParticleDefinition(particle->ParticleDefinition(),
 						primaryVertexIn.local.totalEnergy, 0, 0,
 						particle->FFact(),
-						particle->IonDefinition());
+						particle->IonDefinition(),
+                        particle->PDGID());
   momentum = thisParticle->Momentum();
   rigidity = thisParticle->BRho();
   delete thisParticle;
