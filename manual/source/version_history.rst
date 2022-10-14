@@ -189,6 +189,9 @@ General Updates
   to be a little brighter.
 * Parser error messages for samplers have been improved to give line numbers and exact
   strings in quotes.
+* Samplers, sampler placements and their parallel world have been change to have a nullptr (no)
+  material. The parallel world material should not make a difference for the setup in BDSIM, but
+  now it is explicitly forbidden from having any effect by it being nullptr.
 
 Bug Fixes
 ---------
