@@ -273,36 +273,45 @@ void BDSOutputStructures::InitialiseMaterialMap()
   
   const auto materialTable = G4Material::GetMaterialTable(); // should be an std::vector<G4Material*>*
   
-  // It's totally permitted to use degenerate material names as the geometry is done by pointer
-  // We need a way to sort the materials for a given input irrespective of pointer or memory
+  // It's completely permitted to use degenerate material names as the geometry is constructed by
+  // pointer. We need a way to sort the materials for a given input irrespective of pointer or memory
   // location so the result is the same for multiple runs of bdsim.
+
   // Use a pair of <name, density>. A c++ map will be internally sorted by keys and the various
-  // comparison operators are defined by pairs in <utility>.
-  // Once sorted, by a map, we then loop over that map and generate integer IDs for each
-  // material
-  // This is a little overkill really as we ensure in BDSMaterials we don't make materials
-  // with degenerate names and ultimately, we can't define degenerate materials in GMAD so
-  // this shouldn't happen. Perhaps it could from GDML.
+  // comparison operators are defined by pairs in <utility>. Once sorted, by a map, we then loop
+  // over that map and generate integer IDs for each material.
+  
+  // This may seem overkill as we ensure in BDSMaterials we don't make materials with
+  // degenerate names and ultimately, we can't define degenerate materials in GMAD so
+  // this shouldn't happen. But, if someone turns off preprocessGDML and they have degenerate
+  // material names in multiple GDML files or a repeated definition of the same material
+  // in multiple GDML files, we will end up with different G4Material instances but still
+  // need a way to distinguish them withouth using the pointer.
+  
   std::map<std::pair<G4String, G4double>, G4Material*> sortingMap;
   std::map<G4String, int> nameCount;
   std::map<G4Material*, G4String> matToUniqueName;
+  
   for (const auto& mat : *materialTable)
     {
       G4String matName = mat->GetName();
-      sortingMap[std::make_pair(matName, mat->GetDensity())] = mat;
+      G4String matNameUnique = matName;
       
       auto search = nameCount.find(matName);
       if (search != nameCount.end())
 	{
 	  search->second += 1;
-	  matToUniqueName[mat] = matName + std::to_string(search->second);
+	  matNameUnique = matName + std::to_string(search->second);
+	  matToUniqueName[mat] = matNameUnique;
 	}
       else
 	{
 	  nameCount[matName] = 0;
 	  matToUniqueName[mat] = matName;
 	}
+      sortingMap[std::make_pair(matNameUnique, mat->GetDensity())] = mat;
     }
+  
   short int i = 0;
   for (const auto& kv : sortingMap)
     {
