@@ -3656,6 +3656,10 @@ a sampler that uses that marker::
 
   sample, range = interestingplane;
 
+.. note:: If an element with an attached sampler is followed by a marker with an attached sampler,
+      the BDSIM output will not contain sampler data for the element as it would be identical to
+      that of the marker.
+
 When an element is defined multiple times in the line (such as "d1" in the above example),
 samplers will be attached to all instances. If you wish to sample only one specific
 instance, the following syntax can be used::
