@@ -319,6 +319,7 @@ void Options::PublishMembers()
   publish("maximumPhotonsPerStep",       &Options::maximumPhotonsPerStep);
   publish("maximumBetaChangePerStep",    &Options::maximumBetaChangePerStep);
   publish("maximumTracksPerEvent",       &Options::maximumTracksPerEvent);
+  publish("maximumEventDuration",        &Options::maximumEventDuration);
   publish("minimumKineticEnergy",        &Options::minimumKineticEnergy);
   publish("minimumKineticEnergyTunnel",  &Options::minimumKineticEnergyTunnel);
   publish("minimumRange",                &Options::minimumRange);

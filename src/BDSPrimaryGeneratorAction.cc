@@ -114,6 +114,8 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
     if (!beg)
     {throw BDSException(__METHOD_NAME__, "must be used with a BDSBunchEventGenerator instance");}
     samplerReader = new BDSROOTSamplerReader(beam.distrType, filename, beg, beam.eventGeneratorWarnSkippedParticles);
+    if ()
+    {BDSGlobalConstants::Instance()->SetNumberToGenerate(samplerReader->NEventsInFile());}
   }
 }
 

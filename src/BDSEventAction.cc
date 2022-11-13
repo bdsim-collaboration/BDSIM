@@ -71,6 +71,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ctime>
 #include <map>
 #include <string>
+#include <thread>
 #include <vector>
 
 using namespace std::chrono;
@@ -78,6 +79,8 @@ using namespace std::chrono;
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 BDSEventAction::BDSEventAction(BDSOutput* outputIn):
+  longRunningMonitor(new BDSTimerKiller()),
+  maximumEventDuration(0),
   output(outputIn),
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
@@ -104,6 +107,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   nTracks(0)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  maximumEventDuration      = globals->MaximumEventDuration();
   verboseEventBDSIM         = globals->VerboseEventBDSIM();
   verboseEventStart         = globals->VerboseEventStart();
   verboseEventStop          = BDS::VerboseEventStop(verboseEventStart, globals->VerboseEventContinueFor());
@@ -129,7 +133,9 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
 }
 
 BDSEventAction::~BDSEventAction()
-{;}
+{
+  delete longRunningMonitor;
+}
 
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 {
@@ -227,10 +233,14 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 
   milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
   starts = (G4double)ms.count()/1000.0;
+  
+  longRunningMonitor->WaitFor(std::chrono::seconds(maximumEventDuration), currentEventID);
 }
 
 void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
+  longRunningMonitor->Kill(); // reached end of event naturally - kill the killer
+  
   //G4cout << "BDSWrapperMuonSplitting::nCallsThisEvent> " << BDSWrapperMuonSplitting::nCallsThisEvent << G4endl;
   auto flagsCache(G4cout.flags());
   // Get event number information

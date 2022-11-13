@@ -235,6 +235,7 @@ namespace GMAD
     int      maximumPhotonsPerStep;
     int      maximumBetaChangePerStep;
     long     maximumTracksPerEvent;
+    int      maximumEventDuration;
     double   minimumKineticEnergy;
     double   minimumKineticEnergyTunnel;
     double   minimumRange;

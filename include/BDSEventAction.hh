@@ -24,16 +24,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectoryFilter.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4EventManager.hh"
 #include "G4UserEventAction.hh"
 
 #include <bitset>
+#include <condition_variable>
 #include <ctime>
 #include <map>
+#include <mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 class BDSEventInfo;
 class BDSOutput;
+class BDSTimerKiller;           //  <---- See bottom of this source file for implementation
 class BDSTrajectoriesToStore;
 class BDSTrajectory;
 class BDSTrajectoryPrimary;
@@ -84,6 +89,8 @@ protected:
                          std::map<BDSTrajectory*, std::bitset<BDS::NTrajectoryFilters> >& trajectoryFilters) const;
   
 private:
+  BDSTimerKiller* longRunningMonitor;
+  G4int maximumEventDuration; ///< In seconds.
   BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
   G4bool verboseEventBDSIM;
   G4int  verboseEventStart;
@@ -152,6 +159,45 @@ private:
   /// leading to more than one temporary object per final one trajectory. Therefore
   /// we can't end up with degenerate ones here.
   std::map<G4int, const BDSTrajectoryPrimary*> primaryTrajectoriesCache;// Cache of primary trajectories as constructed
+};
+
+/**
+ *  @brief A class for a monitor thread that will do something after some time but can also be killed itself.
+ *
+ *  Solution from https://stackoverflow.com/questions/29775153/stopping-long-sleep-threads by
+ *  Yakk - Adam Nevraumont
+ */
+class BDSTimerKiller
+  {
+  public:
+  /// Returns false if killed.
+  template<class R, class P>
+  bool WaitFor(std::chrono::duration<R,P> const& time, G4int currentEventIndex) const
+  {
+    std::unique_lock<std::mutex> lock(m);
+    bool result = !cv.wait_for(lock, time, [&]{return terminate;});
+    G4cout << "Current event (index = " << currentEventIndex << ") is being killed due to exceeding time limit of " << time;
+    G4EventManager::GetEventManager()->AbortCurrentEvent();
+    return result;
+  }
+  void Kill()
+  {
+    std::unique_lock<std::mutex> lock(m);
+    terminate = true; // should be modified inside mutex lock
+    cv.notify_all();
+  }
+  /// @{ Explicitly delete/default special member functions.
+  BDSTimerKiller() = default;
+  BDSTimerKiller(BDSTimerKiller&&)=delete;
+  BDSTimerKiller(BDSTimerKiller const&)=delete;
+  BDSTimerKiller& operator=(BDSTimerKiller&&)=delete;
+  BDSTimerKiller& operator=(BDSTimerKiller const&)=delete;
+  /// @}
+  
+private:
+  mutable std::condition_variable cv;
+  mutable std::mutex m;
+  bool terminate = false;
 };
 
 #endif

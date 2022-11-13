@@ -290,6 +290,7 @@ public:
   inline G4int    MaximumPhotonsPerStep()    const {return G4int   (options.maximumPhotonsPerStep);}
   inline G4int    MaximumBetaChangePerStep() const {return G4int   (options.maximumBetaChangePerStep);}
   inline G4long   MaximumTracksPerEvent()    const {return G4long  (options.maximumTracksPerEvent);}
+  inline G4int    MaximumEventDuration()     const {return G4int   (options.maximumEventDuration);}
   inline G4double MinimumKineticEnergy()     const {return G4double(options.minimumKineticEnergy*CLHEP::GeV);}
   inline G4double MinimumKineticEnergyTunnel() const {return G4double(options.minimumKineticEnergyTunnel)*CLHEP::GeV;}
   inline G4double MinimumRange()             const {return G4double(options.minimumRange*CLHEP::m);}
