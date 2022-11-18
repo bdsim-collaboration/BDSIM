@@ -254,17 +254,23 @@ void BDSBunchUserFile<T>::skip(std::stringstream& ss, G4int nValues)
 
 template<class T>
 void BDSBunchUserFile<T>::SkipLines()
-{
+{  
   if (BDS::IsFinite(nlinesIgnore) || BDS::IsFinite(nlinesSkip))
     {
+      G4int numLinesFullFile = BDSGlobalConstants::Instance()->NGenerate();
+      G4int numLinesToNoUse = nlinesIgnore + nlinesSkip;
+      while(numLinesFullFile < numLinesToNoUse)
+        {
+          numLinesToNoUse = numLinesToNoUse - numLinesFullFile;
+        }
       G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << ", skipping "
-	     << nlinesSkip << " lines" << G4endl;
+      << nlinesSkip << " lines" << G4endl;
       std::string line;
-      for (G4int i = 0; i < nlinesIgnore + nlinesSkip; i++)
-	{
-	  std::getline(InputBunchFile, line);
-	  lineCounter++;
-	}
+      for (G4int i = 0; i < numLinesToNoUse; i++)
+  {
+    std::getline(InputBunchFile, line);
+    lineCounter++;
+  }
     }
 }
 
@@ -287,14 +293,35 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
 }
 
 template<class T>
+G4int BDSBunchUserFile<T>::CountAllLinesInFile()
+{
+  OpenBunchFile();
+
+  std::string line;
+  std::regex comment("^\\#.*");
+
+  G4int numLines = 0;
+  while ( std::getline(InputBunchFile, line) )
+    {
+      if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
+	{continue;}
+      ++numLines;
+    }
+  CloseBunchFile();
+  return numLines;
+}
+
+
+template<class T>
 G4int BDSBunchUserFile<T>::CountLinesInFile()
 {
   OpenBunchFile();
   SkipLines();
-  
-  G4int numLines = 0;
+
   std::string line;
   std::regex comment("^\\#.*");
+  
+  G4int numLines = 0;
   while ( std::getline(InputBunchFile, line) )
     {
       if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
