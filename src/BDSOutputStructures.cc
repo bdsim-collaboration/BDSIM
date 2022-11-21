@@ -59,10 +59,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   nCollimators(0),
+  nCavities(0),
   localSamplersInitialised(false),
   localCollimatorsInitialised(false)
 {
   G4bool storeCollimatorInfo = globals->StoreCollimatorInfo();
+  G4bool storeCavityInfo = globals->StoreCavityInfo();
   G4bool storeTurn       = globals->StoreELossTurn();
   G4bool storeLinks      = globals->StoreELossLinks();
   G4bool storeLocal      = globals->StoreELossLocal();
@@ -79,7 +81,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   headerOutput  = new BDSOutputROOTEventHeader();
   beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();
-  modelOutput   = new BDSOutputROOTEventModel(storeCollimatorInfo);
+  modelOutput   = new BDSOutputROOTEventModel(storeCollimatorInfo, storeCavityInfo);
 
   eLoss       = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					   storeGlobal, storeTime, storeStepLength,
@@ -368,6 +370,34 @@ void BDSOutputStructures::PrepareCollimatorInformation()
       G4double xDiff = info.xSizeOut - info.xSizeIn;
       G4double yDiff = info.ySizeOut - info.ySizeIn;
       collimatorDifferences.emplace_back(xDiff, yDiff); // construct in place
+    }
+}
+
+void BDSOutputStructures::PrepareCavityInformation()
+{
+    const G4String cavityPrefix = "CAV_";
+    const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
+    std::vector<G4int> pillboxIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_pillbox");
+    std::vector<G4int> rectIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_rectangular");
+    std::vector<G4int> ellipticalIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_elliptical");
+    cavityIndices = pillboxIndices;
+    cavityIndices.insert(std::end(cavityIndices), std::begin(rectIndices), std::end(rectIndices));
+    cavityIndices.insert(std::end(cavityIndices), std::begin(ellipticalIndices), std::end(ellipticalIndices));
+    nCavities = (G4int)cavityIndices.size();
+
+    for (auto index : cavityIndices)
+    {
+      // prepare output structure name
+      const BDSBeamlineElement* el = flatBeamline->at(index);
+      // use the 'placement' name for a unique name (with copy number included)
+      G4String cavityName = cavityPrefix + el->GetPlacementName();
+      cavityNames.push_back(cavityName);
+      cavityIndicesByName[el->GetName()]          = index;
+      cavityIndicesByName[el->GetPlacementName()] = index;
+
+      BDSOutputROOTEventCavityInfo info;
+      info.Fill(el);
+      cavityInfo.push_back(info);
     }
 }
 
