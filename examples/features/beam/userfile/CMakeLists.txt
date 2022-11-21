@@ -20,6 +20,7 @@ simple_testing(bunch-userfile-all-columns1     "--file=userfile-all-columns.gmad
 simple_testing(bunch-userfile-all-columns2     "--file=userfile-all-columns2.gmad"     "")
 simple_testing(bunch-userfile-all-columns3     "--file=userfile-all-columns3.gmad"     "")
 simple_testing(bunch-userfile-xp0-yp0          "--file=userfile-xp0yp0.gmad"           "")
+simple_testing(bunch-userfile-skip-lines       "--file=userfile-skip-lines.gmad"       "")
 
 simple_fail(bunch-userfile-bad-units   "--file=userfile-bad-units.gmad")
 
