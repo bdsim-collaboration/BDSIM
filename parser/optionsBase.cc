@@ -269,6 +269,7 @@ OptionsBase::OptionsBase()
   storeApertureImpactsIons   = false;
   storeApertureImpactsAll    = false;
   apertureImpactsMinimumKE   = 0;
+  storeCavityInfo            = true;
   storeCollimatorInfo        = false;
   storeCollimatorHits        = false;
   storeCollimatorHitsLinks   = false;
