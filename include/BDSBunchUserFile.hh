@@ -77,6 +77,7 @@ private:
   G4String bunchFormat;   ///< Format of the file.
   G4int    nlinesIgnore;  ///< Number of lines that will be ignored at the start the file.
   G4int    nlinesSkip;    ///< Number of lines that will be skipped after the nlinesIgnore.
+  G4int    numLinesFullFile;
   G4double particleMass;  ///< Cache of nominal beam particle mass.
   G4int    lineCounter;   ///< Line counter.
   G4bool   printedOutFirstTime;    ///< Whether we've printed out opening the file the first time.
