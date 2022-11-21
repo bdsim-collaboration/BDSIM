@@ -52,6 +52,7 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   bunchFormat(""),
   nlinesIgnore(0),
   nlinesSkip(0),
+  numLinesFullFile(0),
   particleMass(0),
   lineCounter(0),
   printedOutFirstTime(false),
@@ -254,19 +255,18 @@ void BDSBunchUserFile<T>::skip(std::stringstream& ss, G4int nValues)
 
 template<class T>
 void BDSBunchUserFile<T>::SkipLines()
-{  
+{
   if (BDS::IsFinite(nlinesIgnore) || BDS::IsFinite(nlinesSkip))
     {
-      G4int numLinesFullFile = BDSGlobalConstants::Instance()->NGenerate();
-      G4int numLinesToNoUse = nlinesIgnore + nlinesSkip;
-      while(numLinesFullFile < numLinesToNoUse)
+      G4int numLinesToNotUse = nlinesIgnore + nlinesSkip;
+      while(numLinesFullFile < numLinesToNotUse)
         {
-          numLinesToNoUse = numLinesToNoUse - numLinesFullFile;
+          numLinesToNotUse = numLinesToNotUse - numLinesFullFile;
         }
       G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << ", skipping "
       << nlinesSkip << " lines" << G4endl;
       std::string line;
-      for (G4int i = 0; i < numLinesToNoUse; i++)
+      for (G4int i = 0; i < numLinesToNotUse; i++)
   {
     std::getline(InputBunchFile, line);
     lineCounter++;
@@ -293,30 +293,9 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
 }
 
 template<class T>
-G4int BDSBunchUserFile<T>::CountAllLinesInFile()
-{
-  OpenBunchFile();
-
-  std::string line;
-  std::regex comment("^\\#.*");
-
-  G4int numLines = 0;
-  while ( std::getline(InputBunchFile, line) )
-    {
-      if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
-	{continue;}
-      ++numLines;
-    }
-  CloseBunchFile();
-  return numLines;
-}
-
-
-template<class T>
 G4int BDSBunchUserFile<T>::CountLinesInFile()
 {
   OpenBunchFile();
-  SkipLines();
 
   std::string line;
   std::regex comment("^\\#.*");
@@ -335,10 +314,24 @@ G4int BDSBunchUserFile<T>::CountLinesInFile()
 template<class T>
 void BDSBunchUserFile<T>::Initialise()
 {
+  numLinesFullFile = CountLinesInFile();
   G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
   if (matchDistrFileLength && !nGenerateHasBeenSet)
     {
-      G4int nGenerate = CountLinesInFile();
+      G4int nGenerate;
+      G4int numLinesToNotUse = nlinesIgnore + nlinesSkip;
+      if(numLinesFullFile >= numLinesToNotUse)
+        {
+          nGenerate = numLinesFullFile - numLinesToNotUse;
+        }
+      else
+        {
+          while(numLinesFullFile < numLinesToNotUse)
+            {
+              numLinesToNotUse = numLinesToNotUse - numLinesFullFile;
+            }
+          nGenerate = numLinesFullFile - numLinesToNotUse;
+        }
       BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
       G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength is True -> simulation " << nGenerate << " events" << G4endl;
     }
