@@ -351,6 +351,8 @@ Output Changes
   for a given model. In the Model tree, a map of this integer to the name is stored. An integer
   is used to save space as it is stored for every step of each trajectory stored.
 * Model tree now has two maps for material ID to name and vica-versa.
+* Cavity info is now optionally stored in the Model Tree which includes rf element parameters and
+  cavity geometry parameters. Default true.
 
 Output Class Versions
 ---------------------
