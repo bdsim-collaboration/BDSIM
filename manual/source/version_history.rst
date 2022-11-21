@@ -67,6 +67,8 @@ New Features
 * The radius of the transverse momentum distribution of a circular beam no longer has to be finite.
   This is useful for generation of an idealised pencil beam.
 * All neutrinos can be used as beam particles now (useful for visualisation of neutrino lines).
+* A change to the user file class was made such that BDSIM does not enter into an inifite loop
+  if one wants to skip and/or ignore more lines than the file consists of.
 
 **Components**
 
