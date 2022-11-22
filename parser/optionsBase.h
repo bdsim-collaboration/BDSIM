@@ -276,6 +276,7 @@ namespace GMAD
     int         nSplit;
     bool        bRBias;
     std::string decayBiasFilename;
+    std::string sourceTimeBiasFilename;
 
     // tracking related parameters
     std::string integratorSet;

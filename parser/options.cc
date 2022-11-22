@@ -360,6 +360,7 @@ void Options::PublishMembers()
   publish("nSplit", &Options::nSplit);
   publish("bRBias", &Options::bRBias);
   publish("decayBiasFilename", &Options::decayBiasFilename);
+  publish("sourceTimeBiasFilename", &Options::sourceTimeBiasFilename);
 
   // options which influence tracking
   publish("integratorSet",            &Options::integratorSet);

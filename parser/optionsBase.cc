@@ -235,6 +235,7 @@ OptionsBase::OptionsBase()
   nSplit = 1;
   bRBias = true;
   decayBiasFilename = "";
+  sourceTimeBiasFilename = "";
 
   // tracking options
   integratorSet            = "bdsimmatrix";

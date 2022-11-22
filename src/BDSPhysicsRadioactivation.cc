@@ -102,6 +102,7 @@ void BDSPhysicsRadioactivation::ConstructProcess()
 
       if (!BDSGlobalConstants::Instance()->DecayBiasFilename().empty()){
           ra->SetDecayBias(BDSGlobalConstants::Instance()->DecayBiasFilename());
+          ra->SetSourceTimeProfile(BDSGlobalConstants::Instance()->SourceTimeBiasFilename());
       }
   }
 

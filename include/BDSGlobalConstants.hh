@@ -347,6 +347,7 @@ public:
   inline G4int  NSplit()        const {return G4int(options.nSplit);}
   inline G4bool BRBias()        const {return G4bool(options.bRBias);}
   inline G4String DecayBiasFilename() const {return G4String(options.decayBiasFilename);}
+  inline G4String SourceTimeBiasFilename() const {return G4String(options.sourceTimeBiasFilename);}
 
   /// @{ options that require some implementation.
   G4bool StoreTrajectoryTransportationSteps() const;
