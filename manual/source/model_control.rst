@@ -3012,6 +3012,10 @@ with the following options.
 |                                    | If both this and `storeApertureImpacts` is off, no aperture        |
 |                                    | impact hits will be generated and will save memory during the run. |
 +------------------------------------+--------------------------------------------------------------------+
+| storeCavityInfo                    | With this option on, summary information in the Model Tree about   |
+|                                    | cavities is stored, including both field and geometry parameters.  |
+|                                    | Default on.                                                        |
++------------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHits                | Store hits in per-collimator structures with hits for only primary |
 |                                    | particles. With only `storeCollimatorInfo` on, only the            |
 |                                    | `primaryInteracted` and `primaryStopped` Booleans are stored.      |
