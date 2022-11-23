@@ -348,7 +348,8 @@ void BDSOutputStructures::PrepareCollimatorInformation()
 {
   const G4String collimatorPrefix = "COLL_";
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
-  collimatorIndices = flatBeamline->GetIndicesOfCollimators();
+  if (flatBeamline)
+    {collimatorIndices = flatBeamline->GetIndicesOfCollimators();}
   nCollimators = (G4int)collimatorIndices.size();
   
   for (auto index : collimatorIndices)
@@ -377,14 +378,16 @@ void BDSOutputStructures::PrepareCavityInformation()
 {
     const G4String cavityPrefix = "CAV_";
     const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
-    std::vector<G4int> pillboxIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_pillbox");
-    std::vector<G4int> rectIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_rectangular");
-    std::vector<G4int> ellipticalIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_elliptical");
-    cavityIndices = pillboxIndices;
-    cavityIndices.insert(std::end(cavityIndices), std::begin(rectIndices), std::end(rectIndices));
-    cavityIndices.insert(std::end(cavityIndices), std::begin(ellipticalIndices), std::end(ellipticalIndices));
-    nCavities = (G4int)cavityIndices.size();
-
+    if (flatBeamline)
+      {
+        std::vector<G4int> pillboxIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_pillbox");
+        std::vector<G4int> rectIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_rectangular");
+        std::vector<G4int> ellipticalIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_elliptical");
+        cavityIndices = pillboxIndices;
+        cavityIndices.insert(std::end(cavityIndices), std::begin(rectIndices), std::end(rectIndices));
+        cavityIndices.insert(std::end(cavityIndices), std::begin(ellipticalIndices), std::end(ellipticalIndices));
+        nCavities = (G4int) cavityIndices.size();
+      }
     for (auto index : cavityIndices)
     {
       // prepare output structure name
