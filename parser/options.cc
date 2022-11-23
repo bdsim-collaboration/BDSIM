@@ -397,6 +397,7 @@ void Options::PublishMembers()
   publish("storeApertureImpactsAll",        &Options::storeApertureImpactsAll);
   publish("storeApertureImpactsHistograms", &Options::storeApertureImpactsHistograms);
   publish("apertureImpactsMinimumKE",       &Options::apertureImpactsMinimumKE);
+  publish("storeCavityInfo",                &Options::storeCavityInfo);
   publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
   publish("storeCollimatorHits",            &Options::storeCollimatorHits);
   publish("storeCollimatorHitsLinks",       &Options::storeCollimatorHitsLinks); // backwards compatibility
