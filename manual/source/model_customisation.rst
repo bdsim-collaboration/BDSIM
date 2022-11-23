@@ -1775,7 +1775,7 @@ to a cavity object:
 
 Example::
 
-  shinyCavity: cavity, type="elliptical",
+  shinyCavity: cavitymodel, type="elliptical",
                        irisRadius = 35*mm,
 	               equatorRadius = 103.3*mm,
 	               halfCellLength = 57.7*mm,
