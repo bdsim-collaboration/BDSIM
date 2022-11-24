@@ -24,6 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldQuery.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 
+#include "G4UImanager.hh"
+
 #include "CLHEP/Random/Random.h"
 
 BDSRunManager::BDSRunManager()
@@ -84,17 +86,29 @@ void BDSRunManager::DoEventLoop(G4int n_event,const char* macroFile,G4int n_sele
 void BDSRunManager::ProcessOneEvent(G4int i_event)
 {
   // additional output
-  if(verboseLevel>3){
-    G4cout << __METHOD_NAME__ << "Event="<<i_event<<G4endl;
-    // Print seed to try and recreate an event in a run
-    G4cout << __METHOD_NAME__ << "Random number generator's seed=" 
-	   << CLHEP::HepRandom::getTheSeed() << G4endl;
-    // Print generator full state to output 
-    G4cout << __METHOD_NAME__ << "Random number generator's state: " << G4endl;
-    CLHEP::HepRandom::saveFullState(G4cout);
-  }
-
-  G4RunManager::ProcessOneEvent(i_event);
+  if (verboseLevel > 3)
+    {
+      G4cout << __METHOD_NAME__ << "Event="<<i_event<<G4endl;
+      // Print seed to try and recreate an event in a run
+      G4cout << __METHOD_NAME__ << "Random number generator's seed=" 
+	     << CLHEP::HepRandom::getTheSeed() << G4endl;
+      // Print generator full state to output 
+      G4cout << __METHOD_NAME__ << "Random number generator's state: " << G4endl;
+      CLHEP::HepRandom::saveFullState(G4cout);
+    }
+  
+  //G4RunManager::ProcessOneEvent(i_event);
+  
+  // This is the same as in G4RunManager but we check the aborted event after the primary
+  // generator action
+  currentEvent = GenerateEvent(i_event);
+  if (currentEvent->IsAborted())
+    {return;}
+  eventManager->ProcessOneEvent(currentEvent);
+  AnalyzeEvent(currentEvent);
+  UpdateScoring();
+  if (i_event < n_select_msg)
+    {G4UImanager::GetUIpointer()->ApplyCommand(msgText);}
 }
 
 void BDSRunManager::AbortRun(G4bool)

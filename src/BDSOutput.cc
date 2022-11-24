@@ -368,8 +368,12 @@ void BDSOutput::CloseAndOpenNewFile()
   InitialiseGeometryDependent();
 }
 
-void BDSOutput::FillRun(const BDSEventInfo* info)
+void BDSOutput::FillRun(const BDSEventInfo* info,
+                        G4bool runEndedEarlyIn,
+                        G4long nEventsInOriginalDistrFileIn)
 {
+  runEndedEarly = runEndedEarlyIn;
+  nEventsInOriginalDistrFile = nEventsInOriginalDistrFileIn;
   FillRunInfo(info);
   WriteFileRunLevel();
   ClearStructuresRunLevel();

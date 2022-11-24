@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPTCOneTurnMap.hh"
+#include "BDSRunAction.hh"
 #include "BDSROOTSamplerReader.hh"
 #include "BDSRandom.hh"
 #include "BDSUtilities.hh"
@@ -50,8 +51,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleDefinition.hh"
 
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
-						     const GMAD::Beam& beam):
+                                                     const GMAD::Beam& beam,
+                                                     BDSRunAction*     runActionIn):
   bunch(bunchIn),
+  runAction(runActionIn),
   recreateFile(nullptr),
   eventOffset(0),
   ionPrimary(bunchIn->BeamParticleIsAnIon()),
@@ -106,15 +109,23 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
 #endif
     }
   else if (useSamplerLoader)
-  {
-    if (beam.distrFile.empty())
-    {throw BDSException(__METHOD_NAME__, "no distrFile specified for event generator beam distribution.");}
-    G4String filename = BDS::GetFullPath(beam.distrFile, false, beam.distrFileFromExecOptions);
-    BDSBunchEventGenerator* beg = dynamic_cast<BDSBunchEventGenerator*>(bunchIn);
-    if (!beg)
-    {throw BDSException(__METHOD_NAME__, "must be used with a BDSBunchEventGenerator instance");}
-    samplerReader = new BDSROOTSamplerReader(beam.distrType, filename, beg, beam.eventGeneratorWarnSkippedParticles);
-  }
+    {
+      if (beam.distrFile.empty())
+	{throw BDSException(__METHOD_NAME__, "no distrFile specified for event generator beam distribution.");}
+      G4String filename = BDS::GetFullPath(beam.distrFile, false, beam.distrFileFromExecOptions);
+      BDSBunchEventGenerator* beg = dynamic_cast<BDSBunchEventGenerator*>(bunchIn);
+      if (!beg)
+	{throw BDSException(__METHOD_NAME__, "must be used with a BDSBunchEventGenerator instance");}
+      // matching file length is done in 2 steps. 1) set the number to generate to be N events in the file.
+      // and 2) if not all events match the cuts (which we can only tell as we go along through the file),
+      // then flag the BDSROOTSampleReader that it should abort the event rather than loop the file.
+      samplerReader = new BDSROOTSamplerReader(beam.distrType, filename, beg,
+					       beam.matchDistrFileLength,
+					       true, // remove unstable without decay table
+					       beam.eventGeneratorWarnSkippedParticles);
+      if (beam.matchDistrFileLength)
+        {BDSGlobalConstants::Instance()->SetNumberToGenerate(samplerReader->NEventsInFile());}
+    }
 }
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
@@ -162,6 +173,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (useSamplerLoader)
   {
     samplerReader->GeneratePrimaryVertex(anEvent);
+    if (anEvent->IsAborted())
+      {runAction->NotifyOfCompletionOfInputDistrFile(samplerReader->NEventsInFile());}
     return; // don't need any further steps
   }
 

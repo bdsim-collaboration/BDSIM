@@ -47,12 +47,15 @@ public:
   /// Constructor takes full distrType string including semicolon and
   /// eventgeneratorfile prefix. The filename is assumed to be correctly
   /// prefixed if a relative path already. The bunch definition is used
-  /// for the reference coordinates and offset of the beam point.
+  /// for the reference coordinates and offset of the beam point. If the
+  /// flag endRunWhenEndOfFileReached is false, then the reader will loop
+  /// the file to provide another event. If true, it will call AbortRun().
   BDSROOTSamplerReader(const G4String& distrType,
 		       const G4String& fileNameIn,
 		       BDSBunchEventGenerator* bunchIn,
+		       G4bool endRunWhenEndOfFileReachedIn = false,
                        G4bool removeUnstableWithoutDecayIn = true,
-		       G4bool warnAboutSkippedParticlesIn = true);
+		       G4bool warnAboutSkippedParticlesIn  = true);
   virtual ~BDSROOTSamplerReader();
 
   /// Read the next non-empty sampler entry from the file.
@@ -92,6 +95,7 @@ private:
   G4String                  fileName;
   G4String                  samplerName;
   BDSBunchEventGenerator*   bunch;
+  G4bool                    endRunWhenEndOfFileReached;
   G4bool                    removeUnstableWithoutDecay;
   G4bool                    warnAboutSkippedParticles;
   G4RotationMatrix          referenceBeamMomentumOffset;

@@ -47,11 +47,15 @@ public:
 	       BDSBunch*       bunchGeneratorIn,
 	       G4bool          usingIonsIn,
 	       BDSEventAction* eventActionIn,
-	       G4String        trajectorySamplerIDIn);
+	       const G4String& trajectorySamplerIDIn);
   virtual ~BDSRunAction();
   
   virtual void BeginOfRunAction(const G4Run*);
   virtual void EndOfRunAction(const G4Run*);
+  
+  /// Record that the run was ended early and the original number of events in the
+  /// input distribution file that we finished early.
+  void NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrfileIn);
 
 private:
   BDSRunAction() = delete;
@@ -79,6 +83,9 @@ private:
   std::clock_t  cpuStartTime;     ///< Start time of run.
   BDSEventAction* eventAction;    ///< Event action for updating information at start of run.
   G4String        trajectorySamplerID; ///< Copy of option.
+  
+  G4bool runEndedEarly;
+  G4long nEventsInOriginalDistrfile;
 };
 
 #endif

@@ -60,7 +60,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   nCollimators(0),
   localSamplersInitialised(false),
-  localCollimatorsInitialised(false)
+  localCollimatorsInitialised(false),
+  runEndedEarly(false),
+  nEventsInOriginalDistrFile(0)
 {
   G4bool storeCollimatorInfo = globals->StoreCollimatorInfo();
   G4bool storeTurn       = globals->StoreELossTurn();
@@ -435,4 +437,6 @@ void BDSOutputStructures::ClearStructuresEventLevel()
 void BDSOutputStructures::ClearStructuresRunLevel()
 {
   runInfo->Flush();
+  runEndedEarly = false;
+  nEventsInOriginalDistrFile = 0;
 }
