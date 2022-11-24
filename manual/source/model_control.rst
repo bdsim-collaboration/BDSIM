@@ -1310,10 +1310,10 @@ Recorded hits in a sampler in a BDSIM ROOT output file can be loaded back into B
 and launched through a model. This does not have to be the same model and the starting
 position does not need to be the same.
 
-.. note:: By default, the 'local' hits in the frame of the sampler are loaded and launched
-	  from wherever the beam central coordinates start (e.g. 0,0,0 with direction 0,0,1).
-	  If you want to continue hits from a sampler, you must include the `S` of that sampler
-	  in the original model as a beam offset.
+.. warning:: By default, the 'local' hits in the frame of the sampler are loaded and launched
+	     from wherever the beam central coordinates start (e.g. 0,0,0 with direction 0,0,1).
+	     If you want to continue hits from a sampler, you must include the `S` of that sampler
+	     in the original model as a beam offset.
 
 +----------------------------+-----------------------------------------------------------+
 | Option                     | Description                                               |
@@ -1322,9 +1322,18 @@ position does not need to be the same.
 +----------------------------+-----------------------------------------------------------+
 | `distrFile`                | The path to the input file desired.                       |
 +----------------------------+-----------------------------------------------------------+
+| `matchDistrFileLength`     | (1 or 0) Whether to run the number of events as is in the |
+|                            | file. On by default, but ignored if --ngenerate used      |
++----------------------------+-----------------------------------------------------------+
 
+* Specify `S` in the beam command to offset the loaded data to the desired position in the beam
+  line. i.e. the sampler data is not played back globally where it was recorded.
 * **All** of the parameters of `eventgeneratorfile`_ apply - i.e. all of the cuts and filters
   apply to this distribution as well.
+* By default, the length of the file is matched. If some events contain no particles of
+  interest according to the cuts these events will be skipped. Therefore you might have
+  fewer events afterwards. Turn off `matchDistrFileLength` to allow looping on the file
+  to generate more.
 * Examples can be found in :code:`bdsim/examples/features/beam/bdsimsampler/*gmad`.
 * Remember, a design particle must still be specified in the beam command for the magnets.
 
