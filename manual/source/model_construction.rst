@@ -12,6 +12,8 @@ The following sections describe the basics of how to prepare a BDSIM model.
 
 * :ref:`lattice-description`
 * :ref:`circular-machines`
+* :ref:`beamline-starting-point`
+* :ref:`magnet-strength-polarity`
 * :ref:`lattice-elements`
 * :ref:`offsets-and-tilts`
 * :ref:`lattice-sequence`
@@ -93,6 +95,24 @@ calculated and constructed when using the :code:`--circular` executable option.
 
 Although the teleporter may not be required in a well-formed model that closes, the minimum
 gap of :math:`0.2 \mu m` is required for the terminator.
+
+
+.. _beamline-starting-point:
+
+Beamline Starting Point
+-----------------------
+
+The main beamline, by default, starts at :code:`(X,Y,Z) = (0,0,0)` and points in the
+positive unit `Z` direction.
+
+The initial position and direction of the baemline may be change with the options described
+in :ref:`beamline-offset`.
+
+.. note:: It should be noted that the beam or 'bunch' definition will move along with the
+	  beamline and the offset of the beam is with respect to this.
+
+
+.. _magnet-strength-polarity:
 
 Magnet Strength Polarity
 ------------------------

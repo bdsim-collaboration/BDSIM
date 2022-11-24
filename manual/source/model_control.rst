@@ -23,6 +23,8 @@ Model Control
   - :ref:`physics-bias-muon-splitting`
     
 * :ref:`bdsim-options`
+  - including :ref:`beamline-offset`
+    
 * :ref:`sampler-output`
 
   - :ref:`sampler-syntax`
