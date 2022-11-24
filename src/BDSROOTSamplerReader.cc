@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 #include "G4Event.hh"
+#include "G4EventManager.hh"
 #include "G4LorentzVector.hh"
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
@@ -44,15 +45,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 
 BDSROOTSamplerReader::BDSROOTSamplerReader(const G4String& distrType,
-					   const G4String& fileNameIn,
-					   BDSBunchEventGenerator* bunchIn,
+                                           const G4String& fileNameIn,
+                                           BDSBunchEventGenerator* bunchIn,
+                                           G4bool endRunWhenEndOfFileReachedIn,
                                            G4bool removeUnstableWithoutDecayIn,
-					   G4bool warnAboutSkippedParticlesIn):
+                                           G4bool warnAboutSkippedParticlesIn):
   currentFileEventIndex(0),
   nEventsInFile(0),
   reader(nullptr),
   fileName(fileNameIn),
   bunch(bunchIn),
+  endRunWhenEndOfFileReached(endRunWhenEndOfFileReachedIn),
   removeUnstableWithoutDecay(removeUnstableWithoutDecayIn),
   warnAboutSkippedParticles(warnAboutSkippedParticlesIn),
   worldSolid(nullptr),
@@ -80,10 +83,23 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
   currentVertices.clear();
   while (nParticles < 1)
     {
-      if (currentFileEventIndex > nEventsInFile)
+      // currentFileEventIndex is zero counting by nEventsInFile will be 1 greater
+      if (currentFileEventIndex >= nEventsInFile)
 	{
-	  G4cout << __METHOD_NAME__ << "End of file reached. Return to beginning of file for next event." << G4endl;
-	  currentFileEventIndex = 0;
+	  G4cout << __METHOD_NAME__ << "End of file reached. ";
+	  if (endRunWhenEndOfFileReached)
+	    {
+	      G4cout << "Finishing run as requested to match file length." << G4endl;
+	      G4EventManager::GetEventManager()->AbortCurrentEvent();
+	      G4RunManager::GetRunManager()->AbortRun();
+	      anEvent->SetEventAborted();
+	      return;
+	    }
+	  else
+	    {
+	      G4cout << "Returning to beginning of file for next event." << G4endl;
+	      currentFileEventIndex = 0;
+	    }
 	}
       ReadSingleEvent(currentFileEventIndex);
       nParticles = (G4int)currentVertices.size();

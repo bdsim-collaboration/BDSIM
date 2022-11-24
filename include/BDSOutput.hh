@@ -144,7 +144,9 @@ public:
   void CloseAndOpenNewFile();
 
   /// Copy run information to output structure.
-  void FillRun(const BDSEventInfo* info);
+  void FillRun(const BDSEventInfo* info,
+               G4bool runEndedEarlyIn,
+               G4long nEventsInOriginalDistrFileIn);
   
   /// Test whether a sampler name is invalid or not.
   static G4bool InvalidSamplerName(const G4String& samplerName);

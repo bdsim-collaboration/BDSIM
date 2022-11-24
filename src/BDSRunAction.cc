@@ -59,10 +59,9 @@ BDSRunAction::BDSRunAction(BDSOutput*      outputIn,
                            BDSBunch*       bunchGeneratorIn,
 			   G4bool          usingIonsIn,
 			   BDSEventAction* eventActionIn,
-			   G4String        trajectorySamplerIDIn):
+			   const G4String& trajectorySamplerIDIn):
   output(outputIn),
   starttime(time(nullptr)),
-  seedStateAtStart(""),
   info(nullptr),
   bunchGenerator(bunchGeneratorIn),
   usingIons(usingIonsIn),
@@ -223,4 +222,10 @@ void BDSRunAction::CheckTrajectoryOptions() const
       if (range.first > maxS)
 	{throw BDSException(__METHOD_NAME__, "S coordinate " + std::to_string(range.first / CLHEP::m) + "m in option storeTrajectoryElossSRange is beyond the length of the beam line (2m margin).");}
     }
+}
+
+void BDSRunAction::NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrfileIn)
+{
+  runEndedEarly = true;
+  nEventsInOriginalDistrfile = nEventsInOriginalDistrfileIn;
 }
