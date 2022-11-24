@@ -57,11 +57,10 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
-
   if (BDSGlobalConstants::Instance()->RadioactiveDecay())
-  {
+    {
       BDSRunAction* aRun = (BDSRunAction *) (G4RunManager::GetRunManager()->GetUserRunAction());
-
+      
       G4ParticleDefinition* particle = track->GetDefinition();
       G4String name   = particle->GetParticleName();
       G4double Ekin = track->GetKineticEnergy();
@@ -75,21 +74,20 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 
       fFullChain = BDSGlobalConstants::Instance()->FullChain();
 
-
-
-      if (IsIon){
+      if (IsIon)
+	{
           G4Track* tr = (G4Track*) track;
-          if (TrackID == 1 and BDSGlobalConstants::Instance()->AnalogueMC()){
-              tr->GetDefinition()->SetPDGLifeTime(0); // Halflife already set to zero in biasing mode for the parent nuclides
-          }
-          if (fFullChain and ParentID > 0 and Ekin > 0){
-              tr->SetTrackStatus(fStopButAlive);
-          } else if (ParentID > 0){
-              tr->SetTrackStatus(fStopAndKill);
-          }
-      }
-  }
+	  // Halflife already set to zero in biasing mode for the parent nuclides
+          if (TrackID == 1 and BDSGlobalConstants::Instance()->AnalogueMC())
+	    {tr->GetDefinition()->SetPDGLifeTime(0);}
 
+	  if (fFullChain and ParentID > 0 and Ekin > 0)
+	    {tr->SetTrackStatus(fStopButAlive);}
+	  else if (ParentID > 0)
+	    {tr->SetTrackStatus(fStopAndKill);}
+	}
+    }
+  
   eventAction->IncrementNTracks();
   G4int  eventIndex = eventAction->CurrentEventIndex();
   G4bool verboseSteppingThisEvent = BDS::VerboseThisEvent(eventIndex, verboseSteppingEventStart, verboseSteppingEventStop);
