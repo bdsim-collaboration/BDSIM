@@ -37,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
+#include "BDSOutputROOTEventCavityInfo.hh"
 #include "BDSOutputROOTEventCollimatorInfo.hh"
 #include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventLossWorld.hh"
@@ -119,6 +120,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
 
   storeApertureImpacts       = g->StoreApertureImpacts();
   storeApertureImpactsHistograms = g->StoreApertureImpactsHistograms();
+  storeCavityInfo            = g->StoreCavityInfo();
   storeCollimatorInfo        = g->StoreCollimatorInfo();
   storeCollimatorHitsLinks   = g->StoreCollimatorHitsLinks();
   storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
@@ -170,6 +172,8 @@ void BDSOutput::InitialiseGeometryDependent()
       PrepareCollimatorInformation(); // prepare names, offsets and indices
       InitialiseCollimators(); // allocate local objects
     }
+  if (storeCavityInfo)
+    {PrepareCavityInformation();} // prepare names, offsets and indices
   CreateHistograms();
   InitialiseSamplers();
   InitialiseMaterialMap();
@@ -224,6 +228,10 @@ void BDSOutput::FillModel()
 			collimatorIndicesByName,
 			collimatorInfo,
 			collimatorNames,
+            cavityIndices,
+            cavityIndicesByName,
+            cavityInfo,
+            cavityNames,
 			&smpm,
 			&materialIDToNameUnique,
 			storeTrajectory);
