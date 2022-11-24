@@ -36,7 +36,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSBunchEventGenerator: public BDSBunch
 {
 public: 
-  BDSBunchEventGenerator(); 
+  explicit BDSBunchEventGenerator(G4bool warnAboutMatchFileLengthNotWorkingIn = true);
   virtual ~BDSBunchEventGenerator(); 
   /// @{ Assignment and copy constructor not implemented nor used
   BDSBunchEventGenerator& operator=(const BDSBunchEventGenerator&) = delete;
@@ -91,6 +91,7 @@ protected:
   std::vector<G4int> acceptedParticles;
 
 private:
+  G4bool warnAboutMatchFileLengthNotWorking;
   G4bool firstTime;                ///< Flag to prepare acceptedParticles on first call.
   G4bool testOnParticleType;       ///< Flag whether to bother applying search.
   G4String acceptedParticlesString;///< Cache of string for parsing on first query.
