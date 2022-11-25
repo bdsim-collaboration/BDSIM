@@ -261,16 +261,16 @@ void BDSBunchUserFile<T>::SkipLines()
       G4int numLinesToNotUse = nlinesIgnore + nlinesSkip;
       while(numLinesFullFile < numLinesToNotUse)
         {
-          numLinesToNotUse = numLinesToNotUse - numLinesFullFile;
+          numLinesToNotUse -= numLinesFullFile;
         }
       G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << ", skipping "
       << nlinesSkip << " lines" << G4endl;
       std::string line;
       for (G4int i = 0; i < numLinesToNotUse; i++)
-  {
-    std::getline(InputBunchFile, line);
-    lineCounter++;
-  }
+	{
+	  std::getline(InputBunchFile, line);
+	  lineCounter++;
+	}
     }
 }
 
@@ -320,13 +320,11 @@ void BDSBunchUserFile<T>::Initialise()
     {
       G4int nGenerate;
       G4int numLinesToNotUse = nlinesIgnore + nlinesSkip;
-      if(numLinesFullFile >= numLinesToNotUse)
-        {
-          nGenerate = numLinesFullFile - numLinesToNotUse;
-        }
+      if (numLinesFullFile >= numLinesToNotUse)
+        {nGenerate = numLinesFullFile - numLinesToNotUse;}
       else
         {
-          while(numLinesFullFile < numLinesToNotUse)
+          while (numLinesFullFile < numLinesToNotUse)
             {
               numLinesToNotUse = numLinesToNotUse - numLinesFullFile;
             }
