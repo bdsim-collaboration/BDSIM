@@ -23,6 +23,8 @@ Model Control
   - :ref:`physics-bias-muon-splitting`
     
 * :ref:`bdsim-options`
+  - including :ref:`beamline-offset`
+    
 * :ref:`sampler-output`
 
   - :ref:`sampler-syntax`
@@ -3020,6 +3022,10 @@ with the following options.
 |                                    | `storeApertureImpacts` is on, and is on by default otherwise.      |
 |                                    | If both this and `storeApertureImpacts` is off, no aperture        |
 |                                    | impact hits will be generated and will save memory during the run. |
++------------------------------------+--------------------------------------------------------------------+
+| storeCavityInfo                    | With this option on, summary information in the Model Tree about   |
+|                                    | cavities is stored, including both field and geometry parameters.  |
+|                                    | Default on.                                                        |
 +------------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHits                | Store hits in per-collimator structures with hits for only primary |
 |                                    | particles. With only `storeCollimatorInfo` on, only the            |
