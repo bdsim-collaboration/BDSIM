@@ -258,19 +258,14 @@ void BDSBunchUserFile<T>::SkipLines()
 {
   if (BDS::IsFinite(nlinesIgnore) || BDS::IsFinite(nlinesSkip))
     {
-      G4int numLinesToNotUse = nlinesIgnore + nlinesSkip;
-      while(numLinesFullFile < numLinesToNotUse)
-        {
-          numLinesToNotUse = numLinesToNotUse - numLinesFullFile;
-        }
       G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << ", skipping "
-      << nlinesSkip << " lines" << G4endl;
+	     << nlinesSkip << " lines" << G4endl;
       std::string line;
-      for (G4int i = 0; i < numLinesToNotUse; i++)
-  {
-    std::getline(InputBunchFile, line);
-    lineCounter++;
-  }
+      for (G4int i = 0; i < nlinesIgnore + nlinesSkip; i++)
+	{
+	  std::getline(InputBunchFile, line);
+	  lineCounter++;
+	}
     }
 }
 
@@ -315,23 +310,14 @@ template<class T>
 void BDSBunchUserFile<T>::Initialise()
 {
   numLinesFullFile = CountLinesInFile();
+  if(numLinesFullFile < nlinesIgnore + nlinesSkip)
+    {
+      throw BDSException("BDSBunchUserFile::Initialise>", "You requested to skip and/or ignore more lines than there are in the user file.");
+    }
   G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
   if (matchDistrFileLength && !nGenerateHasBeenSet)
     {
-      G4int nGenerate;
-      G4int numLinesToNotUse = nlinesIgnore + nlinesSkip;
-      if(numLinesFullFile >= numLinesToNotUse)
-        {
-          nGenerate = numLinesFullFile - numLinesToNotUse;
-        }
-      else
-        {
-          while(numLinesFullFile < numLinesToNotUse)
-            {
-              numLinesToNotUse = numLinesToNotUse - numLinesFullFile;
-            }
-          nGenerate = numLinesFullFile - numLinesToNotUse;
-        }
+      G4int nGenerate = numLinesFullFile - nlinesIgnore - nlinesSkip;
       BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
       G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength is True -> simulation " << nGenerate << " events" << G4endl;
     }

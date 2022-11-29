@@ -22,7 +22,8 @@ simple_testing(bunch-userfile-all-columns3     "--file=userfile-all-columns3.gma
 simple_testing(bunch-userfile-xp0-yp0          "--file=userfile-xp0yp0.gmad"           "")
 simple_testing(bunch-userfile-skip-lines       "--file=userfile-skip-lines.gmad"       "")
 
-simple_fail(bunch-userfile-bad-units   "--file=userfile-bad-units.gmad")
+simple_fail(bunch-userfile-bad-units    "--file=userfile-bad-units.gmad")
+simple_fail(bunch-userfile-bad-skipping "--file=userfile-bad-skipping.gmad")
 
 if (USE_GZSTREAM)
   simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")
