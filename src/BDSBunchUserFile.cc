@@ -311,9 +311,7 @@ void BDSBunchUserFile<T>::Initialise()
 {
   numLinesFullFile = CountLinesInFile();
   if(numLinesFullFile < nlinesIgnore + nlinesSkip)
-    {
-      throw BDSException("BDSBunchUserFile::Initialise>", "You requested to skip and/or ignore more lines than there are in the user file.");
-    }
+{throw BDSException("BDSBunchUserFile::Initialise>", "You requested to skip and/or ignore more lines than there are in the user file.");}
   G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
   if (matchDistrFileLength && !nGenerateHasBeenSet)
     {
