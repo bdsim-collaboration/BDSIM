@@ -312,6 +312,7 @@ namespace GMAD
     bool        storeApertureImpactsAll;
     bool        storeApertureImpactsHistograms;
     double      apertureImpactsMinimumKE;
+    bool        storeCavityInfo;
     bool        storeCollimatorInfo;
     bool        storeCollimatorHits;
     bool        storeCollimatorHitsLinks;

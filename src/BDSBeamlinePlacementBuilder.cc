@@ -173,8 +173,7 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
       if (hasAField)
 	{
 	  G4VSolid* containerSolidClone = comp->GetContainerSolid()->Clone();
-	  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
-	  G4LogicalVolume* lv = new G4LogicalVolume(containerSolidClone, emptyMaterial, fieldPlacementName+"_lv");
+	  G4LogicalVolume* lv = new G4LogicalVolume(containerSolidClone, nullptr, fieldPlacementName+"_lv");
 	  fieldPlacements.emplace_back(BDSPlacementToMake(transform, lv, fieldPlacementName+"_pv"));
 	}
     }

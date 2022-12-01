@@ -475,7 +475,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
     {zp = CalculateZp(xp,yp,1);}
   // compute t from z if it hasn't been read from file
   if (!tdef)
-    {t=0;}
+    {t=0;} //TBC
   
   if (updateParticleDefinition || changingParticleType)
     {

@@ -1889,7 +1889,7 @@ to a cavity object:
 
 Example::
 
-  shinyCavity: cavity, type="elliptical",
+  shinyCavity: cavitymodel, type="elliptical",
                        irisRadius = 35*mm,
 	               equatorRadius = 103.3*mm,
 	               halfCellLength = 57.7*mm,
@@ -1901,6 +1901,12 @@ Example::
 	               thickness = 1*mm,
 	               numberOfPoints = 24,
 	               numberOfCells = 1;
+
+.. figure:: figures/elliptical-cavity2.png
+	    :width: 50%
+	    :align: center
+
+	    Elliptical cavity geometry example from :code:`bdsim/examples/features/geometry/12_cavities/rfcavity-geometry-elliptical.gmad`.
 
 .. figure:: figures/elliptical-cavity.pdf
 	   :width: 40%

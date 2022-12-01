@@ -23,6 +23,8 @@ Model Control
   - :ref:`physics-bias-muon-splitting`
     
 * :ref:`bdsim-options`
+  - including :ref:`beamline-offset`
+    
 * :ref:`sampler-output`
 
   - :ref:`sampler-syntax`
@@ -3087,6 +3089,10 @@ with the following options.
 |                                    | If both this and `storeApertureImpacts` is off, no aperture        |
 |                                    | impact hits will be generated and will save memory during the run. |
 +------------------------------------+--------------------------------------------------------------------+
+| storeCavityInfo                    | With this option on, summary information in the Model Tree about   |
+|                                    | cavities is stored, including both field and geometry parameters.  |
+|                                    | Default on.                                                        |
++------------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHits                | Store hits in per-collimator structures with hits for only primary |
 |                                    | particles. With only `storeCollimatorInfo` on, only the            |
 |                                    | `primaryInteracted` and `primaryStopped` Booleans are stored.      |
@@ -3730,6 +3736,10 @@ a sampler that uses that marker::
   use,period=l1;
 
   sample, range = interestingplane;
+
+.. note:: If an element with an attached sampler is followed by a marker with an attached sampler,
+      the BDSIM output will not contain sampler data for the element as it would be identical to
+      that of the marker.
 
 When an element is defined multiple times in the line (such as "d1" in the above example),
 samplers will be attached to all instances. If you wish to sample only one specific

@@ -918,7 +918,7 @@ For a field that varies in :math:`x`.
 +--------------------+-------------------------------------------------------------------+
 | xmax               | The upper spatial coordinate in x associated with the field map   |
 +--------------------+-------------------------------------------------------------------+
-| nx                 | Number of elements in x - 1 counting                              |
+| nx                 | Number of elements in x (1 counting)                              |
 +--------------------+-------------------------------------------------------------------+
 
 Example syntax is shown below and there is an example in
@@ -958,7 +958,7 @@ All of the 1D parameters, plus:
 +--------------------+---------------------------------------------------------------------------+
 | ymax               | The upper spatial coordinate in :math:`y` associated with the field map   |
 +--------------------+---------------------------------------------------------------------------+
-| ny                 | Number of elements in y - 1 counting                                      |
+| ny                 | Number of elements in y (1 counting)                                      |
 +--------------------+---------------------------------------------------------------------------+
 
 Example syntax is shown below and there is an example in
@@ -1011,7 +1011,7 @@ All of the 1D and 2D parameters, plus:
 +--------------------+---------------------------------------------------------------------------+
 | zmax               | The upper spatial coordinate in :math:`z` associated with the field map   |
 +--------------------+---------------------------------------------------------------------------+
-| nz                 | Number of elements in z - 1 counting                                      |
+| nz                 | Number of elements in z (1 counting)                                      |
 +--------------------+---------------------------------------------------------------------------+
 
 Example syntax is shown below and there is an example in
@@ -1103,7 +1103,7 @@ All of the 1D, 2D and 3D parameters, plus:
 +--------------------+---------------------------------------------------------------------------+
 | tmax               | The upper spatial coordinate in :math:`t` associated with the field map   |
 +--------------------+---------------------------------------------------------------------------+
-| nt                 | Number of elements in t - 1 counting                                      |
+| nt                 | Number of elements in t (1 counting)                                      |
 +--------------------+---------------------------------------------------------------------------+
 
 There is an example in :code:`bdsim/examples/features/fields/4_bdsimformat/tdexample.tar.gz`.
