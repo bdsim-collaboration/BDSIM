@@ -2634,7 +2634,7 @@ G4double BDSComponentFactory::EFieldFromElement(Element const* el,
 	  {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
 	else
 	  {
-	    G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, cavityLength, incomingParticle.Beta());
+	    G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, phase, cavityLength, incomingParticle.Beta());
 	    eField = scaling * el->E * CLHEP::volt / cavityLength;
 	    eField /= transitTimeFactor;
 	  }

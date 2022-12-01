@@ -87,7 +87,7 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
 	    {
 	      if (!BDS::IsFinite(frequency)) // protect against zero division
 		{throw BDSException(__METHOD_NAME__, "for a pillbox cavity field, the frequency must be non-zero");}
-        G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, thisComponentArcLength, designParticle.Beta());
+	      G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, phase, thisComponentArcLength, designParticle.Beta());
 	      dEk = particleCharge * eField * thisComponentArcLength * transitTimeFactor;
 	      break;
 	    }
