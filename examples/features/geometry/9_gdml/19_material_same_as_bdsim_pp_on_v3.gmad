@@ -1,11 +1,6 @@
 box1: element, l=1.1*m, geometry="gdml:box-w-bdsim-material-conflict-1.gdml";
-box2: element, l=1.1*m, geometry="gdml:box-w-bdsim-material-conflict-1.gdml";
+box2: element, l=1.1*m, geometry="gdml:box-w-bdsim-material-conflict-3.gdml";
 
-
-! the gdml file loaded above redefines "iron"
-! the preprocessing is on so it should be cached as 'box1_iron'
-! and therefore we shouldn't have a problem when "iron" is constructed
-! by bdsim in the quadrupole
 q1: quadrupole, l=0.2*m, k1=0.2;
 
 l1: line=(box1, box2, q1);
