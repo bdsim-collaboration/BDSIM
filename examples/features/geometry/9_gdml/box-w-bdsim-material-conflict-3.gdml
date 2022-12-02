@@ -2,9 +2,16 @@
 <gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
 	<define/>
 	<materials>
-		<material name="fe" Z="26">
-			<D value="7.874"/>
-			<atom value="55.8452"/>
+		<element name="nitrogen" formula="N" Z="7">
+			<atom value="14.01"/>
+		</element>
+		<element name="oxygen" formula="O" Z="8">
+			<atom value="16.0"/>
+		</element>
+		<material name="airbdsim">
+			<D value="0.00129"/>
+			<fraction ref="nitrogen" n="0.7"/>
+			<fraction ref="oxygen" n="0.3"/>
 		</material>
 	</materials>
 	<solids>
@@ -13,7 +20,7 @@
 	</solids>
 	<structure>
 		<volume name="boxlv">
-			<materialref ref="fe"/>
+			<materialref ref="airbdsim"/>
 			<solidref ref="box"/>
 		</volume>
 		<volume name="worldlv">
