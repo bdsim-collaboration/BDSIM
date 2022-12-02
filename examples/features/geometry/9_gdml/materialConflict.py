@@ -9,9 +9,10 @@ def GenerateFile(option):
         # "iron" is an alias in BDSIM but this is allowed
         mat = g4.MaterialSingleElement("iron",26,55.8452,7.874,reg) # iron at near room temp
     if option == 2:
-        # "fe" is a material already defined in bdsim but we're creating
-        # a unique conflicting definition here
-        mat = g4.MaterialSingleElement("fe",26,55.8452,7.874,reg) # iron at near room temp
+        # "weightiron" is a material already defined in bdsim but we're creating
+        # a unique conflicting definition here. This can't be an single element
+        # name as that would be forwarded to a NIST one that wouldn't test this
+        mat = g4.MaterialSingleElement("weightiron",26,55.8452,7.874,reg) # iron at near room temp
     elif option == 3:
         # test a more involved material... both elements and material
         # should conflict with pre-existing ones in bdsim
