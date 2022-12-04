@@ -137,7 +137,7 @@ New Features
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
 * New **spherical** and **cylindrical** samplers.  See :ref:`sampler-types-and-shapes`.
-* The :code:`csample` command now works correctly and has been reimplemented for all beamline
+* The :code:`csample` command now works correctly and has been re-implemented for all beamline
   components.
 * A sampler in a BDSIM ROOT output file can now be used as an input beam distribution for
   another simulation.  See :ref:`bunch-bdsimsampler`.
@@ -194,6 +194,7 @@ General Updates
 * Samplers, sampler placements and their parallel world have been change to have a nullptr (no)
   material. The parallel world material should not make a difference for the setup in BDSIM, but
   now it is explicitly forbidden from having any effect by it being nullptr.
+* The material print out (:code:`bdsim --materials`) now includes aliases.
 
 Bug Fixes
 ---------
@@ -261,6 +262,8 @@ Bug Fixes
   fixes field maps, biasing, range cuts, regions and more being wrong if the same GDML file was reused
   in different components. However, this can be explicitly circumvented with the new parameter
   :code:`dontReloadGeometry` in a placement.
+* Fix a bug where BDSIM would exit complaining about a conflicting material after loading a GDML
+  file containing a material with the same name as one predefined in BDSIM.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.
@@ -353,6 +356,8 @@ Output Changes
   for a given model. In the Model tree, a map of this integer to the name is stored. An integer
   is used to save space as it is stored for every step of each trajectory stored.
 * Model tree now has two maps for material ID to name and vica-versa.
+* Cavity info is now optionally stored in the Model Tree which includes rf element parameters and
+  cavity geometry parameters. Default true.
 
 Output Class Versions
 ---------------------

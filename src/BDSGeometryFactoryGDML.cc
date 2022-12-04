@@ -96,7 +96,8 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   std::set<G4LogicalVolume*>   lvsGDML;
   std::map<G4String, G4Material*> materialsGDML;
   GetAllLogicalPhysicalAndMaterials(containerPV, pvsGDML, lvsGDML, materialsGDML);
-  BDSMaterials::Instance()->CacheMaterialsFromGDML(materialsGDML, componentName, preprocessGDML);
+  BDSMaterials::Instance()->CheckForConflictingMaterialsAfterLoad(fileName, componentName);
+  BDSMaterials::Instance()->CacheMaterialsFromGDML(materialsGDML);
 
   // load possible colours in auxiliary tags
   std::map<G4String, G4Colour*> gdmlColours;

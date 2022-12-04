@@ -31,13 +31,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-#include <algorithm>
 #include <cmath>
 #include <map>
+#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <string> // for stoi
-#include <vector>
 
 BDSBunchEventGenerator::BDSBunchEventGenerator():
   BDSBunch("event generator"),
@@ -143,7 +142,7 @@ void BDSBunchEventGenerator::ParseAcceptedParticleIDs()
 	      G4ParticleTable::G4PTblEncodingDictionary* encoding = G4ParticleTable::fEncodingDictionary;
 	      auto search = encoding->find(particleID);
 	      if (search != encoding->end())
-		{acceptedParticles.push_back(particleID);}
+		{acceptedParticles.insert(particleID);}
 	      else
 		{throw BDSException(__METHOD_NAME__,"PDG ID \"" + particleIDStr + "not found in particle table");}
 	    }
@@ -156,10 +155,9 @@ void BDSBunchEventGenerator::ParseAcceptedParticleIDs()
 		  throw BDSException(__METHOD_NAME__, "Particle \"" + particleIDStr + "\" not found.");      
 		}
 	      else
-		{acceptedParticles.push_back(particleDef->GetPDGEncoding());}
+		{acceptedParticles.insert(particleDef->GetPDGEncoding());}
 	    }	
 	}
-      std::sort(acceptedParticles.begin(), acceptedParticles.end());
     }
   else
     {testOnParticleType = false;}
@@ -185,7 +183,7 @@ G4bool BDSBunchEventGenerator::AcceptParticle(const BDSParticleCoordsFull& coord
   
   G4bool allowedParticle = true;
   if (testOnParticleType)
-    {allowedParticle = std::binary_search(acceptedParticles.begin(), acceptedParticles.end(), pdgID);}
+    {allowedParticle = acceptedParticles.count(pdgID) == 1;}
   
   return x && y && z && xp && yp && zp && rp && t && ek && allowedParticle;
 }

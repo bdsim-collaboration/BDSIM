@@ -60,6 +60,10 @@ public:
 
   /// Advance to the correct event number in the file for recreation.
   virtual void RecreateAdvanceToEvent(G4int eventOffset);
+  
+  /// Return the number of events in the file - not necessarily the number that
+  /// match the filters but that are there in total.
+  inline G4int NEventsInFile() const {return nEventsInFile;}
 
   struct DisplacedVertex
   {
