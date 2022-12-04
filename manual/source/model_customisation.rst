@@ -1942,7 +1942,7 @@ Externally Provided Geometry
 ----------------------------
 
 BDSIM provides the ability to use externally provided geometry in the Geant4 model constructed
-by BDSIM. A variety of formats are supported (see :ref:`geometry-formats`). External
+by BDSIM. Different formats are supported (see :ref:`geometry-formats`). External
 geometry can be used in several ways:
 
 1) A placement of a piece of geometry unrelated to the beam line (see :ref:`placements`)
@@ -2003,6 +2003,27 @@ and validate geometry.
 See :ref:`python-geometry-preparation` for details and links to the software and manual. This
 package is used for many of the examples included with BDSIM and the Python scripts are
 included with the examples.
+
+Material Names And Usage
+************************
+
+Rules for materials in a GDML file:
+
+* A NIST material (e.g. :code:`G4_AIR`) may be used by name without full definition. The XML
+  validator may warning that they are undefined - this is ok as true, but they will be available
+  at runtime.
+* A BDSIM predefined material (or indeed one defined in the input GMAD) may be used by name
+  without a full definition in a GDML file. Similarly, there may be a warning from the XML
+  validator, but the material will be available at run time.
+* A BDSIM material by one of it's aliases in BDSIM may be used by name, similarly.
+* It is allowed to define a material inside a GDML file with the same name as one in BDSIM
+  as the GDML preprocessor (see below) will change the name.
+* Do not define a material fully but with the same name as a NIST material. Whilst Geant4
+  will construct the material when loading the GDML file, it will attach the material by
+  **name** and may not find your material definition from the GDML file.
+
+BDSIM will exit if a conflict in naming (and therefore ambiguous materials could be set)
+is found.
 
 .. _geometry-gdml-preprocessing:
 
