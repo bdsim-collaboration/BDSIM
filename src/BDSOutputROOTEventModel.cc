@@ -43,6 +43,8 @@ ClassImp(BDSOutputROOTEventModel)
 BDSOutputROOTEventModel::BDSOutputROOTEventModel():
   n(0),
   storeCollimatorInfo(false),
+  storeCavityInfo(false),
+  nCavities(0),
   nCollimators(0)
 {
   Flush();
@@ -136,6 +138,12 @@ void BDSOutputROOTEventModel::Flush()
   fintk2.clear();
   fintxk2.clear();
 
+  storeCavityInfo = false;
+  cavityIndices.clear();
+  cavityIndicesByName.clear();
+  nCavities = 0;
+  cavityInfo.clear();
+  cavityBranchNamesUnique.clear();
   storeCollimatorInfo = false;
   collimatorIndices.clear();
   collimatorIndicesByName.clear();
@@ -158,9 +166,12 @@ void BDSOutputROOTEventModel::Flush()
 }
 
 #ifndef __ROOTBUILD__
-BDSOutputROOTEventModel::BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn):
+BDSOutputROOTEventModel::BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn,
+                                                 G4bool storeCavityInfoIn):
   n(0),
   storeCollimatorInfo(storeCollimatorInfoIn),
+  storeCavityInfo(storeCavityInfoIn),
+  nCavities(0),
   nCollimators(0)
 {;}
 
@@ -193,6 +204,10 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 				   const std::map<G4String, G4int>&         collimatorIndicesByNameIn,
 				   const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn,
 				   const std::vector<G4String>&             collimatorBranchNamesIn,
+                   const std::vector<G4int>&                cavityIndicesIn,
+                   const std::map<G4String, G4int>&         cavityIndicesByNameIn,
+                   const std::vector<BDSOutputROOTEventCavityInfo>& cavityInfoIn,
+                   const std::vector<G4String>&             cavityBranchNamesIn,
                                    const std::map<G4String, G4Transform3D>* scorerMeshPlacements,
 				   const std::map<short int, G4String>*     materialIDToNameUnique,
 				   G4bool storeTrajectory)
@@ -212,7 +227,9 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 
   for (const auto& name : collimatorBranchNamesIn)
     {collimatorBranchNamesUnique.push_back(std::string(name) + ".");}
-  
+  for (const auto& name : cavityBranchNamesIn)
+    {cavityBranchNamesUnique.push_back(std::string(name) + ".");}
+
   if (scorerMeshPlacements)
     {
       for (const auto& kv : *scorerMeshPlacements)
@@ -239,6 +256,19 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 	{collimatorIndicesByName[(std::string)kv.first] = (int)kv.second;}
 
       collimatorInfo = collimatorInfoIn;
+    }
+
+  if (storeCavityInfo)
+    {
+      for (const auto value : cavityIndicesIn)
+        {cavityIndices.push_back((int)value);}
+
+      nCavities = (int)cavityIndices.size();
+
+      for (const auto& kv : cavityIndicesByNameIn)
+        {cavityIndicesByName[(std::string)kv.first] = (int)kv.second;}
+
+      cavityInfo = cavityInfoIn;
     }
 
   if (materialIDToNameUnique && storeTrajectory)

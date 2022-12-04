@@ -1,4 +1,4 @@
-FROM jairhul/centos-base-environment
+FROM jairhul/centos7-base-environment
 
 SHELL ["/bin/bash", "-c"]
 
