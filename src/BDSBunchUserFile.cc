@@ -493,7 +493,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	  G4IonTable* ionTable = particleTable->GetIonTable();
 	  G4int ionA, ionZ, ionLevel;
 	  G4double ionE;
-    G4IonTable::GetNucleusByEncoding(type, ionZ, ionA, ionE, ionLevel);
+	  G4IonTable::GetNucleusByEncoding(type, ionZ, ionA, ionE, ionLevel);
 	  ionDef = new BDSIonDefinition(ionA, ionZ, ionZ);
 	  particleDef = ionTable->GetIon(ionDef->Z(), ionDef->A(), ionDef->ExcitationEnergy());
 	}
@@ -510,9 +510,9 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
           particleDefinitionHasBeenUpdated = true;
         }
       catch (const BDSException& e)
-	    {// if we throw an exception the object is invalid for the delete on the next loop
-	      particleDefinition = nullptr; // reset back to nullptr for safe delete
-	      throw e;                      // rethrow
+	{// if we throw an exception the object is invalid for the delete on the next loop
+	  particleDefinition = nullptr; // reset back to nullptr for safe delete
+	  throw e;                      // rethrow
         }
     }
 
@@ -536,12 +536,17 @@ namespace BDS
 {
 G4double ParseEnergyUnit(const G4String& fmt)
 {
-  G4double unit=1.;
-  if (fmt=="TeV") unit=1.e3;
-  else if(fmt=="GeV") unit=1;
-  else if(fmt=="MeV") unit=1.e-3;
-  else if(fmt=="KeV") unit=1.e-6;
-  else if(fmt=="eV") unit=1.e-9;
+  G4double unit= 1.0;
+  if (fmt == "TeV")
+    {unit = 1e3;}
+  else if (fmt == "GeV")
+    {unit = 1.0 ;}
+  else if (fmt == "MeV")
+    {unit = 1e-3;}
+  else if (fmt == "KeV")
+    {unit = 1e-6;}
+  else if (fmt == "eV")
+    {unit = 1e-9;}
   else
     {throw BDSException(__METHOD_NAME__, "Unrecognised energy unit! " +fmt);}
   return unit;
@@ -549,12 +554,17 @@ G4double ParseEnergyUnit(const G4String& fmt)
 
 G4double ParseLengthUnit(const G4String& fmt)
 {
-  G4double unit=1.;
-  if(fmt=="m") unit=1;
-  else if(fmt=="cm") unit=1.e-2;
-  else if(fmt=="mm") unit=1.e-3;
-  else if(fmt=="mum" || fmt=="um") unit=1.e-6;
-  else if(fmt=="nm") unit=1.e-9;
+  G4double unit = 1.0;
+  if (fmt == "m")
+    {unit = 1;}
+  else if (fmt == "cm")
+    {unit = 1e-2;}
+  else if (fmt == "mm")
+    {unit = 1e-3;}
+  else if (fmt == "mum" || fmt == "um")
+    {unit = 1e-6;}
+  else if (fmt == "nm")
+    {unit = 1e-9;}
   else
     {throw BDSException(__METHOD_NAME__, "Unrecognised length unit! " + fmt);}
   return unit;
@@ -562,11 +572,15 @@ G4double ParseLengthUnit(const G4String& fmt)
 
 G4double ParseAngleUnit(const G4String& fmt)
 {
-  G4double unit=1.;
-  if(fmt=="rad") unit=1;
-  else if(fmt=="mrad") unit=1.e-3;
-  else if(fmt=="murad" || fmt=="urad") unit=1.e-6;
-  else if(fmt=="nrad") unit=1.e-9;
+  G4double unit = 1.0;
+  if (fmt == "rad")
+    {unit = 1;}
+  else if (fmt == "mrad")
+    {unit = 1e-3;}
+  else if (fmt == "murad" || fmt == "urad")
+    {unit = 1e-6;}
+  else if (fmt == "nrad")
+    {unit=1e-9;}
   else
     {throw BDSException(__METHOD_NAME__, "Unrecognised angle unit! " + fmt);}
   return unit;
@@ -574,13 +588,19 @@ G4double ParseAngleUnit(const G4String& fmt)
 
 G4double ParseTimeUnit(const G4String& fmt)
 {
-  G4double unit=1.;
-  if(fmt=="s") unit=1;
-  else if(fmt=="ms") unit=1.e-3;
-  else if(fmt=="mus" || fmt=="us") unit=1.e-6;
-  else if(fmt=="ns") unit=1.e-9;
-  else if(fmt=="mm/c") unit=(CLHEP::mm/CLHEP::c_light)/CLHEP::s;
-  else if(fmt=="nm/c") unit=(CLHEP::nm/CLHEP::c_light)/CLHEP::s;
+  G4double unit = 1.0;
+  if (fmt == "s")
+    {unit = 1;}
+  else if (fmt == "ms")
+    {unit = 1.e-3;}
+  else if (fmt == "mus" || fmt == "us")
+    {unit = 1e-6;}
+  else if (fmt == "ns")
+    {unit = 1e-9;}
+  else if (fmt == "mm/c")
+    {unit = (CLHEP::mm/CLHEP::c_light)/CLHEP::s;}
+  else if (fmt == "nm/c")
+    {unit = (CLHEP::nm/CLHEP::c_light)/CLHEP::s;}
   else
     {throw BDSException(__METHOD_NAME__, "Unrecognised time unit! " + fmt);}
   return unit;
