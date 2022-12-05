@@ -46,7 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
-  BDSBunch("user file"),
+  BDSBunch("userfile"),
   distrFile(""),
   distrFilePath(""),
   bunchFormat(""),
