@@ -229,8 +229,8 @@ void BDSBunchUserFile<T>::CheckAndParseUnits(const G4String& uName,
       return;
     }
   
-  G4int pos1 = rest.find("[");
-  G4int pos2 = rest.find("]");
+  G4int pos1 = (G4int)rest.find("[");
+  G4int pos2 = (G4int)rest.find("]");
   if (pos1 < 0 || pos2 < 0)
     {
       G4String message = "Missing bracket [] in units of \"distrFileFormat\"\n";
