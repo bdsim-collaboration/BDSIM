@@ -2,7 +2,7 @@ beam,  particle="e-",
        energy = 1*GeV,
        distrType  = "userfile",
        distrFile  = "userbeamdata.dat",
-       ignoreLines = 8
+       nlinesIgnore = 8,
        distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
 
 include options.gmad

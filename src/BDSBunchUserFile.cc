@@ -119,7 +119,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
       if(token.substr(0,1)=="E" || token.substr(0,1)=="P")
 	{
 	  anEnergyCoordinateInUse = true;
-	  if(token.substr(0,2)=="Ek")
+	  if (token.substr(0,2)=="Ek")
 	    {//Kinetic energy (longer name).
 	      vari = token.substr(0,2);
 	      rest = token.substr(2);
@@ -131,15 +131,15 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	    }
 	  CheckAndParseUnits(vari, rest, BDS::ParseEnergyUnit);
 	}
-      else if(token.substr(0,1)=="t")
+      else if (token.substr(0,1)=="t")
 	{
 	  vari = token.substr(0, 1);
 	  rest = token.substr(1);
 	  CheckAndParseUnits(vari, rest, BDS::ParseTimeUnit);
 	}
-      else if( ( token.substr(0,1)=="x" && token.substr(1,1)!="p" ) ||
-	       ( token.substr(0,1)=="y" && token.substr(1,1)!="p" ) ||
-	       ( token.substr(0,1)=="z" && token.substr(1,1)!="p" ) )
+      else if ( ( token.substr(0,1)=="x" && token.substr(1,1)!="p" ) ||
+		( token.substr(0,1)=="y" && token.substr(1,1)!="p" ) ||
+		( token.substr(0,1)=="z" && token.substr(1,1)!="p" ) )
 	{
 	  vari = token.substr(0,1);
 	  rest = token.substr(1);
@@ -310,14 +310,16 @@ template<class T>
 void BDSBunchUserFile<T>::Initialise()
 {
   numLinesFullFile = CountLinesInFile();
-  if(numLinesFullFile < nlinesIgnore + nlinesSkip)
-{throw BDSException("BDSBunchUserFile::Initialise>", "You requested to skip and/or ignore more lines than there are in the user file.");}
+
+  if (numLinesFullFile < nlinesIgnore + nlinesSkip)
+    {throw BDSException("BDSBunchUserFile::Initialise>", "nlinesSkip + nlinesIgnore is greater than the number of lines in the user file \""+distrFilePath+"\"");}
+
   G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
   if (matchDistrFileLength && !nGenerateHasBeenSet)
     {
       G4int nGenerate = numLinesFullFile - nlinesIgnore - nlinesSkip;
       BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
-      G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength is True -> simulation " << nGenerate << " events" << G4endl;
+      G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength is True -> simulating " << nGenerate << " events" << G4endl;
     }
   OpenBunchFile();
   SkipLines();
