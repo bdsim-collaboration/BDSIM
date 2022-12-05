@@ -24,6 +24,7 @@ simple_testing(bunch-userfile-skip-lines       "--file=userfile-skip-lines.gmad"
 
 simple_fail(bunch-userfile-bad-units    "--file=userfile-bad-units.gmad")
 simple_fail(bunch-userfile-bad-skipping "--file=userfile-bad-skipping.gmad")
+simple_fail(bunch-userfile-ignore-too-much "--file=userfile-ignore-too-much.gmad")
 
 if (USE_GZSTREAM)
   simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")
