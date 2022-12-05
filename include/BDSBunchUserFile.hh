@@ -78,7 +78,7 @@ private:
   G4String bunchFormat;   ///< Format of the file.
   G4int    nlinesIgnore;  ///< Number of lines that will be ignored at the start the file.
   G4int    nlinesSkip;    ///< Number of lines that will be skipped after the nlinesIgnore.
-  G4int    numLinesFullFile;
+  G4int    nLinesValidData;
   G4double particleMass;  ///< Cache of nominal beam particle mass.
   G4int    lineCounter;   ///< Line counter.
   G4bool   printedOutFirstTime;    ///< Whether we've printed out opening the file the first time.
@@ -87,7 +87,15 @@ private:
 
   void ParseFileFormat(); ///< Parse the column tokens and units factors
   void OpenBunchFile();   ///< Open the file and check it's open.
-  void SkipLines();       ///< Read lines according to nlinesIgnore.
+  
+  /// Skip nlinesIgnore into the file irrespective of what's on the lines. If the
+  /// end of file is reached, an exception is thrown.
+  void SkipNLinesIgnoreIntoFile(G4bool usualPrintOut=true);
+  
+  /// Skip nlinesSkip further into the data where a line has to be 'valid' - i.e. it
+  /// is not an empty or comment line.
+  void SkipNLinesSkip(G4bool usualPrintOut=true);
+  
   void CloseBunchFile();  ///< Close the file handler
 
   /// Read a word out of the string stream, in effect advancing the internal
@@ -119,8 +127,11 @@ private:
   template <typename U>
   void CheckAndParseUnits(const G4String& name, const G4String& rest, U unitParser);
 
-  /// Open the file, skip lines, then count number of lines, then close file again.
-  G4int CountLinesInFile();
+  /// Open the file, skip the nlinesIgnore, then count the number of valid lines in the file.
+  /// A valid line is one that can be used for coordinates, so empty lines or commented lines
+  /// are ignored from this count. This number should be the number of particle coordinate sets
+  /// we can read from the file.
+  G4int CountNLinesValidDataInFile();
   
   /// Open the file and skip lines.
   virtual void Initialise();
