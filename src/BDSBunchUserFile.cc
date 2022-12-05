@@ -52,7 +52,7 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   bunchFormat(""),
   nlinesIgnore(0),
   nlinesSkip(0),
-  numLinesFullFile(0),
+  nLinesValidData(0),
   particleMass(0),
   lineCounter(0),
   printedOutFirstTime(false),
@@ -255,17 +255,47 @@ void BDSBunchUserFile<T>::skip(std::stringstream& ss, G4int nValues)
 }
 
 template<class T>
-void BDSBunchUserFile<T>::SkipLines()
+void BDSBunchUserFile<T>::SkipNLinesIgnoreIntoFile(G4bool usualPrintOut)
 {
-  if (BDS::IsFinite(nlinesIgnore) || BDS::IsFinite(nlinesSkip))
+  if (BDS::IsFinite(nlinesIgnore))
     {
-      G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << ", skipping "
-	     << nlinesSkip << " lines" << G4endl;
+      if (usualPrintOut)
+        {G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << " lines" << G4endl;}
       std::string line;
-      for (G4int i = 0; i < nlinesIgnore + nlinesSkip; i++)
+      for (G4int i = 0; i < nlinesIgnore; i++)
 	{
 	  std::getline(InputBunchFile, line);
 	  lineCounter++;
+	  // we must check explicitly if we've gone past the end of the file
+	  if (InputBunchFile.eof())
+	    {
+	      G4String msg = "end of file reached after line " + std::to_string(lineCounter);
+	      msg += " before nlinesIgnore ("+std::to_string(nlinesIgnore)+") was reached.";
+	      throw BDSException("BDSBunchUserFile::SkipNLinesIgnoreIntoFile>", msg);
+	    }
+	}
+    }
+}
+
+template<class T>
+void BDSBunchUserFile<T>::SkipNLinesSkip(G4bool usualPrintOut)
+{
+  if (BDS::IsFinite(nlinesSkip))
+    {
+      if (usualPrintOut)
+        {G4cout << "BDSBunchUserFile> skipping " << nlinesSkip << " valid lines" << G4endl;}
+      
+      // We can read into the file safely without checking eof() because we know from earlier
+      // counting of the number of valid lines in the file that nlinesSkip is not beyond the
+      // end of the file (including nlinesIgnore).
+      std::string line;
+      G4int nLinesValidRead = 0;
+      while (nLinesValidRead < nlinesSkip)
+	{
+	  std::getline(InputBunchFile, line);
+	  if (SkippableLine(line))
+	    {continue;}
+	  nLinesValidRead++;
 	}
     }
 }
@@ -289,9 +319,16 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
 }
 
 template<class T>
-G4int BDSBunchUserFile<T>::CountLinesInFile()
+G4bool BDSBunchUserFile<T>::SkippableLine(const std::string& line) const
+{
+  return std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment);
+}
+
+template<class T>
+G4int BDSBunchUserFile<T>::CountNLinesValidDataInFile()
 {
   OpenBunchFile();
+  SkipNLinesIgnoreIntoFile(false);
 
   std::string line;
   G4int nLinesValid = 0;
@@ -308,46 +345,57 @@ G4int BDSBunchUserFile<T>::CountLinesInFile()
 template<class T>
 void BDSBunchUserFile<T>::Initialise()
 {
-  numLinesFullFile = CountLinesInFile();
+  nLinesValidData = CountNLinesValidDataInFile();
 
-  if (numLinesFullFile < nlinesIgnore + nlinesSkip)
-    {throw BDSException("BDSBunchUserFile::Initialise>", "nlinesSkip + nlinesIgnore is greater than the number of lines in the user file \""+distrFilePath+"\"");}
+  if (nLinesValidData < nlinesSkip)
+    {
+      G4String msg = "nlinesSkip is greater than the number of valid lines (" + std::to_string(nLinesValidData);
+      msg += ") in the user file \"" + distrFilePath + "\"";
+      throw BDSException("BDSBunchUserFile::Initialise>", msg);
+    }
 
   G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
   if (matchDistrFileLength && !nGenerateHasBeenSet)
     {
-      G4int nGenerate = numLinesFullFile - nlinesIgnore - nlinesSkip;
+      G4int nGenerate = nLinesValidData - nlinesSkip;
       BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
       G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength is True -> simulating " << nGenerate << " events" << G4endl;
     }
   OpenBunchFile();
-  SkipLines();
+  SkipNLinesIgnoreIntoFile();
+  SkipNLinesSkip();
 }
 
 template<class T>
 void BDSBunchUserFile<T>::EndOfFileAction()
 {
   // If the end of the file is reached go back to the beginning of the file.
-  // this re reads the same file again - must always print warning
-  G4cout << "BDSBunchUserFile> End of file reached. Returning to beginning of file for next event." << G4endl;
+  // this re-reads the same file again - must always print warning
+  G4cout << "BDSBunchUserFile> End of file reached. Returning to beginning of file (including nlinesIgnore & nlinesSkip) for next event." << G4endl;
   CloseBunchFile();
   OpenBunchFile();
-  SkipLines();
+  SkipNLinesIgnoreIntoFile(false);
+  SkipNLinesSkip(false);
 }
 
 template<class T>
 void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
 {
   G4cout << "BDSBunchUserFile::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
-  if (InputBunchFile.eof())
-    {EndOfFileAction();}
+  if (eventOffset > nLinesValidData)
+    {
+      G4String msg = "eventOffset (" + std::to_string(eventOffset) + ") is greater than the number of valid data lines in this file.";
+      throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
+    }
+  // we should now be completely safe to read into the file ignoring comment lines and
+  // without checking eof()
   std::string line;
   for (G4int i = 0; i < eventOffset; i++)
     {
       std::getline(InputBunchFile, line);
+      if (SkippableLine(line))
+        {continue;}
       lineCounter++;
-      if (InputBunchFile.eof())
-	{EndOfFileAction();}
     }
 }
 
