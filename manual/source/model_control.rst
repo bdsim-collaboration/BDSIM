@@ -1066,7 +1066,7 @@ particle coordinates from the beginning. A warning will be printed out in this c
 |                                  | unit is optional. See below for tokens and units.     |
 +----------------------------------+-------------------------------------------------------+
 | `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
-|                                  | input files                                           |
+|                                  | input files (e.g. header lines)                       |
 +----------------------------------+-------------------------------------------------------+
 | `nlinesSkip`                     | Number of lines to skip into the file. This is for    |
 |                                  | number of coordinate lines to skip. This also counts  |
