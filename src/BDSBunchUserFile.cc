@@ -61,6 +61,7 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   matchDistrFileLength(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
+  comment = std::regex("^\\s*\\#|\\!.*");
 }
 
 template<class T>
@@ -293,17 +294,15 @@ G4int BDSBunchUserFile<T>::CountLinesInFile()
   OpenBunchFile();
 
   std::string line;
-  std::regex comment("^\\#.*");
-  
-  G4int numLines = 0;
+  G4int nLinesValid = 0;
   while ( std::getline(InputBunchFile, line) )
     {
-      if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
-	{continue;}
-      ++numLines;
+      if (SkippableLine(line))
+	{continue;} // don't count it
+      nLinesValid++;
     }
   CloseBunchFile();
-  return numLines;
+  return nLinesValid;
 }
 
 template<class T>
@@ -381,11 +380,10 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   lineCounter++;
   
   // skip empty lines and comment lines (starting with # or !)
-  std::regex comment("^\\s*\\#|\\!.*");
   G4bool lineIsBad = true;
   while (lineIsBad)
     {
-      if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
+      if (SkippableLine(line))
 	{
 	  if (InputBunchFile.eof())
 	    {EndOfFileAction();}
