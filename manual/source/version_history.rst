@@ -60,7 +60,7 @@ New Features
 
 * New bunches feature allows offset in time for different bunches at a given repetition rate
   or period with a certain number of events at a fixed bunch index generated. See :ref:`beam-bunches`.
-* The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
+* The `square` distribution can now have an uncorrelated `Z` distribution with time by
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
 * New bunch distribution type `halosigma` that samples a flat halo distribution
   flat in terms of sigma. This is useful for re-weighting distributions based on
@@ -176,6 +176,7 @@ New Options
 General Updates
 ---------------
 
+* The `userfile` distribution now doesn't count comment lines for `nlinesSkip` - only valid data lines.
 * When using the minimum kinetic energy option, tracks are now stopped in the stacking action
   rather than being allowed to be tracked for a single step. This should vastly improve the
   speed of some events with large numbers of tracks.
@@ -245,7 +246,9 @@ Bug Fixes
 
 **Beam**
 
-* Fixed time (T) coordinate of beam which wasn't offset if the beam was offset in curvilinear S.
+* The `userfile` distribution now doesn't count comment lines for `nlinesSkip` - only valid data lines.
+* Fix infinite looping in the `userfile` distribution if `nlinesIgnore` or `nlinesSkip` were longer
+  than the number of lines in the file.
 * Fixed generation of circular beam distribution type. The beam previously was circular but was non-uniform with a strong
   peak at the centre. The distribution is now uniform in x, y, xp & yp.
 * Fixed generation of ring beam distribution type. Similarly to the circular distribution, the beam had a higher density

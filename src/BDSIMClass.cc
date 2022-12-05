@@ -279,7 +279,7 @@ int BDSIM::Initialise()
                                           globals->BeamlineTransform(),
                                           globals->BeamlineS(),
                                           globals->GeneratePrimariesOnly());
-  G4cout << "Bunch distribution: " << bdsBunch->Name() << G4endl;
+  G4cout << "Bunch distribution: \"" << bdsBunch->Name() << "\"" << G4endl;
   /// We no longer need beamParticle so delete it to avoid confusion. The definition is
   /// held inside bdsBunch (can be updated dynamically).
   delete beamParticle;

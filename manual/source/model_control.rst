@@ -1102,6 +1102,11 @@ particle coordinates from the beginning. A warning will be printed out in this c
 .. note:: For gzip support, BDSIM must be compiled with GZIP. This is normally sourced
 	  from Geant4 and is on by default.
 
+* The lines counted by `nlinesIgnore` are truly ignored whether they are a comment or not.
+* `nlinesSkip` will skip a number of valid lines (excluding comments or empty lines).
+* The default behaviour is to loop to the beginning of the file when the end is reached.
+  This can be controlled by `matchDistrFileLength` in the `beam` command.
+* When the file is looped, the `nlinesIgnore` and `nlinesSkip` are done again.
 * **tar + gz** will not work. The file must be a single file compressed through gzip only.
 * Coordinates not specified are taken from the default `reference`_ distribution parameters.
 * Lines starting with `#` or `!` will be ignored.
@@ -1126,45 +1131,43 @@ particle coordinates from the beginning. A warning will be printed out in this c
 	     is a proxy to load their definitions. Note, without decay physics used, unstable
 	     particles will be tracked beyond their normal lifetime.
 
-.. tabularcolumns:: |p{3cm}|p{7cm}|
+.. tabularcolumns:: |p{3cm}|p{7cm}|p{3cm}|
 
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| `distrFile`                      | File path to ASCII data file                          |
-+----------------------------------+-------------------------------------------------------+
-| `distrFileFormat`                | A string that details the column names and units. A   |
-|                                  | list of token[unit] separated by white space where    |
-|                                  | unit is optional. See below for tokens and units.     |
-+----------------------------------+-------------------------------------------------------+
-| `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
-|                                  | input files                                           |
-+----------------------------------+-------------------------------------------------------+
-| `nlinesSkip`                     | Number of lines to skip into the file. This is for    |
-|                                  | number of coordinate lines to skip. This also counts  |
-|                                  | comment lines.                                        |
-+----------------------------------+-------------------------------------------------------+
-| `matchDistrFileLength`           | Option for certain distributions to simulate the same |
-|                                  | number of events as are in the file. Currently works  |
-|                                  | for the `userfile` and `ptc` distribution.            |
-+----------------------------------+-------------------------------------------------------+
++----------------------------------+-------------------------------------------------------+---------------+
+| Option                           | Description                                           | **Required**  |
++==================================+=======================================================+===============+
+| `distrFile`                      | File path to ASCII data file                          | Yes           |
++----------------------------------+-------------------------------------------------------+---------------+
+| `distrFileFormat`                | A string that details the column names and units. A   | Yes           |
+|                                  | list of token[unit] separated by white space where    |               |
+|                                  | unit is optional. See below for tokens and units.     |               |
++----------------------------------+-------------------------------------------------------+---------------+
+| `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     | No            |
+|                                  | input files (e.g. header lines)                       |               |
++----------------------------------+-------------------------------------------------------+---------------+
+| `nlinesSkip`                     | Number of lines to skip into the file. This is for    | No            |
+|                                  | number of coordinate lines to skip. This does not     |               |
+|                                  | comment or empty lines.                               |               |
++----------------------------------+-------------------------------------------------------+---------------+
+| `matchDistrFileLength`           | Option for certain distributions to simulate the same | No            |
+|                                  | number of events as are in the file. Currently works  |               |
+|                                  | for the `userfile` and `ptc` distribution.            |               |
++----------------------------------+-------------------------------------------------------+---------------+
 
 Skipping and Ignoring Lines:
 
 * `nlinesIgnore` is intended for header lines to ignore at the start of the file.
 * `nlinesSkip` is intended for the number of particle coordinate lines to skip after `nlinesIgnore`.
 * `nlinesSkip` is available as the executable option :code:`--distrFileNLinesSkip`.
-* The number of lines skipped from a file is `nlinesIgnore` + `nlinesSkip`. The user could use
-  only one of these, but only `nlinesSkip` is available through the executable option described above.
-* If more events are generated than are lines in the file, the file is read again including the skipped
-  lines.
+* If more events are generated than are lines in the file, the file is read again including the
+  ignored and skipped lines.
 
 Examples:
 
-1) `nlinesIgnore=1` and `nlinesSkip=3`. The first four lines are ignored always in the file.
+1) `nlinesIgnore=1` and `nlinesSkip=3`. The first line and then the next three non-blank or comment
+   lines are ignored always in the file.
 2) `nlinesIgnore=1` in the input gmad and `--distrFileNLinesSkip=3` is used as an executable option.
-   The first four lines are skipped. The user has the option of controlling the 3 though - perhaps
-   for another instance of BDSIM on a computer farm.
+   The first line and then the next three non-blank or comment lines are skipped.
 
 Acceptable tokens for the columns are:
 
