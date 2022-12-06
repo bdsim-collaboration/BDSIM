@@ -774,6 +774,19 @@ One entry in the model tree represents one beam line.
 | fintxk2             | std::vector<float>       | 2nd fringe-field integral for exit pole face                 |
 +---------------------+--------------------------+--------------------------------------------------------------+
 
+Additionally:
+
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.4\textwidth}|p{0.3\textwidth}|
+
++---------------------+--------------------------------------+----------------------------------------------------+
+| pvNames             | std::vector<std::vector<std::string> | Name of physical volume(s) placed in the world for |
+|                     |                                      | a given beamline element                           |
++---------------------+--------------------------------------+----------------------------------------------------+
+| pvNamesWPointer     | std::vector<std::vector<std::string> | Same as pvNames but with the pointer appended to   |
+|                     |                                      | the name                                           |
++---------------------+--------------------------------------+----------------------------------------------------+
+
+
 Optional collimator information also store in the model.
 
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.3\textwidth}|p{0.4\textwidth}|
