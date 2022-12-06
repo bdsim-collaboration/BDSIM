@@ -46,12 +46,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
-  BDSBunch("user file"),
+  BDSBunch("userfile"),
   distrFile(""),
   distrFilePath(""),
   bunchFormat(""),
   nlinesIgnore(0),
   nlinesSkip(0),
+  nLinesValidData(0),
   particleMass(0),
   lineCounter(0),
   printedOutFirstTime(false),
@@ -60,6 +61,7 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   matchDistrFileLength(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
+  comment = std::regex("^\\s*\\#|\\!.*");
 }
 
 template<class T>
@@ -118,7 +120,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
       if(token.substr(0,1)=="E" || token.substr(0,1)=="P")
 	{
 	  anEnergyCoordinateInUse = true;
-	  if(token.substr(0,2)=="Ek")
+	  if (token.substr(0,2)=="Ek")
 	    {//Kinetic energy (longer name).
 	      vari = token.substr(0,2);
 	      rest = token.substr(2);
@@ -130,15 +132,15 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 	    }
 	  CheckAndParseUnits(vari, rest, BDS::ParseEnergyUnit);
 	}
-      else if(token.substr(0,1)=="t")
+      else if (token.substr(0,1)=="t")
 	{
 	  vari = token.substr(0, 1);
 	  rest = token.substr(1);
 	  CheckAndParseUnits(vari, rest, BDS::ParseTimeUnit);
 	}
-      else if( ( token.substr(0,1)=="x" && token.substr(1,1)!="p" ) ||
-	       ( token.substr(0,1)=="y" && token.substr(1,1)!="p" ) ||
-	       ( token.substr(0,1)=="z" && token.substr(1,1)!="p" ) )
+      else if ( ( token.substr(0,1)=="x" && token.substr(1,1)!="p" ) ||
+		( token.substr(0,1)=="y" && token.substr(1,1)!="p" ) ||
+		( token.substr(0,1)=="z" && token.substr(1,1)!="p" ) )
 	{
 	  vari = token.substr(0,1);
 	  rest = token.substr(1);
@@ -227,8 +229,8 @@ void BDSBunchUserFile<T>::CheckAndParseUnits(const G4String& uName,
       return;
     }
   
-  G4int pos1 = rest.find("[");
-  G4int pos2 = rest.find("]");
+  G4int pos1 = (G4int)rest.find("[");
+  G4int pos2 = (G4int)rest.find("]");
   if (pos1 < 0 || pos2 < 0)
     {
       G4String message = "Missing bracket [] in units of \"distrFileFormat\"\n";
@@ -253,17 +255,47 @@ void BDSBunchUserFile<T>::skip(std::stringstream& ss, G4int nValues)
 }
 
 template<class T>
-void BDSBunchUserFile<T>::SkipLines()
+void BDSBunchUserFile<T>::SkipNLinesIgnoreIntoFile(G4bool usualPrintOut)
 {
-  if (BDS::IsFinite(nlinesIgnore) || BDS::IsFinite(nlinesSkip))
+  if (BDS::IsFinite(nlinesIgnore))
     {
-      G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << ", skipping "
-	     << nlinesSkip << " lines" << G4endl;
+      if (usualPrintOut)
+        {G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << " lines" << G4endl;}
       std::string line;
-      for (G4int i = 0; i < nlinesIgnore + nlinesSkip; i++)
+      for (G4int i = 0; i < nlinesIgnore; i++)
 	{
 	  std::getline(InputBunchFile, line);
 	  lineCounter++;
+	  // we must check explicitly if we've gone past the end of the file
+	  if (InputBunchFile.eof())
+	    {
+	      G4String msg = "end of file reached after line " + std::to_string(lineCounter);
+	      msg += " before nlinesIgnore ("+std::to_string(nlinesIgnore)+") was reached.";
+	      throw BDSException("BDSBunchUserFile::SkipNLinesIgnoreIntoFile>", msg);
+	    }
+	}
+    }
+}
+
+template<class T>
+void BDSBunchUserFile<T>::SkipNLinesSkip(G4bool usualPrintOut)
+{
+  if (BDS::IsFinite(nlinesSkip))
+    {
+      if (usualPrintOut)
+        {G4cout << "BDSBunchUserFile> skipping " << nlinesSkip << " valid lines" << G4endl;}
+      
+      // We can read into the file safely without checking eof() because we know from earlier
+      // counting of the number of valid lines in the file that nlinesSkip is not beyond the
+      // end of the file (including nlinesIgnore).
+      std::string line;
+      G4int nLinesValidRead = 0;
+      while (nLinesValidRead < nlinesSkip)
+	{
+	  std::getline(InputBunchFile, line);
+	  if (SkippableLine(line))
+	    {continue;}
+	  nLinesValidRead++;
 	}
     }
 }
@@ -287,62 +319,83 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
 }
 
 template<class T>
-G4int BDSBunchUserFile<T>::CountLinesInFile()
+G4bool BDSBunchUserFile<T>::SkippableLine(const std::string& line) const
+{
+  return std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment);
+}
+
+template<class T>
+G4int BDSBunchUserFile<T>::CountNLinesValidDataInFile()
 {
   OpenBunchFile();
-  SkipLines();
-  
-  G4int numLines = 0;
+  SkipNLinesIgnoreIntoFile(false);
+
   std::string line;
-  std::regex comment("^\\#.*");
+  G4int nLinesValid = 0;
   while ( std::getline(InputBunchFile, line) )
     {
-      if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
-	{continue;}
-      ++numLines;
+      if (SkippableLine(line))
+	{continue;} // don't count it
+      nLinesValid++;
     }
   CloseBunchFile();
-  return numLines;
+  return nLinesValid;
 }
 
 template<class T>
 void BDSBunchUserFile<T>::Initialise()
 {
+  nLinesValidData = CountNLinesValidDataInFile();
+
+  if (nLinesValidData < nlinesSkip)
+    {
+      G4String msg = "nlinesSkip is greater than the number of valid lines (" + std::to_string(nLinesValidData);
+      msg += ") in the user file \"" + distrFilePath + "\"";
+      throw BDSException("BDSBunchUserFile::Initialise>", msg);
+    }
+
   G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
   if (matchDistrFileLength && !nGenerateHasBeenSet)
     {
-      G4int nGenerate = CountLinesInFile();
+      G4int nGenerate = nLinesValidData - nlinesSkip;
       BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
-      G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength is True -> simulation " << nGenerate << " events" << G4endl;
+      G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength is True -> simulating " << nGenerate << " events" << G4endl;
     }
   OpenBunchFile();
-  SkipLines();
+  SkipNLinesIgnoreIntoFile();
+  SkipNLinesSkip();
 }
 
 template<class T>
 void BDSBunchUserFile<T>::EndOfFileAction()
 {
   // If the end of the file is reached go back to the beginning of the file.
-  // this re reads the same file again - must always print warning
-  G4cout << "BDSBunchUserFile> End of file reached. Returning to beginning of file for next event." << G4endl;
+  // this re-reads the same file again - must always print warning
+  G4cout << "BDSBunchUserFile> End of file reached. Returning to beginning of file (including nlinesIgnore & nlinesSkip) for next event." << G4endl;
   CloseBunchFile();
   OpenBunchFile();
-  SkipLines();
+  SkipNLinesIgnoreIntoFile(false);
+  SkipNLinesSkip(false);
 }
 
 template<class T>
 void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
 {
   G4cout << "BDSBunchUserFile::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
-  if (InputBunchFile.eof())
-    {EndOfFileAction();}
+  if (eventOffset > nLinesValidData)
+    {
+      G4String msg = "eventOffset (" + std::to_string(eventOffset) + ") is greater than the number of valid data lines in this file.";
+      throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
+    }
+  // we should now be completely safe to read into the file ignoring comment lines and
+  // without checking eof()
   std::string line;
   for (G4int i = 0; i < eventOffset; i++)
     {
       std::getline(InputBunchFile, line);
+      if (SkippableLine(line))
+        {continue;}
       lineCounter++;
-      if (InputBunchFile.eof())
-	{EndOfFileAction();}
     }
 }
 
@@ -375,11 +428,10 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   lineCounter++;
   
   // skip empty lines and comment lines (starting with # or !)
-  std::regex comment("^\\s*\\#|\\!.*");
   G4bool lineIsBad = true;
   while (lineIsBad)
     {
-      if (std::all_of(line.begin(), line.end(), isspace) || std::regex_search(line, comment))
+      if (SkippableLine(line))
 	{
 	  if (InputBunchFile.eof())
 	    {EndOfFileAction();}
@@ -489,7 +541,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 	  G4IonTable* ionTable = particleTable->GetIonTable();
 	  G4int ionA, ionZ, ionLevel;
 	  G4double ionE;
-    G4IonTable::GetNucleusByEncoding(type, ionZ, ionA, ionE, ionLevel);
+	  G4IonTable::GetNucleusByEncoding(type, ionZ, ionA, ionE, ionLevel);
 	  ionDef = new BDSIonDefinition(ionA, ionZ, ionZ);
 	  particleDef = ionTable->GetIon(ionDef->Z(), ionDef->A(), ionDef->ExcitationEnergy());
 	}
@@ -506,9 +558,9 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
           particleDefinitionHasBeenUpdated = true;
         }
       catch (const BDSException& e)
-	    {// if we throw an exception the object is invalid for the delete on the next loop
-	      particleDefinition = nullptr; // reset back to nullptr for safe delete
-	      throw e;                      // rethrow
+	{// if we throw an exception the object is invalid for the delete on the next loop
+	  particleDefinition = nullptr; // reset back to nullptr for safe delete
+	  throw e;                      // rethrow
         }
     }
 
@@ -532,12 +584,17 @@ namespace BDS
 {
 G4double ParseEnergyUnit(const G4String& fmt)
 {
-  G4double unit=1.;
-  if (fmt=="TeV") unit=1.e3;
-  else if(fmt=="GeV") unit=1;
-  else if(fmt=="MeV") unit=1.e-3;
-  else if(fmt=="KeV") unit=1.e-6;
-  else if(fmt=="eV") unit=1.e-9;
+  G4double unit= 1.0;
+  if (fmt == "TeV")
+    {unit = 1e3;}
+  else if (fmt == "GeV")
+    {unit = 1.0 ;}
+  else if (fmt == "MeV")
+    {unit = 1e-3;}
+  else if (fmt == "KeV")
+    {unit = 1e-6;}
+  else if (fmt == "eV")
+    {unit = 1e-9;}
   else
     {throw BDSException(__METHOD_NAME__, "Unrecognised energy unit! " +fmt);}
   return unit;
@@ -545,12 +602,17 @@ G4double ParseEnergyUnit(const G4String& fmt)
 
 G4double ParseLengthUnit(const G4String& fmt)
 {
-  G4double unit=1.;
-  if(fmt=="m") unit=1;
-  else if(fmt=="cm") unit=1.e-2;
-  else if(fmt=="mm") unit=1.e-3;
-  else if(fmt=="mum" || fmt=="um") unit=1.e-6;
-  else if(fmt=="nm") unit=1.e-9;
+  G4double unit = 1.0;
+  if (fmt == "m")
+    {unit = 1;}
+  else if (fmt == "cm")
+    {unit = 1e-2;}
+  else if (fmt == "mm")
+    {unit = 1e-3;}
+  else if (fmt == "mum" || fmt == "um")
+    {unit = 1e-6;}
+  else if (fmt == "nm")
+    {unit = 1e-9;}
   else
     {throw BDSException(__METHOD_NAME__, "Unrecognised length unit! " + fmt);}
   return unit;
@@ -558,11 +620,15 @@ G4double ParseLengthUnit(const G4String& fmt)
 
 G4double ParseAngleUnit(const G4String& fmt)
 {
-  G4double unit=1.;
-  if(fmt=="rad") unit=1;
-  else if(fmt=="mrad") unit=1.e-3;
-  else if(fmt=="murad" || fmt=="urad") unit=1.e-6;
-  else if(fmt=="nrad") unit=1.e-9;
+  G4double unit = 1.0;
+  if (fmt == "rad")
+    {unit = 1;}
+  else if (fmt == "mrad")
+    {unit = 1e-3;}
+  else if (fmt == "murad" || fmt == "urad")
+    {unit = 1e-6;}
+  else if (fmt == "nrad")
+    {unit=1e-9;}
   else
     {throw BDSException(__METHOD_NAME__, "Unrecognised angle unit! " + fmt);}
   return unit;
@@ -570,13 +636,19 @@ G4double ParseAngleUnit(const G4String& fmt)
 
 G4double ParseTimeUnit(const G4String& fmt)
 {
-  G4double unit=1.;
-  if(fmt=="s") unit=1;
-  else if(fmt=="ms") unit=1.e-3;
-  else if(fmt=="mus" || fmt=="us") unit=1.e-6;
-  else if(fmt=="ns") unit=1.e-9;
-  else if(fmt=="mm/c") unit=(CLHEP::mm/CLHEP::c_light)/CLHEP::s;
-  else if(fmt=="nm/c") unit=(CLHEP::nm/CLHEP::c_light)/CLHEP::s;
+  G4double unit = 1.0;
+  if (fmt == "s")
+    {unit = 1;}
+  else if (fmt == "ms")
+    {unit = 1.e-3;}
+  else if (fmt == "mus" || fmt == "us")
+    {unit = 1e-6;}
+  else if (fmt == "ns")
+    {unit = 1e-9;}
+  else if (fmt == "mm/c")
+    {unit = (CLHEP::mm/CLHEP::c_light)/CLHEP::s;}
+  else if (fmt == "nm/c")
+    {unit = (CLHEP::nm/CLHEP::c_light)/CLHEP::s;}
   else
     {throw BDSException(__METHOD_NAME__, "Unrecognised time unit! " + fmt);}
   return unit;

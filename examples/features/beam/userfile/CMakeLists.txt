@@ -20,8 +20,12 @@ simple_testing(bunch-userfile-all-columns1     "--file=userfile-all-columns.gmad
 simple_testing(bunch-userfile-all-columns2     "--file=userfile-all-columns2.gmad"     "")
 simple_testing(bunch-userfile-all-columns3     "--file=userfile-all-columns3.gmad"     "")
 simple_testing(bunch-userfile-xp0-yp0          "--file=userfile-xp0yp0.gmad"           "")
+simple_testing(bunch-userfile-skip-lines       "--file=userfile-skip-lines.gmad"       "")
+simple_testing(bunch-userfile-fully-featured   "--file=userfile-fully-featured.gmad"   "")
 
-simple_fail(bunch-userfile-bad-units   "--file=userfile-bad-units.gmad")
+simple_fail(bunch-userfile-bad-units        "--file=userfile-bad-units.gmad")
+simple_fail(bunch-userfile-bad-nlinesSkip   "--file=userfile-bad-skipping.gmad")
+simple_fail(bunch-userfile-bad-nlinesIgnore "--file=userfile-bad-nlinesIgnore.gmad")
 
 if (USE_GZSTREAM)
   simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")

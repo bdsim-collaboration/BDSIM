@@ -55,7 +55,7 @@ New Features
 
 **Beam**
 
-* The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
+* The `square` distribution can now have an uncorrelated `Z` distribution with time by
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
 * New bunch distribution type `halosigma` that samples a flat halo distribution
   flat in terms of sigma. This is useful for re-weighting distributions based on
@@ -135,7 +135,7 @@ New Features
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
 * New **spherical** and **cylindrical** samplers.  See :ref:`sampler-types-and-shapes`.
-* The :code:`csample` command now works correctly and has been reimplemented for all beamline
+* The :code:`csample` command now works correctly and has been re-implemented for all beamline
   components.
 * A sampler in a BDSIM ROOT output file can now be used as an input beam distribution for
   another simulation.  See :ref:`bunch-bdsimsampler`.
@@ -151,6 +151,7 @@ New Features
 General Updates
 ---------------
 
+* The `userfile` distribution now doesn't count comment lines for `nlinesSkip` - only valid data lines.
 * When using the minimum kinetic energy option, tracks are now stopped in the stacking action
   rather than being allowed to be tracked for a single step. This should vastly improve the
   speed of some events with large numbers of tracks.
@@ -192,6 +193,7 @@ General Updates
 * Samplers, sampler placements and their parallel world have been change to have a nullptr (no)
   material. The parallel world material should not make a difference for the setup in BDSIM, but
   now it is explicitly forbidden from having any effect by it being nullptr.
+* The material print out (:code:`bdsim --materials`) now includes aliases.
 
 Bug Fixes
 ---------
@@ -219,6 +221,9 @@ Bug Fixes
 
 **Beam**
 
+* The `userfile` distribution now doesn't count comment lines for `nlinesSkip` - only valid data lines.
+* Fix infinite looping in the `userfile` distribution if `nlinesIgnore` or `nlinesSkip` were longer
+  than the number of lines in the file.
 * Fixed generation of circular beam distribution type. The beam previously was circular but was non-uniform with a strong
   peak at the centre. The distribution is now uniform in x, y, xp & yp.
 * Fixed generation of ring beam distribution type. Similarly to the circular distribution, the beam had a higher density
@@ -259,6 +264,8 @@ Bug Fixes
   fixes field maps, biasing, range cuts, regions and more being wrong if the same GDML file was reused
   in different components. However, this can be explicitly circumvented with the new parameter
   :code:`dontReloadGeometry` in a placement.
+* Fix a bug where BDSIM would exit complaining about a conflicting material after loading a GDML
+  file containing a material with the same name as one predefined in BDSIM.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.
@@ -345,7 +352,8 @@ Bug Fixes
 Output Changes
 --------------
 * Add angle of the element in the Model Tree.
-* Add samplerSPosition in the Model Tree.
+* Add `samplerSPosition` in the Model Tree.
+* Add `pvName` and `pvNameWPointer` to the Model Tree.
 * Trajectories now have the variable `depth` for which level of the tree that trajectory is.
 * Trajectories now have the variable `materialID`, which is an integer ID for each material
   for a given model. In the Model tree, a map of this integer to the name is stored. An integer
