@@ -352,7 +352,8 @@ Bug Fixes
 Output Changes
 --------------
 * Add angle of the element in the Model Tree.
-* Add samplerSPosition in the Model Tree.
+* Add `samplerSPosition` in the Model Tree.
+* Add `pvName` and `pvNameWPointer` to the Model Tree.
 * Trajectories now have the variable `depth` for which level of the tree that trajectory is.
 * Trajectories now have the variable `materialID`, which is an integer ID for each material
   for a given model. In the Model tree, a map of this integer to the name is stored. An integer
