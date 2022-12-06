@@ -24,7 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4RotationMatrix.hh"
 #include "G4Types.hh"
 
-#include <vector>
+#include <set>
 
 /**
  * @brief A wrapper of BDSBunch to include a filter for the events
@@ -88,7 +88,7 @@ protected:
   /// @}
 
   /// Vector (sorted) of permitted particles.
-  std::vector<G4int> acceptedParticles;
+  std::set<G4int> acceptedParticles;
 
 private:
   G4bool warnAboutMatchFileLengthNotWorking;
