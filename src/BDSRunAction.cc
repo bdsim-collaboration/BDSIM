@@ -67,7 +67,9 @@ BDSRunAction::BDSRunAction(BDSOutput*      outputIn,
   usingIons(usingIonsIn),
   cpuStartTime(std::clock_t()),
   eventAction(eventActionIn),
-  trajectorySamplerID(trajectorySamplerIDIn)
+  trajectorySamplerID(trajectorySamplerIDIn),
+  runEndedEarly(false),
+  nEventsInOriginalDistrfile(0)
 {;}
 
 BDSRunAction::~BDSRunAction()
@@ -77,6 +79,10 @@ BDSRunAction::~BDSRunAction()
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
+  // reset variables for this run
+  runEndedEarly = false;
+  nEventsInOriginalDistrfile = 0;
+  
   if (BDSGlobalConstants::Instance()->PrintPhysicsProcesses())
     {PrintAllProcessesForAllParticles();}
 
@@ -150,7 +156,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 	 << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
-  output->FillRun(info);
+  output->FillRun(info, runEndedEarly, nEventsInOriginalDistrfile);
   output->CloseFile();
   info->Flush();
 

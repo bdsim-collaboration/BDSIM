@@ -60,10 +60,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   nCollimators(0),
   nCavities(0),
-  localSamplersInitialised(false),
-  localCollimatorsInitialised(false),
   runEndedEarly(false),
-  nEventsInOriginalDistrFile(0)
+  nEventsInOriginalDistrFile(0),
+  localSamplersInitialised(false),
+  localCollimatorsInitialised(false)
 {
   G4bool storeCollimatorInfo = globals->StoreCollimatorInfo();
   G4bool storeCavityInfo = globals->StoreCavityInfo();

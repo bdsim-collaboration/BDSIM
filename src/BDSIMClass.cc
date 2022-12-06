@@ -339,11 +339,12 @@ int BDSIM::Initialise()
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput,
+  BDSRunAction* runAction = new BDSRunAction(bdsOutput,
                                              bdsBunch,
                                              bdsBunch->ParticleDefinition()->IsAnIon(),
                                              eventAction,
-                                             globals->StoreTrajectorySamplerID()));
+                                             globals->StoreTrajectorySamplerID());
+  runManager->SetUserAction(runAction);
 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Stepping Action"<<G4endl;
@@ -379,7 +380,7 @@ int BDSIM::Initialise()
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Primary Generator"<<G4endl;
 #endif
-  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam());
+  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam(), runAction);
   runManager->SetUserAction(primaryGeneratorAction);
   BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 
