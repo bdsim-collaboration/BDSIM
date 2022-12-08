@@ -139,7 +139,7 @@ void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
 #endif
 
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
-  matchDistrFileLength = G4bool(beam.matchDistrFileLength);
+  matchDistrFileLength = G4bool(beam.distrFileMatchLength);
   beta = beamParticle->Beta();
   SetDistrFile((G4String)beam.distrFile); 
   LoadPtcFile();
