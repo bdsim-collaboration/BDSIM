@@ -1033,7 +1033,7 @@ particle coordinates from the beginning. A warning will be printed out in this c
 * The lines counted by `nlinesIgnore` are truly ignored whether they are a comment or not.
 * `nlinesSkip` will skip a number of valid lines (excluding comments or empty lines).
 * The default behaviour is to loop to the beginning of the file when the end is reached.
-  This can be controlled by `matchDistrFileLength` in the `beam` command.
+  This can be controlled by `distrFileMatchLength` in the `beam` command.
 * When the file is looped, the `nlinesIgnore` and `nlinesSkip` are done again.
 * **tar + gz** will not work. The file must be a single file compressed through gzip only.
 * Coordinates not specified are taken from the default `reference`_ distribution parameters.
@@ -1077,7 +1077,7 @@ particle coordinates from the beginning. A warning will be printed out in this c
 |                                  | number of coordinate lines to skip. This does not     |               |
 |                                  | comment or empty lines.                               |               |
 +----------------------------------+-------------------------------------------------------+---------------+
-| `matchDistrFileLength`           | Option for certain distributions to simulate the same | No            |
+| `distrFileMatchLength`           | Option for certain distributions to simulate the same | No            |
 |                                  | number of events as are in the file. Currently works  |               |
 |                                  | for the `userfile` and `ptc` distribution.            |               |
 +----------------------------------+-------------------------------------------------------+---------------+
@@ -1327,7 +1327,7 @@ position does not need to be the same.
 +----------------------------+-----------------------------------------------------------+
 | `distrFile`                | The path to the input file desired.                       |
 +----------------------------+-----------------------------------------------------------+
-| `matchDistrFileLength`     | (1 or 0) Whether to run the number of events as is in the |
+| `distrFileMatchLength`     | (1 or 0) Whether to run the number of events as is in the |
 |                            | file. On by default, but ignored if --ngenerate used      |
 +----------------------------+-----------------------------------------------------------+
 
@@ -1337,7 +1337,7 @@ position does not need to be the same.
   apply to this distribution as well.
 * By default, the length of the file is matched. If some events contain no particles of
   interest according to the cuts these events will be skipped. Therefore you might have
-  fewer events afterwards. Turn off `matchDistrFileLength` to allow looping on the file
+  fewer events afterwards. Turn off `distrFileMatchLength` to allow looping on the file
   to generate more.
 * Examples can be found in :code:`bdsim/examples/features/beam/bdsimsampler/*gmad`.
 * Remember, a design particle must still be specified in the beam command for the magnets.

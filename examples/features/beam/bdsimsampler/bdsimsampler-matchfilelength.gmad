@@ -1,6 +1,6 @@
 include bdsimsampler-filtered.gmad;
 
-beam, matchDistrFileLength=1;
+beam, distrFileMatchLength=1;
 
 !From inspection of the shower.root sample file, only 7/10 events
 !have this particle

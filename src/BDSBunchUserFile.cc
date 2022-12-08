@@ -58,7 +58,9 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   printedOutFirstTime(false),
   anEnergyCoordinateInUse(false),
   changingParticleType(false),
-  matchDistrFileLength(false)
+  endOfFileReached(false),
+  matchDistrFileLength(false),
+  distrFileLoop(true)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
   comment = std::regex("^\\s*\\#|\\!.*");
@@ -314,7 +316,8 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   bunchFormat   = beam.distrFileFormat;
   nlinesIgnore  = beam.nlinesIgnore;
   nlinesSkip    = beam.nlinesSkip;
-  matchDistrFileLength = beam.matchDistrFileLength;
+  matchDistrFileLength = beam.distrFileMatchLength;
+  distrFileLoop = beam.distrFileLoop;
   ParseFileFormat();
 }
 
@@ -359,7 +362,7 @@ void BDSBunchUserFile<T>::Initialise()
     {
       G4int nGenerate = nLinesValidData - nlinesSkip;
       BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
-      G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength is True -> simulating " << nGenerate << " events" << G4endl;
+      G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is True -> simulating " << nGenerate << " events" << G4endl;
     }
   OpenBunchFile();
   SkipNLinesIgnoreIntoFile();

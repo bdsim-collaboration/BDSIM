@@ -120,10 +120,10 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
       // and 2) if not all events match the cuts (which we can only tell as we go along through the file),
       // then flag the BDSROOTSampleReader that it should abort the event rather than loop the file.
       samplerReader = new BDSROOTSamplerReader(beam.distrType, filename, beg,
-					       beam.matchDistrFileLength,
+					       beam.distrFileMatchLength,
 					       true, // remove unstable without decay table
 					       beam.eventGeneratorWarnSkippedParticles);
-      if (beam.matchDistrFileLength)
+      if (beam.distrFileMatchLength)
         {BDSGlobalConstants::Instance()->SetNumberToGenerate(samplerReader->NEventsInFile());}
     }
 }

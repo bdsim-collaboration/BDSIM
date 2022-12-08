@@ -84,6 +84,7 @@ private:
   G4bool   printedOutFirstTime;    ///< Whether we've printed out opening the file the first time.
   G4bool   anEnergyCoordinateInUse;///< Whether Et, Ek or P are in the columns.
   G4bool   changingParticleType;   ///< Whether the particle type is a column.
+  G4bool   endOfFileReached;
 
   void ParseFileFormat(); ///< Parse the column tokens and units factors
   void OpenBunchFile();   ///< Open the file and check it's open.
@@ -143,6 +144,7 @@ private:
   G4double ffact; ///< Cache of flip factor from global constants.
   std::regex comment;
   G4bool   matchDistrFileLength;
+  G4bool   distrFileLoop;
 };
 
 namespace BDS
