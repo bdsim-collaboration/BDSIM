@@ -111,7 +111,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
   else if (useSamplerLoader)
     {
       if (beam.distrFile.empty())
-	{throw BDSException(__METHOD_NAME__, "no distrFile specified for event generator beam distribution.");}
+	{throw BDSException(__METHOD_NAME__, "no distrFile specified for bdsim sampler beam distribution.");}
       G4String filename = BDS::GetFullPath(beam.distrFile, false, beam.distrFileFromExecOptions);
       BDSBunchEventGenerator* beg = dynamic_cast<BDSBunchEventGenerator*>(bunchIn);
       if (!beg)
