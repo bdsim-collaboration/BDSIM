@@ -97,8 +97,8 @@ void BDSBunchEventGenerator::SetOptions(const BDSParticleDefinition* beamParticl
   acceptedParticlesString = beam.eventGeneratorParticles;
   Rp0 = std::hypot(Xp0,Yp0);
   
-  if (beam.matchDistrFileLength && warnAboutMatchFileLengthNotWorking)
-    {BDS::Warning("The option matchDistrFileLength doesn't work with the eventgenerator distribution");}
+  if (beam.distrFileMatchLength && warnAboutMatchFileLengthNotWorking)
+    {BDS::Warning("The option distrFileMatchLength doesn't work with the eventgenerator distribution");}
 }
 
 void BDSBunchEventGenerator::CheckParameters()
