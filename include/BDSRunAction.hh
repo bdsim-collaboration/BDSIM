@@ -85,7 +85,7 @@ private:
   G4String        trajectorySamplerID; ///< Copy of option.
   
   G4bool runEndedEarly;
-  G4long nEventsInOriginalDistrfile;
+  G4long nEventsInOriginalDistrFile;
 };
 
 #endif
