@@ -83,6 +83,7 @@ BDSBunchUserFile<T>::~BDSBunchUserFile()
 template<class T>
 void BDSBunchUserFile<T>::OpenBunchFile()
 {
+  endOfFileReached = false;
   if (!printedOutFirstTime)
     {
       G4cout << "BDSBunchUserFile::OpenBunchFile> opening " << distrFilePath << G4endl;
@@ -99,6 +100,7 @@ void BDSBunchUserFile<T>::CloseBunchFile()
 {
   InputBunchFile.clear(); // igzstream doesn't reset eof flags when closing - do manually
   InputBunchFile.close();
+  endOfFileReached = true;
 }
 
 template<class T>
@@ -374,11 +376,15 @@ void BDSBunchUserFile<T>::EndOfFileAction()
 {
   // If the end of the file is reached go back to the beginning of the file.
   // this re-reads the same file again - must always print warning
-  G4cout << "BDSBunchUserFile> End of file reached. Returning to beginning of file (including nlinesIgnore & nlinesSkip) for next event." << G4endl;
+  G4cout << "BDSBunchUserFile> End of file reached." << G4endl;
   CloseBunchFile();
-  OpenBunchFile();
-  SkipNLinesIgnoreIntoFile(false);
-  SkipNLinesSkip(false);
+  if (distrFileLoop)
+    {
+      G4cout << "Returning to beginning of file (including nlinesIgnore & nlinesSkip) for next event." << G4endl;
+      OpenBunchFile();
+      SkipNLinesIgnoreIntoFile(false);
+      SkipNLinesSkip(false);
+    }
 }
 
 template<class T>

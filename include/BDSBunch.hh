@@ -85,6 +85,11 @@ public:
   /// if they do not wish this behaviour. This may throw an exception if the maximum
   /// number of attempts (maxTries) is exceeded.
   virtual BDSParticleCoordsFullGlobal GetNextParticleValid(G4int maxTries = 100);
+  
+  /// Report whether the distribution is finished generating. For nearly all, this is false
+  /// as they can continue indefinitely, but for say a user file, it may 'finish' and not
+  /// loop on the file again.
+  virtual G4bool DistributionIsFinished() const {return false;}
 
   /// An action that is called at the beginning of a run when we know the number of
   /// events that'll be generated. By default this is nothing, but can be used to
