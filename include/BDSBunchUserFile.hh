@@ -65,6 +65,8 @@ public:
   /// aborted and the user has a 1:1 representation of particle coordinates to events
   /// in the output.
   virtual BDSParticleCoordsFullGlobal GetNextParticleValid(G4int maxTries);
+  
+  virtual G4bool DistributionIsFinished() const {return endOfFileReached;}
 
   /// Get the next particle.
   virtual BDSParticleCoordsFull GetNextParticleLocal();
