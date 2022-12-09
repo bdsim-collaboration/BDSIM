@@ -274,6 +274,8 @@ Bug Fixes
 * Fix overlaps with various parameter combinations for an octagonal beam / aperture shape.
 * Fixed issued where sections of an angled dipole were shorter than their containers, resulting in visual gaps
   in the geometry.
+* Compilation fixes in AWAKE module for Geant4.11.1.0.
+
 
 **Output**
 
