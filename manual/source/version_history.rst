@@ -274,6 +274,11 @@ Bug Fixes
 * Fix overlaps with various parameter combinations for an octagonal beam / aperture shape.
 * Fixed issued where sections of an angled dipole were shorter than their containers, resulting in visual gaps
   in the geometry.
+* Compilation fixes in AWAKE module for Geant4.11.1.0.
+
+**Link**
+
+* Fix nullptr materials for samplers in mass world. Have to explicity use function to make it valid for developers.
 
 **Output**
 
@@ -345,6 +350,8 @@ Bug Fixes
 * Fix a bug where a particle could be misidentified as an ion and end up being a proton.
   An example would be "pion+" which doesn't match the correct "pi+" name in Geant4 but
   would pass through and become a proton despite its name.
+* Fix runtime exception with Geant4 V11.1.0 for default options applied in BDSIM from all
+  previous versions of Geant4 for epsilon max / min in all fields.
 
 
 

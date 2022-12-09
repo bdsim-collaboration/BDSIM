@@ -46,3 +46,9 @@ void BDSSampler::SetSensitivity()
   BDSSDSampler* sd = filterSetID > -1 ? sdMan->SamplerPlaneWithFilter(filterSetID) : sdMan->SamplerPlane();
   containerLogicalVolume->SetSensitiveDetector(sd);
 }
+
+void BDSSampler::MakeMaterialValidForUseInMassWorld()
+{
+  if (containerLogicalVolume)
+    {containerLogicalVolume->SetMaterial(BDSMaterials::Instance()->GetMaterial("G4_Galactic"));}
+}
