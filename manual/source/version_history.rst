@@ -276,6 +276,9 @@ Bug Fixes
   in the geometry.
 * Compilation fixes in AWAKE module for Geant4.11.1.0.
 
+**Link**
+
+* Fix nullptr materials for samplers in mass world. Have to explicity use function to make it valid for developers.
 
 **Output**
 
