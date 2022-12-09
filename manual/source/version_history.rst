@@ -345,6 +345,8 @@ Bug Fixes
 * Fix a bug where a particle could be misidentified as an ion and end up being a proton.
   An example would be "pion+" which doesn't match the correct "pi+" name in Geant4 but
   would pass through and become a proton despite its name.
+* Fix runtime exception with Geant4 V11.1.0 for default options applied in BDSIM from all
+  previous versions of Geant4 for epsilon max / min in all fields.
 
 
 
