@@ -364,8 +364,30 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 			fintk2.push_back(0);
 			fintxk2.push_back(0);
 		      };
+  
+      // do this bit first as we test for magnet strengths later and then do a 'continue' in the for loop
+      auto setOfPVs = BDSPhysicalVolumeInfoRegistry::Instance()->PVsForBeamlineElement(*i);
+      std::vector<std::string> localPVNames;
+      std::vector<std::string> localPVNamesWPointer;
+      if (setOfPVs)
+	{
+	  auto name = [](G4VPhysicalVolume* pv){return pv->GetName();};
+	  std::transform(setOfPVs->begin(), setOfPVs->end(), std::back_inserter(localPVNames), name);
+	  auto fullName = [](G4VPhysicalVolume* pv)
+			  {
+			    std::stringstream ss;
+			    ss << static_cast<const void*>(pv);
+			    std::string addressName = ss.str();
+			    return pv->GetName() + addressName;
+			  };
+	  std::transform(setOfPVs->begin(), setOfPVs->end(), std::back_inserter(localPVNamesWPointer), fullName);
+	}
+      // always push it back even if an empty vector
+      pvName.push_back(localPVNames);
+      pvNameWPointer.push_back(localPVNamesWPointer);
       
       // fill magnet strength data
+      // NOTE - has a 'continue'
       if (BDSMagnet* mag = dynamic_cast<BDSMagnet*>(accComp))
 	{
 	  const BDSMagnetStrength* ms = mag->MagnetStrength();
@@ -399,25 +421,6 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 	{// not a magnet
 	  fillzero();
 	}
-      auto setOfPVs = BDSPhysicalVolumeInfoRegistry::Instance()->PVsForBeamlineElement(*i);
-      std::vector<std::string> localPVNames;
-      std::vector<std::string> localPVNamesWPointer;
-      if (setOfPVs)
-	{
-	  auto name = [](G4VPhysicalVolume* pv){return pv->GetName();};
-	  std::transform(setOfPVs->begin(), setOfPVs->end(), std::back_inserter(localPVNames), name);
-	  auto fullName = [](G4VPhysicalVolume* pv)
-			  {
-			    std::stringstream ss;
-			    ss << static_cast<const void*>(pv);
-			    std::string addressName = ss.str();
-			    return pv->GetName() + addressName;
-			  };
-	  std::transform(setOfPVs->begin(), setOfPVs->end(), std::back_inserter(localPVNamesWPointer), fullName);
-	}
-      // always push it back even if an empty vector
-      pvName.push_back(localPVNames);
-      pvNameWPointer.push_back(localPVNamesWPointer);
     }
 }
 #endif
