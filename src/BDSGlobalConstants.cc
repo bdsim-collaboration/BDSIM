@@ -123,6 +123,9 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   integratorSet = BDS::DetermineIntegratorSetType(options.integratorSet);
 
   InitialiseBeamlineTransform();
+  
+  if (options.lengthSafetyLarge <= options.lengthSafety)
+    {throw BDSException(__METHOD_NAME__, "\"lengthSafetyLarge\" must be > \"lengthSafety\"");}
 
   BDSSamplerPlane::chordLength  = 10*LengthSafety();
   BDSSamplerCustom::chordLength = 10*BDSSamplerPlane::chordLength;
