@@ -72,9 +72,6 @@ BDSBOptrMuonFluxEnhancement::~BDSBOptrMuonFluxEnhancement() {
   /// Destructor\n
   /// Deletes all of the biasing operations created
   /// \EndMemberDescr
-  for (auto op : fFinalStateOperation) {
-    delete op.second;
-  }
   for (auto op : fChangeCrossSectionOperations) {
     delete op.second;
   }
