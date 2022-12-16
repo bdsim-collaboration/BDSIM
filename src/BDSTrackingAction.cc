@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 
+#include "BDSMuonFluxEnhancementTrackInformation.hh"
 #include <set>
 
 class G4LogicalVolume;
@@ -55,6 +56,14 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
+  //TODO: only attach info if we're biasing
+  BDSMuonFluxEnhancementTrackInformation *trackInfo = static_cast<BDSMuonFluxEnhancementTrackInformation*>(track->GetUserInformation());
+  if (!trackInfo)
+  {
+    trackInfo = new BDSMuonFluxEnhancementTrackInformation();
+    track->SetUserInformation(trackInfo);
+  }
+
   eventAction->IncrementNTracks();
   G4int  eventIndex = eventAction->CurrentEventIndex();
   G4bool verboseSteppingThisEvent = BDS::VerboseThisEvent(eventIndex, verboseSteppingEventStart, verboseSteppingEventStop);
@@ -130,4 +139,24 @@ void BDSTrackingAction::PostUserTrackingAction(const G4Track* track)
       if (collimators->find(lv) != collimators->end())
 	{eventAction->SetPrimaryAbsorbedInCollimator(true);}
     }
+
+  //TODO: only propagate to daughters if we're biasing
+  BDSMuonFluxEnhancementTrackInformation *info = static_cast<BDSMuonFluxEnhancementTrackInformation*>(track->GetUserInformation());
+  G4TrackVector *secondaries = fpTrackingManager->GimmeSecondaries();
+  if (!secondaries)
+    return;
+  std::size_t nSecondaries = secondaries->size();
+  if (nSecondaries < 1)
+    return;
+  G4int pdgID = track->GetParticleDefinition()->GetPDGEncoding();
+  for (std::size_t i = 0; i < nSecondaries; i++)
+  {
+    BDSMuonFluxEnhancementTrackInformation *secondaryInfo = static_cast<BDSMuonFluxEnhancementTrackInformation*> ((*secondaries)[i]->GetUserInformation());
+    if (!secondaryInfo){
+      secondaryInfo = new BDSMuonFluxEnhancementTrackInformation();
+      secondaryInfo->SetTrackType(info->GetTrackType());
+      secondaryInfo->SetParentPDGid(pdgID);
+      (*secondaries)[i]->SetUserInformation(secondaryInfo);
+    }
+  }
 }
