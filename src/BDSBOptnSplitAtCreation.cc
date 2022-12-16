@@ -1,5 +1,5 @@
 #include "BDSBOptnSplitAtCreation.hh"
-#include "TrackInformation.hh"
+#include "BDSMuonFluxEnhancementTrackInformation.hh"
 
 BDSBOptnSplitAtCreation::BDSBOptnSplitAtCreation(G4String name) :
 G4VBiasingOperation(name), fParticleChange(), fParticleChangeForNothing()
@@ -9,7 +9,7 @@ BDSBOptnSplitAtCreation::~BDSBOptnSplitAtCreation(){}
 
 G4double BDSBOptnSplitAtCreation::DistanceToApplyOperation(const G4Track *track, G4double, G4ForceCondition *condition)
 {
-  TrackInformation *info = static_cast<TrackInformation*>(track->GetUserInformation());
+  BDSMuonFluxEnhancementTrackInformation *info = static_cast<BDSMuonFluxEnhancementTrackInformation*>(track->GetUserInformation());
   
   // Assume that we do not clone
   *condition = NotForced;
@@ -17,7 +17,7 @@ G4double BDSBOptnSplitAtCreation::DistanceToApplyOperation(const G4Track *track,
   // if track is original (meson or gamma) and does not have a clone, clone it
   G4int pdgID = track->GetParticleDefinition()->GetPDGEncoding();
 
-  if (info->GetTrackType() == 0){
+  if (info->GetTrackType() == kOriginalTrack){
     if (abs(pdgID) != 13 && !info->GetHasClone()){
       *condition = Forced;
     }
@@ -28,13 +28,13 @@ G4double BDSBOptnSplitAtCreation::DistanceToApplyOperation(const G4Track *track,
 }
 
 G4VParticleChange *BDSBOptnSplitAtCreation::GenerateBiasingFinalState(const G4Track *track, const G4Step*){
-  TrackInformation *info = static_cast<TrackInformation*> (track->GetUserInformation());
+  BDSMuonFluxEnhancementTrackInformation *info = static_cast<BDSMuonFluxEnhancementTrackInformation*> (track->GetUserInformation());
   G4int pdgID = track->GetParticleDefinition()->GetPDGEncoding();
   G4double weight = track->GetWeight();
-  if (info->GetTrackType() == 0 && !info->GetHasClone() && track->GetCurrentStepNumber() == 1){
+  if (info->GetTrackType() == kOriginalTrack && !info->GetHasClone() && track->GetCurrentStepNumber() == 1){
     SplitMesonAtCreation(track);
   }
-  else if (abs(pdgID) == 13 && info->GetTrackType() == 0){
+  else if (abs(pdgID) == 13 && info->GetTrackType() == kOriginalTrack){
     // kill muons coming from non-clones
     fParticleChange.Initialize(*track);
     fParticleChange.SetSecondaryWeightByProcess(true);
@@ -52,7 +52,7 @@ void BDSBOptnSplitAtCreation::SplitMesonAtCreation(const G4Track *track){
   fParticleChange.SetSecondaryWeightByProcess(true);
   fParticleChange.SetNumberOfSecondaries(1);
 
-  TrackInformation *infoOriginal = static_cast<TrackInformation*> (track->GetUserInformation());
+  BDSMuonFluxEnhancementTrackInformation *infoOriginal = static_cast<BDSMuonFluxEnhancementTrackInformation*> (track->GetUserInformation());
 
   G4ThreeVector vertexPosition = track->GetVertexPosition();
   G4ThreeVector vertexMomentumDirection = track->GetVertexMomentumDirection();
@@ -60,11 +60,11 @@ void BDSBOptnSplitAtCreation::SplitMesonAtCreation(const G4Track *track){
   fParticleChange.AddSecondary(new G4Track(dyn, track->GetGlobalTime(), vertexPosition));
 
   G4Track *clone = fParticleChange.GetSecondary(0);
-  TrackInformation *infoClone = new TrackInformation();
+  BDSMuonFluxEnhancementTrackInformation *infoClone = new BDSMuonFluxEnhancementTrackInformation();
   infoClone->SetParentPDGid(track->GetParticleDefinition()->GetPDGEncoding());
   infoClone->SetIsAllowedInelastic(false);
   infoClone->SetHasClone(true);
-  infoClone->SetTrackType(1);
+  infoClone->SetTrackType(kCloneTrack);
 
   clone->SetUserInformation(infoClone);
 
