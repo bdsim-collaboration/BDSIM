@@ -5,7 +5,6 @@
 #include "G4BOptnChangeCrossSection.hh"
 #include "G4BOptnForceFreeFlight.hh"
 
-class BDSBOptnMuonFluxEnhancement;
 class BDSBOptnSplitAtCreation;
 class G4ParticleDefinition;
 
@@ -61,8 +60,6 @@ private:
             G4BOptnChangeCrossSection*       > fChangeCrossSectionOperations; ///< List of associations between processes and biasing operations:
   std::map< const G4BiasingProcessInterface*,
             G4BOptnForceFreeFlight*> fForceFreeFlightOperations;
-  std::map< const G4BiasingProcessInterface*, 
-            BDSBOptnMuonFluxEnhancement*       > fFinalStateOperation;
   BDSBOptnSplitAtCreation *fSplitAtCreationOperation;
 };
 
