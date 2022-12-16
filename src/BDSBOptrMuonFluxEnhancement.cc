@@ -21,7 +21,7 @@
 #include "G4TouchableHandle.hh"
 #include "G4VSolid.hh"
 
-#include "TrackInformation.hh"
+#include "BDSMuonFluxEnhancementTrackInformation.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 /// \class BDSBOptrMuonFluxEnhancement
@@ -42,8 +42,8 @@
 /// \EndDetailed
 
 BDSBOptrMuonFluxEnhancement::BDSBOptrMuonFluxEnhancement(G4String particleName, G4String name)
-  : G4VBiasingOperator(name), fSetup(true), fChangeCrossSectionOperations(),
-    fFinalStateOperation() {
+  : G4VBiasingOperator(name), fSetup(true), fChangeCrossSectionOperations()
+{
   /// \MemberDescr
   /// \param particleName: G4String containing the name of the particle to bias.
   /// \param name: G4String containing the name to be assigned to this operator
@@ -105,36 +105,6 @@ void BDSBOptrMuonFluxEnhancement::StartRun() {
         operationName = "XSchange-"+wrapperProcess->GetWrappedProcess()->GetProcessName();
         fChangeCrossSectionOperations[wrapperProcess] = new G4BOptnChangeCrossSection(operationName);
         G4cout << "Created cross section operation for " << wrapperProcess->GetProcessName().data() << G4endl;
-
-        /*
-        switch (BiasingUtility::GetInstance()->GetBiasMethod()) {
-        case 2:
-          operationName = "XSchange-" + wrapperProcess->GetWrappedProcess()->GetProcessName();
-          fChangeCrossSectionOperations[wrapperProcess] =
-            new G4BOptnChangeCrossSection(operationName);
-          G4cout << "Created crossSection operator for " << wrapperProcess->GetProcessName().data()
-                 << ", of particle " << fParticleToBias->GetParticleName().data() << G4endl;
-
-          operationName =
-            "ChangeFinalState-" + wrapperProcess->GetWrappedProcess()->GetProcessName();
-
-          // fFinalStateOperation[wrapperProcess] = new BOptnChangeInelastic(operationName);
-          // G4cout << "Created final state operation for " <<
-          // wrapperProcess->GetProcessName().data()
-          //        << ", of particle " << fParticleToBias->GetParticleName().data() << G4endl;
-          break;
-
-        case 3:
-          operationName = "XSchange-" + wrapperProcess->GetWrappedProcess()->GetProcessName();
-          fChangeCrossSectionOperations[wrapperProcess] =
-            new G4BOptnChangeCrossSection(operationName);
-          G4cout << "Created crossSection operator for " << wrapperProcess->GetProcessName().data()
-                 << ", of particle " << fParticleToBias->GetParticleName().data() << G4endl;
-
-        default:
-          break;
-        }
-        */
       }
     }
     fSetup = false;
@@ -161,12 +131,12 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
   /// \EndMemberDescr
 
   G4int trackPDGid = track->GetParticleDefinition()->GetPDGEncoding();
-  TrackInformation *trackInfo = (TrackInformation *)track->GetUserInformation();
+  BDSMuonFluxEnhancementTrackInformation *trackInfo = static_cast<BDSMuonFluxEnhancementTrackInformation*> (track->GetUserInformation());
 
   // No biasing in case either:
   // --track is analog (i.e. not a clone)
   // --track is allowed to do inelastic interactions
-  if (trackInfo->GetTrackType() == 0 ||
+  if (trackInfo->GetTrackType() == kOriginalTrack ||
       trackInfo->GetIsAllowedInelastic()){
     return nullptr;
   }
@@ -174,7 +144,7 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
 
   // No biasing for processes that do not kill the particle
   G4ProcessType processType= callingProcess->GetWrappedProcess()->GetProcessType();
-  if (procprocessType!= fHadronic && processType != fDecay && trackPDGid != 22){
+  if (processType != fHadronic && processType != fDecay && trackPDGid != 22){
     return nullptr;
   }
 
@@ -184,7 +154,7 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
     if (volume){
       // Check if the volume is made of void. Better option needed.
       if (volume->GetLogicalVolume()->GetMaterial()->GetName().contains("G4_Galactic")){
-        return nullptr
+        return nullptr;
       }
     }
   }
@@ -275,7 +245,7 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeFinalStateBiasingOperat
 
 G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeNonPhysicsBiasingOperation(
   const G4Track *, const G4BiasingProcessInterface *) {
-  BOptnSplitAtCreation *operation = fSplitAtCreationOperation;
+  BDSBOptnSplitAtCreation *operation = fSplitAtCreationOperation;
   if (operation) {
     return operation;
   }
