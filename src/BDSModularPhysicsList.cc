@@ -325,6 +325,29 @@ void BDSModularPhysicsList::ConstructProcess()
 {
   G4VModularPhysicsList::ConstructProcess();
   DumpCutValuesTable(100);
+
+  //TODO: add option to switch this off
+  G4GenericBiasingPhysics *biasPhys = new G4GenericBiasingPhysics();
+  biasPhys->Bias("pi+", {"Decay", "pi+Inelastic"});
+  biasPhys->Bias("pi-", {"Decay", "pi-Inelastic"});
+  biasPhys->Bias("kaon+", {"Decay", "kaon+Inelastic"});
+  biasPhys->Bias("kaon-", {"Decay", "kaon-Inelastic"});
+  biasPhys->Bias("kaon0L", {"Decay", "kaon0LInelastic"});
+  biasPhys->Bias("gamma", {"conv", "photonNuclear", "GammaToMuPair"});
+  //TODO: add option to bias the cross-section of the primary
+    // if (config.compareTo("Target") == 0)
+    //   biasPhys->Bias("proton", {"protonInelastic"});
+
+    biasPhys->NonPhysicsBias("pi+");
+    biasPhys->NonPhysicsBias("pi-");
+    biasPhys->NonPhysicsBias("kaon+");
+    biasPhys->NonPhysicsBias("kaon-");
+    biasPhys->NonPhysicsBias("kaon0L");
+    biasPhys->NonPhysicsBias("gamma");
+    biasPhys->NonPhysicsBias("mu+");
+    biasPhys->NonPhysicsBias("mu-");
+
+    biasPhys->ConstructProcess();
 }
 
 void BDSModularPhysicsList::Print()
