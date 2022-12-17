@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBLM.hh"
 #include "BDSBLMRegistry.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
+#include "BDSBOptrMultiParticleMuonFluxEnhancement.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSComponentFactoryUser.hh"
 #include "BDSCurvilinearBuilder.hh"
@@ -97,6 +98,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4LogicalVolumeStore.hh"
 #if G4VERSION_NUMBER > 1039
 #include "G4ChannelingOptrMultiParticleChangeCrossSection.hh"
 #endif
@@ -276,6 +278,8 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
   // delete bias objects
   for (auto i : biasObjects)
     {delete i;}
+  if (fMultiMuonFlux)
+    {delete fMultiMuonFlux;}
 #endif
   for (auto q : fieldQueries)
     {delete q;}
@@ -1268,6 +1272,46 @@ void BDSDetectorConstruction::ConstructSDandField()
   acceleratorModel->RegisterFields(flds);
 
   ConstructScoringMeshes();
+
+  //TODO: add option to switch this off
+  ConstructBiasingMuonFlux();
+}
+
+void BDSDetectorConstruction::ConstructBiasingMuonFlux(){
+  fMultiMuonFlux = new BDSBOptrMultiParticleMuonFluxEnhancement();
+  fMultiMuonFlux->AddParticle("pi+");
+  fMultiMuonFlux->AddParticle("pi-");
+  fMultiMuonFlux->AddParticle("kaon+");
+  fMultiMuonFlux->AddParticle("kaon-");
+  fMultiMuonFlux->AddParticle("kaon0L");
+  fMultiMuonFlux->AddParticle("gamma");
+  fMultiMuonFlux->AddParticle("mu+");
+  fMultiMuonFlux->AddParticle("mu-");
+  
+  // TODO: add primary particle
+  // if (config.CompareTo("Target") == 0)
+  //   fMultiChangeInelastic->AddParticle("proton");
+  
+  AttachBiasingToAllVolumes();
+}
+
+void BDSDetectorConstruction::AttachBiasingToAllVolumes(){
+  // Loop over volumes and select the ones that with material != G4_Galactic.
+  G4int nVols = G4LogicalVolumeStore::GetInstance()->size();
+  // fStepLimit = new G4UserLimits(10. * CLHEP::mm); // 100 um.
+
+  G4cout << "----------------------------------------------------" << G4endl;
+  G4cout << " Attaching biasing operator " << fMultiMuonFlux->GetName()
+         << " to logical volume(s): " << G4endl;
+  for (G4int i = 0; i < nVols; i++) {
+    G4LogicalVolume *volume = (*G4LogicalVolumeStore::GetInstance())[i];
+    fMultiMuonFlux->AttachTo(volume);
+
+    // volume->SetUserLimits(fStepLimit);
+    G4cout << "--- " << volume->GetName() << G4endl;
+  }
+  G4cout << "----------------------------------------------------" << G4endl;
+
 }
 
 G4bool BDSDetectorConstruction::UnsuitableFirstElement(GMAD::FastList<GMAD::Element>::FastListConstIterator element)

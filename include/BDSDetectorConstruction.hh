@@ -58,6 +58,7 @@ class BDSSamplerInfo;
 
 #if G4VERSION_NUMBER > 1009
 class BDSBOptrMultiParticleChangeCrossSection;
+class BDSBOptrMultiParticleMuonFluxEnhancement;
 #endif
 
 /**
@@ -92,6 +93,13 @@ public:
   /// externally and run only after RunManager->Initialise(). This means the bias can't be
   /// constructed as we go along in the component factory.
   void BuildPhysicsBias();
+
+  /// Create biasing operations for specific algorithm to enhance muon flux in beam dump.
+  /// This is called from ConstructSDandField. Probably we need to be smarter than this.
+  void ConstructBiasingMuonFlux();
+
+  /// Helper method for muon flux enhancement in beam dump biasing.
+  void AttachBiasingToAllVolumes();
 
   /// Set the design particle definition.
   inline void SetDesignParticle(const BDSParticleDefinition* defIn) {designParticle = defIn;}
@@ -242,6 +250,7 @@ private:
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;
   std::map<G4String, BDSBOptrMultiParticleChangeCrossSection*> biasSetObjects;
+  BDSBOptrMultiParticleMuonFluxEnhancement *fMultiMuonFlux;
 #endif
 
 #ifdef BDSDEBUG
