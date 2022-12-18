@@ -49,6 +49,8 @@ BDSBunchPtc::~BDSBunchPtc()
 
 void BDSBunchPtc::LoadPtcFile()
 {
+  G4cout << "BDSBunchPtc::LoadPtcFile> opening " << fileName << G4endl;
+
   // open file and read line by line and extract values
   std::ifstream ifstr(fileName);
 
@@ -121,10 +123,6 @@ void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
 			     G4Transform3D beamlineTransformIn,
 			     const G4double beamlineSIn)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << " " << beam.distrFile << G4endl;
-#endif
-
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   matchDistrFileLength = G4bool(beam.distrFileMatchLength);
   beta = beamParticle->Beta();
@@ -165,7 +163,7 @@ void BDSBunchPtc::Initialise()
 
 BDSParticleCoordsFull BDSBunchPtc::GetNextParticleLocal()
 {
-  if ( (iRay+1) == nRays) // so that we're safe to still read the last entry
+  if ( iRay == nRays) // so that we're safe to still read the last entry
     {
       if (distrFileLoop)
 	{
