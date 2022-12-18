@@ -33,12 +33,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "geomdefs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Navigator.hh"
+#include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
 #include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include "parser/beam.h"
+
+#include <string>
 
 BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile():
   endOfFileReached(false),
@@ -53,6 +56,15 @@ BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile():
 
 BDSPrimaryGeneratorFile::~BDSPrimaryGeneratorFile()
 {;}
+
+void BDSPrimaryGeneratorFile::ThrowExceptionIfRecreateOffsetTooHigh(G4long eventOffset) const
+{
+  if (eventOffset > nEventsInFile)
+    {
+      G4String msg = "eventOffset (" + std::to_string(eventOffset) + ") is greater than the number of valid data lines in this file.";
+      throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
+    }
+}
 
 G4bool BDSPrimaryGeneratorFile::GeneratePrimaryVertexSafe(G4Event* event)
 {

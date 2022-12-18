@@ -99,6 +99,7 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
 {
   G4cout << "BDSHepMC3Reader::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
+  ThrowExceptionIfRecreateOffsetTooHigh(eventOffset);
   for (G4int i = 0; i < eventOffset; i++)
     {ReadSingleEvent();}
 }

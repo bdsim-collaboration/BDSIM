@@ -88,17 +88,27 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
 	    {
 	      G4cout << "Returning to beginning of file for next event." << G4endl;
 	      currentFileEventIndex = 0;
+	      endOfFileReached = false;
 	    }
 	  else
-	    {return;}
+	    {
+	      G4cout << G4endl; // to flush output
+	      return;
+	    }
 	}
+      
       ReadSingleEvent(currentFileEventIndex);
       nParticles = (G4int)currentVertices.size();
       
       if (nParticles > 0)
-	{vertexGeneratedSuccessfully = true;}
+	{
+	  vertexGeneratedSuccessfully = true;
+	  nEventsReadThatPassedFilters++;
+	}
+      
       currentFileEventIndex++;
     }
+  
   for (auto* v : currentVertices)
     {anEvent->AddPrimaryVertex(v);}
   currentVertices.clear();
@@ -107,6 +117,7 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
 void BDSROOTSamplerReader::RecreateAdvanceToEvent(G4int eventOffset)
 {
   G4cout << "BDSROOTSamplerLoader::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
+  ThrowExceptionIfRecreateOffsetTooHigh(eventOffset);
   for (G4int i = 0; i < eventOffset; i++)
     {
       G4Event* event = new G4Event();

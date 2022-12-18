@@ -357,19 +357,36 @@ void BDSBunchUserFile<T>::Initialise()
     }
 
   G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
-  if (matchDistrFileLength && !nGenerateHasBeenSet)
+  if (matchDistrFileLength)
     {
-      G4int nGenerate = nLinesValidData - nlinesSkip;
-      BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
-      G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is True -> simulating " << nGenerate << " events" << G4endl;
+      if (!nGenerateHasBeenSet)
+	{
+	  G4int nGenerate = nLinesValidData - nlinesSkip;
+	  BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
+	  G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is True -> simulating "
+		 << nGenerate << " events" << G4endl;
+	}
+      else
+	{
+	  G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength has been requested "
+		 << "but ngenerate has been specified and this will be used" << G4endl;
+	}
     }
-  else if (matchDistrFileLength && nGenerateHasBeenSet)
-    {G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength has been requested but ngenerate has been specified and this will be used" << G4endl;}
+  else
+    {
+      G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
+      if ((nGenerate > nLinesValidData) && !distrFileLoop)
+	{
+	  G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of valid lines (";
+	  msg += std::to_string(nLinesValidData) + ") but distrFileLoop is false in the beam command";
+	  throw BDSException("BDSBunchUserFile::Initialise>", msg);
+	}
+    }
   OpenBunchFile();
   SkipNLinesIgnoreIntoFile();
   SkipNLinesSkip();
 }
-
+  
 template<class T>
 void BDSBunchUserFile<T>::EndOfFileAction()
 {
