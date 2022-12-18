@@ -59,9 +59,9 @@ macro(simple_fail test_name args)
     set_tests_properties(${test_name} PROPERTIES WILL_FAIL 1)
 endmacro()
 
-macro(simple_fail_w_string test_name args stringToMatch)
+macro(simple_testing_w_string test_name args expression)
     _run_test(${test_name} ${args})
-    set_tests_properties(${test_name} PROPERTIES PASS_REGULAR_EXPRESSION "${stringToMatch}")
+    set_tests_properties(${test_name} PROPERTIES PASS_REGULAR_EXPRESSION "${expression}")
 endmacro()
 
 # a macro that adds a simple test
