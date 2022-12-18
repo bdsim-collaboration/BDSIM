@@ -43,7 +43,10 @@ public:
 			  const BDSBunchType& distrType,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity,
 			  const G4double beamlineS = 0);
+  
   virtual BDSParticleCoordsFull GetNextParticleLocal();
+  
+  virtual void RecreateAdvanceToEvent(G4int eventOffset);
   
 private:
   /// Load the PTC file into memory
