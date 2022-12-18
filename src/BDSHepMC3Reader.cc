@@ -33,9 +33,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4Event.hh"
 #include "G4LorentzVector.hh"
+#include "G4ParticleDefinition.hh"
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
-#include "G4RunManager.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
 

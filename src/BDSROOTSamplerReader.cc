@@ -34,9 +34,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4LorentzVector.hh"
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
-#include "G4RunManager.hh"
-#include "G4TransportationManager.hh"
-#include "G4VSolid.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
