@@ -143,12 +143,12 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   time_t stoptime = time(nullptr);
   info->SetStopTime(stoptime);
   // Run duration
-  G4float duration = difftime(stoptime, starttime);
-  info->SetDurationWall(G4double(duration));
+  G4float duration = static_cast<G4float>(difftime(stoptime, starttime));
+  info->SetDurationWall(duration);
 
   // Calculate the elapsed CPU time for the event.
   auto cpuEndTime = std::clock();
-  G4double durationCPU = static_cast<G4double>(cpuEndTime - cpuStartTime) / CLOCKS_PER_SEC;
+  G4float durationCPU = static_cast<G4float>(cpuEndTime - cpuStartTime) / CLOCKS_PER_SEC;
   info->SetDurationCPU(durationCPU);
   
   // Output feedback

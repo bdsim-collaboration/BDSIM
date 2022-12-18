@@ -58,7 +58,7 @@ public:
   unsigned long long int nOriginalEvents;      ///< Number of original events if skimmed.
   
   /// Update the file type.
-  void SetFileType(std::string fileTypeIn) {fileType = fileTypeIn;}
+  void SetFileType(const std::string& fileTypeIn) {fileType = fileTypeIn;}
   
   /// #ifndef __ROOTBUILD__
   /// Nominally, we don't expose the fill methods to the analysis root dictionaries
