@@ -168,3 +168,10 @@ BDSParticleCoordsFull BDSBunchPtc::GetNextParticleLocal()
   return result;
 }
 
+void BDSBunchPtc::RecreateAdvanceToEvent(G4int eventOffset)
+{
+  if (eventOffset >= nRays)
+    {throw BDSException(__METHOD_NAME__, "eventOffset ("+std::to_string(eventOffset)+") is greater than the number of inrays in the PTC file");}
+  iRay = eventOffset;
+}
+

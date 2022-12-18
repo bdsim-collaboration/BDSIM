@@ -228,6 +228,7 @@ Bug Fixes
   peak at the centre. The distribution is now uniform in x, y, xp & yp.
 * Fixed generation of ring beam distribution type. Similarly to the circular distribution, the beam had a higher density
   of particles towards the ring's inner radius. The distribution is now uniform in x & y.
+* Fixed recreation when using a `ptc` distribution as the file wouldn't advance to the correct entry.
 
 **Biasing**
 
