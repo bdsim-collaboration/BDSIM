@@ -27,15 +27,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/PhysicalConstants.h"
 
+#include <array>
 #include <fstream>
 #include <regex>
 #include <string>
+#include <vector>
 
 BDSBunchPtc::BDSBunchPtc():
   BDSBunch("ptc"),
   matchDistrFileLength(false),
   nRays(0),
-  fileName("./inrays.madx"),
   iRay(0),
   loopedOver(false),
   beta(1.0)
@@ -43,8 +44,7 @@ BDSBunchPtc::BDSBunchPtc():
 
 BDSBunchPtc::~BDSBunchPtc()
 {
-  for (std::vector<double*>::iterator i = ptcData.begin();i!=ptcData.end();++i)
-    {delete[] *i;}
+  ptcData.clear();
 }
 
 void BDSBunchPtc::LoadPtcFile()
@@ -107,17 +107,7 @@ void BDSBunchPtc::LoadPtcFile()
 	  G4cout << __METHOD_NAME__ << "read line " << line << G4endl;
 	  G4cout << __METHOD_NAME__ << "values    " << x << " " << px << " " << y << " " << py << " " << t << " " << pt << G4endl;   
 #endif 
-	  
-	  double* values = new double[6];
-	  values[0] = x;
-	  values[1] = px;
-	  values[2] = y;
-	  values[3] = py;
-	  values[4] = t;
-	  values[5] = pt;
-	  
-	  // append values to storage vector
-	  ptcData.push_back(values);
+    ptcData.emplace_back(std::array<double, 6>{x, px, y, py, t, pt});
 	}
     }
   
@@ -141,13 +131,8 @@ void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   matchDistrFileLength = G4bool(beam.distrFileMatchLength);
   beta = beamParticle->Beta();
-  SetDistrFile((G4String)beam.distrFile); 
+  fileName = BDS::GetFullPath(beam.distrFile);
   LoadPtcFile();
-}
-
-void BDSBunchPtc::SetDistrFile(const G4String& distrFileName)
-{
-  fileName = BDS::GetFullPath(distrFileName);
 }
 
 BDSParticleCoordsFull BDSBunchPtc::GetNextParticleLocal()

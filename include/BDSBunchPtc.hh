@@ -21,8 +21,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSBunch.hh"
 
-#include "globals.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 
+#include <array>
 #include <vector>
 
 /**
@@ -47,14 +49,11 @@ private:
   /// Load the PTC file into memory
   void LoadPtcFile();
 
-  /// Assign the distribution file by finding the full path of it.
-  void SetDistrFile(const G4String& distrFileNameIn);
-
   G4bool   matchDistrFileLength; ///< Whether to only run the number of particles in the file.
   G4int    nRays;     ///< Number of rays in file (1 counting).
   G4String fileName;  ///< File name.
   G4int    iRay;      ///< Iterator counter for current ray.
-  std::vector<double*> ptcData; ///< Data.
+  std::vector<std::array<double, 6>> ptcData; ///< Data.
   G4bool loopedOver;  ///< Whether we've reset to loop over the file again.
   G4double beta;      ///< Velocity w.r.t. speed of light. Needed to convert mom. to energy.
 };
