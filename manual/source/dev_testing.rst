@@ -95,7 +95,7 @@ To add a purposively failing test, i.e. a test that the program should complain 
 To add a test that passes by finding some text explicitly in the print out (i.e. a test that should
 provide a warning but maybe not return 1 error code), use: ::
 
-  simple_fail_w_string(testname  "--file=inputfile.gmad"  "string_to_find")
+  simple_testing_w_string(testname  "--file=inputfile.gmad"  "regex_expression")
 
 
 Steps:
