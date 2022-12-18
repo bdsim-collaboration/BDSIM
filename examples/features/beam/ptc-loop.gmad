@@ -1,0 +1,10 @@
+include ptc.gmad;
+
+beam, distrFileLoop=1,
+      distrFileMatchLength=0;
+
+option, ngenerate=5;
+
+option, printFractionEvents=-1;
+
+beam, distrFile="ptc-inrays-short.madx";
