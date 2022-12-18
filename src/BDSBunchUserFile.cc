@@ -363,6 +363,8 @@ void BDSBunchUserFile<T>::Initialise()
       BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
       G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is True -> simulating " << nGenerate << " events" << G4endl;
     }
+  else if (matchDistrFileLength && nGenerateHasBeenSet)
+    {G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength has been requested but ngenerate has been specified and this will be used" << G4endl;}
   OpenBunchFile();
   SkipNLinesIgnoreIntoFile();
   SkipNLinesSkip();
