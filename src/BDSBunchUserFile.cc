@@ -47,9 +47,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
   BDSBunch("userfile"),
-  distrFile(""),
-  distrFilePath(""),
-  bunchFormat(""),
   nlinesIgnore(0),
   nlinesSkip(0),
   nLinesValidData(0),
@@ -60,7 +57,7 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   changingParticleType(false),
   endOfFileReached(false),
   matchDistrFileLength(false),
-  distrFileLoop(true)
+  distrFileLoop(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
   comment = std::regex("^\\s*\\#|\\!.*");
