@@ -44,6 +44,8 @@ public:
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity,
 			  const G4double beamlineS = 0);
   
+  virtual void Initialise();
+  
   virtual BDSParticleCoordsFull GetNextParticleLocal();
   
   virtual void RecreateAdvanceToEvent(G4int eventOffset);
@@ -57,8 +59,8 @@ private:
   G4String fileName;  ///< File name.
   G4int    iRay;      ///< Iterator counter for current ray.
   std::vector<std::array<double, 6>> ptcData; ///< Data.
-  G4bool loopedOver;  ///< Whether we've reset to loop over the file again.
   G4double beta;      ///< Velocity w.r.t. speed of light. Needed to convert mom. to energy.
+  G4bool distrFileLoop;
 };
 
 #endif

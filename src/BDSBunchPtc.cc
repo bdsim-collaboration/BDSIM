@@ -38,8 +38,8 @@ BDSBunchPtc::BDSBunchPtc():
   matchDistrFileLength(false),
   nRays(0),
   iRay(0),
-  loopedOver(false),
-  beta(1.0)
+  beta(1.0),
+  distrFileLoop(false)
 {;}
 
 BDSBunchPtc::~BDSBunchPtc()
@@ -107,15 +107,12 @@ void BDSBunchPtc::LoadPtcFile()
 	  G4cout << __METHOD_NAME__ << "read line " << line << G4endl;
 	  G4cout << __METHOD_NAME__ << "values    " << x << " " << px << " " << y << " " << py << " " << t << " " << pt << G4endl;   
 #endif 
-    ptcData.emplace_back(std::array<double, 6>{x, px, y, py, t, pt});
+	  ptcData.emplace_back(std::array<double, 6>{x, px, y, py, t, pt});
 	}
     }
   
   // set number of available rays in options
   nRays = (G4int)ptcData.size();
-  
-  if (matchDistrFileLength)
-    {BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);}
 }
 
 void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
@@ -132,16 +129,51 @@ void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
   matchDistrFileLength = G4bool(beam.distrFileMatchLength);
   beta = beamParticle->Beta();
   fileName = BDS::GetFullPath(beam.distrFile);
+  distrFileLoop = beam.distrFileLoop;
+}
+
+void BDSBunchPtc::Initialise()
+{
   LoadPtcFile();
+  
+  G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
+  if (matchDistrFileLength)
+    {
+      if (!nGenerateHasBeenSet)
+	{
+	  BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);
+	  G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is True -> simulating "
+		 << nRays << " events" << G4endl;
+	}
+      else
+	{
+	  G4cout << "BDSBunchPtc::Initialise> matchDistrFileLength has been requested "
+		 << "but ngenerate has been specified and this will be used" << G4endl;
+	}
+    }
+  else
+    {
+      G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
+      if ( (nGenerate > nRays) && !distrFileLoop )
+	{
+	  G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of inrays (";
+	  msg += std::to_string(nRays) + ") but distrFileLoop is false in the beam command";
+	  throw BDSException(__METHOD_NAME__, msg);
+	}
+    }
 }
 
 BDSParticleCoordsFull BDSBunchPtc::GetNextParticleLocal()
 {
-  // if all particles are read, start at 0 again and note it down in bool flag
-  if (iRay == nRays)
+  if ( (iRay+1) == nRays) // so that we're safe to still read the last entry
     {
-      iRay       = 0;
-      loopedOver = true;
+      if (distrFileLoop)
+	{
+	  iRay = 0;
+	  G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
+	}
+      else
+	{throw BDSException(__METHOD_NAME__, "unable to read another event as file finished");}
     }
   
   G4double x  = ptcData[iRay][0] * CLHEP::m + X0;
@@ -158,12 +190,7 @@ BDSParticleCoordsFull BDSBunchPtc::GetNextParticleLocal()
 
   BDSParticleCoordsFull result(x,y,z,xp,yp,zp,t,S0+z,E,/*weight=*/1.0);
 
-  iRay++;  
-  if (loopedOver)
-    {
-      G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
-      loopedOver = false; // reset flag until next time
-    }
+  iRay++;
 
   return result;
 }
