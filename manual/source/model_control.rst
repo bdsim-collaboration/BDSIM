@@ -2505,8 +2505,8 @@ For a description of recreating events, see :ref:`running-recreation`.
 |                                  | option with a path (e.g. "./" for cwd) to override    |
 |                                  | this behaviour.                                       |
 +----------------------------------+-------------------------------------------------------+
-| writeSeedState                   | Writes the seed state of the last event start in      |
-|                                  | ASCII                                                 |
+| writeSeedState                   | Writes the seed state of the last event start in a    |
+|                                  | text file                                             |
 +----------------------------------+-------------------------------------------------------+
 
 .. _options-geometry:
@@ -3169,6 +3169,8 @@ with the following options.
 |                                    | the combination of all filters along with this is logical OR.      |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectories                  | An alias to `storeTrajectory`                                      |
++------------------------------------+--------------------------------------------------------------------+
+| writeSeedState                     | Writes the seed state of the last event start in a text file       |
 +------------------------------------+--------------------------------------------------------------------+
 
 .. _options-trajectory-filtering:
