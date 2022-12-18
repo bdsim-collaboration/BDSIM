@@ -60,7 +60,10 @@ public:
   /// Register a PTC map instance used in the teleporter which this
   /// class will set initial (first turn) primary coordinates for.
   void RegisterPTCOneTurnMap(BDSPTCOneTurnMap* otmIn) {oneTurnMap = otmIn;}
-private:  
+  
+private:
+  /// For a file-based event generator there are a few checks we have to do - put in a function to keep tidy.
+  void GenerateEventFromFile(G4Event* anEvent);
   
   G4ParticleGun* particleGun;     ///< Geant4 particle gun that creates single particles.
   BDSBunch* bunch;                ///< BDSIM particle generator.
