@@ -364,7 +364,7 @@ void BDSBunchUserFile<T>::Initialise()
 	{
 	  G4int nToGenerate = nLinesValidData - nlinesSkip;
 	  BDSGlobalConstants::Instance()->SetNumberToGenerate(nToGenerate);
-	  G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is True -> simulating "
+	  G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is true -> simulating "
 		 << nToGenerate << " events" << G4endl;
 	}
       else
