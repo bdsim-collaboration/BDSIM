@@ -140,7 +140,7 @@ void BDSBunchPtc::Initialise()
       if (!nGenerateHasBeenSet)
 	{
 	  BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);
-	  G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is True -> simulating "
+	  G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is true -> simulating "
 		 << nRays << " events" << G4endl;
 	}
       else
