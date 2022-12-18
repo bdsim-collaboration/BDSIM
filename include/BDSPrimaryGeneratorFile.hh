@@ -19,11 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSPRIMARYGENERATORFILE_H
 #define BDSPRIMARYGENERATORFILE_H
 
+#include "G4ThreeVector.hh"
 #include "G4Types.hh"
 #include "G4VPrimaryGenerator.hh"
 
 class BDSBunch;
 class G4Event;
+class G4VSolid;
 
 namespace GMAD
 {
@@ -70,6 +72,9 @@ public:
   G4bool DistributionIsFinished() const {return endOfFileReached;}
 
 protected:
+  /// Utility function for derived classes to check a position is inside the world.
+  G4bool VertexInsideWorld(const G4ThreeVector& pos) const;
+  
   G4bool endOfFileReached;
   G4bool matchFileLength;
   G4bool loopFile;
@@ -77,6 +82,7 @@ protected:
   G4long currentFileEventIndex;
   G4long nEventsInFile;
   G4long nEventsReadThatPassedFilters;
+  mutable G4VSolid* worldSolid;
 };
 
 #endif

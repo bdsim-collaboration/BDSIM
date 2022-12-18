@@ -30,6 +30,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSHepMC3Reader.hh"
 #endif
 
+#include "geomdefs.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Navigator.hh"
+#include "G4ThreeVector.hh"
+#include "G4TransportationManager.hh"
+#include "G4Types.hh"
+#include "G4VPhysicalVolume.hh"
+
 #include "parser/beam.h"
 
 BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile():
@@ -39,7 +47,8 @@ BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile():
   vertexGeneratedSuccessfully(false),
   currentFileEventIndex(0),
   nEventsInFile(0),
-  nEventsReadThatPassedFilters(0)
+  nEventsReadThatPassedFilters(0),
+  worldSolid(nullptr)
 {;}
 
 BDSPrimaryGeneratorFile::~BDSPrimaryGeneratorFile()
@@ -109,4 +118,16 @@ BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD:
     }
   
   return generatorFromFile; // could be nullptr
+}
+
+G4bool BDSPrimaryGeneratorFile::VertexInsideWorld(const G4ThreeVector& pos) const
+{
+  if (!worldSolid)
+    {// cache the world solid
+      G4Navigator* navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
+      G4VPhysicalVolume* world = navigator->GetWorldVolume();
+      worldSolid = world->GetLogicalVolume()->GetSolid();
+    }
+  EInside qinside = worldSolid->Inside(pos);
+  return qinside == EInside::kInside;
 }

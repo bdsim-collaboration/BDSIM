@@ -89,9 +89,11 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 {
   if (!reader)
     {throw BDSException(__METHOD_NAME__, "no file reader available");}
-  
-  ReadSingleEvent();  
-  HepMC2G4(hepmcEvent, anEvent);
+
+  vertexGeneratedSuccessfully = false;
+  G4bool readEventOK = ReadSingleEvent();
+  if (readEventOK)
+    {HepMC2G4(hepmcEvent, anEvent);}
 }
 
 void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
@@ -103,6 +105,8 @@ void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
 
 void BDSHepMC3Reader::OpenFile()
 {
+  currentFileEventIndex = 0;
+  endOfFileReached = false;
   G4cout << __METHOD_NAME__ << "Opening file: " << fileName << G4endl;
   switch (fileType.underlying())
     {
@@ -137,26 +141,40 @@ void BDSHepMC3Reader::CloseFile()
   if (reader)
     {reader->close();}
   delete reader;
+  currentFileEventIndex = 0;
+  endOfFileReached = true;
 }
 
-void BDSHepMC3Reader::ReadSingleEvent()
+G4bool BDSHepMC3Reader::ReadSingleEvent()
 {
   delete hepmcEvent;
   hepmcEvent = new HepMC3::GenEvent();
 
+  // it will return false if there is a problem with the input stream or in reading one complete event
+  // throw an exception as file inaccessible rather than finished
   bool readEventOK = reader->read_event(*hepmcEvent);
   if (!readEventOK)
-    {throw BDSException(__METHOD_NAME__, "problem with event generator file \"" + fileName + "\"");}
+    {
+      delete hepmcEvent;
+      throw BDSException(__METHOD_NAME__, "problem with event generator file \"" + fileName + "\"");
+    }
+  
   if (reader->failed()) // code for end of the file
     {
-      G4cout << __METHOD_NAME__ << "End of file reached. Return to beginning of file for next event." << G4endl;
-      CloseFile();
-      OpenFile();
       delete hepmcEvent;
-      hepmcEvent = new HepMC3::GenEvent();
-      readEventOK = reader->read_event(*hepmcEvent);
-      if (!readEventOK)
-        {throw BDSException(__METHOD_NAME__, "cannot read file \"" + fileName + "\".");}
+      CloseFile();
+  
+      if (loopFile)
+	{
+	  G4cout << __METHOD_NAME__ << "Returning to beginning of file for next event." << G4endl;
+	  OpenFile();
+	}
+      return false;
+    }
+  else
+    {
+      currentFileEventIndex++;
+      return true;
     }
 }
 
@@ -270,20 +288,20 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
   if (nParticlesSkipped > 0 && warnAboutSkippedParticles)
     {G4cout << __METHOD_NAME__ << nParticlesSkipped << " particles skipped" << G4endl;}
   g4vtx->SetUserInformation(new BDSPrimaryVertexInformationV(vertexInfos));
-  
-  g4event->AddPrimaryVertex(g4vtx);
-}
 
-G4bool BDSHepMC3Reader::VertexInsideWorld(const G4ThreeVector& pos) const
-{
-  if (!worldSolid)
-    {// cache the world solid
-      G4Navigator* navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
-      G4VPhysicalVolume* world = navigator->GetWorldVolume();
-      worldSolid = world->GetLogicalVolume()->GetSolid();
+  if (g4vtx->GetNumberOfParticle() == 0)
+    {// no particles found that pass criteria... we can't simulate this event... abort and move on
+      delete g4vtx;
+      if (warnAboutSkippedParticles)
+	{G4cout << __METHOD_NAME__ << "no particles found in event index in file: " << currentFileEventIndex << G4endl;}
+      return;
     }
-  EInside qinside = worldSolid->Inside(pos);
-  return qinside == kInside;
+  else
+    {
+      g4event->AddPrimaryVertex(g4vtx);
+      vertexGeneratedSuccessfully = true;
+      nEventsReadThatPassedFilters++;
+    }
 }
 
 #else

@@ -47,19 +47,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSROOTSamplerReader::BDSROOTSamplerReader(const G4String& distrType,
                                            const G4String& fileNameIn,
                                            BDSBunchEventGenerator* bunchIn,
-                                           G4bool endRunWhenEndOfFileReachedIn,
                                            G4bool removeUnstableWithoutDecayIn,
                                            G4bool warnAboutSkippedParticlesIn):
-  currentFileEventIndex(0),
-  nEventsInFile(0),
   reader(nullptr),
   fileName(fileNameIn),
   bunch(bunchIn),
-  endRunWhenEndOfFileReached(endRunWhenEndOfFileReachedIn),
   removeUnstableWithoutDecay(removeUnstableWithoutDecayIn),
-  warnAboutSkippedParticles(warnAboutSkippedParticlesIn),
-  worldSolid(nullptr),
-  anyParticlesFoundAtAll(false)
+  warnAboutSkippedParticles(warnAboutSkippedParticlesIn)
 {
   std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrType); // before:after
   samplerName = ba.second;
@@ -76,6 +70,7 @@ BDSROOTSamplerReader::~BDSROOTSamplerReader()
 
 void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
 {
+  vertexGeneratedSuccessfully = false;
   if (!reader)
     {throw BDSException(__METHOD_NAME__, "no file reader available");}
   
@@ -86,28 +81,23 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
       // currentFileEventIndex is zero counting by nEventsInFile will be 1 greater
       if (currentFileEventIndex >= nEventsInFile)
 	{
+	  endOfFileReached = true;
 	  G4cout << __METHOD_NAME__ << "End of file reached. ";
-	  if (endRunWhenEndOfFileReached)
-	    {
-	      G4cout << "Finishing run as requested to match file length." << G4endl;
-	      G4EventManager::GetEventManager()->AbortCurrentEvent();
-	      G4RunManager::GetRunManager()->AbortRun();
-	      anEvent->SetEventAborted();
-	      return;
-	    }
-	  else
+	  
+	  if (loopFile)
 	    {
 	      G4cout << "Returning to beginning of file for next event." << G4endl;
 	      currentFileEventIndex = 0;
 	    }
+	  else
+	    {return;}
 	}
       ReadSingleEvent(currentFileEventIndex);
       nParticles = (G4int)currentVertices.size();
+      
       if (nParticles > 0)
-        {anyParticlesFoundAtAll = true;}
+	{vertexGeneratedSuccessfully = true;}
       currentFileEventIndex++;
-      if ((nParticles < 1) && (currentFileEventIndex > nEventsInFile) && !anyParticlesFoundAtAll)
-        {throw BDSException(__METHOD_NAME__, "no events in file provide any suitable particles from the sampler "+samplerName);}
     }
   for (auto* v : currentVertices)
     {anEvent->AddPrimaryVertex(v);}
@@ -270,16 +260,4 @@ void BDSROOTSamplerReader::ReadSingleEvent(G4long index)
   for (auto& v : vertices)
     {delete v.vertex;}
   vertices.clear();
-}
-
-G4bool BDSROOTSamplerReader::VertexInsideWorld(const G4ThreeVector& pos) const
-{
-  if (!worldSolid)
-    {// cache the world solid
-      G4Navigator* navigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
-      G4VPhysicalVolume* world = navigator->GetWorldVolume();
-      worldSolid = world->GetLogicalVolume()->GetSolid();
-    }
-  EInside qinside = worldSolid->Inside(pos);
-  return qinside == kInside;
 }
