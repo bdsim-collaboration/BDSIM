@@ -36,8 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4RunManager.hh"
-#include "G4TransportationManager.hh"
-#include "G4VSolid.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
 
 #include "HepMC3/Attribute.h"
 #include "HepMC3/GenParticle.h"
@@ -56,7 +56,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include <cmath>
 #include <utility>
+#include <vector>
 
 
 BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
@@ -69,8 +71,7 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
   fileName(fileNameIn),
   bunch(bunchIn),
   removeUnstableWithoutDecay(removeUnstableWithoutDecayIn),
-  warnAboutSkippedParticles(warnAboutSkippedParticlesIn),
-  worldSolid(nullptr)
+  warnAboutSkippedParticles(warnAboutSkippedParticlesIn)
 {
   std::pair<G4String, G4String> ba = BDS::SplitOnColon(distrType); // before:after
   fileType = BDS::DetermineEventGeneratorFileType(ba.second);
