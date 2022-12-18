@@ -1,6 +1,8 @@
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 simple_testing(bunch-userfile                  "--file=userfile.gmad"                  "")
+simple_testing(bunch-userfile-ngenerate        "--file=userfile2.gmad"                 "")
+simple_testing(bunch-userfile-loop             "--file=userfile-loop.gmad"             "")
 simple_testing(bunch-userfile-assumed-particle "--file=userfile-assumed-particle.gmad" "")
 simple_testing(bunch-userfile-below-rest-mass  "--file=userfile-below-rest-mass.gmad"  "")
 simple_testing(bunch-userfile-blank-lines      "--file=userfile-blank-lines.gmad"      "")
@@ -26,6 +28,7 @@ simple_testing(bunch-userfile-fully-featured   "--file=userfile-fully-featured.g
 simple_fail(bunch-userfile-bad-units        "--file=userfile-bad-units.gmad")
 simple_fail(bunch-userfile-bad-nlinesSkip   "--file=userfile-bad-skipping.gmad")
 simple_fail(bunch-userfile-bad-nlinesIgnore "--file=userfile-bad-nlinesIgnore.gmad")
+simple_fail(bunch-userfile-bad-loop         "--file=userfile-bad-loop.gmad")
 
 if (USE_GZSTREAM)
   simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")
