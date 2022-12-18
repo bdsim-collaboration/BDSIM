@@ -144,6 +144,7 @@ void BDSHepMC3Reader::CloseFile()
   if (reader)
     {reader->close();}
   delete reader;
+  reader = nullptr;
   currentFileEventIndex = 0;
   endOfFileReached = true;
 }
@@ -155,7 +156,7 @@ G4long BDSHepMC3Reader::CountEventsInFile()
   while (!reader->failed())
     {
       auto tempEvent = new HepMC3::GenEvent();
-      reader->read_event(*hepmcEvent);
+      reader->read_event(*tempEvent);
       nEvents++;
       delete tempEvent;
     }
@@ -174,12 +175,14 @@ G4bool BDSHepMC3Reader::ReadSingleEvent()
   if (!readEventOK)
     {
       delete hepmcEvent;
+      hepmcEvent = nullptr;
       throw BDSException(__METHOD_NAME__, "problem with event generator file \"" + fileName + "\"");
     }
   
   if (reader->failed()) // code for end of the file
     {
       delete hepmcEvent;
+      hepmcEvent = nullptr;
       CloseFile();
   
       if (loopFile)
