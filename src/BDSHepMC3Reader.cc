@@ -76,6 +76,7 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
   fileType = BDS::DetermineEventGeneratorFileType(ba.second);
   G4cout << __METHOD_NAME__ << "event generator file format to be " << fileType.ToString() << G4endl;
   referenceBeamMomentumOffset = bunch->ReferenceBeamMomentumOffset();
+  nEventsInFile = CountEventsInFile();
   OpenFile();
 }
 
@@ -144,6 +145,21 @@ void BDSHepMC3Reader::CloseFile()
   delete reader;
   currentFileEventIndex = 0;
   endOfFileReached = true;
+}
+
+G4long BDSHepMC3Reader::CountEventsInFile()
+{
+  OpenFile();
+  G4long nEvents = 0;
+  while (!reader->failed())
+    {
+      auto tempEvent = new HepMC3::GenEvent();
+      reader->read_event(*hepmcEvent);
+      nEvents++;
+      delete tempEvent;
+    }
+  CloseFile();
+  return nEvents;
 }
 
 G4bool BDSHepMC3Reader::ReadSingleEvent()

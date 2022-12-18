@@ -38,7 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdexcept>
 #include <string> // for stoi
 
-BDSBunchEventGenerator::BDSBunchEventGenerator(G4bool warnAboutMatchFileLengthNotWorkingIn):
+BDSBunchEventGenerator::BDSBunchEventGenerator():
   BDSBunch("eventgenerator"),
   eventGeneratorMinX(0),
   eventGeneratorMaxX(0),
@@ -59,7 +59,6 @@ BDSBunchEventGenerator::BDSBunchEventGenerator(G4bool warnAboutMatchFileLengthNo
   eventGeneratorMinEK(0),
   eventGeneratorMaxEK(0),
   Rp0(0),
-  warnAboutMatchFileLengthNotWorking(warnAboutMatchFileLengthNotWorkingIn),
   firstTime(true),
   testOnParticleType(true),
   acceptedParticlesString("")
@@ -96,9 +95,6 @@ void BDSBunchEventGenerator::SetOptions(const BDSParticleDefinition* beamParticl
   eventGeneratorMaxEK = beam.eventGeneratorMaxEK * CLHEP::GeV;
   acceptedParticlesString = beam.eventGeneratorParticles;
   Rp0 = std::hypot(Xp0,Yp0);
-  
-  if (beam.distrFileMatchLength && warnAboutMatchFileLengthNotWorking)
-    {BDS::Warning("The option distrFileMatchLength doesn't work with the eventgenerator distribution");}
 }
 
 void BDSBunchEventGenerator::CheckParameters()

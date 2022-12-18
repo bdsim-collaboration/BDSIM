@@ -86,6 +86,10 @@ protected:
   /// Close and delete reader. Have to delete as HepMC3 readers have no iteration
   /// or ability to loop back to the beginning.
   void CloseFile();
+  
+  /// Open the file, read all the events and count them. Do not apply any filters.
+  /// Therefore, this returns the maximum number of raw events.
+  G4long CountEventsInFile();
 
   /// Clear the hepmcEvent object, reallocate and read a single event and fill that member.
   /// Returns true if event read successfully, else false.
