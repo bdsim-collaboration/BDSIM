@@ -12,18 +12,15 @@ enum MuonFluxTrackType{
 class BDSMuonFluxEnhancementTrackInformation : public G4VUserTrackInformation
 {
 public:
-  BDSMuonFluxEnhancementTrackInformation(): G4VUserTrackInformation("muonFluxEnhancement"),
-    fIsAllowedInelastic(true),fParentPDGid(0), fTrackType(kOriginalTrack), fHasClone(false){}
-
-  BDSMuonFluxEnhancementTrackInformation(const BDSMuonFluxEnhancementTrackInformation &info): G4VUserTrackInformation("muonFluxEnhancement"),
-    fIsAllowedInelastic(info.fIsAllowedInelastic), fParentPDGid(info.fParentPDGid), fTrackType(info.fTrackType), fHasClone(info.fHasClone){}
-
+  BDSMuonFluxEnhancementTrackInformation();
+  BDSMuonFluxEnhancementTrackInformation(const BDSMuonFluxEnhancementTrackInformation &info);
+  
   ~BDSMuonFluxEnhancementTrackInformation() {};
 
   inline void *operator new(size_t);
   inline void operator delete(void *info);
   
-  void Print() const;
+  void Print() const {};
 
 public:
   G4bool GetIsAllowedInelastic() const {return fIsAllowedInelastic;}

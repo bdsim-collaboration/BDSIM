@@ -20,8 +20,8 @@
 #include "G4StepPoint.hh"
 #include "G4TouchableHandle.hh"
 #include "G4VSolid.hh"
-
 #include "BDSMuonFluxEnhancementTrackInformation.hh"
+#include "G4String.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 /// \class BDSBOptrMuonFluxEnhancement
@@ -153,7 +153,8 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
     G4VPhysicalVolume *volume = track->GetVolume();
     if (volume){
       // Check if the volume is made of void. Better option needed.
-      if (volume->GetLogicalVolume()->GetMaterial()->GetName().contains("G4_Galactic")){
+      
+      if (G4StrUtil::contains(volume->GetLogicalVolume()->GetMaterial()->GetName(), "G4_Galactic")){
         return nullptr;
       }
     }
@@ -179,7 +180,8 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
 
   // to update to new G4
   G4String processName = callingProcess->GetWrappedProcess()->GetProcessName();
-  if (processType == fHadronic || processName.contains("conv")){
+  if (processType == fHadronic || 
+      G4StrUtil::contains(processName,"conv")){
     // clones should not undergo this kind of process
     XStransformation = 0.0;
   }
@@ -189,8 +191,10 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
 
     G4ThreeVector worldPosition = pointPre->GetPosition();
     G4ThreeVector worldMomDir = pointPre->GetMomentumDirection();
-    G4double dz = BiasingUtility::GetInstance()->GetDecayZMax() / CLHEP::mm -
-                  worldPosition.getZ() / CLHEP::mm;
+    //TODO: set option for maximum z
+    // G4double dz = BiasingUtility::GetInstance()->GetDecayZMax() / CLHEP::mm -
+    //               worldPosition.getZ() / CLHEP::mm;
+    G4double dz = 3000*CLHEP::mm - worldPosition.getZ() / CLHEP::mm;
     G4double dx = worldMomDir.getX() / worldMomDir.getZ() * dz;
     G4double dy = worldMomDir.getY() / worldMomDir.getZ() * dz;
 
@@ -231,7 +235,7 @@ void BDSBOptrMuonFluxEnhancement::OperationApplied(const G4BiasingProcessInterfa
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeFinalStateBiasingOperation(
-  const G4Track * /*track*/, const G4BiasingProcessInterface *callingProcess) {
+  const G4Track * /*track*/, const G4BiasingProcessInterface */*callingProcess*/) {
   /// \MemberDescr
   /// Mandatory base class method implementation.\n
   /// This method is called if the process ocurred and asks for

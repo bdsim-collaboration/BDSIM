@@ -25,12 +25,15 @@ G4double BDSBOptnSplitAtCreation::DistanceToApplyOperation(const G4Track *track,
       *condition = Forced;
     }
   }
+   
+   return DBL_MAX;
 }
 
 G4VParticleChange *BDSBOptnSplitAtCreation::GenerateBiasingFinalState(const G4Track *track, const G4Step*){
   BDSMuonFluxEnhancementTrackInformation *info = static_cast<BDSMuonFluxEnhancementTrackInformation*> (track->GetUserInformation());
   G4int pdgID = track->GetParticleDefinition()->GetPDGEncoding();
-  G4double weight = track->GetWeight();
+  // TODO: use weight for russian roulette
+  // G4double weight = track->GetWeight();
   if (info->GetTrackType() == kOriginalTrack && !info->GetHasClone() && track->GetCurrentStepNumber() == 1){
     SplitMesonAtCreation(track);
   }

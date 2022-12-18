@@ -9,6 +9,12 @@ BDSBOptrMultiParticleMuonFluxEnhancement::BDSBOptrMultiParticleMuonFluxEnhanceme
 G4VBiasingOperator("BDSBOptrMultiParticleMuonFluxEnhancement")
 {}
 
+BDSBOptrMultiParticleMuonFluxEnhancement::~BDSBOptrMultiParticleMuonFluxEnhancement()
+{
+  for (auto op : fBOptrForParticle)
+  {delete op.second;}
+}
+
 void BDSBOptrMultiParticleMuonFluxEnhancement::StartTracking(const G4Track *track) {
   const G4ParticleDefinition *definition = track->GetParticleDefinition();
   std::map<const G4ParticleDefinition *, BDSBOptrMuonFluxEnhancement *>::iterator it =
