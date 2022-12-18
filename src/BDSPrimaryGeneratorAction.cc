@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunch.hh"
-#include "BDSBunchEventGenerator.hh"
 #include "BDSDebug.hh"
 #include "BDSEventInfo.hh"
 #include "BDSException.hh"
@@ -28,16 +27,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSPrimaryGeneratorAction.hh"
+#include "BDSPrimaryGeneratorFile.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSRunAction.hh"
-#include "BDSROOTSamplerReader.hh"
 #include "BDSRandom.hh"
 #include "BDSUtilities.hh"
-
-#ifdef USE_HEPMC3
-#include "BDSHepMC3Reader.hh"
-#endif
 
 #include "parser/beam.h"
 
@@ -45,10 +40,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Event.hh"
+#include "G4EventManager.hh"
 #include "G4HEPEvtInterface.hh"
 #include "G4IonTable.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
+#include "G4RunManager.hh"
 
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
                                                      const GMAD::Beam& beam,
@@ -58,16 +55,10 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
   recreateFile(nullptr),
   eventOffset(0),
   ionPrimary(bunchIn->BeamParticleIsAnIon()),
-  useEventGeneratorFile(false),
-  useSamplerLoader(false),
+  distrFileMatchLength(false),
   ionCached(false),
-  oneTurnMap(nullptr)
-#ifdef USE_HEPMC3
-  ,
-  hepMC3Reader(nullptr)
-#endif
-  ,
-  samplerReader(nullptr)
+  oneTurnMap(nullptr),
+  generatorFromFile(nullptr)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
@@ -83,59 +74,17 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
     }
 
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
-  particleGun->SetParticlePosition(G4ThreeVector(0.*CLHEP::cm,0.*CLHEP::cm,0.*CLHEP::cm));
+  particleGun->SetParticlePosition(G4ThreeVector());
   particleGun->SetParticleTime(0);
-
-  BDSBunchType egf = BDSBunchType::eventgeneratorfile;
-  useEventGeneratorFile = BDS::StrContains(G4String(beam.distrType), egf.ToString());
-  BDSBunchType samp = BDSBunchType::bdsimsampler;
-  useSamplerLoader = BDS::StrContains(beam.distrType, samp.ToString());
   
-  if (useEventGeneratorFile)
-    {
-#ifdef USE_HEPMC3
-      if (beam.distrFile.empty())
-        {throw BDSException(__METHOD_NAME__, "no distrFile specified for event generator beam distribution.");}
-      G4String filename = BDS::GetFullPath(beam.distrFile, false, beam.distrFileFromExecOptions);
-      BDSBunchEventGenerator* beg = dynamic_cast<BDSBunchEventGenerator*>(bunchIn);
-      if (!beg)
-	{throw BDSException(__METHOD_NAME__, "must be used with a BDSBunchEventGenerator instance");}
-      hepMC3Reader = new BDSHepMC3Reader(beam.distrType, filename, beg, beam.removeUnstableWithoutDecay,
-                                         beam.eventGeneratorWarnSkippedParticles);
-      if (recreate)
-        {hepMC3Reader->RecreateAdvanceToEvent(eventOffset);}
-#else
-      throw BDSException(__METHOD_NAME__, "event generator file being used but BDSIM not compiled with HEPMC3");
-#endif
-    }
-  else if (useSamplerLoader)
-    {
-      if (beam.distrFile.empty())
-	{throw BDSException(__METHOD_NAME__, "no distrFile specified for bdsim sampler beam distribution.");}
-      G4String filename = BDS::GetFullPath(beam.distrFile, false, beam.distrFileFromExecOptions);
-      BDSBunchEventGenerator* beg = dynamic_cast<BDSBunchEventGenerator*>(bunchIn);
-      if (!beg)
-	{throw BDSException(__METHOD_NAME__, "must be used with a BDSBunchEventGenerator instance");}
-      // matching file length is done in 2 steps. 1) set the number to generate to be N events in the file.
-      // and 2) if not all events match the cuts (which we can only tell as we go along through the file),
-      // then flag the BDSROOTSampleReader that it should abort the event rather than loop the file.
-      samplerReader = new BDSROOTSamplerReader(beam.distrType, filename, beg,
-					       beam.distrFileMatchLength,
-					       true, // remove unstable without decay table
-					       beam.eventGeneratorWarnSkippedParticles);
-      if (beam.distrFileMatchLength)
-        {BDSGlobalConstants::Instance()->SetNumberToGenerate(samplerReader->NEventsInFile());}
-    }
+  generatorFromFile = BDSPrimaryGeneratorFile::ConstructGenerator(beam, bunch, recreate, eventOffset);
 }
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 {
   delete particleGun;
   delete recreateFile;
-#ifdef USE_HEPMC3
-  delete hepMC3Reader;
-#endif
-  delete samplerReader;
+  delete generatorFromFile;
 }
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
@@ -163,21 +112,24 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
-#ifdef USE_HEPMC3
-  if (useEventGeneratorFile)
+  // events from external file
+  if (generatorFromFile)
     {
-      hepMC3Reader->GeneratePrimaryVertex(anEvent);
-      return; // don't need any further steps
+      if (generatorFromFile->DistributionIsFinished() && distrFileMatchLength)
+	{
+	  runAction->NotifyOfCompletionOfInputDistrFile(generatorFromFile->NEventsInFile());
+	  G4RunManager::GetRunManager()->AbortRun();
+	  return;
+	}
+      G4bool generatedVertexOK = generatorFromFile->GeneratePrimaryVertexSafe(anEvent);
+      if (!generatedVertexOK)
+	{
+	  anEvent->SetEventAborted();
+	  G4EventManager::GetEventManager()->AbortCurrentEvent();
+	}
+      return; // nothing else to be done here
     }
-#endif
-  if (useSamplerLoader)
-  {
-    samplerReader->GeneratePrimaryVertex(anEvent);
-    if (anEvent->IsAborted())
-      {runAction->NotifyOfCompletionOfInputDistrFile(samplerReader->NEventsInFile());}
-    return; // don't need any further steps
-  }
-
+  
   // update particle definition in the special case of an ion - can only be done here
   // and not before due to Geant4 ion information availability only at run time
   if (ionPrimary && !ionCached)

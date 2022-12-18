@@ -26,9 +26,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSBunch;
 class BDSOutputLoader;
+class BDSPrimaryGeneratorFile;
 class BDSPTCOneTurnMap;
 class BDSRunAction;
-class BDSROOTSamplerReader;
 class G4Event;
 class G4ParticleGun;
 
@@ -37,9 +37,6 @@ namespace GMAD
   class Beam;
 }
 
-#ifdef USE_HEPMC3
-class BDSHepMC3Reader;
-#endif
 
 /**
  * @brief Generates primary particle vertices using BDSBunch.
@@ -74,8 +71,7 @@ private:
   G4int    eventOffset;           ///< The offset in the file to read events from when setting the seed.
   G4bool   useASCIISeedState;     ///< Whether to use the ascii seed state each time.
   G4bool   ionPrimary;            ///< The primary particle will be an ion.
-  G4bool   useEventGeneratorFile; ///< Whether to use event generator file.
-  G4bool   useSamplerLoader;      ///< Whether to use a sampler loader.
+  G4bool   distrFileMatchLength;  ///< Match external file length for event generator.
   
   /// World extent that particle coordinates are checked against to ensure they're inside it.
   BDSExtent worldExtent;
@@ -87,11 +83,7 @@ private:
   /// Cached OTM for setting first turn primary coords.
   BDSPTCOneTurnMap* oneTurnMap;
 
-#ifdef USE_HEPMC3
-  /// Event generator file loader.
-  BDSHepMC3Reader* hepMC3Reader;
-#endif
-  BDSROOTSamplerReader* samplerReader;
+  BDSPrimaryGeneratorFile* generatorFromFile;
 };
 
 #endif
