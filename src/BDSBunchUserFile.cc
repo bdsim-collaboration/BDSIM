@@ -357,24 +357,31 @@ void BDSBunchUserFile<T>::Initialise()
     }
 
   G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
+  G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
   if (matchDistrFileLength)
     {
       if (!nGenerateHasBeenSet)
 	{
-	  G4int nGenerate = nLinesValidData - nlinesSkip;
-	  BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
+	  G4int nToGenerate = nLinesValidData - nlinesSkip;
+	  BDSGlobalConstants::Instance()->SetNumberToGenerate(nToGenerate);
 	  G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is True -> simulating "
-		 << nGenerate << " events" << G4endl;
+		 << nToGenerate << " events" << G4endl;
 	}
       else
-	{
+	{// e.g. if recreating a lower number of events - match is on; but ngenerate is lower - must obey
 	  G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength has been requested "
-		 << "but ngenerate has been specified and this will be used" << G4endl;
+		 << "but ngenerate has been specified -> use ngenerate" << G4endl;
+	  if (nGenerate > nLinesValidData)
+	    {
+	      G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of valid lines (";
+	      msg += std::to_string(nLinesValidData) + ") and distrFileMatchLength is on.\nChange ngenerate to <= # lines";
+	      msg += ", or don't specifcy ngenerate.";
+	      throw BDSException("BDSBunchUserFile::Initialise>", msg);
+	    }
 	}
     }
   else
     {
-      G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
       if ((nGenerate > nLinesValidData) && !distrFileLoop)
 	{
 	  G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of valid lines (";
