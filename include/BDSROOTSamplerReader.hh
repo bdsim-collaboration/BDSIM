@@ -19,10 +19,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSROOTSAMPLERREADER_H
 #define BDSROOTSAMPLERREADER_H
 
-#include "globals.hh"
+#include "BDSPrimaryGeneratorFile.hh"
+
 #include "G4RotationMatrix.hh"
+#include "G4String.hh"
 #include "G4ThreeVector.hh"
-#include "G4VPrimaryGenerator.hh"
+#include "G4Types.hh"
 
 #include <vector>
 
@@ -39,7 +41,7 @@ class G4VSolid;
  * @author Laurie Nevay
  */
 
-class BDSROOTSamplerReader: public G4VPrimaryGenerator
+class BDSROOTSamplerReader: public BDSPrimaryGeneratorFile
 {
 public:
   /// Do not require default constructor.
@@ -47,13 +49,10 @@ public:
   /// Constructor takes full distrType string including semicolon and
   /// eventgeneratorfile prefix. The filename is assumed to be correctly
   /// prefixed if a relative path already. The bunch definition is used
-  /// for the reference coordinates and offset of the beam point. If the
-  /// flag endRunWhenEndOfFileReached is false, then the reader will loop
-  /// the file to provide another event. If true, it will call AbortRun().
+  /// for the reference coordinates and offset of the beam point.
   BDSROOTSamplerReader(const G4String& distrType,
 		       const G4String& fileNameIn,
 		       BDSBunchEventGenerator* bunchIn,
-		       G4bool endRunWhenEndOfFileReachedIn = false,
                        G4bool removeUnstableWithoutDecayIn = true,
 		       G4bool warnAboutSkippedParticlesIn  = true);
   virtual ~BDSROOTSamplerReader();
@@ -63,10 +62,6 @@ public:
 
   /// Advance to the correct event number in the file for recreation.
   virtual void RecreateAdvanceToEvent(G4int eventOffset);
-  
-  /// Return the number of events in the file - not necessarily the number that
-  /// match the filters but that are there in total.
-  inline G4int NEventsInFile() const {return nEventsInFile;}
 
   struct DisplacedVertex
   {
@@ -81,30 +76,17 @@ protected:
   /// Conversion from HepMC::GenEvent to G4Event.
   //void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);
   
-  // We  have to take care for the position of primaries because
-  // primary vertices outside the world volume would give rise to a G4Exception.
-  virtual G4bool VertexInsideWorld(const G4ThreeVector& pos) const;
-  
   void ReadPrimaryParticlesFloat(G4long index);
   void ReadPrimaryParticlesDouble(G4long index);
 
 private:
-  G4long                    currentFileEventIndex;
-  G4long                    nEventsInFile;
   BDSOutputLoaderSampler*   reader;
   G4String                  fileName;
   G4String                  samplerName;
   BDSBunchEventGenerator*   bunch;
-  G4bool                    endRunWhenEndOfFileReached;
   G4bool                    removeUnstableWithoutDecay;
   G4bool                    warnAboutSkippedParticles;
   G4RotationMatrix          referenceBeamMomentumOffset;
-  mutable G4VSolid*         worldSolid;
-  
-  /// We need to keep a note of if we find any particles at all when looping through a file
-  /// so we can distinguish if the whole file had no particles, or say the last event doesn't
-  /// before we loop through the file again.
-  G4bool anyParticlesFoundAtAll;
   
   /// Used for transiently loading information.
   std::vector<DisplacedVertex> vertices;

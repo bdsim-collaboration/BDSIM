@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSHEPMC3READER_H
 
 #include "BDSEventGeneratorFileType.hh"
+#include "BDSPrimaryGeneratorFile.hh"
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
@@ -49,10 +50,10 @@ namespace HepMC3
  * Additionally, the interface has been written based on HepMC3
  * example "convert_example" to use multiple reader classes.
  * 
- * @author Helena Pikhartova, Laurie Nevay
+ * @author Helena Lefebvre, Laurie Nevay
  */
 
-class BDSHepMC3Reader: public G4VPrimaryGenerator
+class BDSHepMC3Reader: public BDSPrimaryGeneratorFile
 {
 public:
   /// Do not require default constructor.
@@ -87,14 +88,11 @@ protected:
   void CloseFile();
 
   /// Clear the hepmcEvent object, reallocate and read a single event and fill that member.
-  void ReadSingleEvent();
+  /// Returns true if event read successfully, else false.
+  G4bool ReadSingleEvent();
 
   /// Conversion from HepMC::GenEvent to G4Event.
   void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);
-  
-  // We  have to take care for the position of primaries because
-  // primary vertices outside the world volume would give rise to a G4Exception.
-  virtual G4bool VertexInsideWorld(const G4ThreeVector& pos) const;
   
   // Note that the life of HepMC event object must be handled by users.
   // In the default implementation, a current HepMC event will be
