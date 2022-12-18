@@ -148,7 +148,7 @@ void BDSBunchPtc::Initialise()
       else
 	{
 	  G4cout << "BDSBunchPtc::Initialise> matchDistrFileLength has been requested "
-		 << "but ngenerate has been specified and this will be used" << G4endl;
+		 << "but ngenerate has been specified -> use ngenerate" << G4endl;
 	}
     }
   else
