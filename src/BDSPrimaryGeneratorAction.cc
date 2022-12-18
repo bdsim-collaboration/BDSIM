@@ -45,6 +45,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4IonTable.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
+#include "G4Run.hh"
 #include "G4RunManager.hh"
 
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
@@ -115,15 +116,29 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // events from external file
   if (generatorFromFile)
     {
-      if (generatorFromFile->DistributionIsFinished() && distrFileMatchLength)
+      G4bool distributionFinished = generatorFromFile->DistributionIsFinished(); // only happens if no looping
+      G4int nGenerateRequested = BDSGlobalConstants::Instance()->NGenerate();
+      if (distributionFinished && distrFileMatchLength)
 	{
-	  runAction->NotifyOfCompletionOfInputDistrFile(generatorFromFile->NEventsInFile());
+	  runAction->NotifyOfCompletionOfInputDistrFile(generatorFromFile->NEventsInFile(),
+                                                  generatorFromFile->NEventsReadThatPassedFilters());
+	  G4RunManager::GetRunManager()->AbortRun();
+	  return;
+	}
+      else if (distributionFinished && (generatorFromFile->NEventsReadThatPassedFilters() < nGenerateRequested) )
+	{
+	  G4int currentEventIndex = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent();
+	  G4cerr << __METHOD_NAME__ << "unable to generate " << nGenerateRequested
+		 << " events as fewer events passed the filters in the file." << G4endl;
+	  G4cerr << currentEventIndex << " events generated" << G4endl;
+	  anEvent->SetEventAborted();
+	  G4EventManager::GetEventManager()->AbortCurrentEvent();
 	  G4RunManager::GetRunManager()->AbortRun();
 	  return;
 	}
       G4bool generatedVertexOK = generatorFromFile->GeneratePrimaryVertexSafe(anEvent);
       if (!generatedVertexOK)
-	{
+	{	
 	  anEvent->SetEventAborted();
 	  G4EventManager::GetEventManager()->AbortCurrentEvent();
 	}
@@ -139,9 +154,12 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     }
 
   // generate set of coordinates - internally the bunch may try many times to generate
-  // coordinates with total energy above the rest mass and may throw an exception if
-  // it can't
+  // coordinates with total energy above the rest mass and may throw an exception if it can't
   BDSParticleCoordsFullGlobal coords;
+  
+  // BDSBunch distributions based on files do not (as a principle) have the ability to filter
+  // the particles they load so the number of events to generate can be predicted exactly and
+  // there is no need to check on whether an event has been successfully generated here.
   try
     {coords = bunch->GetNextParticleValid();}
   catch (const BDSException& exception)

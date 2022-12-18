@@ -230,7 +230,8 @@ void BDSRunAction::CheckTrajectoryOptions() const
     }
 }
 
-void BDSRunAction::NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrFileIn)
+void BDSRunAction::NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrFileIn,
+                                                      G4long nEventsReadThatPassedFiltersIn)
 {
   runEndedEarly = true;
   nEventsInOriginalDistrFile = nEventsInOriginalDistrFileIn;

@@ -68,8 +68,16 @@ public:
   /// file. This is nominally nEventsInFile - currentFileEventIndex.
   G4long NEventsLeftInFile() const;
   
+  /// Accessor.
+  G4long NEventsReadThatPassedFilters() const {return nEventsReadThatPassedFilters;}
+  
   /// Report whether the distribution is finished generating.
   G4bool DistributionIsFinished() const {return endOfFileReached;}
+  
+  /// Utility function to check eventOffset < nEventsInFile. This can only possibly happen
+  /// If the recreation is done with the same filename but different contents or indeed somehow
+  /// a different file.
+  void ThrowExceptionIfRecreateOffsetTooHigh(G4long eventOffset) const;
 
 protected:
   /// Utility function for derived classes to check a position is inside the world.
