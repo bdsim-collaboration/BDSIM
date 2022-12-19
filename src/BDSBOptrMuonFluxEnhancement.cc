@@ -143,6 +143,7 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
 
 
   // No biasing for processes that do not kill the particle
+  // TODO: fix for K0L that produces warnings.
   G4ProcessType processType= callingProcess->GetWrappedProcess()->GetProcessType();
   if (processType != fHadronic && processType != fDecay && trackPDGid != 22){
     return nullptr;
@@ -168,14 +169,14 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
   G4double analogInteractionLength = 
     callingProcess->GetWrappedProcess()->GetCurrentInteractionLength() / CLHEP::mm;
 
-  if (analogInteractionLength > DBL_MAX/10.){
+  if (analogInteractionLength > 1.0E15){
     return nullptr;
   }
   if (analogInteractionLength < 0.){
     return nullptr;
   }
 
-  G4double analogXS = 1./analogInteractionLength;
+  G4double analogXS = 1./(analogInteractionLength/CLHEP::mm);
   G4double XStransformation = 1.0;
 
   // to update to new G4
@@ -199,10 +200,21 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
     G4double dy = worldMomDir.getY() / worldMomDir.getZ() * dz;
 
     G4double distanceLeft = sqrt(dx * dx + dy * dy + dz * dz);
-    XStransformation = 1. / (1.0 - std::exp(-analogXS * distanceLeft));
+    
+    G4double exponent = analogXS*distanceLeft;
+    if (exponent < 1E-3)
+    {XStransformation = 0.5+1./exponent;}
+    else
+    {XStransformation = -1./(std::expm1(-analogXS*distanceLeft));}
+    // if (XStransformation < 0.){
+    //   G4cout << "XStf = " << XStransformation << " d = " << distanceLeft << " analogXS = " << analogXS << G4endl;
+    // }
+    // XStransformation = 1. / (1.0 - std::exp(-analogXS * distanceLeft));
+    if (XStransformation > 1E4)
+    {XStransformation = 1E4;}
   }
 
-  operation->SetBiasedCrossSection(XStransformation*analogXS);
+  operation->SetBiasedCrossSection(abs(XStransformation*analogXS));
   operation->Sample();
   return operation;
 }
