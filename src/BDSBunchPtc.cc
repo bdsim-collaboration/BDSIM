@@ -25,6 +25,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "parser/beam.h"
 
+#include "globals.hh"
+#include "G4String.hh"
+#include "G4Types.hh"
+
 #include "CLHEP/Units/PhysicalConstants.h"
 
 #include <array>
@@ -33,13 +37,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
+
 BDSBunchPtc::BDSBunchPtc():
   BDSBunch("ptc"),
   matchDistrFileLength(false),
   nRays(0),
   iRay(0),
   beta(1.0),
-  distrFileLoop(false)
+  distrFileLoop(false),
+  nlinesSkip(0),
+  lineCounter(0)
 {;}
 
 BDSBunchPtc::~BDSBunchPtc()
@@ -57,10 +64,26 @@ void BDSBunchPtc::LoadPtcFile()
   if (!ifstr)
     {throw BDSException(__METHOD_NAME__, "\"" + fileName + "\" file doesn't exist - exiting as no input");}
 
-  std::string line; 
+  std::string line;
+  lineCounter = 0;
+  
+  for (G4int i = 0; i < nlinesSkip; i++)
+    {
+      std::getline(ifstr, line);
+      lineCounter++;
+      // we must check explicitly if we've gone past the end of the file
+      if (ifstr.eof())
+        {
+          G4String msg = "end of file reached on line " + std::to_string(lineCounter) + " before nlinesSkip + nlinesIgnore (";
+          msg += std::to_string(nlinesSkip) + " reached.";
+          throw BDSException(__METHOD_NAME__, msg);
+        }
+    }
+  
   // read single line 
   while (std::getline(ifstr,line))
     {
+      lineCounter++;
       int isComment = line.compare(0, 1, "!");
       if (isComment == 0)
 	{continue;}
@@ -128,11 +151,24 @@ void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
   beta = beamParticle->Beta();
   fileName = BDS::GetFullPath(beam.distrFile);
   distrFileLoop = beam.distrFileLoop;
+  nlinesSkip = beam.nlinesSkip + beam.nlinesIgnore;
 }
 
 void BDSBunchPtc::Initialise()
 {
-  LoadPtcFile();
+  try
+    {LoadPtcFile();}
+  catch (BDSException& e)
+    {
+      std::string msg = "\nError on line " + std::to_string(lineCounter);
+      e.AppendToMessage(msg);
+      throw e;
+    }
+  catch (std::exception& e)
+    {
+      std::string msg = "Error on line " + std::to_string(lineCounter);
+      throw BDSException(__METHOD_NAME__, msg);
+    }
   
   G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
   if (matchDistrFileLength)
@@ -196,7 +232,27 @@ BDSParticleCoordsFull BDSBunchPtc::GetNextParticleLocal()
 void BDSBunchPtc::RecreateAdvanceToEvent(G4int eventOffset)
 {
   if (eventOffset >= nRays)
-    {throw BDSException(__METHOD_NAME__, "eventOffset ("+std::to_string(eventOffset)+") is greater than the number of inrays in the PTC file");}
+    {
+      if (distrFileLoop)
+	{
+	  G4int nToRoll = nRays % eventOffset;
+	  eventOffset = nToRoll;
+	}
+      else
+	{throw BDSException(__METHOD_NAME__, "eventOffset (" + std::to_string(eventOffset) +
+			    ") is greater than the number of inrays in the PTC file");
+	}
+    }
+  
   iRay = eventOffset;
+  
+  G4int nEventsRemaining = nRays - eventOffset;
+  G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
+  if (nGenerate > nEventsRemaining && !distrFileLoop)
+    {
+      G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") requested in recreate mode is greater than number\n";
+      msg += "of remaining valid lines in file (" + std::to_string(nEventsRemaining) + ") and distrFileLoop is turned off.";
+      throw BDSException("BDSBunchUserFile>", msg);
+    }
 }
 

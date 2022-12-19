@@ -61,6 +61,8 @@ private:
   std::vector<std::array<double, 6>> ptcData; ///< Data.
   G4double beta;      ///< Velocity w.r.t. speed of light. Needed to convert mom. to energy.
   G4bool distrFileLoop;
+  G4int nlinesSkip;
+  G4int lineCounter;
 };
 
 #endif
