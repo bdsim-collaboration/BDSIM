@@ -5,6 +5,4 @@ beam, distrFileLoop=1,
 
 option, ngenerate=5;
 
-option, printFractionEvents=-1;
-
 beam, distrFile="ptc-inrays-short.madx";
