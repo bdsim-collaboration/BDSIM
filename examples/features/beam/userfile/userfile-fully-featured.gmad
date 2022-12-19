@@ -12,3 +12,8 @@ beam, nlinesSkip=2;
 
 ! should loop 1x set of coordinates
 option, ngenerate=3;
+
+! need to turn off default file length matching
+! and request to allow looping also
+beam, distrFileMatchLength=0,
+      distrFileLoop=1;
