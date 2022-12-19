@@ -371,11 +371,13 @@ void BDSBunchUserFile<T>::Initialise()
 	{// e.g. if recreating a lower number of events - match is on; but ngenerate is lower - must obey
 	  G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength has been requested "
 		 << "but ngenerate has been specified -> use ngenerate" << G4endl;
-	  if (nGenerate > nLinesValidData)
+	  // note we don't need to take care of a recreation offset - this is done later in primary generator action
+	  if (nGenerate > nLinesValidData - nlinesSkip)
 	    {
 	      G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of valid lines (";
 	      msg += std::to_string(nLinesValidData) + ") and distrFileMatchLength is on.\nChange ngenerate to <= # lines";
-	      msg += ", or don't specifcy ngenerate.";
+	      msg += ", or don't specifcy ngenerate.\n";
+	      msg += "This includes nlinesSkip.";
 	      throw BDSException("BDSBunchUserFile::Initialise>", msg);
 	    }
 	}
@@ -403,7 +405,7 @@ void BDSBunchUserFile<T>::EndOfFileAction()
   CloseBunchFile();
   if (distrFileLoop)
     {
-      G4cout << "Returning to beginning of file (including nlinesIgnore & nlinesSkip) for next event." << G4endl;
+      G4cout << "BDSBunchUserFile> Returning to beginning of file (including nlinesIgnore & nlinesSkip) for next event." << G4endl;
       OpenBunchFile();
       SkipNLinesIgnoreIntoFile(false);
       SkipNLinesSkip(false);
@@ -414,10 +416,30 @@ template<class T>
 void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
 {
   G4cout << "BDSBunchUserFile::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
-  if (eventOffset > nLinesValidData)
+  if (eventOffset > nLinesValidData - nlinesSkip)
     {
-      G4String msg = "eventOffset (" + std::to_string(eventOffset) + ") is greater than the number of valid data lines in this file.";
-      throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
+      if (distrFileLoop)
+        {
+          // we're recreating a file where we looped on the data - don't repeatedly read - just read up to
+          // the right point as if we'd looped the file
+          G4int nAvailable = nLinesValidData - nlinesSkip;
+          G4int nToRoll = eventOffset % nAvailable;
+          eventOffset = nToRoll;
+        }
+      else
+        {
+          G4String msg = "eventOffset (" + std::to_string(eventOffset) + ") is greater than the number of valid data lines in this file.\n";
+          msg += "This includes nlinesSkip.";
+          throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
+        }
+    }
+  G4int nEventsRemaining = nLinesValidData - nlinesSkip - eventOffset;
+  G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
+  if (nGenerate > nEventsRemaining && !distrFileLoop)
+    {
+      G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") requested in recreate mode is greater than number\n";
+      msg += "of remaining valid lines in file (" + std::to_string(nEventsRemaining) + ") and distrFileLoop is turned off.";
+      throw BDSException("BDSBunchUserFile>", msg);
     }
   // we should now be completely safe to read into the file ignoring comment lines and
   // without checking eof()
