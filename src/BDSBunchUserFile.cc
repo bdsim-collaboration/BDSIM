@@ -356,16 +356,24 @@ void BDSBunchUserFile<T>::Initialise()
       throw BDSException("BDSBunchUserFile::Initialise>", msg);
     }
 
-  G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
-  G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
+  auto g = BDSGlobalConstants::Instance();
+  G4bool nGenerateHasBeenSet = g->NGenerateSet();
+  G4int nGenerate = g->NGenerate();
   if (matchDistrFileLength)
     {
       if (!nGenerateHasBeenSet)
 	{
 	  G4int nToGenerate = nLinesValidData - nlinesSkip;
-	  BDSGlobalConstants::Instance()->SetNumberToGenerate(nToGenerate);
+	  g->SetNumberToGenerate(nToGenerate);
 	  G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is true -> simulating "
 		 << nToGenerate << " events" << G4endl;
+	  if (g->Recreate())
+	    {// have to do this now before the primary generator action is called already in the run
+	      G4int nLeftFromOffset = nToGenerate - (g->StartFromEvent() % nToGenerate);
+	      g->SetNumberToGenerate(nLeftFromOffset);
+	      G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength + recreation -> simulate the "
+		     << nLeftFromOffset << " lines left given startFromEvent" << G4endl;
+	    }
 	}
       else
 	{// e.g. if recreating a lower number of events - match is on; but ngenerate is lower - must obey
@@ -441,6 +449,10 @@ void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
       msg += "of remaining valid lines in file (" + std::to_string(nEventsRemaining) + ") and distrFileLoop is turned off.";
       throw BDSException("BDSBunchUserFile>", msg);
     }
+  // note we cannot update ngenerate here as we're already being called from the primary
+  // generator action in the start of the event after BeamOn(nEvents) has been called
+  // therefore this adjustment for recreation + match is done earlier in this class
+
   // we should now be completely safe to read into the file ignoring comment lines and
   // without checking eof()
   std::string line;

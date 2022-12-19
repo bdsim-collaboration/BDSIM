@@ -170,15 +170,23 @@ void BDSBunchPtc::Initialise()
       throw BDSException(__METHOD_NAME__, msg);
     }
   
-  G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
+  auto g = BDSGlobalConstants::Instance();
+  G4bool nGenerateHasBeenSet = g->NGenerateSet();
   if (matchDistrFileLength)
     {
       if (!nGenerateHasBeenSet)
 	{
-	  BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);
-	  G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is true -> simulating "
+	  g->SetNumberToGenerate(nRays);
+	  G4cout << "BDSBunchPtc::Initialise> distrFileMatchLength is true -> simulating "
 		 << nRays << " events" << G4endl;
-	}
+	  if (g->Recreate())
+	    {// have to do this now before the primary generator action is called already in the run
+	      G4int nLeftFromOffset = nRays - (g->StartFromEvent() % nRays);
+	      g->SetNumberToGenerate(nLeftFromOffset);
+	      G4cout << "BDSBunchPtc::Initialise> distrFileMatchLength + recreation -> simulate the "
+		     << nLeftFromOffset << " lines left given startFromEvent" << G4endl;
+	    }
+}
       else
 	{
 	  G4cout << "BDSBunchPtc::Initialise> matchDistrFileLength has been requested "
@@ -187,7 +195,7 @@ void BDSBunchPtc::Initialise()
     }
   else
     {
-      G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
+      G4int nGenerate = g->NGenerate();
       if ( (nGenerate > nRays) && !distrFileLoop )
 	{
 	  G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of inrays (";
@@ -235,12 +243,14 @@ void BDSBunchPtc::RecreateAdvanceToEvent(G4int eventOffset)
     {
       if (distrFileLoop)
 	{
-	  G4int nToRoll = nRays % eventOffset;
+	  G4int nToRoll = eventOffset % nRays;
 	  eventOffset = nToRoll;
 	}
       else
-	{throw BDSException(__METHOD_NAME__, "eventOffset (" + std::to_string(eventOffset) +
-			    ") is greater than the number of inrays in the PTC file");
+	{
+	  G4String msg = "eventOffset (" + std::to_string(eventOffset);
+	  msg += ") is greater than the number of inrays in the PTC file";
+	  throw BDSException(__METHOD_NAME__, msg);
 	}
     }
   
@@ -252,7 +262,10 @@ void BDSBunchPtc::RecreateAdvanceToEvent(G4int eventOffset)
     {
       G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") requested in recreate mode is greater than number\n";
       msg += "of remaining valid lines in file (" + std::to_string(nEventsRemaining) + ") and distrFileLoop is turned off.";
-      throw BDSException("BDSBunchUserFile>", msg);
+      throw BDSException("BDSBunchPtc>", msg);
     }
+  // note we cannot update ngenerate here as we're already being called from the primary
+  // generator action in the start of the event after BeamOn(nEvents) has been called
+  // therefore this adjustment for recreation + match is done earlier in this class
 }
 
