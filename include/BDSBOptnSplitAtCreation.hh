@@ -37,8 +37,8 @@ public:
   virtual G4VParticleChange *GenerateBiasingFinalState(const G4Track *, const G4Step *);
 
   void SplitMesonAtCreation(const G4Track *track);
-  // void PlayRussianRoulette(const G4Track *track);
-  // void SplitHighWeightMuon(const G4Track *track);
+  void PlayRussianRoulette(const G4Track *track);
+  void SplitHighWeightMuon(const G4Track *track);
 
 private:
   G4VParticleChange fParticleChange;
