@@ -43,6 +43,13 @@ public:
 private:
   G4VParticleChange fParticleChange;
   G4ParticleChangeForNothing fParticleChangeForNothing;
+
+  // muon flux control for convenience
+  G4double fMinWeight;
+  G4double fMaxWeight;
+  G4bool fShouldRussianRoulette;
+  G4bool fShouldSplitHighWeightParticles;
+
 };
 
 #endif

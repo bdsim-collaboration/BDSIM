@@ -1,9 +1,15 @@
 #include "BDSBOptnSplitAtCreation.hh"
 #include "BDSMuonFluxEnhancementTrackInformation.hh"
+#include "BDSGlobalConstants.hh"
 
 BDSBOptnSplitAtCreation::BDSBOptnSplitAtCreation(G4String name) :
-G4VBiasingOperation(name), fParticleChange(), fParticleChangeForNothing()
-{}
+G4VBiasingOperation(name), fParticleChange(), fParticleChangeForNothing(),
+fMinWeight(BDSGlobalConstants::Instance()->MuonFluxBiasingMinWeight()),
+fMaxWeight(BDSGlobalConstants::Instance()->MuonFluxBiasingMaxWeight())
+{
+  fShouldSplitHighWeightParticles = fMaxWeight > 0.;
+  fShouldRussianRoulette = (fMinWeight > 0. && fMaxWeight > 0. && fMaxWeight > fMinWeight);
+}
 
 BDSBOptnSplitAtCreation::~BDSBOptnSplitAtCreation(){}
 
@@ -18,10 +24,10 @@ G4double BDSBOptnSplitAtCreation::DistanceToApplyOperation(const G4Track *track,
   G4int pdgID = track->GetParticleDefinition()->GetPDGEncoding();
 
   if (info->GetTrackType() == kOriginalTrack){
-    if (abs(pdgID) != 13 && !info->GetHasClone()){
+    if (abs(pdgID) != 13 && !info->GetHasClone()){// always clone original mesons/gammas
       *condition = Forced;
     }
-    else if (abs(pdgID) == 13){
+    else if (abs(pdgID) == 13){ // always kill original muons
       *condition = Forced;
     }
   }
@@ -29,17 +35,17 @@ G4double BDSBOptnSplitAtCreation::DistanceToApplyOperation(const G4Track *track,
   {
     // here we have a clone.
     // apply split/RR if muon is outside window
-    //TODO: get min and max weight from options
-    static G4double minWeight = 1E-4;
-    static G4double maxWeight = 1E-3;
-  
+    
     if (abs(pdgID) == 13 &&
-        (track->GetWeight() < minWeight ||
-         track->GetWeight() > maxWeight))
+        (fShouldRussianRoulette || fShouldSplitHighWeightParticles))
+    { 
       *condition = Forced;
-    // apply RR if meson/gamma is bellow weight threshold
-    if (abs(pdgID) != 13 && track->GetWeight() < minWeight)
+    }
+    
+    if (abs(pdgID) != 13 && fShouldRussianRoulette)
+    { 
       *condition = Forced;
+    }
   } 
   return DBL_MAX;
 }
@@ -47,32 +53,34 @@ G4double BDSBOptnSplitAtCreation::DistanceToApplyOperation(const G4Track *track,
 G4VParticleChange *BDSBOptnSplitAtCreation::GenerateBiasingFinalState(const G4Track *track, const G4Step*){
   BDSMuonFluxEnhancementTrackInformation *info = static_cast<BDSMuonFluxEnhancementTrackInformation*> (track->GetUserInformation());
   G4int pdgID = track->GetParticleDefinition()->GetPDGEncoding();
-  //TODO: get minWeight from options
-  static G4double minWeight = 1E-4;
-  static G4double maxWeight = 1E-3;
-  // TODO: use weight for russian roulette
-  // G4double weight = track->GetWeight();
-  if (info->GetTrackType() == kOriginalTrack && !info->GetHasClone() && track->GetCurrentStepNumber() == 1){
+  if (abs(pdgID) != 13 &&
+      info->GetTrackType() == kOriginalTrack && 
+      !info->GetHasClone() && 
+      track->GetCurrentStepNumber() == 1)
+  { // original mesons/gamma are always cloned at creation since they always have weight=1
     SplitMesonAtCreation(track);
   }
-  else if (info->GetTrackType() == kCloneTrack && abs(pdgID) != 13 && track->GetWeight() < minWeight)
-  {
-    // If track is a clone (meson or gamma) and its weight drops under 1E-4, play russian roullette
+  else if (abs(pdgID) != 13 && 
+           info->GetTrackType() == kCloneTrack && 
+           track->GetWeight() < fMinWeight && 
+           fShouldRussianRoulette)
+  { // clone mesons/gamma are russian roulette'd only if below weight threshold
     PlayRussianRoulette(track);
   }
-  else if (abs(pdgID) == 13 && info->GetTrackType() == kOriginalTrack){
-    // kill muons coming from non-clones
+  else if (abs(pdgID) == 13 && 
+           info->GetTrackType() == kOriginalTrack)
+  {// kill original muons
     fParticleChange.Initialize(*track);
     fParticleChange.SetSecondaryWeightByProcess(true);
     fParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
   }
-  else if (info->GetTrackType() == kCloneTrack && abs(pdgID) == 13)
+  else if (abs(pdgID) == 13 &&
+           info->GetTrackType() == kCloneTrack)
   {
-    // If track is a clone (muon) and  its weight is above 1E-3, split it.
-    if (track->GetWeight() > maxWeight)
-      SplitHighWeightMuon(track);
-    else if (track->GetWeight() < minWeight)
-      PlayRussianRoulette(track);
+    if (track->GetWeight() > fMaxWeight && fShouldSplitHighWeightParticles)
+    {SplitHighWeightMuon(track);}
+    else if (track->GetWeight() < fMinWeight && fShouldRussianRoulette)
+    {PlayRussianRoulette(track);}
   }
   else{
     fParticleChangeForNothing.Initialize(*track);
@@ -108,14 +116,11 @@ void BDSBOptnSplitAtCreation::SplitMesonAtCreation(const G4Track *track){
 void BDSBOptnSplitAtCreation::SplitHighWeightMuon(const G4Track *track)
 {
   fParticleChange.Initialize(*track);
-  //TODO: get minWeight from options
-  // static G4double minWeight = 1E-4;
-  static G4double maxWeight = 1E-3;
   
   BDSMuonFluxEnhancementTrackInformation *infoOriginal = static_cast<BDSMuonFluxEnhancementTrackInformation*> (track->GetUserInformation());
 
   G4double weight = track->GetWeight();
-  G4int nClones = (int)(weight / maxWeight);
+  G4int nClones = (int)(weight / fMaxWeight);
   G4double finalWeight = weight / nClones;
 
   fParticleChange.ProposeParentWeight(finalWeight);
@@ -149,13 +154,10 @@ void BDSBOptnSplitAtCreation::PlayRussianRoulette(const G4Track *track)
 {
   fParticleChange.Initialize(*track);
   fParticleChange.SetSecondaryWeightByProcess(true);
-  //TODO: get min and max weight from options
-  static G4double minWeight = 1E-4;
-  static G4double maxWeight = 1E-3;
   // fParticleChange.SetNumberOfSecondaries(0);
 
   G4double weight = track->GetWeight();
-  G4double killingProb = 1.0 - weight / (0.5 * (minWeight + maxWeight));
+  G4double killingProb = 1.0 - weight / (0.5 * (fMinWeight + fMaxWeight));
 
   if (G4RandFlat::shoot() < killingProb)
   {
@@ -163,7 +165,7 @@ void BDSBOptnSplitAtCreation::PlayRussianRoulette(const G4Track *track)
   }
   else
   {
-    fParticleChange.ProposeParentWeight(0.5 * (minWeight+maxWeight));
+    fParticleChange.ProposeParentWeight(0.5 * (fMinWeight + fMaxWeight));
   }
 }
 
