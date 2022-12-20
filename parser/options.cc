@@ -355,6 +355,13 @@ void Options::PublishMembers()
   publish("biasForWorldVacuum",  &Options::biasForWorldVacuum);
   publish("worldVacuumVolumeNames",&Options::worldVacuumVolumeNames);
 
+  // muon flux options
+  publish("useMuonFluxBiasing", &Options::useMuonFluxBiasing);
+  publish("muonFluxBiasingMinWeight", &Options::muonFluxBiasingMinWeight);
+  publish("muonFluxBiasingMaxWeight", &Options::muonFluxBiasingMaxWeight);
+  publish("muonFluxBiasingMaxZDecay", &Options::muonFluxBiasingMaxZDecay);
+  publish("muonFluxBiasingPrimaryXsFactor", &Options::muonFluxBiasingPrimaryXsFactor);
+  
   // options which influence tracking
   publish("integratorSet",            &Options::integratorSet);
   publish("lengthSafety",             &Options::lengthSafety);
