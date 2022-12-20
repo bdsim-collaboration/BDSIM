@@ -1273,8 +1273,8 @@ void BDSDetectorConstruction::ConstructSDandField()
 
   ConstructScoringMeshes();
 
-  //TODO: add option to switch this off
-  ConstructBiasingMuonFlux();
+  if (BDSGlobalConstants::Instance()->UseMuonFluxBiasing())
+  {ConstructBiasingMuonFlux();}
 }
 
 void BDSDetectorConstruction::ConstructBiasingMuonFlux(){
