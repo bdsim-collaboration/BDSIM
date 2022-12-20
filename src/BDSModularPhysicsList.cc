@@ -326,7 +326,9 @@ void BDSModularPhysicsList::ConstructProcess()
   G4VModularPhysicsList::ConstructProcess();
   DumpCutValuesTable(100);
 
-  //TODO: add option to switch this off
+  if (!BDSGlobalConstants::Instance()->UseMuonFluxBiasing())
+  {return;}
+  
   G4GenericBiasingPhysics *biasPhys = new G4GenericBiasingPhysics();
   biasPhys->Bias("pi+", {"Decay", "pi+Inelastic"});
   biasPhys->Bias("pi-", {"Decay", "pi-Inelastic"});
@@ -338,16 +340,16 @@ void BDSModularPhysicsList::ConstructProcess()
     // if (config.compareTo("Target") == 0)
     //   biasPhys->Bias("proton", {"protonInelastic"});
 
-    biasPhys->NonPhysicsBias("pi+");
-    biasPhys->NonPhysicsBias("pi-");
-    biasPhys->NonPhysicsBias("kaon+");
-    biasPhys->NonPhysicsBias("kaon-");
-    biasPhys->NonPhysicsBias("kaon0L");
-    biasPhys->NonPhysicsBias("gamma");
-    biasPhys->NonPhysicsBias("mu+");
-    biasPhys->NonPhysicsBias("mu-");
+  biasPhys->NonPhysicsBias("pi+");
+  biasPhys->NonPhysicsBias("pi-");
+  biasPhys->NonPhysicsBias("kaon+");
+  biasPhys->NonPhysicsBias("kaon-");
+  biasPhys->NonPhysicsBias("kaon0L");
+  biasPhys->NonPhysicsBias("gamma");
+  biasPhys->NonPhysicsBias("mu+");
+  biasPhys->NonPhysicsBias("mu-");
 
-    biasPhys->ConstructProcess();
+  biasPhys->ConstructProcess();
 }
 
 void BDSModularPhysicsList::Print()

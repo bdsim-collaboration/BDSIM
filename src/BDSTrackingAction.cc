@@ -56,12 +56,14 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode,
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
-  //TODO: only attach info if we're biasing
-  BDSMuonFluxEnhancementTrackInformation *trackInfo = static_cast<BDSMuonFluxEnhancementTrackInformation*>(track->GetUserInformation());
-  if (!trackInfo)
+  if (BDSGlobalConstants::Instance()->UseMuonFluxBiasing())
   {
-    trackInfo = new BDSMuonFluxEnhancementTrackInformation();
-    track->SetUserInformation(trackInfo);
+    BDSMuonFluxEnhancementTrackInformation *trackInfo = static_cast<BDSMuonFluxEnhancementTrackInformation*>(track->GetUserInformation());
+    if (!trackInfo)
+    {
+      trackInfo = new BDSMuonFluxEnhancementTrackInformation();
+      track->SetUserInformation(trackInfo);
+    }
   }
 
   eventAction->IncrementNTracks();
@@ -140,7 +142,9 @@ void BDSTrackingAction::PostUserTrackingAction(const G4Track* track)
 	{eventAction->SetPrimaryAbsorbedInCollimator(true);}
     }
 
-  //TODO: only propagate to daughters if we're biasing
+  if (!BDSGlobalConstants::Instance()->UseMuonFluxBiasing())
+  {return;}
+  
   BDSMuonFluxEnhancementTrackInformation *info = static_cast<BDSMuonFluxEnhancementTrackInformation*>(track->GetUserInformation());
   G4TrackVector *secondaries = fpTrackingManager->GimmeSecondaries();
   if (!secondaries)
@@ -152,7 +156,8 @@ void BDSTrackingAction::PostUserTrackingAction(const G4Track* track)
   for (std::size_t i = 0; i < nSecondaries; i++)
   {
     BDSMuonFluxEnhancementTrackInformation *secondaryInfo = static_cast<BDSMuonFluxEnhancementTrackInformation*> ((*secondaries)[i]->GetUserInformation());
-    if (!secondaryInfo){
+    if (!secondaryInfo)
+    {
       secondaryInfo = new BDSMuonFluxEnhancementTrackInformation();
       secondaryInfo->SetTrackType(info->GetTrackType());
       secondaryInfo->SetParentPDGid(pdgID);
