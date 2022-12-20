@@ -22,6 +22,7 @@
 #include "G4VSolid.hh"
 #include "BDSMuonFluxEnhancementTrackInformation.hh"
 #include "G4String.hh"
+#include "BDSGlobalConstants.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 /// \class BDSBOptrMuonFluxEnhancement
@@ -191,10 +192,9 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
 
     G4ThreeVector worldPosition = pointPre->GetPosition();
     G4ThreeVector worldMomDir = pointPre->GetMomentumDirection();
-    //TODO: set option for maximum z
-    // G4double dz = BiasingUtility::GetInstance()->GetDecayZMax() / CLHEP::mm -
-    //               worldPosition.getZ() / CLHEP::mm;
-    G4double dz = 3000*CLHEP::mm - worldPosition.getZ() / CLHEP::mm;
+    
+    static G4double maxZ = BDSGlobalConstants::Instance()->MuonFluxBiasingMaxZDecay()/CLHEP::mm;
+    G4double dz = maxZ - worldPosition.getZ() / CLHEP::mm;
     G4double dx = worldMomDir.getX() / worldMomDir.getZ() * dz;
     G4double dy = worldMomDir.getY() / worldMomDir.getZ() * dz;
 
