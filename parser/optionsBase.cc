@@ -230,6 +230,13 @@ OptionsBase::OptionsBase()
   biasForWorldVacuum       = "";
   worldVacuumVolumeNames   = "";
 
+  //muon flux options
+  useMuonFluxBiasing = false;
+  muonFluxBiasingMinWeight = -1.; // default case. No russian roulette. No splitting
+  muonFluxBiasingMaxWeight = -1.; // default case. No russian roulette. No splitting
+  muonFluxBiasingMaxZDecay = -1.; // default case. No biasing. TODO: see comment in header file.
+  muonFluxBiasingPrimaryXsFactor = -1.; // default case. No xs modification for the primary particle.
+  
   // tracking options
   integratorSet            = "bdsimmatrix";
   lengthSafety             = 1e-9;   // be very careful adjusting this as it affects all the geometry

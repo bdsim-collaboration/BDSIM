@@ -341,6 +341,11 @@ public:
   inline G4double DEThresholdForScattering() const {return G4double(options.dEThresholdForScattering)*CLHEP::GeV;}
   inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
   inline G4double BackupStepperMomLimit()    const {return G4double(options.backupStepperMomLimit)*CLHEP::rad;}
+  inline G4bool   UseMuonFluxBiasing()       const {return G4bool (options.useMuonFluxBiasing);}
+  inline G4double MuonFluxBiasingMinWeight() const {return G4double (options.muonFluxBiasingMinWeight);}
+  inline G4double MuonFluxBiasingMaxWeight() const {return G4double (options.muonFluxBiasingMaxWeight);}
+  inline G4double MuonFluxBiasingMaxZDecay() const {return G4double (options.muonFluxBiasingMaxZDecay);}
+  inline G4double MuonFluxBiasingPrimaryXsFactor() const {return G4double (options.muonFluxBiasingPrimaryXsFactor);}
 
   /// @{ options that require some implementation.
   G4bool StoreTrajectoryTransportationSteps() const;

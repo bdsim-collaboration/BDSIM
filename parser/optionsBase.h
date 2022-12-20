@@ -271,6 +271,15 @@ namespace GMAD
     std::string biasForWorldVacuum;
     std::string worldVacuumVolumeNames;
 
+    // muon flux options
+    // TODO: check with Laurie if simulation ALWAYS starts from 0m.
+    //       in that case, we could remove the bool flag and use only muonFluxBiasingMaxZDecay.
+    bool   useMuonFluxBiasing;
+    double muonFluxBiasingMinWeight;
+    double muonFluxBiasingMaxWeight;
+    double muonFluxBiasingMaxZDecay;
+    double muonFluxBiasingPrimaryXsFactor;
+
     // tracking related parameters
     std::string integratorSet;
     double   lengthSafety;
