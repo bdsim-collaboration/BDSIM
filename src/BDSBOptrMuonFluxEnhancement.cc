@@ -143,7 +143,6 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
 
 
   // No biasing for processes that do not kill the particle
-  // TODO: fix for K0L that produces warnings.
   G4ProcessType processType= callingProcess->GetWrappedProcess()->GetProcessType();
   if (processType != fHadronic && processType != fDecay && trackPDGid != 22){
     return nullptr;
