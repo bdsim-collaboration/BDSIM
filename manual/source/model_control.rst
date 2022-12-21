@@ -1078,8 +1078,7 @@ particle coordinates from the beginning. A warning will be printed out in this c
 |                                  | comment or empty lines.                               |               |
 +----------------------------------+-------------------------------------------------------+---------------+
 | `distrFileMatchLength`           | Option for certain distributions to simulate the same | No            |
-|                                  | number of events as are in the file. Currently works  |               |
-|                                  | for the `userfile` and `ptc` distribution.            |               |
+|                                  | number of events as are in the file.                  |               |
 +----------------------------------+-------------------------------------------------------+---------------+
 
 Skipping and Ignoring Lines:
@@ -1180,8 +1179,17 @@ Output from MAD-X PTC used as input for BDSIM.
 +==================================+=======================================================+
 | `distrFile`                      | PTC output file                                       |
 +----------------------------------+-------------------------------------------------------+
+| `distrFileMatchLength`           | whether to simulate the number of events matching     |
+|                                  | the lines in the file if ngenerate is not specified   |
++----------------------------------+-------------------------------------------------------+
+| `distrFileLoop`                  | whether to loop on the file (default off)             |
++----------------------------------+-------------------------------------------------------+
+| `nlinesSkip`                     | number of lines to skip into the file irrespective of |
+|                                  | their contents                                        |
++----------------------------------+-------------------------------------------------------+
 
 * Reference offsets specified in the gmad file such as `X0` are added to each coordinate.
+* The number of raw input lines (without interpretation) skipped is `nlinesIgnore` + `nlinesSkip`.
 
 
 eventgeneratorfile
