@@ -209,8 +209,8 @@ G4VBiasingOperation *BDSBOptrMuonFluxEnhancement::ProposeOccurenceBiasingOperati
     //   G4cout << "XStf = " << XStransformation << " d = " << distanceLeft << " analogXS = " << analogXS << G4endl;
     // }
     // XStransformation = 1. / (1.0 - std::exp(-analogXS * distanceLeft));
-    if (XStransformation > 1E4)
-    {XStransformation = 1E4;}
+    if (XStransformation > 1E8)
+    {XStransformation = 1E8;}
   }
 
   operation->SetBiasedCrossSection(abs(XStransformation*analogXS));
