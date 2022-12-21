@@ -37,12 +37,13 @@ G4double BDSBOptnSplitAtCreation::DistanceToApplyOperation(const G4Track *track,
     // apply split/RR if muon is outside window
     
     if (abs(pdgID) == 13 &&
-        (fShouldRussianRoulette || fShouldSplitHighWeightParticles))
+        ((fShouldRussianRoulette && track->GetWeight() < fMinWeight) || 
+         (fShouldSplitHighWeightParticles && track->GetWeight() > fMaxWeight)))
     { 
       *condition = Forced;
     }
     
-    if (abs(pdgID) != 13 && fShouldRussianRoulette)
+    if (abs(pdgID) != 13 && fShouldRussianRoulette && track->GetWeight() < fMinWeight)
     { 
       *condition = Forced;
     }
@@ -53,39 +54,81 @@ G4double BDSBOptnSplitAtCreation::DistanceToApplyOperation(const G4Track *track,
 G4VParticleChange *BDSBOptnSplitAtCreation::GenerateBiasingFinalState(const G4Track *track, const G4Step*){
   BDSMuonFluxEnhancementTrackInformation *info = static_cast<BDSMuonFluxEnhancementTrackInformation*> (track->GetUserInformation());
   G4int pdgID = track->GetParticleDefinition()->GetPDGEncoding();
-  if (abs(pdgID) != 13 &&
-      info->GetTrackType() == kOriginalTrack && 
-      !info->GetHasClone() && 
-      track->GetCurrentStepNumber() == 1)
-  { // original mesons/gamma are always cloned at creation since they always have weight=1
-    SplitMesonAtCreation(track);
-  }
-  else if (abs(pdgID) != 13 && 
-           info->GetTrackType() == kCloneTrack && 
-           track->GetWeight() < fMinWeight && 
-           fShouldRussianRoulette)
-  { // clone mesons/gamma are russian roulette'd only if below weight threshold
-    PlayRussianRoulette(track);
-  }
-  else if (abs(pdgID) == 13 && 
-           info->GetTrackType() == kOriginalTrack)
-  {// kill original muons
-    fParticleChange.Initialize(*track);
-    fParticleChange.SetSecondaryWeightByProcess(true);
-    fParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
-  }
-  else if (abs(pdgID) == 13 &&
-           info->GetTrackType() == kCloneTrack)
+  // for clarity, deal with originals and clones separately
+  if (info->GetTrackType() == kOriginalTrack)
   {
-    if (track->GetWeight() > fMaxWeight && fShouldSplitHighWeightParticles)
-    {SplitHighWeightMuon(track);}
-    else if (track->GetWeight() < fMinWeight && fShouldRussianRoulette)
-    {PlayRussianRoulette(track);}
+    if (abs(pdgID) != 13 &&
+        !info->GetHasClone() &&
+        track->GetCurrentStepNumber() == 1)
+    {// clone mesons/gammas
+      SplitMesonAtCreation(track);
+    }
+    else if (abs(pdgID) == 13)
+    {// kill original muons
+      fParticleChange.Initialize(*track);
+      fParticleChange.SetSecondaryWeightByProcess(true);
+      fParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
+    }
+    else
+    {
+      fParticleChangeForNothing.Initialize(*track);
+      return &fParticleChangeForNothing;
+    }
   }
-  else{
-    fParticleChangeForNothing.Initialize(*track);
-    return &fParticleChangeForNothing;
+  else
+  {
+    if(track->GetWeight() < fMinWeight &&
+       fShouldRussianRoulette)
+    {
+      // play russian roulette with low weight clones: mesons/gammas/muons
+      PlayRussianRoulette(track);
+    }
+    else if (abs(pdgID) == 13 &&
+             track->GetWeight() > fMaxWeight &&
+             fShouldSplitHighWeightParticles)
+    {
+      // split high weight muons
+      SplitHighWeightMuon(track);
+    }
+    else
+    {
+      fParticleChangeForNothing.Initialize(*track);
+      return &fParticleChangeForNothing;
+    }
   }
+  // if (abs(pdgID) != 13 &&
+  //     info->GetTrackType() == kOriginalTrack && 
+  //     !info->GetHasClone() && 
+  //     track->GetCurrentStepNumber() == 1)
+  // { // original mesons/gamma are always cloned at creation since they always have weight=1
+  //   SplitMesonAtCreation(track);
+  // }
+  // else if (abs(pdgID) != 13 && 
+  //          info->GetTrackType() == kCloneTrack && 
+  //          track->GetWeight() < fMinWeight && 
+  //          fShouldRussianRoulette)
+  // { // clone mesons/gamma are russian roulette'd only if below weight threshold
+  //   PlayRussianRoulette(track);
+  // }
+  // else if (abs(pdgID) == 13 && 
+  //          info->GetTrackType() == kOriginalTrack)
+  // {// kill original muons
+  //   fParticleChange.Initialize(*track);
+  //   fParticleChange.SetSecondaryWeightByProcess(true);
+  //   fParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
+  // }
+  // else if (abs(pdgID) == 13 &&
+  //          info->GetTrackType() == kCloneTrack)
+  // {
+  //   if (track->GetWeight() > fMaxWeight && fShouldSplitHighWeightParticles)
+  //   {SplitHighWeightMuon(track);}
+  //   else if (track->GetWeight() < fMinWeight && fShouldRussianRoulette)
+  //   {PlayRussianRoulette(track);}
+  // }
+  // else{
+  //   fParticleChangeForNothing.Initialize(*track);
+  //   return &fParticleChangeForNothing;
+  // }
   return &fParticleChange;
 }
 
@@ -120,11 +163,12 @@ void BDSBOptnSplitAtCreation::SplitHighWeightMuon(const G4Track *track)
   BDSMuonFluxEnhancementTrackInformation *infoOriginal = static_cast<BDSMuonFluxEnhancementTrackInformation*> (track->GetUserInformation());
 
   G4double weight = track->GetWeight();
-  G4int nClones = (int)(weight / fMaxWeight);
+  static G4double survivalWeight = 0.5*(fMaxWeight+fMinWeight);
+  G4int nClones = (int)(weight / survivalWeight);
   G4double finalWeight = weight / nClones;
 
   fParticleChange.ProposeParentWeight(finalWeight);
-  fParticleChange.SetNumberOfSecondaries(nClones);
+  fParticleChange.SetNumberOfSecondaries(nClones-1);
 
   G4ThreeVector vertexPos = track->GetVertexPosition();
   G4ThreeVector vertexMomDir = track->GetVertexMomentumDirection();
