@@ -36,7 +36,7 @@ G4double BDSBOptnSplitAtCreation::DistanceToApplyOperation(const G4Track *track,
     // here we have a clone.
     // apply split/RR if muon is outside window
     
-    if (abs(pdgID) == 13 &&
+    if (abs(pdgID) == 13 && track->GetCurrentStepNumber() == 1 &&
         ((fShouldRussianRoulette && track->GetWeight() < fMinWeight) || 
          (fShouldSplitHighWeightParticles && track->GetWeight() > fMaxWeight)))
     { 
