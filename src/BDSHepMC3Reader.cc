@@ -79,6 +79,9 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
   referenceBeamMomentumOffset = bunch->ReferenceBeamMomentumOffset();
   nEventsInFile = CountEventsInFile();
   OpenFile();
+  if (!bunch)
+    {throw BDSException(__METHOD_NAME__, "must be constructed with a valid BDSBunchEventGenerator instance");}
+  SkipEvents(bunch->eventGeneratorNEventsSkip);
 }
 
 BDSHepMC3Reader::~BDSHepMC3Reader()
@@ -100,10 +103,9 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 
 void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
 {
-  G4cout << "BDSHepMC3Reader::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
+  G4cout << __METHOD_NAME__ << "advancing file to event: " << eventOffset << G4endl;
   ThrowExceptionIfRecreateOffsetTooHigh(eventOffset);
-  for (G4int i = 0; i < eventOffset; i++)
-    {ReadSingleEvent();}
+  SkipEvents(eventOffset);
 }
 
 void BDSHepMC3Reader::OpenFile()
@@ -156,7 +158,9 @@ G4long BDSHepMC3Reader::CountEventsInFile()
   while (!reader->failed())
     {
       auto tempEvent = new HepMC3::GenEvent();
-      reader->read_event(*tempEvent);
+      bool readEventOK = reader->read_event(*tempEvent);
+      if (!readEventOK) // warn but continue
+        {G4cout << __METHOD_NAME__ << "error in reading event index " << nEvents << G4endl;}
       nEvents++;
       delete tempEvent;
     }
@@ -197,6 +201,18 @@ G4bool BDSHepMC3Reader::ReadSingleEvent()
       currentFileEventIndex++;
       return true;
     }
+}
+
+void BDSHepMC3Reader::SkipEvents(G4int nEventsToSkip)
+{
+  if (nEventsToSkip > nEventsInFile)
+    {
+      G4String msg = "number of events to skip (" + std::to_string(nEventsToSkip) + ") is greater than the number of events (";
+      msg += std::to_string(nEventsInFile) + ") in this file.";
+      throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
+    }
+  for (G4int i = 0; i < nEventsToSkip; i++)
+    {ReadSingleEvent();}
 }
 
 void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,

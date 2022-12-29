@@ -303,6 +303,7 @@ void Beam::PublishMembers()
 
   publish("offsetSampleMean",      &Beam::offsetSampleMean);
 
+  publish("eventGeneratorNEventsSkip", &Beam::eventGeneratorNEventsSkip);
   publish("eventGeneratorMinX",      &Beam::eventGeneratorMinX);
   publish("eventGeneratorMaxX",      &Beam::eventGeneratorMaxX);
   publish("eventGeneratorMinY",      &Beam::eventGeneratorMinY);
