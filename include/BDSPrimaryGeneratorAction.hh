@@ -63,7 +63,7 @@ public:
   
 private:
   /// For a file-based event generator there are a few checks we have to do - put in a function to keep tidy.
-  void GenerateEventFromFile(G4Event* anEvent);
+  void GeneratePrimariesFromFile(G4Event* anEvent);
   
   G4ParticleGun* particleGun;     ///< Geant4 particle gun that creates single particles.
   BDSBunch* bunch;                ///< BDSIM particle generator.

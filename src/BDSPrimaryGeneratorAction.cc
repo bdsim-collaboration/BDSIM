@@ -116,7 +116,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // events from external file
   if (generatorFromFile)
     {
-      GenerateEventFromFile(anEvent);
+      GeneratePrimariesFromFile(anEvent);
       return; // nothing else to be done here
     }
   
@@ -206,7 +206,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 }
 
 
-void BDSPrimaryGeneratorAction::GenerateEventFromFile(G4Event* anEvent)
+void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
 {
   G4bool distributionFinished = generatorFromFile->DistributionIsFinished(); // only happens if no looping
   G4int nGenerateRequested = BDSGlobalConstants::Instance()->NGenerate();
