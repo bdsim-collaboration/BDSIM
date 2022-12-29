@@ -39,6 +39,9 @@ namespace GMAD
  * In this, it must update the protected members in this class of endOfFileReached and
  * vertexGeneratedSuccessfully.
  *
+ * Matching the file length is done externally but by using the DistributionIsFinished() method
+ * in this class. Whether looping is permitted is known about in this class.
+ *
  * @author Laurie Nevay
  */
 

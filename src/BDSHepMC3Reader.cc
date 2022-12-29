@@ -98,7 +98,7 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
   vertexGeneratedSuccessfully = false;
   G4bool readEventOK = ReadSingleEvent();
   if (readEventOK)
-    {HepMC2G4(hepmcEvent, anEvent);}
+    {HepMC2G4(hepmcEvent, anEvent);} // this will update vertexGeneratedSuccessfully if one is created
 }
 
 void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
