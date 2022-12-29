@@ -87,7 +87,6 @@ protected:
   G4bool VertexInsideWorld(const G4ThreeVector& pos) const;
   
   G4bool endOfFileReached;
-  G4bool matchFileLength;
   G4bool loopFile;
   G4bool vertexGeneratedSuccessfully;
   G4long currentFileEventIndex;

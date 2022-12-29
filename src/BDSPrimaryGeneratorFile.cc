@@ -45,7 +45,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile():
   endOfFileReached(false),
-  matchFileLength(false),
   loopFile(false),
   vertexGeneratedSuccessfully(false),
   currentFileEventIndex(0),
