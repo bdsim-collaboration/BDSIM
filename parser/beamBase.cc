@@ -125,7 +125,8 @@ BeamBase::BeamBase()
   haloPSWeightFunction  = "";
 
   offsetSampleMean = false;
-
+  
+  eventGeneratorNEventsSkip = 0;
   eventGeneratorMinX  = -1e6;
   eventGeneratorMaxX  =  1e6;
   eventGeneratorMinY  = -1e6;

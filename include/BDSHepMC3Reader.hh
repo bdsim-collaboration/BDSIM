@@ -93,6 +93,10 @@ protected:
   /// Clear the hepmcEvent object, reallocate and read a single event and fill that member.
   /// Returns true if event read successfully, else false.
   G4bool ReadSingleEvent();
+  
+  /// Read events but do nothing with them. Will throw an exception if the number is greater
+  /// than the number of events in the file.
+  void SkipEvents(G4int nEventsToSkip);
 
   /// Conversion from HepMC::GenEvent to G4Event.
   void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);

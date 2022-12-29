@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSBunchEventGenerator::BDSBunchEventGenerator():
   BDSBunch("eventgenerator"),
+  eventGeneratorNEventsSkip(0),
   eventGeneratorMinX(0),
   eventGeneratorMaxX(0),
   eventGeneratorMinY(0),
@@ -74,7 +75,8 @@ void BDSBunchEventGenerator::SetOptions(const BDSParticleDefinition* beamParticl
 					const G4double               beamlineSIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
-
+  
+  eventGeneratorNEventsSkip = beam.eventGeneratorNEventsSkip;
   eventGeneratorMinX  = beam.eventGeneratorMinX * CLHEP::m;
   eventGeneratorMaxX  = beam.eventGeneratorMaxX * CLHEP::m;
   eventGeneratorMinY  = beam.eventGeneratorMinY * CLHEP::m;
@@ -100,6 +102,8 @@ void BDSBunchEventGenerator::SetOptions(const BDSParticleDefinition* beamParticl
 void BDSBunchEventGenerator::CheckParameters()
 {
   BDSBunch::CheckParameters();
+  if (eventGeneratorNEventsSkip < 0)
+    {throw BDSException(__METHOD_NAME__, "eventGeneratorNEventsSkip < 0");}
   if (eventGeneratorMinX >= eventGeneratorMaxX)
     {throw BDSException(__METHOD_NAME__, "eventGeneratorMinX >= eventGeneratorMaxX");}
   if (eventGeneratorMinY >= eventGeneratorMaxY)

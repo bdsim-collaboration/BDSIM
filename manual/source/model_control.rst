@@ -1208,10 +1208,12 @@ The following parameters are used to control the use of an event generator file.
 +----------------------------+-----------------------------------------------------------+
 | Option                     | Description                                               |
 +============================+===========================================================+
-| `distrType`                | This should be "eventgeneratorfile:format" where format   |
+| distrType                  | This should be "eventgeneratorfile:format" where format   |
 |                            | one of the acceptable formats listed below.               |
 +----------------------------+-----------------------------------------------------------+
-| `distrFile`                | The path to the input file desired.                       |
+| distrFile                  | The path to the input file desired                        |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorNEventsSkip  | Number of events to skip in the file                      |
 +----------------------------+-----------------------------------------------------------+
 | eventGeneratorMinX         | Minimum x coordinate accepted (m)                         |
 +----------------------------+-----------------------------------------------------------+

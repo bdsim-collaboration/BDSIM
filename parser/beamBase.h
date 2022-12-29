@@ -132,6 +132,7 @@ namespace GMAD
       bool offsetSampleMean;
 
       /// @{ Event generator file filter.
+      int    eventGeneratorNEventsSkip;
       double eventGeneratorMinX;
       double eventGeneratorMaxX;
       double eventGeneratorMinY;

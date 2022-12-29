@@ -42,6 +42,9 @@ public:
   BDSBunchEventGenerator& operator=(const BDSBunchEventGenerator&) = delete;
   BDSBunchEventGenerator(BDSBunchEventGenerator&) = delete;
   /// @}
+  
+  // Make friends so they can access protected members
+  friend class BDSHepMC3Reader;
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam&            beam,
 			  const BDSBunchType&          distrType,
@@ -66,6 +69,7 @@ protected:
   void ParseAcceptedParticleIDs();
 
   /// @{ Cache of limit.
+  G4int    eventGeneratorNEventsSkip;
   G4double eventGeneratorMinX;
   G4double eventGeneratorMaxX;
   G4double eventGeneratorMinY;
