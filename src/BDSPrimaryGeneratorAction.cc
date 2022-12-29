@@ -55,12 +55,16 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
   runAction(runActionIn),
   recreateFile(nullptr),
   eventOffset(0),
-  ionPrimary(bunchIn->BeamParticleIsAnIon()),
-  distrFileMatchLength(false),
+  ionPrimary(false),
+  distrFileMatchLength(beam.distrFileMatchLength),
   ionCached(false),
   oneTurnMap(nullptr),
   generatorFromFile(nullptr)
 {
+  if (!bunchIn)
+    {throw BDSException(__METHOD_NAME__, "valid BDSBunch required");}
+  ionPrimary = bunchIn->BeamParticleIsAnIon();
+  
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
   writeASCIISeedState = BDSGlobalConstants::Instance()->WriteSeedState();
