@@ -131,6 +131,8 @@ New Features
 
 **Sensitivity & Output**
 
+* Add an option :code:`uprootCompatible` to read the output file with uproot. If set to 1,
+  it corresponds to have :code:`samplersSplitLevel=1` and :code:`modelSplitLevel=2`.
 * Samplers now have the parameter :code:`partID={11,-11}`, which for example can be used
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
