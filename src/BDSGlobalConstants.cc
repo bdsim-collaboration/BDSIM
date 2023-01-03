@@ -185,6 +185,14 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 	    {*no.second = false;}
 	}
     }
+
+  // uproot
+  if (options.uprootCompatible == 1)
+  {
+    options.samplersSplitLevel = 1;
+    options.modelSplitLevel = 2;
+  }
+
 #if G4VERSION_NUMBER > 1079
   if (options.HasBeenSet("scintYieldFactor"))
     {BDS::Warning("The option \"scintYieldFactor\" has no effect with Geant4 11.0 onwards");}

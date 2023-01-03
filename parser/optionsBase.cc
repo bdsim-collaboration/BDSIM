@@ -337,6 +337,8 @@ OptionsBase::OptionsBase()
   storeModel               = true;
 
   samplersSplitLevel       = 0;
+  modelSplitLevel          = 1;
+  uprootCompatible         = 0;
 
   // circular options
   nturns                   = 1;
