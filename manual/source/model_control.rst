@@ -3154,6 +3154,13 @@ with the following options.
 | samplersSplitLevel                 | The ROOT split-level of the branch. Default 0 (unsplit). Set to 1  |
 |                                    | or 2 to allow columnar access (e.g. with `uproot`).                |
 +------------------------------------+--------------------------------------------------------------------+
+| modelSplitLevel                    | The ROOT split-level of the branch. Default 1. Set to 2            |
+|                                    | to allow columnar access (e.g. with `uproot`).                     |
++------------------------------------+--------------------------------------------------------------------+
+| uprootCompatible                   | The ROOT split-level for the branches samplers and model.          |
+|                                    | Default 0. Set to 1 will set samplersSplitLevel = 1 and            |
+|                                    | ModelSplitLevel = 1.                                               |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectory                    | Whether to store trajectories. If turned on, only the primary      |
 |                                    | particle(s) trajectory(ies) are stored by default. This is         |
 |                                    | required for the storage of any other trajectories at all. Note    |
@@ -3161,6 +3168,9 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectories                  | An alias to `storeTrajectory`                                      |
 +------------------------------------+--------------------------------------------------------------------+
+
+.. note:: Using :code:`samplersSplitLevel` > 0 could lead to increasing simulation time in the case of many samplers
+          and, therefore the optics computation.
 
 .. _options-trajectory-filtering:
 

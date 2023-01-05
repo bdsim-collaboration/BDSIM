@@ -378,6 +378,8 @@ namespace GMAD
     bool        storeModel;
 
     int         samplersSplitLevel;
+    int         modelSplitLevel;
+    int         uprootCompatible;
 
     // circular options
     int         nturns;
