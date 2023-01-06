@@ -60,8 +60,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   nCollimators(0),
   nCavities(0),
-  runEndedEarly(false),
-  nEventsInOriginalDistrFile(0),
   localSamplersInitialised(false),
   localCollimatorsInitialised(false)
 {
@@ -470,6 +468,4 @@ void BDSOutputStructures::ClearStructuresEventLevel()
 void BDSOutputStructures::ClearStructuresRunLevel()
 {
   runInfo->Flush();
-  runEndedEarly = false;
-  nEventsInOriginalDistrFile = 0;
 }

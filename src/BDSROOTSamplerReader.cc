@@ -102,6 +102,8 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
 	  vertexGeneratedSuccessfully = true;
 	  nEventsReadThatPassedFilters++;
 	}
+      else
+	{nEventsSkipped++;}
       
       currentFileEventIndex++;
     }
@@ -113,6 +115,7 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
 
 void BDSROOTSamplerReader::RecreateAdvanceToEvent(G4int eventOffset)
 {
+  BDSPrimaryGeneratorFile::RecreateAdvanceToEvent(eventOffset);
   G4cout << "BDSROOTSamplerLoader::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
   ThrowExceptionIfRecreateOffsetTooHigh(eventOffset);
   for (G4int i = 0; i < eventOffset; i++)

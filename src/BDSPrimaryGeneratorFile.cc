@@ -50,6 +50,7 @@ BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile():
   currentFileEventIndex(0),
   nEventsInFile(0),
   nEventsReadThatPassedFilters(0),
+  nEventsSkipped(0),
   worldSolid(nullptr)
 {;}
 
@@ -72,6 +73,11 @@ G4bool BDSPrimaryGeneratorFile::GeneratePrimaryVertexSafe(G4Event* event)
   while (! (endOfFileReached || vertexGeneratedSuccessfully) )
     {GeneratePrimaryVertex(event);} // derived class provides this; it must update vertexGeneratedSuccessfully
   return vertexGeneratedSuccessfully;
+}
+
+void BDSPrimaryGeneratorFile::RecreateAdvanceToEvent(G4int eventOffset)
+{
+  nEventsSkipped = eventOffset;
 }
 
 G4long BDSPrimaryGeneratorFile::NEventsLeftInFile() const

@@ -28,7 +28,8 @@ BDSOutputROOTEventRunInfo::BDSOutputROOTEventRunInfo():
   stopTime(time_t()),
   durationWall(0),
   durationCPU(0),
-  seedStateAtStart("")
+  nEventsInFile(0),
+  nEventsInFileSkipped(0)
 {;}
 
 BDSOutputROOTEventRunInfo::BDSOutputROOTEventRunInfo(const BDSOutputROOTEventInfo* info):
@@ -36,7 +37,9 @@ BDSOutputROOTEventRunInfo::BDSOutputROOTEventRunInfo(const BDSOutputROOTEventInf
   stopTime(info->stopTime),
   durationWall(info->durationWall),
   durationCPU(info->durationCPU),
-  seedStateAtStart(info->seedStateAtStart)
+  seedStateAtStart(info->seedStateAtStart),
+  nEventsInFile(0),
+  nEventsInFileSkipped(0)
 {;}
 
 BDSOutputROOTEventRunInfo::~BDSOutputROOTEventRunInfo()
@@ -49,4 +52,6 @@ void BDSOutputROOTEventRunInfo::Flush()
   durationWall     = 0;
   durationCPU      = 0;
   seedStateAtStart = "";
+  nEventsInFile    = 0;
+  nEventsInFileSkipped = 0;
 }

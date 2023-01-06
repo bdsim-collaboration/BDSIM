@@ -61,7 +61,7 @@ public:
   /// Return false if not able to generate a primary vertex.
   G4bool GeneratePrimaryVertexSafe(G4Event* event);
   
-  virtual void RecreateAdvanceToEvent(G4int eventOffset) = 0;
+  virtual void RecreateAdvanceToEvent(G4int eventOffset);
   
   /// Return the number of events in the file - not necessarily the number that
   /// match the filters but that are there in total.
@@ -73,6 +73,9 @@ public:
   
   /// Accessor.
   G4long NEventsReadThatPassedFilters() const {return nEventsReadThatPassedFilters;}
+
+  /// Return the offset into the file if any.
+  G4long NEventsSkipped() const {return nEventsSkipped;}
   
   /// Report whether the distribution is finished generating.
   G4bool DistributionIsFinished() const {return endOfFileReached;}
@@ -92,6 +95,7 @@ protected:
   G4long currentFileEventIndex;
   G4long nEventsInFile;
   G4long nEventsReadThatPassedFilters;
+  G4long nEventsSkipped;
   mutable G4VSolid* worldSolid;
 };
 

@@ -194,9 +194,6 @@ protected:
   std::map<G4Material*, short int> materialToID;
   std::map<short int, G4String>    materialIDToNameUnique;
   
-  G4bool runEndedEarly;
-  G4long nEventsInOriginalDistrFile;
-  
 private:
   /// Whether we've set up the member vector of samplers. Can only be done once the geometry
   /// is constructed so it's done in initialisation. This happens with each new file, but we
