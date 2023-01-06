@@ -69,7 +69,8 @@ BDSRunAction::BDSRunAction(BDSOutput*      outputIn,
   eventAction(eventActionIn),
   trajectorySamplerID(trajectorySamplerIDIn),
   runEndedEarly(false),
-  nEventsInOriginalDistrFile(0)
+  nEventsInOriginalDistrFile(0),
+  nEventsDistrFileSkipped(0)
 {;}
 
 BDSRunAction::~BDSRunAction()
@@ -82,6 +83,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   // reset variables for this run
   runEndedEarly = false;
   nEventsInOriginalDistrFile = 0;
+  nEventsDistrFileSkipped = 0;
   
   if (BDSGlobalConstants::Instance()->PrintPhysicsProcesses())
     {PrintAllProcessesForAllParticles();}
@@ -156,7 +158,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 	 << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
-  output->FillRun(info, runEndedEarly, nEventsInOriginalDistrFile);
+  output->FillRun(info, runEndedEarly, nEventsInOriginalDistrFile, nEventsDistrFileSkipped);
   output->CloseFile();
   info->Flush();
 
@@ -231,8 +233,9 @@ void BDSRunAction::CheckTrajectoryOptions() const
 }
 
 void BDSRunAction::NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrFileIn,
-                                                      G4long nEventsReadThatPassedFiltersIn)
+                                                      G4long nEventsDistrFileSkippedIn)
 {
   runEndedEarly = true;
   nEventsInOriginalDistrFile = nEventsInOriginalDistrFileIn;
+  nEventsDistrFileSkipped = nEventsDistrFileSkippedIn;
 }

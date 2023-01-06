@@ -146,7 +146,8 @@ public:
   /// Copy run information to output structure.
   void FillRun(const BDSEventInfo* info,
                G4bool runEndedEarlyIn,
-               G4long nEventsInOriginalDistrFileIn);
+               G4long nEventsInOriginalDistrFileIn,
+               G4long nEventsDistrFileSkippedIn);
   
   /// Test whether a sampler name is invalid or not.
   static G4bool InvalidSamplerName(const G4String& samplerName);
@@ -269,7 +270,10 @@ private:
                                    const G4THitsMap<G4double>* hitMap);
 
   /// Fill run level summary information.
-  void FillRunInfo(const BDSEventInfo* info);
+  void FillRunInfo(const BDSEventInfo* info,
+                   G4bool runEndedEarlyIn,
+                   G4long nEventsInOriginalDistrFileIn,
+                   G4long nEventsDistrFileSkippedIn);
 
   /// Utility function to copy out select bins from one histogram to another for 1D
   /// histograms only.

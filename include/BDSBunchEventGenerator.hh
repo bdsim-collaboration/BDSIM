@@ -45,6 +45,8 @@ public:
   
   // Make friends so they can access protected members
   friend class BDSHepMC3Reader;
+  friend class BDSROOTSamplerReader;
+  
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam&            beam,
 			  const BDSBunchType&          distrType,

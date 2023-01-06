@@ -103,6 +103,7 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 
 void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
 {
+  BDSPrimaryGeneratorFile::RecreateAdvanceToEvent(eventOffset);
   G4cout << __METHOD_NAME__ << "advancing file to event: " << eventOffset << G4endl;
   ThrowExceptionIfRecreateOffsetTooHigh(eventOffset);
   SkipEvents(eventOffset);
@@ -329,6 +330,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
   if (g4vtx->GetNumberOfParticle() == 0)
     {// no particles found that pass criteria... we can't simulate this event... abort and move on
       delete g4vtx;
+      nEventsSkipped++;
       if (warnAboutSkippedParticles)
 	{G4cout << __METHOD_NAME__ << "no particles found in event index in file: " << currentFileEventIndex << G4endl;}
       return;

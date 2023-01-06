@@ -56,7 +56,7 @@ public:
   /// Record that the run was ended early and the original number of events in the
   /// input distribution file that we finished early.
   void NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrFileIn,
-                                          G4long nEventsReadThatPassedFiltersIn);
+                                          G4long nEventsDistrFileSkippedIn);
 
 private:
   BDSRunAction() = delete;
@@ -87,6 +87,7 @@ private:
   
   G4bool runEndedEarly;
   G4long nEventsInOriginalDistrFile;
+  G4long nEventsDistrFileSkipped;
 };
 
 #endif
