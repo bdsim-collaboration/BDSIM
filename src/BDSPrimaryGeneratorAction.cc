@@ -215,24 +215,34 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
   G4bool distributionFinished = generatorFromFile->DistributionIsFinished(); // only happens if no looping
   G4int nGenerateRequested = BDSGlobalConstants::Instance()->NGenerate();
 
-  if (distributionFinished && distrFileMatchLength)
+  if (distributionFinished)
     {
-      runAction->NotifyOfCompletionOfInputDistrFile(generatorFromFile->NEventsInFile(),
-						    generatorFromFile->NEventsReadThatPassedFilters());
-      G4RunManager::GetRunManager()->AbortRun();
-      return;
+      G4bool endRunNow = false;
+      if (distrFileMatchLength)
+	{
+	  endRunNow = true;
+	  G4cout << __METHOD_NAME__ << "distribution file finished (matched in length) - ending run" << G4endl;
+	}
+      else if (generatorFromFile->NEventsReadThatPassedFilters() < nGenerateRequested)
+	{// not matching the file length specifically but requested a certain number of events
+	  endRunNow = true;
+	  G4int currentEventIndex = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent();
+	  G4cerr << __METHOD_NAME__ << "unable to generate " << nGenerateRequested
+		 << " events as fewer events passed the filters in the file." << G4endl;
+	  G4cerr << __METHOD_NAME__ << currentEventIndex << " events generated" << G4endl;
+	}
+      // common bit to artifically abort the event and then end the run now
+      if (endRunNow)
+	{
+	  anEvent->SetEventAborted();
+	  G4EventManager::GetEventManager()->AbortCurrentEvent();
+	  runAction->NotifyOfCompletionOfInputDistrFile(generatorFromFile->NEventsInFile(),
+							generatorFromFile->NEventsSkipped());
+	  G4RunManager::GetRunManager()->AbortRun();
+	  return; // don't generate anything - just return
+	}
     }
-  else if (distributionFinished && (generatorFromFile->NEventsReadThatPassedFilters() < nGenerateRequested) )
-    {
-      G4int currentEventIndex = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent();
-      G4cerr << __METHOD_NAME__ << "unable to generate " << nGenerateRequested
-	     << " events as fewer events passed the filters in the file." << G4endl;
-      G4cerr << __METHOD_NAME__ << currentEventIndex << " events generated" << G4endl;
-      anEvent->SetEventAborted();
-      G4EventManager::GetEventManager()->AbortCurrentEvent();
-      G4RunManager::GetRunManager()->AbortRun();
-      return;
-    }
+  
   G4bool generatedVertexOK = generatorFromFile->GeneratePrimaryVertexSafe(anEvent);
   if (!generatedVertexOK)
     {	
