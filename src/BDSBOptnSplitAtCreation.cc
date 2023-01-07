@@ -58,7 +58,7 @@ G4VParticleChange *BDSBOptnSplitAtCreation::GenerateBiasingFinalState(const G4Tr
   if (info->GetTrackType() == kOriginalTrack)
   {
     if (abs(pdgID) != 13 &&
-        !info->GetHasClone() &&
+        (!info->GetHasClone()) &&
         track->GetCurrentStepNumber() == 1)
     {// clone mesons/gammas
       SplitMesonAtCreation(track);
