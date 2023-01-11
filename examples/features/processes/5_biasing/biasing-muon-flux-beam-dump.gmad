@@ -1,0 +1,51 @@
+! Define a box of 3m x 3m x 3m (TAX) of copper and a sampler plane to be placed just after the box
+
+! specify biasing configuration (comment the line below to run in analog mode)
+! The configuration "TAX" does not alter the interaction cross-sections for the primary particle
+!option, biasingConfiguration="TAX";
+
+tax: rcol, l=3*m, material="copper";
+sampler: marker;
+
+! Define beamline
+l1: line=(tax, sampler);
+use, period=l1;
+
+! Score particles
+sample, range = sampler;
+
+
+! beam definition
+beam, particle="proton", momentum=400.0*GeV, distrType="reference",
+      X0=0.0*m, Y0=0.0*m, Z0=0.0*m, Xp0=0.0*GeV, Yp0=0.0*GeV;
+
+! physics
+!option, physicsList = "g4FTFP_BERT",
+option, physicsList="em ftfp_bert decay muon hadronic_elastic em_extra ion";
+option, minimumKineticEnergy = 1.0*GeV,
+        killNeutrinos=1;
+
+
+! trajectory options to reduce output size
+option, storeApertureImpacts=0,
+        storeApertureImpactsHistograms=0,
+        storeCollimatorHits=0,
+        storeCollimatorInfo=0,
+        storeEloss=0;
+
+! use extra processes
+option, geant4PhysicsMacroFileName="extraphysics.mac";
+
+! muon flux biasing
+option, useMuonFluxBiasing=1,
+        muonFluxBiasingMinWeight=-1,
+        muonFluxBiasingMaxWeight=-1,
+        muonFluxBiasingMaxZDecay=3000*mm;
+
+!option, storeTrajectories=1,
+!        storeTrajectoryParticleID="13 -13",
+!        storeTrajectorySamplerID="sampler",
+!        storeTrajectoryTransportationSteps=0,
+!        trajectoryFilterLogicAND=1;
+
+option, ngenerate = 10;

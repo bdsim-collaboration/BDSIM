@@ -12,3 +12,4 @@ simple_fail(physics-biasing-bad-flag                "--file=bad-biasing-flag.gma
 if (USE_GDML)
   simple_testing(physics-biasing-gdml-named-vacuum    "--file=gdmlVacuumVolumeBiasing.gmad" "")
 endif()
+simple_testing(physics-biasing-muon-flux               "--file=biasing-muon-flux-beam-dump.gmad" "")
