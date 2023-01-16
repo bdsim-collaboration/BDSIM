@@ -67,7 +67,6 @@ BDSROOTSamplerReader::~BDSROOTSamplerReader()
 
 void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
 {
-  vertexGeneratedSuccessfully = false;
   if (!reader)
     {throw BDSException(__METHOD_NAME__, "no file reader available");}
   
