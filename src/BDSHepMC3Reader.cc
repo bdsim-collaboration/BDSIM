@@ -162,6 +162,10 @@ G4long BDSHepMC3Reader::CountEventsInFile()
       bool readEventOK = reader->read_event(*tempEvent);
       if (!readEventOK) // warn but continue
         {G4cout << __METHOD_NAME__ << "error in reading event index " << nEvents << G4endl;}
+      // the reader will read ok beyond the last event (stupid), so we then have to check the file
+      // status again here to know we've not really read an event!
+      if (reader->failed())
+        {continue;}
       nEvents++;
       delete tempEvent;
     }
