@@ -17,8 +17,9 @@ def GenerateXY(xyrange=2000):
 
 def CreateEvent(pdgIDs, eventID):  
     evt = hep.GenEvent(hep.Units.GEV, hep.Units.MM)
+    #evt.set_event_number(eventID)
     evt.event_number = eventID
-    evt.weights = []
+    evt.weights = [1]*len(pdgIDs)
     evt.attributes['signal_process_id'] = -1
 
     for pdgID in pdgIDs:
@@ -29,7 +30,10 @@ def CreateEvent(pdgIDs, eventID):
         x,y = GenerateXY()
         vtx = hep.GenVertex((x,y,0.0,20.0))
         vtx.add_particle_out(prt)
+        #vtx.add_particle_in(prt)
         evt.add_vertex(vtx)
+        evt.add_particle(prt)
+        #evt.set_beam_particles(prt)
 
     return evt
 
@@ -43,12 +47,17 @@ def CreateDummyEventsInHEPMC2File(outputFileName):
                [13,-13],
                [13,2212,11,22] ]
 
+    hepEvents = []
     for i,event in enumerate(events):
         hepEvent = CreateEvent(event, i)
+        hepEvents.append(hepEvent)
         fHEP.write(hepEvent)
     
     fHEP.close()
+    return hepEvents
 
 
 if __name__ == "__main__":
+    print("This works ok but the file seems to be empty on loading... so effectively doesn't work")
+    print("don't use this output file... for now")
     CreateDummyEventsInHEPMC2File("egf-hepmc2-dummy-sample.dat")
