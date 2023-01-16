@@ -335,7 +335,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       delete g4vtx;
       nEventsSkipped++;
       if (warnAboutSkippedParticles)
-	{G4cout << __METHOD_NAME__ << "no particles found in event index in file: " << currentFileEventIndex << G4endl;}
+	{G4cout << __METHOD_NAME__ << "no particles found in event number: " << currentFileEventIndex << " in the file" << G4endl;}
       return;
     }
   else

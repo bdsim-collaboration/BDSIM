@@ -231,7 +231,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
 		 << " events as fewer events passed the filters in the file." << G4endl;
 	  G4cerr << __METHOD_NAME__ << currentEventIndex << " events generated" << G4endl;
 	}
-      // common bit to artifically abort the event and then end the run now
+      // common bit to artificially abort the event and then end the run now
       if (endRunNow)
 	{
 	  anEvent->SetEventAborted();
