@@ -94,8 +94,7 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 {
   if (!reader)
     {throw BDSException(__METHOD_NAME__, "no file reader available");}
-
-  vertexGeneratedSuccessfully = false;
+  
   G4bool readEventOK = ReadSingleEvent();
   if (readEventOK)
     {HepMC2G4(hepmcEvent, anEvent);} // this will update vertexGeneratedSuccessfully if one is created
