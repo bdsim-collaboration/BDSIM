@@ -22,9 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4BaryonConstructor.hh"
 #include "G4LeptonConstructor.hh"
 #include "G4MesonConstructor.hh"
+#include "G4MuonMinus.hh"
 #include "G4MuonNuclearProcess.hh"
+#include "G4MuonPlus.hh"
 #include "G4MuonVDNuclearModel.hh"
-#include "G4ParticleDefinition.hh"
 #include "G4PhysicsListHelper.hh"
 #include "G4ShortLivedConstructor.hh"
 
@@ -56,8 +57,8 @@ void BDSPhysicsMuonInelastic::ConstructProcess()
   G4AutoDelete::Register(muNucModel);
 
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
-  ph->RegisterProcess(muNucProcess, muonplus);
-  ph->RegisterProcess(muNucProcess, muonminus);
+  ph->RegisterProcess(muNucProcess, G4MuonPlus::MuonPlus());
+  ph->RegisterProcess(muNucProcess, G4MuonMinus::MuonMinus());
 
   SetActivated();
 }
