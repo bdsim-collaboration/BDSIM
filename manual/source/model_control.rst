@@ -1201,7 +1201,14 @@ compiled with respect to it.  See :ref:`installation-bdsim-config-options` for m
 When using an event generator file, the **design** particle and total energy must still be
 specified. These are used to calculate the magnetic field strengths.
 
-The following parameters are used to control the use of an event generator file.
+The following parameters are used to control the use of an event generator file. These are
+implemented as :math:`>=` and :math:`<=` for `Min` and `Max` respectively. i.e.
+
+.. math::
+
+   [MinW, MaxW] \implies \{ W \in \mathbb{R} : MinW \leq W \leq MaxW \}
+
+where `W` is some coordinate.
 
 .. tabularcolumns:: |p{5cm}|p{9cm}|
 
@@ -1227,25 +1234,25 @@ The following parameters are used to control the use of an event generator file.
 +----------------------------+-----------------------------------------------------------+
 | eventGeneratorMaxZ         | Maximum z coordinate accepted (m)                         |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMinXp        | Minimum xp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMinXp        | Minimum xp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxXp        | Maximum xp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMaxXp        | Maximum xp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMinYp        | Minimum yp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMinYp        | Minimum yp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxYp        | Maximum yp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMaxYp        | Maximum yp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMinZp        | Minimum zp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMinZp        | Minimum zp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxZp        | Maximum zp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMaxZp        | Maximum zp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
 | eventGeneratorMinT         | Minimum T coordinate accepted (s)                         |
 +----------------------------+-----------------------------------------------------------+
 | eventGeneratorMaxT         | Maximum T coordinate accepted (s)                         |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMinEK        | Minimum kinetic energy accepted (GeV)                     |
+| eventGeneratorMinEk        | Minimum kinetic energy accepted (GeV)                     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxEK        | Maximum kinetic energy accepted (GeV)                     |
+| eventGeneratorMaxEk        | Maximum kinetic energy accepted (GeV)                     |
 +----------------------------+-----------------------------------------------------------+
 | eventGeneratorParticles    | PDG IDs or names (as per Geant4 exactly) for accepted     |
 |                            | particles. White space delimited. If empty all particles  |

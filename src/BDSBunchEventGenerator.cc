@@ -172,14 +172,14 @@ G4bool BDSBunchEventGenerator::AcceptParticle(const BDSParticleCoordsFull& coord
   if (firstTime)
     {ParseAcceptedParticleIDs(); firstTime = false;}
 
-  G4bool x  = coords.x  > eventGeneratorMinX+X0   && coords.x  < eventGeneratorMaxX+X0;
-  G4bool y  = coords.y  > eventGeneratorMinY+Y0   && coords.y  < eventGeneratorMaxY+Y0;
-  G4bool z  = coords.z  > eventGeneratorMinZ      && coords.z  < eventGeneratorMaxZ;
-  G4bool xp = coords.xp > eventGeneratorMinXp+Xp0 && coords.xp < eventGeneratorMaxXp+Xp0;
-  G4bool yp = coords.yp > eventGeneratorMinYp+Yp0 && coords.yp < eventGeneratorMaxYp+Yp0;
-  G4bool zp = coords.zp > eventGeneratorMinZp     && coords.zp < eventGeneratorMaxZp;
-  G4bool t  = coords.T  > eventGeneratorMinT      && coords.T+T0  < eventGeneratorMaxT+T0;
-  G4bool ek = kineticEnergy > eventGeneratorMinEK && kineticEnergy < eventGeneratorMaxEK;
+  G4bool x  = coords.x  >= eventGeneratorMinX+X0   && coords.x  <= eventGeneratorMaxX+X0;
+  G4bool y  = coords.y  >= eventGeneratorMinY+Y0   && coords.y  <= eventGeneratorMaxY+Y0;
+  G4bool z  = coords.z  >= eventGeneratorMinZ      && coords.z  <= eventGeneratorMaxZ;
+  G4bool xp = coords.xp >= eventGeneratorMinXp+Xp0 && coords.xp <= eventGeneratorMaxXp+Xp0;
+  G4bool yp = coords.yp >= eventGeneratorMinYp+Yp0 && coords.yp <= eventGeneratorMaxYp+Yp0;
+  G4bool zp = coords.zp >= eventGeneratorMinZp     && coords.zp <= eventGeneratorMaxZp;
+  G4bool t  = coords.T  >= eventGeneratorMinT      && coords.T+T0  <= eventGeneratorMaxT+T0;
+  G4bool ek = kineticEnergy >= eventGeneratorMinEK && kineticEnergy <= eventGeneratorMaxEK;
   G4bool rp = rpOriginal >= eventGeneratorMinRp && rpOriginal < eventGeneratorMaxRp;
   
   G4bool allowedParticle = true;
