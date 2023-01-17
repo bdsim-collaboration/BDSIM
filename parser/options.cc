@@ -487,6 +487,8 @@ void Options::PublishMembers()
   publish("storeModel",                     &Options::storeModel);
 
   publish("samplersSplitLevel",             &Options::samplersSplitLevel);
+  publish("modelSplitLevel",                &Options::modelSplitLevel);
+  publish("uprootCompatible",               &Options::uprootCompatible);
 
   // circular options
   publish("nturns",                   &Options::nturns);

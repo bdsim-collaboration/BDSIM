@@ -126,11 +126,14 @@ New Features
 * New "radioactivation" physics list.
 * New "gamma_to_mumu" physics list.
 * New "annihi_to_mumu" physics list.
+* New "muon_inelastic" physics list.
 * New option for excluding certain particles from cuts, e.g. exclude muons from the
   minimumKineticEnergy option. See :code:`particlesToExcludeFromCuts` in :ref:`options-tracking`.
 
 **Sensitivity & Output**
 
+* Add an option :code:`uprootCompatible` to read the output file with uproot. If set to 1,
+  it corresponds to have :code:`samplersSplitLevel=1` and :code:`modelSplitLevel=2`.
 * Samplers now have the parameter :code:`partID={11,-11}`, which for example can be used
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
