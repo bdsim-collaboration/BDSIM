@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4AutoDelete.hh"
 #include "G4BaryonConstructor.hh"
+#include "G4BosonConstructor.hh"
+#include "G4IonConstructor.hh"
 #include "G4LeptonConstructor.hh"
 #include "G4MesonConstructor.hh"
 #include "G4MuonMinus.hh"
@@ -42,6 +44,8 @@ void BDSPhysicsMuonInelastic::ConstructParticle()
   G4LeptonConstructor::ConstructParticle();
   G4MesonConstructor::ConstructParticle();
   G4BaryonConstructor::ConstructParticle();
+  G4BosonConstructor::ConstructParticle();
+  G4IonConstructor::ConstructParticle();
   G4ShortLivedConstructor::ConstructParticle();
 }
 
