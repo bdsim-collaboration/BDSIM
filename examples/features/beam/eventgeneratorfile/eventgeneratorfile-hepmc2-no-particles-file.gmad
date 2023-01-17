@@ -1,9 +1,7 @@
 include eventgeneratorfile-hepmc2.gmad;
 
-beam, distrFile="egf-hepmc2-dummy-sample.dat";
-
-! no 14s in our dummy file
-beam, eventGeneratorParticles="14";
+! no such particle so we won't find it
+beam, eventGeneratorParticles="123456789";
 
 ! make sure it isn't rejected by no decay table for it
 option, physicsList="all_particles decay";

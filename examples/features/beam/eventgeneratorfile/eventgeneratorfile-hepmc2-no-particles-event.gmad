@@ -1,7 +1,5 @@
 include eventgeneratorfile-hepmc2.gmad;
 
-beam, distrFile="egf-hepmc2-dummy-sample.dat";
-
 ! only 2/4 events have a 13 in them
 beam, eventGeneratorParticles="13";
 
