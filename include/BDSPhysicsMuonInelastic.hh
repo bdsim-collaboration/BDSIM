@@ -16,45 +16,32 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSMUONPHYSICS_H
-#define BDSMUONPHYSICS_H
+#ifndef BDSPHYSICSMUONINELASTIC_H
+#define BDSPHYSICSMUONINELASTIC_H
 
 #include "BDSSingleUse.hh"
 
 #include "G4VPhysicsConstructor.hh"
 
 /**
- * @brief High energy muon processes.
+ * @brief Only nuclear interactions for mu+-.
  * 
- * Constructs:
- * Gamma to Muon pair.
- * e+ annihilation to Muon pair
- * e+ annihilation to hadrons.
- * Muon multiple scattering.
- * Muon ionisation.
- * Muon bremsstrahlung.
- * Muon pair production from Muons.
  *
  * Uses the G4PhysicsListHelper to set and order processes.
  *
+ * @author Laurie Nevay
  */
 
-class BDSPhysicsMuon: public G4VPhysicsConstructor, public BDSSingleUse
+class BDSPhysicsMuonInelastic: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
-  BDSPhysicsMuon();
-  explicit BDSPhysicsMuon(G4bool emWillBeUsed);
-  virtual ~BDSPhysicsMuon();
-  /// Construct all leptons, photons (inc optical), and pion +- just in case.
+  BDSPhysicsMuonInelastic();
+  virtual ~BDSPhysicsMuonInelastic();
+
+  /// Construct all particles (could be produced from interaction).
   virtual void ConstructParticle();
 
-  /// Construct and attach the processes to the relevant particles.
+  /// Construct and attach the process for muons.
   virtual void ConstructProcess();
-
-private:
-
-  /// Whether em physics will be used, which provides processes that would be duplicate
-  /// here.
-  G4bool emWillBeUsed;
 };
 #endif
