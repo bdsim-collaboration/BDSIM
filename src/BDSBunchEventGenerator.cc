@@ -145,7 +145,7 @@ void BDSBunchEventGenerator::ParseAcceptedParticleIDs()
 	      if (search != encoding->end())
 		{acceptedParticles.insert(particleID);}
 	      else
-		{throw BDSException(__METHOD_NAME__,"PDG ID \"" + particleIDStr + "not found in particle table");}
+		{throw BDSException(__METHOD_NAME__,"PDG ID \"" + particleIDStr + "\" not found in particle table");}
 	    }
 	  catch (const std::logic_error&) // else, usual way by string search
 	    {
