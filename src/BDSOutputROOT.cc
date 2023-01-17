@@ -183,6 +183,11 @@ void BDSOutputROOT::WriteHeader()
   theHeaderOutputTree->Fill();
 }
 
+void BDSOutputROOT::WriteHeaderUpdated()
+{
+  theHeaderOutputTree->Write(nullptr, TObject::kOverwrite);
+}
+
 void BDSOutputROOT::WriteParticleData()
 {
   theParticleDataTree->Fill();

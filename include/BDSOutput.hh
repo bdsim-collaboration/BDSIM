@@ -186,6 +186,9 @@ private:
 
   /// Write the header.
   virtual void WriteHeader() = 0;
+  
+  /// Overwrite and update header in the output.
+  virtual void WriteHeaderUpdated() = 0;
 
   /// Write the geant4 information.
   virtual void WriteParticleData() = 0;
