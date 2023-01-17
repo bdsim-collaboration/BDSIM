@@ -126,6 +126,7 @@ New Features
 * New "radioactivation" physics list.
 * New "gamma_to_mumu" physics list.
 * New "annihi_to_mumu" physics list.
+* New "muon_inelastic" physics list.
 * New option for excluding certain particles from cuts, e.g. exclude muons from the
   minimumKineticEnergy option. See :code:`particlesToExcludeFromCuts` in :ref:`options-tracking`.
 

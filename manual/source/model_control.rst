@@ -1660,6 +1660,9 @@ Examples: ::
 |                              | production and Cherenkov light are all provided. Given by BDSIM        |
 |                              | physics builder (a la Geant4) `BDSPhysicsMuon`.                        |
 +------------------------------+------------------------------------------------------------------------+
+| muon_inelastic               | Only hadronic interactions for both muons. Incompatible with           |
+|                              | `em_extra` and `muon` physics lists.                                   |
++------------------------------+------------------------------------------------------------------------+
 | neutron_tracking_cut         | `G4NeutronTrackingCut` allows neutrons to be killed via their tracking |
 |                              | time (i.e. time of flight) and minimum kinetic energy. These options   |
 |                              | are set via the option command, `neutronTimeLimit` (s) and             |
