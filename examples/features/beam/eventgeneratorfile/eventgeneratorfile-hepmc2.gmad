@@ -1,7 +1,7 @@
 beam,  particle = "e-",
        energy = 1.0*GeV,
        distrType = "eventgeneratorfile:hepmc2",
-       distrFile = "egf-hepmc2.dat";
+       distrFile = "egf-hepmc2-4pp-100gev-evts.dat";
 
 d1: drift, l=0.25;
 q1: quadrupole, l=0.5, k1=2.0;
