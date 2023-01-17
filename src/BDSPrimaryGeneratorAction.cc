@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSRunAction.hh"
 #include "BDSRandom.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "parser/beam.h"
 
@@ -214,14 +215,21 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
 {
   G4bool distributionFinished = generatorFromFile->DistributionIsFinished(); // only happens if no looping
   G4int nGenerateRequested = BDSGlobalConstants::Instance()->NGenerate();
+  
+  G4bool generatedVertexOK = false;
+  if (!distributionFinished)
+    {generatedVertexOK = generatorFromFile->GeneratePrimaryVertexSafe(anEvent);}
 
-  if (distributionFinished)
+  // file finished (no more events) and we haven't generated a viable event
+  if (distributionFinished && !generatedVertexOK)
     {
       G4bool endRunNow = false;
       if (distrFileMatchLength)
 	{
 	  endRunNow = true;
 	  G4cout << __METHOD_NAME__ << "distribution file finished (matched in length) - ending run" << G4endl;
+	  if (generatorFromFile->NEventsReadThatPassedFilters() == 0)
+	    {BDS::Warning(__METHOD_NAME__, "no events passed filters and were simulated.");}
 	}
       else if (generatorFromFile->NEventsReadThatPassedFilters() < nGenerateRequested)
 	{// not matching the file length specifically but requested a certain number of events
@@ -242,9 +250,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
 	  return; // don't generate anything - just return
 	}
     }
-  
-  G4bool generatedVertexOK = generatorFromFile->GeneratePrimaryVertexSafe(anEvent);
-  if (!generatedVertexOK)
+  else if (!generatedVertexOK) // file isn't finished but we didn't successfully generate this event
     {	
       anEvent->SetEventAborted();
       G4EventManager::GetEventManager()->AbortCurrentEvent();
