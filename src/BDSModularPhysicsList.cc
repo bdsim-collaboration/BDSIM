@@ -908,7 +908,7 @@ void BDSModularPhysicsList::MuonInelastic()
 {
   if (!physicsActivated["muon_inelastic"])
     {
-      constructors.push_back(new BDSPhysicsMuonElastic());
+      constructors.push_back(new BDSPhysicsMuonInelastic());
       physicsActivated["muon_inelastic"] = true;
     }
 }
