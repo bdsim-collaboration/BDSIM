@@ -184,7 +184,7 @@ void BDSOutput::FillHeader()
   headerOutput->Flush();
   headerOutput->Fill(); // updates time stamp
   WriteHeader();
-  ClearStructuresHeader();
+  // we purposively don't call ClearStructuresHeader() as we may yet update and overwrite the header info
 }
 
 void BDSOutput::FillParticleData(G4bool writeIons)
@@ -371,6 +371,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 
 void BDSOutput::CloseAndOpenNewFile()
 {
+  ClearStructuresHeader();
   CloseFile();
   NewFile();
   InitialiseGeometryDependent();
@@ -383,6 +384,7 @@ void BDSOutput::FillRun(const BDSEventInfo* info,
 {
   FillRunInfo(info, runEndedEarlyIn, nEventsInOriginalDistrFileIn, nEventsDistrFileSkippedIn);
   WriteFileRunLevel();
+  WriteHeaderUpdated();
   ClearStructuresRunLevel();
 }
 
