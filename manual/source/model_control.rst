@@ -1686,6 +1686,9 @@ Examples: ::
 |                              | production and Cherenkov light are all provided. Given by BDSIM        |
 |                              | physics builder (a la Geant4) `BDSPhysicsMuon`.                        |
 +------------------------------+------------------------------------------------------------------------+
+| muon_inelastic               | Only hadronic interactions for both muons. Incompatible with           |
+|                              | `em_extra` and `muon` physics lists.                                   |
++------------------------------+------------------------------------------------------------------------+
 | neutron_tracking_cut         | `G4NeutronTrackingCut` allows neutrons to be killed via their tracking |
 |                              | time (i.e. time of flight) and minimum kinetic energy. These options   |
 |                              | are set via the option command, `neutronTimeLimit` (s) and             |
@@ -3180,6 +3183,13 @@ with the following options.
 | samplersSplitLevel                 | The ROOT split-level of the branch. Default 0 (unsplit). Set to 1  |
 |                                    | or 2 to allow columnar access (e.g. with `uproot`).                |
 +------------------------------------+--------------------------------------------------------------------+
+| modelSplitLevel                    | The ROOT split-level of the branch. Default 1. Set to 2            |
+|                                    | to allow columnar access (e.g. with `uproot`).                     |
++------------------------------------+--------------------------------------------------------------------+
+| uprootCompatible                   | The ROOT split-level for the branches samplers and model.          |
+|                                    | Default 0. Set to 1 will set samplersSplitLevel = 1 and            |
+|                                    | ModelSplitLevel = 1.                                               |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectory                    | Whether to store trajectories. If turned on, only the primary      |
 |                                    | particle(s) trajectory(ies) are stored by default. This is         |
 |                                    | required for the storage of any other trajectories at all. Note    |
@@ -3189,6 +3199,9 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | writeSeedState                     | Writes the seed state of the last event start in a text file       |
 +------------------------------------+--------------------------------------------------------------------+
+
+.. note:: Using :code:`samplersSplitLevel` > 0 could lead to increasing simulation time in the case of many samplers
+          and, therefore the optics computation.
 
 .. _options-trajectory-filtering:
 
