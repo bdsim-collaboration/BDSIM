@@ -1,0 +1,18 @@
+beam,  particle = "e-",
+       energy = 1.0*GeV,
+       distrType = "eventgeneratorfile:hepmc2",
+       distrFile = "egf-hepmc2-dummy-sample.dat",
+       eventGeneratorParticles="-3122";
+
+! there's 2 events in this file and only the first has a -3122
+
+d1: drift, l=1.3;
+lat : line = (d1);
+use, lat;
+sample, all;
+
+option, stopSecondaries=1;
+
+! we need some physics list to ensure the particles are defined that
+! will be supplied in the event generator file - use a full physics list
+option, physicsList="g4FTFP_BERT";
