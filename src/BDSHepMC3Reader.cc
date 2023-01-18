@@ -248,6 +248,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       G4double py = p.y() * CLHEP::GeV;
       G4double pz = p.z() * CLHEP::GeV;
       G4ThreeVector originalUnitMomentum(px,py,pz);
+      // as the particle is given by momentum (and not Etotal) then we don't need to check Etotal >= rest mass
       originalUnitMomentum = originalUnitMomentum.unit();
       G4double rp = std::hypot(originalUnitMomentum.x(), originalUnitMomentum.y());
       
