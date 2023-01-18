@@ -287,7 +287,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
                                   centralCoords.s,
                                   g4prim->GetTotalEnergy(),
                                   overallWeight);
-        G4cout << pdgcode << G4endl;
+
       if (!bunch->AcceptParticle(local, rp, g4prim->GetKineticEnergy(), pdgcode))
         {
           delete g4prim;
