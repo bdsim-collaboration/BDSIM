@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPrimaryGenerator.hh"
 
 class BDSBunch;
+class BDSRunAction;
 class G4Event;
 class G4VSolid;
 
@@ -57,7 +58,8 @@ public:
   static BDSPrimaryGeneratorFile* ConstructGenerator(const GMAD::Beam& beam,
                                                      BDSBunch* bunchIn,
                                                      G4bool recreate,
-                                                     G4int eventOffset);
+                                                     G4int eventOffset,
+                                                     BDSRunAction* runAction);
 
   /// Return false if not able to generate a primary vertex.
   G4bool GeneratePrimaryVertexSafe(G4Event* event);

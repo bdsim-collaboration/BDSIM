@@ -83,7 +83,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
   particleGun->SetParticlePosition(G4ThreeVector());
   particleGun->SetParticleTime(0);
   
-  generatorFromFile = BDSPrimaryGeneratorFile::ConstructGenerator(beam, bunch, recreate, eventOffset);
+  generatorFromFile = BDSPrimaryGeneratorFile::ConstructGenerator(beam, bunch, recreate, eventOffset, runAction);
 }
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
