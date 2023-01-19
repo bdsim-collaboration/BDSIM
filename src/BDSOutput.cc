@@ -377,11 +377,10 @@ void BDSOutput::CloseAndOpenNewFile()
 }
 
 void BDSOutput::FillRun(const BDSEventInfo* info,
-                        G4bool runEndedEarlyIn,
                         G4long nEventsInOriginalDistrFileIn,
                         G4long nEventsDistrFileSkippedIn)
 {
-  FillRunInfo(info, runEndedEarlyIn, nEventsInOriginalDistrFileIn, nEventsDistrFileSkippedIn);
+  FillRunInfo(info, nEventsInOriginalDistrFileIn, nEventsDistrFileSkippedIn);
   WriteFileRunLevel();
   ClearStructuresRunLevel();
 }
@@ -1196,7 +1195,6 @@ void BDSOutput::FillScorerHitsIndividualBLM(const G4String& histogramDefName,
 }
 
 void BDSOutput::FillRunInfo(const BDSEventInfo* info,
-                            G4bool runEndedEarly,
                             G4long nEventsInOriginalDistrFile,
                             G4long nEventsDistrFileSkipped)
 {
@@ -1205,7 +1203,7 @@ void BDSOutput::FillRunInfo(const BDSEventInfo* info,
       *runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());
       runInfo->nEventsInFile = nEventsInOriginalDistrFile;
       runInfo->nEventsInFileSkipped = nEventsDistrFileSkipped;
-      headerOutput->skimmedFile |= runEndedEarly;
+      headerOutput->skimmedFile |= nEventsDistrFileSkipped > 0;
       headerOutput->nOriginalEvents = nEventsInOriginalDistrFile;
     }
 }
