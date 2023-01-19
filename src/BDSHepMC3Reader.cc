@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPrimaryVertexInformationV.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "G4Event.hh"
 #include "G4LorentzVector.hh"
@@ -62,10 +63,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
-				 const G4String& fileNameIn,
-				 BDSBunchEventGenerator* bunchIn,
-				 G4bool removeUnstableWithoutDecayIn,
-				 G4bool warnAboutSkippedParticlesIn):
+                                 const G4String& fileNameIn,
+                                 BDSBunchEventGenerator* bunchIn,
+                                 G4bool loopFileIn,
+                                 G4bool removeUnstableWithoutDecayIn,
+                                 G4bool warnAboutSkippedParticlesIn):
+  BDSPrimaryGeneratorFile(loopFileIn),
   hepmcEvent(nullptr),
   reader(nullptr),
   fileName(fileNameIn),
@@ -108,11 +111,12 @@ void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
   SkipEvents(eventOffset);
 }
 
-void BDSHepMC3Reader::OpenFile()
+void BDSHepMC3Reader::OpenFile(G4bool usualPrintOut)
 {
   currentFileEventIndex = 0;
   endOfFileReached = false;
-  G4cout << __METHOD_NAME__ << "Opening file: " << fileName << G4endl;
+  if (usualPrintOut)
+    {G4cout << __METHOD_NAME__ << "Opening file: " << fileName << G4endl;}
   switch (fileType.underlying())
     {
     case BDSEventGeneratorFileType::hepmc2:
@@ -130,8 +134,8 @@ void BDSHepMC3Reader::OpenFile()
     case BDSEventGeneratorFileType::root:
     case BDSEventGeneratorFileType::treeroot:
       {
-	throw BDSException(__METHOD_NAME__, "HEPMC3 installation not compiled with ROOT support so can't load root file.");
-	break;
+        throw BDSException(__METHOD_NAME__, "HEPMC3 installation not compiled with ROOT support so can't load root file.");
+        break;
       }
 #endif
     case BDSEventGeneratorFileType::lhef:
@@ -153,7 +157,7 @@ void BDSHepMC3Reader::CloseFile()
 
 G4long BDSHepMC3Reader::CountEventsInFile()
 {
-  OpenFile();
+  OpenFile(false);
   G4long nEvents = 0;
   while (!reader->failed())
     {
@@ -192,12 +196,17 @@ G4bool BDSHepMC3Reader::ReadSingleEvent()
       delete hepmcEvent;
       hepmcEvent = nullptr;
       CloseFile();
-  
+
       if (loopFile)
-	{
-	  G4cout << __METHOD_NAME__ << "Returning to beginning of file for next event." << G4endl;
-	  OpenFile();
-	}
+        {
+          if (OKToLoopFile())
+            {
+              G4cout << __METHOD_NAME__ << "Returning to beginning of file for next event." << G4endl;
+              OpenFile();
+            }
+          else
+            {BDS::Warning(__METHOD_NAME__, "file looping requested, but 0 events passed filters - ending.");}
+        }
       return false;
     }
   else
@@ -209,6 +218,7 @@ G4bool BDSHepMC3Reader::ReadSingleEvent()
 
 void BDSHepMC3Reader::SkipEvents(G4int nEventsToSkip)
 {
+  G4cout << __METHOD_NAME__ << "skipping " << nEventsToSkip << " into file." << G4endl;
   if (nEventsToSkip > nEventsInFile)
     {
       G4String msg = "number of events to skip (" + std::to_string(nEventsToSkip) + ") is greater than the number of events (";
@@ -220,15 +230,15 @@ void BDSHepMC3Reader::SkipEvents(G4int nEventsToSkip)
 }
 
 void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
-			       G4Event* g4event)
+                               G4Event* g4event)
 {
   BDSParticleCoordsFull centralCoords = bunch->GetNextParticleLocal();
   // do the transform for the reference particle (if any transform) and use that
   BDSParticleCoordsFullGlobal centralCoordsGlobal = bunch->ApplyTransform(centralCoords);
   G4PrimaryVertex* g4vtx = new G4PrimaryVertex(centralCoordsGlobal.global.x,
-					       centralCoordsGlobal.global.y,
-					       centralCoordsGlobal.global.z,
-					       centralCoordsGlobal.global.T);
+                                               centralCoordsGlobal.global.y,
+                                               centralCoordsGlobal.global.z,
+                                               centralCoordsGlobal.global.T);
   
   double overallWeight = 1.0;
   if (!(hepmcevt->weights().empty()))
@@ -239,7 +249,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
     {
       const HepMC3::GenParticle* particle = particlePtr.get();
       if (!particle->children().empty())
-	{continue;} // this particle is not at the end of the tree - ignore
+        {continue;} // this particle is not at the end of the tree - ignore
       
       int pdgcode = particle->pdg_id();
       const HepMC3::FourVector& fv = particle->momentum();
@@ -248,6 +258,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       G4double py = p.y() * CLHEP::GeV;
       G4double pz = p.z() * CLHEP::GeV;
       G4ThreeVector originalUnitMomentum(px,py,pz);
+      // as the particle is given by momentum (and not Etotal) then we don't need to check Etotal >= rest mass
       originalUnitMomentum = originalUnitMomentum.unit();
       G4double rp = std::hypot(originalUnitMomentum.x(), originalUnitMomentum.y());
       
@@ -265,7 +276,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       G4bool deleteIt = !pd;
       if (pd && removeUnstableWithoutDecay)
         {deleteIt = !(pd->GetPDGStable()) && !pd->GetDecayTable();}
-
+      
       if (deleteIt)
         {
 #ifdef BDSDEBUG
@@ -277,52 +288,52 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
         }
 
       BDSParticleCoordsFull local(centralCoords.x,
-				  centralCoords.y,
-				  centralCoords.z,
-				  unitMomentum.x(),
-				  unitMomentum.y(),
-				  unitMomentum.z(),
-				  centralCoords.T,
-				  centralCoords.s,
-				  g4prim->GetTotalEnergy(),
-				  overallWeight);
+                                  centralCoords.y,
+                                  centralCoords.z,
+                                  unitMomentum.x(),
+                                  unitMomentum.y(),
+                                  unitMomentum.z(),
+                                  centralCoords.T,
+                                  centralCoords.s,
+                                  g4prim->GetTotalEnergy(),
+                                  overallWeight);
 
       if (!bunch->AcceptParticle(local, rp, g4prim->GetKineticEnergy(), pdgcode))
-	{
-	  delete g4prim;
-	  nParticlesSkipped++;
-	  continue;
-	}
+        {
+          delete g4prim;
+          nParticlesSkipped++;
+          continue;
+        }
       
       BDSParticleCoordsFullGlobal fullCoords = bunch->ApplyTransform(local);
       // ensure it's in the world - not done in primary generator action for event generators
       if (!VertexInsideWorld(fullCoords.global.Position()))
-	{
-	  delete g4prim;
-	  nParticlesSkipped++;
-	  continue;
-	}  
+        {
+          delete g4prim;
+          nParticlesSkipped++;
+          continue;
+        }  
       
       G4double brho     = 0;
       G4double charge   = g4prim->GetCharge();
       G4double momentum = g4prim->GetTotalMomentum();
       if (BDS::IsFinite(charge)) // else leave as 0
-	{
-	  brho = momentum / CLHEP::GeV / BDS::cOverGeV / charge;
-	  brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
-	}
+        {
+          brho = momentum / CLHEP::GeV / BDS::cOverGeV / charge;
+          brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
+        }
       BDSPrimaryVertexInformation vertexInfo(fullCoords,
-					     g4prim->GetTotalMomentum(),
-					     g4prim->GetCharge(),
-					     brho,
-					     g4prim->GetMass(),
-					     pdgcode);
+                                             g4prim->GetTotalMomentum(),
+                                             g4prim->GetCharge(),
+                                             brho,
+                                             g4prim->GetMass(),
+                                             pdgcode);
       vertexInfos.emplace_back(vertexInfo);
 
       // update momentum in case of a beam line transform
       g4prim->SetMomentumDirection(G4ThreeVector(fullCoords.global.xp,
-						 fullCoords.global.yp,
-						 fullCoords.global.zp));
+                                                 fullCoords.global.yp,
+                                                 fullCoords.global.zp));
       g4vtx->SetPrimary(g4prim);
     }
 
@@ -335,7 +346,7 @@ void BDSHepMC3Reader::HepMC2G4(const HepMC3::GenEvent* hepmcevt,
       delete g4vtx;
       nEventsSkipped++;
       if (warnAboutSkippedParticles)
-	{G4cout << __METHOD_NAME__ << "no particles found in event number: " << currentFileEventIndex << " in the file" << G4endl;}
+        {G4cout << __METHOD_NAME__ << "no particles found in event number: " << currentFileEventIndex << " in the file" << G4endl;}
       return;
     }
   else

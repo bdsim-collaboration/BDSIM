@@ -68,7 +68,6 @@ BDSRunAction::BDSRunAction(BDSOutput*      outputIn,
   cpuStartTime(std::clock_t()),
   eventAction(eventActionIn),
   trajectorySamplerID(trajectorySamplerIDIn),
-  runEndedEarly(false),
   nEventsInOriginalDistrFile(0),
   nEventsDistrFileSkipped(0)
 {;}
@@ -81,7 +80,6 @@ BDSRunAction::~BDSRunAction()
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
   // reset variables for this run
-  runEndedEarly = false;
   nEventsInOriginalDistrFile = 0;
   nEventsDistrFileSkipped = 0;
   
@@ -158,7 +156,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 	 << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
-  output->FillRun(info, runEndedEarly, nEventsInOriginalDistrFile, nEventsDistrFileSkipped);
+  output->FillRun(info, nEventsInOriginalDistrFile, nEventsDistrFileSkipped);
   output->CloseFile();
   info->Flush();
 
@@ -235,7 +233,6 @@ void BDSRunAction::CheckTrajectoryOptions() const
 void BDSRunAction::NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrFileIn,
                                                       G4long nEventsDistrFileSkippedIn)
 {
-  runEndedEarly = true;
   nEventsInOriginalDistrFile = nEventsInOriginalDistrFileIn;
   nEventsDistrFileSkipped = nEventsDistrFileSkippedIn;
 }

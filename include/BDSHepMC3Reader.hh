@@ -62,10 +62,11 @@ public:
   /// prefixed if a relative path already. The bunch definition is used
   /// for the reference coordinates and offset of the beam point.
   BDSHepMC3Reader(const G4String& distrType,
-		  const G4String& fileNameIn,
-		  BDSBunchEventGenerator* bunchIn,
-		  G4bool removeUnstableWithoutDecayIn = true,
-		  G4bool warnAboutSkippedParticlesIn  = true);
+                  const G4String& fileNameIn,
+                  BDSBunchEventGenerator* bunchIn,
+                  G4bool loopFileIn,
+                  G4bool removeUnstableWithoutDecayIn = true,
+                  G4bool warnAboutSkippedParticlesIn  = true);
   virtual ~BDSHepMC3Reader();
 
   /// Accessor.
@@ -83,7 +84,7 @@ public:
 
 protected:
   /// Construct the member "reader" and open the file for reading.
-  void OpenFile();
+  void OpenFile(G4bool usualPrintOut = true);
 
   /// Close and delete reader. Have to delete as HepMC3 readers have no iteration
   /// or ability to loop back to the beginning.
