@@ -40,7 +40,7 @@ public:
   virtual void CloseFile(){;}
 private:
   virtual void WriteHeader(){;}
-  virtual void WriteHeaderUpdated(){;}
+  virtual void WriteHeaderEndOfFile(){;}
   virtual void WriteParticleData(){;}
   virtual void WriteBeam(){;}
   virtual void WriteOptions(){;}

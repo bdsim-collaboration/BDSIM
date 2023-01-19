@@ -57,7 +57,7 @@ private:
   virtual void WriteHeader();
   
   /// Overwrite contents of header in the file.
-  virtual void WriteHeaderUpdated();
+  virtual void WriteHeaderEndOfFile();
 
   /// Copy geant4 data to file.
   virtual void WriteParticleData();
