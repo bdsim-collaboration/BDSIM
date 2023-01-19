@@ -110,11 +110,12 @@ void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
   SkipEvents(eventOffset);
 }
 
-void BDSHepMC3Reader::OpenFile()
+void BDSHepMC3Reader::OpenFile(G4bool usualPrintOut)
 {
   currentFileEventIndex = 0;
   endOfFileReached = false;
-  G4cout << __METHOD_NAME__ << "Opening file: " << fileName << G4endl;
+  if (usualPrintOut)
+    {G4cout << __METHOD_NAME__ << "Opening file: " << fileName << G4endl;}
   switch (fileType.underlying())
     {
     case BDSEventGeneratorFileType::hepmc2:
@@ -155,7 +156,7 @@ void BDSHepMC3Reader::CloseFile()
 
 G4long BDSHepMC3Reader::CountEventsInFile()
 {
-  OpenFile();
+  OpenFile(false);
   G4long nEvents = 0;
   while (!reader->failed())
     {

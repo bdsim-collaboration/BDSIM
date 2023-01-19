@@ -84,7 +84,7 @@ public:
 
 protected:
   /// Construct the member "reader" and open the file for reading.
-  void OpenFile();
+  void OpenFile(G4bool usualPrintOut = true);
 
   /// Close and delete reader. Have to delete as HepMC3 readers have no iteration
   /// or ability to loop back to the beginning.
