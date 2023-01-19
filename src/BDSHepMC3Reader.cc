@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPrimaryVertexInformationV.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "G4Event.hh"
 #include "G4LorentzVector.hh"
@@ -195,11 +196,16 @@ G4bool BDSHepMC3Reader::ReadSingleEvent()
       delete hepmcEvent;
       hepmcEvent = nullptr;
       CloseFile();
-  
+
       if (loopFile)
         {
-          G4cout << __METHOD_NAME__ << "Returning to beginning of file for next event." << G4endl;
-          OpenFile();
+          if (OKToLoopFile())
+            {
+              G4cout << __METHOD_NAME__ << "Returning to beginning of file for next event." << G4endl;
+              OpenFile();
+            }
+          else
+            {BDS::Warning(__METHOD_NAME__, "file looping requested, but 0 events passed filters - ending.");}
         }
       return false;
     }
