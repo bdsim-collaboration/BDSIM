@@ -58,6 +58,9 @@ public:
   void NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrFileIn,
                                           G4long nEventsDistrFileSkippedIn);
 
+  /// Function to set the variable even if we're not finishing the run abnormally.
+  void SaveNEventsInOriginalFile(G4long nEventsInOriginalDistrFileIn) {nEventsInOriginalDistrFile = nEventsInOriginalDistrFileIn;}
+
 private:
   BDSRunAction() = delete;
   

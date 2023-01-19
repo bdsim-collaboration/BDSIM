@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSPrimaryGeneratorFile.hh"
 #include "BDSROOTSamplerReader.hh"
+#include "BDSRunAction.hh"
 #include "BDSUtilities.hh"
 
 #ifdef USE_HEPMC3
@@ -93,7 +94,8 @@ G4bool BDSPrimaryGeneratorFile::OKToLoopFile() const
 BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD::Beam& beam,
                                                                      BDSBunch* bunchIn,
                                                                      G4bool recreate,
-                                                                     G4int eventOffset)
+                                                                     G4int eventOffset,
+                                                                     BDSRunAction* runAction)
 {
   BDSPrimaryGeneratorFile* generatorFromFile = nullptr;
   
@@ -137,6 +139,7 @@ BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD:
 	{generatorFromFile->RecreateAdvanceToEvent(eventOffset);}
       if (beam.distrFileMatchLength)
 	{BDSGlobalConstants::Instance()->SetNumberToGenerate((G4int)generatorFromFile->NEventsLeftInFile());}
+      runAction->SaveNEventsInOriginalFile(generatorFromFile->NEventsLeftInFile());
     }
   
   return generatorFromFile; // could be nullptr

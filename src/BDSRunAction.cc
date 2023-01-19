@@ -80,7 +80,6 @@ BDSRunAction::~BDSRunAction()
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
   // reset variables for this run
-  nEventsInOriginalDistrFile = 0;
   nEventsDistrFileSkipped = 0;
   
   if (BDSGlobalConstants::Instance()->PrintPhysicsProcesses())
@@ -152,8 +151,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   info->SetDurationCPU(durationCPU);
   
   // Output feedback
-  G4cout << G4endl << __METHOD_NAME__ << "Run " << aRun->GetRunID()
-	 << " end. Time is " << asctime(localtime(&stoptime));
+  G4cout << G4endl << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
   output->FillRun(info, nEventsInOriginalDistrFile, nEventsDistrFileSkipped);
