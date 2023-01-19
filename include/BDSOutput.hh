@@ -187,7 +187,7 @@ private:
   virtual void WriteHeader() = 0;
   
   /// Overwrite and update header in the output.
-  virtual void WriteHeaderUpdated() = 0;
+  virtual void WriteHeaderEndOfFile() = 0;
 
   /// Write the geant4 information.
   virtual void WriteParticleData() = 0;
@@ -271,7 +271,8 @@ private:
   void FillScorerHitsIndividualBLM(const G4String& histogramDefName,
                                    const G4THitsMap<G4double>* hitMap);
 
-  /// Fill run level summary information.
+  /// Fill run level summary information. This also updates the header information for
+  /// writing at the end of a file.
   void FillRunInfo(const BDSEventInfo* info,
                    G4long nEventsInOriginalDistrFileIn,
                    G4long nEventsDistrFileSkippedIn);

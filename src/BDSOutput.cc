@@ -383,7 +383,7 @@ void BDSOutput::FillRun(const BDSEventInfo* info,
 {
   FillRunInfo(info, nEventsInOriginalDistrFileIn, nEventsDistrFileSkippedIn);
   WriteFileRunLevel();
-  WriteHeaderUpdated();
+  WriteHeaderEndOfFile();
   ClearStructuresRunLevel();
 }
 

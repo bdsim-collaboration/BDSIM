@@ -183,9 +183,10 @@ void BDSOutputROOT::WriteHeader()
   theHeaderOutputTree->Fill();
 }
 
-void BDSOutputROOT::WriteHeaderUpdated()
+void BDSOutputROOT::WriteHeaderEndOfFile()
 {
-  theHeaderOutputTree->Write(nullptr, TObject::kOverwrite);
+  // there's no way to overwrite an entry in a ttree so we just add another entry with updated information
+  theHeaderOutputTree->Fill();
 }
 
 void BDSOutputROOT::WriteParticleData()
