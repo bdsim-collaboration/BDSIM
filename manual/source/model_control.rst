@@ -3303,7 +3303,7 @@ that has passed the filters above.
 | storeTrajectoryMomentumVector      | Store `PXPYPZ`, momentum (not unit) 3-vector in GeV for each step. |
 |                                    | Default False.                                                     |
 +------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryProcesses           | Store `preProcessTyps`, `preProcessSubTypes`, `postProcessTypes`,  |
+| storeTrajectoryProcesses           | Store `preProcessTypes`, `preProcessSubTypes`, `postProcessTypes`, |
 |                                    | `postProcessSubTypes`, the Geant4 integer process IDs for pre and  |
 |                                    | post step points. Default False.                                   |
 +------------------------------------+--------------------------------------------------------------------+
