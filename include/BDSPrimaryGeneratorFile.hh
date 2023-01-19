@@ -48,7 +48,8 @@ namespace GMAD
 class BDSPrimaryGeneratorFile: public G4VPrimaryGenerator
 {
 public:
-  BDSPrimaryGeneratorFile();
+  BDSPrimaryGeneratorFile() = delete;
+  explicit BDSPrimaryGeneratorFile(G4bool loopFileIn);
   virtual ~BDSPrimaryGeneratorFile();
   
   /// Unbound function to construct the right generator from file. Can return nullptr
@@ -88,9 +89,9 @@ public:
 protected:
   /// Utility function for derived classes to check a position is inside the world.
   G4bool VertexInsideWorld(const G4ThreeVector& pos) const;
-  
-  G4bool endOfFileReached;
+
   G4bool loopFile;
+  G4bool endOfFileReached;
   G4bool vertexGeneratedSuccessfully;
   G4long currentFileEventIndex;
   G4long nEventsInFile;

@@ -64,8 +64,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
                                  const G4String& fileNameIn,
                                  BDSBunchEventGenerator* bunchIn,
+                                 G4bool loopFileIn,
                                  G4bool removeUnstableWithoutDecayIn,
                                  G4bool warnAboutSkippedParticlesIn):
+  BDSPrimaryGeneratorFile(loopFileIn),
   hepmcEvent(nullptr),
   reader(nullptr),
   fileName(fileNameIn),

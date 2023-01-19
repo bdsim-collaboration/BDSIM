@@ -44,8 +44,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSROOTSamplerReader::BDSROOTSamplerReader(const G4String& distrType,
                                            const G4String& fileNameIn,
                                            BDSBunchEventGenerator* bunchIn,
+                                           G4bool loopFileIn,
                                            G4bool removeUnstableWithoutDecayIn,
                                            G4bool warnAboutSkippedParticlesIn):
+  BDSPrimaryGeneratorFile(loopFileIn),
   reader(nullptr),
   fileName(fileNameIn),
   bunch(bunchIn),

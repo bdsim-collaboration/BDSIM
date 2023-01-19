@@ -51,8 +51,9 @@ public:
   /// prefixed if a relative path already. The bunch definition is used
   /// for the reference coordinates and offset of the beam point.
   BDSROOTSamplerReader(const G4String& distrType,
-		       const G4String& fileNameIn,
-		       BDSBunchEventGenerator* bunchIn,
+                       const G4String& fileNameIn,
+                       BDSBunchEventGenerator* bunchIn,
+                       G4bool loopFileIn,
                        G4bool removeUnstableWithoutDecayIn = true,
 		       G4bool warnAboutSkippedParticlesIn  = true);
   virtual ~BDSROOTSamplerReader();
