@@ -4,7 +4,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURC
 if (USE_HEPMC3)
   simple_testing(bunch-eventgeneratorfile-hepmc2                 "--file=eventgeneratorfile-hepmc2.gmad"                    "")
   simple_testing(bunch-eventgeneratorfile-hepmc2-ngenerate       "--file=eventgeneratorfile-hepmc2-ngenerate.gmad"          "")	
-  simple_testing(bunch-eventgeneratorfile-hepmc2-nevents-skip    "--file=eventgeneratorfile-hepmc2-nEventsSkip.gmad"        "")
+  simple_testing_w_string(bunch-eventgeneratorfile-hepmc2-nevents-skip    "--file=eventgeneratorfile-hepmc2-nEventsSkip.gmad"        "BDSHepMC3Reader::SkipEvents")
   simple_testing(bunch-eventgeneratorfile-hepmc2-filtered        "--file=eventgeneratorfile-hepmc2-filtered.gmad"           "")
   simple_testing(bunch-eventgeneratorfile-hepmc2-filtered2       "--file=eventgeneratorfile-hepmc2-filtered2.gmad"          "")
   simple_testing_w_string(bunch-eventgeneratorfile-hepmc2-loop   "--file=eventgeneratorfile-hepmc2-loop.gmad"               "BDSHepMC3Reader::OpenFile")
