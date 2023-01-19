@@ -212,6 +212,7 @@ G4bool BDSHepMC3Reader::ReadSingleEvent()
 
 void BDSHepMC3Reader::SkipEvents(G4int nEventsToSkip)
 {
+  G4cout << __METHOD_NAME__ << "skipping " << nEventsToSkip << " into file." << G4endl;
   if (nEventsToSkip > nEventsInFile)
     {
       G4String msg = "number of events to skip (" + std::to_string(nEventsToSkip) + ") is greater than the number of events (";
