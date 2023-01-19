@@ -71,6 +71,10 @@ public:
   /// Return number of available events (excluding any filters in derived classes) in the
   /// file. This is nominally nEventsInFile - currentFileEventIndex.
   G4long NEventsLeftInFile() const;
+
+  /// Return whether at least 1 event has passed a filter in the file. If we have no
+  /// events in the file that pass then we will loop infinitely to find one.
+  G4bool OKToLoopFile() const;
   
   /// Accessor.
   G4long NEventsReadThatPassedFilters() const {return nEventsReadThatPassedFilters;}

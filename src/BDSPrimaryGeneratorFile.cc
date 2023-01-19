@@ -85,6 +85,11 @@ G4long BDSPrimaryGeneratorFile::NEventsLeftInFile() const
   return nEventsInFile - currentFileEventIndex;
 }
 
+G4bool BDSPrimaryGeneratorFile::OKToLoopFile() const
+{
+  return nEventsReadThatPassedFilters > 0;
+}
+
 BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD::Beam& beam,
                                                                      BDSBunch* bunchIn,
                                                                      G4bool recreate,
