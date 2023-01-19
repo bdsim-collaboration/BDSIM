@@ -43,9 +43,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile():
+BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile(G4bool loopFileIn):
+  loopFile(loopFileIn),
   endOfFileReached(false),
-  loopFile(false),
   vertexGeneratedSuccessfully(false),
   currentFileEventIndex(0),
   nEventsInFile(0),
