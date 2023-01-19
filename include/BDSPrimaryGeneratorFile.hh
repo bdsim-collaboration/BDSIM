@@ -48,7 +48,8 @@ namespace GMAD
 class BDSPrimaryGeneratorFile: public G4VPrimaryGenerator
 {
 public:
-  BDSPrimaryGeneratorFile();
+  BDSPrimaryGeneratorFile() = delete;
+  explicit BDSPrimaryGeneratorFile(G4bool loopFileIn);
   virtual ~BDSPrimaryGeneratorFile();
   
   /// Unbound function to construct the right generator from file. Can return nullptr
@@ -70,6 +71,10 @@ public:
   /// Return number of available events (excluding any filters in derived classes) in the
   /// file. This is nominally nEventsInFile - currentFileEventIndex.
   G4long NEventsLeftInFile() const;
+
+  /// Return whether at least 1 event has passed a filter in the file. If we have no
+  /// events in the file that pass then we will loop infinitely to find one.
+  G4bool OKToLoopFile() const;
   
   /// Accessor.
   G4long NEventsReadThatPassedFilters() const {return nEventsReadThatPassedFilters;}
@@ -88,9 +93,9 @@ public:
 protected:
   /// Utility function for derived classes to check a position is inside the world.
   G4bool VertexInsideWorld(const G4ThreeVector& pos) const;
-  
-  G4bool endOfFileReached;
+
   G4bool loopFile;
+  G4bool endOfFileReached;
   G4bool vertexGeneratedSuccessfully;
   G4long currentFileEventIndex;
   G4long nEventsInFile;

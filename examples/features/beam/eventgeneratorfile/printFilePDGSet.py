@@ -17,7 +17,8 @@ def Analyse(filename):
         readok = f.read_event(evt)
         if f.failed():
             break
-        pdgids = set([p.pid for p in evt.particles])
+        # choose particles with no children, i.e. at the end of the tree - we do this in bdsim
+        pdgids = set([p.pid for p in evt.particles if len(p.children) == 0])
         sets.append(pdgids)
         print("Event #:", eventIndex)
         print(sorted(pdgids))

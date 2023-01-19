@@ -84,8 +84,7 @@ private:
   std::clock_t  cpuStartTime;     ///< Start time of run.
   BDSEventAction* eventAction;    ///< Event action for updating information at start of run.
   G4String        trajectorySamplerID; ///< Copy of option.
-  
-  G4bool runEndedEarly;
+
   G4long nEventsInOriginalDistrFile;
   G4long nEventsDistrFileSkipped;
 };

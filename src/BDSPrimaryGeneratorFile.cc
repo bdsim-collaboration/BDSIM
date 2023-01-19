@@ -43,9 +43,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile():
+BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile(G4bool loopFileIn):
+  loopFile(loopFileIn),
   endOfFileReached(false),
-  loopFile(false),
   vertexGeneratedSuccessfully(false),
   currentFileEventIndex(0),
   nEventsInFile(0),
@@ -83,6 +83,11 @@ void BDSPrimaryGeneratorFile::RecreateAdvanceToEvent(G4int eventOffset)
 G4long BDSPrimaryGeneratorFile::NEventsLeftInFile() const
 {
   return nEventsInFile - currentFileEventIndex;
+}
+
+G4bool BDSPrimaryGeneratorFile::OKToLoopFile() const
+{
+  return nEventsReadThatPassedFilters > 0;
 }
 
 BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD::Beam& beam,

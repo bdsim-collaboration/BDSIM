@@ -145,7 +145,6 @@ public:
 
   /// Copy run information to output structure.
   void FillRun(const BDSEventInfo* info,
-               G4bool runEndedEarlyIn,
                G4long nEventsInOriginalDistrFileIn,
                G4long nEventsDistrFileSkippedIn);
   
@@ -274,7 +273,6 @@ private:
 
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info,
-                   G4bool runEndedEarlyIn,
                    G4long nEventsInOriginalDistrFileIn,
                    G4long nEventsDistrFileSkippedIn);
 
