@@ -1,7 +1,7 @@
+! load shower sample
 include bdsimsampler-lowphysics.gmad;
 
+! restore physics list
 option, physicsList="all_particles decay";
 
-beam, eventGeneratorNEventsSkip=2;
-
-option, printFractionEvents=-1;
+option, ngenerate=3;
