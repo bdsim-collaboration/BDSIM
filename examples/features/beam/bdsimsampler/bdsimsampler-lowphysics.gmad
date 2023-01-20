@@ -1,7 +1,7 @@
 include bdsimsampler.gmad;
 
 beam, distrType="bdsimsampler:c1",
-      distrFile="../../data/shower1.root";
+      distrFile="../../data/shower.root";
 
 
 ! reduce physics list to nothing - so only magnetic tracking
