@@ -107,13 +107,13 @@ BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD:
   if (useEventGeneratorFile || useSamplerLoader)
     {
       if (beam.distrFile.empty())
-	{throw BDSException(__METHOD_NAME__, "no distrFile specified for event generator beam distribution.");}
+        {throw BDSException(__METHOD_NAME__, "no distrFile specified for event generator beam distribution.");}
       G4String filename = BDS::GetFullPath(beam.distrFile, false, beam.distrFileFromExecOptions);
       BDSBunchEventGenerator* beg = dynamic_cast<BDSBunchEventGenerator*>(bunchIn);
       if (!beg)
-	{throw BDSException(__METHOD_NAME__, "must be used with a BDSBunchEventGenerator instance");}
+        {throw BDSException(__METHOD_NAME__, "must be used with a BDSBunchEventGenerator instance");}
       if (useEventGeneratorFile)
-	{
+        {
 #ifdef USE_HEPMC3
           generatorFromFile = new BDSHepMC3Reader(beam.distrType,
                                                   filename,
@@ -122,9 +122,9 @@ BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD:
                                                   beam.removeUnstableWithoutDecay,
                                                   beam.eventGeneratorWarnSkippedParticles);
 #else
-	  throw BDSException(__METHOD_NAME__, "event generator file being used but BDSIM not compiled with HEPMC3");
+          throw BDSException(__METHOD_NAME__, "event generator file being used but BDSIM not compiled with HEPMC3");
 #endif
-	}
+        }
       else // must be useSamplerLoader is true
         {
           generatorFromFile = new BDSROOTSamplerReader(beam.distrType,
@@ -138,9 +138,9 @@ BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD:
       
       // common bits
       if (recreate)
-	{generatorFromFile->RecreateAdvanceToEvent(eventOffset);}
+        {generatorFromFile->RecreateAdvanceToEvent(eventOffset);}
       if (beam.distrFileMatchLength)
-	{BDSGlobalConstants::Instance()->SetNumberToGenerate((G4int)generatorFromFile->NEventsLeftInFile());}
+        {BDSGlobalConstants::Instance()->SetNumberToGenerate((G4int)generatorFromFile->NEventsLeftInFile());}
       runAction->SaveNEventsInOriginalFile(generatorFromFile->NEventsLeftInFile());
     }
   
