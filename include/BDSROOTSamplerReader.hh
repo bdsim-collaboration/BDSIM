@@ -69,10 +69,14 @@ public:
     G4ThreeVector xyz;
     G4PrimaryParticle* vertex;
   };
+
+  /// Just advance to a different event index. Have a function to put the
+  /// implementation in one place and be similar to BDSHepMC3Reader.
+  void SkipEvents(G4long eventOffset);
   
 protected:
-  /// Clear the hepmcEvent object, reallocate and read a single event and fill that member.
-  void ReadSingleEvent(G4long index);
+  /// Read sampler hits and put into primary vertices if they pass filters.
+  void ReadSingleEvent(G4long index, G4Event* anEvent);
 
   /// Conversion from HepMC::GenEvent to G4Event.
   //void HepMC2G4(const HepMC3::GenEvent* hepmcevt, G4Event* g4event);

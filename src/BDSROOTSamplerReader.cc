@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSPrimaryVertexInformationV.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "G4Event.hh"
 #include "G4EventManager.hh"
@@ -60,6 +61,9 @@ BDSROOTSamplerReader::BDSROOTSamplerReader(const G4String& distrType,
   referenceBeamMomentumOffset = bunch->ReferenceBeamMomentumOffset();
   reader = new BDSOutputLoaderSampler(fileName, samplerName);
   nEventsInFile = reader->NEventsInFile();
+  if (!bunch)
+    {throw BDSException(__METHOD_NAME__, "must be constructed with a valid BDSBunchEventGenerator instance");}
+  SkipEvents(bunch->eventGeneratorNEventsSkip);
 }
 
 BDSROOTSamplerReader::~BDSROOTSamplerReader()
@@ -71,47 +75,34 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
 {
   if (!reader)
     {throw BDSException(__METHOD_NAME__, "no file reader available");}
-  
-  G4int nParticles = 0;
+
   currentVertices.clear();
-  while (nParticles < 1)
-    {
-      // currentFileEventIndex is zero counting by nEventsInFile will be 1 greater
-      if (currentFileEventIndex >= nEventsInFile)
-	{
-	  endOfFileReached = true;
-	  G4cout << __METHOD_NAME__ << "End of file reached. ";
+
+  // currentFileEventIndex is zero counting by nEventsInFile will be 1 greater
+  if (currentFileEventIndex >= nEventsInFile)
+	  {
+	    endOfFileReached = true;
+	    G4cout << __METHOD_NAME__ << "End of file reached. ";
 	  
-	  if (loopFile)
-	    {
-	      G4cout << "Returning to beginning of file for next event." << G4endl;
-	      currentFileEventIndex = 0;
-	      endOfFileReached = false;
-	    }
-	  else
-	    {
-	      G4cout << G4endl; // to flush output
-	      return;
-	    }
-	}
+	    if (loopFile)
+	      {
+          if (OKToLoopFile())
+            {
+              G4cout << "Returning to beginning of file for next event." << G4endl;
+              currentFileEventIndex = 0;
+              endOfFileReached = false;
+            }
+          else
+            {BDS::Warning(__METHOD_NAME__, "file looping requested, but 0 events passed filters - ending.");}
+	      }
+	    else
+	      {
+	        G4cout << G4endl; // to flush output
+	        return;
+	      }
+	  }
       
-      ReadSingleEvent(currentFileEventIndex);
-      nParticles = (G4int)currentVertices.size();
-      
-      if (nParticles > 0)
-	{
-	  vertexGeneratedSuccessfully = true;
-	  nEventsReadThatPassedFilters++;
-	}
-      else
-	{nEventsSkipped++;}
-      
-      currentFileEventIndex++;
-    }
-  
-  for (auto* v : currentVertices)
-    {anEvent->AddPrimaryVertex(v);}
-  currentVertices.clear();
+  ReadSingleEvent(currentFileEventIndex, anEvent);
 }
 
 void BDSROOTSamplerReader::RecreateAdvanceToEvent(G4int eventOffset)
@@ -119,12 +110,7 @@ void BDSROOTSamplerReader::RecreateAdvanceToEvent(G4int eventOffset)
   BDSPrimaryGeneratorFile::RecreateAdvanceToEvent(eventOffset);
   G4cout << "BDSROOTSamplerLoader::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
   ThrowExceptionIfRecreateOffsetTooHigh(eventOffset);
-  for (G4int i = 0; i < eventOffset; i++)
-    {
-      G4Event* event = new G4Event();
-      GeneratePrimaryVertex(event);
-      delete event;
-    }
+  SkipEvents(eventOffset);
 }
 
 void BDSROOTSamplerReader::ReadPrimaryParticlesFloat(G4long index)
@@ -171,7 +157,7 @@ void BDSROOTSamplerReader::ReadPrimaryParticlesDouble(G4long index)
     }
 }
 
-void BDSROOTSamplerReader::ReadSingleEvent(G4long index)
+void BDSROOTSamplerReader::ReadSingleEvent(G4long index, G4Event* anEvent)
 {
   if (reader->DoublePrecision())
     {ReadPrimaryParticlesDouble(index);}
@@ -184,7 +170,7 @@ void BDSROOTSamplerReader::ReadSingleEvent(G4long index)
     {
       const auto vertex = xyzVertex.vertex;
       // if the particle definition isn't found from the pdgcode in the construction
-      // of G4PrimaryParticle, it means the mass, charge, etc will be wrong - don't
+      // of G4PrimaryParticle, it means the mass, charge, etc. will be wrong - don't
       // stack this particle into the vertex.
       // technically shouldn't happen as bdsim produced this output... but safety first
       const G4ParticleDefinition* pd = vertex->GetParticleDefinition();
@@ -194,9 +180,6 @@ void BDSROOTSamplerReader::ReadSingleEvent(G4long index)
       
       if (deleteIt)
         {
-#ifdef BDSDEBUG
-          G4cout << __METHOD_NAME__ << "skipping particle with PDG ID: " << pd->GetPDGEncoding() << G4endl;
-#endif
           nParticlesSkipped++;
           continue;
         }
@@ -267,9 +250,32 @@ void BDSROOTSamplerReader::ReadSingleEvent(G4long index)
   
   if (nParticlesSkipped > 0 && warnAboutSkippedParticles)
     {G4cout << __METHOD_NAME__ << nParticlesSkipped << " particles skipped" << G4endl;}
+
+  if (currentVertices.empty())
+    {// no particles found that pass criteria... we can't simulate this event... abort and move on
+      nEventsSkipped++;
+      if (warnAboutSkippedParticles)
+        {G4cout << __METHOD_NAME__ << "no particles found in event number: " << currentFileEventIndex << " in the file" << G4endl;}
+    }
+  else
+    {
+      vertexGeneratedSuccessfully = true;
+      nEventsReadThatPassedFilters++;
+    }
   
   // clear initially loaded ones
   for (auto& v : vertices)
     {delete v.vertex;}
   vertices.clear();
+
+  currentFileEventIndex++;
+
+  for (auto* v : currentVertices)
+    {anEvent->AddPrimaryVertex(v);}
+  currentVertices.clear();
+}
+
+void BDSROOTSamplerReader::SkipEvents(G4long eventOffset)
+{
+  currentFileEventIndex = eventOffset;
 }
