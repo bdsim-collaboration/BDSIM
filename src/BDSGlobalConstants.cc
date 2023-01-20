@@ -34,6 +34,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 #include "BDSWarning.hh"
 
+#include "parser/options.h"
+
 #include "globals.hh"
 #include "G4Colour.hh"
 #include "G4RotationMatrix.hh"
@@ -58,7 +60,12 @@ BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if (!instance)
-    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
+    {
+      if (BDSParser::IsInitialised())
+        {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
+      else
+        {instance = new BDSGlobalConstants(GMAD::Options());}
+    }
   return instance;
 }
 
