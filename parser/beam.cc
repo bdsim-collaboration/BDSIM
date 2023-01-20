@@ -321,8 +321,8 @@ void Beam::PublishMembers()
   publish("eventGeneratorMinT",      &Beam::eventGeneratorMinT);
   publish("eventGeneratorMaxT",      &Beam::eventGeneratorMinT);
   publish("eventGeneratorMinEk",     &Beam::eventGeneratorMinEK);
-  publish("eventGeneratorMinEK",     &Beam::eventGeneratorMaxEK); // alias
-  publish("eventGeneratorMaxEk",     &Beam::eventGeneratorMinEK);
+  publish("eventGeneratorMinEK",     &Beam::eventGeneratorMinEK); // alias
+  publish("eventGeneratorMaxEk",     &Beam::eventGeneratorMaxEK);
   publish("eventGeneratorMaxEK",     &Beam::eventGeneratorMaxEK); // alias
   publish("eventGeneratorParticles", &Beam::eventGeneratorParticles);
   publish("eventGeneratorWarnSkippedParticles", &Beam::eventGeneratorWarnSkippedParticles);
