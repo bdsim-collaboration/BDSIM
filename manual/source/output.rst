@@ -551,9 +551,15 @@ BDSOutputROOTEventHeader
 | skimmedFile            | bool                     | Whether this file's Event tree is     |
 |                        |                          | made of skimmed events.               |
 +------------------------+--------------------------+---------------------------------------+
-| nOriginalEvents        | unsigned long long int   | If a skimmed file, this is the number |
+| nOriginalEvents (\*)   | unsigned long long int   | If a skimmed file, this is the number |
 |                        |                          | of events in the original file.       |
 +------------------------+--------------------------+---------------------------------------+
+
+* (\*) This variable may only be filled in the second entry of the tree as they are only
+  available at the end of a run and ROOT does not permit overwriting an entry. The first entry
+  to the header tree is written when the file is opened and must be there in case of a crash
+  or the BDSIM instance was killed.
+
 
 ParticleData Tree
 ^^^^^^^^^^^^^^^^^
@@ -1244,6 +1250,8 @@ system so there are only global coordinates recorded.
 | turn                  | std::vector<int>      | (optional) Turn in circular machine on loss                       |
 +-----------------------+-----------------------+-------------------------------------------------------------------+
 
+.. _output-structure-run-info:
+
 BDSOutputROOTEventRunInfo
 *************************
 
@@ -1262,6 +1270,15 @@ BDSOutputROOTEventRunInfo
 +-----------------------------+-------------------+---------------------------------------------+
 | seedStateAtStart            | std::string       | State of random number generator at the     |
 |                             |                   | start of the run as provided by CLHEP       |
++-----------------------------+-------------------+---------------------------------------------+
+| nEventsInFile               | long              | Number of events from input distribution    |
+|                             |                   | file that were found. Excludes any ignored  |
+|                             |                   | or skipped events, but includes all events  |
+|                             |                   | after those irrespective of filters.        |
++-----------------------------+-------------------+---------------------------------------------+
+| nEventsInFileSkipped        | long              | Number of events if any that were skipped   |
+|                             |                   | from an input distribution given the        |
+|                             |                   | filters used.                               |
 +-----------------------------+-------------------+---------------------------------------------+
 
 .. _output-structure-trajectory:
