@@ -1,0 +1,7 @@
+include bdsimsampler-lowphysics.gmad;
+
+option, physcisList="all_particles decay";
+
+beam, eventGeneratorNEventsSkip=2;
+
+option, printFractionEvents=-1;
