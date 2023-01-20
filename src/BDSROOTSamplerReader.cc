@@ -280,5 +280,6 @@ void BDSROOTSamplerReader::ReadSingleEvent(G4long index, G4Event* anEvent)
 
 void BDSROOTSamplerReader::SkipEvents(G4long eventOffset)
 {
+  G4cout << __METHOD_NAME__ << "skipping " << eventOffset << " into file." << G4endl;
   currentFileEventIndex = eventOffset;
 }
