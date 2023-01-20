@@ -93,7 +93,10 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
               endOfFileReached = false;
             }
           else
-            {BDS::Warning(__METHOD_NAME__, "file looping requested, but 0 events passed filters - ending.");}
+            {
+              BDS::Warning(__METHOD_NAME__, "file looping requested, but 0 events passed filters - ending.");
+              return;
+            }
 	      }
 	    else
 	      {
