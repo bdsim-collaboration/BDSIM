@@ -168,8 +168,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (EK <= 0)
     {
       G4cout << __METHOD_NAME__ << "Event #" << anEvent->GetEventID()
-	     << " - Particle kinetic energy smaller than 0! "
-	     << "This will not be tracked." << G4endl;
+             << " - Particle kinetic energy smaller than 0! "
+             << "This will not be tracked." << G4endl;
       anEvent->SetEventAborted();
       return;
     }
@@ -178,8 +178,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (!worldExtent.Encompasses(coords.global))
     {
       G4cerr << __METHOD_NAME__ << "point: " << coords.global
-	     << "mm lies outside the world volume with extent ("
-	     << worldExtent << " - event aborted!" << G4endl << G4endl;
+             << "mm lies outside the world volume with extent ("
+             << worldExtent << " - event aborted!" << G4endl << G4endl;
       anEvent->SetEventAborted();
     }
 
@@ -203,7 +203,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   // associate full set of coordinates with vertex for writing to output after event
   vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords,
-							     bunch->ParticleDefinition()));
+                                                             bunch->ParticleDefinition()));
 
 #ifdef BDSDEBUG
   vertex->Print();
@@ -225,33 +225,33 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
     {
       G4bool endRunNow = false;
       if (distrFileMatchLength)
-	{
-	  endRunNow = true;
-	  G4cout << __METHOD_NAME__ << "distribution file finished (matched in length): ending run." << G4endl;
-	  if (generatorFromFile->NEventsReadThatPassedFilters() == 0)
-	    {BDS::Warning(__METHOD_NAME__, "no events passed filters and were simulated.");}
-	}
+        {
+          endRunNow = true;
+          G4cout << __METHOD_NAME__ << "distribution file finished (matched in length): ending run." << G4endl;
+          if (generatorFromFile->NEventsReadThatPassedFilters() == 0)
+            {BDS::Warning(__METHOD_NAME__, "no events passed filters and were simulated.");}
+        }
       else if (generatorFromFile->NEventsReadThatPassedFilters() < nGenerateRequested)
-	{// not matching the file length specifically but requested a certain number of events
-	  endRunNow = true;
-	  G4int currentEventIndex = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent();
-	  G4cerr << __METHOD_NAME__ << "unable to generate " << nGenerateRequested
-		 << " events as fewer events passed the filters in the file." << G4endl;
-	  G4cerr << __METHOD_NAME__ << currentEventIndex << " events generated" << G4endl;
-	}
+        {// not matching the file length specifically but requested a certain number of events
+          endRunNow = true;
+          G4int currentEventIndex = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent();
+          G4cerr << __METHOD_NAME__ << "unable to generate " << nGenerateRequested
+                 << " events as fewer events passed the filters in the file." << G4endl;
+          G4cerr << __METHOD_NAME__ << currentEventIndex << " events generated" << G4endl;
+        }
       // common bit to artificially abort the event and then end the run now
       if (endRunNow)
-	{
-	  anEvent->SetEventAborted();
-	  G4EventManager::GetEventManager()->AbortCurrentEvent();
-	  runAction->NotifyOfCompletionOfInputDistrFile(generatorFromFile->NEventsInFile(),
-							generatorFromFile->NEventsSkipped());
-	  G4RunManager::GetRunManager()->AbortRun();
-	  return; // don't generate anything - just return
-	}
+        {
+          anEvent->SetEventAborted();
+          G4EventManager::GetEventManager()->AbortCurrentEvent();
+          runAction->NotifyOfCompletionOfInputDistrFile(generatorFromFile->NEventsInFile(),
+                                                        generatorFromFile->NEventsSkipped());
+          G4RunManager::GetRunManager()->AbortRun();
+          return; // don't generate anything - just return
+        }
     }
   else if (!generatedVertexOK) // file isn't finished but we didn't successfully generate this event
-    {	
+    {   
       anEvent->SetEventAborted();
       G4EventManager::GetEventManager()->AbortCurrentEvent();
     }
