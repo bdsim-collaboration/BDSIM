@@ -3,7 +3,7 @@ simple_testing(bunch-bdsimsampler-offset              "--file=bdsimsampler-offse
 simple_testing(bunch-bdsimsampler-permit-unstable     "--file=bdsimsampler-permit-unstable.gmad" "")
 simple_testing(bunch-bdsimsampler-lowphysics          "--file=bdsimsampler-lowphysics.gmad"      "")
 simple_testing(bunch-bdsimsampler-filtered            "--file=bdsimsampler-filtered.gmad"        "")
-simple_testing(bunch-bdsimsampler-ngenerate           "--file=bdsimsampler-ngenerate.gmad"       "")
+simple_testing(bunch-bdsimsampler-ngenerate           "--file=bdsimsampler-ngenerate.gmad --ngenerate=3" "")
 simple_testing_w_string(bunch-bdsimsampler-loop                "--file=bdsimsampler-loop.gmad"            "Returning")
 simple_testing_w_string(bunch-bdsimsampler-no-particles        "--file=bdsimsampler-no-particles.gmad"    "simulated")
 simple_testing_w_string(bunch-bdsimsampler-end-run-early       "--file=bdsimsampler-end-run-early.gmad"   "ending")
