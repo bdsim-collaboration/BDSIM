@@ -192,21 +192,21 @@ void BDSROOTSamplerReader::ReadSingleEvent(G4long index, G4Event* anEvent)
       centralCoords.AddOffset(xyzVertex.xyz); // add on the local offset from the sampler
       
       BDSParticleCoordsFull local(centralCoords.x,
-				  centralCoords.y,
-				  centralCoords.z,
-				  unitMomentum.x(),
-				  unitMomentum.y(),
-				  unitMomentum.z(),
-				  centralCoords.T,
-				  centralCoords.s,
+                                  centralCoords.y,
+                                  centralCoords.z,
+                                  unitMomentum.x(),
+                                  unitMomentum.y(),
+                                  unitMomentum.z(),
+                                  centralCoords.T,
+                                  centralCoords.s,
                                   vertex->GetTotalEnergy(),
-				  overallWeight);
+                                  overallWeight);
 
       if (!bunch->AcceptParticle(local, rp, vertex->GetKineticEnergy(), vertex->GetPDGcode()))
-	{
-	  nParticlesSkipped++;
-	  continue;
-	}
+        {
+          nParticlesSkipped++;
+          continue;
+        }
   
       BDSParticleCoordsFullGlobal fullCoordsGlobal = bunch->ApplyTransform(local);
   
@@ -217,26 +217,26 @@ void BDSROOTSamplerReader::ReadSingleEvent(G4long index, G4Event* anEvent)
       
       // ensure it's in the world - not done in primary generator action for event generators
       if (!VertexInsideWorld(fullCoordsGlobal.global.Position()))
-	{
-	  delete g4vtx;
-	  nParticlesSkipped++;
-	  continue;
-	}  
+        {
+          delete g4vtx;
+          nParticlesSkipped++;
+          continue;
+        }
       
       G4double brho     = 0;
       G4double charge   = vertex->GetCharge();
       G4double momentum = vertex->GetTotalMomentum();
       if (BDS::IsFinite(charge)) // else leave as 0
-	{
-	  brho = momentum / CLHEP::GeV / BDS::cOverGeV / charge;
-	  brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
-	}
+        {
+          brho = momentum / CLHEP::GeV / BDS::cOverGeV / charge;
+          brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
+        }
       auto vertexInfo = new BDSPrimaryVertexInformation(fullCoordsGlobal,
-                                             vertex->GetTotalMomentum(),
-                                             vertex->GetCharge(),
-                                             brho,
-                                             vertex->GetMass(),
-                                             vertex->GetPDGcode());
+                                                        vertex->GetTotalMomentum(),
+                                                        vertex->GetCharge(),
+                                                        brho,
+                                                        vertex->GetMass(),
+                                                        vertex->GetPDGcode());
 
       // update momentum in case of a beam line transform
       auto prim = new G4PrimaryParticle(*vertex);
