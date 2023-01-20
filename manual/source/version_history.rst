@@ -36,6 +36,8 @@ V1.7.0 - 2022 / XX / XX
   without units should be updated to include units of MV/m. The documentation has been fixed and is correct
   and consistent. The units for :code:`E` have also been clarified as volts and that this voltage is assumed
   across the length of the element :code:`l`.
+* File looping is no longer the default for filed-based input distributions. The default behaviour
+  is now **to match the length** of the input distribution file.
 
 
 New Features
@@ -67,6 +69,9 @@ New Features
 * The radius of the transverse momentum distribution of a circular beam no longer has to be finite.
   This is useful for generation of an idealised pencil beam.
 * All neutrinos can be used as beam particles now (useful for visualisation of neutrino lines).
+* The `eventgenerator` and `bdsimsampler` distributions now have `eventGeneratorNEventsSkip`
+  in the beam command to allow skipping into the file.
+* Consitency between features between `eventgenerator` and `bdsimsampler` distribution.
 
 **Components**
 

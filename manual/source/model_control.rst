@@ -9,7 +9,11 @@ Model Control
 =============
 
 * :ref:`random-engine`
-* :ref:`beam-parameters`    
+* :ref:`beam-parameters`
+
+  - :ref:`beam-distributions`
+  - :ref:`beam-distributions-file-based`
+    
 * :ref:`physics-processes`
 
   - :ref:`physics-modular-physics-lists`
@@ -73,10 +77,10 @@ Beam Parameters
 
 BDSIM starts each event in one of the following ways:
 
-#) Particles coordinates for one particle
-   are generated from a chosen beam distribution, which is specified in the input GMAD file.
-   In most cases, the particle coordinates are randomly generated according
-   to a distribution.
+#) Particles coordinates for one particle are generated from a chosen beam distribution,
+   which is specified in the input GMAD file. In most cases, the particle coordinates
+   are randomly generated according to a distribution. But this also includes reading
+   from a text file.
 
 #) A primary vertex is loaded from an event generator file. This currently requires linking to
    HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
@@ -322,23 +326,33 @@ Beam Distributions
 The following beam distributions are available in BDSIM
 
 - `reference`_
+
+**Gaussian**
 - `gaussmatrix`_
 - `gauss`_
 - `gausstwiss`_
+
+**Uniform Type**
 - `circle`_
 - `square`_
 - `ring`_
 - `eshell`_
+- `sphere`_
+- `box`_
 - `halo`_
 - `halosigma`_
+
+**Composite**
 - `composite`_
 - `compositespacedirectionenergy`_
+  
+**Beam Distributions - File-Based**
+
 - `userfile`_
 - `ptc`_
 - `eventgeneratorfile`_
 - `bdsimsampler`_
-- `sphere`_
-- `box`_
+
 
 .. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the beam option `beam, offsetSampleMean=1`
 	  documented in :ref:`developer-options` can be used to pre-generate all particle coordinates and
@@ -592,7 +606,7 @@ Beam of randomly distributed particles with a uniform distribution within a circ
 dimension of phase space - `x` & `xp`; `y` & `yp`, `T` & `E` with each uncorrelated.
 Each parameter defines the maximum absolute extent in that dimension, i.e. the possible values
 `x` values range from `-envelopeR` to `envelopeR` for example. Total
-energy is also uniformly distributed between :math:`\pm` `envelopeE`.
+energy is also uniformly distributed between :math:`\pm` `envelopeE`. No distribution in `z`.
 
 * All parameters from `reference`_ distribution are used as centroids.
 
@@ -735,6 +749,63 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 * Only one of :code:`sigmaE`, :code:`sigmaEk` or :code:`sigmaP` can be used.
 * No variation in `t`, `z`, `s`. Only central values.
 
+	
+sphere
+******
+
+The `sphere` distribution generates a distribution with a uniform random direction at one location.
+Points are randomly and uniformly generated on a sphere that are used in a unit vector for the
+momentum direction. This is implemented using `G4RandomDirection`, which in turn uses the
+Marsaglia (1972) method.
+
+* `Xp0`, `Yp0`, `Zp0` are ignored.
+* `X0`, `Y0`, `Z0`, `S0`, `T0` can be used for the position of the source.
+* No energy spread.
+
+If an energy spread is desired, please use a :ref:`beam-composite` distribution.
+
+An example can be found in `bdsim/examples/features/beam/sphere.gmad`. Below is an example: ::
+
+  beam, particle = "proton",
+        energy = 1.2*GeV,
+	distrType = "sphere",
+	X0 = 9*cm,
+	Z0 = 0.5*m;
+
+
+box
+***
+
+The `box` distribution generates a uniform random uncorrelated distribution in each variable.
+Ultimatley, the 3-vector making the direction `xp`, `yp`, and `zp` is normalised (i.e. unit 1).
+This results in an uneven distribution in these variables over the range (cube projected onto sphere).
+
+* The values will vary from -envelope to +envelope.
+* `Xp0`, `Yp0`, and `Zp0` are ignored from the reference distribution.
+
+.. tabularcolumns:: |p{5cm}|p{9cm}|
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| `envelopeX`                      | Maximum position in X [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeXp`                     | Maximum component in X of unit momentum vector        |
++----------------------------------+-------------------------------------------------------+
+| `envelopeY`                      | Maximum position in Y [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeYp`                     | Maximum component in Y of unit momentum vector        |
++----------------------------------+-------------------------------------------------------+
+| `envelopeZ`                      | Maximum position in Z [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeZp`                     | Maximum component in Z of unit momentum vector        |
++----------------------------------+-------------------------------------------------------+
+| `envelopeT`                      | Maximum time offset [s]                               |
++----------------------------------+-------------------------------------------------------+
+| `envelopeE`                      | Maximum energy offset [GeV]                           |
++----------------------------------+-------------------------------------------------------+
+
+
 .. _beam-halo-distribution:
 
 halo
@@ -838,6 +909,7 @@ Example::
         haloNSigmaYOuter      = 2,
         haloPSWeightParameter = 1,
         haloPSWeightFunction  = "oneoverr";
+
 
 halosigma
 *********
@@ -1007,7 +1079,96 @@ Examples: ::
 	envelopeY = 3*cm,
 	envelopeZ = 4*cm;
 
-	
+
+.. _beam-distributions-file-based:
+
+Beam Distributions - File-Based
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There are two classes of file-based distributions. Firstly, text file ones - `userfile`
+and `ptc` that load one line of coordinates per event. Secondly, there are more complex
+ones that can have multiple primaries per event - `eventgeneratorfile` and `bdsimsampler`.
+
+The later two have a set of particle filters that can be used to load only certain particles.
+
+Behaviour
+*********
+
+The default behaviour since BDSIM V1.7 is to 'match' the file length - i.e. simulate the
+number of events as there would be in the file. The default is **not to loop** the file.
+However, the user can explicitly request a certain number of events, or that the file is
+looped (knowing that certain primaries might be repeated introducing correlations).
+
+For all the file-based distributions, the following beam options apply.
+
++------------------------------+---------------+-----------------------------------------------+
+| **Option**                   |  **Default**  | **Description**                               |
++==============================+===============+===============================================+
+| `distrFileMatchLength`       | 1 (true)      | Whether to simulate the number of events      |
+|                              |               | that match the number of entries in the file  |
++------------------------------+---------------+-----------------------------------------------+
+| `distrFileLoop`              | 0 (false)     | Whether to loop back to the start of the file |
++------------------------------+---------------+-----------------------------------------------+
+
+.. warning:: `option, ngenerate=N` in input GMAD text will be ignored when a distribution file
+             is used and the default file matching is turned on. The executable option `--ngenerate=N`
+             must therefore be used, or file length matching turned off.
+
+**Normal Behaviour - No Looping**
+
+::
+
+   beam, distrType="somedistributionhere...",
+         distrFile="somefile.dat";
+
+The number of events will be generate as matches number of entries in the file.
+
+**NGenerate**
+
+To simulate fewer events, we must specify ngenerate as an **executable** option. ::
+
+  bdsim --file=mymodel_w_generator.gmad --outfile=r1 --batch --ngenerate=3
+
+This will generate 3 events, no matter how many are in the file.
+
+**Looping**
+
+We must explicitly turn off file length matching and turn on looping. ::
+
+  beam, distrType="somedistributionhere...",
+        distrFile="somefile.dat",
+        distrFileMatchLength=0,
+        distrFileLoop=1;
+
+  beam, ngenerate=100;
+
+This will generate 100 events and if we assume `somefile.dat` has only say 20 events,
+it will be replayed (with different event seeds) 5x.
+
+.. warning:: Looping a file is fine if each event is simulated with a different seed,
+             which would be the default behaviour. However, if you only loop part of
+             a file, you may 'enhance' the statistics of one set of input coordinates
+             and may bias the final result.
+
+**Filtering**
+
+With the `eventgenerator` and `bdsimsampler` distributions, we can filter which particles
+we load. It is therefore possible to exclude all particles from an event or indeed a file.
+
+
+* If all particles from a file are excluded and looping is requested, the file will not loop.
+* The number of completely skipped events is recorded in the `Run.Summary.nEventsInFileSkipped`
+  in the output. See :ref:`output-structure-run-info`.
+* The number of events in total in the input file is written both to `Run.Summary.nEventsInFile`
+  and to `Header.nOriginalEvents`.
+* If :math:`nEventsInFileSkiipe > 0`, then the file will be marked as a "skimmed" file as the
+  number of output events is less than the number of input events. This is recorded in
+  `Header.skimmedFile`.
+* The header variables described here, will only be recorded in the second entry of the header tree.
+  The first entry is when the file is opened, and the second at the end of a run. ROOT prevents us
+  from overwriting the first entry.
+
+        
 userfile
 ********
 
@@ -1032,8 +1193,6 @@ particle coordinates from the beginning. A warning will be printed out in this c
 
 * The lines counted by `nlinesIgnore` are truly ignored whether they are a comment or not.
 * `nlinesSkip` will skip a number of valid lines (excluding comments or empty lines).
-* The default behaviour is to loop to the beginning of the file when the end is reached.
-  This can be controlled by `distrFileMatchLength` in the `beam` command.
 * When the file is looped, the `nlinesIgnore` and `nlinesSkip` are done again.
 * **tar + gz** will not work. The file must be a single file compressed through gzip only.
 * Coordinates not specified are taken from the default `reference`_ distribution parameters.
@@ -1076,9 +1235,6 @@ particle coordinates from the beginning. A warning will be printed out in this c
 | `nlinesSkip`                     | Number of lines to skip into the file. This is for    | No            |
 |                                  | number of coordinate lines to skip. This does not     |               |
 |                                  | comment or empty lines.                               |               |
-+----------------------------------+-------------------------------------------------------+---------------+
-| `distrFileMatchLength`           | Option for certain distributions to simulate the same | No            |
-|                                  | number of events as are in the file.                  |               |
 +----------------------------------+-------------------------------------------------------+---------------+
 
 Skipping and Ignoring Lines:
@@ -1154,6 +1310,16 @@ Examples: ::
         distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
 
 
+  beam, particle = "e-",
+        energy = 1*GeV,
+        distrType  = "userfile",
+        distrFile  = "Userbeamdata.dat",
+        distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]",
+        distrMatchFileLength = 0,
+        distrFileLoop = 1;
+  option, ngenerate=100;
+
+
 The corresponding `userbeamdata.dat` file looks like::
 
   0 1 2 1 0 1000
@@ -1178,11 +1344,6 @@ Output from MAD-X PTC used as input for BDSIM.
 | Option                           | Description                                           |
 +==================================+=======================================================+
 | `distrFile`                      | PTC output file                                       |
-+----------------------------------+-------------------------------------------------------+
-| `distrFileMatchLength`           | whether to simulate the number of events matching     |
-|                                  | the lines in the file if ngenerate is not specified   |
-+----------------------------------+-------------------------------------------------------+
-| `distrFileLoop`                  | whether to loop on the file (default off)             |
 +----------------------------------+-------------------------------------------------------+
 | `nlinesSkip`                     | number of lines to skip into the file irrespective of |
 |                                  | their contents                                        |
@@ -1351,7 +1512,7 @@ position does not need to be the same.
 * Specify `S` in the beam command to offset the loaded data to the desired position in the beam
   line. i.e. the sampler data is not played back globally where it was recorded.
 * **All** of the parameters of `eventgeneratorfile`_ apply - i.e. all of the cuts and filters
-  apply to this distribution as well.
+  apply to this distribution as well, including **skipping**.
 * By default, the length of the file is matched. If some events contain no particles of
   interest according to the cuts these events will be skipped. Therefore you might have
   fewer events afterwards. Turn off `distrFileMatchLength` to allow looping on the file
@@ -1382,63 +1543,6 @@ Examples: ::
 	     permitted (nor do we want to) simulate an empty event with no starting particles.
 	     Events are read until at least 1 particle is found in an event. If an event loaded
 	     has more than one particle, that event will also match 1:1 to the output event.
-  
-
-	
-sphere
-******
-
-The `sphere` distribution generates a distribution with a uniform random direction at one location.
-Points are randomly and uniformly generated on a sphere that are used in a unit vector for the
-momentum direction. This is implemented using `G4RandomDirection`, which in turn uses the
-Marsaglia (1972) method.
-
-* `Xp0`, `Yp0`, `Zp0` are ignored.
-* `X0`, `Y0`, `Z0`, `S0`, `T0` can be used for the position of the source.
-* No energy spread.
-
-If an energy spread is desired, please use a :ref:`beam-composite` distribution.
-
-An example can be found in `bdsim/examples/features/beam/sphere.gmad`. Below is an example: ::
-
-  beam, particle = "proton",
-        energy = 1.2*GeV,
-	distrType = "sphere",
-	X0 = 9*cm,
-	Z0 = 0.5*m;
-
-
-box
-***
-
-The `box` distribution generates a uniform random uncorrelated distribution in each variable.
-Ultimatley, the 3-vector making the direction `xp`, `yp`, and `zp` is normalised (i.e. unit 1).
-This results in an uneven distribution in these variables over the range (cube projected onto sphere).
-
-* The values will vary from -envelope to +envelope.
-* `Xp0`, `Yp0`, and `Zp0` are ignored from the reference distribution.
-
-.. tabularcolumns:: |p{5cm}|p{9cm}|
-
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| `envelopeX`                      | Maximum position in X [m]                             |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeXp`                     | Maximum component in X of unit momentum vector        |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeY`                      | Maximum position in Y [m]                             |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeYp`                     | Maximum component in Y of unit momentum vector        |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeZ`                      | Maximum position in Z [m]                             |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeZp`                     | Maximum component in Z of unit momentum vector        |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeT`                      | Maximum time offset [s]                               |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeE`                      | Maximum energy offset [GeV]                           |
-+----------------------------------+-------------------------------------------------------+
 
 
 .. _physics-processes:
