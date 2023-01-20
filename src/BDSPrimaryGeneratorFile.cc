@@ -63,7 +63,7 @@ void BDSPrimaryGeneratorFile::ThrowExceptionIfRecreateOffsetTooHigh(G4long event
   if (eventOffset > nEventsInFile)
     {
       G4String msg = "eventOffset (" + std::to_string(eventOffset) + ") is greater than the number of valid data lines in this file.";
-      throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
+      throw BDSException(__METHOD_NAME__, msg);
     }
 }
 
