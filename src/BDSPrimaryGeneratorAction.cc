@@ -227,7 +227,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
       if (distrFileMatchLength)
 	{
 	  endRunNow = true;
-	  G4cout << __METHOD_NAME__ << "distribution file finished (matched in length) - ending run" << G4endl;
+	  G4cout << __METHOD_NAME__ << "distribution file finished (matched in length): ending run." << G4endl;
 	  if (generatorFromFile->NEventsReadThatPassedFilters() == 0)
 	    {BDS::Warning(__METHOD_NAME__, "no events passed filters and were simulated.");}
 	}

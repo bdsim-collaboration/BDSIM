@@ -47,6 +47,7 @@ BDSOutputLoader::BDSOutputLoader(const G4String& filePath):
   optionsTree(nullptr),
   eventTree(nullptr)
 {
+  G4cout << __METHOD_NAME__ << "Opening file: " << filePath << G4endl;
   // open file - READ mode to prevent accidental corruption by adding new things
   file = new TFile(filePath.c_str(), "READ");
   
