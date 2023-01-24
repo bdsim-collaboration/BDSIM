@@ -1947,8 +1947,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
   if (BDS::IsFinite(beamPipeRadius))
 	{beamPipeInfo->aper1 = beamPipeRadius;}
 
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(name, element,
-                                                               -angleIn, angleIn, beamPipeInfo);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(name, element, -angleIn, angleIn, beamPipeInfo);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
@@ -2651,15 +2650,6 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   G4double phaseOffset = BDSFieldFactory::CalculateGlobalPhase(frequency, tOffset);
   (*st)["phase"] -= phaseOffset;
   (*st)["tOffset"] = tOffset;
-
-  // sort phase / timing for each fringe
-  G4double tOffsetIn   = tOffset; // copy central T0
-  G4double tOffsetOut  = tOffset;
-  G4double tHalfCavity = (0.5 * chordLength) / CLHEP::c_light;
-  // this gives correct phase at the beginning of cavity
-  tOffsetIn  -= tHalfCavity;
-  // this gives correct phase at the end of cavity
-  tOffsetOut += tHalfCavity;
   
   return st;
 }
