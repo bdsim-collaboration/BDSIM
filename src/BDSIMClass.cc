@@ -279,7 +279,7 @@ int BDSIM::Initialise()
                                           globals->BeamlineTransform(),
                                           globals->BeamlineS(),
                                           globals->GeneratePrimariesOnly());
-  G4cout << "Bunch distribution: " << bdsBunch->Name() << G4endl;
+  G4cout << "Bunch distribution: \"" << bdsBunch->Name() << "\"" << G4endl;
   /// We no longer need beamParticle so delete it to avoid confusion. The definition is
   /// held inside bdsBunch (can be updated dynamically).
   delete beamParticle;
@@ -340,11 +340,12 @@ int BDSIM::Initialise()
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput,
+  BDSRunAction* runAction = new BDSRunAction(bdsOutput,
                                              bdsBunch,
                                              bdsBunch->ParticleDefinition()->IsAnIon(),
                                              eventAction,
-                                             globals->StoreTrajectorySamplerID()));
+                                             globals->StoreTrajectorySamplerID());
+  runManager->SetUserAction(runAction);
 
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Stepping Action"<<G4endl;
@@ -380,7 +381,7 @@ int BDSIM::Initialise()
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "Registering user action - Primary Generator"<<G4endl;
 #endif
-  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam());
+  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam(), runAction);
   runManager->SetUserAction(primaryGeneratorAction);
   BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 
