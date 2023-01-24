@@ -148,6 +148,8 @@ public:
   std::vector<float>       fintx;
   std::vector<float>       fintk2;
   std::vector<float>       fintxk2;
+  std::vector<std::vector<std::string>> pvName;
+  std::vector<std::vector<std::string>> pvNameWPointer;
 
   /// Whether optional collimator information was stored.
   bool storeCollimatorInfo;

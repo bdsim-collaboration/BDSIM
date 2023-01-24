@@ -113,6 +113,7 @@ in :ref:`beamline-offset`.
 	  beamline and the offset of the beam is with respect to this.
 
 
+
 .. _magnet-strength-polarity:
 
 Magnet Strength Polarity

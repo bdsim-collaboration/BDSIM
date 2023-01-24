@@ -47,9 +47,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
   BDSBunch("userfile"),
-  distrFile(""),
-  distrFilePath(""),
-  bunchFormat(""),
   nlinesIgnore(0),
   nlinesSkip(0),
   nLinesValidData(0),
@@ -58,7 +55,9 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   printedOutFirstTime(false),
   anEnergyCoordinateInUse(false),
   changingParticleType(false),
-  matchDistrFileLength(false)
+  endOfFileReached(false),
+  matchDistrFileLength(false),
+  distrFileLoop(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
   comment = std::regex("^\\s*\\#|\\!.*");
@@ -81,6 +80,7 @@ BDSBunchUserFile<T>::~BDSBunchUserFile()
 template<class T>
 void BDSBunchUserFile<T>::OpenBunchFile()
 {
+  endOfFileReached = false;
   if (!printedOutFirstTime)
     {
       G4cout << "BDSBunchUserFile::OpenBunchFile> opening " << distrFilePath << G4endl;
@@ -97,6 +97,7 @@ void BDSBunchUserFile<T>::CloseBunchFile()
 {
   InputBunchFile.clear(); // igzstream doesn't reset eof flags when closing - do manually
   InputBunchFile.close();
+  endOfFileReached = true;
 }
 
 template<class T>
@@ -118,74 +119,74 @@ void BDSBunchUserFile<T>::ParseFileFormat()
       G4String vari = "";
       G4String rest = "";
       if(token.substr(0,1)=="E" || token.substr(0,1)=="P")
-	{
-	  anEnergyCoordinateInUse = true;
-	  if (token.substr(0,2)=="Ek")
-	    {//Kinetic energy (longer name).
-	      vari = token.substr(0,2);
-	      rest = token.substr(2);
-	    }
-	  else
-	    {
-	      vari = token.substr(0,1);
-	      rest = token.substr(1);
-	    }
-	  CheckAndParseUnits(vari, rest, BDS::ParseEnergyUnit);
-	}
+        {
+          anEnergyCoordinateInUse = true;
+          if (token.substr(0,2)=="Ek")
+            {//Kinetic energy (longer name).
+              vari = token.substr(0,2);
+              rest = token.substr(2);
+            }
+          else
+            {
+              vari = token.substr(0,1);
+              rest = token.substr(1);
+            }
+          CheckAndParseUnits(vari, rest, BDS::ParseEnergyUnit);
+        }
       else if (token.substr(0,1)=="t")
-	{
-	  vari = token.substr(0, 1);
-	  rest = token.substr(1);
-	  CheckAndParseUnits(vari, rest, BDS::ParseTimeUnit);
-	}
+        {
+          vari = token.substr(0, 1);
+          rest = token.substr(1);
+          CheckAndParseUnits(vari, rest, BDS::ParseTimeUnit);
+        }
       else if ( ( token.substr(0,1)=="x" && token.substr(1,1)!="p" ) ||
-		( token.substr(0,1)=="y" && token.substr(1,1)!="p" ) ||
-		( token.substr(0,1)=="z" && token.substr(1,1)!="p" ) )
-	{
-	  vari = token.substr(0,1);
-	  rest = token.substr(1);
-	  CheckAndParseUnits(vari, rest, BDS::ParseLengthUnit);
-	}
+                ( token.substr(0,1)=="y" && token.substr(1,1)!="p" ) ||
+                ( token.substr(0,1)=="z" && token.substr(1,1)!="p" ) )
+        {
+          vari = token.substr(0,1);
+          rest = token.substr(1);
+          CheckAndParseUnits(vari, rest, BDS::ParseLengthUnit);
+        }
       else if ( (token.substr(0,2)=="xp") ||
-		(token.substr(0,2)=="yp") ||
-		(token.substr(0,2)=="zp") )
-	{
-	  vari = token.substr(0,2);
-	  rest = token.substr(2);
-	  CheckAndParseUnits(vari, rest, BDS::ParseAngleUnit);
-	}
+                (token.substr(0,2)=="yp") ||
+                (token.substr(0,2)=="zp") )
+        {
+          vari = token.substr(0,2);
+          rest = token.substr(2);
+          CheckAndParseUnits(vari, rest, BDS::ParseAngleUnit);
+        }
       else if (token.substr(0, 1) == "S")
-	{
-	  vari = token.substr(0, 1);
-	  rest = token.substr(1);
-	  CheckAndParseUnits(vari, rest, BDS::ParseLengthUnit);
-	  useCurvilinear = true;
-	}
+        {
+          vari = token.substr(0, 1);
+          rest = token.substr(1);
+          CheckAndParseUnits(vari, rest, BDS::ParseLengthUnit);
+          useCurvilinear = true;
+        }
       else if(token.substr(0,5)=="pdgid")
-	{
-	  changingParticleType = true;
-	  sd.name="pdgid";
-	  sd.unit=1;
-	  fields.push_back(sd);
-	}
+        {
+          changingParticleType = true;
+          sd.name="pdgid";
+          sd.unit=1;
+          fields.push_back(sd);
+        }
       else if(token.substr(0,1)=="w")
-	{
-	  sd.name="weight";
-	  sd.unit=1;
-	  fields.push_back(sd);
-	}
+        {
+          sd.name="weight";
+          sd.unit=1;
+          fields.push_back(sd);
+        }
       else if (token.substr(0,1)=="-")
-	{
-	  // skip
-	  sd.name="skip";
-	  sd.unit=1;
-	  fields.push_back(sd);
-	}
+        {
+          // skip
+          sd.name="skip";
+          sd.unit=1;
+          fields.push_back(sd);
+        }
       else
-	{
-	  G4String message = "Cannot determine bunch data format. Failed at token: " + token;
-	  throw BDSException(__METHOD_NAME__, message);
-	}
+        {
+          G4String message = "Cannot determine bunch data format. Failed at token: " + token;
+          throw BDSException(__METHOD_NAME__, message);
+        }
     }
   
   std::set<G4String> energyKeys = {"E", "Ek", "P"};
@@ -205,10 +206,10 @@ void BDSBunchUserFile<T>::CheckConflictingParameters(const std::set<G4String>& s
     {
       G4String message = "More than one of the following set in user file columns (\"distrFileFormat\") ";
       for (const auto& st : s)
-	{
-	  message += st;
-	  message += ", ";
-	}
+        {
+          message += st;
+          message += ", ";
+        }
       message += "\nPossibly conflicting information. Ensure only one by skipping others with \"-\" symbol";
       throw BDSException("BDSBunchUserFile::CheckConflictingParameters>", message);
     }
@@ -263,17 +264,17 @@ void BDSBunchUserFile<T>::SkipNLinesIgnoreIntoFile(G4bool usualPrintOut)
         {G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << " lines" << G4endl;}
       std::string line;
       for (G4int i = 0; i < nlinesIgnore; i++)
-	{
-	  std::getline(InputBunchFile, line);
-	  lineCounter++;
-	  // we must check explicitly if we've gone past the end of the file
-	  if (InputBunchFile.eof())
-	    {
-	      G4String msg = "end of file reached after line " + std::to_string(lineCounter);
-	      msg += " before nlinesIgnore ("+std::to_string(nlinesIgnore)+") was reached.";
-	      throw BDSException("BDSBunchUserFile::SkipNLinesIgnoreIntoFile>", msg);
-	    }
-	}
+        {
+          std::getline(InputBunchFile, line);
+          lineCounter++;
+          // we must check explicitly if we've gone past the end of the file
+          if (InputBunchFile.eof())
+            {
+              G4String msg = "end of file reached after line " + std::to_string(lineCounter);
+              msg += " before nlinesIgnore ("+std::to_string(nlinesIgnore)+") was reached.";
+              throw BDSException("BDSBunchUserFile::SkipNLinesIgnoreIntoFile>", msg);
+            }
+        }
     }
 }
 
@@ -291,21 +292,21 @@ void BDSBunchUserFile<T>::SkipNLinesSkip(G4bool usualPrintOut)
       std::string line;
       G4int nLinesValidRead = 0;
       while (nLinesValidRead < nlinesSkip)
-	{
-	  std::getline(InputBunchFile, line);
-	  if (SkippableLine(line))
-	    {continue;}
-	  nLinesValidRead++;
-	}
+        {
+          std::getline(InputBunchFile, line);
+          if (SkippableLine(line))
+            {continue;}
+          nLinesValidRead++;
+        }
     }
 }
 
 template<class T>
 void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
-				     const GMAD::Beam& beam,
-				     const BDSBunchType& distrType,
-				     G4Transform3D beamlineTransformIn,
-				     const G4double beamlineSIn)
+                                     const GMAD::Beam& beam,
+                                     const BDSBunchType& distrType,
+                                     G4Transform3D beamlineTransformIn,
+                                     const G4double beamlineSIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   particleMass = beamParticle->Mass();
@@ -314,7 +315,8 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   bunchFormat   = beam.distrFileFormat;
   nlinesIgnore  = beam.nlinesIgnore;
   nlinesSkip    = beam.nlinesSkip;
-  matchDistrFileLength = beam.matchDistrFileLength;
+  matchDistrFileLength = beam.distrFileMatchLength;
+  distrFileLoop = beam.distrFileLoop;
   ParseFileFormat();
 }
 
@@ -335,7 +337,7 @@ G4int BDSBunchUserFile<T>::CountNLinesValidDataInFile()
   while ( std::getline(InputBunchFile, line) )
     {
       if (SkippableLine(line))
-	{continue;} // don't count it
+        {continue;} // don't count it
       nLinesValid++;
     }
   CloseBunchFile();
@@ -354,28 +356,68 @@ void BDSBunchUserFile<T>::Initialise()
       throw BDSException("BDSBunchUserFile::Initialise>", msg);
     }
 
-  G4bool nGenerateHasBeenSet = BDSGlobalConstants::Instance()->NGenerateSet();
-  if (matchDistrFileLength && !nGenerateHasBeenSet)
+  auto g = BDSGlobalConstants::Instance();
+  G4bool nGenerateHasBeenSet = g->NGenerateSet();
+  G4int nGenerate = g->NGenerate();
+  if (matchDistrFileLength)
     {
-      G4int nGenerate = nLinesValidData - nlinesSkip;
-      BDSGlobalConstants::Instance()->SetNumberToGenerate(nGenerate);
-      G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength is True -> simulating " << nGenerate << " events" << G4endl;
+      if (!nGenerateHasBeenSet)
+        {
+          G4int nToGenerate = nLinesValidData - nlinesSkip;
+          g->SetNumberToGenerate(nToGenerate);
+          G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is true -> simulating "
+                 << nToGenerate << " events" << G4endl;
+          if (g->Recreate())
+            {// have to do this now before the primary generator action is called already in the run
+              G4int nLeftFromOffset = nToGenerate - (g->StartFromEvent() % nToGenerate);
+              g->SetNumberToGenerate(nLeftFromOffset);
+              G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength + recreation -> simulate the "
+                     << nLeftFromOffset << " lines left given startFromEvent" << G4endl;
+            }
+        }
+      else
+        {// e.g. if recreating a lower number of events - match is on; but ngenerate is lower - must obey
+          G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength has been requested "
+                 << "but ngenerate has been specified -> use ngenerate" << G4endl;
+          // note we don't need to take care of a recreation offset - this is done later in primary generator action
+          if (nGenerate > nLinesValidData - nlinesSkip)
+            {
+              G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of valid lines (";
+              msg += std::to_string(nLinesValidData) + ") and distrFileMatchLength is on.\nChange ngenerate to <= # lines";
+              msg += ", or don't specifcy ngenerate.\n";
+              msg += "This includes nlinesSkip.";
+              throw BDSException("BDSBunchUserFile::Initialise>", msg);
+            }
+        }
+    }
+  else
+    {
+      if ((nGenerate > nLinesValidData) && !distrFileLoop)
+        {
+          G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of valid lines (";
+          msg += std::to_string(nLinesValidData) + ") but distrFileLoop is false in the beam command";
+          throw BDSException("BDSBunchUserFile::Initialise>", msg);
+        }
     }
   OpenBunchFile();
   SkipNLinesIgnoreIntoFile();
   SkipNLinesSkip();
 }
-
+  
 template<class T>
 void BDSBunchUserFile<T>::EndOfFileAction()
 {
   // If the end of the file is reached go back to the beginning of the file.
   // this re-reads the same file again - must always print warning
-  G4cout << "BDSBunchUserFile> End of file reached. Returning to beginning of file (including nlinesIgnore & nlinesSkip) for next event." << G4endl;
+  G4cout << "BDSBunchUserFile> End of file reached." << G4endl;
   CloseBunchFile();
-  OpenBunchFile();
-  SkipNLinesIgnoreIntoFile(false);
-  SkipNLinesSkip(false);
+  if (distrFileLoop)
+    {
+      G4cout << "BDSBunchUserFile> Returning to beginning of file (including nlinesIgnore & nlinesSkip) for next event." << G4endl;
+      OpenBunchFile();
+      SkipNLinesIgnoreIntoFile(false);
+      SkipNLinesSkip(false);
+    }
 }
 
 template<class T>
@@ -383,11 +425,35 @@ void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
 {
   BDSBunch::RecreateAdvanceToEvent(eventOffset);
   G4cout << "BDSBunchUserFile::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
-  if (eventOffset > nLinesValidData)
+  if (eventOffset > nLinesValidData - nlinesSkip)
     {
-      G4String msg = "eventOffset (" + std::to_string(eventOffset) + ") is greater than the number of valid data lines in this file.";
-      throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
+      if (distrFileLoop)
+        {
+          // we're recreating a file where we looped on the data - don't repeatedly read - just read up to
+          // the right point as if we'd looped the file
+          G4int nAvailable = nLinesValidData - nlinesSkip;
+          G4int nToRoll = eventOffset % nAvailable;
+          eventOffset = nToRoll;
+        }
+      else
+        {
+          G4String msg = "eventOffset (" + std::to_string(eventOffset) + ") is greater than the number of valid data lines in this file.\n";
+          msg += "This includes nlinesSkip.";
+          throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
+        }
     }
+  G4int nEventsRemaining = nLinesValidData - nlinesSkip - eventOffset;
+  G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
+  if (nGenerate > nEventsRemaining && !distrFileLoop)
+    {
+      G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") requested in recreate mode is greater than number\n";
+      msg += "of remaining valid lines in file (" + std::to_string(nEventsRemaining) + ") and distrFileLoop is turned off.";
+      throw BDSException("BDSBunchUserFile>", msg);
+    }
+  // note we cannot update ngenerate here as we're already being called from the primary
+  // generator action in the start of the event after BeamOn(nEvents) has been called
+  // therefore this adjustment for recreation + match is done earlier in this class
+
   // we should now be completely safe to read into the file ignoring comment lines and
   // without checking eof()
   std::string line;
@@ -433,18 +499,18 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   while (lineIsBad)
     {
       if (SkippableLine(line))
-	{
-	  if (InputBunchFile.eof())
-	    {EndOfFileAction();}
-	  else
-	    {
-	      std::getline(InputBunchFile, line);
-	      lineCounter++;
-	      continue;
-	    }
-	}
+        {
+          if (InputBunchFile.eof())
+            {EndOfFileAction();}
+          else
+            {
+              std::getline(InputBunchFile, line);
+              lineCounter++;
+              continue;
+            }
+        }
       else
-	{lineIsBad = false;}
+        {lineIsBad = false;}
     }
   
   // no check the line has the right number of 'words' in it ->
@@ -464,9 +530,9 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   if (results.size() < fields.size())
     {// ensure enough columns
       std::string message = "Invalid line at line " + std::to_string(lineCounter) +
-	".  Expected " + std::to_string(fields.size()) +
-	" columns , but got " + std::to_string(results.size()) +
-	".";
+        ".  Expected " + std::to_string(fields.size()) +
+        " columns , but got " + std::to_string(results.size()) +
+        ".";
       throw BDSException(__METHOD_NAME__, message);
     }
   
@@ -474,36 +540,36 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   for (auto it=fields.begin();it!=fields.end();it++)
     {
       if(it->name=="skip")
-	{double dummy; ReadValue(ss, dummy);}
+        {double dummy; ReadValue(ss, dummy);}
       else if(it->name=="Ek")
-	{ReadValue(ss, Ek); Ek *= (CLHEP::GeV * it->unit);}
+        {ReadValue(ss, Ek); Ek *= (CLHEP::GeV * it->unit);}
       else if(it->name=="E")
-	{ReadValue(ss, E); E *= (CLHEP::GeV * it->unit);}
+        {ReadValue(ss, E); E *= (CLHEP::GeV * it->unit);}
       else if(it->name=="P")
-	{ReadValue(ss, P); P *= (CLHEP::GeV * it->unit);}
+        {ReadValue(ss, P); P *= (CLHEP::GeV * it->unit);}
       else if(it->name=="t")
-	{ReadValue(ss, t); t *= (CLHEP::s * it->unit); tdef = true;}
+        {ReadValue(ss, t); t *= (CLHEP::s * it->unit); tdef = true;}
       else if(it->name=="x")
-	{ReadValue(ss, x); x *= (CLHEP::m * it->unit);}
+        {ReadValue(ss, x); x *= (CLHEP::m * it->unit);}
       else if(it->name=="y")
-	{ReadValue(ss, y); y *= (CLHEP::m * it->unit);}
+        {ReadValue(ss, y); y *= (CLHEP::m * it->unit);}
       else if(it->name=="z")
-	{ReadValue(ss, z); z *= (CLHEP::m * it->unit);}
+        {ReadValue(ss, z); z *= (CLHEP::m * it->unit);}
       else if(it->name=="xp") {ReadValue(ss, xp); xp *= ( CLHEP::radian * it->unit );}
       else if(it->name=="yp") {ReadValue(ss, yp); yp *= ( CLHEP::radian * it->unit );}
       else if(it->name=="zp") {ReadValue(ss, zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
       else if(it->name=="pdgid")
-	{// particle type
-	  ReadValue(ss, type);
-	  updateParticleDefinition = true; // update particle definition after finished reading line
-	}
+        {// particle type
+          ReadValue(ss, type);
+          updateParticleDefinition = true; // update particle definition after finished reading line
+        }
       else if (it->name == "S")
-	{
-	  ReadValue(ss, z);
-	  z *= CLHEP::m * it->unit;
-	}
+        {
+          ReadValue(ss, z);
+          z *= CLHEP::m * it->unit;
+        }
       else if(it->name=="weight")
-	{ReadValue(ss, weight);}
+        {ReadValue(ss, weight);}
     }
 
   // coordinate checks
@@ -536,16 +602,16 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       G4ParticleDefinition* particleDef = nullptr;
       BDSIonDefinition* ionDef = nullptr;
       if (type < 1e9) // not a pdg ion
-	{particleDef = particleTable->FindParticle(type);}
+        {particleDef = particleTable->FindParticle(type);}
       else
-	{
-	  G4IonTable* ionTable = particleTable->GetIonTable();
-	  G4int ionA, ionZ, ionLevel;
-	  G4double ionE;
-	  G4IonTable::GetNucleusByEncoding(type, ionZ, ionA, ionE, ionLevel);
-	  ionDef = new BDSIonDefinition(ionA, ionZ, ionZ);
-	  particleDef = ionTable->GetIon(ionDef->Z(), ionDef->A(), ionDef->ExcitationEnergy());
-	}
+        {
+          G4IonTable* ionTable = particleTable->GetIonTable();
+          G4int ionA, ionZ, ionLevel;
+          G4double ionE;
+          G4IonTable::GetNucleusByEncoding(type, ionZ, ionA, ionE, ionLevel);
+          ionDef = new BDSIonDefinition(ionA, ionZ, ionZ);
+          particleDef = ionTable->GetIon(ionDef->Z(), ionDef->A(), ionDef->ExcitationEnergy());
+        }
       
       if (!particleDef)
         {throw BDSException("BDSBunchUserFile> Particle \"" + std::to_string(type) + "\" not found");}
@@ -559,9 +625,9 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
           particleDefinitionHasBeenUpdated = true;
         }
       catch (const BDSException& e)
-	{// if we throw an exception the object is invalid for the delete on the next loop
-	  particleDefinition = nullptr; // reset back to nullptr for safe delete
-	  throw e;                      // rethrow
+        {// if we throw an exception the object is invalid for the delete on the next loop
+          particleDefinition = nullptr; // reset back to nullptr for safe delete
+          throw e;                      // rethrow
         }
     }
 

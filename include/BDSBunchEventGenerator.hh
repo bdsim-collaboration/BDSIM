@@ -36,12 +36,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSBunchEventGenerator: public BDSBunch
 {
 public: 
-  BDSBunchEventGenerator(); 
+  BDSBunchEventGenerator();
   virtual ~BDSBunchEventGenerator(); 
   /// @{ Assignment and copy constructor not implemented nor used
   BDSBunchEventGenerator& operator=(const BDSBunchEventGenerator&) = delete;
   BDSBunchEventGenerator(BDSBunchEventGenerator&) = delete;
   /// @}
+  
+  // Make friends so they can access protected members
+  friend class BDSHepMC3Reader;
+  friend class BDSROOTSamplerReader;
+  
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam&            beam,
 			  const BDSBunchType&          distrType,
@@ -66,6 +71,7 @@ protected:
   void ParseAcceptedParticleIDs();
 
   /// @{ Cache of limit.
+  G4int    eventGeneratorNEventsSkip;
   G4double eventGeneratorMinX;
   G4double eventGeneratorMaxX;
   G4double eventGeneratorMinY;

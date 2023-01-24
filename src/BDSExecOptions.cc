@@ -345,7 +345,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 		int result = 1;
 		conversion = BDS::IsInteger(optarg, result);
 		options.set_value("ngenerate", result);
-		beam.set_value("matchDistrFileLength", false); // ngenerate overrides.
+		beam.set_value("distrFileMatchLength", false); // ngenerate overrides.
 	      }
 	    else if ( !strcmp(optionName, "nturns") || !strcmp(optionName, "nTurns"))
 	      {

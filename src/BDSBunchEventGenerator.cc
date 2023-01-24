@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSBunchEventGenerator::BDSBunchEventGenerator():
   BDSBunch("eventgenerator"),
+  eventGeneratorNEventsSkip(0),
   eventGeneratorMinX(0),
   eventGeneratorMaxX(0),
   eventGeneratorMinY(0),
@@ -74,7 +75,8 @@ void BDSBunchEventGenerator::SetOptions(const BDSParticleDefinition* beamParticl
 					const G4double               beamlineSIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
-
+  
+  eventGeneratorNEventsSkip = beam.eventGeneratorNEventsSkip;
   eventGeneratorMinX  = beam.eventGeneratorMinX * CLHEP::m;
   eventGeneratorMaxX  = beam.eventGeneratorMaxX * CLHEP::m;
   eventGeneratorMinY  = beam.eventGeneratorMinY * CLHEP::m;
@@ -95,14 +97,13 @@ void BDSBunchEventGenerator::SetOptions(const BDSParticleDefinition* beamParticl
   eventGeneratorMaxEK = beam.eventGeneratorMaxEK * CLHEP::GeV;
   acceptedParticlesString = beam.eventGeneratorParticles;
   Rp0 = std::hypot(Xp0,Yp0);
-  
-  if (beam.matchDistrFileLength)
-    {BDS::Warning("The option matchDistrFileLength doesn't work with the eventgenerator distribution");}
 }
 
 void BDSBunchEventGenerator::CheckParameters()
 {
   BDSBunch::CheckParameters();
+  if (eventGeneratorNEventsSkip < 0)
+    {throw BDSException(__METHOD_NAME__, "eventGeneratorNEventsSkip < 0");}
   if (eventGeneratorMinX >= eventGeneratorMaxX)
     {throw BDSException(__METHOD_NAME__, "eventGeneratorMinX >= eventGeneratorMaxX");}
   if (eventGeneratorMinY >= eventGeneratorMaxY)
@@ -144,7 +145,7 @@ void BDSBunchEventGenerator::ParseAcceptedParticleIDs()
 	      if (search != encoding->end())
 		{acceptedParticles.insert(particleID);}
 	      else
-		{throw BDSException(__METHOD_NAME__,"PDG ID \"" + particleIDStr + "not found in particle table");}
+		{throw BDSException(__METHOD_NAME__,"PDG ID \"" + particleIDStr + "\" not found in particle table");}
 	    }
 	  catch (const std::logic_error&) // else, usual way by string search
 	    {
@@ -171,14 +172,14 @@ G4bool BDSBunchEventGenerator::AcceptParticle(const BDSParticleCoordsFull& coord
   if (firstTime)
     {ParseAcceptedParticleIDs(); firstTime = false;}
 
-  G4bool x  = coords.x  > eventGeneratorMinX+X0   && coords.x  < eventGeneratorMaxX+X0;
-  G4bool y  = coords.y  > eventGeneratorMinY+Y0   && coords.y  < eventGeneratorMaxY+Y0;
-  G4bool z  = coords.z  > eventGeneratorMinZ      && coords.z  < eventGeneratorMaxZ;
-  G4bool xp = coords.xp > eventGeneratorMinXp+Xp0 && coords.xp < eventGeneratorMaxXp+Xp0;
-  G4bool yp = coords.yp > eventGeneratorMinYp+Yp0 && coords.yp < eventGeneratorMaxYp+Yp0;
-  G4bool zp = coords.zp > eventGeneratorMinZp     && coords.zp < eventGeneratorMaxZp;
-  G4bool t  = coords.T  > eventGeneratorMinT      && coords.T+T0  < eventGeneratorMaxT+T0;
-  G4bool ek = kineticEnergy > eventGeneratorMinEK && kineticEnergy < eventGeneratorMaxEK;
+  G4bool x  = coords.x  >= eventGeneratorMinX+X0   && coords.x  <= eventGeneratorMaxX+X0;
+  G4bool y  = coords.y  >= eventGeneratorMinY+Y0   && coords.y  <= eventGeneratorMaxY+Y0;
+  G4bool z  = coords.z  >= eventGeneratorMinZ      && coords.z  <= eventGeneratorMaxZ;
+  G4bool xp = coords.xp >= eventGeneratorMinXp+Xp0 && coords.xp <= eventGeneratorMaxXp+Xp0;
+  G4bool yp = coords.yp >= eventGeneratorMinYp+Yp0 && coords.yp <= eventGeneratorMaxYp+Yp0;
+  G4bool zp = coords.zp >= eventGeneratorMinZp     && coords.zp <= eventGeneratorMaxZp;
+  G4bool t  = coords.T  >= eventGeneratorMinT      && coords.T+T0  <= eventGeneratorMaxT+T0;
+  G4bool ek = kineticEnergy >= eventGeneratorMinEK && kineticEnergy <= eventGeneratorMaxEK;
   G4bool rp = rpOriginal >= eventGeneratorMinRp && rpOriginal < eventGeneratorMaxRp;
   
   G4bool allowedParticle = true;

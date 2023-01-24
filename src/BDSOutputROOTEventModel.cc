@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSSamplerRegistry.hh"
 
 #include "G4RotationMatrix.hh"
@@ -32,7 +33,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Types.hh"
 
 #include <algorithm>
+#include <iterator>
 #include <map>
+#include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <utility>
@@ -137,6 +141,8 @@ void BDSOutputROOTEventModel::Flush()
   fintx.clear();
   fintk2.clear();
   fintxk2.clear();
+  pvName.clear();
+  pvNameWPointer.clear();
 
   storeCavityInfo = false;
   cavityIndices.clear();
@@ -204,10 +210,10 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 				   const std::map<G4String, G4int>&         collimatorIndicesByNameIn,
 				   const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn,
 				   const std::vector<G4String>&             collimatorBranchNamesIn,
-                   const std::vector<G4int>&                cavityIndicesIn,
-                   const std::map<G4String, G4int>&         cavityIndicesByNameIn,
-                   const std::vector<BDSOutputROOTEventCavityInfo>& cavityInfoIn,
-                   const std::vector<G4String>&             cavityBranchNamesIn,
+				   const std::vector<G4int>&                cavityIndicesIn,
+				   const std::map<G4String, G4int>&         cavityIndicesByNameIn,
+				   const std::vector<BDSOutputROOTEventCavityInfo>& cavityInfoIn,
+				   const std::vector<G4String>&             cavityBranchNamesIn,
                                    const std::map<G4String, G4Transform3D>* scorerMeshPlacements,
 				   const std::map<short int, G4String>*     materialIDToNameUnique,
 				   G4bool storeTrajectory)
@@ -358,8 +364,30 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
 			fintk2.push_back(0);
 			fintxk2.push_back(0);
 		      };
+  
+      // do this bit first as we test for magnet strengths later and then do a 'continue' in the for loop
+      auto setOfPVs = BDSPhysicalVolumeInfoRegistry::Instance()->PVsForBeamlineElement(*i);
+      std::vector<std::string> localPVNames;
+      std::vector<std::string> localPVNamesWPointer;
+      if (setOfPVs)
+	{
+	  auto name = [](G4VPhysicalVolume* pv){return pv->GetName();};
+	  std::transform(setOfPVs->begin(), setOfPVs->end(), std::back_inserter(localPVNames), name);
+	  auto fullName = [](G4VPhysicalVolume* pv)
+			  {
+			    std::stringstream ss;
+			    ss << static_cast<const void*>(pv);
+			    std::string addressName = ss.str();
+			    return pv->GetName() + addressName;
+			  };
+	  std::transform(setOfPVs->begin(), setOfPVs->end(), std::back_inserter(localPVNamesWPointer), fullName);
+	}
+      // always push it back even if an empty vector
+      pvName.push_back(localPVNames);
+      pvNameWPointer.push_back(localPVNamesWPointer);
       
       // fill magnet strength data
+      // NOTE - has a 'continue'
       if (BDSMagnet* mag = dynamic_cast<BDSMagnet*>(accComp))
 	{
 	  const BDSMagnetStrength* ms = mag->MagnetStrength();
@@ -392,7 +420,7 @@ void BDSOutputROOTEventModel::Fill(const std::vector<G4int>&                coll
       else
 	{// not a magnet
 	  fillzero();
-	}    
+	}
     }
 }
 #endif

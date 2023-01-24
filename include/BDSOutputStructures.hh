@@ -82,7 +82,7 @@ protected:
   /// Extract number of collimators and their names from beam line.
   void PrepareCavityInformation();
 
-  /// Construct collimtors.
+  /// Construct collimators.
   void InitialiseCollimators();
 
   /// Clear the local particle data structure.

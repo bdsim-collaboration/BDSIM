@@ -144,7 +144,9 @@ public:
   void CloseAndOpenNewFile();
 
   /// Copy run information to output structure.
-  void FillRun(const BDSEventInfo* info);
+  void FillRun(const BDSEventInfo* info,
+               G4long nEventsInOriginalDistrFileIn,
+               G4long nEventsDistrFileSkippedIn);
   
   /// Test whether a sampler name is invalid or not.
   static G4bool InvalidSamplerName(const G4String& samplerName);
@@ -183,6 +185,9 @@ private:
 
   /// Write the header.
   virtual void WriteHeader() = 0;
+  
+  /// Overwrite and update header in the output.
+  virtual void WriteHeaderEndOfFile() = 0;
 
   /// Write the geant4 information.
   virtual void WriteParticleData() = 0;
@@ -266,8 +271,11 @@ private:
   void FillScorerHitsIndividualBLM(const G4String& histogramDefName,
                                    const G4THitsMap<G4double>* hitMap);
 
-  /// Fill run level summary information.
-  void FillRunInfo(const BDSEventInfo* info);
+  /// Fill run level summary information. This also updates the header information for
+  /// writing at the end of a file.
+  void FillRunInfo(const BDSEventInfo* info,
+                   G4long nEventsInOriginalDistrFileIn,
+                   G4long nEventsDistrFileSkippedIn);
 
   /// Utility function to copy out select bins from one histogram to another for 1D
   /// histograms only.

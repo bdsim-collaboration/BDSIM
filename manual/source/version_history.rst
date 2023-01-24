@@ -34,11 +34,12 @@ V1.7.0 - 2022 / XX / XX
   in Bibtex syntax to cite BDSIM easily.
 * The default yoke fields have changed and are on average stronger (and more correct). See below.
 * :code:`gradient` in the :code:`rf` component has the units of **V/m** and not MV/m as was
-  written in the manual. Any rf component in an existing model that is defined with
-  a :code:`gradient` but without units should be updated to include units of MV/m. The
-  documentation has been fixed and is correct and consistent. The units for :code:`E` have
-  also been clarified as volts and that this voltage is assumed across the length of
-  the element :code:`l`.
+  written in the manual. Any rf component in an existing model that is defined with a :code:`gradient` but
+  without units should be updated to include units of MV/m. The documentation has been fixed and is correct
+  and consistent. The units for :code:`E` have also been clarified as volts and that this voltage is assumed
+  across the length of the element :code:`l`.
+* File looping is no longer the default for filed-based input distributions. The default behaviour
+  is now **to match the length** of the input distribution file.
 
 
 New Features
@@ -60,7 +61,7 @@ New Features
 
 * New bunches feature allows offset in time for different bunches at a given repetition rate
   or period with a certain number of events at a fixed bunch index generated. See :ref:`beam-bunches`.
-* The `square` distribution can now have an uncorrelated `Z` distribution with time by
+* The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
 * New bunch distribution type `halosigma` that samples a flat halo distribution
   flat in terms of sigma. This is useful for re-weighting distributions based on
@@ -72,6 +73,9 @@ New Features
 * The radius of the transverse momentum distribution of a circular beam no longer has to be finite.
   This is useful for generation of an idealised pencil beam.
 * All neutrinos can be used as beam particles now (useful for visualisation of neutrino lines).
+* The `eventgenerator` and `bdsimsampler` distributions now have `eventGeneratorNEventsSkip`
+  in the beam command to allow skipping into the file.
+* Consitency between features between `eventgenerator` and `bdsimsampler` distribution.
 
 **Components**
 
@@ -139,11 +143,14 @@ New Features
 * New "radioactivation" physics list.
 * New "gamma_to_mumu" physics list.
 * New "annihi_to_mumu" physics list.
+* New "muon_inelastic" physics list.
 * New option for excluding certain particles from cuts, e.g. exclude muons from the
   minimumKineticEnergy option. See :code:`particlesToExcludeFromCuts` in :ref:`options-tracking`.
 
 **Sensitivity & Output**
 
+* Add an option :code:`uprootCompatible` to read the output file with uproot. If set to 1,
+  it corresponds to have :code:`samplersSplitLevel=1` and :code:`modelSplitLevel=2`.
 * Samplers now have the parameter :code:`partID={11,-11}`, which for example can be used
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
@@ -253,6 +260,7 @@ Bug Fixes
   peak at the centre. The distribution is now uniform in x, y, xp & yp.
 * Fixed generation of ring beam distribution type. Similarly to the circular distribution, the beam had a higher density
   of particles towards the ring's inner radius. The distribution is now uniform in x & y.
+* Fixed recreation when using a `ptc` distribution as the file wouldn't advance to the correct entry.
 
 **Biasing**
 
@@ -299,6 +307,11 @@ Bug Fixes
 * Fix overlaps with various parameter combinations for an octagonal beam / aperture shape.
 * Fixed issued where sections of an angled dipole were shorter than their containers, resulting in visual gaps
   in the geometry.
+* Compilation fixes in AWAKE module for Geant4.11.1.0.
+
+**Link**
+
+* Fix nullptr materials for samplers in mass world. Have to explicity use function to make it valid for developers.
 
 **Output**
 
@@ -370,11 +383,14 @@ Bug Fixes
 * Fix a bug where a particle could be misidentified as an ion and end up being a proton.
   An example would be "pion+" which doesn't match the correct "pi+" name in Geant4 but
   would pass through and become a proton despite its name.
+* Fix runtime exception with Geant4 V11.1.0 for default options applied in BDSIM from all
+  previous versions of Geant4 for epsilon max / min in all fields.
 
 Output Changes
 --------------
 * Add angle of the element in the Model Tree.
-* Add samplerSPosition in the Model Tree.
+* Add `samplerSPosition` in the Model Tree.
+* Add `pvName` and `pvNameWPointer` to the Model Tree.
 * Trajectories now have the variable `depth` for which level of the tree that trajectory is.
 * Trajectories now have the variable `materialID`, which is an integer ID for each material
   for a given model. In the Model tree, a map of this integer to the name is stored. An integer

@@ -1968,8 +1968,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double        
   if (BDS::IsFinite(beamPipeRadius))
 	  {beamPipeInfo->aper1 = beamPipeRadius;}
 
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(name, element,
-                                                               -angleIn, angleIn, beamPipeInfo);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(name, element, -angleIn, angleIn, beamPipeInfo);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
