@@ -638,6 +638,9 @@ symdecl : VARIABLE '='
         {
           if(execute)
             {
+              std::string errorReason;
+              if (Parser::Instance()->InvalidSymbolName(*($1), errorReason))
+                {yyerror(errorReason.c_str());}
               Symtab *sp = Parser::Instance()->symcreate(*($1));
               $$ = sp;
             }
@@ -1203,6 +1206,12 @@ int yyerror(const char *s)
 {
   std::cout << s << " at line " << GMAD::line_num << " of file " << yyfilename << std::endl;
   std::cout << "symbol '" << yytext << "' unexpected (misspelt or semicolon forgotten?)" << std::endl;
+  exit(1);
+}
+
+int yyerror2(const char *s)
+{
+  std::cout << s << " at line " << GMAD::line_num << " of file " << yyfilename << std::endl;
   exit(1);
 }
 

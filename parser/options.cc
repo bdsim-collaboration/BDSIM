@@ -322,6 +322,7 @@ void Options::PublishMembers()
   publish("minimumKineticEnergy",        &Options::minimumKineticEnergy);
   publish("minimumKineticEnergyTunnel",  &Options::minimumKineticEnergyTunnel);
   publish("minimumRange",                &Options::minimumRange);
+  publish("particlesToExcludeFromCuts",  &Options::particlesToExcludeFromCuts);
   
   publish("prodCutPhotons",              &Options::prodCutPhotons);
   publish("prodCutElectrons",            &Options::prodCutElectrons);
@@ -396,6 +397,7 @@ void Options::PublishMembers()
   publish("storeApertureImpactsAll",        &Options::storeApertureImpactsAll);
   publish("storeApertureImpactsHistograms", &Options::storeApertureImpactsHistograms);
   publish("apertureImpactsMinimumKE",       &Options::apertureImpactsMinimumKE);
+  publish("storeCavityInfo",                &Options::storeCavityInfo);
   publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
   publish("storeCollimatorHits",            &Options::storeCollimatorHits);
   publish("storeCollimatorHitsLinks",       &Options::storeCollimatorHitsLinks); // backwards compatibility
@@ -485,6 +487,8 @@ void Options::PublishMembers()
   publish("storeModel",                     &Options::storeModel);
 
   publish("samplersSplitLevel",             &Options::samplersSplitLevel);
+  publish("modelSplitLevel",                &Options::modelSplitLevel);
+  publish("uprootCompatible",               &Options::uprootCompatible);
 
   // circular options
   publish("nturns",                   &Options::nturns);
