@@ -37,7 +37,7 @@ class BDSOutputROOTEventRunInfo: public TObject
 {
 public:
   BDSOutputROOTEventRunInfo();
-  BDSOutputROOTEventRunInfo(const BDSOutputROOTEventInfo* info);
+  explicit BDSOutputROOTEventRunInfo(const BDSOutputROOTEventInfo* info);
   virtual ~BDSOutputROOTEventRunInfo();
   void Flush();
 
@@ -46,6 +46,10 @@ public:
   double durationWall;
   double durationCPU;
   std::string seedStateAtStart; ///< Seed state at the start of the event.
+  
+  /// Upon loading an input file for events, this was the number found in the file excluding lines skipped and filters.
+  long nEventsInFile;
+  long nEventsInFileSkipped;
   
   ClassDef(BDSOutputROOTEventRunInfo,3);
 };

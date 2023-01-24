@@ -12,6 +12,7 @@ The following sections describe the basics of how to prepare a BDSIM model.
 
 * :ref:`lattice-description`
 * :ref:`circular-machines`
+* :ref:`beamline-starting-point`
 * :ref:`magnet-strength-polarity`
 * :ref:`synchronous-time-and-phase`
 * :ref:`lattice-elements`
@@ -95,6 +96,23 @@ calculated and constructed when using the :code:`--circular` executable option.
 
 Although the teleporter may not be required in a well-formed model that closes, the minimum
 gap of :math:`0.2 \mu m` is required for the terminator.
+
+
+.. _beamline-starting-point:
+
+Beamline Starting Point
+-----------------------
+
+The main beamline, by default, starts at :code:`(X,Y,Z) = (0,0,0)` and points in the
+positive unit `Z` direction.
+
+The initial position and direction of the baemline may be change with the options described
+in :ref:`beamline-offset`.
+
+.. note:: It should be noted that the beam or 'bunch' definition will move along with the
+	  beamline and the offset of the beam is with respect to this.
+
+
 
 .. _magnet-strength-polarity:
 
@@ -498,13 +516,13 @@ that the maximum tangential error in the aperture is 1 mm.
 +-----------------+-----------------------------------+-----------+-----------------+
 | `B`             | Magnetic field [T]                | 0         | Yes             |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `e1`            | Input poleface angle [rad]        | 0         | No              |
+| `e1`            | Input pole face angle [rad]       | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `e2`            | Output poleface angle [rad]       | 0         | No              |
+| `e2`            | Output pole face angle [rad]      | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `material`      | Magnet outer material             | Iron      | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `yokeOnInside`  | Yoke on inside of bend or not     | 0         | No              |
+| `yokeOnInside`  | Yoke on inside of bend            | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `hStyle`        | H style poled geometry            | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -1821,17 +1839,22 @@ element
 ^^^^^^^
 
 `element` defines an arbitrary beam line element that's defined by externally provided geometry.
-It includes the possibility of overlaying a field as well. Several geometry formats are supported.
-The user must supply the length (accurately) as well as a `horizontalWidth` (full width), such
-that the geometry will be contained in a box that has horizontal and vertical sizes of `horizontalWidth`.
+It includes the possibility of overlaying a field as well. Several geometry formats are supported
+but GDML is the primary and tested format.
+
+The user must supply the length of the geometry accurately to ensure a tight fit in the beamline.
+BDSIM will leave a gap of this length, then place the geometry at the centre of that location. If
+the geometry is suspected to be too long, a warning will be printed but the model still created
+and visualisable.
 
 The outermost volume of the loaded geometry is simply placed in the beam line. There is no placement
 offset other than the :code:`offsetX`, :code:`offsetY` and :code:`tilt` of that element in the beam line.
 Therefore, the user must prepare geometry with the placement of the contents in the outermost volume
 as required.
 
-An alternative strategy is to use the `gap`_ beam line element
-and make a placement at the appropriate point in global coordinates.
+An alternative strategy is to use the `gap`_ beam line element and make a placement at the appropriate
+point in global coordinates. Again, the user should take care to avoid overlaps and check
+for them purposively.
 
 .. tabularcolumns:: |p{4cm}|p{5cm}|p{2cm}|p{2cm}|
 
@@ -1842,8 +1865,6 @@ and make a placement at the appropriate point in global coordinates.
 +----------------------+----------------------------------+--------------+---------------+
 | `l`                  | Length. Arc length in case of a  | NA           | Yes           |
 |                      | finite angle.                    |              |               |
-+----------------------+----------------------------------+--------------+---------------+
-| `horizontalWidth`    | Diameter of component [m]        | NA           | Yes           |
 +----------------------+----------------------------------+--------------+---------------+
 | `fieldAll`           | Name of field object to use      | NA           | No            |
 +----------------------+----------------------------------+--------------+---------------+
@@ -1870,6 +1891,9 @@ and make a placement at the appropriate point in global coordinates.
 |                      | outermost volume from the loaded |              |               |
 |                      | geometry and make it an assembly |              |               |
 +----------------------+----------------------------------+--------------+---------------+
+| `horizontalWidth`    | Diameter of component [m] Only   | NA           | No            |
+|                      | required for SQL geometry        |              |               |
++----------------------+----------------------------------+--------------+---------------+
 
 * `geometryFile` should be of the format `format:filename`, where `format` is the geometry
   format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
@@ -1883,6 +1907,12 @@ and make a placement at the appropriate point in global coordinates.
 * The outer volume can be stripped away and the geometry is made into an assembly volume
   in Geant4 and placed in the world. Use the parameter :code:`stripOuterVolume=1` for this.
 
+.. warning:: If you strip the outer volume, any field supplied will be applied to all
+	     daughter volumes, but note that the (now from the world) air that may
+	     appear as part of that element will not have field. No field is attached
+	     to the world volume. Therefore, if using say a magnet geometry with yoke,
+	     the user should take care to acknowledge where there is and is not field.
+
 .. note:: The length must be larger than the geometry so that it is contained within it and
 	  no overlapping geometry will be produced. However, care must be taken, as the length
 	  will be the length of the component inserted in the beamline.  If this is much larger
@@ -1891,7 +1921,7 @@ and make a placement at the appropriate point in global coordinates.
 
 Simple example::
 
-  detector: element, geometryFile="gdml:atlasreduced.gdml", horizontalWidth=10*m,l=44*m;
+  detector: element, geometryFile="gdml:atlasreduced.gdml", l=44*m;
 
 Example with field: ::
 

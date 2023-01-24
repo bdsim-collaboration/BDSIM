@@ -59,16 +59,17 @@ BDSRunAction::BDSRunAction(BDSOutput*      outputIn,
                            BDSBunch*       bunchGeneratorIn,
 			   G4bool          usingIonsIn,
 			   BDSEventAction* eventActionIn,
-			   G4String        trajectorySamplerIDIn):
+			   const G4String& trajectorySamplerIDIn):
   output(outputIn),
   starttime(time(nullptr)),
-  seedStateAtStart(""),
   info(nullptr),
   bunchGenerator(bunchGeneratorIn),
   usingIons(usingIonsIn),
   cpuStartTime(std::clock_t()),
   eventAction(eventActionIn),
-  trajectorySamplerID(trajectorySamplerIDIn)
+  trajectorySamplerID(trajectorySamplerIDIn),
+  nEventsInOriginalDistrFile(0),
+  nEventsDistrFileSkipped(0)
 {;}
 
 BDSRunAction::~BDSRunAction()
@@ -78,6 +79,9 @@ BDSRunAction::~BDSRunAction()
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
+  // reset variables for this run
+  nEventsDistrFileSkipped = 0;
+  
   if (BDSGlobalConstants::Instance()->PrintPhysicsProcesses())
     {PrintAllProcessesForAllParticles();}
 
@@ -138,20 +142,19 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   time_t stoptime = time(nullptr);
   info->SetStopTime(stoptime);
   // Run duration
-  G4float duration = difftime(stoptime, starttime);
-  info->SetDurationWall(G4double(duration));
+  G4float duration = static_cast<G4float>(difftime(stoptime, starttime));
+  info->SetDurationWall(duration);
 
   // Calculate the elapsed CPU time for the event.
   auto cpuEndTime = std::clock();
-  G4double durationCPU = static_cast<G4double>(cpuEndTime - cpuStartTime) / CLOCKS_PER_SEC;
+  G4float durationCPU = static_cast<G4float>(cpuEndTime - cpuStartTime) / CLOCKS_PER_SEC;
   info->SetDurationCPU(durationCPU);
   
   // Output feedback
-  G4cout << G4endl << __METHOD_NAME__ << "Run " << aRun->GetRunID()
-	 << " end. Time is " << asctime(localtime(&stoptime));
+  G4cout << G4endl << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
-  output->FillRun(info);
+  output->FillRun(info, nEventsInOriginalDistrFile, nEventsDistrFileSkipped);
   output->CloseFile();
   info->Flush();
 
@@ -223,4 +226,11 @@ void BDSRunAction::CheckTrajectoryOptions() const
       if (range.first > maxS)
 	{throw BDSException(__METHOD_NAME__, "S coordinate " + std::to_string(range.first / CLHEP::m) + "m in option storeTrajectoryElossSRange is beyond the length of the beam line (2m margin).");}
     }
+}
+
+void BDSRunAction::NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrFileIn,
+                                                      G4long nEventsDistrFileSkippedIn)
+{
+  nEventsInOriginalDistrFile = nEventsInOriginalDistrFileIn;
+  nEventsDistrFileSkipped = nEventsDistrFileSkippedIn;
 }
