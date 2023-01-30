@@ -157,6 +157,7 @@ void BDSHepMC3Reader::CloseFile()
 
 G4long BDSHepMC3Reader::CountEventsInFile()
 {
+  G4cout << __METHOD_NAME__ << "counting number of events" << G4endl;
   OpenFile(false);
   G4long nEvents = 0;
   while (!reader->failed())
@@ -173,6 +174,7 @@ G4long BDSHepMC3Reader::CountEventsInFile()
       delete tempEvent;
     }
   CloseFile();
+  G4cout << __METHOD_NAME__ << nEvents << " events found in file" << G4endl;
   return nEvents;
 }
 
@@ -218,7 +220,8 @@ G4bool BDSHepMC3Reader::ReadSingleEvent()
 
 void BDSHepMC3Reader::SkipEvents(G4int nEventsToSkip)
 {
-  G4cout << __METHOD_NAME__ << "skipping " << nEventsToSkip << " into file." << G4endl;
+  if (nEventsToSkip > 0)
+    {G4cout << __METHOD_NAME__ << "skipping " << nEventsToSkip << " into file." << G4endl;}
   if (nEventsToSkip > nEventsInFile)
     {
       G4String msg = "number of events to skip (" + std::to_string(nEventsToSkip) + ") is greater than the number of events (";

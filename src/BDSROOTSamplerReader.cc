@@ -61,6 +61,7 @@ BDSROOTSamplerReader::BDSROOTSamplerReader(const G4String& distrType,
   referenceBeamMomentumOffset = bunch->ReferenceBeamMomentumOffset();
   reader = new BDSOutputLoaderSampler(fileName, samplerName);
   nEventsInFile = reader->NEventsInFile();
+  G4cout << __METHOD_NAME__ << nEventsInFile << " events found in file" << G4endl;
   if (!bunch)
     {throw BDSException(__METHOD_NAME__, "must be constructed with a valid BDSBunchEventGenerator instance");}
   SkipEvents(bunch->eventGeneratorNEventsSkip);
@@ -280,6 +281,7 @@ void BDSROOTSamplerReader::ReadSingleEvent(G4long index, G4Event* anEvent)
 
 void BDSROOTSamplerReader::SkipEvents(G4long eventOffset)
 {
-  G4cout << __METHOD_NAME__ << "skipping " << eventOffset << " into file." << G4endl;
+  if (eventOffset > 0)
+    {G4cout << __METHOD_NAME__ << "skipping " << eventOffset << " into file." << G4endl;}
   currentFileEventIndex = eventOffset;
 }
