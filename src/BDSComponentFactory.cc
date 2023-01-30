@@ -126,7 +126,7 @@ BDSComponentFactory::BDSComponentFactory(const BDSParticleDefinition* designPart
   
   integratorSet = BDS::IntegratorSet(integratorSetType);
   if (usualPrintOut)
-    {G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;}
+    {G4cout << __METHOD_NAME__ << "using \"" << integratorSetType << "\" set of integrators" << G4endl;}
 
   PrepareColours();      // prepare colour definitions from parser
   PrepareCavityModels(); // prepare rf cavity model info from parser
@@ -1595,7 +1595,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
   G4double chordLength = element->l*CLHEP::m;
   if (!HasSufficientMinimumLength(element, false))
     {
-      G4cout << __METHOD_NAME__ << "Using default length of 1 mm for dump" << G4endl;
+      G4cout << __METHOD_NAME__ << "using default length of 1 mm for dump" << G4endl;
       chordLength = 1*CLHEP::mm;
     }
 
