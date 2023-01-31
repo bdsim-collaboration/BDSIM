@@ -273,9 +273,9 @@ private:
 
   /// Fill run level summary information. This also updates the header information for
   /// writing at the end of a file.
-  void FillRunInfo(const BDSEventInfo* info,
-                   G4long nEventsInOriginalDistrFileIn,
-                   G4long nEventsDistrFileSkippedIn);
+  void FillRunInfoAndUpdateHeader(const BDSEventInfo* info,
+                                  G4long nEventsInOriginalDistrFileIn,
+                                  G4long nEventsDistrFileSkippedIn);
 
   /// Utility function to copy out select bins from one histogram to another for 1D
   /// histograms only.
