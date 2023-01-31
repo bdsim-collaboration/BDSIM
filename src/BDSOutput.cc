@@ -381,7 +381,7 @@ void BDSOutput::FillRun(const BDSEventInfo* info,
                         G4long nEventsInOriginalDistrFileIn,
                         G4long nEventsDistrFileSkippedIn)
 {
-  FillRunInfo(info, nEventsInOriginalDistrFileIn, nEventsDistrFileSkippedIn);
+  FillRunInfoAndUpdateHeader(info, nEventsInOriginalDistrFileIn, nEventsDistrFileSkippedIn);
   WriteFileRunLevel();
   WriteHeaderEndOfFile();
   ClearStructuresRunLevel();
@@ -1196,17 +1196,17 @@ void BDSOutput::FillScorerHitsIndividualBLM(const G4String& histogramDefName,
     }
 }
 
-void BDSOutput::FillRunInfo(const BDSEventInfo* info,
-                            G4long nEventsInOriginalDistrFile,
-                            G4long nEventsDistrFileSkipped)
+void BDSOutput::FillRunInfoAndUpdateHeader(const BDSEventInfo* info,
+                                           G4long nEventsInOriginalDistrFileIn,
+                                           G4long nEventsDistrFileSkippedIn)
 {
   if (info)
     {
       *runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());
-      runInfo->nEventsInFile = nEventsInOriginalDistrFile;
-      runInfo->nEventsInFileSkipped = nEventsDistrFileSkipped;
-      headerOutput->skimmedFile |= nEventsDistrFileSkipped > 0;
-      headerOutput->nOriginalEvents = nEventsInOriginalDistrFile;
+      // Note, check analysis/HeaderAnalysis.cc if the logic changes of only filling the 2nd
+      // entry in the header tree with this information
+      headerOutput->nEventsInFile = nEventsInOriginalDistrFileIn;
+      headerOutput->nEventsInFileSkipped = nEventsDistrFileSkippedIn;
     }
 }
 
