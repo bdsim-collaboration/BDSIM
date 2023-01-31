@@ -109,8 +109,10 @@ int main(int argc, char *argv[])
   auto filenames = dl->GetFileNames();
   HeaderAnalysis* ha = new HeaderAnalysis(filenames,
                                           dl->GetHeader(),
-  dl->GetHeaderTree());
-  unsigned long long int nOriginalEvents = ha->CountNOriginalEvents();
+                                          dl->GetHeaderTree());
+  unsigned long long int nEventsInFileTotal;
+  unsigned long long int nEventsInFileSkippedTotal;
+  unsigned long long int nOriginalEvents = ha->CountNOriginalEvents(nEventsInFileTotal, nEventsInFileSkippedTotal);
   delete ha;
   
   BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl->GetBeam(),
@@ -165,6 +167,8 @@ int main(int argc, char *argv[])
       headerOut->Fill(dl->GetFileNames()); // updates time stamp
       headerOut->SetFileType("REBDSIM");
       headerOut->nOriginalEvents = nOriginalEvents;
+      headerOut->nEventsInFile = nEventsInFileTotal;
+      headerOut->nEventsInFileSkipped = nEventsInFileSkippedTotal;
       TTree* headerTree = new TTree("Header", "REBDSIM Header");
       headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
       headerTree->Fill();
