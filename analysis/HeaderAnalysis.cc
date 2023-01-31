@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TFile.h"
 #include "TTree.h"
 
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -39,12 +40,28 @@ HeaderAnalysis::HeaderAnalysis(const std::vector<std::string>& filenamesIn,
 HeaderAnalysis::~HeaderAnalysis() noexcept
 {;}
 
-unsigned long long int HeaderAnalysis::CountNOriginalEvents()
+unsigned long long int HeaderAnalysis::CountNOriginalEvents(unsigned long long int& nEventsInFileIn,
+                                                            unsigned long long int& nEventsInFileSkippedIn)
 {
+  // We should only read one entry per header tree per file, so we don't double count, the number
+  // of events in a file. The header can have 2 entries (start of file and end or run). Use the
+  // tree number set to cache this. We could be analysing 1 file with 1 or 2 header entries or a
+  // chain of files with 1 or 2 header entries.
+  std::set<Int_t> treeFiles;
   unsigned long long int nOriginalEvents = 0;
   for (int i = 0; i < chain->GetEntries(); i++) // assumes 1 header entry per file - fine
     {
       chain->GetEntry(i);
+      Int_t currentTreeNumber = chain->GetTreeNumber();
+      if (treeFiles.count(currentTreeNumber) > 0)
+        {continue;} // we've processed this file in the chain -> ignore
+
+      // Here we take advantage of the fact that although in a given file there might be 2
+      // header entries, the first one will always be empty (set to 0) for these two variables.
+      // Therefore, we can safely *always* add them to a total.
+      nEventsInFileIn += header->header->nEventsInFile;
+      nEventsInFileSkippedIn += header->header->nEventsInFileSkipped;
+
       if (header->header->nOriginalEvents > 0)
 	{nOriginalEvents += header->header->nOriginalEvents;}
       else
@@ -67,6 +84,7 @@ unsigned long long int HeaderAnalysis::CountNOriginalEvents()
 	  ftemp->Close();
 	  delete ftemp;
 	}
+      treeFiles.insert(currentTreeNumber);
     }
   return nOriginalEvents;
 }

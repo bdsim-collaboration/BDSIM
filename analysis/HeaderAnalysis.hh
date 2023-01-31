@@ -40,7 +40,12 @@ public:
 		 TChain* chainIn);
   virtual ~HeaderAnalysis() noexcept;
 
-  unsigned long long int CountNOriginalEvents();
+  /// Add up nOriginalEvents from each file in the chain and also nEventsInFile
+  /// and nEventsInFileSkipped so we have the total numbers. Only adds nOriginalEvents
+  /// from the first entry in each file, but adds the other two from all entries in the
+  /// header tree assuming that only the 2nd entry is filled.
+  unsigned long long int CountNOriginalEvents(unsigned long long int& nEventsInFileIn,
+                                              unsigned long long int& nEventsInFileSkippedIn);
 
 protected:
   std::vector<std::string> filenames;
