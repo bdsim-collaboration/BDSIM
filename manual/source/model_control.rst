@@ -80,7 +80,7 @@ BDSIM starts each event in one of the following ways:
 #) Particles coordinates for one particle are generated from a chosen beam distribution,
    which is specified in the input GMAD file. In most cases, the particle coordinates
    are randomly generated according to a distribution. But this also includes reading
-   from a text file.
+   from a **text file**.
 
 #) A primary vertex is loaded from an event generator file. This currently requires linking to
    HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
