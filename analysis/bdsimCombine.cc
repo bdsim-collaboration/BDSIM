@@ -87,8 +87,11 @@ int main(int argc, char* argv[])
   else
     {std::cout << "Finished merge of Event Tree" << std::endl;}
   
-  // loop over input files loading headers to accumulate number of original events
+  // loop over input files loading headers to accumulate number of original events and
+  // the number of input events from an optional distribution file
   unsigned long long int nOriginalEvents = 0;
+  unsigned long long int nEventsInFile = 0;
+  unsigned long long int nEventsInFileSkipped = 0;
   bool skimmedFile = false;
   unsigned long int i = 0;
   std::cout << "Counting number of original events from headers of files" << std::endl;
@@ -135,6 +138,16 @@ int main(int argc, char* argv[])
 	  else
 	    {std::cerr << "Problem getting Event tree in file " << filename << std::endl;}
 	}
+      
+      // Here we exploit the fact that the 0th entry of the header tree has no data for these
+      // two variables. There may however, only ever be 1 entry for older data. We add it up anyway.
+      for (int j = 0; j < (int)headerTree->GetEntries(); j++)
+        {
+          headerTree->GetEntry(j);
+          nEventsInFile += headerLocal->header->nEventsInFile;
+          nEventsInFileSkipped += headerLocal->header->nEventsInFileSkipped;
+        }
+      
       nEventsPerTree.push_back(nEventsThisFile);
       delete headerLocal;
       f->Close();
@@ -169,6 +182,8 @@ int main(int argc, char* argv[])
   headerOut->SetFileType("BDSIM");
   headerOut->skimmedFile = skimmedFile;
   headerOut->nOriginalEvents = nOriginalEvents;
+  headerOut->nEventsInFile = nEventsInFile;
+  headerOut->nEventsInFileSkipped = nEventsInFileSkipped;
   TTree* headerTree = new TTree("Header", "BDSIM Header");
   headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
   headerTree->Fill();

@@ -126,6 +126,8 @@ int main(int argc, char* argv[])
   std::vector<RBDS::HistogramPath> histograms = histMap->Histograms();
 
   unsigned long long int nOriginalEvents = 0;
+  unsigned long long int nEventsInFile = 0;
+  unsigned long long int nEventsInFileSkipped = 0;
   
   std::cout << "Combination of " << inputFiles.size() << " files beginning" << std::endl;
   // loop over files and accumulate
@@ -151,6 +153,14 @@ int main(int argc, char* argv[])
 	  h->SetBranchAddress(ht);
 	  ht->GetEntry(0);
 	  nOriginalEvents += h->header->nOriginalEvents;
+    // Here we exploit the fact that the 0th entry of the header tree has no data for these
+    // two variables. There may however, only ever be 1 entry for older data. We add it up anyway.
+    for (int i = 0; i < (int)headerTree->GetEntries(); i++)
+      {
+        headerTree->GetEntry(i);
+        nEventsInFile += h->header->nEventsInFile;
+        nEventsInFileSkipped += h->header->nEventsInFileSkipped;
+      }
 	  delete h;
 	}
       else
@@ -169,6 +179,8 @@ int main(int argc, char* argv[])
 	}
 
   headerOut->nOriginalEvents = nOriginalEvents;
+  headerOut->nEventsInFile = nEventsInFile;
+  headerOut->nEventsInFileSkipped = nEventsInFileSkipped;
   headerTree->Fill();
 
   output->Write(nullptr,TObject::kOverwrite);
