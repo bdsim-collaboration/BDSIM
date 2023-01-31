@@ -889,6 +889,7 @@ BDSOutputROOTEventCollimatorInfo
 | ySizeOut           | double        | Vertical half aperture at exit(m)          |
 +--------------------+---------------+--------------------------------------------+
 
+.. _output-run-tree:
 
 Run Tree
 ^^^^^^^^
@@ -898,8 +899,14 @@ Run Tree
 	    :align: center
 
 This tree contains two branches called "Histos." and "Summary." which represent instances of
-:code:`include/BDSOutputROOTEventHistograms.hh` and :code:`include/BSOutputROOTEventInfo`,
-respectively. Histos contains two vectors of 1D and 2D histograms that are produced per run.
+:code:`include/BDSOutputROOTEventHistograms.hh` and :code:`include/BSOutputROOTRunInfo`,
+respectively. See:
+
+* :ref:`output-structure-run-info`
+* :ref:`output-structure-histograms`
+
+Histos contains vectors of any 1D, 2D and 3D histograms that are produced per run. Currently,
+these are 'simple histograms' and not the per-event average ones for the run.
 
 .. _output-event-tree:
 
@@ -1733,7 +1740,8 @@ BDSOutputROOTEventCoords
 +-----------------+-------------+-------------------------------------------------------+
 | T               | double      | Time (ns)                                             |
 +-----------------+-------------+-------------------------------------------------------+
-	     
+
+.. _output-structure-histograms:
 	     
 BDSOutputROOTEventHistograms
 ****************************
