@@ -30,8 +30,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 HeaderAnalysis::HeaderAnalysis(const std::vector<std::string>& filenamesIn,
-			       Header* headerIn,
-			       TChain* chainIn):
+                               Header* headerIn,
+                               TChain* chainIn):
   filenames(filenamesIn),
   header(headerIn),
   chain(chainIn)
@@ -63,27 +63,27 @@ unsigned long long int HeaderAnalysis::CountNOriginalEvents(unsigned long long i
       nEventsInFileSkippedIn += header->header->nEventsInFileSkipped;
 
       if (header->header->nOriginalEvents > 0)
-	{nOriginalEvents += header->header->nOriginalEvents;}
+        {nOriginalEvents += header->header->nOriginalEvents;}
       else
-	{// not a skimmed file, so nOriginalEvents in header is 0 -> get info from that individual file
-	  TFile* ftemp;
-	  try
-	    {ftemp = new TFile(filenames[i].c_str());}
-	  catch (const std::exception& e)
-	    {continue;}
-	  TTree* eventTree = (TTree*)ftemp->Get("Event");
-	  if (!eventTree)
-	    {
-	      ftemp->Close();
-	      delete ftemp;
-	      continue;
-	    }
-	  Long64_t nentries = eventTree->GetEntries();
-	  if (nentries > 0)
-	    {nOriginalEvents += (unsigned long long int)nentries;}
-	  ftemp->Close();
-	  delete ftemp;
-	}
+        {// not a skimmed file, so nOriginalEvents in header is 0 -> get info from that individual file
+          TFile* ftemp;
+          try
+            {ftemp = new TFile(filenames[i].c_str());}
+          catch (const std::exception& e)
+            {continue;}
+          TTree* eventTree = (TTree*)ftemp->Get("Event");
+          if (!eventTree)
+            {
+              ftemp->Close();
+              delete ftemp;
+              continue;
+            }
+          Long64_t nentries = eventTree->GetEntries();
+          if (nentries > 0)
+            {nOriginalEvents += (unsigned long long int)nentries;}
+          ftemp->Close();
+          delete ftemp;
+        }
       treeFiles.insert(currentTreeNumber);
     }
   return nOriginalEvents;

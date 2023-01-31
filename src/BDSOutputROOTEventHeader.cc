@@ -67,7 +67,7 @@ void BDSOutputROOTEventHeader::FlushLocal()
 }
 
 void BDSOutputROOTEventHeader::Fill(const std::vector<std::string>& analysedFilesIn,
-				    const std::vector<std::string>& combinedFilesIn)
+                                    const std::vector<std::string>& combinedFilesIn)
 {
   time_t rawtime;
   time(&rawtime);

@@ -123,8 +123,8 @@ int main(int argc, char* argv[])
       skimmedFile = skimmedFile || headerLocal->header->skimmedFile;
       if (headerLocal->header->skimmedFile)
 	{
-        nEventsThisFile= headerLocal->header->nOriginalEvents;
-        nOriginalEvents += nEventsThisFile;
+          nEventsThisFile = headerLocal->header->nOriginalEvents;
+          nOriginalEvents += nEventsThisFile;
 	}
       else
 	{// unskimmed file which won't record the number of events in the header, so we inspect the Event Tree
