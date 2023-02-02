@@ -128,6 +128,7 @@ int main(int argc, char* argv[])
   unsigned long long int nOriginalEvents = 0;
   unsigned long long int nEventsInFile = 0;
   unsigned long long int nEventsInFileSkipped = 0;
+  unsigned long long int nEventsRequested = 0;
   
   std::cout << "Combination of " << inputFiles.size() << " files beginning" << std::endl;
   // loop over files and accumulate
@@ -160,6 +161,7 @@ int main(int argc, char* argv[])
         headerTree->GetEntry(i);
         nEventsInFile += h->header->nEventsInFile;
         nEventsInFileSkipped += h->header->nEventsInFileSkipped;
+        nEventsRequested += h->header->nEventsRequested;
       }
 	  delete h;
 	}
@@ -181,6 +183,7 @@ int main(int argc, char* argv[])
   headerOut->nOriginalEvents = nOriginalEvents;
   headerOut->nEventsInFile = nEventsInFile;
   headerOut->nEventsInFileSkipped = nEventsInFileSkipped;
+  headerOut->nEventsRequested = nEventsRequested;
   headerTree->Fill();
 
   output->Write(nullptr,TObject::kOverwrite);

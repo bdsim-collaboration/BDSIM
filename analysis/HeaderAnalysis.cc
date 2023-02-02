@@ -41,7 +41,8 @@ HeaderAnalysis::~HeaderAnalysis() noexcept
 {;}
 
 unsigned long long int HeaderAnalysis::CountNOriginalEvents(unsigned long long int& nEventsInFileIn,
-                                                            unsigned long long int& nEventsInFileSkippedIn)
+                                                            unsigned long long int& nEventsInFileSkippedIn,
+                                                            unsigned long long int& nEventsRequestedIn)
 {
   // We should only read one entry per header tree per file, so we don't double count, the number
   // of events in a file. The header can have 2 entries (start of file and end or run). Use the
@@ -53,14 +54,16 @@ unsigned long long int HeaderAnalysis::CountNOriginalEvents(unsigned long long i
     {
       chain->GetEntry(i);
       Int_t currentTreeNumber = chain->GetTreeNumber();
-      if (treeFiles.count(currentTreeNumber) > 0)
-        {continue;} // we've processed this file in the chain -> ignore
 
       // Here we take advantage of the fact that although in a given file there might be 2
       // header entries, the first one will always be empty (set to 0) for these two variables.
       // Therefore, we can safely *always* add them to a total.
       nEventsInFileIn += header->header->nEventsInFile;
       nEventsInFileSkippedIn += header->header->nEventsInFileSkipped;
+      nEventsRequestedIn += header->header->nEventsRequested;
+
+      if (treeFiles.count(currentTreeNumber) > 0)
+        {continue;} // we've processed this file in the chain -> ignore
 
       if (header->header->nOriginalEvents > 0)
         {nOriginalEvents += header->header->nOriginalEvents;}
