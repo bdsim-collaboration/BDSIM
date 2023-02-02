@@ -233,6 +233,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
         }
       else if (generatorFromFile->NEventsReadThatPassedFilters() < nGenerateRequested)
         {// not matching the file length specifically but requested a certain number of events
+          // If the NEventsReadThatPassedFilters == nGenerateRequested then this won't happen as we won't
+          // try to generate another new event beyond this and the run will end naturally without intervention here.
           endRunNow = true;
           G4int currentEventIndex = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent();
           G4cerr << __METHOD_NAME__ << "unable to generate " << nGenerateRequested
@@ -250,7 +252,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
           return; // don't generate anything - just return
         }
     }
-  else if (!generatedVertexOK) // file isn't finished but we didn't successfully generate this event
+  else if (!generatedVertexOK) // file isn't finished, but we didn't successfully generate this event
     {   
       anEvent->SetEventAborted();
       G4EventManager::GetEventManager()->AbortCurrentEvent();
