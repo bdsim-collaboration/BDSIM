@@ -156,9 +156,9 @@ int main(int argc, char* argv[])
 	  nOriginalEvents += h->header->nOriginalEvents;
     // Here we exploit the fact that the 0th entry of the header tree has no data for these
     // two variables. There may however, only ever be 1 entry for older data. We add it up anyway.
-    for (int i = 0; i < (int)headerTree->GetEntries(); i++)
+    for (int i = 0; i < (int)ht->GetEntries(); i++)
       {
-        headerTree->GetEntry(i);
+        ht->GetEntry(i);
         nEventsInFile += h->header->nEventsInFile;
         nEventsInFileSkipped += h->header->nEventsInFileSkipped;
         nEventsRequested += h->header->nEventsRequested;
