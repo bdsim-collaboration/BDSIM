@@ -146,7 +146,7 @@ New Features
 * The :code:`csample` command now works correctly and has been re-implemented for all beamline
   components.
 * A sampler in a BDSIM ROOT output file can now be used as an input beam distribution for
-  another simulation.  See :ref:`bunch-bdsimsampler`.
+  another simulation.  See :ref:`beam-bdsimsampler`.
 * Solenoid sheet / cylinder field has been added and is used by default on the solenoid yoke geometry.
 * Scoring of the differential flux (3D mesh + energy spectrum per cell) following either a linear,
   logarithmic or user-defined energy axis scale (requires Boost).
