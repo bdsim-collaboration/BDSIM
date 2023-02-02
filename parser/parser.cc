@@ -477,7 +477,7 @@ void Parser::set_sampler(const std::string& name,
   // skip first element and add one at the end
   if (count == -2)
     {
-      for (auto it=beamline_list.begin(); it!=beamline_list.end(); ++it)
+      for (auto it = beamline_list.begin(); it != beamline_list.end(); ++it)
 	{// skip LINEs
 	  if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)
 	    {continue;}
@@ -487,17 +487,16 @@ void Parser::set_sampler(const std::string& name,
 	  
 	  (*it).setSamplerInfo(samplerType,(*it).name,samplerRadius,particleSetID);
 	}
-    }
-  // if count equal to -1 add sampler to all element instances
-  else if (count == -1)
+    } 
+  else if (count == -1) // if count equal to -1 add sampler to all element instances
     {
       auto itPair = beamline_list.equal_range(name);
-      if (itPair.first==itPair.second)
+      if (itPair.first == itPair.second)
 	{
-	  std::cerr<<"current beamline doesn't contain element "<< name << std::endl;
-	  exit(1);
+	  std::string msg = "parser> SetSampler> current beamline doesn't contain element \"" + name + "\"";
+	  yyerror2(msg.c_str());
 	}
-      for (auto it = itPair.first; it!= itPair.second; ++it)
+      for (auto it = itPair.first; it != itPair.second; ++it)
 	{
 	  // if sampler is attached to a marker, really attach it to the previous element with the name of marker
 	  auto elementIt = (it->second);
@@ -510,12 +509,13 @@ void Parser::set_sampler(const std::string& name,
 		{
 		  elementIt--;
 		  // have to break first before continue since in while loop
-		  if (elementIt==beamline_list.begin()) break;
+		  if (elementIt == beamline_list.begin())
+		    {break;}
 		}
 	  
 	      if (elementIt==beamline_list.begin())
 		{
-		  std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+		  std::cout << "parser> SetSampler> WARNING: no element before marker " << name << ", no sampler added" << std::endl;
 		  continue;
 		}
 	    }
@@ -527,8 +527,8 @@ void Parser::set_sampler(const std::string& name,
       auto it = beamline_list.find(name,count);
       if (it==beamline_list.end())
 	{
-	  std::cerr<<"current beamline doesn't contain element "<<name<<" with number "<<count<<std::endl;
-	  exit(1);
+	  std::string msg = "parser> SetSampler> current beamline doesn't contain element \"" + name + "\" with number " + std::to_string(count);
+	  yyerror2(msg.c_str());
 	}
       // if sampler is attached to a marker, really attach it to the previous element with the name of marker
       std::string samplerName = (*it).name;
@@ -539,9 +539,9 @@ void Parser::set_sampler(const std::string& name,
 	  while ((*it).isSpecial())
 	    {
 	      it--;
-	      if (it==beamline_list.begin())
+	      if (it == beamline_list.begin())
 		{
-		  std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+		  std::cout << "parser> SetSampler> WARNING: no element before marker " << name << ", no sampler added" << std::endl;
 		  return;
 		}
 	    }
@@ -571,9 +571,10 @@ int Parser::add_sampler_partIDSet(std::list<int>* samplerPartIDListIn)
 void Parser::add_sampler(const std::string& name, int count, ElementType type, std::string samplerType, std::list<int>* samplerPartIDListIn)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting sampler "<<name;
-  if (count>=0) std::cout<<"["<< count <<"]";
-  std::cout<<std::endl;
+  std::cout << "inserting sampler " << name;
+  if (count>=0)
+    {std::cout << "[" << count << "]";}
+  std::cout << std::endl;
 #endif
   int particleSetID = add_sampler_partIDSet(samplerPartIDListIn);
   set_sampler(name,count,type,samplerType,0,particleSetID);
@@ -640,7 +641,8 @@ void Parser::add_element_temp(const std::string& name, int number, bool pushfron
 {
 #ifdef BDSDEBUG
   std::cout << "matched sequence element, " << name;
-  if (number > 1) std::cout << " * " << number;
+  if (number > 1)
+    {std::cout << " * " << number;}
   std::cout << std::endl;
 #endif
   // add to temporary element sequence
@@ -650,12 +652,12 @@ void Parser::add_element_temp(const std::string& name, int number, bool pushfron
   e.lst = nullptr;
   if (pushfront)
     {
-      for(int i=0;i<number;i++)
+      for (int i = 0; i < number; i++)
 	{tmp_list.push_front(e);}
     }
   else
     {
-      for(int i=0;i<number;i++)
+      for (int i = 0; i < number; i++)
 	{tmp_list.push_back(e);}
     }
 }
@@ -683,7 +685,7 @@ void Parser::add_func(std::string name, double (*func)(double))
 
 void Parser::add_var(std::string name, double value, int is_reserved)
 {
-  Symtab *sp=symtab_map.symcreate(name);
+  Symtab* sp = symtab_map.symcreate(name);
   sp->Set(value,is_reserved);
 }
 
