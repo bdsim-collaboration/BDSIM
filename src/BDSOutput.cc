@@ -37,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventAperture.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCollimator.hh"
+#include "BDSOutputROOTEventCavityInfo.hh"
 #include "BDSOutputROOTEventCollimatorInfo.hh"
 #include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventLossWorld.hh"
@@ -119,6 +120,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
 
   storeApertureImpacts       = g->StoreApertureImpacts();
   storeApertureImpactsHistograms = g->StoreApertureImpactsHistograms();
+  storeCavityInfo            = g->StoreCavityInfo();
   storeCollimatorInfo        = g->StoreCollimatorInfo();
   storeCollimatorHitsLinks   = g->StoreCollimatorHitsLinks();
   storeCollimatorHitsIons    = g->StoreCollimatorHitsIons();
@@ -170,6 +172,8 @@ void BDSOutput::InitialiseGeometryDependent()
       PrepareCollimatorInformation(); // prepare names, offsets and indices
       InitialiseCollimators(); // allocate local objects
     }
+  if (storeCavityInfo)
+    {PrepareCavityInformation();} // prepare names, offsets and indices
   CreateHistograms();
   InitialiseSamplers();
   InitialiseMaterialMap();
@@ -180,7 +184,7 @@ void BDSOutput::FillHeader()
   headerOutput->Flush();
   headerOutput->Fill(); // updates time stamp
   WriteHeader();
-  ClearStructuresHeader();
+  // we purposively don't call ClearStructuresHeader() as we may yet update and overwrite the header info
 }
 
 void BDSOutput::FillParticleData(G4bool writeIons)
@@ -224,6 +228,10 @@ void BDSOutput::FillModel()
 			collimatorIndicesByName,
 			collimatorInfo,
 			collimatorNames,
+            cavityIndices,
+            cavityIndicesByName,
+            cavityInfo,
+            cavityNames,
 			&smpm,
 			&materialIDToNameUnique,
 			storeTrajectory);
@@ -363,15 +371,19 @@ void BDSOutput::FillEvent(const BDSEventInfo*                            info,
 
 void BDSOutput::CloseAndOpenNewFile()
 {
+  ClearStructuresHeader();
   CloseFile();
   NewFile();
   InitialiseGeometryDependent();
 }
 
-void BDSOutput::FillRun(const BDSEventInfo* info)
+void BDSOutput::FillRun(const BDSEventInfo* info,
+                        G4long nEventsInOriginalDistrFileIn,
+                        G4long nEventsDistrFileSkippedIn)
 {
-  FillRunInfo(info);
+  FillRunInfo(info, nEventsInOriginalDistrFileIn, nEventsDistrFileSkippedIn);
   WriteFileRunLevel();
+  WriteHeaderEndOfFile();
   ClearStructuresRunLevel();
 }
 
@@ -1184,10 +1196,18 @@ void BDSOutput::FillScorerHitsIndividualBLM(const G4String& histogramDefName,
     }
 }
 
-void BDSOutput::FillRunInfo(const BDSEventInfo* info)
+void BDSOutput::FillRunInfo(const BDSEventInfo* info,
+                            G4long nEventsInOriginalDistrFile,
+                            G4long nEventsDistrFileSkipped)
 {
   if (info)
-    {*runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());}
+    {
+      *runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());
+      runInfo->nEventsInFile = nEventsInOriginalDistrFile;
+      runInfo->nEventsInFileSkipped = nEventsDistrFileSkipped;
+      headerOutput->skimmedFile |= nEventsDistrFileSkipped > 0;
+      headerOutput->nOriginalEvents = nEventsInOriginalDistrFile;
+    }
 }
 
 void BDSOutput::CopyFromHistToHist1D(const G4String& sourceName,

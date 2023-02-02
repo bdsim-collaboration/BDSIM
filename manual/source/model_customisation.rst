@@ -604,7 +604,7 @@ Inside the domain of the sub-field, only its interpolated value is used. The tra
 and main field is hard and it is left to the user to ensure that the field values are continuous to
 make physical sense.
 
-* Currently only sub-magnetic fields are supported.
+* Currently only sub-magnetic and sub-electric fields are supported (no sub-electromagnetic fields).
 * The tilt or rotation of the field map (with respect to the element it is attached to) does not
   apply to the region of applicability for the sub-field. However, the field is tilted appropriately.
 * The spatial (only) offset (x,y,z) of the sub-field applies to it independently of the offset of the
@@ -1775,7 +1775,7 @@ to a cavity object:
 
 Example::
 
-  shinyCavity: cavity, type="elliptical",
+  shinyCavity: cavitymodel, type="elliptical",
                        irisRadius = 35*mm,
 	               equatorRadius = 103.3*mm,
 	               halfCellLength = 57.7*mm,
@@ -1787,6 +1787,12 @@ Example::
 	               thickness = 1*mm,
 	               numberOfPoints = 24,
 	               numberOfCells = 1;
+
+.. figure:: figures/elliptical-cavity2.png
+	    :width: 50%
+	    :align: center
+
+	    Elliptical cavity geometry example from :code:`bdsim/examples/features/geometry/12_cavities/rfcavity-geometry-elliptical.gmad`.
 
 .. figure:: figures/elliptical-cavity.pdf
 	   :width: 40%
@@ -1822,7 +1828,7 @@ Externally Provided Geometry
 ----------------------------
 
 BDSIM provides the ability to use externally provided geometry in the Geant4 model constructed
-by BDSIM. A variety of formats are supported (see :ref:`geometry-formats`). External
+by BDSIM. Different formats are supported (see :ref:`geometry-formats`). External
 geometry can be used in several ways:
 
 1) A placement of a piece of geometry unrelated to the beam line (see :ref:`placements`)
@@ -1833,7 +1839,9 @@ geometry can be used in several ways:
 .. note:: If a given geometry file is reused in different components, it will be reloaded on purpose
 	  to generate a unique set of logical volumes so we have the possibility of different fields,
 	  cuts, regions, colours etc. It will only be loaded once though, if the same component
-	  is used repeatedly.
+	  is used repeatedly. **However**, specifically for a `placement`, this can be overridden
+	  by specifying the parameter :code:`dontReloadGeometry` in the placement definition -
+	  see :ref:`placements`.
 
 .. warning:: If including any external geometry, overlaps must be checked in the visualiser by
 	     running :code:`/geometry/test/run` before the model is used for a physics study.
@@ -1881,6 +1889,27 @@ and validate geometry.
 See :ref:`python-geometry-preparation` for details and links to the software and manual. This
 package is used for many of the examples included with BDSIM and the Python scripts are
 included with the examples.
+
+Material Names And Usage
+************************
+
+Rules for materials in a GDML file:
+
+* A NIST material (e.g. :code:`G4_AIR`) may be used by name without full definition. The XML
+  validator may warning that they are undefined - this is ok as true, but they will be available
+  at runtime.
+* A BDSIM predefined material (or indeed one defined in the input GMAD) may be used by name
+  without a full definition in a GDML file. Similarly, there may be a warning from the XML
+  validator, but the material will be available at run time.
+* A BDSIM material by one of it's aliases in BDSIM may be used by name, similarly.
+* It is allowed to define a material inside a GDML file with the same name as one in BDSIM
+  as the GDML preprocessor (see below) will change the name.
+* Do not define a material fully but with the same name as a NIST material. Whilst Geant4
+  will construct the material when loading the GDML file, it will attach the material by
+  **name** and may not find your material definition from the GDML file.
+
+BDSIM will exit if a conflict in naming (and therefore ambiguous materials could be set)
+is found.
 
 .. _geometry-gdml-preprocessing:
 
@@ -2109,6 +2138,10 @@ The following parameters may be specified with a placement in BDSIM:
 | fieldAll                | Name of field object definition to be used as the field for the    |
 |                         | whole geometry including all daughter volumes.                     |
 +-------------------------+--------------------------------------------------------------------+
+| dontReloadGeometry      | (Boolean) Purposively circumvent BDSIM's reloading of the same     |
+|                         | geometry file for each placement, i.e. reuse it. This will mean    |
+|                         | any cuts or fields or sensitivity will be the same.                |
++-------------------------+--------------------------------------------------------------------+
 
 
 * Only one of :code:`bdsimElement` or :code:`geometryFile` should be used in a placement.
@@ -2130,6 +2163,9 @@ The following parameters may be specified with a placement in BDSIM:
   is executed from or an absolute path.
 * The main beam line begins at (0,0,0) by default but may be offset.  See
   :ref:`beamline-offset` for more details.
+* :code:`dontReloadGeometry` is useful when you have lots of repeated placements of the same thing
+  that is essentially passive material with the same sensitivity e.g. shielding. Specifically,
+  when you don't want to reload the geometry and don't want to preprocess it.
 
 
 `referenceElementNumber` is the occurrence of that element in the sequence. For example, if a sequence

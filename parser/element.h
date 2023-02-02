@@ -282,19 +282,19 @@ namespace GMAD
   };
 
   template <typename T>
-    void Element::set_value(std::string property, T value)
+  void Element::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
       std::cout << "element> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
-      try {
-        Published<Element>::set(this,property,value);
-      }
-      catch(const std::runtime_error&) {
-        std::cerr << "Error: element> unknown property \"" << property << "\" with value " << value  << std::endl;
-        exit(1);
-      }
+      try
+	{Published<Element>::set(this,property,value);}
+      catch(const std::runtime_error&)
+	{
+	  std::cerr << "Error: element> unknown property \"" << property << "\" with value \"" << value << "\"" << std::endl;
+	  exit(1);
+	}
     }
 }
  
