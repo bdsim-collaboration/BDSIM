@@ -292,31 +292,7 @@ int BDSIM::Initialise()
   /// until after the physics list has been constructed and attached a run manager.
   if (globals->GeneratePrimariesOnly())
     {      
-      // output creation is duplicated below but with this if loop, we exit so ok.
-      bdsOutput->NewFile();
-      const G4int nToGenerate = globals->NGenerate();
-      const G4int printModulo = globals->PrintModuloEvents();
-      bdsBunch->BeginOfRunAction(nToGenerate);
-      auto flagsCache(G4cout.flags());
-      for (G4int i = 0; i < nToGenerate; i++)
-	{
-	  if (i%printModulo == 0)
-	    {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
-	  BDSParticleCoordsFullGlobal coords = bdsBunch->GetNextParticleValid();
-	  // always pull particle definition in case it's updated
-	  const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
-	  bdsOutput->FillEventPrimaryOnly(coords, pDef);
-	}
-      G4cout.flags(flagsCache); // restore cout flags
-      // Write options now the file is open
-      const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
-      bdsOutput->FillOptions(ob);
-      
-      // Write beam
-      const GMAD::BeamBase* bb = BDSParser::Instance()->GetBeamBase();
-      bdsOutput->FillBeam(bb);
-
-      bdsOutput->CloseFile();
+      GeneratePrimariesOnly(globals);
       return 0;
     }
   
@@ -522,4 +498,33 @@ void BDSIM::RegisterUserComponent(const G4String& componentTypeName,
 
   userComponentFactory->RegisterComponent(componentTypeName,
 					  componentConstructor);
+}
+
+void BDSIM::GeneratePrimariesOnly(const BDSGlobalConstants* globals)
+{
+  // output creation is duplicated below but with this if loop, we exit so ok.
+  bdsOutput->NewFile();
+  const G4int nToGenerate = globals->NGenerate();
+  const G4int printModulo = globals->PrintModuloEvents();
+  bdsBunch->BeginOfRunAction(nToGenerate);
+  auto flagsCache(G4cout.flags());
+  for (G4int i = 0; i < nToGenerate; i++)
+    {
+      if (i%printModulo == 0)
+        {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
+      BDSParticleCoordsFullGlobal coords = bdsBunch->GetNextParticleValid();
+      // always pull particle definition in case it's updated
+      const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
+      bdsOutput->FillEventPrimaryOnly(coords, pDef);
+    }
+  G4cout.flags(flagsCache); // restore cout flags
+  // Write options now the file is open
+  const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
+  bdsOutput->FillOptions(ob);
+  
+  // Write beam
+  const GMAD::BeamBase* bb = BDSParser::Instance()->GetBeamBase();
+  bdsOutput->FillBeam(bb);
+  
+  bdsOutput->CloseFile();
 }
