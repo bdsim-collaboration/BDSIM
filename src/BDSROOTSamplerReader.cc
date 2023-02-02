@@ -48,10 +48,9 @@ BDSROOTSamplerReader::BDSROOTSamplerReader(const G4String& distrType,
                                            G4bool loopFileIn,
                                            G4bool removeUnstableWithoutDecayIn,
                                            G4bool warnAboutSkippedParticlesIn):
-  BDSPrimaryGeneratorFile(loopFileIn),
+  BDSPrimaryGeneratorFile(loopFileIn, bunchIn),
   reader(nullptr),
   fileName(fileNameIn),
-  bunch(bunchIn),
   removeUnstableWithoutDecay(removeUnstableWithoutDecayIn),
   warnAboutSkippedParticles(warnAboutSkippedParticlesIn)
 {
@@ -61,6 +60,7 @@ BDSROOTSamplerReader::BDSROOTSamplerReader(const G4String& distrType,
   referenceBeamMomentumOffset = bunch->ReferenceBeamMomentumOffset();
   reader = new BDSOutputLoaderSampler(fileName, samplerName);
   nEventsInFile = reader->NEventsInFile();
+  bunch->SetNEventsInFile(nEventsInFile);
   G4cout << __METHOD_NAME__ << nEventsInFile << " events found in file" << G4endl;
   if (!bunch)
     {throw BDSException(__METHOD_NAME__, "must be constructed with a valid BDSBunchEventGenerator instance");}
@@ -111,7 +111,6 @@ void BDSROOTSamplerReader::GeneratePrimaryVertex(G4Event* anEvent)
 
 void BDSROOTSamplerReader::RecreateAdvanceToEvent(G4int eventOffset)
 {
-  BDSPrimaryGeneratorFile::RecreateAdvanceToEvent(eventOffset);
   G4cout << "BDSROOTSamplerLoader::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
   ThrowExceptionIfRecreateOffsetTooHigh(eventOffset);
   SkipEvents(eventOffset);

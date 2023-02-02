@@ -28,7 +28,6 @@ class BDSBunch;
 class BDSOutputLoader;
 class BDSPrimaryGeneratorFile;
 class BDSPTCOneTurnMap;
-class BDSRunAction;
 class G4Event;
 class G4ParticleGun;
 
@@ -48,8 +47,7 @@ class BDSPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 public:
   /// Bunch must have a valid particle definition (ie not nullptr).
   BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
-                            const GMAD::Beam& beam,
-                            BDSRunAction*     runActionIn);
+                            const GMAD::Beam& beam);
   virtual ~BDSPrimaryGeneratorAction();
 
   /// Main interface for Geant4. Prepare primary(ies) for the event.
@@ -67,7 +65,6 @@ private:
   
   G4ParticleGun* particleGun;     ///< Geant4 particle gun that creates single particles.
   BDSBunch* bunch;                ///< BDSIM particle generator.
-  BDSRunAction* runAction;        ///< So we can notify the run of an early terminated run due to completing a file.
   G4bool writeASCIISeedState;     ///< Cache of whether to write seed state as ASCII per event.
   BDSOutputLoader* recreateFile;  ///< Optional output handler for restoring seed state. 
   G4bool   recreate;              ///< Whether to load seed state at start of event from rootevent file.
