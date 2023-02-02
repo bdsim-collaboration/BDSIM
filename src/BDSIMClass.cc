@@ -305,27 +305,19 @@ int BDSIM::Initialise()
       G4cout << __METHOD_NAME__ << std::setw(12) << "Angular: " << std::setw(7) << theGeometryTolerance->GetAngularTolerance() << " rad"  << G4endl;
       G4cout << __METHOD_NAME__ << std::setw(12) << "Radial: "  << std::setw(7) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
     }
+  
   /// Set user action classes
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Event Action" << G4endl;
-#endif
   BDSEventAction* eventAction = new BDSEventAction(bdsOutput);
   runManager->SetUserAction(eventAction);
-
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
-#endif
+  
   BDSRunAction* runAction = new BDSRunAction(bdsOutput,
                                              bdsBunch,
                                              bdsBunch->ParticleDefinition()->IsAnIon(),
                                              eventAction,
                                              globals->StoreTrajectorySamplerID());
   runManager->SetUserAction(runAction);
-
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Stepping Action"<<G4endl;
-#endif
-  // Only add steppingaction if it is actually used, so do check here (for performance reasons)
+  
+  // Only add stepping action if it is actually used, so do check here (for performance reasons)
   G4int verboseSteppingEventStart = globals->VerboseSteppingEventStart();
   G4int verboseSteppingEventStop  = BDS::VerboseEventStop(verboseSteppingEventStart,
                                                           globals->VerboseSteppingEventContinueFor());
@@ -336,9 +328,6 @@ int BDSIM::Initialise()
 						      verboseSteppingEventStop));
     }
   
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Tracking Action"<<G4endl;
-#endif
   runManager->SetUserAction(new BDSTrackingAction(globals->Batch(),
                                                   globals->StoreTrajectory(),
                                                   globals->StoreTrajectoryOptions(),
@@ -348,14 +337,8 @@ int BDSIM::Initialise()
                                                   globals->VerboseSteppingPrimaryOnly(),
                                                   globals->VerboseSteppingLevel()));
 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Stacking Action"<<G4endl;
-#endif
   runManager->SetUserAction(new BDSStackingAction(globals));
-
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Primary Generator"<<G4endl;
-#endif
+  
   auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam(), runAction);
   runManager->SetUserAction(primaryGeneratorAction);
   BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
