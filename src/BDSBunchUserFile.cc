@@ -46,7 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
-  BDSBunch("userfile"),
+  BDSBunchFileBased("userfile"),
   nlinesIgnore(0),
   nlinesSkip(0),
   nLinesValidData(0),
@@ -298,6 +298,7 @@ void BDSBunchUserFile<T>::SkipNLinesSkip(G4bool usualPrintOut)
             {continue;}
           nLinesValidRead++;
         }
+      IncrementNEventsInFileSkipped((unsigned long long int)nlinesSkip);
     }
 }
 

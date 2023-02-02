@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBUNCHEVENTGENERATOR_H
 #define BDSBUNCHEVENTGENERATOR_H 
 
-#include "BDSBunch.hh"
+#include "BDSBunchFileBased.hh"
 
 #include "G4RotationMatrix.hh"
 #include "G4Types.hh"
@@ -33,7 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @author Laurie Nevay
  */
 
-class BDSBunchEventGenerator: public BDSBunch
+class BDSBunchEventGenerator: public BDSBunchFileBased
 {
 public: 
   BDSBunchEventGenerator();

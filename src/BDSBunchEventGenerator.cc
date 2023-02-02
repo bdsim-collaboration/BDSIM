@@ -39,7 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string> // for stoi
 
 BDSBunchEventGenerator::BDSBunchEventGenerator():
-  BDSBunch("eventgenerator"),
+  BDSBunchFileBased("eventgenerator"),
   eventGeneratorNEventsSkip(0),
   eventGeneratorMinX(0),
   eventGeneratorMaxX(0),
