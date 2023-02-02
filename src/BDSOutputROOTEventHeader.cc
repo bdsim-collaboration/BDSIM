@@ -56,6 +56,7 @@ void BDSOutputROOTEventHeader::FlushLocal()
   trajectoryFilters.clear();
   skimmedFile   = false;
   nOriginalEvents = 0;
+  nEventsRequested = 0;
   nEventsInFileSkipped = 0;
   nEventsInFile = 0;
   

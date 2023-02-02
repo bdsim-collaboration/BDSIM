@@ -44,8 +44,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile(G4bool loopFileIn):
+BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile(G4bool loopFileIn,
+                                                 BDSBunchEventGenerator* bunchIn):
   loopFile(loopFileIn),
+  bunch(bunchIn),
   endOfFileReached(false),
   vertexGeneratedSuccessfully(false),
   currentFileEventIndex(0),
@@ -70,15 +72,10 @@ void BDSPrimaryGeneratorFile::ThrowExceptionIfRecreateOffsetTooHigh(G4long event
 G4bool BDSPrimaryGeneratorFile::GeneratePrimaryVertexSafe(G4Event* event)
 {
   vertexGeneratedSuccessfully = false;
-
-  while (! (endOfFileReached || vertexGeneratedSuccessfully) )
-    {GeneratePrimaryVertex(event);} // derived class provides this; it must update vertexGeneratedSuccessfully
+  GeneratePrimaryVertex(event);//derived class must update vertexGeneratedSuccessfully
+  if (!vertexGeneratedSuccessfully)
+    {bunch->IncrementNEventsInFileSkipped();}
   return vertexGeneratedSuccessfully;
-}
-
-void BDSPrimaryGeneratorFile::RecreateAdvanceToEvent(G4int eventOffset)
-{
-  nEventsSkipped = eventOffset;
 }
 
 G4long BDSPrimaryGeneratorFile::NEventsLeftInFile() const
@@ -94,8 +91,7 @@ G4bool BDSPrimaryGeneratorFile::OKToLoopFile() const
 BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD::Beam& beam,
                                                                      BDSBunch* bunchIn,
                                                                      G4bool recreate,
-                                                                     G4int eventOffset,
-                                                                     BDSRunAction* runAction)
+                                                                     G4int eventOffset)
 {
   BDSPrimaryGeneratorFile* generatorFromFile = nullptr;
   
@@ -141,7 +137,6 @@ BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD:
         {generatorFromFile->RecreateAdvanceToEvent(eventOffset);}
       if (beam.distrFileMatchLength)
         {BDSGlobalConstants::Instance()->SetNumberToGenerate((G4int)generatorFromFile->NEventsLeftInFile());}
-      runAction->SaveNEventsInOriginalFile(generatorFromFile->NEventsLeftInFile());
     }
   
   return generatorFromFile; // could be nullptr

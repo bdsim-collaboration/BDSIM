@@ -68,11 +68,10 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
                                  G4bool loopFileIn,
                                  G4bool removeUnstableWithoutDecayIn,
                                  G4bool warnAboutSkippedParticlesIn):
-  BDSPrimaryGeneratorFile(loopFileIn),
+  BDSPrimaryGeneratorFile(loopFileIn, bunchIn),
   hepmcEvent(nullptr),
   reader(nullptr),
   fileName(fileNameIn),
-  bunch(bunchIn),
   removeUnstableWithoutDecay(removeUnstableWithoutDecayIn),
   warnAboutSkippedParticles(warnAboutSkippedParticlesIn)
 {
@@ -81,6 +80,7 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
   G4cout << __METHOD_NAME__ << "event generator file format to be " << fileType.ToString() << G4endl;
   referenceBeamMomentumOffset = bunch->ReferenceBeamMomentumOffset();
   nEventsInFile = CountEventsInFile();
+  bunch->SetNEventsInFile(nEventsInFile);
   OpenFile();
   if (!bunch)
     {throw BDSException(__METHOD_NAME__, "must be constructed with a valid BDSBunchEventGenerator instance");}
@@ -105,7 +105,6 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 
 void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
 {
-  BDSPrimaryGeneratorFile::RecreateAdvanceToEvent(eventOffset);
   G4cout << __METHOD_NAME__ << "advancing file to event: " << eventOffset << G4endl;
   ThrowExceptionIfRecreateOffsetTooHigh(eventOffset);
   SkipEvents(eventOffset);

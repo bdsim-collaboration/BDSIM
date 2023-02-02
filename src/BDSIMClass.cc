@@ -339,7 +339,7 @@ int BDSIM::Initialise()
 
   runManager->SetUserAction(new BDSStackingAction(globals));
   
-  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam(), runAction);
+  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam());
   runManager->SetUserAction(primaryGeneratorAction);
   BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 

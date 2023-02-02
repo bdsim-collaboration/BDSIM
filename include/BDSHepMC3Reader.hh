@@ -113,7 +113,6 @@ protected:
 private:
   HepMC3::Reader*           reader;
   G4String                  fileName;
-  BDSBunchEventGenerator*   bunch;
   G4bool                    removeUnstableWithoutDecay;
   G4bool                    warnAboutSkippedParticles;
   BDSEventGeneratorFileType fileType;
