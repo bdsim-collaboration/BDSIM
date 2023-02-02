@@ -119,8 +119,7 @@ void BDSCollimatorJaw::CheckParameters()
 	     << "will not be constructed" << G4endl;
       buildRightJaw = false;
     }
-
-  G4cout << std::tan(std::abs(jawTiltLeft)) * chordLength / 2. << " " << xSizeLeft << G4endl;
+  
   if (std::abs(jawTiltLeft) > 0 && std::tan(std::abs(jawTiltLeft)) * chordLength / 2. > std::max(xHalfGap, xSizeLeft))
     {throw BDSException(__METHOD_NAME__, "tilted left jaw not allowed to cross the mid-plane: \"" + name + "\"");}
 
