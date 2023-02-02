@@ -45,7 +45,8 @@ public:
   /// from the first entry in each file, but adds the other two from all entries in the
   /// header tree assuming that only the 2nd entry is filled.
   unsigned long long int CountNOriginalEvents(unsigned long long int& nEventsInFileIn,
-                                              unsigned long long int& nEventsInFileSkippedIn);
+                                              unsigned long long int& nEventsInFileSkippedIn,
+                                              unsigned long long int& nEventsRequestedIn);
 
 protected:
   std::vector<std::string> filenames;
