@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBUNCHUSERFILE_H
 #define BDSBUNCHUSERFILE_H 
 
-#include "BDSBunch.hh"
+#include "BDSBunchFileBased.hh"
 
 #include <fstream>
 #include <list>
@@ -42,7 +42,7 @@ class BDSParticleCoordsFullGlobal;
  */
 
 template <class T>
-class BDSBunchUserFile: public BDSBunch
+class BDSBunchUserFile: public BDSBunchFileBased
 {
 public: 
   BDSBunchUserFile();
