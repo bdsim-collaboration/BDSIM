@@ -73,7 +73,7 @@ G4bool BDSPrimaryGeneratorFile::GeneratePrimaryVertexSafe(G4Event* event)
 {
   vertexGeneratedSuccessfully = false;
   GeneratePrimaryVertex(event);//derived class must update vertexGeneratedSuccessfully
-  if (!vertexGeneratedSuccessfully)
+  if (!vertexGeneratedSuccessfully && !endOfFileReached)
     {bunch->IncrementNEventsInFileSkipped();}
   return vertexGeneratedSuccessfully;
 }
