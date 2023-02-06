@@ -236,10 +236,13 @@ type and last physics process are recorded as a snapshot of the particle at that
 
 We don't store trajectory information by default because it is an **incredible** amount of information and
 hard to deal with sensibly. Turning on trajectory storage in the options will store by default,
-**only** the primary particle(s) trajectory(ies). We then use some options to include a set of
-particles we're interested in and whether to also store the trajectories that connect these particles
-back to the primary.
+**only** the primary particle(s) trajectory(ies). We then use some options to specify (filter down to)
+a set of particles we're interested in and also store the trajectories that connect these particles
+back to the primary. A set of subsequent options define which numbers will be stored for each trajectory
+and each point along the trajectory.
 
+* Filtering options: :ref:`options-trajectory-filtering`
+* Storage options: :ref:`options-trajectory-storage`
 * The trajectory filters are combined with a **logical OR**. So, if two filters are used, a trajectory
   will be stored if it matches either one OR the other. In analysis, the variable `filters` has
   Booleans stored for which filters a particular trajectory matched and can be used to disentangle
@@ -260,7 +263,6 @@ histogram the first point in each trajectory afterwards.  e.g. ::
 	  storeTrajectorySamplerID="samplername",
 	  trajectoryFilterLogicAND=1;
 
-See :ref:`bdsim-options-output` with options beginning with :code:`storeTrajectory` and :code:`traj`.
 
 5) Collimator Hits
 ^^^^^^^^^^^^^^^^^^
