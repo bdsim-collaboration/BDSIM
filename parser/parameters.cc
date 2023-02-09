@@ -189,6 +189,9 @@ Parameters::Parameters()
 
   setMap["colour"] = false;
 
+  setMap["jawTiltLeft"] = false;
+  setMap["jawTiltRight"] = false;
+
   setMap["crystalLeft"]            = false;
   setMap["crystalRight"]           = false;
   setMap["crystalBoth"]            = false;
