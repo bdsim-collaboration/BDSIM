@@ -321,7 +321,7 @@ rbend
 
 `rbend` defines a rectangular bend magnet. |angleFieldComment|
 The faces of the magnet are normal to the chord of the
-input and output points. Can be specified using:
+input and output points. It can be specified using:
 
 1) `angle` only - `B` calculated from the angle and the beam design rigidity.
 2) `B` only - the angle is calculated from the beam design rigidity.
@@ -347,7 +347,7 @@ tracking still includes the pole face effects.
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
 +=================+===================================+===========+=================+
-| `l`             | Length [m]                        | 0         | Yes             |
+| `l`             | Chord Length [m]                  | 0         | Yes             |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `angle`         | Angle [rad]                       | 0         | Yes, and or `B` |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -438,8 +438,8 @@ A few points about rbends:
     we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an rbend with a
     positive bending angle will produce a vertical bend where the beam is bent downwards.
 11) The sign of the pole face rotations do not change when flipping the sign of the magnet bending angle. This
-    is to match the behaviour of MAD-X; a positive pole face angle reduces the length of the side of the bend
-    furthest from the centre of curvature.
+    is to match the behaviour of MAD-X; i.e. a positive pole face angle reduces the length of the outer side of
+    the bend (the side furthest from the centre of curvature).
 
 Examples: ::
 
@@ -457,7 +457,7 @@ sbend
 
 `sbend` defines a sector bend magnet. |angleFieldComment|
 The faces of the magnet are normal to the curvilinear coordinate
-system. `sbend` magnets are made of a series of straight segments. Can be specified using:
+system. It can be specified using:
 
 1) `angle` only - `B` calculated from the angle and the beam design rigidity.
 2) `B` only - the angle is calculated from the beam design rigidity.
@@ -483,12 +483,16 @@ makes no effect on tracking, but allows a much higher variety of apertures and m
 geometry to be used given the Geant4 geometry. The number of segments is computed such
 that the maximum tangential error in the aperture is 1 mm.
 
+With the default integrator set, the pole face rotations are not built into the geometry
+such that the tracking will match MADX. If you use the :code:`geant4` integrator set,
+the pole face geometry will be built fully.
+
 .. note:: See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
 +=================+===================================+===========+=================+
-| `l`             | Length [m]                        | 0         | Yes             |
+| `l`             | Arc length [m]                    | 0         | Yes             |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `angle`         | Angle [rad]                       | 0         | Yes, and or `B` |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -576,8 +580,8 @@ A few points about sbends:
    we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an sbend with a
    positive bending angle will produce a vertical bend where the beam is bent downwards.
 10) The sign of the pole face rotations do not change when flipping the sign of the magnet bending angle. This
-    is to match the behaviour of MAD-X; a positive pole face angle reduces the length of the side of the bend
-    furthest from the centre of curvature.
+    is to match the behaviour of MAD-X; i.e. a positive pole face angle reduces the length of the outer side of
+    the bend (the side furthest from the centre of curvature).
 
 Examples: ::
 

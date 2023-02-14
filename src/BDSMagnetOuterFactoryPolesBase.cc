@@ -518,7 +518,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(const G4String&
   poleIntersectionSolid = new G4Tubs(name + "_yoke_intersection_solid", // name
 				     0,                                 // start radius
 				     yokeStartRadius - lengthSafetyLarge,
-				     length,  // long half length for unamibiguous intersection
+				     length,  // long half-length for unambiguous intersection
 				     0,                                 // start angle
 				     CLHEP::twopi);                     // sweep angle
   allSolids.insert(poleIntersectionSolid);
