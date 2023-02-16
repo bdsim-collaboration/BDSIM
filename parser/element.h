@@ -213,6 +213,9 @@ namespace GMAD
     std::string geometryFile;     ///< For Element. File for external geometry.
     bool        stripOuterVolume; ///< For Element. Make it an assembly.
     bool        autoColour;       ///< Automagically colour the external geometry.
+
+    bool        elementLengthIsArcLength; ///< For Element. Treat the length as arc length, if not chord.
+
     std::string material;
     std::string namedVacuumVolumes; ///< For imported geometry - identify vacuum volumes.
     bool        markAsCollimator;

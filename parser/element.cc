@@ -238,6 +238,7 @@ void Element::PublishMembers()
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
   publish("stripOuterVolume",    &Element::stripOuterVolume);
   publish("autoColour",          &Element::autoColour);
+  publish("elementLengthIsArcLength", &Element::elementLengthIsArcLength);
   publish("material",            &Element::material);
   publish("outerMaterial",       &Element::material);
   alternativeNames["outerMaterial"] = "material";
@@ -595,6 +596,7 @@ void Element::flush()
   geometryFile = "";
   stripOuterVolume = false;
   autoColour   = true;
+  elementLengthIsArcLength = false;
   material="";
   namedVacuumVolumes = "";
   markAsCollimator = false;
