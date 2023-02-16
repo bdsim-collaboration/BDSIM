@@ -233,7 +233,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
   // construct placement geometry from parser
   BDSBeamline* mainBeamLine = BDSAcceleratorModel::Instance()->BeamlineSetMain().massWorld;
-  auto componentFactory = new BDSComponentFactory(userComponentFactory);
+  auto componentFactory = new BDSComponentFactory(userComponentFactory, false); // false for printing out integrator set again
   placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements(),
                                             mainBeamLine,
                                             componentFactory,
