@@ -37,9 +37,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 
 BDSBeamlineIntegral::BDSBeamlineIntegral(const BDSParticleDefinition& incomingParticle,
-					 G4double T0In,
-					 G4double integratedArcLength,
-					 G4bool   integrateKineticEnergyIn):
+                                         G4double T0In,
+                                         G4double integratedArcLength,
+                                         G4bool   integrateKineticEnergyIn):
   integrateKineticEnergy(integrateKineticEnergyIn),
   synchronousTAtEnd(T0In),
   synchronousTAtMiddleOfLastElement(T0In),
@@ -77,23 +77,23 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
         BDSFieldType fieldType = BDS::FieldTypeFromCavityFieldType(tp);
         G4double eField = BDSComponentFactory::EFieldFromElement(&componentAsDefined, fieldType, thisComponentArcLength, designParticle);
         switch (tp.underlying())
-	  {
+          {
           case BDSCavityFieldType::constantinz:
-	    {
-	      dEk = particleCharge * eField * thisComponentArcLength * std::cos(phase);
-	      break;
-	    }
+            {
+              dEk = particleCharge * eField * thisComponentArcLength * std::cos(phase);
+              break;
+            }
           case BDSCavityFieldType::pillbox:
-	    {
-	      if (!BDS::IsFinite(frequency)) // protect against zero division
-		{throw BDSException(__METHOD_NAME__, "for a pillbox cavity field, the frequency must be non-zero");}
-	      G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, phase, thisComponentArcLength, designParticle.Beta());
-	      dEk = particleCharge * eField * thisComponentArcLength * transitTimeFactor;
-	      break;
-	    }
+            {
+              if (!BDS::IsFinite(frequency)) // protect against zero division
+                {throw BDSException(__METHOD_NAME__, "for a pillbox cavity field, the frequency must be non-zero");}
+              G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, phase, thisComponentArcLength, designParticle.Beta());
+              dEk = particleCharge * eField * thisComponentArcLength * transitTimeFactor;
+              break;
+            }
           default:
-	    {break;}
-	  }
+            {break;}
+          }
         break;
       }
     default:
