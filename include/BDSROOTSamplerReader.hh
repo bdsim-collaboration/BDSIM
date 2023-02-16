@@ -88,7 +88,6 @@ private:
   BDSOutputLoaderSampler*   reader;
   G4String                  fileName;
   G4String                  samplerName;
-  BDSBunchEventGenerator*   bunch;
   G4bool                    removeUnstableWithoutDecay;
   G4bool                    warnAboutSkippedParticles;
   G4RotationMatrix          referenceBeamMomentumOffset;

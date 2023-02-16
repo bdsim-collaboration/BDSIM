@@ -151,6 +151,8 @@ void Element::PublishMembers()
   publish("xsizeRight",       &Element::xsizeRight);
   publish("offsetX",     &Element::offsetX);
   publish("offsetY",     &Element::offsetY);
+  publish("jawTiltLeft",     &Element::jawTiltLeft);
+  publish("jawTiltRight",     &Element::jawTiltRight);
 
   // screen parameters
   publish("tscint",          &Element::tscint);
@@ -237,6 +239,7 @@ void Element::PublishMembers()
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
   publish("stripOuterVolume",    &Element::stripOuterVolume);
   publish("autoColour",          &Element::autoColour);
+  publish("elementLengthIsArcLength", &Element::elementLengthIsArcLength);
   publish("material",            &Element::material);
   publish("outerMaterial",       &Element::material);
   alternativeNames["outerMaterial"] = "material";
@@ -530,6 +533,8 @@ void Element::flush()
   xsizeRight = 0;
   offsetX = 0;
   offsetY = 0;
+  jawTiltLeft = 0;
+  jawTiltRight = 0;
 
   // screen parameters
   tscint = 0.0003;
@@ -608,6 +613,7 @@ void Element::flush()
   geometryFile = "";
   stripOuterVolume = false;
   autoColour   = true;
+  elementLengthIsArcLength = false;
   material="";
   namedVacuumVolumes = "";
   markAsCollimator = false;

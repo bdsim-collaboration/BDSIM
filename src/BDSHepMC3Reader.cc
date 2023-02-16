@@ -68,11 +68,10 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
                                  G4bool loopFileIn,
                                  G4bool removeUnstableWithoutDecayIn,
                                  G4bool warnAboutSkippedParticlesIn):
-  BDSPrimaryGeneratorFile(loopFileIn),
+  BDSPrimaryGeneratorFile(loopFileIn, bunchIn),
   hepmcEvent(nullptr),
   reader(nullptr),
   fileName(fileNameIn),
-  bunch(bunchIn),
   removeUnstableWithoutDecay(removeUnstableWithoutDecayIn),
   warnAboutSkippedParticles(warnAboutSkippedParticlesIn)
 {
@@ -81,6 +80,7 @@ BDSHepMC3Reader::BDSHepMC3Reader(const G4String& distrType,
   G4cout << __METHOD_NAME__ << "event generator file format to be " << fileType.ToString() << G4endl;
   referenceBeamMomentumOffset = bunch->ReferenceBeamMomentumOffset();
   nEventsInFile = CountEventsInFile();
+  bunch->SetNEventsInFile(nEventsInFile);
   OpenFile();
   if (!bunch)
     {throw BDSException(__METHOD_NAME__, "must be constructed with a valid BDSBunchEventGenerator instance");}
@@ -105,7 +105,6 @@ void BDSHepMC3Reader::GeneratePrimaryVertex(G4Event* anEvent)
 
 void BDSHepMC3Reader::RecreateAdvanceToEvent(G4int eventOffset)
 {
-  BDSPrimaryGeneratorFile::RecreateAdvanceToEvent(eventOffset);
   G4cout << __METHOD_NAME__ << "advancing file to event: " << eventOffset << G4endl;
   ThrowExceptionIfRecreateOffsetTooHigh(eventOffset);
   SkipEvents(eventOffset);
@@ -157,6 +156,7 @@ void BDSHepMC3Reader::CloseFile()
 
 G4long BDSHepMC3Reader::CountEventsInFile()
 {
+  G4cout << __METHOD_NAME__ << "counting number of events" << G4endl;
   OpenFile(false);
   G4long nEvents = 0;
   while (!reader->failed())
@@ -173,6 +173,7 @@ G4long BDSHepMC3Reader::CountEventsInFile()
       delete tempEvent;
     }
   CloseFile();
+  G4cout << __METHOD_NAME__ << nEvents << " events found in file" << G4endl;
   return nEvents;
 }
 
@@ -218,7 +219,8 @@ G4bool BDSHepMC3Reader::ReadSingleEvent()
 
 void BDSHepMC3Reader::SkipEvents(G4int nEventsToSkip)
 {
-  G4cout << __METHOD_NAME__ << "skipping " << nEventsToSkip << " into file." << G4endl;
+  if (nEventsToSkip > 0)
+    {G4cout << __METHOD_NAME__ << "skipping " << nEventsToSkip << " into file." << G4endl;}
   if (nEventsToSkip > nEventsInFile)
     {
       G4String msg = "number of events to skip (" + std::to_string(nEventsToSkip) + ") is greater than the number of events (";

@@ -13,7 +13,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
-V1.7.0 - 2022 / XX / XX
+V1.7.0 - 2023 / XX / XX
 =======================
 
 * For models with acceleration, the rigidity and synchronous time are now calculated
@@ -49,11 +49,11 @@ New Features
 
 **Analysis**
 
-* New Spectra command for rebsdim to make very flexible sets of spectra automatically. See
+* New Spectra command for rebdsim to make very flexible sets of spectra automatically. See
   :ref:`spectra-definition` for more information.
-* rebdsim will now default to <inputfilename>_ana.root if no outputfile name is specified.
-* Similarly, rebdsimHistoMerge will default to <inputfilename>_histos.root; rebdsimOptics to
-  <intputfilename>_optics.root and bdskim to <inputfilename>_skimmed.root.
+* rebdsim will now default to `<inputfilename>_ana.root` if no outputfile name is specified.
+* Similarly, rebdsimHistoMerge will default to `<inputfilename>_histos.root`; rebdsimOptics to
+  `<intputfilename>_optics.root` and bdskim to `<inputfilename>_skimmed.root`.
 * bdsimCombine will now produce an extra tree in the output called "EventCombineInfo" that
   contains an index to which file the event came from.
 
@@ -75,7 +75,7 @@ New Features
 * All neutrinos can be used as beam particles now (useful for visualisation of neutrino lines).
 * The `eventgenerator` and `bdsimsampler` distributions now have `eventGeneratorNEventsSkip`
   in the beam command to allow skipping into the file.
-* Consitency between features between `eventgenerator` and `bdsimsampler` distribution.
+* Consistency between features between `eventgenerator` and `bdsimsampler` distribution.
 
 **Components**
 
@@ -102,7 +102,7 @@ New Features
 * New field drawing facility in the visualiser to draw query objects.
 * Field map reflections have been introduced allowing symmetry to be exploited.
   See :ref:`fields-transforms`.
-* "linearmag" experimental interpolation.
+* "linearmag" interpolation added.
 * New ability to arbitrarily scale the yoke fields.
 * New `modulator` object to modulate RF components (see :ref:`field-modulators`).
   
@@ -126,6 +126,14 @@ New Features
 
 **Geometry**
 
+* An :code:`element` beam line component now works with :code:`angle` as a parameter and
+  the sign convention has been changed to match the bends as per MADX where a positive angle
+  corresponds to a displacement in negative `x` in a right handed coordinate system with the
+  beamline built along `z`. Drifts on either side will now match the element if `e1` and `e2`
+  (traditionally pole-face angles) are given for the element.
+* The length :code:`l` for :code:`element` is now treated as the chord length rather than the
+  arc length. This has no effect for straight components, but makes it easier to use angled
+  elements.
 * When loading geometry (e.g. a GDML file) to be used as a placement, you can now remove the
   outermost volume (e.g. the 'world' of that file) and place all the contents in the BDSIM
   world with the compound transforms: relative to the former outermost logical volume and also
@@ -158,7 +166,7 @@ New Features
 * The :code:`csample` command now works correctly and has been re-implemented for all beamline
   components.
 * A sampler in a BDSIM ROOT output file can now be used as an input beam distribution for
-  another simulation.  See :ref:`bunch-bdsimsampler`.
+  another simulation.  See :ref:`beam-bdsimsampler`.
 * Solenoid sheet / cylinder field has been added and is used by default on the solenoid yoke geometry.
 * Scoring of the differential flux (3D mesh + energy spectrum per cell) following either a linear,
   logarithmic or user-defined energy axis scale (requires Boost).
@@ -203,7 +211,7 @@ General Updates
   has been renamed to :code:`--geant4MacroFileName` to be the same as the option in
   the input GMAD file. The old one is still accepted for backwards compatibility.
 * The userfile distribution will tolerate `!` to denote a comment line to match GMAD syntax now.
-  It will also tolerate any whitespace before either `#` or `!` to mark a comment line,
+  It will also tolerate any white-space before either `#` or `!` to mark a comment line,
   whereas previously it would only identify a comment if the very first character
   of the line was `#`.
 * BDSGeometryComponent class refactored to permit a G4AssemblyVolume as the container

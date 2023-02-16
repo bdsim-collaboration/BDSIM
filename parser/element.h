@@ -125,6 +125,7 @@ namespace GMAD
     double xsize, ysize; ///< collimator aperture or laser spotsize for laser
     double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
     double xsizeLeft, xsizeRight; ///< individual collimator jaw half widths
+    double jawTiltLeft, jawTiltRight; ///< jaw collimator jaw tilts (angle in x-z plane)
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
 
@@ -213,6 +214,9 @@ namespace GMAD
     std::string geometryFile;     ///< For Element. File for external geometry.
     bool        stripOuterVolume; ///< For Element. Make it an assembly.
     bool        autoColour;       ///< Automagically colour the external geometry.
+
+    bool        elementLengthIsArcLength; ///< For Element. Treat the length as arc length, if not chord.
+
     std::string material;
     std::string namedVacuumVolumes; ///< For imported geometry - identify vacuum volumes.
     bool        markAsCollimator;

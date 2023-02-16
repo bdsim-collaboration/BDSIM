@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
 #include "BDSBunch.hh"
+#include "BDSBunchFileBased.hh"
 #include "BDSDebug.hh"
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
@@ -68,8 +69,7 @@ BDSRunAction::BDSRunAction(BDSOutput*      outputIn,
   cpuStartTime(std::clock_t()),
   eventAction(eventActionIn),
   trajectorySamplerID(trajectorySamplerIDIn),
-  nEventsInOriginalDistrFile(0),
-  nEventsDistrFileSkipped(0)
+  nEventsRequested(0)
 {;}
 
 BDSRunAction::~BDSRunAction()
@@ -79,9 +79,6 @@ BDSRunAction::~BDSRunAction()
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
-  // reset variables for this run
-  nEventsDistrFileSkipped = 0;
-  
   if (BDSGlobalConstants::Instance()->PrintPhysicsProcesses())
     {PrintAllProcessesForAllParticles();}
 
@@ -89,6 +86,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   
   // Bunch generator beginning of run action (optional mean subtraction).
   bunchGenerator->BeginOfRunAction(aRun->GetNumberOfEventToBeProcessed());
+  nEventsRequested = aRun->GetNumberOfEventToBeProcessed();
 
   SetTrajectorySamplerIDs();
   CheckTrajectoryOptions();
@@ -154,7 +152,17 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   G4cout << G4endl << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
-  output->FillRun(info, nEventsInOriginalDistrFile, nEventsDistrFileSkipped);
+  // In the case of a file-based bunch generator, it will have cached these numbers - get them.
+  unsigned long long int nEventsDistrFileSkipped = 0;
+  unsigned long long int nEventsInOriginalDistrFile = 0;
+  if (auto beg = dynamic_cast<BDSBunchFileBased*>(bunchGenerator))
+    {
+      nEventsDistrFileSkipped = beg->NEventsInFileSkipped();
+      nEventsInOriginalDistrFile = beg->NEventsInFile();
+      if (nEventsDistrFileSkipped > 0)
+        {G4cout << __METHOD_NAME__ << nEventsDistrFileSkipped << " events were skipped as no particles passed the filters in them." << G4endl;}
+    }
+  output->FillRun(info, nEventsRequested, nEventsInOriginalDistrFile, nEventsDistrFileSkipped);
   output->CloseFile();
   info->Flush();
 
@@ -226,11 +234,4 @@ void BDSRunAction::CheckTrajectoryOptions() const
       if (range.first > maxS)
 	{throw BDSException(__METHOD_NAME__, "S coordinate " + std::to_string(range.first / CLHEP::m) + "m in option storeTrajectoryElossSRange is beyond the length of the beam line (2m margin).");}
     }
-}
-
-void BDSRunAction::NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrFileIn,
-                                                      G4long nEventsDistrFileSkippedIn)
-{
-  nEventsInOriginalDistrFile = nEventsInOriginalDistrFileIn;
-  nEventsDistrFileSkipped = nEventsDistrFileSkippedIn;
 }

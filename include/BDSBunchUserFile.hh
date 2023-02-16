@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBUNCHUSERFILE_H
 #define BDSBUNCHUSERFILE_H 
 
-#include "BDSBunch.hh"
+#include "BDSBunchFileBased.hh"
 
 #include <fstream>
 #include <list>
@@ -42,7 +42,7 @@ class BDSParticleCoordsFullGlobal;
  */
 
 template <class T>
-class BDSBunchUserFile: public BDSBunch
+class BDSBunchUserFile: public BDSBunchFileBased
 {
 public: 
   BDSBunchUserFile();
@@ -78,9 +78,9 @@ private:
   G4String distrFile;     ///< Bunch file.
   G4String distrFilePath; ///< Bunch file including absolute path.
   G4String bunchFormat;   ///< Format of the file.
-  G4int    nlinesIgnore;  ///< Number of lines that will be ignored at the start the file.
-  G4int    nlinesSkip;    ///< Number of lines that will be skipped after the nlinesIgnore.
-  G4int    nLinesValidData;
+  G4long   nlinesIgnore;  ///< Number of lines that will be ignored at the start the file.
+  G4long   nlinesSkip;    ///< Number of lines that will be skipped after the nlinesIgnore.
+  G4long   nLinesValidData;
   G4double particleMass;  ///< Cache of nominal beam particle mass.
   G4int    lineCounter;   ///< Line counter.
   G4bool   printedOutFirstTime;    ///< Whether we've printed out opening the file the first time.
@@ -134,7 +134,7 @@ private:
   /// A valid line is one that can be used for coordinates, so empty lines or commented lines
   /// are ignored from this count. This number should be the number of particle coordinate sets
   /// we can read from the file.
-  G4int CountNLinesValidDataInFile();
+  G4long CountNLinesValidDataInFile();
   
   /// Open the file and skip lines.
   virtual void Initialise();

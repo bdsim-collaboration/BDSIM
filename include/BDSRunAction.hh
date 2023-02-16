@@ -52,14 +52,6 @@ public:
   
   virtual void BeginOfRunAction(const G4Run*);
   virtual void EndOfRunAction(const G4Run*);
-  
-  /// Record that the run was ended early and the original number of events in the
-  /// input distribution file that we finished early.
-  void NotifyOfCompletionOfInputDistrFile(G4long nEventsInOriginalDistrFileIn,
-                                          G4long nEventsDistrFileSkippedIn);
-
-  /// Function to set the variable even if we're not finishing the run abnormally.
-  void SaveNEventsInOriginalFile(G4long nEventsInOriginalDistrFileIn) {nEventsInOriginalDistrFile = nEventsInOriginalDistrFileIn;}
 
 private:
   BDSRunAction() = delete;
@@ -87,9 +79,7 @@ private:
   std::clock_t  cpuStartTime;     ///< Start time of run.
   BDSEventAction* eventAction;    ///< Event action for updating information at start of run.
   G4String        trajectorySamplerID; ///< Copy of option.
-
-  G4long nEventsInOriginalDistrFile;
-  G4long nEventsDistrFileSkipped;
+  unsigned long long int nEventsRequested; ///< Cache of ngenerate.
 };
 
 #endif
