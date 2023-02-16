@@ -186,6 +186,11 @@ New Options
 | cavityFieldType                  | Default cavity field type ('constantinz', 'pillbox')  |
 |                                  | to use for all rf elements unless otherwise specified.|
 +----------------------------------+-------------------------------------------------------+
+| scaleRigidityWithMomentum        | Change the design rigidity as the kinetic energy and  |
+|                                  | therefore momentum of the design particle changes     |
+|                                  | along the beam line during construction due to        |
+|                                  | acceleration. Default 1.0.                            |
++----------------------------------+-------------------------------------------------------+
   
 
 General Updates

@@ -3003,6 +3003,11 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | their own scalingFieldOuter factor specified in their |
 |                                  | element definition. Default 1.0 (no effect).          |
 +----------------------------------+-------------------------------------------------------+
+| scaleRigidityWithMomentum        | Change the design rigidity as the kinetic energy and  |
+|                                  | therefore momentum of the design particle changes     |
+|                                  | along the beam line during construction due to        |
+|                                  | acceleration. Default 1.0.                            |
++----------------------------------+-------------------------------------------------------+
 | stopSecondaries                  | Whether to stop secondaries or not (default = false)  |
 +----------------------------------+-------------------------------------------------------+
 | tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
