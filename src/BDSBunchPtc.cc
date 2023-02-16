@@ -39,7 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 BDSBunchPtc::BDSBunchPtc():
-  BDSBunch("ptc"),
+  BDSBunchFileBased("ptc"),
   matchDistrFileLength(false),
   nRays(0),
   iRay(0),
@@ -79,6 +79,7 @@ void BDSBunchPtc::LoadPtcFile()
           throw BDSException(__METHOD_NAME__, msg);
         }
     }
+  IncrementNEventsInFileSkipped((unsigned long long int)nlinesSkip);
   
   // read single line 
   while (std::getline(ifstr,line))

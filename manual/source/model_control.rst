@@ -80,7 +80,7 @@ BDSIM starts each event in one of the following ways:
 #) Particles coordinates for one particle are generated from a chosen beam distribution,
    which is specified in the input GMAD file. In most cases, the particle coordinates
    are randomly generated according to a distribution. But this also includes reading
-   from a text file.
+   from a **text file**.
 
 #) A primary vertex is loaded from an event generator file. This currently requires linking to
    HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
@@ -88,7 +88,7 @@ BDSIM starts each event in one of the following ways:
 
 #) Hits are loaded from a sampler in BDSIM output file and launched at any location in the
    simulation - not necessarily in the same position or same model as they were generated in.
-   See :ref:`bunch-bdsimsampler`.
+   See :ref:`beam-bdsimsampler`.
 
 To specify the input particle distribution, the :code:`beam` command is
 used. This also specifies the particle species and **reference total energy**, which is the
@@ -1161,6 +1161,11 @@ There are two classes of file-based distributions. Firstly, text file ones - `us
 and `ptc` that load one line of coordinates per event. Secondly, there are more complex
 ones that can have multiple primaries per event - `eventgeneratorfile` and `bdsimsampler`.
 
+* :ref:`beam-userfile`
+* :ref:`beam-ptc`
+* :ref:`beam-eventgenerator`
+* :ref:`beam-bdsimsampler`
+
 The later two have a set of particle filters that can be used to load only certain particles.
 
 Behaviour
@@ -1240,6 +1245,7 @@ we load. It is therefore possible to exclude all particles from an event or inde
   The first entry is when the file is opened, and the second at the end of a run. ROOT prevents us
   from overwriting the first entry.
 
+.. _beam-userfile:
         
 userfile
 ********
@@ -1405,6 +1411,8 @@ The corresponding `userbeamdata.dat` file looks like::
   0 0 0 2 0 1000
 
 
+.. _beam-ptc:
+
 ptc
 ***
 
@@ -1424,6 +1432,8 @@ Output from MAD-X PTC used as input for BDSIM.
 * Reference offsets specified in the gmad file such as `X0` are added to each coordinate.
 * The number of raw input lines (without interpretation) skipped is `nlinesIgnore` + `nlinesSkip`.
 
+
+.. _beam-eventgenerator:
 
 eventgeneratorfile
 ******************
@@ -1556,7 +1566,7 @@ For only pions: ::
 	eventGeneratorParticles="111 211 -211";
   
 
-.. _bunch-bdsimsampler:
+.. _beam-bdsimsampler:
 	
 bdsimsampler
 ************
@@ -3484,7 +3494,8 @@ that has passed the filters above.
 |                                    | post step points. Default False.                                   |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryStepPoints (\*)     | Integer number of step points to store for each trajectory that is |
-|                                    | chosen to be stored. Should be greater than or equal to 1. Storing |
+|                                    | chosen to be stored. Should be greater than or equal to 1. -1 can  |
+|                                    | be used to mean 'all' step points. Storing                         |
 |                                    | 1 will mean only the first creation point is stored. Caution, this |
 |                                    | will break any references to step index such as parentStepIndex in |
 |                                    | other trajectories. It is purely a last storage filtering step.    |

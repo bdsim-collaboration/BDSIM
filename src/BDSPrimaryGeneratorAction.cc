@@ -50,10 +50,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4RunManager.hh"
 
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
-                                                     const GMAD::Beam& beam,
-                                                     BDSRunAction*     runActionIn):
+                                                     const GMAD::Beam& beam):
   bunch(bunchIn),
-  runAction(runActionIn),
   recreateFile(nullptr),
   eventOffset(0),
   ionPrimary(false),
@@ -83,7 +81,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
   particleGun->SetParticlePosition(G4ThreeVector());
   particleGun->SetParticleTime(0);
   
-  generatorFromFile = BDSPrimaryGeneratorFile::ConstructGenerator(beam, bunch, recreate, eventOffset, runAction);
+  generatorFromFile = BDSPrimaryGeneratorFile::ConstructGenerator(beam, bunch, recreate, eventOffset);
 }
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
@@ -238,6 +236,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
         }
       else if (generatorFromFile->NEventsReadThatPassedFilters() < nGenerateRequested)
         {// not matching the file length specifically but requested a certain number of events
+          // If the NEventsReadThatPassedFilters == nGenerateRequested then this won't happen as we won't
+          // try to generate another new event beyond this and the run will end naturally without intervention here.
           endRunNow = true;
           G4int currentEventIndex = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent();
           G4cerr << __METHOD_NAME__ << "unable to generate " << nGenerateRequested
@@ -249,13 +249,11 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
         {
           anEvent->SetEventAborted();
           G4EventManager::GetEventManager()->AbortCurrentEvent();
-          runAction->NotifyOfCompletionOfInputDistrFile(generatorFromFile->NEventsInFile(),
-                                                        generatorFromFile->NEventsSkipped());
           G4RunManager::GetRunManager()->AbortRun();
           return; // don't generate anything - just return
         }
     }
-  else if (!generatedVertexOK) // file isn't finished but we didn't successfully generate this event
+  else if (!generatedVertexOK) // file isn't finished, but we didn't successfully generate this event
     {   
       anEvent->SetEventAborted();
       G4EventManager::GetEventManager()->AbortCurrentEvent();

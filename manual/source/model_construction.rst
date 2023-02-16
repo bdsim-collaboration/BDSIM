@@ -330,6 +330,8 @@ Examples: ::
    l203b: drift, l=1*m;
    l204c: drift, l=3*cm, beampipeRadius=10*cm;
 
+.. _component-rbend:
+
 rbend
 ^^^^^
 
@@ -343,7 +345,7 @@ rbend
 
 `rbend` defines a rectangular bend magnet. |angleFieldComment|
 The faces of the magnet are normal to the chord of the
-input and output points. Can be specified using:
+input and output points. It can be specified using:
 
 1) `angle` only - `B` calculated from the angle and the beam design rigidity.
 2) `B` only - the angle is calculated from the beam design rigidity.
@@ -369,7 +371,7 @@ tracking still includes the pole face effects.
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
 +=================+===================================+===========+=================+
-| `l`             | Length [m]                        | 0         | Yes             |
+| `l`             | Chord Length [m]                  | 0         | Yes             |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `angle`         | Angle [rad]                       | 0         | Yes, and or `B` |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -460,8 +462,8 @@ A few points about rbends:
     we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an rbend with a
     positive bending angle will produce a vertical bend where the beam is bent downwards.
 11) The sign of the pole face rotations do not change when flipping the sign of the magnet bending angle. This
-    is to match the behaviour of MAD-X; a positive pole face angle reduces the length of the side of the bend
-    furthest from the centre of curvature.
+    is to match the behaviour of MAD-X; i.e. a positive pole face angle reduces the length of the outer side of
+    the bend (the side furthest from the centre of curvature).
 
 Examples: ::
 
@@ -479,7 +481,7 @@ sbend
 
 `sbend` defines a sector bend magnet. |angleFieldComment|
 The faces of the magnet are normal to the curvilinear coordinate
-system. `sbend` magnets are made of a series of straight segments. Can be specified using:
+system. It can be specified using:
 
 1) `angle` only - `B` calculated from the angle and the beam design rigidity.
 2) `B` only - the angle is calculated from the beam design rigidity.
@@ -505,12 +507,16 @@ makes no effect on tracking, but allows a much higher variety of apertures and m
 geometry to be used given the Geant4 geometry. The number of segments is computed such
 that the maximum tangential error in the aperture is 1 mm.
 
+With the default integrator set, the pole face rotations are not built into the geometry
+such that the tracking will match MADX. If you use the :code:`geant4` integrator set,
+the pole face geometry will be built fully.
+
 .. note:: See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
 +=================+===================================+===========+=================+
-| `l`             | Length [m]                        | 0         | Yes             |
+| `l`             | Arc length [m]                    | 0         | Yes             |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `angle`         | Angle [rad]                       | 0         | Yes, and or `B` |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -598,8 +604,8 @@ A few points about sbends:
    we use a right-handed coordinate system. A positive tilt angle of :math:`\pi/2` for an sbend with a
    positive bending angle will produce a vertical bend where the beam is bent downwards.
 10) The sign of the pole face rotations do not change when flipping the sign of the magnet bending angle. This
-    is to match the behaviour of MAD-X; a positive pole face angle reduces the length of the side of the bend
-    furthest from the centre of curvature.
+    is to match the behaviour of MAD-X; i.e. a positive pole face angle reduces the length of the outer side of
+    the bend (the side furthest from the centre of curvature).
 
 Examples: ::
 
@@ -1233,6 +1239,9 @@ jcol
 If a vertical `jcol` is required, the `tilt` parameter should be used to rotate it by :math:`\pi/2`.
 The horizontal position of each jaw can be set separately with the `xsizeLeft` and `xsizeRight`
 apertures which are the distances from the centre of element to the left and right jaws respectively.
+The collimator jaws can be individually tilted in a plane perpendicular to the jaw opening plane with the
+`jawTiltLeft` and `jawTiltRight` arguments. In this case, the set aperture is in the middle of the collimator.
+This feature can be useful for example in aligning the jaws to the beam envelope.
 
 
 .. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
@@ -1251,6 +1260,10 @@ apertures which are the distances from the centre of element to the left and rig
 | `xsizeLeft`            | Left jaw aperture [m]             | 0              | No            |
 +------------------------+-----------------------------------+----------------+---------------+
 | `xsizeRight`           | Right jaw aperture [m]            | 0              | No            |
++------------------------+-----------------------------------+----------------+---------------+
+| `jawTiltLeft`          | Left jaw tilt angle [rad]         | 0              | No            |
++------------------------+-----------------------------------+----------------+---------------+
+| `jawTiltRight`         | Right jaw tilt angle [rad]        | 0              | No            |
 +------------------------+-----------------------------------+----------------+---------------+
 | `horizontalWidth`      | Outer full width [m]              | 0.5 m          | No            |
 +------------------------+-----------------------------------+----------------+---------------+
@@ -1276,6 +1289,10 @@ Notes:
 * For **only one jaw**, specifying a jaw aperture which is larger than half the `horizontalWidth` value
   will result in that jaw not being constructed. If both jaw apertures are greater than
   half the `horizontalWidth`, no jaws will be built and BDSIM will exit.
+* To preserve the longitudinal dimensions, jaw tilt specified with `jawTiltLeft` or `jawTiltRight` and `xsizeRight`
+  uses parallelepipeds instead of boxes for the collimator jaws. Relative to using angled boxes, this can introduce and
+  error in the material traversed by incident particles, which scales as $b\tan(\alpha)$, where b is
+  the impact parameter (depth of impact) and $\alpha$ is the jaw tilt angle.
 * The parameter `minimumKineticEnergy` (GeV by default) may be specified to artificially kill
   particles below this kinetic energy in the collimator. This is useful to match other simulations
   where collimators can be assumed to be infinite absorbers. If this behaviour is required, the
@@ -1840,7 +1857,7 @@ element
 
 `element` defines an arbitrary beam line element that's defined by externally provided geometry.
 It includes the possibility of overlaying a field as well. Several geometry formats are supported
-but GDML is the primary and tested format.
+but GDML is the recommended and tested format.
 
 The user must supply the length of the geometry accurately to ensure a tight fit in the beamline.
 BDSIM will leave a gap of this length, then place the geometry at the centre of that location. If
@@ -1863,13 +1880,15 @@ for them purposively.
 +======================+==================================+==============+===============+
 | `geometryFile`       | Filename of geometry             | NA           | Yes           |
 +----------------------+----------------------------------+--------------+---------------+
-| `l`                  | Length. Arc length in case of a  | NA           | Yes           |
-|                      | finite angle.                    |              |               |
+| `l`                  | Length - chord length in case of | NA           | Yes           |
+|                      | a finite angle [m]               |              |               |
 +----------------------+----------------------------------+--------------+---------------+
 | `fieldAll`           | Name of field object to use      | NA           | No            |
 +----------------------+----------------------------------+--------------+---------------+
 | `angle`              | Angle the component bends the    | 0            | No            |
-|                      | beam line.                       |              |               |
+|                      | beam line. A positive value      |              |               |
+|                      | results in a deflection in       |              |               |
+|                      | negative `x`.                    |              |               |
 +----------------------+----------------------------------+--------------+---------------+
 | `tilt`               | Tilt of the whole component.     | 0            | No            |
 +----------------------+----------------------------------+--------------+---------------+
@@ -1877,7 +1896,7 @@ for them purposively.
 |                      | of **logical** volume names in   |              |               |
 |                      | the geometry file that should be |              |               |
 |                      | considered 'vacuum' for biasing  |              |               |
-|                      | purposes.                        |              |               |
+|                      | purposes                         |              |               |
 +----------------------+----------------------------------+--------------+---------------+
 | `autoColour`         | 1 or 0. Whether the geometry     | 1            | No            |
 |                      | should be automatically coloured |              |               |
@@ -1894,6 +1913,13 @@ for them purposively.
 | `horizontalWidth`    | Diameter of component [m] Only   | NA           | No            |
 |                      | required for SQL geometry        |              |               |
 +----------------------+----------------------------------+--------------+---------------+
+| `e1`                 | Assumed incoming face angle of   | 0            | No            |
+|                      | the provided geometry [rad]      |              |               |
++----------------------+----------------------------------+--------------+---------------+
+| `e2`                 | Assumed outgoing face angle of   | 0            | No            |
+|                      | the provided geometry [rad]      |              |               |
++----------------------+----------------------------------+--------------+---------------+
+
 
 * `geometryFile` should be of the format `format:filename`, where `format` is the geometry
   format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
@@ -1901,11 +1927,23 @@ for them purposively.
 * `fieldAll` should refer to the name of a field object the user has defined in the input
   gmad file. The syntax for this is described in :ref:`field-maps`.
 * The field map will also be tilted with the component if it is tilted.
+* The angle has the same sign convention as sbends and rbends in that a positive angle
+  corresponds to a deflection in negative x in a right-handed coordinate system with the
+  `element` built along positive `z`.
+* `e1` and `e2` follow the convention of the sbend and rbend components and therefore
+  depend on the sign of the angle of the `element`. See :ref:`component-rbend`. These
+  angles are used to make the preceding and proceeding drifts (if they are drifts) match
+  the angled face of the geometry so there are no overlaps or gaps. This only works for
+  drifts on either side of the `element`.
 * If marked as a collimator, the element will also appear in the collimator histograms
   and also have a collimator-specific branch made for it in the Event tree of the output
   as per the other collimators. The type in the output will be "element-collimator".
 * The outer volume can be stripped away and the geometry is made into an assembly volume
   in Geant4 and placed in the world. Use the parameter :code:`stripOuterVolume=1` for this.
+* `elementLengthIsArcLength` is also available as a Boolean parameter. If set true (:code:`=1`),
+  then the `l` will be interpreted as the arc length. Caution - it is most likely that the
+  container volume of the piece of geometry loaded is truly straight with angled faces and
+  should therefore be given as the chord length - the default interpretation.
 
 .. warning:: If you strip the outer volume, any field supplied will be applied to all
 	     daughter volumes, but note that the (now from the world) air that may
@@ -1917,7 +1955,7 @@ for them purposively.
 	  no overlapping geometry will be produced. However, care must be taken, as the length
 	  will be the length of the component inserted in the beamline.  If this is much larger
 	  than the size required for the geometry, the beam may be mismatched into the rest of
-	  the accelerator. A common practice is to add a nanometre to the length of the geometry.
+	  the accelerator. A common practice is to add a nanometer to the length of the geometry.
 
 Simple example::
 
@@ -1936,6 +1974,16 @@ Example with field: ::
 
 Here, in the field definition, cubic interpolation (2D to match the field type) by default and
 the integrator (for the particle motion) will be the default "g4classicalrk4" (4th order Runge Kutta).
+
+Or: ::
+
+  specialbend: element, geometryFile="gdml:MBR_dipole.gdml",
+                        fieldAll="f1",
+                        angle=pi/10,
+                        e1=-pi/20,
+                        e2=-pi/20,
+                        l=4.5*m;
+
 
 .. note:: For GDML geometry, we preprocess the input file prepending all names with the name
 	  of the element. This is to compensate for the fact that the Geant4 GDML loader does

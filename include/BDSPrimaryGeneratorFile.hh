@@ -24,7 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VPrimaryGenerator.hh"
 
 class BDSBunch;
-class BDSRunAction;
+class BDSBunchEventGenerator;
 class G4Event;
 class G4VSolid;
 
@@ -50,7 +50,8 @@ class BDSPrimaryGeneratorFile: public G4VPrimaryGenerator
 {
 public:
   BDSPrimaryGeneratorFile() = delete;
-  explicit BDSPrimaryGeneratorFile(G4bool loopFileIn);
+  BDSPrimaryGeneratorFile(G4bool loopFileIn,
+                          BDSBunchEventGenerator* bunchIn);
   virtual ~BDSPrimaryGeneratorFile();
   
   /// Unbound function to construct the right generator from file. Can return nullptr
@@ -58,13 +59,13 @@ public:
   static BDSPrimaryGeneratorFile* ConstructGenerator(const GMAD::Beam& beam,
                                                      BDSBunch* bunchIn,
                                                      G4bool recreate,
-                                                     G4int eventOffset,
-                                                     BDSRunAction* runAction);
+                                                     G4int eventOffset);
 
   /// Return false if not able to generate a primary vertex.
   G4bool GeneratePrimaryVertexSafe(G4Event* event);
-  
-  virtual void RecreateAdvanceToEvent(G4int eventOffset);
+
+  /// Advance into the file as required.
+  virtual void RecreateAdvanceToEvent(G4int eventOffset) = 0;
   
   /// Return the number of events in the file - not necessarily the number that
   /// match the filters but that are there in total.
@@ -97,6 +98,7 @@ protected:
   G4bool VertexInsideWorld(const G4ThreeVector& pos) const;
 
   G4bool loopFile;
+  BDSBunchEventGenerator* bunch;
   G4bool endOfFileReached;
   G4bool vertexGeneratedSuccessfully;
   G4long currentFileEventIndex;

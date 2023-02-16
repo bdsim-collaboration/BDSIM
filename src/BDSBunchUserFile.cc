@@ -46,7 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
-  BDSBunch("userfile"),
+  BDSBunchFileBased("userfile"),
   nlinesIgnore(0),
   nlinesSkip(0),
   nLinesValidData(0),
@@ -263,7 +263,7 @@ void BDSBunchUserFile<T>::SkipNLinesIgnoreIntoFile(G4bool usualPrintOut)
       if (usualPrintOut)
         {G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << " lines" << G4endl;}
       std::string line;
-      for (G4int i = 0; i < nlinesIgnore; i++)
+      for (G4int i = 0; i < (G4int)nlinesIgnore; i++)
         {
           std::getline(InputBunchFile, line);
           lineCounter++;
@@ -298,6 +298,7 @@ void BDSBunchUserFile<T>::SkipNLinesSkip(G4bool usualPrintOut)
             {continue;}
           nLinesValidRead++;
         }
+      IncrementNEventsInFileSkipped((unsigned long long int)nlinesSkip);
     }
 }
 
@@ -313,8 +314,8 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   distrFile     = beam.distrFile;
   distrFilePath = BDS::GetFullPath(beam.distrFile);
   bunchFormat   = beam.distrFileFormat;
-  nlinesIgnore  = beam.nlinesIgnore;
-  nlinesSkip    = beam.nlinesSkip;
+  nlinesIgnore  = (G4long)beam.nlinesIgnore;
+  nlinesSkip    = (G4long)beam.nlinesSkip;
   matchDistrFileLength = beam.distrFileMatchLength;
   distrFileLoop = beam.distrFileLoop;
   ParseFileFormat();
@@ -327,13 +328,13 @@ G4bool BDSBunchUserFile<T>::SkippableLine(const std::string& line) const
 }
 
 template<class T>
-G4int BDSBunchUserFile<T>::CountNLinesValidDataInFile()
+G4long BDSBunchUserFile<T>::CountNLinesValidDataInFile()
 {
   OpenBunchFile();
   SkipNLinesIgnoreIntoFile(false);
 
   std::string line;
-  G4int nLinesValid = 0;
+  G4long nLinesValid = 0;
   while ( std::getline(InputBunchFile, line) )
     {
       if (SkippableLine(line))
@@ -363,7 +364,7 @@ void BDSBunchUserFile<T>::Initialise()
     {
       if (!nGenerateHasBeenSet)
         {
-          G4int nToGenerate = nLinesValidData - nlinesSkip;
+          G4int nToGenerate = (G4int)(nLinesValidData - nlinesSkip);
           g->SetNumberToGenerate(nToGenerate);
           G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is true -> simulating "
                  << nToGenerate << " events" << G4endl;

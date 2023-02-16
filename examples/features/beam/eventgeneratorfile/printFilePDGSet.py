@@ -1,8 +1,9 @@
 import pyhepmc as hep
 from collections import defaultdict
+import sys
 
 
-def Analyse(filename):
+def Analyse(filename, eventStart=0, eventEnd=100):
 
     f = hep.io.ReaderAsciiHepMC2(filename)
     if f.failed():
@@ -10,9 +11,12 @@ def Analyse(filename):
 
     histogram = defaultdict(int)
 
-    eventIndex = 0
+    eventIndex = eventStart
     sets = []
     while not f.failed():
+        if eventIndex > eventEnd:
+            print("Reached limit of",eventEnd)
+            break
         evt = hep.GenEvent()
         readok = f.read_event(evt)
         if f.failed():
@@ -49,4 +53,6 @@ def Analyse(filename):
 
 
 if __name__ == "__main__":
-    Analyse("egf-hepmc2-4pp-100gev-evts.dat")
+    print("Usage: python printFilePDGSet.py filename_hepmc2.dat")
+    filename = sys.argv[1]
+    Analyse(filename)
