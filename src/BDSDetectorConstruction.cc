@@ -467,7 +467,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 									   nextElement,
                      *integral);
       if (temp)
-	{
+        {
           G4bool forceNoSamplerOnThisElement = false;
           if ((!canSampleAngledFaces) && (BDS::IsFinite((*elementIt).e2)))
             {forceNoSamplerOnThisElement = true;}
@@ -478,7 +478,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
           BDSSamplerInfo* samplerInfo = forceNoSamplerOnThisElement ? nullptr : BuildSamplerInfo(&(*elementIt));
           BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(&(*elementIt));
           massWorld->AddComponent(temp, tiltOffset, samplerInfo);
-	}
+        }
     }
 
   // Special circular machine bits
@@ -487,12 +487,12 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
   if (beamlineIsCircular && !massWorld->empty())
     {
       if (integral->changeOfEnergyEncountered && integral->integrateKineticEnergy)
-	{
-	  G4String msg = "a change in energy was encountered in a circular machine and both\n";
-	  msg +=         "scaleRigidityWithMomentum=1 (default is 1) and circular options were used.\n";
-	  msg +=         "This will be wrong for more than one turn...";
-	  BDS::Warning(__METHOD_NAME__, msg);
-	}
+        {
+          G4String msg = "a change in energy was encountered in a circular machine and both\n";
+          msg +=         "scaleRigidityWithMomentum=1 (default is 1) and circular options were used.\n";
+          msg +=         "This will be wrong for more than one turn...";
+          BDS::Warning(__METHOD_NAME__, msg);
+        }
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
@@ -511,10 +511,10 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       
       BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator(teleporterHorizontalWidth);
       if (terminator)
-	{
-	  terminator->Initialise();
-	  massWorld->AddComponent(terminator);
-	}
+        {
+          terminator->Initialise();
+          massWorld->AddComponent(terminator);
+        }
       
       BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
 										  teleporterHorizontalWidth,

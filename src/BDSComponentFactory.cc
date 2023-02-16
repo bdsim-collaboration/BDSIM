@@ -2631,23 +2631,23 @@ G4double BDSComponentFactory::EFieldFromElement(Element const* el,
       }
     case BDSFieldType::rfconstantinz:
       {
-	if (BDS::IsFinite(el->gradient))
-	  {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
-	else
-	  {eField = scaling * el->E * CLHEP::volt / cavityLength;}
-	break;
+        if (BDS::IsFinite(el->gradient))
+          {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
+        else
+          {eField = scaling * el->E * CLHEP::volt / cavityLength;}
+        break;
       }
     case BDSFieldType::rfpillbox:
       {
-	if (BDS::IsFinite(el->gradient))
-	  {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
-	else
-	  {
-	    G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, phase, cavityLength, incomingParticle.Beta());
-	    eField = scaling * el->E * CLHEP::volt / cavityLength;
-	    eField /= transitTimeFactor;
-	  }
-	break;
+        if (BDS::IsFinite(el->gradient))
+          {eField = scaling * el->gradient * CLHEP::volt / CLHEP::m;}
+        else
+          {
+            G4double transitTimeFactor = BDSFieldEMRFCavity::TransitTimeFactor(frequency, phase, cavityLength, incomingParticle.Beta());
+            eField = scaling * el->E * CLHEP::volt / cavityLength;
+            eField /= transitTimeFactor;
+          }
+        break;
       }
     default:
       {break;} // shouldn't happen
