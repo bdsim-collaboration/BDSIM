@@ -26,6 +26,7 @@ double SamplerAnalysis::particleMass = 0;
 
 SamplerAnalysis::SamplerAnalysis():
   s(nullptr),
+  npart(0),
   S(0),
   debug(false)
 {
@@ -40,6 +41,7 @@ SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
                                  bool debugIn):
 #endif
   s(samplerIn),
+  npart(0),
   S(0),
   debug(debugIn)
 {
