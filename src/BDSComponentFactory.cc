@@ -1195,11 +1195,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
   // we don't specify the field explicitly here - this is done generically
   // in the main CreateComponent method with SetFieldDefinitions.
   std::vector<G4String> vacuumBiasVolumeNames = BDS::SplitOnWhiteSpace(G4String(element->namedVacuumVolumes));
+
+  G4double angle = -element->angle * CLHEP::rad; // this is to match the convention of MADX for bends
+  G4double l = element->l * CLHEP::m;
+  // calculate the arc length as that's what we need for BDSAcceleratorComponent,
+  // which in turn calculates the chord length internally for placement.
+  G4double arcLength = BDS::ArcLengthFromChordLength(l, angle);
+  if (element->elementLengthIsArcLength)
+    {arcLength = l;} // reset back to just l
   return (new BDSElement(elementName,
-			 element->l * CLHEP::m,
+			 arcLength,
 			 PrepareHorizontalWidth(element),
 			 element->geometryFile,
-			 element->angle * CLHEP::rad,
+			 angle,
 			 &vacuumBiasVolumeNames,
 			 element->autoColour,
 			 element->markAsCollimator,
@@ -2838,6 +2846,8 @@ G4double BDSComponentFactory::BendAngle(const Element* el) const
       G4double field = 0; // required by next function.
       CalculateAngleAndFieldSBend(el, bendAngle, field);
     }
+  else if (el->type == ElementType::_ELEMENT)
+    {bendAngle = -1*el->angle*CLHEP::rad;}
   // else the default is 0
   return bendAngle;
 }
@@ -2853,7 +2863,15 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
   G4double outgoingFaceAngle = 0;
   G4double bendAngle         = BendAngle(el);
 
-  if (el->type == ElementType::_RBEND)
+  // +ve e1/e2 shorten the outside of the bend - so flips with angle
+  G4double e2 = el->e2*CLHEP::rad;
+  if (el->type == ElementType::_ELEMENT)
+    {// so if the angle is 0, +1 will be returned
+      G4double factor = bendAngle < 0 ? -1 : 1;
+      outgoingFaceAngle += factor * e2;
+      return outgoingFaceAngle;
+    }
+  else if (el->type == ElementType::_RBEND)
     {
       if (integratorSet->IsMatrixIntegratorSet())
 	{return outgoingFaceAngle;}
@@ -2872,7 +2890,6 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
   // we need angle though to decide which way it goes
   
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
-  G4double e2 = el->e2*CLHEP::rad;
   if (BDS::IsFinite(e2) && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry())
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
@@ -2891,9 +2908,17 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
   // detector construction will not give a thin multipole as a next element
   // - it'll be skipped while looking forwards.
   G4double incomingFaceAngle = 0;
-  G4double bendAngle         = BendAngle(el);
+  G4double bendAngle = BendAngle(el);
 
-  if (el->type == ElementType::_RBEND)
+  // +ve e1/e2 shorten the outside of the bend - so flips with angle
+  G4double e1 = el->e1*CLHEP::rad;
+  if (el->type == ElementType::_ELEMENT)
+    {// so if the angle is 0, +1 will be returned
+      G4double factor = bendAngle < 0 ? -1 : 1;
+      incomingFaceAngle += factor * e1;
+      return incomingFaceAngle;
+    }
+  else if (el->type == ElementType::_RBEND)
     {
       if (integratorSet->IsMatrixIntegratorSet())
 	{return incomingFaceAngle;}
@@ -2912,7 +2937,6 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
   // we need angle though to decide which way it goes
 
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
-  G4double e1 = el->e1*CLHEP::rad;
   if (BDS::IsFinite(e1) && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry())
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;

@@ -178,6 +178,7 @@ Parameters::Parameters()
   setMap["geometryFile"]   = false;
   setMap["stripOuterVolume"] = false;
   setMap["autoColour"]     = false;
+  setMap["elementLengthIsArcLength"] = false;
   setMap["material"]       = false;
   setMap["namedVacuumVolumes"] = false;
   setMap["markAsCollimator"] = false;
