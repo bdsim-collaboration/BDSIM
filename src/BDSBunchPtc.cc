@@ -81,6 +81,14 @@ void BDSBunchPtc::LoadPtcFile()
     }
   IncrementNEventsInFileSkipped((unsigned long long int)nlinesSkip);
   
+  // create regular expressions
+  std::regex rex("\\sx\\s*=\\s*([0-9eE.+-]+)");
+  std::regex rey("\\sy\\s*=\\s*([0-9eE.+-]+)");
+  std::regex repx("px\\s*=\\s*([0-9eE.+-]+)");
+  std::regex repy("py\\s*=\\s*([0-9eE.+-]+)");
+  std::regex ret("\\st\\s*=\\s*([0-9eE.+-]+)");
+  std::regex rept("pt\\s*=\\s*([0-9eE.+-]+)");
+  
   // read single line 
   while (std::getline(ifstr,line))
     {
@@ -97,14 +105,6 @@ void BDSBunchPtc::LoadPtcFile()
           double py = 0.0;
           double t  = 0.0;
           double pt = 0.0;
-          
-          // create regular expressions
-          std::regex rex("\\sx\\s*=\\s*([0-9eE.+-]+)");
-          std::regex rey("\\sy\\s*=\\s*([0-9eE.+-]+)");
-          std::regex repx("px\\s*=\\s*([0-9eE.+-]+)");
-          std::regex repy("py\\s*=\\s*([0-9eE.+-]+)");
-          std::regex ret("\\st\\s*=\\s*([0-9eE.+-]+)");
-          std::regex rept("pt\\s*=\\s*([0-9eE.+-]+)");
           
           // return search match objects
           std::smatch smx;
