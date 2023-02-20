@@ -54,6 +54,7 @@ namespace GMAD
       bool        distrFileFromExecOptions; ///< Required to know how to build the absolute path properly
       bool        distrFileMatchLength;
       bool        distrFileLoop;
+      int         distrFileLoopNTimes;
       bool        removeUnstableWithoutDecay;
       ///@}
       int         nlinesIgnore; ///< Ignore first lines in the input bunch file.
