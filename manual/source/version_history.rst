@@ -343,6 +343,8 @@ Bug Fixes
   step length h regardless of the step's direction. Now, it advances along z by the projection of the step h onto
   the z axis. This change will only produce a noticeable impact on particles with a large transverse momentum,
   particularly those in low energy machines.
+* Fix dipole integrator track when K1 is negative. The overall strength parameter calculated for the integrator matrices
+  was incorrect when K1 < 0.
 
 **Visualisation**
 
