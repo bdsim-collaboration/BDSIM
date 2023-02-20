@@ -45,6 +45,7 @@ BDSBunchPtc::BDSBunchPtc():
   iRay(0),
   beta(1.0),
   distrFileLoop(false),
+  distrFileLoopNTimes(0),
   nlinesSkip(0),
   lineCounter(0)
 {;}
@@ -152,6 +153,7 @@ void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
   beta = beamParticle->Beta();
   fileName = BDS::GetFullPath(beam.distrFile);
   distrFileLoop = beam.distrFileLoop;
+  distrFileLoopNTimes = beam.distrFileLoopNTimes;
   nlinesSkip = beam.nlinesSkip + beam.nlinesIgnore;
 }
 
@@ -173,30 +175,43 @@ void BDSBunchPtc::Initialise()
   
   auto g = BDSGlobalConstants::Instance();
   G4bool nGenerateHasBeenSet = g->NGenerateSet();
+  G4int nEventsPerLoop = nRays;
+  G4int nAvailable = nEventsPerLoop * distrFileLoopNTimes;
+  G4int nGenerate = g->NGenerate();
   if (matchDistrFileLength)
     {
       if (!nGenerateHasBeenSet)
         {
-          g->SetNumberToGenerate(nRays);
-          G4cout << "BDSBunchPtc::Initialise> distrFileMatchLength is true -> simulating "
-                 << nRays << " events" << G4endl;
+          g->SetNumberToGenerate(nAvailable);
+          G4cout << "BDSBunchPtc::Initialise> distrFileMatchLength is true -> simulating " << nRays << " events";
+          if (distrFileLoopNTimes > 1)
+            {G4cout << " " << distrFileLoopNTimes << " times";}
+          G4cout << G4endl;
           if (g->Recreate())
             {// have to do this now before the primary generator action is called already in the run
-              G4int nLeftFromOffset = nRays - (g->StartFromEvent() % nRays);
-              g->SetNumberToGenerate(nLeftFromOffset);
+              G4int nEventsRemaining = nAvailable - g->StartFromEvent();
+              g->SetNumberToGenerate(nEventsRemaining);
               G4cout << "BDSBunchPtc::Initialise> distrFileMatchLength + recreation -> simulate the "
-                     << nLeftFromOffset << " lines left given startFromEvent" << G4endl;
+                     << nEventsRemaining << " lines left given startFromEvent including possible looping" << G4endl;
             }
         }
       else
-        {
+        {// e.g. if recreating a lower number of events - match is on; but ngenerate is lower - must obey
           G4cout << "BDSBunchPtc::Initialise> matchDistrFileLength has been requested "
                  << "but ngenerate has been specified -> use ngenerate" << G4endl;
+          // note we don't need to take care of a recreation offset - this is done later in primary generator action
+          if (nGenerate > nAvailable)
+            {
+              G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of valid lines (";
+              msg += std::to_string(nRays) + ") and distrFileMatchLength is on.\nChange ngenerate to <= # lines";
+              msg += ", or don't specifcy ngenerate.\n";
+              msg += "This includes nlinesSkip.";
+              throw BDSException("BDSBunchUserFile::Initialise>", msg);
+            }
         }
     }
   else
     {
-      G4int nGenerate = g->NGenerate();
       if ( (nGenerate > nRays) && !distrFileLoop )
         {
           G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of inrays (";
@@ -240,6 +255,8 @@ BDSParticleCoordsFull BDSBunchPtc::GetNextParticleLocal()
 
 void BDSBunchPtc::RecreateAdvanceToEvent(G4int eventOffset)
 {
+  G4int nAvailable       = nRays * distrFileLoopNTimes;
+  G4int nEventsRemaining = nAvailable - eventOffset;
   if (eventOffset >= nRays)
     {
       if (distrFileLoop)
@@ -256,8 +273,6 @@ void BDSBunchPtc::RecreateAdvanceToEvent(G4int eventOffset)
     }
   
   iRay = eventOffset;
-  
-  G4int nEventsRemaining = nRays - eventOffset;
   G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
   if (nGenerate > nEventsRemaining && !distrFileLoop)
     {
