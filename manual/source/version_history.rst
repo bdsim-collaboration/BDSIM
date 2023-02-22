@@ -210,6 +210,8 @@ General Updates
   material. The parallel world material should not make a difference for the setup in BDSIM, but
   now it is explicitly forbidden from having any effect by it being nullptr.
 * The material print out (:code:`bdsim --materials`) now includes aliases.
+* When using `autoScale` for a field map attached to the yoke of a magnet, the calculated scaling
+  factor is now always print out for feedback.
 
 Bug Fixes
 ---------
