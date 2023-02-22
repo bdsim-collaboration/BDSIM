@@ -97,7 +97,7 @@ void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo*      info
                                                    const G4String&          scalingKey)
 {
   // copy into vector for this interface
-  std::vector<G4LogicalVolume*> lvsForThisInfo;
+  std::vector<G4LogicalVolume*> lvsForThisInfo(logicalVolumes.size());
   for (auto lv : logicalVolumes)
     {lvsForThisInfo.push_back(lv);}
   RegisterFieldForConstruction(info,
