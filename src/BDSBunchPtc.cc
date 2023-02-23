@@ -44,8 +44,6 @@ BDSBunchPtc::BDSBunchPtc():
   nRays(0),
   iRay(0),
   beta(1.0),
-  distrFileLoop(false),
-  distrFileLoopNTimes(0),
   nlinesSkip(0),
   lineCounter(0)
 {;}
@@ -148,12 +146,10 @@ void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
                              G4Transform3D beamlineTransformIn,
                              const G4double beamlineSIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
+  BDSBunchFileBased::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   matchDistrFileLength = G4bool(beam.distrFileMatchLength);
   beta = beamParticle->Beta();
   fileName = BDS::GetFullPath(beam.distrFile);
-  distrFileLoop = beam.distrFileLoop;
-  distrFileLoopNTimes = beam.distrFileLoopNTimes;
   nlinesSkip = beam.nlinesSkip + beam.nlinesIgnore;
 }
 

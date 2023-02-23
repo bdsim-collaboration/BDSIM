@@ -146,8 +146,6 @@ private:
   G4double ffact; ///< Cache of flip factor from global constants.
   std::regex comment;
   G4bool   matchDistrFileLength;
-  G4bool   distrFileLoop;
-  G4int    distrFileLoopNTimes;
 };
 
 namespace BDS
