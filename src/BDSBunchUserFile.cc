@@ -56,9 +56,7 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   anEnergyCoordinateInUse(false),
   changingParticleType(false),
   endOfFileReached(false),
-  matchDistrFileLength(false),
-  distrFileLoop(false),
-  distrFileLoopNTimes(0)
+  matchDistrFileLength(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
   comment = std::regex("^\\s*\\#|\\!.*");
@@ -310,7 +308,7 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
                                      G4Transform3D beamlineTransformIn,
                                      const G4double beamlineSIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
+  BDSBunchFileBased::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   particleMass = beamParticle->Mass();
   distrFile     = beam.distrFile;
   distrFilePath = BDS::GetFullPath(beam.distrFile);
@@ -318,8 +316,6 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   nlinesIgnore  = (G4long)beam.nlinesIgnore;
   nlinesSkip    = (G4long)beam.nlinesSkip;
   matchDistrFileLength = beam.distrFileMatchLength;
-  distrFileLoop = beam.distrFileLoop;
-  distrFileLoopNTimes = beam.distrFileLoopNTimes;
   ParseFileFormat();
 }
 
