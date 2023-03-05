@@ -221,13 +221,21 @@ void BDSHepMC3Reader::SkipEvents(G4int nEventsToSkip)
 {
   if (nEventsToSkip > 0)
     {G4cout << __METHOD_NAME__ << "skipping " << nEventsToSkip << " into file." << G4endl;}
-  if (nEventsToSkip > nEventsInFile)
+  else
+    {return ;}
+  G4long distrFileLoopNTimes = bunch->DistrFileLoopNTimes();
+  G4long nAvailable = nEventsInFile * distrFileLoopNTimes;
+  if ((G4long)nEventsToSkip > nAvailable)
     {
       G4String msg = "number of events to skip (" + std::to_string(nEventsToSkip) + ") is greater than the number of events (";
-      msg += std::to_string(nEventsInFile) + ") in this file.";
+      msg += std::to_string(nEventsInFile);
+      if (distrFileLoopNTimes > 1)
+        {msg += " x " + std::to_string(distrFileLoopNTimes) + " loops of file";}
+      msg += ") in this file.";
       throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
     }
-  for (G4int i = 0; i < nEventsToSkip; i++)
+  G4long nToSkipSinglePass = nAvailable % nEventsToSkip;
+  for (G4int i = 0; i < nToSkipSinglePass; i++)
     {ReadSingleEvent();}
 }
 

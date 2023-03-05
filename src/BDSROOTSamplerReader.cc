@@ -280,7 +280,21 @@ void BDSROOTSamplerReader::ReadSingleEvent(G4long index, G4Event* anEvent)
 
 void BDSROOTSamplerReader::SkipEvents(G4long nEventsToSkip)
 {
-  if (eventOffset > 0)
-    {G4cout << __METHOD_NAME__ << "skipping " << eventOffset << " into file." << G4endl;}
-  currentFileEventIndex = eventOffset;
+  if (nEventsToSkip > 0)
+    {G4cout << __METHOD_NAME__ << "skipping " << nEventsToSkip << " into file." << G4endl;}
+  else
+    {return ;}
+  G4long distrFileLoopNTimes = bunch->DistrFileLoopNTimes();
+  G4long nAvailable = nEventsInFile * distrFileLoopNTimes;
+  if ((G4long)nEventsToSkip > nAvailable)
+    {
+      G4String msg = "number of events to skip (" + std::to_string(nEventsToSkip) + ") is greater than the number of events (";
+      msg += std::to_string(nEventsInFile);
+      if (distrFileLoopNTimes > 1)
+        {msg += " x " + std::to_string(distrFileLoopNTimes) + " loops of file";}
+      msg += ") in this file.";
+      throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
+    }
+  G4long nToSkipSinglePass = nAvailable % nEventsToSkip;
+  currentFileEventIndex = nToSkipSinglePass;
 }
