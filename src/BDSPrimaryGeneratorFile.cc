@@ -62,7 +62,8 @@ BDSPrimaryGeneratorFile::~BDSPrimaryGeneratorFile()
 
 void BDSPrimaryGeneratorFile::ThrowExceptionIfRecreateOffsetTooHigh(G4long eventOffset) const
 {
-  if (eventOffset > nEventsInFile)
+  G4int nLoops = bunch->DistrFileLoopNTimes();
+  if (eventOffset > nEventsInFile*nLoops)
     {
       G4String msg = "eventOffset (" + std::to_string(eventOffset) + ") is greater than the number of valid data lines in this file.";
       throw BDSException(__METHOD_NAME__, msg);
@@ -136,7 +137,15 @@ BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD:
       if (recreate)
         {generatorFromFile->RecreateAdvanceToEvent(eventOffset);}
       if (beam.distrFileMatchLength)
-        {BDSGlobalConstants::Instance()->SetNumberToGenerate((G4int)generatorFromFile->NEventsLeftInFile());}
+        {
+          G4int nEventsPerLoop = (G4int)generatorFromFile->NEventsLeftInFile();
+          G4int distrFileLoopNTimes = (G4int)beam.distrFileLoopNTimes;
+          BDSGlobalConstants::Instance()->SetNumberToGenerate(nEventsPerLoop*distrFileLoopNTimes);
+          G4cout << __METHOD_NAME__ << "distrFileMatchLength is true -> simulating " << nEventsPerLoop << " events";
+          if (distrFileLoopNTimes > 1)
+            {G4cout << " " << distrFileLoopNTimes << " times";}
+          G4cout << G4endl;
+        }
     }
   
   return generatorFromFile; // could be nullptr
