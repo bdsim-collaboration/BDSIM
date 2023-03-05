@@ -278,7 +278,7 @@ void BDSROOTSamplerReader::ReadSingleEvent(G4long index, G4Event* anEvent)
   currentVertices.clear();
 }
 
-void BDSROOTSamplerReader::SkipEvents(G4long eventOffset)
+void BDSROOTSamplerReader::SkipEvents(G4long nEventsToSkip)
 {
   if (eventOffset > 0)
     {G4cout << __METHOD_NAME__ << "skipping " << eventOffset << " into file." << G4endl;}
