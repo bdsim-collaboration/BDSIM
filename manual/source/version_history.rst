@@ -72,6 +72,9 @@ New Features
 * The `eventgenerator` and `bdsimsampler` distributions now have `eventGeneratorNEventsSkip`
   in the beam command to allow skipping into the file.
 * Consistency between features between `eventgenerator` and `bdsimsampler` distribution.
+* A new executable option `--distrFileLoopNTimes=<N>` allows you to repeat an input file `N`
+  times while matching the length to replay the same input coordinates from a distribution
+  file with different physics easily.
 
 **Components**
 
