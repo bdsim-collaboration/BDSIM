@@ -1100,7 +1100,7 @@ Behaviour
 *********
 
 The default behaviour since BDSIM V1.7 is to 'match' the file length - i.e. simulate the
-number of events as there would be in the file. The default is **not to loop** the file.
+number of events as there would be in the file. The default is **not to loop** (i.e. repeat) the file.
 However, the user can explicitly request a certain number of events, or that the file is
 looped (knowing that certain primaries might be repeated introducing correlations).
 
@@ -1113,6 +1113,9 @@ For all the file-based distributions, the following beam options apply.
 |                              |               | that match the number of entries in the file  |
 +------------------------------+---------------+-----------------------------------------------+
 | `distrFileLoop`              | 0 (false)     | Whether to loop back to the start of the file |
++------------------------------+---------------+-----------------------------------------------+
+| `distrFileLoopNTimes`        | 1             | Number of times to repeat the distribution    |
+|                              |               | file in its entirety                          |
 +------------------------------+---------------+-----------------------------------------------+
 
 .. warning:: `option, ngenerate=N` in input GMAD text will be ignored when a distribution file
@@ -1154,6 +1157,20 @@ it will be replayed (with different event seeds) 5x.
              which would be the default behaviour. However, if you only loop part of
              a file, you may 'enhance' the statistics of one set of input coordinates
              and may bias the final result.
+
+**Looping N Times**
+
+We can repeat the same file `N` times. The random engine seed will continue to advance
+for the physics so even with the same initial particles or coordinates, a different
+outcome will happen according to the physics processes. Therefore, it is useful to
+sometimes repeat the same distribution multiple times. ::
+
+  beam, distrType="somedistributionhere...",
+        distrFile="somefile.dat",
+        distrFileLoop=1,
+        distrFileLoopNTimes=3;
+
+This will match the file length and repeat the file 3 times.
 
 **Filtering**
 
