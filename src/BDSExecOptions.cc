@@ -280,7 +280,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
                 int result = 0;
                 conversion = BDS::IsInteger(optarg, result);
                 beam.set_value("distrFileLoopNTimes", result);
-                beam.set_value("distrFileLoo", true);
+                beam.set_value("distrFileLoop", true);
               }
 	    else if (!strcmp(optionName, "E0") )
 	      {
