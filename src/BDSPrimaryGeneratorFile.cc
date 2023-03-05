@@ -23,12 +23,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSPrimaryGeneratorFile.hh"
-#include "BDSROOTSamplerReader.hh"
+#include "BDSPrimaryGeneratorFileSampler.hh"
 #include "BDSRunAction.hh"
 #include "BDSUtilities.hh"
 
 #ifdef USE_HEPMC3
-#include "BDSHepMC3Reader.hh"
+#include "BDSPrimaryGeneratorFileHEPMC.hh"
 #endif
 
 #include "geomdefs.hh"
@@ -112,24 +112,24 @@ BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD:
       if (useEventGeneratorFile)
         {
 #ifdef USE_HEPMC3
-          generatorFromFile = new BDSHepMC3Reader(beam.distrType,
-                                                  filename,
-                                                  beg,
-                                                  beam.distrFileLoop,
-                                                  beam.removeUnstableWithoutDecay,
-                                                  beam.eventGeneratorWarnSkippedParticles);
+          generatorFromFile = new BDSPrimaryGeneratorFileHEPMC(beam.distrType,
+                                                               filename,
+                                                               beg,
+                                                               beam.distrFileLoop,
+                                                               beam.removeUnstableWithoutDecay,
+                                                               beam.eventGeneratorWarnSkippedParticles);
 #else
           throw BDSException(__METHOD_NAME__, "event generator file being used but BDSIM not compiled with HEPMC3");
 #endif
         }
       else // must be useSamplerLoader is true
         {
-          generatorFromFile = new BDSROOTSamplerReader(beam.distrType,
-                                                       filename,
-                                                       beg,
-                                                       beam.distrFileLoop,
-                                                       beam.removeUnstableWithoutDecay,
-                                                       beam.eventGeneratorWarnSkippedParticles);
+          generatorFromFile = new BDSPrimaryGeneratorFileSampler(beam.distrType,
+                                                                 filename,
+                                                                 beg,
+                                                                 beam.distrFileLoop,
+                                                                 beam.removeUnstableWithoutDecay,
+                                                                 beam.eventGeneratorWarnSkippedParticles);
           
         }
       
