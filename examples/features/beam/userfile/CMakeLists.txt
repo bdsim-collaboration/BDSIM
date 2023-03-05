@@ -3,6 +3,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURC
 simple_testing(bunch-userfile                  "--file=userfile.gmad"                  "")
 simple_testing(bunch-userfile-ngenerate        "--file=userfile2.gmad"                 "")
 simple_testing(bunch-userfile-loop             "--file=userfile-loop.gmad"             "")
+simple_testing(bunch-userfile-loop-ntimes      "--file=userfile-loop-ntimes.gmad"      "")
 simple_testing(bunch-userfile-assumed-particle "--file=userfile-assumed-particle.gmad" "")
 simple_testing(bunch-userfile-below-rest-mass  "--file=userfile-below-rest-mass.gmad"  "")
 simple_testing(bunch-userfile-blank-lines      "--file=userfile-blank-lines.gmad"      "")
