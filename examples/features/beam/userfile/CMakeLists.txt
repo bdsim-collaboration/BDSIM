@@ -33,6 +33,8 @@ simple_fail(bunch-userfile-bad-nlinesIgnore   "--file=userfile-bad-nlinesIgnore.
 simple_fail(bunch-userfile-bad-loop           "--file=userfile-bad-loop.gmad")
 simple_fail(bunch-userfile-bad-recreate-loop  "--file=userfile-bad-recreate-loop.gmad")
 
+simple_testing(option-executable-distrFileLoopNTimes  "--file=userfile-loop-ntimes.gmad --distrFileLoopNTimes=5" "")
+
 if (USE_GZSTREAM)
   simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")
 else()

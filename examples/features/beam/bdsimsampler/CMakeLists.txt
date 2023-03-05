@@ -1,6 +1,7 @@
 simple_testing(bunch-bdsimsampler                     "--file=bdsimsampler.gmad"                 "")
 simple_testing(bunch-bdsimsampler-offset              "--file=bdsimsampler-offset.gmad"          "")
 simple_testing(bunch-bdsimsampler-permit-unstable     "--file=bdsimsampler-permit-unstable.gmad" "")
+simple_testing(bunch-bdsimsampler-loop-ntimes         "--file=bdsimsampler-loop-ntimes.gmad"     "")
 simple_testing(bunch-bdsimsampler-lowphysics          "--file=bdsimsampler-lowphysics.gmad"      "")
 simple_testing(bunch-bdsimsampler-filtered            "--file=bdsimsampler-filtered.gmad"        "")
 simple_testing(bunch-bdsimsampler-ngenerate           "--file=bdsimsampler-ngenerate.gmad --ngenerate=3" "")
