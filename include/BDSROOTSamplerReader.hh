@@ -72,7 +72,7 @@ public:
 
   /// Just advance to a different event index. Have a function to put the
   /// implementation in one place and be similar to BDSHepMC3Reader.
-  void SkipEvents(G4long eventOffset);
+  void SkipEvents(G4long nEventsToSkip);
   
 protected:
   /// Read sampler hits and put into primary vertices if they pass filters.
