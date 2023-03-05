@@ -1,4 +1,4 @@
 include bdsimsampler.gmad;
 
-beam, beam, distrFileLoop=1,
+beam, distrFileLoop=1,
       distrFileLoopNTimes=3;
