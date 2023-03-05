@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSRunAction.hh"
 #include "BDSSamplerPlacementRecord.hh"
 #include "BDSSamplerRegistry.hh"
+#include "BDSWarning.hh"
 
 #include "parser/beamBase.h"
 #include "parser/optionsBase.h"
@@ -161,6 +162,11 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
       nEventsInOriginalDistrFile = beg->NEventsInFile();
       if (nEventsDistrFileSkipped > 0)
         {G4cout << __METHOD_NAME__ << nEventsDistrFileSkipped << " events were skipped as no particles passed the filters in them." << G4endl;}
+      if (nEventsDistrFileSkipped == nEventsInOriginalDistrFile)
+        {
+          G4String msg = "no events were simulated at all as none contained any particles that passed the filters.";
+          BDS::Warning(__METHOD_NAME__, msg);
+        }
     }
   output->FillRun(info, nEventsRequested, nEventsInOriginalDistrFile, nEventsDistrFileSkipped);
   output->CloseFile();
