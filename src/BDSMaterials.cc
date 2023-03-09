@@ -1093,9 +1093,11 @@ void BDSMaterials::CheckForConflictingMaterialsAfterLoad(const G4String& geometr
   for (const auto& mat : *table)
     {
       G4String name = mat->GetName();
+      if (BDS::StartsWith(BDS::LowerCase(name), "g4_"))
+        {continue;} // ignore possible repeat G4 ones
       auto search = nameCount.find(name);
       if (search == nameCount.end())
-	{nameCount[name] = 0;}
+        {nameCount[name] = 0;}
       nameCount[name] += 1;
       check = check || nameCount[name] > 1; // flag for efficiency - don't loop again if we don't need to
     }
