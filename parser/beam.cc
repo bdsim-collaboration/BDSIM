@@ -170,6 +170,7 @@ void Beam::PublishMembers()
   publish("matchDistrFileLength", &Beam::distrFileMatchLength);  // for backwards compatibility
   publish("distrFileMatchLength", &Beam::distrFileMatchLength);
   publish("distrFileLoop",        &Beam::distrFileLoop);
+  publish("distrFileLoopNTimes",  &Beam::distrFileLoopNTimes);
   publish("removeUnstableWithoutDecay", &Beam::removeUnstableWithoutDecay);
   publish("nlinesIgnore",         &Beam::nlinesIgnore);
   publish("nLinesIgnore",         &Beam::nlinesIgnore); // for consistency

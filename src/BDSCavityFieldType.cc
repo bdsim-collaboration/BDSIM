@@ -50,7 +50,7 @@ BDSCavityFieldType BDS::DetermineCavityFieldType(G4String cavityFieldType)
       G4String msg = "\"" + cavityFieldType + "\" is not a valid cavity field type\n";
       msg += "Available cavity field types are:\n";
       for (const auto& it : types)
-	{msg += "\"" + it.first + "\"\n";}
+        {msg += "\"" + it.first + "\"\n";}
       throw BDSException(__METHOD_NAME__, msg);
     }
   

@@ -1270,7 +1270,7 @@ BDSFieldObjects* BDSFieldFactory::CreateCavityFringe(const BDSFieldInfo& info)
   BDSMagUsualEqRhs* bEqOfMotion       = new BDSMagUsualEqRhs(bGlobalField);
   G4MagIntegratorStepper* integrator  = new BDSIntegratorCavityFringe(info.MagnetStrength(),bEqOfMotion,info.BRho(),0.95*info.BeamPipeRadius());
   BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
-	                                                          bEqOfMotion, integrator);
+                                                                  bEqOfMotion, integrator);
   return completeField;
 }
 
@@ -1301,37 +1301,37 @@ BDSModulator* BDSFieldFactory::CreateModulator(const BDSModulatorInfo* modulator
   try
     {
       switch (modulatorRecipe->modulatorType.underlying())
-	{
-	case BDSModulatorType::sint:
-	  {
-	    G4double globalPhase = CalculateGlobalPhase(*modulatorRecipe, info);
-	    result = new BDSModulatorSinT(modulatorRecipe->frequency,
-					  globalPhase,
-					  modulatorRecipe->amplitudeOffset,
-					  modulatorRecipe->scale);
-	    break;
-	  }
-	case BDSModulatorType::singlobalt:
-	  {
-	    // calculate phase with no synchronous offset
-	    G4double globalPhase = BDS::IsFinite(modulatorRecipe->phase) ? modulatorRecipe->phase : CalculateGlobalPhase(modulatorRecipe->frequency, modulatorRecipe->tOffset);;
-	    result = new BDSModulatorSinT(modulatorRecipe->frequency,
-					  globalPhase,
-					  modulatorRecipe->amplitudeOffset,
-					  modulatorRecipe->scale);
-	    break;
-	  }
-	case BDSModulatorType::tophatt:
-	  {
-	    result = new BDSModulatorTopHatT(modulatorRecipe->T0,
-					     modulatorRecipe->T1,
-					     modulatorRecipe->scale);
-	    break;
-	  }
-	case BDSModulatorType::none:
-	default:
-	  {break;}
-	}
+        {
+        case BDSModulatorType::sint:
+          {
+            G4double globalPhase = CalculateGlobalPhase(*modulatorRecipe, info);
+            result = new BDSModulatorSinT(modulatorRecipe->frequency,
+                                          globalPhase,
+                                          modulatorRecipe->amplitudeOffset,
+                                          modulatorRecipe->scale);
+            break;
+          }
+        case BDSModulatorType::singlobalt:
+          {
+            // calculate phase with no synchronous offset
+            G4double globalPhase = BDS::IsFinite(modulatorRecipe->phase) ? modulatorRecipe->phase : CalculateGlobalPhase(modulatorRecipe->frequency, modulatorRecipe->tOffset);;
+            result = new BDSModulatorSinT(modulatorRecipe->frequency,
+                                          globalPhase,
+                                          modulatorRecipe->amplitudeOffset,
+                                          modulatorRecipe->scale);
+            break;
+          }
+        case BDSModulatorType::tophatt:
+          {
+            result = new BDSModulatorTopHatT(modulatorRecipe->T0,
+                                             modulatorRecipe->T1,
+                                             modulatorRecipe->scale);
+            break;
+          }
+        case BDSModulatorType::none:
+        default:
+          {break;}
+        }
     }
   catch (BDSException& e)
     {

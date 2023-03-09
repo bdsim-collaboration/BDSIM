@@ -41,6 +41,7 @@ BeamBase::BeamBase()
   distrFileFromExecOptions = false;
   distrFileMatchLength = true;
   distrFileLoop        = false;
+  distrFileLoopNTimes  = 1;
   removeUnstableWithoutDecay = true;
   nlinesIgnore         = 0;
   nlinesSkip           = 0;

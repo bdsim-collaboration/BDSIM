@@ -27,9 +27,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <limits>
 
 BDSModulatorSinT::BDSModulatorSinT(G4double frequencyIn,
-				   G4double phaseIn,
-				   G4double amplitudeOffsetIn,
-				   G4double amplitudeScaleIn):
+                                   G4double phaseIn,
+                                   G4double amplitudeOffsetIn,
+                                   G4double amplitudeScaleIn):
   angularFrequency(CLHEP::twopi * frequencyIn),
   phase(phaseIn),
   offset(amplitudeOffsetIn),
@@ -40,7 +40,7 @@ BDSModulatorSinT::BDSModulatorSinT(G4double frequencyIn,
 }
 
 G4double BDSModulatorSinT::Factor(const G4ThreeVector& /*xyz*/,
-				  G4double T) const
+                                  G4double T) const
 {
   G4double factor = offset + scale*std::sin(angularFrequency*T + phase);
   return factor;

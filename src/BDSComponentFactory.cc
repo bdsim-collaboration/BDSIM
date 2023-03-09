@@ -2806,17 +2806,17 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 }
 
 void BDSComponentFactory::SetModulatorDefinition(Element const* el,
-						 BDSFieldInfo* info) const
+                                                 BDSFieldInfo* info) const
 {
   if (!el->fieldModulator.empty())
     {
       if (info->ModulatorInfo()) // already exists
-	{throw BDSException(__METHOD_NAME__, "\""+elementName+"\" uses a field map with a modulator but also a modulator\ndouble modulation is not allowed");}
+        {throw BDSException(__METHOD_NAME__, "\""+elementName+"\" uses a field map with a modulator but also a modulator\ndouble modulation is not allowed");}
       else
-	{
-	  auto modDef = ModulatorDefinition(el);
-	  info->SetModulatorInfo(modDef); // works even if none
-	}
+        {
+          auto modDef = ModulatorDefinition(el);
+          info->SetModulatorInfo(modDef); // works even if none
+        }
     }
 }
 

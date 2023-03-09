@@ -24,13 +24,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ostream>
 
 BDSModulatorInfo::BDSModulatorInfo(BDSModulatorType modulatorTypeIn,
-				   G4double         frequencyIn,
-				   G4double         phaseIn,
-				   G4double         tOffsetIn,
-				   G4double         scaleIn,
-				   G4double         amplitudeOffsetIn,
-				   G4double         T0In,
-				   G4double         T1In):
+                                   G4double         frequencyIn,
+                                   G4double         phaseIn,
+                                   G4double         tOffsetIn,
+                                   G4double         scaleIn,
+                                   G4double         amplitudeOffsetIn,
+                                   G4double         T0In,
+                                   G4double         T1In):
   modulatorType(modulatorTypeIn),
   frequency(frequencyIn),
   phase(phaseIn),
