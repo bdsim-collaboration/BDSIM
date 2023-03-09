@@ -342,12 +342,12 @@ private:
   /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum
   /// and outer field in place of the one general field.
   void SetFieldDefinitions(GMAD::Element const* el,
-			   BDSAcceleratorComponent* component) const;
+                           BDSAcceleratorComponent* component) const;
 
   /// Check the info doesn't already have a modulator definition (exception if it does).
   /// and update it.
   void SetModulatorDefinition(GMAD::Element const* el,
-			      BDSFieldInfo* info) const;
+                              BDSFieldInfo* info) const;
   
   /// Prepare magnet strength for multipoles
   BDSMagnetStrength* PrepareMagnetStrengthForMultipoles(GMAD::Element const* el) const;

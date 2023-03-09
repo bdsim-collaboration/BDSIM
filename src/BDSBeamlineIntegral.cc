@@ -36,8 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 BDSBeamlineIntegral::BDSBeamlineIntegral(const BDSParticleDefinition& incomingParticle,
-					 G4double T0In,
-					 G4double integratedArcLength):
+                                         G4double T0In,
+                                         G4double integratedArcLength):
   synchronousTAtEnd(T0In),
   synchronousTAtMiddleOfLastElement(T0In),
   arcLength(integratedArcLength),
@@ -71,25 +71,25 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
         BDSCavityFieldType tp = BDS::DetermineCavityFieldType(componentAsDefined.cavityFieldType);
         G4double eField = BDSComponentFactory::EFieldFromElement(&componentAsDefined, thisComponentArcLength);
         switch (tp.underlying())
-	  {
+          {
           case BDSCavityFieldType::constantinz:
-	    {
-	      dEk = particleCharge * eField * thisComponentArcLength * cosPhase;
-	      break;
-	    }
+            {
+              dEk = particleCharge * eField * thisComponentArcLength * cosPhase;
+              break;
+            }
           case BDSCavityFieldType::pillbox:
-	    {
-	      if (!BDS::IsFinite(frequency)) // protect against zero division
-		{throw BDSException(__METHOD_NAME__, "for a pillbox cavity field, the frequency must be non-zero");}
-	      G4double rfWavelength = CLHEP::c_light / frequency;
-	      G4double piGOverBetaLambda = CLHEP::pi * thisComponentArcLength / designParticle.Beta() * rfWavelength;
-	      G4double transitTimeFactor = std::sin(piGOverBetaLambda) / piGOverBetaLambda;
-	      dEk = particleCharge * eField * thisComponentArcLength * transitTimeFactor * cosPhase;
-	      break;
-	    }
+            {
+              if (!BDS::IsFinite(frequency)) // protect against zero division
+                {throw BDSException(__METHOD_NAME__, "for a pillbox cavity field, the frequency must be non-zero");}
+              G4double rfWavelength = CLHEP::c_light / frequency;
+              G4double piGOverBetaLambda = CLHEP::pi * thisComponentArcLength / designParticle.Beta() * rfWavelength;
+              G4double transitTimeFactor = std::sin(piGOverBetaLambda) / piGOverBetaLambda;
+              dEk = particleCharge * eField * thisComponentArcLength * transitTimeFactor * cosPhase;
+              break;
+            }
           default:
-	    {break;}
-	  }
+            {break;}
+          }
         break;
       }
     default:
