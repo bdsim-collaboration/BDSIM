@@ -51,61 +51,62 @@ BDSFieldBuilder::BDSFieldBuilder()
 }
 
 void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo*      info,
-						   const std::vector<G4LogicalVolume*>& logicalVolumes,
-						   const G4bool             propagateToDaughters,
+                                                   const std::vector<G4LogicalVolume*>& logicalVolumes,
+                                                   const G4bool             propagateToDaughters,
                                                    const BDSMagnetStrength* magnetStrengthForScaling,
-						   const G4String&          scalingKey)
+                                                   const G4String&          scalingKey)
 {
   if (info)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Registering info: " << info
-	     << " to volume(s): ";
+             << " to volume(s): ";
       for (auto vol : logicalVolumes)
-	{G4cout << vol->GetName() << " ";}
+        {G4cout << vol->GetName() << " ";}
       G4cout << G4endl;
 #endif
       infos.push_back(info);
       lvs.push_back(logicalVolumes);
       propagators.push_back(propagateToDaughters);
       if (info->AutoScale())
-	{// only store if we're going to use for autoscaling
+        {// only store if we're going to use for autoscaling
           G4int index = (G4int)infos.size() - 1;
           scalingStrengths[index] = magnetStrengthForScaling;
           scalingKeys[index]      = scalingKey;
-	}
+        }
     }
 }
   
 void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo*      info,
-						   G4LogicalVolume*         logicalVolume,
-						   const G4bool             propagateToDaughters,
+                                                   G4LogicalVolume*         logicalVolume,
+                                                   const G4bool             propagateToDaughters,
                                                    const BDSMagnetStrength* magnetStrengthForScaling,
-						   const G4String&          scalingKey)
+                                                   const G4String&          scalingKey)
 {
   std::vector<G4LogicalVolume*> lvsForThisInfo = {logicalVolume};
   RegisterFieldForConstruction(info,
-			       lvsForThisInfo,
-			       propagateToDaughters,
-			       magnetStrengthForScaling,
-			       scalingKey);
+                               lvsForThisInfo,
+                               propagateToDaughters,
+                               magnetStrengthForScaling,
+                               scalingKey);
 }
 
 void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo*      info,
-						   const std::set<G4LogicalVolume*>& logicalVolumes,
-						   const G4bool             propagateToDaughters,
+                                                   const std::set<G4LogicalVolume*>& logicalVolumes,
+                                                   const G4bool             propagateToDaughters,
                                                    const BDSMagnetStrength* magnetStrengthForScaling,
-						   const G4String&          scalingKey)
+                                                   const G4String&          scalingKey)
 {
   // copy into vector for this interface
   std::vector<G4LogicalVolume*> lvsForThisInfo;
+  lvsForThisInfo.reserve(logicalVolumes.size());
   for (auto lv : logicalVolumes)
     {lvsForThisInfo.push_back(lv);}
   RegisterFieldForConstruction(info,
-			       lvsForThisInfo,
-			       propagateToDaughters,
-			       magnetStrengthForScaling,
-			       scalingKey);
+                               lvsForThisInfo,
+                               propagateToDaughters,
+                               magnetStrengthForScaling,
+                               scalingKey);
 } 
 
 std::vector<BDSFieldObjects*> BDSFieldBuilder::CreateAndAttachAll()
@@ -133,10 +134,10 @@ std::vector<BDSFieldObjects*> BDSFieldBuilder::CreateAndAttachAll()
 	  throw e;
 	}
       if (field)
-	{
-	  fields.push_back(field);
-	  field->AttachToVolume(lvs[i], propagators[i]); // works with vector of LVs*
-	}
+        {
+          fields.push_back(field);
+          field->AttachToVolume(lvs[i], propagators[i]); // works with vector of LVs*
+        }
     }
   return fields;
 }

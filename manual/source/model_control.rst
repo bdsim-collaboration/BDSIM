@@ -82,9 +82,9 @@ BDSIM starts each event in one of the following ways:
    are randomly generated according to a distribution. But this also includes reading
    from a **text file**.
 
-#) A primary vertex is loaded from an event generator file. This currently requires linking to
-   HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
-   `eventgeneratorfile`_).
+#) A primary vertex is loaded from an event generator file. This currently requires compiling
+   BDSIM with HepMC3 to load such files. In this case, each event may start with 1 or more particles.
+   (see `eventgeneratorfile`_).
 
 #) Hits are loaded from a sampler in BDSIM output file and launched at any location in the
    simulation - not necessarily in the same position or same model as they were generated in.
@@ -225,8 +225,8 @@ from this value given the proton's mass).
 * If no :code:`beamParticleName` is given but one of :code:`E0`, :code:`Ek0`, :code:`P0` are given,
   the same particle is assumed as :code:`particle` but with a different energy.
 
-Beam Energy From Command Line
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Beam Energy From the Command Line
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The energy of the beam can also be controlled using executable options to override what is provided
 in the input GMAD files. The following executable options can be used (with example value of 123.456 GeV):
@@ -254,6 +254,8 @@ with a large number of particles (for example, 10k to 100k in under one minute).
 
 BDSIM should be executed with the option :code:`--generatePrimariesOnly` as described in
 :ref:`executable-options`.
+
+This **does not** work for `eventgeneratorfile` and `bdsimsampler` distributions.
 
 * The exact coordinates generated will not be the same as those generated in a run, even
   with the same seed. This is because the physics models will also advanced the random
@@ -397,7 +399,8 @@ Beam Distributions
 ^^^^^^^^^^^^^^^^^^
 The following beam distributions are available in BDSIM
 
-- `reference`_
+**No Variation**
+- `reference`_ (a 'pencil' beam)
 
 **Gaussian**
 - `gaussmatrix`_
@@ -417,8 +420,8 @@ The following beam distributions are available in BDSIM
 **Composite**
 - `composite`_
 - `compositespacedirectionenergy`_
-  
-**Beam Distributions - File-Based**
+
+**File-Based** (see :ref:`beam-distributions-file-based`)
 
 - `userfile`_
 - `ptc`_
@@ -1172,7 +1175,7 @@ Behaviour
 *********
 
 The default behaviour since BDSIM V1.7 is to 'match' the file length - i.e. simulate the
-number of events as there would be in the file. The default is **not to loop** the file.
+number of events as there would be in the file. The default is **not to loop** (i.e. repeat) the file.
 However, the user can explicitly request a certain number of events, or that the file is
 looped (knowing that certain primaries might be repeated introducing correlations).
 
@@ -1185,6 +1188,9 @@ For all the file-based distributions, the following beam options apply.
 |                              |               | that match the number of entries in the file  |
 +------------------------------+---------------+-----------------------------------------------+
 | `distrFileLoop`              | 0 (false)     | Whether to loop back to the start of the file |
++------------------------------+---------------+-----------------------------------------------+
+| `distrFileLoopNTimes`        | 1             | Number of times to repeat the distribution    |
+|                              |               | file in its entirety                          |
 +------------------------------+---------------+-----------------------------------------------+
 
 .. warning:: `option, ngenerate=N` in input GMAD text will be ignored when a distribution file
@@ -1226,6 +1232,20 @@ it will be replayed (with different event seeds) 5x.
              which would be the default behaviour. However, if you only loop part of
              a file, you may 'enhance' the statistics of one set of input coordinates
              and may bias the final result.
+
+**Looping N Times**
+
+We can repeat the same file `N` times. The random engine seed will continue to advance
+for the physics so even with the same initial particles or coordinates, a different
+outcome will happen according to the physics processes. Therefore, it is useful to
+sometimes repeat the same distribution multiple times. ::
+
+  beam, distrType="somedistributionhere...",
+        distrFile="somefile.dat",
+        distrFileLoop=1,
+        distrFileLoopNTimes=3;
+
+This will match the file length and repeat the file 3 times.
 
 **Filtering**
 

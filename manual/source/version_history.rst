@@ -74,6 +74,9 @@ New Features
 * The `eventgenerator` and `bdsimsampler` distributions now have `eventGeneratorNEventsSkip`
   in the beam command to allow skipping into the file.
 * Consistency between features between `eventgenerator` and `bdsimsampler` distribution.
+* A new executable option `--distrFileLoopNTimes=<N>` allows you to repeat an input file `N`
+  times while matching the length to replay the same input coordinates from a distribution
+  file with different physics easily.
 
 **Components**
 
@@ -214,6 +217,8 @@ General Updates
   material. The parallel world material should not make a difference for the setup in BDSIM, but
   now it is explicitly forbidden from having any effect by it being nullptr.
 * The material print out (:code:`bdsim --materials`) now includes aliases.
+* When using `autoScale` for a field map attached to the yoke of a magnet, the calculated scaling
+  factor is now always print out for feedback.
 
 Bug Fixes
 ---------
@@ -347,6 +352,8 @@ Bug Fixes
   step length h regardless of the step's direction. Now, it advances along z by the projection of the step h onto
   the z axis. This change will only produce a noticeable impact on particles with a large transverse momentum,
   particularly those in low energy machines.
+* Fix dipole integrator track when K1 is negative. The overall strength parameter calculated for the integrator matrices
+  was incorrect when K1 < 0.
 
 **Visualisation**
 
@@ -408,7 +415,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCoords          | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventHeader          | N           | 4               | 4               |
+| BDSOutputROOTEventHeader          | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventHistograms      | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+

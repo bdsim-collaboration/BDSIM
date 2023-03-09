@@ -202,7 +202,7 @@ When defining a :code:`field`, the following parameters can be specified. Exampl
 |                      | and the field magnitude will be automatically scaled according  |
 |                      | to the normalised `k` strength (such as `k1` for a quadrupole)  |
 |                      | for the magnet it's attached to. Only applicable for when       |
-|                      | attached to magnets.                                            |
+|                      | attached to `fieldOuter` of aa magnet.                          |
 +----------------------+-----------------------------------------------------------------+
 | maximumStepLength    | The maximum permitted step length through the field. (m) No     |
 |                      | length smaller than 1 micron is permitted currently.            |
@@ -232,7 +232,7 @@ When defining a :code:`field`, the following parameters can be specified. Exampl
 Simple example: ::
 
   detectorField: field, type="bmap2d",
-                 magneticFile="bdsim:fieldmap.dat";
+                 magneticFile="bdsim2d:fieldmap.dat";
 
 This will use a BDSIM format magnetic (only) field map. By default it will have cubic
 interpolation and use a 4th order Runge Kutta integrator.
@@ -261,6 +261,32 @@ for the spatial distance calculated from this.
     according to :math:`\sin(2\pi ft-\varphi)` or :math:`\cos(2\pi ft-\varphi)` with :math:`f`
     being the frequency of the modulation, :math:`t` the global time of the particle and
     :math:`\varphi` the shift wrt. the beginning of the oscillation.
+
+
+AutoScaling
+***********
+
+BDSIM includes a feature called "autoScale" that allows the gradient to be calculated of a field
+map when attached to the yoke of a magnet. The field map is then scaled by the required factor to
+match the (normalised) strength of the magnet, e.g. `k1` for a quadrupole.
+
+This only works when `autoScale=1` is used in the field definition and when the field is specified
+for the `fieldOuter` parameter of a magnet such as a quadrupole, sextupole, or octupole.
+
+For example: ::
+
+  f1: field, type="bmap2d", magnetifFile="bdsim:fieldmap.dat";
+  q1: quadrupole, l=2.99*m, fieldOuter="f1", k1=-0.03571027562065992;
+
+Example print out when running BDSIM would be: ::
+
+  BDSIM Field Format> Loading "/Users/lnevay/Desktop/gradient/QNRX0610005_-192.59A.map"
+  BDSIM Field Format> Loaded 2099 lines from file
+  BDSIM Field Format> (Min | Max) field magnitudes in loaded file (before scaling): (0 | 4.12849187851)
+  autoScale> Calculated k1 = -0.0430970787713
+  autoScale> Ratio of supplied strength to calculated map strength: 0.828600838822
+  autoScale> New overall scaling factor: 0.828600838822
+
 
 Field Types
 ***********
