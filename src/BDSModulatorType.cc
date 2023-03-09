@@ -30,11 +30,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template<>
 std::map<BDSModulatorType, std::string>* BDSModulatorType::dictionary =
   new std::map<BDSModulatorType, std::string> ({
-						{BDSModulatorType::none,              "none"},
-						{BDSModulatorType::sint,              "sint"},
-						{BDSModulatorType::singlobalt,        "singlobalt"},
-						{BDSModulatorType::tophatt,           "tophatt"}
-    });	
+                                                {BDSModulatorType::none,              "none"},
+                                                {BDSModulatorType::sint,              "sint"},
+                                                {BDSModulatorType::singlobalt,        "singlobalt"},
+                                                {BDSModulatorType::tophatt,           "tophatt"}
+    });         
 
 BDSModulatorType BDS::DetermineModulatorType(G4String mType)
 {
@@ -52,7 +52,7 @@ BDSModulatorType BDS::DetermineModulatorType(G4String mType)
       G4String msg = "\"" + mType + "\" is not a valid modulator type\n";
       msg += "Available modulator types are:\n";
       for (const auto& it : types)
-	{msg += "\"" + it.first + "\"\n";}
+        {msg += "\"" + it.first + "\"\n";}
       throw BDSException(__METHOD_NAME__, msg);
     }
 
