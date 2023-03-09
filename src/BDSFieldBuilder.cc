@@ -120,19 +120,19 @@ std::vector<BDSFieldObjects*> BDSFieldBuilder::CreateAndAttachAll()
       try
       {
         if (currentInf->AutoScale())
-	  {
-	    field = BDSFieldFactory::Instance()->CreateField(*(infos[i]),
-							     scalingStrengths[i],
-							     scalingKeys[i]);
-	  }
+          {
+            field = BDSFieldFactory::Instance()->CreateField(*(infos[i]),
+                                                             scalingStrengths[i],
+                                                             scalingKeys[i]);
+          }
         else
-	  {field = BDSFieldFactory::Instance()->CreateField(*(infos[i]));}
+          {field = BDSFieldFactory::Instance()->CreateField(*(infos[i]));}
       }
       catch (BDSException& e)
-	{
-	  e.AppendToMessage("\nField would be attached to logical volume named \"" + lvs[i][0]->GetName() + "\"");
-	  throw e;
-	}
+        {
+          e.AppendToMessage("\nField would be attached to logical volume named \"" + lvs[i][0]->GetName() + "\"");
+          throw e;
+        }
       if (field)
         {
           fields.push_back(field);
