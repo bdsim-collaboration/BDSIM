@@ -45,9 +45,9 @@ The following output formats are provided:
 +----------------------+----------------------+-----------------------------------------------+
 | Format               | Syntax               | Description                                   |
 +======================+======================+===============================================+
-| None                 | -\\-output=none      | No output is written                          |
+| None                 | -\-output=none       | No output is written                          |
 +----------------------+----------------------+-----------------------------------------------+
-| ROOT Event (Default) | -\\-output=rootevent | A ROOT file with details of the model built,  |
+| ROOT Event (Default) | -\-output=rootevent  | A ROOT file with details of the model built,  |
 |                      |                      | options used, seed states, and event-by-event |
 |                      |                      | information (default and recommended).        |
 +----------------------+----------------------+-----------------------------------------------+
@@ -520,42 +520,53 @@ BDSOutputROOTEventHeader
 | **Variable Name**      | **Type**                 | **Description**                       |
 +========================+==========================+=======================================+
 | bdsimVersion           | std::string              | Version of BDSIM used                 |
-+------------------------+--------------------------+---------------------------------------+
-| geant4Version          | std::string              | Version of Geant4 used                |
-+------------------------+--------------------------+---------------------------------------+
-| rootVersion            | std::string              | Version of ROOT used                  |
-+------------------------+--------------------------+---------------------------------------+
-| clhepVersion           | std::string              | Version of CLHEP used                 |
-+------------------------+--------------------------+---------------------------------------+
-| timeStamp              | std::string              | Time and date file was created        |
-+------------------------+--------------------------+---------------------------------------+
-| fileType               | std::string              | String describing what stage of       |
-|                        |                          | simulation the file came from         |
-+------------------------+--------------------------+---------------------------------------+
-| dataVersion            | int                      | BDSIM data format version             |
-+------------------------+--------------------------+---------------------------------------+
-| doublePrecisionOutput  | bool                     | Whether BDSIM was compiled with       |
-|                        |                          | double precision for output           |
-+------------------------+--------------------------+---------------------------------------+
-| analysedFiles          | std::vector<std::string> | List of files analysed in the case of |
-|                        |                          | rebdsim, rebdsimHistoMerge,           |
-|                        |                          | rebdsimOptics and rebdsimOrbit        |
-+------------------------+--------------------------+---------------------------------------+
-| combinedFiles          | std::vector<std::string> | List of files combined together in    |
-|                        |                          | rebdsimCombine                        |
-+------------------------+--------------------------+---------------------------------------+
-| nTrajectoryFilters     | int                      | The total number of trajectory filters|
-|                        |                          | and therefore the number of bits in   |
-|                        |                          | Event.Trajectory.filters.             |
-+------------------------+--------------------------+---------------------------------------+
-| trajectoryFilters      | std::vector<std::string> | The name of each trajectory filter.   |
-+------------------------+--------------------------+---------------------------------------+
-| skimmedFile            | bool                     | Whether this file's Event tree is     |
-|                        |                          | made of skimmed events.               |
-+------------------------+--------------------------+---------------------------------------+
-| nOriginalEvents (\*)   | unsigned long long int   | If a skimmed file, this is the number |
-|                        |                          | of events in the original file.       |
-+------------------------+--------------------------+---------------------------------------+
++---------------------------+--------------------------+---------------------------------------+
+| geant4Version             | std::string              | Version of Geant4 used                |
++---------------------------+--------------------------+---------------------------------------+
+| rootVersion               | std::string              | Version of ROOT used                  |
++---------------------------+--------------------------+---------------------------------------+
+| clhepVersion              | std::string              | Version of CLHEP used                 |
++---------------------------+--------------------------+---------------------------------------+
+| timeStamp                 | std::string              | Time and date file was created        |
++---------------------------+--------------------------+---------------------------------------+
+| fileType                  | std::string              | String describing what stage of       |
+|                           |                          | simulation the file came from         |
++---------------------------+--------------------------+---------------------------------------+
+| dataVersion               | int                      | BDSIM data format version             |
++---------------------------+--------------------------+---------------------------------------+
+| doublePrecisionOutput     | bool                     | Whether BDSIM was compiled with       |
+|                           |                          | double precision for output           |
++---------------------------+--------------------------+---------------------------------------+
+| analysedFiles             | std::vector<std::string> | List of files analysed in the case of |
+|                           |                          | rebdsim, rebdsimHistoMerge,           |
+|                           |                          | rebdsimOptics and rebdsimOrbit        |
++---------------------------+--------------------------+---------------------------------------+
+| combinedFiles             | std::vector<std::string> | List of files combined together in    |
+|                           |                          | rebdsimCombine                        |
++---------------------------+--------------------------+---------------------------------------+
+| nTrajectoryFilters        | int                      | The total number of trajectory filters|
+|                           |                          | and therefore the number of bits in   |
+|                           |                          | Event.Trajectory.filters.             |
++---------------------------+--------------------------+---------------------------------------+
+| trajectoryFilters         | std::vector<std::string> | The name of each trajectory filter.   |
++---------------------------+--------------------------+---------------------------------------+
+| skimmedFile               | bool                     | Whether this file's Event tree is     |
+|                           |                          | made of skimmed events.               |
++---------------------------+--------------------------+---------------------------------------+
+| nOriginalEvents (\*)      | unsigned long long int   | If a skimmed file, this is the number |
+|                           |                          | of events in the original file.       |
++---------------------------+--------------------------+---------------------------------------+
+| nEventsRequested (\*)     | unsigned long long int   | Number of events requested to be      |
+|                           |                          | simulated from the file.              |
++---------------------------+--------------------------+---------------------------------------+
+| nEventsInFile (\*)        | unsigned long long int   | Number of events in the input         |
+|                           |                          | distribution file.                    |
++---------------------------+--------------------------+---------------------------------------+
+| nEventsInFileSkipped (\*) | unsigned long long int   | Number of events from the             |
+|                           |                          | distribution file that were skipped   |
+|                           |                          | due to filters.                       |
++---------------------------+--------------------------+---------------------------------------+
+
 
 * (\*) This variable may only be filled in the second entry of the tree as they are only
   available at the end of a run and ROOT does not permit overwriting an entry. The first entry
