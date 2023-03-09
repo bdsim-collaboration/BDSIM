@@ -1093,8 +1093,6 @@ void BDSMaterials::CheckForConflictingMaterialsAfterLoad(const G4String& geometr
   for (const auto& mat : *table)
     {
       G4String name = mat->GetName();
-      if (BDS::StartsWith(BDS::LowerCase(name), "g4_"))
-        {continue;} // ignore possible repeat G4 ones
       auto search = nameCount.find(name);
       if (search == nameCount.end())
         {nameCount[name] = 0;}
@@ -1112,7 +1110,10 @@ void BDSMaterials::CheckForConflictingMaterialsAfterLoad(const G4String& geometr
               msg += "than once now and will cause the wrong material to be used for any future usages.\n";
               msg += "Error caused by GDML file \""+geometryFileName+"\" in component \""+componentName+"\"\n";
               msg += "This is most likely due to a material name in the GDML file conflicting with a predefined one in BDSIM.";
-              throw BDSException(__METHOD_NAME__, msg);
+              if (BDS::StartsWith(BDS::LowerCase(nc.first), "g4_"))
+                {BDS::Warning(msg);} // only warn for a NIST one as ultimately it won't be that different even if redefined from reloading
+              else
+                {throw BDSException(__METHOD_NAME__, msg);}
             }
         }
     }
