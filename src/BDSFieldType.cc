@@ -64,9 +64,9 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::skewoctupole,                 "skewoctupole"},
       {BDSFieldType::skewdecapole,                 "skewdecapole"},
       {BDSFieldType::rfpillbox,                    "rfpillbox"},
-      {BDSFieldType::rfconstantinz,                "rfconstantinz"},
       {BDSFieldType::rfconstantinx,                "rfconstantinx"},
-      {BDSFieldType::rfconstantinty,               "rfconstantinty"},
+      {BDSFieldType::rfconstantiny,                "rfconstantiny"},
+      {BDSFieldType::rfconstantinz,                "rfconstantinz"},
       {BDSFieldType::undulator,                    "undulator"},
       {BDSFieldType::rmatrix,                      "rmatrix"},
       {BDSFieldType::paralleltransporter,          "paralleltransporter"},
@@ -123,9 +123,9 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["skewoctupole"]     = BDSFieldType::skewoctupole;
   types["skewdecapole"]     = BDSFieldType::skewdecapole;
   types["rfpillbox"]        = BDSFieldType::rfpillbox;
-  types["rfconstantinz"]    = BDSFieldType::rfconstantinz;
   types["rfconstantinx"]    = BDSFieldType::rfconstantinx;
-  types["rfconstantinty"]   = BDSFieldType::rfconstantinty;
+  types["rfconstantiny"]    = BDSFieldType::rfconstantiny;
+  types["rfconstantinz"]    = BDSFieldType::rfconstantinz;
   types["undulator"]        = BDSFieldType::undulator;
   types["rmatrix"]          = BDSFieldType::rmatrix;
   types["paralleltransporter"] = BDSFieldType::paralleltransporter;

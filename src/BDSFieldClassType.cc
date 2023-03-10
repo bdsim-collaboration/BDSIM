@@ -76,9 +76,9 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::emap2d:
     case BDSFieldType::emap3d:
     case BDSFieldType::emap4d:
-    case BDSFieldType::rfconstantinz:
     case BDSFieldType::rfconstantinx:
-    case BDSFieldType::rfconstantinty:
+    case BDSFieldType::rfconstantiny:
+    case BDSFieldType::rfconstantinz:
       {return BDSFieldClassType::electric;}
     case BDSFieldType::none:
     case BDSFieldType::ebfieldzero:
