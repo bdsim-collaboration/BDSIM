@@ -547,7 +547,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
     case RFFieldDirection::x:
       {fieldType = BDSFieldType::rfconstantinx; break;}
     case RFFieldDirection::y:
-      {fieldType = BDSFieldType::rfconstantinty; break;}
+      {fieldType = BDSFieldType::rfconstantiny; break;}
     case RFFieldDirection::z:
       {fieldType = BDSFieldType::rfconstantinz; break;}
     }
@@ -566,7 +566,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
   // use cavity fringe option, includeFringeFields does not affect cavity fringes
   G4bool buildCavityFringes = BDSGlobalConstants::Instance()->IncludeFringeFieldsCavities();
   // don't build fringes for transverse rf cavities - none provided
-  if (fieldType == BDSFieldType::rfconstantinx || fieldType == BDSFieldType::rfconstantinty)
+  if (fieldType == BDSFieldType::rfconstantinx || fieldType == BDSFieldType::rfconstantiny)
     {buildCavityFringes = false;}
 
   G4bool buildIncomingFringe = buildCavityFringes;
@@ -2616,7 +2616,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
       {(*st)["ez"] = 1.0; break;}
     case BDSFieldType::rfconstantinx:
       {(*st)["ex"] = 1.0; break;}
-    case BDSFieldType::rfconstantinty:
+    case BDSFieldType::rfconstantiny:
       {(*st)["ey"] = 1.0; break;}
     default:
       {(*st)["ez"] = 1.0; break;}
@@ -2625,8 +2625,8 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   // scale factor to account for reduced body length due to fringe placement.
   G4double lengthScaling = cavityLength / (element->l * CLHEP::m);
   
-  if ((fieldType == BDSFieldType::rfconstantinx || fieldType == BDSFieldType::rfconstantinty) && BDS::IsFinite(el->E) )
-    {throw BDSException(__METHOD_NAME__, "only \"gradient\" is accepted for rfconstantinx or rfconstantinty components and not \"E\"");}
+  if ((fieldType == BDSFieldType::rfconstantinx || fieldType == BDSFieldType::rfconstantiny) && BDS::IsFinite(el->E) )
+    {throw BDSException(__METHOD_NAME__, "only \"gradient\" is accepted for rfconstantinx or rfconstantiny components and not \"E\"");}
   
   G4double eField = EFieldFromElement(el, chordLength); // includes scaling
   (*st)["efield"] = eField / lengthScaling;

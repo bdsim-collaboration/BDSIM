@@ -960,9 +960,9 @@ BDSFieldE* BDSFieldFactory::CreateFieldERaw(const BDSFieldInfo& info)
   BDSFieldE* field = nullptr;
   switch (info.FieldType().underlying())
     {
-    case BDSFieldType::rfconstantinz:
     case BDSFieldType::rfconstantinx:
-    case BDSFieldType::rfconstantinty:
+    case BDSFieldType::rfconstantiny:
+    case BDSFieldType::rfconstantinz:
       {field = new BDSFieldESinusoid(info.MagnetStrength(), info.BRho()); break;}
     case BDSFieldType::emap1d:
     case BDSFieldType::emap2d:
