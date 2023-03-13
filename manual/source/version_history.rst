@@ -282,6 +282,9 @@ Bug Fixes
   low due to the placement of units. The integrator for tracking (which ignores the field) was
   correct and still is, but the back up field used for non-paraxial particles had the wrong
   effective k1.
+* Fix B field for the rf cavity field (`BDSFieldEMRFCavity` class). The direction of the vector was wrong
+  due to a wrong translation from radial to Cartesian coordinates. Previously there was no variation in local
+  `z`, which was wrong and has now been corrected.
 
 **Geometry**
 
