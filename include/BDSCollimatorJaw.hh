@@ -36,7 +36,7 @@ class G4VSolid;
 class BDSCollimatorJaw: public BDSCollimator
 {
 public:
-  BDSCollimatorJaw(G4String    nameIn,
+  BDSCollimatorJaw(const G4String& nameIn,
                    G4double    lengthIn,
                    G4double    horizontalWidthIn,
                    G4double    xHalfGapIn,

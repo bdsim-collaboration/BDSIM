@@ -38,42 +38,33 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <set>
 
-BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
+BDSCollimatorJaw::BDSCollimatorJaw(const G4String&    nameIn,
                                    G4double    lengthIn,
                                    G4double    horizontalWidthIn,
                                    G4double    xHalfGapIn,
                                    G4double    yHalfHeightIn,
                                    G4double    xSizeLeftIn,
                                    G4double    xSizeRightIn,
-                   G4double    leftJawTiltIn,
-                   G4double    rightJawTiltIn,
+                                   G4double    leftJawTiltIn,
+                                   G4double    rightJawTiltIn,
                                    G4bool      buildLeftJawIn,
                                    G4bool      buildRightJawIn,
                                    G4Material* collimatorMaterialIn,
                                    G4Material* vacuumMaterialIn,
                                    G4Colour*   colourIn):
-        BDSCollimator(nameIn,
-                lengthIn,
-                horizontalWidthIn,
-                "jcol",
-                collimatorMaterialIn,
-                vacuumMaterialIn,
-                xHalfGapIn,
-                yHalfHeightIn,
-                xHalfGapIn,
-                yHalfHeightIn,
-                colourIn),
-        jawSolid(nullptr),
-        xSizeLeft(xSizeLeftIn),
-        xSizeRight(xSizeRightIn),
-        xHalfGap(xHalfGapIn),
-        jawTiltLeft(leftJawTiltIn),
-        jawTiltRight(rightJawTiltIn),
-        jawHalfWidth(0),
-        yHalfHeight(yHalfHeightIn),
-        buildLeftJaw(buildLeftJawIn),
-        buildRightJaw(buildRightJawIn),
-        buildAperture(true)
+BDSCollimator(nameIn, lengthIn, horizontalWidthIn, "jcol", collimatorMaterialIn, vacuumMaterialIn,
+              xHalfGapIn, yHalfHeightIn, xHalfGapIn, yHalfHeightIn, colourIn),
+  jawSolid(nullptr),
+  xSizeLeft(xSizeLeftIn),
+  xSizeRight(xSizeRightIn),
+  xHalfGap(xHalfGapIn),
+  jawTiltLeft(leftJawTiltIn),
+  jawTiltRight(rightJawTiltIn),
+  jawHalfWidth(0),
+  yHalfHeight(yHalfHeightIn),
+  buildLeftJaw(buildLeftJawIn),
+  buildRightJaw(buildRightJawIn),
+  buildAperture(true)
 {
   jawHalfWidth = 0.5 * (0.5*horizontalWidth - lengthSafetyLarge - xHalfGap);
 }
@@ -135,17 +126,18 @@ void BDSCollimatorJaw::CheckParameters()
 
 void BDSCollimatorJaw::BuildContainerLogicalVolume()
 {
-    G4double horizontalHalfWidth = horizontalWidth * 0.5;
-    if (jawTiltLeft != 0 || jawTiltRight != 0){
-        // The box must encompass everything, so pick the largest absolute angle
-        horizontalHalfWidth = horizontalWidth * 0.5 + chordLength * 0.5 * std::sin(std::max(std::abs(jawTiltLeft), std::abs(jawTiltRight)));
+  G4double horizontalHalfWidth = horizontalWidth * 0.5;
+  if (jawTiltLeft != 0 || jawTiltRight != 0)
+    {
+      // The box must encompass everything, so pick the largest absolute angle
+      horizontalHalfWidth = horizontalWidth * 0.5 + chordLength * 0.5 * std::sin(std::max(std::abs(jawTiltLeft), std::abs(jawTiltRight)));
     }
-
-    // For the case of jaw tilt, adjust the horizontal size, but keep the container length the same
-    // This results in small drifts either side of the collimator, but preserves the overall size
+  
+  // For the case of jaw tilt, adjust the horizontal size, but keep the container length the same
+  // This results in small drifts either side of the collimator, but preserves the overall size
   containerSolid = new G4Box(name + "_container_solid",
                              horizontalHalfWidth,
-                                         yHalfHeight,
+                             yHalfHeight,
                              chordLength*0.5);
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
@@ -167,20 +159,20 @@ void BDSCollimatorJaw::Build()
   // update jaw half gap with offsets
   // if one jaw is not constructed, set the opening to xSize/2 for the aperture vacuum volume creation
   if (BDS::IsFinite(xSizeLeft))
-  {
+    {
       if (buildLeftJaw)
-      { leftJawHalfGap = xSizeLeft; }
+        {leftJawHalfGap = xSizeLeft;}
       else
-      { leftJawHalfGap = 0.5 * horizontalWidth; }
-  }
+        {leftJawHalfGap = 0.5 * horizontalWidth;}
+    }
 
   if (BDS::IsFinite(xSizeRight))
-  {
+    {
       if (buildRightJaw)
-      { rightJawHalfGap = xSizeRight; }
+        {rightJawHalfGap = xSizeRight;}
       else
-      { rightJawHalfGap = 0.5 * horizontalWidth; }
-  }
+        {rightJawHalfGap = 0.5 * horizontalWidth;}
+    }
 
   // jaws have to fit inside containerLogicalVolume so calculate full jaw widths given offsets
   G4double leftJawWidth = 0.5 * horizontalWidth - leftJawHalfGap;
@@ -206,14 +198,14 @@ void BDSCollimatorJaw::Build()
   if (buildLeftJaw && buildAperture)
     {
       G4VSolid* leftJawSolid = nullptr;
-
+      
       if (jawTiltLeft != 0)
-      {
+        {
           // Adjust the length of the parallelepiped to match the inside edges in Z
           // Due to the straight parallelepiped edges, it will never match the volume an angled box,
           // so it is chosen to underestimate the volume, but preserve the jaw x-y cutting plane.
           G4double leftHalfLength = chordLength * 0.5 * std::cos(jawTiltLeft);
-
+          
           leftJawSolid = new G4Para(name + "_leftjaw_solid",
                                     leftJawWidth * 0.5 - lengthSafety,
                                     yHalfHeight - lengthSafety,
@@ -221,15 +213,15 @@ void BDSCollimatorJaw::Build()
                                     0,
                                     jawTiltLeft,
                                     0);
-      }
+        }
       else
-      {
+        {
           leftJawSolid = new G4Box(name + "_leftjaw_solid",
                                    leftJawWidth * 0.5 - lengthSafety,
                                    yHalfHeight - lengthSafety,
                                    chordLength * 0.5 - lengthSafety);
-      }
-
+        }
+      
       RegisterSolid(leftJawSolid);
       
       G4LogicalVolume* leftJawLV = new G4LogicalVolume(leftJawSolid,       // solid
@@ -261,9 +253,9 @@ void BDSCollimatorJaw::Build()
   if (buildRightJaw && buildAperture)
     {
       G4VSolid* rightJawSolid = nullptr;
-
+      
       if (jawTiltRight != 0)
-      {
+        {
           // Adjust the length of the parallelepiped to match the inside edges in Z
           // Due to the straight parallelepiped edges, it will never match the volume an angled box,
           // so it is chosen to underestimate the volume, but preserve the jaw x-y cutting plane.
@@ -276,14 +268,14 @@ void BDSCollimatorJaw::Build()
                                      0,
                                      jawTiltRight,
                                      0);
-      }
+        }
       else
-      {
+        {
           rightJawSolid = new G4Box(name + "_rightjaw_solid",
                                     rightJawWidth * 0.5 - lengthSafety,
                                     yHalfHeight - lengthSafety,
                                     chordLength * 0.5 - lengthSafety);
-      }
+        }
 
       RegisterSolid(rightJawSolid);
       
@@ -348,13 +340,14 @@ void BDSCollimatorJaw::Build()
     }
   
   // build and place the vacuum volume only if the aperture is finite.
-  if (buildAperture) {
+  if (buildAperture)
+    {
       if (jawTiltLeft != 0 || jawTiltRight != 0)
-      {
+        {
           /// If the jaw is not built, do not take it's tilt into account for the vacuum box
           G4double tiltLeft = buildLeftJaw ? jawTiltLeft : 0.;
           G4double tiltRight = buildRightJaw ? jawTiltRight : 0.;
-
+          
           /// The vacuum volume should extend from edge to edge, but the tilted jaws themselves don't
           /// Compute an effective length to correctly obtain the vacuum size at the edges
           G4double halfLengthLeftEff = (chordLength  * 0.5) / std::cos(tiltLeft);
@@ -382,15 +375,15 @@ void BDSCollimatorJaw::Build()
           // The for tilted jaws, the vacuum trapezoid is constructed from absolute coordinates
           // need to rese the vacuum offset, which is intended for a box
           vacuumOffset = G4ThreeVector(0, 0, 0);
-      }
+        }
       else
-      {
+        {
           vacuumSolid = new G4Box(name + "_vacuum_solid",               // name
-                                   vacuumWidth - lengthSafety,           // x half width
-                                   yHalfHeight - lengthSafety,           // y half width
-                                   chordLength * 0.5);                   // z half length
-      }
-
+                                  vacuumWidth - lengthSafety,           // x half width
+                                  yHalfHeight - lengthSafety,           // y half width
+                                  chordLength * 0.5);                   // z half length
+        }
+      
       RegisterSolid(vacuumSolid);
       
       G4LogicalVolume* vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
