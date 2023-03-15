@@ -305,6 +305,7 @@ OptionsBase::OptionsBase()
   storeTrajectoryStepPointLast   = false;
   storeTrajectoryParticle        = "";
   storeTrajectoryParticleID      = "";
+  storeTrajectorySecondaryParticles = false;
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";

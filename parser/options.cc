@@ -453,6 +453,7 @@ void Options::PublishMembers()
   publish("storeTrajectoryStepPointLast",       &Options::storeTrajectoryStepPointLast);
   publish("storeTrajectoryParticle",            &Options::storeTrajectoryParticle);
   publish("storeTrajectoryParticleID",          &Options::storeTrajectoryParticleID);
+  publish("storeTrajectorySecondaryParticles",  &Options::storeTrajectorySecondaryParticles);
   publish("storeTrajectoryEnergyThreshold",     &Options::storeTrajectoryEnergyThreshold);
   publish("storeTrajectorySamplerID",           &Options::storeTrajectorySamplerID);
   publish("storeTrajectoryELossSRange",         &Options::storeTrajectoryELossSRange);
