@@ -3313,9 +3313,16 @@ with the following options.
 |                                    | the case of using Geant4.10.3 or newer, the energy leaving the     |
 |                                    | world volume as well. Default off.                                 |
 +------------------------------------+--------------------------------------------------------------------+
+| storeElossWorldIntegral            | Store the total energy deposited in the world in the event summary |
+|                                    | for when the hits aren't wanted but the integral is. Default off.  |
++------------------------------------+--------------------------------------------------------------------+
 | storeElossWorldContents            | Whether to record energy deposition in the daughter volumes within |
 |                                    | the world volume when supplied as external world geometry.         |
 |                                    | Default off.                                                       |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossWorldContentsIntegral    | Store the total energy deposited in the daughter volumes within    |
+|                                    | the world volume when supplied as external world geometry. For     |
+|                                    | when the hits aren't wanted but the integral is. Default off.      |
 +------------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                   | Global coordinates will be stored for each energy deposition hit   |
 |                                    | and for each trajectory point. Default off.                        |
