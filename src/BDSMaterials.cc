@@ -45,14 +45,6 @@ BDSMaterials* BDSMaterials::Instance()
 
 BDSMaterials::BDSMaterials()
 {
-#ifdef BDSDEBUG
-  G4cout << "BDSMaterials: G4 predefined units: " << G4endl;
-  G4cout << "g= "      << CLHEP::g << G4endl;
-  G4cout << "m= "      << CLHEP::m << G4endl;
-  G4cout << "mole= "   << CLHEP::mole << G4endl;
-  G4cout << "kelvin= " << CLHEP::kelvin << G4endl;
-#endif
-
   DefineMetals();
   DefineSuperconductors();
   DefineNonMetalSolids();
@@ -62,6 +54,16 @@ BDSMaterials::BDSMaterials()
   DefineGases();
   DefinePlasmas();
   DefineVacuums();
+
+  DefineSubstitutions();
+
+  materialConstructors.insert({"bdsimair",&BDSMaterials::_bdsimair});
+}
+
+void BDSMaterials::DefineSubstitutions()
+{
+  substitutions["aluminium"] = "Al";
+  substitutions["beryllium"] = "Be";
 }
 
 void BDSMaterials::DefineMetals()
@@ -1038,8 +1040,13 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
   if (material.empty())
     {throw BDSException(__METHOD_NAME__, "empty material name");}
   G4String materialOriginal = material;
-  // for short names we assume they're elements so we prefix with G4_ and
-  // get them from NIST
+
+  // do any name substitution
+  auto substitutionSearch = substitutions.find(material);
+  if (substitutionSearch != substitutions.end())
+    {material = substitutionSearch->second;}
+
+  // for short names we assume they're elements, so we prefix with G4_ and get them from NIST
   G4String nistString ("G4_");
   if (material.length() <= 2)
 #if G4VERSION_NUMBER > 1099
@@ -1051,9 +1058,6 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
   G4String start = material.substr(0,3);
   if (nistString == start)
     {
-#ifdef BDSDEBUG
-      G4cout << "Using NIST material " << material << G4endl;
-#endif
       G4Material* mat = G4NistManager::Instance()->FindOrBuildMaterial(material, true, true);
       if (!mat)
         {throw BDSException(__METHOD_NAME__, "\"" + material + "\" could not be found by NIST.");}
@@ -1065,6 +1069,7 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
       material = BDS::LowerCase(material);
 
       // search predefined + parser materials
+      auto constructorSeach = materialConstructors.find(material);
       if (materialNames.count(material) == 1)
         {return materials.at(material);}
       else if (aliasNames.count(material) == 1)

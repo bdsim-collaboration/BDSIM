@@ -38,7 +38,6 @@ class G4MaterialPropertiesTable;
 class BDSMaterials
 {
 public:
-
   /// Singleton pattern access
   static BDSMaterials* Instance();
   ~BDSMaterials(); 
@@ -137,6 +136,14 @@ private:
   /// Print mass fractions of consituents of a given material.
   void PrintBasicMaterialMassFraction(G4Material* material) const;
 
+  void DefineSubstitutions();
+  /// Typedef for function pointers to simplify syntax.
+  typedef G4Material*(BDSMaterials::*Constructor)();
+  /// A map of physics list names to their constructors.
+  std::map<std::string, Constructor> materialConstructors;
+
+  std::map<std::string, std::string> substitutions;
+
   /// Map of materials, convention name lowercase.
   std::set<G4String> materialNames;
   std::map<G4String, G4Material*> materials;
@@ -154,6 +161,8 @@ private:
   std::vector<G4MaterialPropertiesTable*> propertiesTables;
   /// Create new properties table and store in vector
   G4MaterialPropertiesTable* CreatePropertiesTable();
+
+  G4Material* _bdsimair();
 };
 
 #endif
