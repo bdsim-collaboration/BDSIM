@@ -638,9 +638,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       // make the world sensitive to energy deposition with its own unique hits collection
       // this will be a nullptr depending on the options.
       // make world sensitive if importance sampling is needed
-      if (BDSGlobalConstants::Instance()->StoreELossWorld()
-	  || BDSGlobalConstants::Instance()->UseImportanceSampling()
-	  || BDSGlobalConstants::Instance()->StoreELossWorldContents())
+      if (globals->StoreELossWorld()
+          || globals->StoreELossWorldIntegral()
+          || globals->UseImportanceSampling()
+          || globals->StoreELossWorldContents()
+          || globals->StoreELossWorldContentsIntegral())
         {
           geom->AttachSensitiveDetectors();
           // override the logical volume itself with a specific SD
@@ -667,7 +669,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
                                     worldName + "_lv");      // name
 
       // make the world sensitive to energy deposition with its own unique hits collection
-      if (BDSGlobalConstants::Instance()->StoreELossWorld())
+      // note with our world, there are no 'contents' to also consider
+      if (globals->StoreELossWorld() || globals->StoreELossWorldIntegral())
         {worldLV->SetSensitiveDetector(BDSSDManager::Instance()->WorldComplete());}
     }
 
