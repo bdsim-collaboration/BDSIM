@@ -1348,7 +1348,7 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +==========================+=====================================+=========================================================+
 | n                        | int                                 | The number of trajectories stored for this event        |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| filters                  | std::bitset<9>                      | Bits (0 or 1) representing which filters this           |
+| filters                  | std::bitset<10>                     | Bits (0 or 1) representing which filters this           |
 |                          |                                     | particular trajectory matched. See the header for their |
 |                          |                                     | description.                                            |
 +--------------------------+-------------------------------------+---------------------------------------------------------+

@@ -3444,6 +3444,8 @@ These options control, if :code:`storeTrajectory=1;`, which tracks trajectories 
 |                                    | e.g. "11 12 22 13". Note, the anti-particles must be individually  |
 |                                    | specified.                                                         |
 +------------------------------------+--------------------------------------------------------------------+
+| storeTrajectorySecondaryParticles  | Mark a trajectory for storage if it is not a primary particle.     |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectorySamplerID           | If a trajectory reaches the name of these samplers, store that     |
 |                                    | trajectory. This value supplied should be a whitespace separated   |
 |                                    | string such as "cd1 qf32x". If the same element exists multiple    |
