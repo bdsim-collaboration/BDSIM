@@ -39,30 +39,30 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 
 BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
-				   G4double    lengthIn,
-				   G4double    horizontalWidthIn,
-				   G4double    xHalfGapIn,
-				   G4double    yHalfHeightIn,
-				   G4double    xSizeLeftIn,
-				   G4double    xSizeRightIn,
+                                   G4double    lengthIn,
+                                   G4double    horizontalWidthIn,
+                                   G4double    xHalfGapIn,
+                                   G4double    yHalfHeightIn,
+                                   G4double    xSizeLeftIn,
+                                   G4double    xSizeRightIn,
                    G4double    leftJawTiltIn,
                    G4double    rightJawTiltIn,
-				   G4bool      buildLeftJawIn,
-				   G4bool      buildRightJawIn,
-				   G4Material* collimatorMaterialIn,
-				   G4Material* vacuumMaterialIn,
-				   G4Colour*   colourIn):
+                                   G4bool      buildLeftJawIn,
+                                   G4bool      buildRightJawIn,
+                                   G4Material* collimatorMaterialIn,
+                                   G4Material* vacuumMaterialIn,
+                                   G4Colour*   colourIn):
         BDSCollimator(nameIn,
-		lengthIn,
-		horizontalWidthIn,
-		"jcol",
-		collimatorMaterialIn,
-		vacuumMaterialIn,
-		xHalfGapIn,
-		yHalfHeightIn,
-		xHalfGapIn,
-		yHalfHeightIn,
-		colourIn),
+                lengthIn,
+                horizontalWidthIn,
+                "jcol",
+                collimatorMaterialIn,
+                vacuumMaterialIn,
+                xHalfGapIn,
+                yHalfHeightIn,
+                xHalfGapIn,
+                yHalfHeightIn,
+                colourIn),
         jawSolid(nullptr),
         xSizeLeft(xSizeLeftIn),
         xSizeRight(xSizeRightIn),
@@ -108,15 +108,15 @@ void BDSCollimatorJaw::CheckParameters()
   if (std::abs(xSizeLeft) > 0.5*horizontalWidth)
     {
       G4cerr << __METHOD_NAME__ << "jcol \"" << name
-	     << "\" left jaw offset is greater the element half width, jaw "
-	     << "will not be constructed" << G4endl;
+             << "\" left jaw offset is greater the element half width, jaw "
+             << "will not be constructed" << G4endl;
       buildLeftJaw = false;
     }
   if (std::abs(xSizeRight) > 0.5*horizontalWidth)
     {
       G4cerr << __METHOD_NAME__ << "jcol \"" << name
-	     << "\" right jaw offset is greater the element half width, jaw "
-	     << "will not be constructed" << G4endl;
+             << "\" right jaw offset is greater the element half width, jaw "
+             << "will not be constructed" << G4endl;
       buildRightJaw = false;
     }
   
@@ -145,12 +145,12 @@ void BDSCollimatorJaw::BuildContainerLogicalVolume()
     // This results in small drifts either side of the collimator, but preserves the overall size
   containerSolid = new G4Box(name + "_container_solid",
                              horizontalHalfWidth,
-			                 yHalfHeight,
+                                         yHalfHeight,
                              chordLength*0.5);
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
-					       vacuumMaterial,
-					       name + "_container_lv");
+                                               vacuumMaterial,
+                                               name + "_container_lv");
   BDSExtent ext(horizontalHalfWidth, yHalfHeight, chordLength*0.5);
   SetExtent(ext);
 }
@@ -233,8 +233,8 @@ void BDSCollimatorJaw::Build()
       RegisterSolid(leftJawSolid);
       
       G4LogicalVolume* leftJawLV = new G4LogicalVolume(leftJawSolid,       // solid
-						       collimatorMaterial,    // material
-						       name + "_leftjaw_lv"); // name
+                                                       collimatorMaterial,    // material
+                                                       name + "_leftjaw_lv"); // name
       leftJawLV->SetVisAttributes(collimatorVisAttr);
       
       // user limits - provided by BDSAcceleratorComponent
@@ -245,17 +245,17 @@ void BDSCollimatorJaw::Build()
       // register it in a set of collimator logical volumes
       BDSAcceleratorModel::Instance()->VolumeSet("collimators")->insert(leftJawLV);
       if (sensitiveOuter)
-	{RegisterSensitiveVolume(leftJawLV, BDSSDType::collimatorcomplete);}
+        {RegisterSensitiveVolume(leftJawLV, BDSSDType::collimatorcomplete);}
       
       // place the jaw
       G4PVPlacement* leftJawPV = new G4PVPlacement(nullptr,              // rotation
-						   leftJawPos,              // position
-						   leftJawLV,               // its logical volume
-						   name + "_leftjaw_pv",    // its name
-						   containerLogicalVolume,  // its mother volume
-						   false,		             // no boolean operation
-						   0,		                 // copy number
-						   checkOverlaps);
+                                                   leftJawPos,              // position
+                                                   leftJawLV,               // its logical volume
+                                                   name + "_leftjaw_pv",    // its name
+                                                   containerLogicalVolume,  // its mother volume
+                                                   false,                            // no boolean operation
+                                                   0,                            // copy number
+                                                   checkOverlaps);
       RegisterPhysicalVolume(leftJawPV);
     }
   if (buildRightJaw && buildAperture)
@@ -288,8 +288,8 @@ void BDSCollimatorJaw::Build()
       RegisterSolid(rightJawSolid);
       
       G4LogicalVolume* rightJawLV = new G4LogicalVolume(rightJawSolid,      // solid
-							collimatorMaterial,     // material
-							name + "_rightjaw_lv"); // name
+                                                        collimatorMaterial,     // material
+                                                        name + "_rightjaw_lv"); // name
       rightJawLV->SetVisAttributes(collimatorVisAttr);
       
       // user limits - provided by BDSAcceleratorComponent
@@ -300,31 +300,31 @@ void BDSCollimatorJaw::Build()
       // register it in a set of collimator logical volumes
       BDSAcceleratorModel::Instance()->VolumeSet("collimators")->insert(rightJawLV);
       if (sensitiveOuter)
-	{RegisterSensitiveVolume(rightJawLV, BDSSDType::collimatorcomplete);}
+        {RegisterSensitiveVolume(rightJawLV, BDSSDType::collimatorcomplete);}
       
       // place the jaw
       G4PVPlacement* rightJawPV = new G4PVPlacement(nullptr,             // rotation
-						    rightJawPos,             // position
-						    rightJawLV,              // its logical volume
-						    name + "_rightjaw_pv",   // its name
-						    containerLogicalVolume,  // its mother volume
-						    false,		             // no boolean operation
-						    0,		                 // copy number
-						    checkOverlaps);
+                                                    rightJawPos,             // position
+                                                    rightJawLV,              // its logical volume
+                                                    name + "_rightjaw_pv",   // its name
+                                                    containerLogicalVolume,  // its mother volume
+                                                    false,                           // no boolean operation
+                                                    0,                           // copy number
+                                                    checkOverlaps);
       RegisterPhysicalVolume(rightJawPV);
     }
   // if no aperture but the code has got to this stage, build the collimator as a simple box.
   if (!buildAperture)
     {
       collimatorSolid = new G4Box(name + "_solid",
-				  horizontalWidth * 0.5 - lengthSafety,
-				  yHalfHeight - lengthSafety,
-				  chordLength * 0.5 - lengthSafety);
+                                  horizontalWidth * 0.5 - lengthSafety,
+                                  yHalfHeight - lengthSafety,
+                                  chordLength * 0.5 - lengthSafety);
       RegisterSolid(collimatorSolid);
       
       G4LogicalVolume* collimatorLV = new G4LogicalVolume(collimatorSolid,       // solid
-							  collimatorMaterial,    // material
-							  name + "_lv");         // name
+                                                          collimatorMaterial,    // material
+                                                          name + "_lv");         // name
       collimatorLV->SetVisAttributes(collimatorVisAttr);
       
       // user limits - provided by BDSAcceleratorComponent - don't use collUserLimits
@@ -333,17 +333,17 @@ void BDSCollimatorJaw::Build()
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(collimatorLV);
       if (sensitiveOuter)
-	{RegisterSensitiveVolume(collimatorLV, BDSSDType::collimatorcomplete);}
+        {RegisterSensitiveVolume(collimatorLV, BDSSDType::collimatorcomplete);}
       
       // place the jaw
       G4PVPlacement* collimatorPV = new G4PVPlacement(nullptr,                 // rotation
-						      (G4ThreeVector) 0,       // position
-						      collimatorLV,            // its logical volume
-						      name + "_pv",    		   // its name
-						      containerLogicalVolume,  // its mother volume
-						      false,		           // no boolean operation
-						      0,		               // copy number
-						      checkOverlaps);
+                                                      (G4ThreeVector) 0,       // position
+                                                      collimatorLV,            // its logical volume
+                                                      name + "_pv",                        // its name
+                                                      containerLogicalVolume,  // its mother volume
+                                                      false,                       // no boolean operation
+                                                      0,                               // copy number
+                                                      checkOverlaps);
       RegisterPhysicalVolume(collimatorPV);
     }
   
@@ -394,8 +394,8 @@ void BDSCollimatorJaw::Build()
       RegisterSolid(vacuumSolid);
       
       G4LogicalVolume* vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
-						      vacuumMaterial,       // material
-						      name + "_vacuum_lv"); // name
+                                                      vacuumMaterial,       // material
+                                                      name + "_vacuum_lv"); // name
       
       vacuumLV->SetVisAttributes(containerVisAttr);
       // user limits - provided by BDSAcceleratorComponent
@@ -403,16 +403,16 @@ void BDSCollimatorJaw::Build()
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);
       if (sensitiveVacuum)
-	{RegisterSensitiveVolume(vacuumLV, BDSSDType::energydepvacuum);}
+        {RegisterSensitiveVolume(vacuumLV, BDSSDType::energydepvacuum);}
       
       G4PVPlacement* vacPV = new G4PVPlacement(nullptr,                 // rotation
-					       vacuumOffset,            // position
-					       vacuumLV,                // its logical volume
-					       name + "_vacuum_pv",     // its name
-					       containerLogicalVolume,  // its mother  volume
-					       false,                   // no boolean operation
-					       0,                       // copy number
-					       checkOverlaps);
+                                               vacuumOffset,            // position
+                                               vacuumLV,                // its logical volume
+                                               name + "_vacuum_pv",     // its name
+                                               containerLogicalVolume,  // its mother  volume
+                                               false,                   // no boolean operation
+                                               0,                       // copy number
+                                               checkOverlaps);
       RegisterPhysicalVolume(vacPV);
     }
 }
