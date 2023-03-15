@@ -175,6 +175,10 @@ New Features
   for which filter was passed has been accordingly extended from 9 bits to 10 bits and the new
   filter is the the last one. This is reflected in the file header that stores the names of the
   filters.
+* New options :code:`storeElossWorldIntegral` and :code:`storeElossworldContentsIntegral` that can
+  be used alone to store only the single total energy deposition (including weights) in the world and
+  world contents (in case of an externally provided world volume) without storing all the individual
+  hits that would use a lot of disk space.
 
 
 General Updates
