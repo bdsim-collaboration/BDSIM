@@ -258,6 +258,7 @@ public:
   inline G4bool   StoreTrajectoryStepPointLast()const{return G4bool(options.storeTrajectoryStepPointLast);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
+  inline G4bool   StoreTrajectorySecondaryParticles() const {return options.storeTrajectorySecondaryParticles;}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
   inline G4bool   StoreTrajectoryKineticEnergy()  const {return G4bool(options.storeTrajectoryKineticEnergy);}
   inline G4bool   StoreTrajectoryMomentumVector() const {return G4bool(options.storeTrajectoryMomentumVector);}
