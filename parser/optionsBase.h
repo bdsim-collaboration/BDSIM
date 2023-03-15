@@ -344,6 +344,7 @@ namespace GMAD
     bool        storeTrajectoryStepPointLast;
     std::string storeTrajectoryParticle;
     std::string storeTrajectoryParticleID;
+    bool        storeTrajectorySecondaryParticles;
     double      storeTrajectoryEnergyThreshold;
     std::string storeTrajectorySamplerID;
     std::string storeTrajectoryELossSRange;
