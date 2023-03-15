@@ -169,6 +169,12 @@ New Features
 * New type of scorermesh geometry: cylindrical.
 * Materials are now stored for each trajectory step point (optionally) as described
   by an integer ID.
+* New trajectory filter option to store only secondary particles. Can be used in combination
+  with particle type to select only secondary particles that may be the same type of particle
+  as the primary particle. The option is :code:`storeTrajectorySecondaryParticles`. The bitset
+  for which filter was passed has been accordingly extended from 9 bits to 10 bits and the new
+  filter is the the last one. This is reflected in the file header that stores the names of the
+  filters.
 
 
 General Updates
