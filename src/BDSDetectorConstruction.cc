@@ -546,6 +546,9 @@ void BDSDetectorConstruction::BuildTunnel()
 
 G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 {
+  // shortcut
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+
   // calculate extents of everything we need to place in the world first
   std::vector<BDSExtentGlobal> extents;
 
@@ -588,14 +591,14 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   G4VSolid*        worldSolid = nullptr;
   G4LogicalVolume* worldLV    = nullptr;
 
-  G4String worldGeometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
+  G4String worldGeometryFile = globals->WorldGeometryFile();
   if (!worldGeometryFile.empty())
     {
-      if (BDSGlobalConstants::Instance()->WorldMaterialSet())
+      if (globals->WorldMaterialSet())
         {BDS::Warning(__METHOD_NAME__, "conflicting options - world material option specified but material will be taken from world GDML file");}
-      G4bool ac = BDSGlobalConstants::Instance()->AutoColourWorldGeometryFile();
+      G4bool ac = globals->AutoColourWorldGeometryFile();
       
-      std::vector<G4String> namedWorldVacuumVolumes = BDS::SplitOnWhiteSpace(BDSGlobalConstants::Instance()->WorldVacuumVolumeNames());
+      std::vector<G4String> namedWorldVacuumVolumes = BDS::SplitOnWhiteSpace(globals->WorldVacuumVolumeNames());
       
       BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(worldName,
 										worldGeometryFile,
@@ -647,18 +650,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   else
     {
       // add on margin for constructed world volume
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
-#endif
-      G4double margin = BDSGlobalConstants::Instance()->WorldVolumeMargin();
+      G4double margin = globals->WorldVolumeMargin();
       margin = std::max(margin, 2*CLHEP::m); // minimum margin of 2m.
       worldR += G4ThreeVector(margin,margin,margin); //add 5m extra in every dimension
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "with " << margin << "m margin, it becomes in all dimensions: " << worldR << G4endl;
-#else
+
       G4cout << __METHOD_NAME__ << "World dimensions: " << worldR / CLHEP::m << " m" << G4endl;
-#endif
-      G4String    worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
+
+      G4String    worldMaterialName = globals->WorldMaterial();
       G4Material* worldMaterial     = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
       worldExtent = BDSExtent(worldR);
       worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
@@ -675,12 +673,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
   // visual attributes
   // copy the debug vis attributes but change to force wireframe
-  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(globals->ContainerVisAttr()));
   debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   worldLV->SetVisAttributes(debugWorldVis);
   
   // set limits
-  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+  worldLV->SetUserLimits(globals->DefaultUserLimits());
 
   // place the world
   G4VPhysicalVolume* worldPV = new G4PVPlacement(nullptr,           // no rotation
@@ -692,7 +690,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 						 0,                 // copy number
 						 checkOverlaps);    // overlap checking
 
-  // Register the lv & pvs to the our holder class for the model
+  // Register the lv & pvs to our holder class for the model
   acceleratorModel->RegisterWorldPV(worldPV);
   acceleratorModel->RegisterWorldLV(worldLV);
   acceleratorModel->RegisterWorldSolid(worldSolid);
