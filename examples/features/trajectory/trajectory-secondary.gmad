@@ -2,5 +2,6 @@ include trajectory-base.gmad;
 
 ! choose a particle that is the same as the primary particle
 ! then ask for only secondary ones (electrons)
-option, storeTrajectorySecondaryParticlesOnly=1,
-        storeTrajectoryParticleID="11";
+option, storeTrajectorySecondaryParticles=1,
+        storeTrajectoryParticleID="11",
+        trajectoryFilterLogicAND=1;
