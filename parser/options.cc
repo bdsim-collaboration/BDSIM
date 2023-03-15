@@ -420,8 +420,12 @@ void Options::PublishMembers()
   publish("storeELossTunnelHistograms",     &Options::storeElossTunnelHistograms);
   publish("storeElossWorld",                &Options::storeElossWorld);
   publish("storeELossWorld",                &Options::storeElossWorld);
+  publish("storeElossWorldIntegral",        &Options::storeElossWorldIntegral);
+  publish("storeELossWorldIntegral",        &Options::storeElossWorldIntegral);
   publish("storeElossWorldContents",        &Options::storeElossWorldContents);
   publish("storeELossWorldContents",        &Options::storeElossWorldContents);
+  publish("storeElossWorldContentsIntegral",&Options::storeElossWorldContentsIntegral);
+  publish("storeELossWorldContentsIntegral",&Options::storeElossWorldContentsIntegral);
   publish("storeElossTurn",                 &Options::storeElossTurn);
   publish("storeELossTurn",                 &Options::storeElossTurn);
   publish("storeElossLinks",                &Options::storeElossLinks);

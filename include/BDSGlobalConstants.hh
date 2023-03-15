@@ -240,7 +240,9 @@ public:
   inline G4bool   StoreELossTunnel()         const {return G4bool  (options.storeElossTunnel);}
   inline G4bool   StoreELossTunnelHistograms()const{return G4bool  (options.storeElossTunnelHistograms);}
   inline G4bool   StoreELossWorld()          const {return G4bool  (options.storeElossWorld);}
+  inline G4bool   StoreELossWorldIntegral()  const {return G4bool  (options.storeElossWorldIntegral);}
   inline G4bool   StoreELossWorldContents()  const {return G4bool  (options.storeElossWorldContents);}
+  inline G4bool   StoreELossWorldContentsIntegral()  const {return G4bool  (options.storeElossWorldContentsIntegral);}
   inline G4bool   StoreELossTurn()           const {return G4bool  (options.storeElossTurn || options.circular);}
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
