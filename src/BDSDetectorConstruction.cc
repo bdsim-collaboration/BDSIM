@@ -584,7 +584,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   for (const auto& ext : extents)
     {
       for (G4int i = 0; i < 3; i++)
-	{worldR[i] = std::max(worldR[i], ext.GetMaximumExtentAbsolute()[i]);} // expand with the maximum
+        {worldR[i] = std::max(worldR[i], ext.GetMaximumExtentAbsolute()[i]);} // expand with the maximum
     }
   
   G4String         worldName  = "World";
@@ -601,13 +601,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       std::vector<G4String> namedWorldVacuumVolumes = BDS::SplitOnWhiteSpace(globals->WorldVacuumVolumeNames());
       
       BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(worldName,
-										worldGeometryFile,
-										nullptr,
-										ac,
-										0, 0,
-										&namedWorldVacuumVolumes,
-										true,
-										BDSSDType::energydepworldcontents);
+                                                                                worldGeometryFile,
+                                                                                nullptr,
+                                                                                ac,
+                                                                                0, 0,
+                                                                                &namedWorldVacuumVolumes,
+                                                                                true,
+                                                                                BDSSDType::energydepworldcontents);
       
       // get list of 'material' and 'vacuum' volumes for possible biasing of this geometry
       worldVacuumLogicalVolumes = geom->VacuumVolumes();
@@ -627,9 +627,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
       // cannot construct world if any beamline extent is greater than the world extents
       if (!worldContainsAllBeamlines)
         {
-	  G4String message = "Beamlines cannot be constructed, beamline extents are larger than \n";
-	  message += "the extents of the external world";
-	  throw BDSException(__METHOD_NAME__, message);
+          G4String message = "Beamlines cannot be constructed, beamline extents are larger than \n";
+          message += "the extents of the external world";
+          throw BDSException(__METHOD_NAME__, message);
         }
 
       worldSolid = geom->GetContainerSolid();
@@ -685,13 +685,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
   // place the world
   G4VPhysicalVolume* worldPV = new G4PVPlacement(nullptr,           // no rotation
-						 G4ThreeVector(),   // at (0,0,0)
-						 worldLV,	    // its logical volume
-						 worldName,         // its name
-						 nullptr,	    // its mother  volume
-						 false,		    // no boolean operation
-						 0,                 // copy number
-						 checkOverlaps);    // overlap checking
+                                                 G4ThreeVector(),   // at (0,0,0)
+                                                 worldLV,           // its logical volume
+                                                 worldName,         // its name
+                                                 nullptr,           // its mother  volume
+                                                 false,                     // no boolean operation
+                                                 0,                 // copy number
+                                                 checkOverlaps);    // overlap checking
 
   // Register the lv & pvs to our holder class for the model
   acceleratorModel->RegisterWorldPV(worldPV);
@@ -717,13 +717,13 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
   // Geant4 at the right time, so we have a separate placement call for them
   BDSBeamlineSet mainBL = BDSAcceleratorModel::Instance()->BeamlineSetMain();
   PlaceBeamlineInWorld(mainBL.massWorld,
-		       worldPV, checkOverlaps, true, false, false, false, true); // record pv set to element for output
+                       worldPV, checkOverlaps, true, false, false, false, true); // record pv set to element for output
   PlaceBeamlineInWorld(mainBL.endPieces,
-		       worldPV, checkOverlaps);
+                       worldPV, checkOverlaps);
   if (BDSGlobalConstants::Instance()->BuildTunnel())
     {
       PlaceBeamlineInWorld(acceleratorModel->TunnelBeamline(),
-			   worldPV, checkOverlaps);
+                           worldPV, checkOverlaps);
     }
   // No energy counter SD added here as individual placements have that attached
   // during construction time
