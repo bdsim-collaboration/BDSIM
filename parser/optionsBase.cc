@@ -284,7 +284,9 @@ OptionsBase::OptionsBase()
   storeElossTunnel           = false;
   storeElossTunnelHistograms = false;
   storeElossWorld            = false;
+  storeElossWorldIntegral    = false;
   storeElossWorldContents    = false;
+  storeElossWorldContentsIntegral = false;
   storeElossTurn             = false;
   storeElossLinks            = false;
   storeElossLocal            = false;
