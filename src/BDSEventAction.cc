@@ -109,6 +109,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   verboseEventStop          = BDS::VerboseEventStop(verboseEventStart, globals->VerboseEventContinueFor());
   storeTrajectory           = globals->StoreTrajectory();
   storeTrajectoryAll        = globals->StoreTrajectoryAll();
+  storeTrajectorySecondary  = globals->StoreTrajectorySecondaryParticles();
   trajectoryFilterLogicAND  = globals->TrajectoryFilterLogicAND();
   trajectoryEnergyThreshold = globals->StoreTrajectoryEnergyThreshold();
   trajectoryCutZ            = globals->TrajCutGTZ();
@@ -521,6 +522,11 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	  // always store primaries
 	  if (parentID == 0)
 	    {filters[BDSTrajectoryFilter::primary] = true;}
+    else
+      {
+        if (storeTrajectorySecondary)
+          {filters[BDSTrajectoryFilter::secondary] = true;}
+      }
 	  
 	  // check on energy (if energy threshold is not negative)
 	  if (trajectoryEnergyThreshold >= 0 &&
@@ -651,9 +657,9 @@ BDSTrajectoriesToStore* BDSEventAction::IdentifyTrajectoriesForStorage(const G4E
 	    {
 	      if (trajFlag.second) // if we're going to store it check the logic
 		{
-		  // use bit-wise AND filters matched for this trajectory with filters set
-		  // if count of 1s the same, then trajectory should be stored, therefore if
-		  // not the same, it should be set to false.
+		  // Use bit-wise AND ('&') on the filters matched for this trajectory with the
+      // filters set. If count of 1s the same, then trajectory should be stored,
+      // therefore if not the same, it should be set to false.
 		  auto filterMatch = trajectoryFilters[trajFlag.first] & trajFiltersSet;
 		  if (filterMatch.count() != trajFiltersSet.count())
 		    {trajFlag.second = false;}
