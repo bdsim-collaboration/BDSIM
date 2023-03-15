@@ -52,8 +52,8 @@ public:
                    G4Colour*   colourIn = nullptr);
   virtual ~BDSCollimatorJaw();
 
-  G4double getJawTiltLeft() const;
-  G4double getJawTiltRight() const;
+  inline G4double GetJawTiltLeft() const {return jawTiltLeft;}
+  inline G4double GetJawTiltRight() const {return jawTiltRight;}
 
 protected:
   /// Check and update parameters before construction. Called at the start of Build() as
