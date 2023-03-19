@@ -23,12 +23,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSPrimaryGeneratorFile.hh"
-#include "BDSROOTSamplerReader.hh"
+#include "BDSPrimaryGeneratorFileSampler.hh"
 #include "BDSRunAction.hh"
 #include "BDSUtilities.hh"
 
 #ifdef USE_HEPMC3
-#include "BDSHepMC3Reader.hh"
+#include "BDSPrimaryGeneratorFileHEPMC.hh"
 #endif
 
 #include "geomdefs.hh"
@@ -44,8 +44,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
-BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile(G4bool loopFileIn):
+BDSPrimaryGeneratorFile::BDSPrimaryGeneratorFile(G4bool loopFileIn,
+                                                 BDSBunchEventGenerator* bunchIn):
   loopFile(loopFileIn),
+  bunch(bunchIn),
   endOfFileReached(false),
   vertexGeneratedSuccessfully(false),
   currentFileEventIndex(0),
@@ -60,7 +62,8 @@ BDSPrimaryGeneratorFile::~BDSPrimaryGeneratorFile()
 
 void BDSPrimaryGeneratorFile::ThrowExceptionIfRecreateOffsetTooHigh(G4long eventOffset) const
 {
-  if (eventOffset > nEventsInFile)
+  G4int nLoops = bunch->DistrFileLoopNTimes();
+  if (eventOffset > nEventsInFile*nLoops)
     {
       G4String msg = "eventOffset (" + std::to_string(eventOffset) + ") is greater than the number of valid data lines in this file.";
       throw BDSException(__METHOD_NAME__, msg);
@@ -70,15 +73,10 @@ void BDSPrimaryGeneratorFile::ThrowExceptionIfRecreateOffsetTooHigh(G4long event
 G4bool BDSPrimaryGeneratorFile::GeneratePrimaryVertexSafe(G4Event* event)
 {
   vertexGeneratedSuccessfully = false;
-
-  while (! (endOfFileReached || vertexGeneratedSuccessfully) )
-    {GeneratePrimaryVertex(event);} // derived class provides this; it must update vertexGeneratedSuccessfully
+  GeneratePrimaryVertex(event);//derived class must update vertexGeneratedSuccessfully
+  if (!vertexGeneratedSuccessfully && !endOfFileReached)
+    {bunch->IncrementNEventsInFileSkipped();}
   return vertexGeneratedSuccessfully;
-}
-
-void BDSPrimaryGeneratorFile::RecreateAdvanceToEvent(G4int eventOffset)
-{
-  nEventsSkipped = eventOffset;
 }
 
 G4long BDSPrimaryGeneratorFile::NEventsLeftInFile() const
@@ -94,8 +92,7 @@ G4bool BDSPrimaryGeneratorFile::OKToLoopFile() const
 BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD::Beam& beam,
                                                                      BDSBunch* bunchIn,
                                                                      G4bool recreate,
-                                                                     G4int eventOffset,
-                                                                     BDSRunAction* runAction)
+                                                                     G4int eventOffset)
 {
   BDSPrimaryGeneratorFile* generatorFromFile = nullptr;
   
@@ -115,24 +112,24 @@ BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD:
       if (useEventGeneratorFile)
         {
 #ifdef USE_HEPMC3
-          generatorFromFile = new BDSHepMC3Reader(beam.distrType,
-                                                  filename,
-                                                  beg,
-                                                  beam.distrFileLoop,
-                                                  beam.removeUnstableWithoutDecay,
-                                                  beam.eventGeneratorWarnSkippedParticles);
+          generatorFromFile = new BDSPrimaryGeneratorFileHEPMC(beam.distrType,
+                                                               filename,
+                                                               beg,
+                                                               beam.distrFileLoop,
+                                                               beam.removeUnstableWithoutDecay,
+                                                               beam.eventGeneratorWarnSkippedParticles);
 #else
           throw BDSException(__METHOD_NAME__, "event generator file being used but BDSIM not compiled with HEPMC3");
 #endif
         }
       else // must be useSamplerLoader is true
         {
-          generatorFromFile = new BDSROOTSamplerReader(beam.distrType,
-                                                       filename,
-                                                       beg,
-                                                       beam.distrFileLoop,
-                                                       beam.removeUnstableWithoutDecay,
-                                                       beam.eventGeneratorWarnSkippedParticles);
+          generatorFromFile = new BDSPrimaryGeneratorFileSampler(beam.distrType,
+                                                                 filename,
+                                                                 beg,
+                                                                 beam.distrFileLoop,
+                                                                 beam.removeUnstableWithoutDecay,
+                                                                 beam.eventGeneratorWarnSkippedParticles);
           
         }
       
@@ -140,8 +137,15 @@ BDSPrimaryGeneratorFile* BDSPrimaryGeneratorFile::ConstructGenerator(const GMAD:
       if (recreate)
         {generatorFromFile->RecreateAdvanceToEvent(eventOffset);}
       if (beam.distrFileMatchLength)
-        {BDSGlobalConstants::Instance()->SetNumberToGenerate((G4int)generatorFromFile->NEventsLeftInFile());}
-      runAction->SaveNEventsInOriginalFile(generatorFromFile->NEventsLeftInFile());
+        {
+          G4int nEventsPerLoop = (G4int)generatorFromFile->NEventsLeftInFile();
+          G4int distrFileLoopNTimes = (G4int)beam.distrFileLoopNTimes;
+          BDSGlobalConstants::Instance()->SetNumberToGenerate(nEventsPerLoop*distrFileLoopNTimes);
+          G4cout << __METHOD_NAME__ << "distrFileMatchLength is true -> simulating " << nEventsPerLoop << " events";
+          if (distrFileLoopNTimes > 1)
+            {G4cout << " " << distrFileLoopNTimes << " times";}
+          G4cout << G4endl;
+        }
     }
   
   return generatorFromFile; // could be nullptr

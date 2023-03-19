@@ -13,7 +13,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
-V1.7.0 - 2022 / XX / XX
+V1.7.0 - 2023 / XX / XX
 =======================
 
 * The input parser will now reject any duplicate object names (e.g. a field with the same name),
@@ -47,17 +47,19 @@ New Features
 
 **Analysis**
 
-* New Spectra command for rebsdim to make very flexible sets of spectra automatically. See
+* New Spectra command for rebdsim to make very flexible sets of spectra automatically. See
   :ref:`spectra-definition` for more information.
-* rebdsim will now default to <inputfilename>_ana.root if no outputfile name is specified.
-* Similarly, rebdsimHistoMerge will default to <inputfilename>_histos.root; rebdsimOptics to
-  <intputfilename>_optics.root and bdskim to <inputfilename>_skimmed.root.
+* rebdsim will now default to `<inputfilename>_ana.root` if no outputfile name is specified.
+* Similarly, rebdsimHistoMerge will default to `<inputfilename>_histos.root`; rebdsimOptics to
+  `<intputfilename>_optics.root` and bdskim to `<inputfilename>_skimmed.root`.
 * bdsimCombine will now produce an extra tree in the output called "EventCombineInfo" that
   contains an index to which file the event came from.
 
 **Beam**
 
-* The `square` distribution can now have an uncorrelated `Z` distribution with time by
+* New bunches feature allows offset in time for different bunches at a given repetition rate
+  or period with a certain number of events at a fixed bunch index generated. See :ref:`beam-bunches`.
+* The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
 * New bunch distribution type `halosigma` that samples a flat halo distribution
   flat in terms of sigma. This is useful for re-weighting distributions based on
@@ -71,12 +73,16 @@ New Features
 * All neutrinos can be used as beam particles now (useful for visualisation of neutrino lines).
 * The `eventgenerator` and `bdsimsampler` distributions now have `eventGeneratorNEventsSkip`
   in the beam command to allow skipping into the file.
-* Consitency between features between `eventgenerator` and `bdsimsampler` distribution.
+* Consistency between features between `eventgenerator` and `bdsimsampler` distribution.
+* A new executable option `--distrFileLoopNTimes=<N>` allows you to repeat an input file `N`
+  times while matching the length to replay the same input coordinates from a distribution
+  file with different physics easily.
 
 **Components**
 
 * A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into
   voxelized geometries.
+* New `rfx` and `rfy` components for transverse RF fields.
 * New `target` beam line component. We could always create a block of material with a closed
   `rcol` but this is more intuitive.
 
@@ -91,8 +97,9 @@ New Features
 * New field drawing facility in the visualiser to draw query objects.
 * Field map reflections have been introduced allowing symmetry to be exploited.
   See :ref:`fields-transforms`.
-* "linearmag" experimental interpolation.
+* "linearmag" interpolation added.
 * New ability to arbitrarily scale the yoke fields.
+* New `modulator` object to modulate RF components (see :ref:`field-modulators`).
   
 **General**
 
@@ -114,6 +121,14 @@ New Features
 
 **Geometry**
 
+* An :code:`element` beam line component now works with :code:`angle` as a parameter and
+  the sign convention has been changed to match the bends as per MADX where a positive angle
+  corresponds to a displacement in negative `x` in a right handed coordinate system with the
+  beamline built along `z`. Drifts on either side will now match the element if `e1` and `e2`
+  (traditionally pole-face angles) are given for the element.
+* The length :code:`l` for :code:`element` is now treated as the chord length rather than the
+  arc length. This has no effect for straight components, but makes it easier to use angled
+  elements.
 * When loading geometry (e.g. a GDML file) to be used as a placement, you can now remove the
   outermost volume (e.g. the 'world' of that file) and place all the contents in the BDSIM
   world with the compound transforms: relative to the former outermost logical volume and also
@@ -146,7 +161,7 @@ New Features
 * The :code:`csample` command now works correctly and has been re-implemented for all beamline
   components.
 * A sampler in a BDSIM ROOT output file can now be used as an input beam distribution for
-  another simulation.  See :ref:`bunch-bdsimsampler`.
+  another simulation.  See :ref:`beam-bdsimsampler`.
 * Solenoid sheet / cylinder field has been added and is used by default on the solenoid yoke geometry.
 * Scoring of the differential flux (3D mesh + energy spectrum per cell) following either a linear,
   logarithmic or user-defined energy axis scale (requires Boost).
@@ -154,6 +169,16 @@ New Features
 * New type of scorermesh geometry: cylindrical.
 * Materials are now stored for each trajectory step point (optionally) as described
   by an integer ID.
+* New trajectory filter option to store only secondary particles. Can be used in combination
+  with particle type to select only secondary particles that may be the same type of particle
+  as the primary particle. The option is :code:`storeTrajectorySecondaryParticles`. The bitset
+  for which filter was passed has been accordingly extended from 9 bits to 10 bits and the new
+  filter is the the last one. This is reflected in the file header that stores the names of the
+  filters.
+* New options :code:`storeElossWorldIntegral` and :code:`storeElossworldContentsIntegral` that can
+  be used alone to store only the single total energy deposition (including weights) in the world and
+  world contents (in case of an externally provided world volume) without storing all the individual
+  hits that would use a lot of disk space.
 
 
 General Updates
@@ -179,7 +204,7 @@ General Updates
   has been renamed to :code:`--geant4MacroFileName` to be the same as the option in
   the input GMAD file. The old one is still accepted for backwards compatibility.
 * The userfile distribution will tolerate `!` to denote a comment line to match GMAD syntax now.
-  It will also tolerate any whitespace before either `#` or `!` to mark a comment line,
+  It will also tolerate any white-space before either `#` or `!` to mark a comment line,
   whereas previously it would only identify a comment if the very first character
   of the line was `#`.
 * BDSGeometryComponent class refactored to permit a G4AssemblyVolume as the container
@@ -202,6 +227,8 @@ General Updates
   material. The parallel world material should not make a difference for the setup in BDSIM, but
   now it is explicitly forbidden from having any effect by it being nullptr.
 * The material print out (:code:`bdsim --materials`) now includes aliases.
+* When using `autoScale` for a field map attached to the yoke of a magnet, the calculated scaling
+  factor is now always print out for feedback.
 
 Bug Fixes
 ---------
@@ -265,6 +292,9 @@ Bug Fixes
   low due to the placement of units. The integrator for tracking (which ignores the field) was
   correct and still is, but the back up field used for non-paraxial particles had the wrong
   effective k1.
+* Fix B field for the rf cavity field (`BDSFieldEMRFCavity` class). The direction of the vector was wrong
+  due to a wrong translation from radial to Cartesian coordinates. Previously there was no variation in local
+  `z`, which was wrong and has now been corrected.
 
 **Geometry**
 
@@ -335,6 +365,8 @@ Bug Fixes
   step length h regardless of the step's direction. Now, it advances along z by the projection of the step h onto
   the z axis. This change will only produce a noticeable impact on particles with a large transverse momentum,
   particularly those in low energy machines.
+* Fix dipole integrator track when K1 is negative. The overall strength parameter calculated for the integrator matrices
+  was incorrect when K1 < 0.
 
 **Visualisation**
 
@@ -396,11 +428,11 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCoords          | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventHeader          | N           | 4               | 4               |
+| BDSOutputROOTEventHeader          | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventHistograms      | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventInfo            | N           | 6               | 6               |
+| BDSOutputROOTEventInfo            | Y           | 7               | 6               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventLoss            | N           | 5               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+

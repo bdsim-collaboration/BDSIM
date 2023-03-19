@@ -232,6 +232,7 @@ OptionsBase::OptionsBase()
 
   // tracking options
   integratorSet            = "bdsimmatrix";
+  fieldModulator           = "";
   lengthSafety             = 1e-9;   // be very careful adjusting this as it affects all the geometry
   lengthSafetyLarge        = 1e-6;   // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
@@ -283,7 +284,9 @@ OptionsBase::OptionsBase()
   storeElossTunnel           = false;
   storeElossTunnelHistograms = false;
   storeElossWorld            = false;
+  storeElossWorldIntegral    = false;
   storeElossWorldContents    = false;
+  storeElossWorldContentsIntegral = false;
   storeElossTurn             = false;
   storeElossLinks            = false;
   storeElossLocal            = false;
@@ -304,6 +307,7 @@ OptionsBase::OptionsBase()
   storeTrajectoryStepPointLast   = false;
   storeTrajectoryParticle        = "";
   storeTrajectoryParticleID      = "";
+  storeTrajectorySecondaryParticles = false;
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";

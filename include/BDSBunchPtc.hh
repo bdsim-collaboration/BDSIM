@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBUNCHPTC_H
 #define BDSBUNCHPTC_H
 
-#include "BDSBunch.hh"
+#include "BDSBunchFileBased.hh"
 
 #include "G4String.hh"
 #include "G4Types.hh"
@@ -33,7 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @author Stewart Boogert
  */
 
-class BDSBunchPtc: public BDSBunch
+class BDSBunchPtc: public BDSBunchFileBased
 {  
 public: 
   BDSBunchPtc();
@@ -60,7 +60,6 @@ private:
   G4int    iRay;      ///< Iterator counter for current ray.
   std::vector<std::array<double, 6>> ptcData; ///< Data.
   G4double beta;      ///< Velocity w.r.t. speed of light. Needed to convert mom. to energy.
-  G4bool distrFileLoop;
   G4int nlinesSkip;
   G4int lineCounter;
 };

@@ -273,6 +273,7 @@ namespace GMAD
 
     // tracking related parameters
     std::string integratorSet;
+    std::string fieldModulator;
     double   lengthSafety;
     double   lengthSafetyLarge;
     double   maximumTrackingTime; ///< Maximum tracking time per track [s].
@@ -322,7 +323,9 @@ namespace GMAD
     bool        storeElossTunnel;
     bool        storeElossTunnelHistograms;
     bool        storeElossWorld;
+    bool        storeElossWorldIntegral;
     bool        storeElossWorldContents;
+    bool        storeElossWorldContentsIntegral;
     bool        storeElossTurn;
     bool        storeElossLinks;
     bool        storeElossLocal;
@@ -343,6 +346,7 @@ namespace GMAD
     bool        storeTrajectoryStepPointLast;
     std::string storeTrajectoryParticle;
     std::string storeTrajectoryParticleID;
+    bool        storeTrajectorySecondaryParticles;
     double      storeTrajectoryEnergyThreshold;
     std::string storeTrajectorySamplerID;
     std::string storeTrajectoryELossSRange;

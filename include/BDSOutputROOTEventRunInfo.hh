@@ -47,10 +47,6 @@ public:
   double durationCPU;
   std::string seedStateAtStart; ///< Seed state at the start of the event.
   
-  /// Upon loading an input file for events, this was the number found in the file excluding lines skipped and filters.
-  long nEventsInFile;
-  long nEventsInFileSkipped;
-  
   ClassDef(BDSOutputROOTEventRunInfo,3);
 };
 

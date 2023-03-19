@@ -46,7 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
-  BDSBunch("userfile"),
+  BDSBunchFileBased("userfile"),
   nlinesIgnore(0),
   nlinesSkip(0),
   nLinesValidData(0),
@@ -56,8 +56,7 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   anEnergyCoordinateInUse(false),
   changingParticleType(false),
   endOfFileReached(false),
-  matchDistrFileLength(false),
-  distrFileLoop(false)
+  matchDistrFileLength(false)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
   comment = std::regex("^\\s*\\#|\\!.*");
@@ -263,7 +262,7 @@ void BDSBunchUserFile<T>::SkipNLinesIgnoreIntoFile(G4bool usualPrintOut)
       if (usualPrintOut)
         {G4cout << "BDSBunchUserFile> ignoring " << nlinesIgnore << " lines" << G4endl;}
       std::string line;
-      for (G4int i = 0; i < nlinesIgnore; i++)
+      for (G4int i = 0; i < (G4int)nlinesIgnore; i++)
         {
           std::getline(InputBunchFile, line);
           lineCounter++;
@@ -298,6 +297,7 @@ void BDSBunchUserFile<T>::SkipNLinesSkip(G4bool usualPrintOut)
             {continue;}
           nLinesValidRead++;
         }
+      IncrementNEventsInFileSkipped((unsigned long long int)nlinesSkip);
     }
 }
 
@@ -308,15 +308,14 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
                                      G4Transform3D beamlineTransformIn,
                                      const G4double beamlineSIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
+  BDSBunchFileBased::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   particleMass = beamParticle->Mass();
   distrFile     = beam.distrFile;
   distrFilePath = BDS::GetFullPath(beam.distrFile);
   bunchFormat   = beam.distrFileFormat;
-  nlinesIgnore  = beam.nlinesIgnore;
-  nlinesSkip    = beam.nlinesSkip;
+  nlinesIgnore  = (G4long)beam.nlinesIgnore;
+  nlinesSkip    = (G4long)beam.nlinesSkip;
   matchDistrFileLength = beam.distrFileMatchLength;
-  distrFileLoop = beam.distrFileLoop;
   ParseFileFormat();
 }
 
@@ -327,13 +326,13 @@ G4bool BDSBunchUserFile<T>::SkippableLine(const std::string& line) const
 }
 
 template<class T>
-G4int BDSBunchUserFile<T>::CountNLinesValidDataInFile()
+G4long BDSBunchUserFile<T>::CountNLinesValidDataInFile()
 {
   OpenBunchFile();
   SkipNLinesIgnoreIntoFile(false);
 
   std::string line;
-  G4int nLinesValid = 0;
+  G4long nLinesValid = 0;
   while ( std::getline(InputBunchFile, line) )
     {
       if (SkippableLine(line))
@@ -358,21 +357,26 @@ void BDSBunchUserFile<T>::Initialise()
 
   auto g = BDSGlobalConstants::Instance();
   G4bool nGenerateHasBeenSet = g->NGenerateSet();
+  G4int nEventsPerLoop = (G4int)(nLinesValidData - nlinesSkip);
+  nEventsInFile = nEventsPerLoop;
+  G4int nAvailable     = nEventsPerLoop * distrFileLoopNTimes;
   G4int nGenerate = g->NGenerate();
   if (matchDistrFileLength)
     {
       if (!nGenerateHasBeenSet)
         {
-          G4int nToGenerate = nLinesValidData - nlinesSkip;
-          g->SetNumberToGenerate(nToGenerate);
-          G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is true -> simulating "
-                 << nToGenerate << " events" << G4endl;
+          g->SetNumberToGenerate(nAvailable);
+          G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength is true -> simulating " << nEventsPerLoop << " events";
+          if (distrFileLoopNTimes > 1)
+            {G4cout << " " << distrFileLoopNTimes << " times";}
+          G4cout << G4endl;
           if (g->Recreate())
             {// have to do this now before the primary generator action is called already in the run
-              G4int nLeftFromOffset = nToGenerate - (g->StartFromEvent() % nToGenerate);
-              g->SetNumberToGenerate(nLeftFromOffset);
+              // we need to start the run with a number of events so we need to calculate here
+              G4int nEventsRemaining = nAvailable - g->StartFromEvent();
+              g->SetNumberToGenerate(nEventsRemaining);
               G4cout << "BDSBunchUserFile::Initialise> distrFileMatchLength + recreation -> simulate the "
-                     << nLeftFromOffset << " lines left given startFromEvent" << G4endl;
+                     << nEventsRemaining << " lines left given startFromEvent including possible looping" << G4endl;
             }
         }
       else
@@ -380,7 +384,7 @@ void BDSBunchUserFile<T>::Initialise()
           G4cout << "BDSBunchUserFile::Initialise> matchDistrFileLength has been requested "
                  << "but ngenerate has been specified -> use ngenerate" << G4endl;
           // note we don't need to take care of a recreation offset - this is done later in primary generator action
-          if (nGenerate > nLinesValidData - nlinesSkip)
+          if (nGenerate > nAvailable)
             {
               G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of valid lines (";
               msg += std::to_string(nLinesValidData) + ") and distrFileMatchLength is on.\nChange ngenerate to <= # lines";
@@ -392,7 +396,7 @@ void BDSBunchUserFile<T>::Initialise()
     }
   else
     {
-      if ((nGenerate > nLinesValidData) && !distrFileLoop)
+      if ((nGenerate > nEventsPerLoop) && !distrFileLoop)
         {
           G4String msg = "ngenerate (" + std::to_string(nGenerate) + ") is greater than the number of valid lines (";
           msg += std::to_string(nLinesValidData) + ") but distrFileLoop is false in the beam command";
@@ -423,15 +427,18 @@ void BDSBunchUserFile<T>::EndOfFileAction()
 template<class T>
 void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
 {
+  BDSBunch::RecreateAdvanceToEvent(eventOffset);
   G4cout << "BDSBunchUserFile::RecreateAdvanceToEvent> Advancing file to event: " << eventOffset << G4endl;
-  if (eventOffset > nLinesValidData - nlinesSkip)
+  G4int nEventsPerLoop   = nLinesValidData - nlinesSkip;
+  G4int nAvailable       = nEventsPerLoop * distrFileLoopNTimes;
+  G4int nEventsRemaining = nAvailable - eventOffset;
+  if (eventOffset > nEventsPerLoop)
     {
       if (distrFileLoop)
         {
           // we're recreating a file where we looped on the data - don't repeatedly read - just read up to
           // the right point as if we'd looped the file
-          G4int nAvailable = nLinesValidData - nlinesSkip;
-          G4int nToRoll = eventOffset % nAvailable;
+          G4int nToRoll = eventOffset % nEventsPerLoop;
           eventOffset = nToRoll;
         }
       else
@@ -441,7 +448,7 @@ void BDSBunchUserFile<T>::RecreateAdvanceToEvent(G4int eventOffset)
           throw BDSException("BDSBunchUserFile::RecreateAdvanceToEvent>", msg);
         }
     }
-  G4int nEventsRemaining = nLinesValidData - nlinesSkip - eventOffset;
+  
   G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
   if (nGenerate > nEventsRemaining && !distrFileLoop)
     {

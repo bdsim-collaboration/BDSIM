@@ -39,7 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string> // for stoi
 
 BDSBunchEventGenerator::BDSBunchEventGenerator():
-  BDSBunch("eventgenerator"),
+  BDSBunchFileBased("eventgenerator"),
   eventGeneratorNEventsSkip(0),
   eventGeneratorMinX(0),
   eventGeneratorMaxX(0),
@@ -74,7 +74,7 @@ void BDSBunchEventGenerator::SetOptions(const BDSParticleDefinition* beamParticl
 					G4Transform3D                beamlineTransformIn,
 					const G4double               beamlineSIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
+  BDSBunchFileBased::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   
   eventGeneratorNEventsSkip = beam.eventGeneratorNEventsSkip;
   eventGeneratorMinX  = beam.eventGeneratorMinX * CLHEP::m;

@@ -99,8 +99,7 @@ void BDSRunManager::ProcessOneEvent(G4int i_event)
   
   //G4RunManager::ProcessOneEvent(i_event);
   
-  // This is the same as in G4RunManager but we check the aborted event after the primary
-  // generator action
+  // This is the same as in G4RunManager, but we check the aborted event after the primary generator action
   currentEvent = GenerateEvent(i_event);
   if (currentEvent->IsAborted())
     {return;}

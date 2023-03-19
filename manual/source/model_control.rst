@@ -80,15 +80,15 @@ BDSIM starts each event in one of the following ways:
 #) Particles coordinates for one particle are generated from a chosen beam distribution,
    which is specified in the input GMAD file. In most cases, the particle coordinates
    are randomly generated according to a distribution. But this also includes reading
-   from a text file.
+   from a **text file**.
 
-#) A primary vertex is loaded from an event generator file. This currently requires linking to
-   HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
-   `eventgeneratorfile`_).
+#) A primary vertex is loaded from an event generator file. This currently requires compiling
+   BDSIM with HepMC3 to load such files. In this case, each event may start with 1 or more particles.
+   (see `eventgeneratorfile`_).
 
 #) Hits are loaded from a sampler in BDSIM output file and launched at any location in the
    simulation - not necessarily in the same position or same model as they were generated in.
-   See :ref:`bunch-bdsimsampler`.
+   See :ref:`beam-bdsimsampler`.
 
 To specify the input particle distribution, the :code:`beam` command is
 used. This also specifies the particle species and **reference total energy**, which is the
@@ -225,8 +225,8 @@ from this value given the proton's mass).
 * If no :code:`beamParticleName` is given but one of :code:`E0`, :code:`Ek0`, :code:`P0` are given,
   the same particle is assumed as :code:`particle` but with a different energy.
 
-Beam Energy From Command Line
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Beam Energy From the Command Line
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The energy of the beam can also be controlled using executable options to override what is provided
 in the input GMAD files. The following executable options can be used (with example value of 123.456 GeV):
@@ -254,6 +254,8 @@ with a large number of particles (for example, 10k to 100k in under one minute).
 
 BDSIM should be executed with the option :code:`--generatePrimariesOnly` as described in
 :ref:`executable-options`.
+
+This **does not** work for `eventgeneratorfile` and `bdsimsampler` distributions.
 
 * The exact coordinates generated will not be the same as those generated in a run, even
   with the same seed. This is because the physics models will also advanced the random
@@ -292,7 +294,79 @@ Event Tree, as described in :ref:`output-event-tree`.
 	     precision numbers are used so that the beam distribution is accurate. A float typically
 	     has seven significant figures and a double 15.
 
-	     
+
+.. _beam-bunches:
+
+Bunches and Time Offset
+^^^^^^^^^^^^^^^^^^^^^^^
+
+* This does not apply to :code:`eventgeneratorfile` and :code:`bdsimsampler` distributions.
+
+BDSIM offers the feature to simulate multiple bunches at a fixed frequency. This is done as
+a final step after generating the coordinates for a single particle from a bunch distribution.
+The user specifies how many particles to generate for one bunch before moving on to the next.
+For a given bunch, a global time offset is calculated that is added to the T coordinate of each
+particle. The 'bunches' all start in the same location. The time added can be expressed as:
+::
+
+   T = T0 + t*floor(EI / eventsPerBunch)
+
+
+where :code:`T0` is the offset specified in the beam distribution, :code:`t` is the
+period of the bunches, :code:`floor` is the mathematical floor function, :code:`EI` is the
+event index (zero counting) and `eventsPerBunch` is the beam parameter specified in the input.
+
+This does not affect the 'local' time of the coordinates (i.e. the lower case t in the
+Primary coordinates in the output), but it does affect the 'global' time (i.e. the upper
+case T in the PrimaryGlobal coordinates in the output), which is the one used to place
+the particle in the model at the start of an event.
+
+.. note:: For BDSIM-generated distributions, 1 event = 1 primary particle.
+
+
+Relevant beam parameters:
+
+
+.. tabularcolumns:: |p{5cm}|p{6cm}|p{2cm}|
+		      
++----------------------------------+-------------------------------------------------------+----------+
+| Option                           | Description                                           | Default  |
++==================================+=======================================================+==========+
+| `bunchFrequency`                 | Frequency in Hz of bunches                            | 0 \*     |
++----------------------------------+-------------------------------------------------------+----------+
+| `bunchPeriod`                    | Separation in time (s) of bunches                     | 0 \*     |
++----------------------------------+-------------------------------------------------------+----------+
+| `eventsPerBunch`                 | Number of events to simulate with each bunch index    | 0        |
++----------------------------------+-------------------------------------------------------+----------+
+
+* \* One and only one of :code:`bunchFrequency` and :code:`bunchPeriod` must be specified if
+  :code:`eventsPerBunch` is greater than 0 which implies we want bunches.
+
+Example:
+::
+
+   beam, particle="e-",
+         kineticEnergy=1*GeV,
+	 distrType="gauss",
+	 sigmaX=10*um,
+	 sigmaY=10*um,
+	 sigmaT=5*ps,
+	 bunchFrequency=357*MHz,
+	 eventsPerBunch=100;
+
+This will generate particles in a Gaussian distribution with a sigma in time of 5 picoseconds
+and therefore a correlated position in z (e.g. sigma z is around 1.5 mm at the speed of light).
+The first 100 particles will be centred on T0, which is 0 s by default. The next hundred will have
+a similar x,y,z but will have a time centred on 2.8 ns (1 period of 357 MHz). The local time with
+respect to the bunch (and therefore z) will still be randomly generated.
+
+An example can be found in :code:`bdsim/examples/features/beam/bunch-frequency.gmad`.
+
+.. note:: For :code:`--generatePrimariesOnly` the "event number" will be advanced even though
+	  no events are actually simulated and therefore the time coordinate will be consistent
+	  with a full run of BDSIM.
+
+
 Beam Tilt
 ^^^^^^^^^
 
@@ -325,7 +399,8 @@ Beam Distributions
 ^^^^^^^^^^^^^^^^^^
 The following beam distributions are available in BDSIM
 
-- `reference`_
+**No Variation**
+- `reference`_ (a 'pencil' beam)
 
 **Gaussian**
 - `gaussmatrix`_
@@ -345,8 +420,8 @@ The following beam distributions are available in BDSIM
 **Composite**
 - `composite`_
 - `compositespacedirectionenergy`_
-  
-**Beam Distributions - File-Based**
+
+**File-Based** (see :ref:`beam-distributions-file-based`)
 
 - `userfile`_
 - `ptc`_
@@ -1089,13 +1164,18 @@ There are two classes of file-based distributions. Firstly, text file ones - `us
 and `ptc` that load one line of coordinates per event. Secondly, there are more complex
 ones that can have multiple primaries per event - `eventgeneratorfile` and `bdsimsampler`.
 
+* :ref:`beam-userfile`
+* :ref:`beam-ptc`
+* :ref:`beam-eventgenerator`
+* :ref:`beam-bdsimsampler`
+
 The later two have a set of particle filters that can be used to load only certain particles.
 
 Behaviour
 *********
 
 The default behaviour since BDSIM V1.7 is to 'match' the file length - i.e. simulate the
-number of events as there would be in the file. The default is **not to loop** the file.
+number of events as there would be in the file. The default is **not to loop** (i.e. repeat) the file.
 However, the user can explicitly request a certain number of events, or that the file is
 looped (knowing that certain primaries might be repeated introducing correlations).
 
@@ -1108,6 +1188,9 @@ For all the file-based distributions, the following beam options apply.
 |                              |               | that match the number of entries in the file  |
 +------------------------------+---------------+-----------------------------------------------+
 | `distrFileLoop`              | 0 (false)     | Whether to loop back to the start of the file |
++------------------------------+---------------+-----------------------------------------------+
+| `distrFileLoopNTimes`        | 1             | Number of times to repeat the distribution    |
+|                              |               | file in its entirety                          |
 +------------------------------+---------------+-----------------------------------------------+
 
 .. warning:: `option, ngenerate=N` in input GMAD text will be ignored when a distribution file
@@ -1150,6 +1233,20 @@ it will be replayed (with different event seeds) 5x.
              a file, you may 'enhance' the statistics of one set of input coordinates
              and may bias the final result.
 
+**Looping N Times**
+
+We can repeat the same file `N` times. The random engine seed will continue to advance
+for the physics so even with the same initial particles or coordinates, a different
+outcome will happen according to the physics processes. Therefore, it is useful to
+sometimes repeat the same distribution multiple times. ::
+
+  beam, distrType="somedistributionhere...",
+        distrFile="somefile.dat",
+        distrFileLoop=1,
+        distrFileLoopNTimes=3;
+
+This will match the file length and repeat the file 3 times.
+
 **Filtering**
 
 With the `eventgenerator` and `bdsimsampler` distributions, we can filter which particles
@@ -1168,6 +1265,7 @@ we load. It is therefore possible to exclude all particles from an event or inde
   The first entry is when the file is opened, and the second at the end of a run. ROOT prevents us
   from overwriting the first entry.
 
+.. _beam-userfile:
         
 userfile
 ********
@@ -1333,6 +1431,8 @@ The corresponding `userbeamdata.dat` file looks like::
   0 0 0 2 0 1000
 
 
+.. _beam-ptc:
+
 ptc
 ***
 
@@ -1352,6 +1452,8 @@ Output from MAD-X PTC used as input for BDSIM.
 * Reference offsets specified in the gmad file such as `X0` are added to each coordinate.
 * The number of raw input lines (without interpretation) skipped is `nlinesIgnore` + `nlinesSkip`.
 
+
+.. _beam-eventgenerator:
 
 eventgeneratorfile
 ******************
@@ -1484,7 +1586,7 @@ For only pions: ::
 	eventGeneratorParticles="111 211 -211";
   
 
-.. _bunch-bdsimsampler:
+.. _beam-bdsimsampler:
 	
 bdsimsampler
 ************
@@ -3211,9 +3313,16 @@ with the following options.
 |                                    | the case of using Geant4.10.3 or newer, the energy leaving the     |
 |                                    | world volume as well. Default off.                                 |
 +------------------------------------+--------------------------------------------------------------------+
+| storeElossWorldIntegral            | Store the total energy deposited in the world in the event summary |
+|                                    | for when the hits aren't wanted but the integral is. Default off.  |
++------------------------------------+--------------------------------------------------------------------+
 | storeElossWorldContents            | Whether to record energy deposition in the daughter volumes within |
 |                                    | the world volume when supplied as external world geometry.         |
 |                                    | Default off.                                                       |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossWorldContentsIntegral    | Store the total energy deposited in the daughter volumes within    |
+|                                    | the world volume when supplied as external world geometry. For     |
+|                                    | when the hits aren't wanted but the integral is. Default off.      |
 +------------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                   | Global coordinates will be stored for each energy deposition hit   |
 |                                    | and for each trajectory point. Default off.                        |
@@ -3342,6 +3451,8 @@ These options control, if :code:`storeTrajectory=1;`, which tracks trajectories 
 |                                    | e.g. "11 12 22 13". Note, the anti-particles must be individually  |
 |                                    | specified.                                                         |
 +------------------------------------+--------------------------------------------------------------------+
+| storeTrajectorySecondaryParticles  | Mark a trajectory for storage if it is not a primary particle.     |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectorySamplerID           | If a trajectory reaches the name of these samplers, store that     |
 |                                    | trajectory. This value supplied should be a whitespace separated   |
 |                                    | string such as "cd1 qf32x". If the same element exists multiple    |
@@ -3412,7 +3523,8 @@ that has passed the filters above.
 |                                    | post step points. Default False.                                   |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryStepPoints (\*)     | Integer number of step points to store for each trajectory that is |
-|                                    | chosen to be stored. Should be greater than or equal to 1. Storing |
+|                                    | chosen to be stored. Should be greater than or equal to 1. -1 can  |
+|                                    | be used to mean 'all' step points. Storing                         |
 |                                    | 1 will mean only the first creation point is stored. Caution, this |
 |                                    | will break any references to step index such as parentStepIndex in |
 |                                    | other trajectories. It is purely a last storage filtering step.    |

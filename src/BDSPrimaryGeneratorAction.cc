@@ -50,10 +50,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4RunManager.hh"
 
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
-                                                     const GMAD::Beam& beam,
-                                                     BDSRunAction*     runActionIn):
+                                                     const GMAD::Beam& beam):
   bunch(bunchIn),
-  runAction(runActionIn),
   recreateFile(nullptr),
   eventOffset(0),
   ionPrimary(false),
@@ -83,7 +81,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
   particleGun->SetParticlePosition(G4ThreeVector());
   particleGun->SetParticleTime(0);
   
-  generatorFromFile = BDSPrimaryGeneratorFile::ConstructGenerator(beam, bunch, recreate, eventOffset, runAction);
+  generatorFromFile = BDSPrimaryGeneratorFile::ConstructGenerator(beam, bunch, recreate, eventOffset);
 }
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
@@ -95,11 +93,16 @@ BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-  // load seed state if recreating.
-  if (recreate)
+  G4int thisEventID = anEvent->GetEventID();
+  
+  // update the bunch distribution for which event we're on for different bunch timings
+  bunch->CalculateBunchIndex(thisEventID);
+  
+  if (recreate) // load seed state if recreating.
     {
       G4cout << __METHOD_NAME__ << "setting seed state from file" << G4endl;
-      BDSRandom::SetSeedState(recreateFile->SeedState(anEvent->GetEventID() + eventOffset));
+      BDSRandom::SetSeedState(recreateFile->SeedState(thisEventID + eventOffset));
+      bunch->CalculateBunchIndex(thisEventID + eventOffset); // correct bunch index
     }
 
   // save the seed state in a file to recover potentially unrecoverable events
@@ -115,6 +118,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   // always save seed state in output
   BDSEventInfo* eventInfo = new BDSEventInfo();
+  eventInfo->SetBunchIndex(bunch->CurrentBunchIndex());
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
@@ -147,7 +151,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       // could be because of user input file
       anEvent->SetEventAborted();
       G4cout << exception.what() << G4endl;
-      G4cout << "Aborting this event (#" << anEvent->GetEventID() << ")" << G4endl;
+      G4cout << "Aborting this event (#" << thisEventID << ")" << G4endl;
       return;
     }
   
@@ -167,7 +171,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double EK = coords.local.totalEnergy - bunch->ParticleDefinition()->Mass();
   if (EK <= 0)
     {
-      G4cout << __METHOD_NAME__ << "Event #" << anEvent->GetEventID()
+      G4cout << __METHOD_NAME__ << "Event #" << thisEventID
              << " - Particle kinetic energy smaller than 0! "
              << "This will not be tracked." << G4endl;
       anEvent->SetEventAborted();
@@ -202,8 +206,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   vertex->SetWeight(coords.local.weight);
 
   // associate full set of coordinates with vertex for writing to output after event
-  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords,
-                                                             bunch->ParticleDefinition()));
+  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords, bunch->ParticleDefinition()));
 
 #ifdef BDSDEBUG
   vertex->Print();
@@ -233,6 +236,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
         }
       else if (generatorFromFile->NEventsReadThatPassedFilters() < nGenerateRequested)
         {// not matching the file length specifically but requested a certain number of events
+          // If the NEventsReadThatPassedFilters == nGenerateRequested then this won't happen as we won't
+          // try to generate another new event beyond this and the run will end naturally without intervention here.
           endRunNow = true;
           G4int currentEventIndex = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent();
           G4cerr << __METHOD_NAME__ << "unable to generate " << nGenerateRequested
@@ -244,13 +249,11 @@ void BDSPrimaryGeneratorAction::GeneratePrimariesFromFile(G4Event* anEvent)
         {
           anEvent->SetEventAborted();
           G4EventManager::GetEventManager()->AbortCurrentEvent();
-          runAction->NotifyOfCompletionOfInputDistrFile(generatorFromFile->NEventsInFile(),
-                                                        generatorFromFile->NEventsSkipped());
           G4RunManager::GetRunManager()->AbortRun();
           return; // don't generate anything - just return
         }
     }
-  else if (!generatedVertexOK) // file isn't finished but we didn't successfully generate this event
+  else if (!generatedVertexOK) // file isn't finished, but we didn't successfully generate this event
     {   
       anEvent->SetEventAborted();
       G4EventManager::GetEventManager()->AbortCurrentEvent();

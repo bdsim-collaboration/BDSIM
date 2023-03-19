@@ -203,6 +203,7 @@ public:
   inline G4double DeltaOneStep()             const {return G4double(options.deltaOneStep)*CLHEP::m;}
   inline G4double MinimumEpsilonStep()       const {return G4double(options.minimumEpsilonStep);}
   inline G4double MaximumEpsilonStep()       const {return G4double(options.maximumEpsilonStep);}
+  inline G4String FieldModulator()           const {return G4String(options.fieldModulator);}
   inline G4double MaxTime()                  const {return G4double(options.maximumTrackingTime)*CLHEP::s;}
   inline G4double MaxStepLength()            const {return G4double(options.maximumStepLength)*CLHEP::m;}
   inline G4double MaxTrackLength()           const {return G4double(options.maximumTrackLength)*CLHEP::m;}
@@ -241,7 +242,9 @@ public:
   inline G4bool   StoreELossTunnel()         const {return G4bool  (options.storeElossTunnel);}
   inline G4bool   StoreELossTunnelHistograms()const{return G4bool  (options.storeElossTunnelHistograms);}
   inline G4bool   StoreELossWorld()          const {return G4bool  (options.storeElossWorld);}
+  inline G4bool   StoreELossWorldIntegral()  const {return G4bool  (options.storeElossWorldIntegral);}
   inline G4bool   StoreELossWorldContents()  const {return G4bool  (options.storeElossWorldContents);}
+  inline G4bool   StoreELossWorldContentsIntegral()  const {return G4bool  (options.storeElossWorldContentsIntegral);}
   inline G4bool   StoreELossTurn()           const {return G4bool  (options.storeElossTurn || options.circular);}
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
@@ -259,6 +262,7 @@ public:
   inline G4bool   StoreTrajectoryStepPointLast()const{return G4bool(options.storeTrajectoryStepPointLast);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
+  inline G4bool   StoreTrajectorySecondaryParticles() const {return options.storeTrajectorySecondaryParticles;}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
   inline G4bool   StoreTrajectoryKineticEnergy()  const {return G4bool(options.storeTrajectoryKineticEnergy);}
   inline G4bool   StoreTrajectoryMomentumVector() const {return G4bool(options.storeTrajectoryMomentumVector);}
