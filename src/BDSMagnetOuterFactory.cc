@@ -119,10 +119,10 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       magnetType,
-							 BDSMagnetOuterInfo* outerInfo,
-							 G4double            outerLength,
-							 G4double            containerLength,
-							 BDSBeamPipe*        beamPipe)
+                                                         BDSMagnetOuterInfo* outerInfo,
+                                                         G4double            outerLength,
+                                                         G4double            containerLength,
+                                                         BDSBeamPipe*        beamPipe)
 {
   BDSMagnetOuter* outer = nullptr;
 
@@ -135,7 +135,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
       G4double loadedLength = outer->GetExtent().DZ();
 
       if (loadedLength > outerLength)
-	{
+        {
           if (beamPipe->InputFaceNormal() != -beamPipe->OutputFaceNormal())
         {
             BDS::Warning(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
@@ -150,7 +150,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
                                           + "m. ");
         }
 
-	}
+        }
       return outer;
     }
   

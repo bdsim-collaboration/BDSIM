@@ -42,7 +42,7 @@ public:
 
   /// Build a beam line of curvilinear geometry based on another beam line.
   BDSBeamline* BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline,
-					    const G4bool circular);
+                                            const G4bool circular);
 
   /// Build bridging volumes to join the curvilinear ones
   BDSBeamline* BuildCurvilinearBridgeBeamLine(BDSBeamline const* const beamline);
@@ -63,11 +63,11 @@ private:
   /// is taken from the first element and assumed to be the same for all. The index is the
   /// index it'l have in the curvilinear beam line.
   void CreateCurvilinearElementSplit(const G4String&             elementName,
-                                               BDSBeamline::const_iterator startElement,
-                                               G4int                       index,
-                                               G4double                    crRadius,
-                                               G4int splitNumber,
-                                               BDSBeamline* beamline);
+                                     BDSBeamline::const_iterator startElement,
+                                     G4int                       index,
+                                     G4double                    crRadius,
+                                     G4int splitNumber,
+                                     BDSBeamline* beamline);
 
   BDSBeamlineElement* CreateCurvilinearElement(const G4String&             elementName,
 					       BDSBeamline::const_iterator startElement,

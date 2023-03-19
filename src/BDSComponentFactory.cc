@@ -732,54 +732,54 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
       const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
       auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle, -outgoingFaceAngle);
       auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element,
-								-incomingFaceAngle,
-								-outgoingFaceAngle,
-								bpInfo, yokeOnLeft);
+                                                                -incomingFaceAngle,
+                                                                -outgoingFaceAngle,
+                                                                bpInfo, yokeOnLeft);
 
       G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
       BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
       
       BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::dipolequadrupole,
-						       brho,
-						       intType,
-						       st,
-						       true,
-						       fieldTiltOffset);
+                                                       brho,
+                                                       intType,
+                                                       st,
+                                                       true,
+                                                       fieldTiltOffset);
 
       BDSFieldInfo* outerFieldInfo;
       if (element->fieldOuter.empty())
         {
           outerFieldInfo = BDSComponentFactory::PrepareMagnetOuterFieldInfo(st,
-                                                                              BDSFieldType::dipole,
-                                                                              bpInfo,
-                                                                              mgInfo,
-                                                                              fieldTiltOffset,
-                                                                              integratorSet,
-                                                                              brho);
+                                                                            BDSFieldType::dipole,
+                                                                            bpInfo,
+                                                                            mgInfo,
+                                                                            fieldTiltOffset,
+                                                                            integratorSet,
+                                                                            brho);
         }
       else
         {
           outerFieldInfo = new BDSFieldInfo(BDSFieldType::bmap3d,
-					    brho,
-					    BDSIntegratorType::g4classicalrk4,
-					    nullptr,
-					    true,
-					    G4Transform3D(),
-					    element->fieldOuter,
-					    BDSFieldFormat::bdsim3d);
+                                            brho,
+                                            BDSIntegratorType::g4classicalrk4,
+                                            nullptr,
+                                            true,
+                                            G4Transform3D(),
+                                            element->fieldOuter,
+                                            BDSFieldFormat::bdsim3d);
         }
 
       return new BDSMagnetNonSplitOuter(BDSMagnetType::sectorbend, bpInfo, mgInfo, vacuumFieldInfo, outerFieldInfo,
-					false,element, st, brho,integratorSet, incomingFaceAngle,
-					outgoingFaceAngle, includeFringeFields, prevElement, nextElement, modulator);
+                                        false,element, st, brho,integratorSet, incomingFaceAngle,
+                                        outgoingFaceAngle, includeFringeFields, prevElement, nextElement, modulator);
     }
   else if (element->dontSplitOuter && element->magnetGeometryType.empty())
     {throw BDSException(__METHOD_NAME__, "no magnetGeometryType given.");}
   else
     {
       return BDS::BuildSBendLine(elementName, element, st, brho, integratorSet,
-				 incomingFaceAngle, outgoingFaceAngle,
-				 includeFringeFields, prevElement, nextElement, modulator);
+                                 incomingFaceAngle, outgoingFaceAngle,
+                                 includeFringeFields, prevElement, nextElement, modulator);
     }
 }
 
