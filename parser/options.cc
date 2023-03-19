@@ -322,6 +322,7 @@ void Options::PublishMembers()
   publish("minimumKineticEnergy",        &Options::minimumKineticEnergy);
   publish("minimumKineticEnergyTunnel",  &Options::minimumKineticEnergyTunnel);
   publish("minimumRange",                &Options::minimumRange);
+  publish("particlesToExcludeFromCuts",  &Options::particlesToExcludeFromCuts);
   
   publish("prodCutPhotons",              &Options::prodCutPhotons);
   publish("prodCutElectrons",            &Options::prodCutElectrons);
@@ -356,6 +357,7 @@ void Options::PublishMembers()
 
   // options which influence tracking
   publish("integratorSet",            &Options::integratorSet);
+  publish("fieldModulator",           &Options::fieldModulator);
   publish("lengthSafety",             &Options::lengthSafety);
   publish("lengthSafetyLarge",        &Options::lengthSafetyLarge);
   publish("maximumTrackingTime",      &Options::maximumTrackingTime);
@@ -396,6 +398,7 @@ void Options::PublishMembers()
   publish("storeApertureImpactsAll",        &Options::storeApertureImpactsAll);
   publish("storeApertureImpactsHistograms", &Options::storeApertureImpactsHistograms);
   publish("apertureImpactsMinimumKE",       &Options::apertureImpactsMinimumKE);
+  publish("storeCavityInfo",                &Options::storeCavityInfo);
   publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
   publish("storeCollimatorHits",            &Options::storeCollimatorHits);
   publish("storeCollimatorHitsLinks",       &Options::storeCollimatorHitsLinks); // backwards compatibility
@@ -417,8 +420,12 @@ void Options::PublishMembers()
   publish("storeELossTunnelHistograms",     &Options::storeElossTunnelHistograms);
   publish("storeElossWorld",                &Options::storeElossWorld);
   publish("storeELossWorld",                &Options::storeElossWorld);
+  publish("storeElossWorldIntegral",        &Options::storeElossWorldIntegral);
+  publish("storeELossWorldIntegral",        &Options::storeElossWorldIntegral);
   publish("storeElossWorldContents",        &Options::storeElossWorldContents);
   publish("storeELossWorldContents",        &Options::storeElossWorldContents);
+  publish("storeElossWorldContentsIntegral",&Options::storeElossWorldContentsIntegral);
+  publish("storeELossWorldContentsIntegral",&Options::storeElossWorldContentsIntegral);
   publish("storeElossTurn",                 &Options::storeElossTurn);
   publish("storeELossTurn",                 &Options::storeElossTurn);
   publish("storeElossLinks",                &Options::storeElossLinks);
@@ -450,6 +457,7 @@ void Options::PublishMembers()
   publish("storeTrajectoryStepPointLast",       &Options::storeTrajectoryStepPointLast);
   publish("storeTrajectoryParticle",            &Options::storeTrajectoryParticle);
   publish("storeTrajectoryParticleID",          &Options::storeTrajectoryParticleID);
+  publish("storeTrajectorySecondaryParticles",  &Options::storeTrajectorySecondaryParticles);
   publish("storeTrajectoryEnergyThreshold",     &Options::storeTrajectoryEnergyThreshold);
   publish("storeTrajectorySamplerID",           &Options::storeTrajectorySamplerID);
   publish("storeTrajectoryELossSRange",         &Options::storeTrajectoryELossSRange);
@@ -485,6 +493,8 @@ void Options::PublishMembers()
   publish("storeModel",                     &Options::storeModel);
 
   publish("samplersSplitLevel",             &Options::samplersSplitLevel);
+  publish("modelSplitLevel",                &Options::modelSplitLevel);
+  publish("uprootCompatible",               &Options::uprootCompatible);
 
   // circular options
   publish("nturns",                   &Options::nturns);

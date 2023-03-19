@@ -69,9 +69,6 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(const G4String&      nameIn,
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
-#endif
   // initialise static members
   if (!emptyMaterial)
     {
@@ -118,9 +115,7 @@ void BDSAcceleratorComponent::Initialise()
 {
   if (initialised)
     {return;} // protect against duplicated initialisation and memory leaks
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+
   Build();
 
   // field construction must be done after all the geometry is constructed if the

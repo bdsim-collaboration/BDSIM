@@ -35,6 +35,7 @@ class BDSFieldInfo;
 class BDSMagnetOuter;
 class BDSMagnetOuterInfo;
 class BDSMagnetStrength;
+class BDSModulatorInfo;
 class BDSIntegratorSet;
 
 namespace GMAD
@@ -67,7 +68,8 @@ public:
 			 G4double                outgoingFaceAngleIn,
 			 G4bool                  buildFringeFieldsIn,
 			 const GMAD::Element*    prevElementIn,
-			 const GMAD::Element*    nextElementIn);
+			 const GMAD::Element*    nextElementIn,
+                         BDSModulatorInfo*       fieldModulator);
 
   void SBendWithSingleOuter(const G4String& elementName);
 
@@ -84,6 +86,7 @@ private:
   G4bool                  buildFringeFields;
   const GMAD::Element*    prevElement;
   const GMAD::Element*    nextElement;
+  BDSModulatorInfo*       modulator;
   std::vector<G4String>   namedVacuumVolumes;
 };
 

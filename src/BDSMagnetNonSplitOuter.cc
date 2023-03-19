@@ -67,7 +67,8 @@ BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType           typeIn,
 					       G4double                outgoingFaceAngleIn,
 					       G4bool                  buildFringeFieldsIn,
 					       const GMAD::Element*    prevElementIn,
-					       const GMAD::Element*    nextElementIn):
+					       const GMAD::Element*    nextElementIn,
+                                               BDSModulatorInfo*       fieldModulator):
   BDSMagnet(typeIn, elementIn->name, elementIn->l*CLHEP::m, beamPipeInfoIn,
 	    magnetOuterInfoIn, vacuumFieldInfoIn, -elementIn->angle, outerFieldInfoIn, isThinIn),
   element(elementIn),
@@ -78,7 +79,8 @@ BDSMagnetNonSplitOuter::BDSMagnetNonSplitOuter(BDSMagnetType           typeIn,
   outgoingFaceAngle(outgoingFaceAngleIn),
   buildFringeFields(buildFringeFieldsIn),
   prevElement(prevElementIn),
-  nextElement(nextElementIn)
+  nextElement(nextElementIn),
+  modulator(fieldModulator)
 {
   namedVacuumVolumes = BDS::SplitOnWhiteSpace(G4String(element->namedVacuumVolumes));
 
@@ -98,7 +100,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
       el.magnetGeometryType = "none";
       el.l -= lengthSafety;
       pipeLine = BDS::BuildSBendLine(elementName, &el, st, brho, integratorSet, incomingFaceAngle,
-				     outgoingFaceAngle, buildFringeFields, prevElement ,nextElement);
+				     outgoingFaceAngle, buildFringeFields, prevElement, nextElement, modulator);
       pipeLine->Initialise();
     }
   
@@ -117,7 +119,6 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
   G4double outerLength = chordLength - 2*lengthSafety;
   outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(BDSMagnetType::sectorbend,
 							       magnetOuterInfo,
-							       outerFieldInfo,
 							       outerLength,
 							       chordLength,
 							       beamPipeTmp);

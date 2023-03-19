@@ -120,7 +120,6 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       magnetType,
 							 BDSMagnetOuterInfo* outerInfo,
-							 const BDSFieldInfo* outerFieldInfo,
 							 G4double            outerLength,
 							 G4double            containerLength,
 							 BDSBeamPipe*        beamPipe)
@@ -132,7 +131,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 
   if (geometryType == BDSMagnetGeometryType::external)
     {
-      outer = CreateExternal(name, outerInfo, outerFieldInfo, outerLength, containerLength, beamPipe);
+      outer = CreateExternal(name, outerInfo, outerLength, containerLength, beamPipe);
       G4double loadedLength = outer->GetExtent().DZ();
 
       if (loadedLength > outerLength)
@@ -239,7 +238,6 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
 						      BDSMagnetOuterInfo* info,
-						      const BDSFieldInfo* outerFieldInfo,
 						      G4double          /*length*/,
 						      G4double            magnetContainerLength,
 						      BDSBeamPipe*        beampipe)
@@ -258,7 +256,6 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
 
   BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name,
 									    info->geometryTypeAndPath,
-                                                                            outerFieldInfo,
 									    &defaultMap,
 									    info->autoColour,0 ,0, &vacuumVolumeNames);
 

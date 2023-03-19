@@ -41,8 +41,8 @@ std::map<BDSBeamPipeType, std::string>* BDSBeamPipeType::dictionary =
    {BDSBeamPipeType::octagonal,      "octagonal"},
    {BDSBeamPipeType::circularvacuum, "circularvacuum"},
    {BDSBeamPipeType::clicpcl,        "clicpcl"},
-   {BDSBeamPipeType::none,           "none"}
-
+   {BDSBeamPipeType::none,           "none"},
+   {BDSBeamPipeType::pointsfile,     "pointsfile"}
 });	
 
 BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
@@ -60,8 +60,10 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   types["circularvacuum"] = BDSBeamPipeType::circularvacuum;
   types["clicpcl"]        = BDSBeamPipeType::clicpcl;
   types["none"]           = BDSBeamPipeType::none;
+  types["pointsfile"]     = BDSBeamPipeType::pointsfile; // added so the error print out will be correct
 
   apertureType = BDS::LowerCase(apertureType);
+  
 
   auto result = types.find(apertureType);
   if (result == types.end())

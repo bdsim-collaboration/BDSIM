@@ -145,6 +145,7 @@ private:
   void AllParticles();
   
   /// @{ Physics constructor loader.
+  void AnnihiToMuMu();
   void ChargeExchange();
   void Cherenkov();
   void CutsAndLimits();
@@ -164,6 +165,7 @@ private:
   void Em4();
   void FTFPBERT();
   void FTFPBERTHP();
+  void GammaToMuMu();
   void HadronicElastic();
   void HadronicElasticD();
   void HadronicElasticH();
@@ -178,6 +180,7 @@ private:
   void IonINCLXX();
   void LaserWire();
   void Muon();
+  void MuonInelastic();
   void NeutronTrackingCut();
   void Optical();
   void QGSPBERT();
