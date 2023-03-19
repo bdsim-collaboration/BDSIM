@@ -112,7 +112,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
   beamPipeInfoTmp->outputFaceNormal = faces.second;
   
   BDSBeamPipe* beamPipeTmp = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name+"_bp",
-                                                                            arcLength - 2*lengthSafety,
+                                                                            chordLength - 2*lengthSafety,
                                                                             beamPipeInfoTmp);
   
   // Create the Magnet outer
@@ -210,13 +210,13 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
             {
               G4String placementName = el->GetPlacementName() + "_pv";
               G4Transform3D* placementTransform = el->GetPlacementTransform();
-              G4int copyNumber = i;
+              G4int copyNumberLocal = i;
               auto vv = new G4PVPlacement(*placementTransform,             // placement transform
                                           el->GetAcceleratorComponent()->GetContainerLogicalVolume(), // volume to be placed
                                           placementName,                   // placement name
                                           containerLogicalVolume,          // volume to place it in
                                           false,                           // no boolean operation
-                                          copyNumber,                      // copy number
+                                          copyNumberLocal,                 // copy number
                                           false);                          // overlap checking
               
               i++; // for incremental copy numbers
@@ -230,15 +230,15 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
       
       G4ThreeVector outerOffset = outer->GetPlacementOffset();
       
-      auto gdml_world = outer->GetContainerLogicalVolume();
+      auto gdmlContainer = outer->GetContainerLogicalVolume();
 
       // Check if the outer logical volume (GDML world volume) must be placed into the container logical volume
       if (element->includeGdmlWorldVolume)
         {
           G4Transform3D placementTransform;
-          auto vv = new G4PVPlacement(placementTransform,            // placement transform
-                                      gdml_world,                    // volume to be placed
-                                      gdml_world->GetName() + "_pv", // placement name
+          auto vv = new G4PVPlacement(placementTransform,               // placement transform
+                                      gdmlContainer,                    // volume to be placed
+                                      gdmlContainer->GetName() + "_pv", // placement name
                                       containerLogicalVolume,        // volume to place it in
                                       false,                         // no boolean operation
                                       0,                             // copy number
@@ -249,11 +249,11 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
           RegisterPhysicalVolume(vv); 
         }
       
-      for (G4int j = 0; j < (G4int)gdml_world->GetNoDaughters(); j++)
+      for (G4int j = 0; j < (G4int)gdmlContainer->GetNoDaughters(); j++)
         {
-          const auto& pv = gdml_world->GetDaughter(j);
+          const auto& pv = gdmlContainer->GetDaughter(j);
           G4String placementName = pv->GetName() + "_pv";
-          G4int copyNumber = 1;
+          G4int copyNumberLocal = 1;
           
           if (!element->includeGdmlWorldVolume)
             {
@@ -264,7 +264,7 @@ void BDSMagnetNonSplitOuter::SBendWithSingleOuter(const G4String& elementName)
                                           placementName,                           // placement name
                                           containerLogicalVolume,                  // volume to place it in
                                           false,                                   // no boolean operation
-                                          copyNumber,                              // copy number
+                                          copyNumberLocal,                         // copy number
                                           false);                                  // overlap checking
               
               if (vv->CheckOverlaps() && checkOverlaps)

@@ -323,13 +323,13 @@ void BDSMagnet::PlaceComponents()
         {
           G4ThreeVector outerOffset = outer->GetPlacementOffset();
           // place outer volume
-          G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                                    // rotation
-                                                           outerOffset,                                      // at normally (0,0,0)
+          G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                            // rotation
+                                                           outerOffset,                        // at normally (0,0,0)
                                                            outer->GetContainerLogicalVolume(), // its logical volume
-                                                           name+"_outer_pv",                         // its name
-                                                           containerLogicalVolume,                          // its mother  volume
-                                                           false,                                    // no boolean operation
-                                                           0,                                       // copy number
+                                                           name+"_outer_pv",                   // its name
+                                                           containerLogicalVolume,             // its mother  volume
+                                                           false,                              // no boolean operation
+                                                           0,                                  // copy number
                                                            false);
           
           if (magnetOuterPV->CheckOverlaps() && checkOverlaps)
@@ -340,23 +340,23 @@ void BDSMagnet::PlaceComponents()
       // place the elements inside the external outer logical volume (world volume) inside the container logical volume
       if (magnetOuterInfo->geometryType == BDSMagnetGeometryType::external)
         {
-          auto gdml_world = outer->GetContainerLogicalVolume();
-          for (G4int j = 0; j < (G4int)gdml_world->GetNoDaughters(); j++)
+          auto gdmlContainer = outer->GetContainerLogicalVolume();
+          for (G4int j = 0; j < (G4int)gdmlContainer->GetNoDaughters(); j++)
             {
-              const auto& pv = gdml_world->GetDaughter(j);
+              const auto& pv = gdmlContainer->GetDaughter(j);
               G4String placementName = pv->GetName() + "_pv";
-              std::cout << "placing " << placementName << std::endl;
-              G4int copyNumber = 1;
+              G4int copyNumberLocal = 1;
               
               if (!magnetOuterInfo->includeGdmlWorldVolume)
                 {
-                  auto vv = new G4PVPlacement(pv->GetRotation(), pv->GetTranslation(),  // placement transform
+                  auto vv = new G4PVPlacement(pv->GetRotation(),
+                                              pv->GetTranslation(),
                                               pv->GetLogicalVolume(),                   // volume to be placed
                                               placementName,                            // placement name
                                               containerLogicalVolume,                   // volume to place it in
-                                              false,                             // no boolean operation
-                                              copyNumber,                               // copy number
-                                              false);                           // overlap checking
+                                              false,                                    // no boolean operation
+                                              copyNumberLocal,                          // copy number
+                                              false);                                   // overlap checking
                   
                   if (vv->CheckOverlaps() && checkOverlaps)
                     {throw BDSException(__METHOD_NAME__, "Overlapping detected for the outer elements");}
@@ -364,18 +364,28 @@ void BDSMagnet::PlaceComponents()
                   RegisterPhysicalVolume(vv);
                 }
             }
-
-        // place the vacuum field inside the GDML logical volumes defined by namedVacuumVolumes
-        BDSGeometryExternal* outerGDML = outer->ExternalGeometry();
-        std::set<G4LogicalVolume*> vacuumVols;
-
-        if (outerGDML) // the dynamic cast will only work if it's loaded as GDML//
-        {
-            vacuumVols = outerGDML->VacuumVolumes();
-            BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-                                                                      vacuumVols,
-                                                                      true);
-        }
+          
+          // place the outer field inside the GDML logical volumes and the vacuum field inside the GDML logical volumes defined by namedVacuumVolumes
+          BDSGeometryExternal* outerGDML = outer->ExternalGeometry();
+          std::set<G4LogicalVolume*> vacuumVols;
+          std::set<G4LogicalVolume*> Vols;
+          
+          if (outerGDML) // the dynamic cast will only work if it's loaded as GDML//
+            {
+              Vols = outerGDML->GetAllLogicalVolumes();
+              
+              outerFieldInfo->SetScalingRadius(beamPipeInfo->aper1 + 2.5);
+              outerFieldInfo->SetBeamPipeRadius(beamPipeInfo->aper1 + 2.5);
+              
+              BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
+                                                                        Vols,
+                                                                        true);
+              
+              vacuumVols = outerGDML->VacuumVolumes();
+              BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+                                                                        vacuumVols,
+                                                                        true);
+            }
         }
     }
 }
