@@ -140,7 +140,7 @@ void BDSMessenger::ElementNameSearch(std::string name)
   for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j)
     {
       if(BDS::StrContains((*i)->GetName(), name))
-	{G4cout << (*i)->GetName() << G4endl;}
+        {G4cout << (*i)->GetName() << G4endl;}
     }
 }
 
@@ -166,24 +166,24 @@ void BDSMessenger::GoToElement(const std::string& value)
   if (!e)
     {// search the beam line for any element containing the name at all
       for (const auto& el : *beamline)
-	{
-	  if (BDS::StrContains(el->GetName(), name))
-	    {
-	      count++;
-	      if (count == instance)
-		{
-		  e = el;
-		  break;
-		}
-	    }
-	}
+        {
+          if (BDS::StrContains(el->GetName(), name))
+            {
+              count++;
+              if (count == instance)
+                {
+                  e = el;
+                  break;
+                }
+            }
+        }
       if (!e)
-	{
-	  G4cout << "No component found by that name" << G4endl;
-	  if (count > -1)
-	    {G4cout << "only " << count << " instances found." << G4endl;}
-	  return;
-	}
+        {
+          G4cout << "No component found by that name" << G4endl;
+          if (count > -1)
+            {G4cout << "only " << count << " instances found." << G4endl;}
+          return;
+        }
     }
   
   G4ThreeVector pos = e->GetReferencePositionMiddle();
