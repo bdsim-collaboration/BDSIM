@@ -78,7 +78,7 @@ void BDSBeamPipeFactoryBase::CommonConstruction(const G4String& nameIn,
   /// build logical volumes
   BuildLogicalVolumes(nameIn, vacuumMaterialIn, beamPipeMaterialIn);
   /// set visual attributes
-  SetVisAttributes(beamPipeMaterialIn);
+  SetVisAttributes(beamPipeMaterialIn, vacuumMaterialIn);
   /// set user limits
   SetUserLimits(length);
   /// place volumes
@@ -106,16 +106,29 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(const G4String& nameIn,
   allLogicalVolumes.insert(beamPipeLV);
 }
 
-void BDSBeamPipeFactoryBase::SetVisAttributes(G4Material* beamPipeMaterialIn)
+void BDSBeamPipeFactoryBase::SetVisAttributes(G4Material* beamPipeMaterialIn,
+                                              G4Material* vacuumMaterialIn)
 {
-  G4Colour* c = BDSColourFromMaterial::Instance()->GetColourWithDefault(beamPipeMaterialIn,
-                                                             BDSColours::Instance()->GetColour("beampipe"));
+  auto cfm = BDSColourFromMaterial::Instance();
+  G4Colour* c = cfm->GetColourWithDefault(beamPipeMaterialIn, BDSColours::Instance()->GetColour("beampipe"));
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(*c);
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.insert(pipeVisAttr);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
-  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+
+  if (vacuumMaterialIn->GetDensity() > (1e-3*CLHEP::gram/CLHEP::cm3))
+    {
+      G4Colour* cv = cfm->GetColour(vacuumMaterialIn);
+      G4VisAttributes* vacVisAttr = new G4VisAttributes(*cv);
+      vacVisAttr->SetVisibility(true);
+      vacVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+      allVisAttributes.insert(vacVisAttr);
+      vacuumLV->SetVisAttributes(vacVisAttr);
+    }
+  else
+    {vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());}
+
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }
 
