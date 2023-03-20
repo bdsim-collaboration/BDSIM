@@ -229,6 +229,7 @@ General Updates
 * The material print out (:code:`bdsim --materials`) now includes aliases.
 * When using `autoScale` for a field map attached to the yoke of a magnet, the calculated scaling
   factor is now always print out for feedback.
+* The visualiser command `/bds/beamline/list` now prints the S middle coordinate in metres.
 
 Bug Fixes
 ---------
