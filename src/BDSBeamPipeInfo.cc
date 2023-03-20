@@ -130,11 +130,11 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(const BDSBeamPipeInfo* defaultInfo,
   else
     {beamPipeThickness = beamPipeThicknessIn;}
   
-  if (vacuumMaterialIn == "")
+  if (vacuumMaterialIn.empty())
     {vacuumMaterial = defaultInfo->vacuumMaterial;}
   else
     {vacuumMaterial = BDSMaterials::Instance()->GetMaterial(vacuumMaterialIn);}
-  if (beamPipeMaterialIn == "")
+  if (beamPipeMaterialIn.empty())
     {beamPipeMaterial = defaultInfo->beamPipeMaterial;}
   else
     {beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(beamPipeMaterialIn);}
