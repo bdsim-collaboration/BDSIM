@@ -15,3 +15,5 @@ simple_testing(aperture-pointsfile-default  "--file=13_pointsfiledefault.gmad"  
 simple_testing(aperture-pointsfile-triangle "--file=14_pointsfile_triangle.gmad"   ${OVERLAP_CHECK})
 
 simple_testing(beampipe-vacuum-material-colour  "--file=15_vacuum_is_water.gmad"    ${OVERLAP_CHECK})
+
+simple_testing(aperture-rhombus        "--file=16_rhombus.gmad"        ${OVERLAP_CHECK})
