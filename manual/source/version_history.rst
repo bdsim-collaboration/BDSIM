@@ -139,6 +139,7 @@ New Features
   in the GDML file.
 * Beam pipe aperture may now be defined by a series of x,y points in a text file for an
   arbitrary shaped beam pipe. This may also be used as the default one.
+* New :code:`rhombus` apreture type.
 
 **Physics**
 
