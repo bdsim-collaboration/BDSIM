@@ -181,6 +181,8 @@ void BDSBeamPipeInfo::CheckApertureInfo()
       {InfoOKForOctagonal();   break;}
     case BDSBeamPipeType::clicpcl:
       {InfoOKForClicPCL();     break;}
+    case BDSBeamPipeType::rhombus:
+      {InfoOKForRhombus();     break;}
     default:
       {InfoOKForCircular();    break;}
     }
@@ -202,6 +204,7 @@ BDSExtent BDSBeamPipeInfo::ExtentInner() const
       case BDSBeamPipeType::elliptical:
       case BDSBeamPipeType::rectangular:
       case BDSBeamPipeType::octagonal:
+      case BDSBeamPipeType::rhombus:
         {
           extX = aper1;
           extY = aper2;
@@ -357,4 +360,20 @@ void BDSBeamPipeInfo::InfoOKForOctagonal()
 void BDSBeamPipeInfo::InfoOKForClicPCL()
 {
   CheckRequiredParametersSet(true, true, true, false);
+}
+
+void BDSBeamPipeInfo::InfoOKForRhombus()
+{
+  CheckRequiredParametersSet(true, true, false, false);
+
+  if (aper1 <= 0)
+    {throw BDSException(__METHOD_NAME__, "aper1 is <= 0 - invalid for a rhombus aperture");}
+  if (aper2 <= 0)
+    {throw BDSException(__METHOD_NAME__, "aper2 is <= 0 - invalid for a rhombus aperture");}
+  if (aper3 < 0)
+    {throw BDSException(__METHOD_NAME__, "aper3 is < 0 - invalid for a rhombus aperture");}
+  if (aper3 > 1.1*aper1)
+    {throw BDSException(__METHOD_NAME__, "aper3 is > 1.1 x aper1 - invalid for a rhombus aperture");}
+  if (aper3 > 1.1*aper2)
+    {throw BDSException(__METHOD_NAME__, "aper3 is > 1.1 x aper2 - invalid for a rhombus aperture");}
 }

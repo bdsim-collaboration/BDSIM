@@ -32,60 +32,53 @@ namespace BDS
 }
 
 /**
- * @brief Factory for octagonal aperture model beampipes.
+ * @brief Factory for rhombus aperture model beampipes.
  * 
- * This is a rectangular aperture with faceted flat corners. In the 
- * positive quadrant (+ve x & y) the user specifies (x,y) of the full
- * width in the horizontal and the full height in the vertical. A
- * second set of (x,y) coordinates specify the x and y points of the 
- * cut points. Therefore, the second x,y are always <  than the first ones.
- * This is reflected in all four quadrants. Practically, a G4ExtrudedSolid
- * is used where simply points are defined and this shape is extruded.
+ * This is a diamond shaped aperture. It optionally has a corner radius
+ * for rounded edges. aper1 is the full extent of what would be the unrounded
+ * corner in x; aper2 is the full extent of what would be the the unrounded
+ * corner in y. aper3 is the radius of curvature for the corners and is optional,
+ * with the default value of 0.
  *
- * aper1,2 are used to represent x1,y1 and aper3,4 are x2,y2 respectively.
+ * Constructed using an extruded solid with a series of points.
  * 
  * @author Laurie Nevay
  */
 
-class BDSBeamPipeFactoryOctagonal: public BDSBeamPipeFactoryPoints
+class BDSBeamPipeFactoryRhombus: public BDSBeamPipeFactoryPoints
 {
 public:
-  BDSBeamPipeFactoryOctagonal();
-  virtual ~BDSBeamPipeFactoryOctagonal(){;}
+  BDSBeamPipeFactoryRhombus();
+  virtual ~BDSBeamPipeFactoryRhombus(){;}
   
 private:
-  /// Generate quarters of a circle to represent the edges joined by straight lines.
-  /// Overloaded (required) from BDSBeamPipeFactoryPoints
+  /// Generate all the sets of required points for each surface.
   virtual void GeneratePoints(G4double aper1,
-			      G4double aper2,
-			      G4double aper3,
-			      G4double aper4,
-			      G4double beamPipeThickness,
-			      G4int    pointsPerTwoPi = 40);
+                              G4double aper2,
+                              G4double aper3,
+                              G4double aper4,
+                              G4double beamPipeThickness,
+                              G4int    pointsPerTwoPi = 40);
 
   /// Calculate the radius of the solid used for intersection for angled faces.
   virtual G4double CalculateIntersectionRadius(G4double aper1,
-					       G4double aper2,
-					       G4double aper3,
-					       G4double aper4,
-					       G4double beamPipeThickness);
+                                               G4double aper2,
+                                               G4double aper3,
+                                               G4double aper4,
+                                               G4double beamPipeThickness);
+  
+  /// Generate either 4 points or set of points with curved edges.
+  void GenerateRhombus(std::vector<G4TwoVector>& vec,
+                       G4double x1,
+                       G4double y1,
+                       G4double cornerRadius,
+                       G4int pointsPerTwoPi);
 
-  /// Append 2D points on an octagon in a clockwise direction into the vector argument.
-  void GenerateOctagonal(std::vector<G4TwoVector>& vec,
-			 G4double x1,
-			 G4double y1,
-			 G4double x2,
-			 G4double y2);
-
-  /// Calculate the corresponding aper1234 values if the octagonal beam pipe shape were
-  /// to be expanded by "distance". This calculates the points, then works out the corresponding
-  /// x,y coordinates for the expanded points such that each side of the octagon is expanded by
-  /// "distance". The aper1234 parameterisation is then calculated from these x,y, coordinates.
-  BDS::FourPoints ExpandOctagon(G4double aper1,
-			   G4double aper2,
-			   G4double aper3,
-			   G4double aper4,
-			   G4double distance);
+  /// Expand the rhombus as needed.
+  BDS::ThreePoints ExpandRhombus(G4double aper1,
+                                 G4double aper2,
+                                 G4double aper3,
+                                 G4double distance);
 };
   
 #endif
