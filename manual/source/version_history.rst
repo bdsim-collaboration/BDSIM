@@ -139,7 +139,7 @@ New Features
   in the GDML file.
 * Beam pipe aperture may now be defined by a series of x,y points in a text file for an
   arbitrary shaped beam pipe. This may also be used as the default one.
-* New :code:`rhombus` apreture type.
+* New :code:`rhombus` aperture type.
 
 **Physics**
 
@@ -316,6 +316,8 @@ Bug Fixes
 * Fixed issued where sections of an angled dipole were shorter than their containers, resulting in visual gaps
   in the geometry.
 * Compilation fixes in AWAKE module for Geant4.11.1.0.
+* Fix possible gap in angled geometry for `rectellipse` and `lhc` aperture types with strongly angled pole faces.
+* Fix erroneous error about beam pipe being too big for a magnet when no magnet geometry was selected.
 
 **Link**
 
