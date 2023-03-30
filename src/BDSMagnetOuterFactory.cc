@@ -141,7 +141,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
     }
 
   // Check dimensions
-  CheckOuterBiggerThanBeamPipe(name, outerInfo, beamPipe);
+  if (geometryType != BDSMagnetGeometryType::none)
+    {CheckOuterBiggerThanBeamPipe(name, outerInfo, beamPipe);}
 
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(geometryType);
   
