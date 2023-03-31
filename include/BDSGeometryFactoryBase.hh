@@ -82,13 +82,13 @@ protected:
   /// Provide the preprocessed object (such as volume) names in case they're processed
   /// whilst loading from external formats. By default, no action.
   virtual G4String PreprocessedName(const G4String& objectName,
-				    const G4String& acceleratorComponentName) const;
+                                    const G4String& acceleratorComponentName) const;
 
   /// Get the volumes that match the name. Volume names are matched exactly and are case sensitive.
   std::set<G4LogicalVolume*> GetVolumes(const std::set<G4LogicalVolume*>& allLVs,
-					std::vector<G4String>*            volumeNames,
-					G4bool                            preprocessGDML,
-					const G4String&                   componentName) const;
+                                        std::vector<G4String>*            volumeNames,
+                                        G4bool                            preprocessGDML,
+                                        const G4String&                   componentName) const;
   
   
   /// Initialise variables - used to reset variables before each use of the factory.
@@ -101,13 +101,13 @@ protected:
   /// Expand the accumulated extents with a symmetric extent in each dimension
   /// (rx,ry,rz) about the offset x0,y0,z0.
   void ExpandExtent(G4double xO, G4double rx,
-		    G4double y0, G4double ry,
-		    G4double z0, G4double rz);
+                    G4double y0, G4double ry,
+                    G4double z0, G4double rz);
 
   /// Expand the extent but asymmetrically.
   void ExpandExtent(G4double x0, G4double xLow, G4double xHigh,
-		    G4double y0, G4double yLow, G4double yHigh,
-		    G4double z0, G4double zLow, G4double zHigh);
+                    G4double y0, G4double yLow, G4double yHigh,
+                    G4double z0, G4double zLow, G4double zHigh);
 
   /// @{ Extent in one dimension.
   G4double xmin;
