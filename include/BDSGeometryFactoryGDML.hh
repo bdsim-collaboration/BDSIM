@@ -61,7 +61,7 @@ public:
 protected:
   /// Use the GDML preprocessing scheme to prepare the preprocesseed volume names.
   virtual G4String PreprocessedName(const G4String& objectName,
-				    const G4String& acceleratorComponentName) const;
+                                    const G4String& acceleratorComponentName) const;
   
 private:
   /// Create a temporary file in the current working directory (even though the geometry file
@@ -69,15 +69,15 @@ private:
   /// a 'key' with 'replacement'. Returns the temporary file name created. Naming only allows one
   /// temporary file per component - so far, not a problem.
   void ReplaceStringInFile(const G4String& filename,
-			   const G4String& outputFileName,
-			   const G4String& key,
-			   const G4String& replacement);
+                           const G4String& outputFileName,
+                           const G4String& key,
+                           const G4String& replacement);
 
   /// Recursively append pvs and lvs from a given mother volume.  Pass by reference
   /// the output vectors
   void GetAllLogicalPhysicalAndMaterials(const G4VPhysicalVolume*         volume,
-					 std::set<G4VPhysicalVolume*>&    pvs,
-					 std::set<G4LogicalVolume*>&      lvs,
+                                         std::set<G4VPhysicalVolume*>&    pvs,
+                                         std::set<G4LogicalVolume*>&      lvs,
                                          std::map<G4String, G4Material*>& materialsGDML);
 };
 
