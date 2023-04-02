@@ -47,7 +47,6 @@ public:
   /// @{ Accessor.
   unsigned long long int NEventsInFile() const {return nEventsInFile;}
   unsigned long long int NEventsInFileSkipped() const {return nEventsInFileSkipped;}
-  G4bool DistrFileLoop() const {return distrFileLoop;}
   G4int DistrFileLoopNTimes() const {return distrFileLoopNTimes;}
   /// @}
 
