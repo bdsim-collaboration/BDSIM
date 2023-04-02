@@ -84,14 +84,16 @@ def GenerateSensitive3(view=False):
     # create with box, then two concurrent spheres in line of beam
     # to practice hiearchy for sensitivity
     # let's call this one 'sb'
-    sbContainerSolid = _g4.solid.Box("sbContainerSolid", 200, 200, 200, reg)
+    x = 500
+    sbContainerSolid = _g4.solid.Box("sbContainerSolid", x, x, 110, reg)
     sbContainerLV = _g4.LogicalVolume(sbContainerSolid, 'G4_Be', 'sbContainerLV', reg)
 
     parentLV = sbContainerLV
-    for i,r in enumerate([100,90,80,70,60,50]):
-        sol = _g4.solid.Orb("orb_"+str(i), r, reg)
-        lv = _g4.LogicalVolume(sol, 'G4_Fe', "orb_"+str(i)+"_lv", reg)
-        _g4.PhysicalVolume([0,0,0],[0,0,0],lv,"orb_"+str(i)+"_pv", parentLV, reg)
+    for i,z in enumerate([100,90,80,70,60,50]):
+        #sol = _g4.solid.Orb("orb_"+str(i), r, reg)
+        sol = _g4.solid.Box("box_"+str(i), x-2*i, x-2*i, z, reg)
+        lv = _g4.LogicalVolume(sol, 'G4_Fe', "box_"+str(i)+"_lv", reg)
+        _g4.PhysicalVolume([0,0,0], [0,0,0], lv, "box_"+str(i)+"_pv", parentLV, reg)
         parentLV = lv
 
     reg.setWorld(sbContainerLV)
