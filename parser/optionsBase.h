@@ -84,6 +84,8 @@ namespace GMAD
     /// @}
     
     int  verboseImportanceSampling; ////< Verbosity about importance sampling.
+
+    bool verboseSensitivity;
   
     bool circular;                 ///< Flag for circular machine
     int  seed;                     ///< The seed value for the random number generator
@@ -253,6 +255,8 @@ namespace GMAD
     bool     useGammaToMuMu;
     bool     usePositronToMuMu;
     bool     usePositronToHadrons;
+    bool     restoreFTPFDiffractionForAGreater10;
+
     bool     beamPipeIsInfiniteAbsorber;
     bool     collimatorsAreInfiniteAbsorbers;
     bool     tunnelIsInfiniteAbsorber;
@@ -274,6 +278,7 @@ namespace GMAD
 
     // tracking related parameters
     std::string integratorSet;
+    std::string fieldModulator;
     double   lengthSafety;
     double   lengthSafetyLarge;
     double   maximumTrackingTime; ///< Maximum tracking time per track [s].
@@ -309,6 +314,7 @@ namespace GMAD
     bool        storeApertureImpactsAll;
     bool        storeApertureImpactsHistograms;
     double      apertureImpactsMinimumKE;
+    bool        storeCavityInfo;
     bool        storeCollimatorInfo;
     bool        storeCollimatorHits;
     bool        storeCollimatorHitsLinks;
@@ -322,7 +328,9 @@ namespace GMAD
     bool        storeElossTunnel;
     bool        storeElossTunnelHistograms;
     bool        storeElossWorld;
+    bool        storeElossWorldIntegral;
     bool        storeElossWorldContents;
+    bool        storeElossWorldContentsIntegral;
     bool        storeElossTurn;
     bool        storeElossLinks;
     bool        storeElossLocal;
@@ -343,6 +351,7 @@ namespace GMAD
     bool        storeTrajectoryStepPointLast;
     std::string storeTrajectoryParticle;
     std::string storeTrajectoryParticleID;
+    bool        storeTrajectorySecondaryParticles;
     double      storeTrajectoryEnergyThreshold;
     std::string storeTrajectorySamplerID;
     std::string storeTrajectoryELossSRange;
@@ -378,6 +387,8 @@ namespace GMAD
     bool        storeModel;
 
     int         samplersSplitLevel;
+    int         modelSplitLevel;
+    int         uprootCompatible;
 
     // circular options
     int         nturns;

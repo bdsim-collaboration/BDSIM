@@ -172,6 +172,8 @@ When defining a :code:`field`, the following parameters can be specified. Exampl
 +----------------------+-----------------------------------------------------------------+
 | electricReflection   | String of white-space separate relfection names to use.         |
 +----------------------+-----------------------------------------------------------------+
+| fieldModulator       | Name of modulator object to apply to the field definition.      |
++----------------------+-----------------------------------------------------------------+
 | x                    | x-offset from element it's attached to                          |
 +----------------------+-----------------------------------------------------------------+
 | y                    | y-offset from element it's attached to                          |
@@ -200,7 +202,7 @@ When defining a :code:`field`, the following parameters can be specified. Exampl
 |                      | and the field magnitude will be automatically scaled according  |
 |                      | to the normalised `k` strength (such as `k1` for a quadrupole)  |
 |                      | for the magnet it's attached to. Only applicable for when       |
-|                      | attached to magnets.                                            |
+|                      | attached to `fieldOuter` of aa magnet.                          |
 +----------------------+-----------------------------------------------------------------+
 | maximumStepLength    | The maximum permitted step length through the field. (m) No     |
 |                      | length smaller than 1 micron is permitted currently.            |
@@ -215,11 +217,22 @@ When defining a :code:`field`, the following parameters can be specified. Exampl
 |                      | :code:`parameter=value` when using a pure field type. See       |
 |                      | :ref:`fields-pure-field-types`.                                 |
 +----------------------+-----------------------------------------------------------------+
+| frequency            | Frequency (Hz) of the time-varying modulation of the field .    |
++----------------------+-----------------------------------------------------------------+
+| phase                | Phase offset (rad) of the time-dependent modulation. It is      |
+|                      | connected to tOffset and can be converted into it.              |
++----------------------+-----------------------------------------------------------------+
+| tOffset              | **Global** time offset (s) of the time-dependent modulation.    |
+|                      | It is internally translated into the phase offset.              |
++----------------------+-----------------------------------------------------------------+
+| modulator            | Function that describes the time-variation of the field.        |
+|                      | Currently, sin/SIN/Sin and cos/COS/Cos can be used.             |
++----------------------+-----------------------------------------------------------------+
 
 Simple example: ::
 
   detectorField: field, type="bmap2d",
-                 magneticFile="bdsim:fieldmap.dat";
+                 magneticFile="bdsim2d:fieldmap.dat";
 
 This will use a BDSIM format magnetic (only) field map. By default it will have cubic
 interpolation and use a 4th order Runge Kutta integrator.
@@ -241,6 +254,39 @@ for the spatial distance calculated from this.
 	  of the field map. Use `axisAngle=1` to use the axis angle rotation scheme.
 
 .. Note:: A right-handed coordinate system is used in Geant4, so positive x is out of a ring.
+
+.. Note:: The time-modulation of the fields is off by default. It is implemented for field maps
+    (E, B and EM) in up to all three spatial dimensions. It is not necessary to define both,
+    phase and tOffset, as they have the same physical meaning. The modulation is calculated
+    according to :math:`\sin(2\pi ft-\varphi)` or :math:`\cos(2\pi ft-\varphi)` with :math:`f`
+    being the frequency of the modulation, :math:`t` the global time of the particle and
+    :math:`\varphi` the shift wrt. the beginning of the oscillation.
+
+
+AutoScaling
+***********
+
+BDSIM includes a feature called "autoScale" that allows the gradient to be calculated of a field
+map when attached to the yoke of a magnet. The field map is then scaled by the required factor to
+match the (normalised) strength of the magnet, e.g. `k1` for a quadrupole.
+
+This only works when `autoScale=1` is used in the field definition and when the field is specified
+for the `fieldOuter` parameter of a magnet such as a quadrupole, sextupole, or octupole.
+
+For example: ::
+
+  f1: field, type="bmap2d", magnetifFile="bdsim:fieldmap.dat";
+  q1: quadrupole, l=2.99*m, fieldOuter="f1", k1=-0.03571027562065992;
+
+Example print out when running BDSIM would be: ::
+
+  BDSIM Field Format> Loading "/Users/lnevay/Desktop/gradient/QNRX0610005_-192.59A.map"
+  BDSIM Field Format> Loaded 2099 lines from file
+  BDSIM Field Format> (Min | Max) field magnitudes in loaded file (before scaling): (0 | 4.12849187851)
+  autoScale> Calculated k1 = -0.0430970787713
+  autoScale> Ratio of supplied strength to calculated map strength: 0.828600838822
+  autoScale> New overall scaling factor: 0.828600838822
+
 
 Field Types
 ***********
@@ -446,6 +492,98 @@ simplify things.
 
 	    Original dipole field from positive y half (*left*), reflected using
 	    :code:`reflectxzdipole` (*right*). 
+
+
+.. _field-modulators:
+
+Modulators
+**********
+
+It is possible to scale or 'modulate' the field of any component in bdsim using a
+"modulator" object. This conceptually can be a function of time, event number and
+turn number for example. Only certain functions are provided but more can be added
+easily by the developers if required - see :ref:`feature-request`.
+
+* Whatever magnetic or electric field would be provided by the original field object
+  is multiplied by the (scalar) numerical factor from the modulator.
+
+A modulator is defined in the in put as follows: ::
+
+  objectname: modulator, parameter1=value, parameters=value,... ;
+
+The modulator is then 'attahced' to the beam line element in its definition: ::
+
+  m1: modulator, type="sint", frequency=1*kHz, amplitudeOffset=1, phase=pi/2;
+  rf1: rfcavity, l=1*m, frequency=450*MHz, fieldModulator="m1";
+
+The function is described by the :code:`type` parameter which can be one of the following:
+
+* :code:`sint` - sinusoid as a function of (local) time
+* :code:`singlobal` - sinusoid as a function of (global) time with no synchronous offset in time
+* :code:`tophatt` - a top hat function as a function of time
+
+Each is described below.
+
+**sint**
+
+A sinusoidal modulator as a function of time T of the particle. The factor is
+described by the equation:
+
+.. math::
+
+  factor = \text{amplitudeOffset} + \text{amplitudeScale} * \sin (2 \pi f t + \phi)
+
+The oscillator will by default have a zero phase that is synchronous with the centre
+of the object it's attached to in the beam line.
+
+* `tOffset` will take precedence over `phase`
+
++--------------------+------------------------------------------+---------------+--------------+------------+
+| **Parameter**      | **Description**                          | **Required**  | **Default**  | **Units**  |
++====================+==========================================+===============+==============+============+
+| `amplitudeOffset`  | Offset of numerical factor               | No            | 0            | None       |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `amplitudeScale`   | Multiplier of scale                      | No            | 1            | None       |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `frequency`        | Frequency of oscillator in (>= 0)        | Yes           | 0            | Hz         |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `phase`            | Phase relative to synchronous phase      | No            | 0            | rad        |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `tOffset`          | Optional time to use in place of phase   | No            | 0            | s          |
++--------------------+------------------------------------------+---------------+--------------+------------+
+
+**singlobalt**
+
+This has the same equation as `sint`, however, no synchronous offset is added to the phase.
+So, if one instance of this modulator is used on several elements, they will all oscillate
+at the same time with the same phase, so a beam particle may see a different effect as it
+passes each element.
+
+* The same parameters as `sint` apply.
+* `phase` takes precedence over `offsetT`.
+
+
+**tophatt**
+
+A function that is on at a constant value inside a time window and 0 everywhere else in time.
+It is described by the equation:
+
+.. math::
+
+    factor &= \textrm{amplitudeScale} \quad \textrm{if} \quad T0 <= T <= T1 \\
+    factor &= 0 \quad \textrm{otherwise} \\
+
+
+
++--------------------+------------------------------------------+---------------+--------------+------------+
+| **Parameter**      | **Description**                          | **Required**  | **Default**  | **Units**  |
++====================+==========================================+===============+==============+============+
+| `T0`               | Global starting time for 'on'            | Yes           | 0            | s          |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `T1`               | Global time for 'off'                    | Yes           | 0            | s          |
++--------------------+------------------------------------------+---------------+--------------+------------+
+| `amplitudeScale`   | Multiplier of scale                      | No            | 1            | None       |
++--------------------+------------------------------------------+---------------+--------------+------------+
 
 
 Integrators
@@ -1317,11 +1455,17 @@ A completely custom aperture can be used with `pointsfile`. See the notes below.
 +----------------------+--------------+-------------------+-----------------+----------------+------------------+
 | `pointsfile` (\*\*)  | 0            | NA                | NA              | NA             | NA               |
 +----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `rhombus` (\+)       | 2-3          | x half-width      | y half-width    | radius of      | NA               |
+|                      |              |                   |                 | corners        |                  |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
 
 .. note:: (\*) :code:`lhcdetailed` aperture type will result in the :code:`beampipeMaterial` being ignored
 	  and LHC-specific materials at 2K being used.
 
 .. note:: (\*\*) For points file, use :code:`apertureType="pointsfile:pathtofile.dat:cm";`. See below.
+
+.. note:: (\+) For the rhombus aperture, `aper1` and `aper2` are the maximum extents if there was no radius
+          of curvature for the corners. Therefore, the curved edges 'eat' into the shape.
 
 These parameters can be set with the *option* command, as the default parameters
 and also on a per element basis that overrides the defaults for that specific element.
@@ -1775,7 +1919,7 @@ to a cavity object:
 
 Example::
 
-  shinyCavity: cavity, type="elliptical",
+  shinyCavity: cavitymodel, type="elliptical",
                        irisRadius = 35*mm,
 	               equatorRadius = 103.3*mm,
 	               halfCellLength = 57.7*mm,
@@ -1828,7 +1972,7 @@ Externally Provided Geometry
 ----------------------------
 
 BDSIM provides the ability to use externally provided geometry in the Geant4 model constructed
-by BDSIM. A variety of formats are supported (see :ref:`geometry-formats`). External
+by BDSIM. Different formats are supported (see :ref:`geometry-formats`). External
 geometry can be used in several ways:
 
 1) A placement of a piece of geometry unrelated to the beam line (see :ref:`placements`)
@@ -1889,6 +2033,27 @@ and validate geometry.
 See :ref:`python-geometry-preparation` for details and links to the software and manual. This
 package is used for many of the examples included with BDSIM and the Python scripts are
 included with the examples.
+
+Material Names And Usage
+************************
+
+Rules for materials in a GDML file:
+
+* A NIST material (e.g. :code:`G4_AIR`) may be used by name without full definition. The XML
+  validator may warning that they are undefined - this is ok as true, but they will be available
+  at runtime.
+* A BDSIM predefined material (or indeed one defined in the input GMAD) may be used by name
+  without a full definition in a GDML file. Similarly, there may be a warning from the XML
+  validator, but the material will be available at run time.
+* A BDSIM material by one of it's aliases in BDSIM may be used by name, similarly.
+* It is allowed to define a material inside a GDML file with the same name as one in BDSIM
+  as the GDML preprocessor (see below) will change the name.
+* Do not define a material fully but with the same name as a NIST material. Whilst Geant4
+  will construct the material when loading the GDML file, it will attach the material by
+  **name** and may not find your material definition from the GDML file.
+
+BDSIM will exit if a conflict in naming (and therefore ambiguous materials could be set)
+is found.
 
 .. _geometry-gdml-preprocessing:
 

@@ -1,6 +1,7 @@
 add_subdirectory(bad-params)
 add_subdirectory(bdsimsampler)
 add_subdirectory(eventgeneratorfile)
+add_subdirectory(ptc)
 add_subdirectory(userfile)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
@@ -17,6 +18,7 @@ simple_testing(bunch-exotic-particle          "--file=exotic-particle.gmad"     
 simple_testing(bunch-exotic-particle-pdgid    "--file=exotic-particle-pdgid.gmad"   "")
 simple_testing(bunch-eshell                   "--file=eshell.gmad"                  "")
 simple_testing(bunch-eshell-width             "--file=eshell-width.gmad"            "")
+simple_testing(bunch-frequency                "--file=bunch-frequency.gmad"         "")
 simple_testing(bunch-gauss                    "--file=gauss.gmad"                   "")
 simple_testing(bunch-gauss-sigmaP             "--file=gauss-sigmaP.gmad"            "")
 simple_testing(bunch-gauss-sigmaEk            "--file=gauss-sigmaEk.gmad"           "")
@@ -38,8 +40,8 @@ simple_testing(bunch-ion-primaries-only       "--file=ion.gmad --generatePrimari
 simple_testing(bunch-ion-h-minus              "--file=ion-hminus.gmad"              "")
 simple_testing(bunch-ion-q                    "--file=ionQ.gmad"                    "")
 simple_testing(bunch-ion-qe                   "--file=ionQE.gmad"                   "")
-simple_testing(bunch-ptc                      "--file=ptc.gmad"                     "")
 simple_testing(bunch-particle-pdgid           "--file=particle-pdgid.gmad"          "")
+simple_testing(bunch-period                   "--file=bunch-period.gmad"            "")
 simple_testing(bunch-reference                "--file=reference.gmad"               "")
 simple_testing(bunch-reference-backwards      "--file=reference-backwards.gmad"     "")
 simple_testing(bunch-reference-p0             "--file=reference-p0.gmad"            "")
@@ -50,9 +52,6 @@ simple_testing(bunch-sixtrack                 "--file=sixtrack.gmad"            
 simple_testing(bunch-square                   "--file=square.gmad"                  "")
 simple_testing(bunch-square-envelopeZ         "--file=square-envelopeZ.gmad"        "")
 simple_testing(bunch-tilt                     "--file=tilt.gmad"                    "")
-
-set(TESTING_ARGS --ngenerate=32)
-simple_testing(bunch-ptc-loop-file "--file=ptc.gmad" "")
 
 simple_testing(random-engine-hepjames   "--file=random-engine-hepjames.gmad"  "")
 if (CLHEP_HAS_MIXMAX)
