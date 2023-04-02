@@ -137,7 +137,10 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
 
   if (globals->RestoreFTPFDiffractionForAGreater10())
 #if G4VERSION_NUMBER > 1109
-    {G4HadronicParameters::Instance()->EnableDiffDissociationForBGreater10();}
+    {
+      G4cout << __METHOD_NAME__ << "restoring diffraction for target / projectiles with A > 10 in the FTFP hadronic model (even if not used)" << G4endl;
+      G4HadronicParameters::Instance()->SetEnableDiffDissociationForBGreater10(true);
+    }
 #else
     {BDS::Warning(__METHOD_NAME__, "\"restoreFTPFDiffractionForAGreater10\" is only available for Geant4 v11.1 and later");}
 #endif
