@@ -53,7 +53,7 @@ def GenerateSensitive2(view=False):
 
     sbOuterSolid = _g4.solid.Box('sbOuterSolid', 100,100,100, reg)
     sbInnerSolid = _g4.solid.Box('sbInnerSolid',  50, 50, 50, reg)
-    sbCordSolid  = _g4.solid.Box('sbCordSolid',   30, 30, 30, reg)
+    sbCordSolid  = _g4.solid.Box('sbCoreSolid',   30, 30, 30, reg)
 
     sbOuterLV = _g4.LogicalVolume(sbOuterSolid, 'G4_C',  'sbOuterLV', reg)
     sbInnerLV = _g4.LogicalVolume(sbInnerSolid, 'G4_Ca', 'sbInnerLV', reg)
@@ -78,6 +78,35 @@ def GenerateSensitive2(view=False):
     w.write('sensitive2.gdml')
 
 
+def GenerateSensitive3(view=False):
+    reg = _g4.Registry()
+    
+    # create with box, then two concurrent spheres in line of beam
+    # to practice hiearchy for sensitivity
+    # let's call this one 'sb'
+    sbContainerSolid = _g4.solid.Box("sbContainerSolid", 200, 200, 200, reg)
+    sbContainerLV = _g4.LogicalVolume(sbContainerSolid, 'G4_Be', 'sbContainerLV', reg)
+
+    parentLV = sbContainerLV
+    for i,r in enumerate([100,90,80,70,60,50]):
+        sol = _g4.solid.Orb("orb_"+str(i), r, reg)
+        lv = _g4.LogicalVolume(sol, 'G4_Fe', "orb_"+str(i)+"_lv", reg)
+        _g4.PhysicalVolume([0,0,0],[0,0,0],lv,"orb_"+str(i)+"_pv", parentLV, reg)
+        parentLV = lv
+
+    reg.setWorld(sbContainerLV)
+
+    if view:
+        v = _vis.VtkViewerColouredMaterial()
+        v.addDetector(saContainerLV)
+        v.view()
+    
+    w = _gdml.Writer()
+    w.addDetector(reg)
+    w.write('sensitive3.gdml')
+
+
 if __name__ == "__main__":
     GenerateSensitive1()
     GenerateSensitive2()
+    GenerateSensitive3()

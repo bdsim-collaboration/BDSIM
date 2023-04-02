@@ -1,0 +1,11 @@
+e1: element, geometry="gdml:sensitive3.gdml", l=0.21*m, namedVacuumVolumes="orb_0_lv orb_2_lv orb_3_lv";
+
+l1: line = (e1);
+use,period=l1;
+
+beam, particle="e-",
+      energy=1*GeV;
+
+option, physicsList="em",
+        minimumKineticEnergy=10*MeV,
+        elossHistoBinWidth=0.3*cm;
