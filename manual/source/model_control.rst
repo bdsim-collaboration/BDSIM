@@ -2157,6 +2157,56 @@ These cannot be used in combination with any other physics processes.
 .. note:: The range cuts specified with BDSIM options to not apply and cannot be used with a 'complete'
 	  physics list.
 
+
+          
+Proton Diffraction
+^^^^^^^^^^^^^^^^^^
+
+Since Geant4.10.5, target and projectile diffractive outcomes from hadronic interactions have been turned
+off if one of the participants has A > 10. This has the effect that the spectra of high energy protons
+passing through targets of materials above Beryllium in the periodic table have a significantly different
+spectrum. This is particularly important for particle accelerator applications where diffractive protons
+may go some way through an accelerator due to their very small momentum deviation and cause large energy
+deposits far from the target.
+
+In the default Geant4, this is therefore quite wrong. Since v11.1 (inclusive) an option has been added
+to :code:`G4HadronicParameters::Instance()` in Geant4 that allows us to turn back on diffraction. BDSIM
+provides the option :code:`restoreFTPFDiffractionForAGreater10` to use this. In versions of Geant4 earlier
+than v11.1, this will have no effect and the original Geant4 code must be patched.
+
+Example syntax: ::
+
+  option, restoreFTPFDiffractionForAGreater10=1;
+
+
+This only has an effect when the FTFP hadronic model is used. i.e. with: ::
+
+  ! the complete reference physics list from Geant4 including em and decay etc.
+  option, physicsList="g4FTFP_BERT";
+
+  ! the modular hadronic only physics as turned on by BDSIM
+  option, physicsList="ftfp_bert";
+
+ 
+
+A comparison is shown below with this option on and off for a 7TeV proton incident on a 40cm
+target of carbon. This example can be found in :code:`bdsim/examples/features/processes/protonDiffraction`.
+
+.. figure:: figures/proton-diffraction-comparison.pdf
+            :width: 80%
+            :align: center
+
+            The relative change in the total energy of protons immmediately after the target.
+
+
+.. figure:: figures/proton-diffraction-comparison-zoom.pdf
+            :width: 80%
+            :align: center
+
+            The relative change in the total energy of protons immmediately after the target. For a
+            narrow range close to the nominal energy (:math:`$\Delta$P = 0`).
+
+
 .. _physics-biasing:
 
 Physics Biasing
