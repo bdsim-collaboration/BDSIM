@@ -150,7 +150,9 @@ void Options::PublishMembers()
   publish("geant4PhysicsMacroFileName", &Options::geant4PhysicsMacroFileName);
   publish("geant4PhysicsMacroFileNameFromExecOptions", &Options::geant4PhysicsMacroFileNameFromExecOptions);
   publish("visDebug",              &Options::visDebug);
+  publish("outfile",               &Options::outputFileName);
   publish("outputFileName",        &Options::outputFileName);
+  publish("output",                &Options::outputFormat);
   publish("outputFormat",          &Options::outputFormat);
   publish("outputDoublePrecision", &Options::outputDoublePrecision);
   publish("outputCompressionLevel",&Options::outputCompressionLevel);
@@ -192,6 +194,7 @@ void Options::PublishMembers()
   publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
   publish("verbose_G4stepping",    &Options::verboseSteppingLevel); // to be compatible with exec options
   publish("verboseImportanceSampling", &Options::verboseImportanceSampling);
+  publish("verboseSensitivity",    &Options::verboseSensitivity);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
   publish("randomEngine",          &Options::randomEngine);
@@ -337,6 +340,7 @@ void Options::PublishMembers()
   publish("useGammaToMuMu",              &Options::useGammaToMuMu);
   publish("usePositronToMuMu",           &Options::usePositronToMuMu);
   publish("usePositronToHadrons",        &Options::usePositronToHadrons);
+  publish("restoreFTPFDiffractionForAGreater10", &Options::restoreFTPFDiffractionForAGreater10);
   publish("beamPipeIsInfiniteAbsorber",  &Options::beamPipeIsInfiniteAbsorber);
   publish("collimatorsAreInfiniteAbsorbers", &Options::collimatorsAreInfiniteAbsorbers);
   publish("tunnelIsInfiniteAbsorber",        &Options::tunnelIsInfiniteAbsorber);

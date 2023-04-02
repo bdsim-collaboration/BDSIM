@@ -68,10 +68,10 @@ void BDSBeamPipeFactoryBase::CleanUpBase()
   outputFaceNormal = G4ThreeVector(0,0, 1);
 }
   
-void BDSBeamPipeFactoryBase::CommonConstruction(const G4String&    nameIn,
-						G4Material* vacuumMaterialIn,
-						G4Material* beamPipeMaterialIn,
-						G4double    length)
+void BDSBeamPipeFactoryBase::CommonConstruction(const G4String& nameIn,
+                                                G4Material* vacuumMaterialIn,
+                                                G4Material* beamPipeMaterialIn,
+                                                G4double    length)
 {
   allSolids.insert(vacuumSolid);
   if (beamPipeSolid)
@@ -79,7 +79,7 @@ void BDSBeamPipeFactoryBase::CommonConstruction(const G4String&    nameIn,
   /// build logical volumes
   BuildLogicalVolumes(nameIn, vacuumMaterialIn, beamPipeMaterialIn);
   /// set visual attributes
-  SetVisAttributes(beamPipeMaterialIn);
+  SetVisAttributes(beamPipeMaterialIn, vacuumMaterialIn);
   /// set user limits
   SetUserLimits(length);
   /// place volumes
@@ -87,8 +87,8 @@ void BDSBeamPipeFactoryBase::CommonConstruction(const G4String&    nameIn,
 }
 
 void BDSBeamPipeFactoryBase::BuildLogicalVolumes(const G4String& nameIn,
-						 G4Material* vacuumMaterialIn,
-						 G4Material* beamPipeMaterialIn)
+                                                 G4Material* vacuumMaterialIn,
+                                                 G4Material* beamPipeMaterialIn)
 {
   // build the logical volumes
   vacuumLV = new G4LogicalVolume(vacuumSolid,
@@ -109,7 +109,8 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(const G4String& nameIn,
 				    nameIn + "_container_lv");
 }
 
-void BDSBeamPipeFactoryBase::SetVisAttributes(G4Material* beamPipeMaterialIn)
+void BDSBeamPipeFactoryBase::SetVisAttributes(G4Material* beamPipeMaterialIn,
+                                              G4Material* vacuumMaterialIn)
 {
     if (beamPipeLV)
     {
@@ -120,8 +121,19 @@ void BDSBeamPipeFactoryBase::SetVisAttributes(G4Material* beamPipeMaterialIn)
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.insert(pipeVisAttr);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
+
+  if (vacuumMaterialIn->GetDensity() > (1e-3*CLHEP::gram/CLHEP::cm3))
+    {
+      G4Colour* cv = cfm->GetColour(vacuumMaterialIn);
+      G4VisAttributes* vacVisAttr = new G4VisAttributes(*cv);
+      vacVisAttr->SetVisibility(true);
+      vacVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+      allVisAttributes.insert(vacVisAttr);
+      vacuumLV->SetVisAttributes(vacVisAttr);
     }
-  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  else
+    {vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());}
+
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }
 
@@ -179,10 +191,10 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(const BDSEx
 								     G4bool    containerIsCircular)
 {  
   // build the BDSBeamPipe instance and return it
-  auto aPipe = new BDSBeamPipe(containerSolid,containerLV,extent,
-				       containerSubtractionSolid,
-				       vacuumLV,containerIsCircular,containerRadius,
-				       inputFaceNormal, outputFaceNormal);
+  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extent,
+                                       containerSubtractionSolid,
+                                       vacuumLV,containerIsCircular,containerRadius,
+                                       inputFaceNormal, outputFaceNormal);
 
   // register objects
   aPipe->RegisterSolid(allSolids);
@@ -193,11 +205,11 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(const BDSEx
   if (beamPipeLV)
     {
       if (sensitiveBeamPipe && storeApertureImpacts)// in the case of the circular vacuum, there isn't a beampipeLV
-	{aPipe->RegisterSensitiveVolume(beamPipeLV, BDSSDType::aperturecomplete);}
+        {aPipe->RegisterSensitiveVolume(beamPipeLV, BDSSDType::aperturecomplete);}
       else if (storeApertureImpacts)
-	{aPipe->RegisterSensitiveVolume(beamPipeLV, BDSSDType::apertureimpacts);}
+        {aPipe->RegisterSensitiveVolume(beamPipeLV, BDSSDType::apertureimpacts);}
       else
-	{aPipe->RegisterSensitiveVolume(beamPipeLV, BDSSDType::energydep);}
+        {aPipe->RegisterSensitiveVolume(beamPipeLV, BDSSDType::energydep);}
     }
   aPipe->RegisterUserLimits(allUserLimits);
   aPipe->RegisterVisAttributes(allVisAttributes);

@@ -66,7 +66,8 @@ private:
   void  BuildLogicalVolumes(const G4String&    nameIn,
 					    G4Material* vacuumMaterialIn,
 					    G4Material* beamPipeMaterialIn) override;
-  void  SetVisAttributes(G4Material* beamPipeMaterialIn) override;
+  void  SetVisAttributes(G4Material* beamPipeMaterialIn,
+                         G4Material* bacuumMaterialIn) override;
   void  SetUserLimits(G4double length) override;
   void  PlaceComponents(const G4String& nameIn) override;
 

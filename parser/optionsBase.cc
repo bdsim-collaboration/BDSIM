@@ -63,6 +63,8 @@ OptionsBase::OptionsBase()
   verboseSteppingPrimaryOnly      = false;
   
   verboseImportanceSampling = 0;
+
+  verboseSensitivity = false;
   
   circular              = false;
   seed                  = -1;
@@ -146,9 +148,9 @@ OptionsBase::OptionsBase()
   beampipeThickness    = 0.0025;
   apertureType         = "circular";
   aper1                = 0.025; // also beampipeRadius
-  aper2                = 0.025;
-  aper3                = 0.025;
-  aper4                = 0.025;
+  aper2                = 0;
+  aper3                = 0;
+  aper4                = 0;
   beampipeMaterial     = "StainlessSteel";
   ignoreLocalAperture  = false;
   
@@ -212,6 +214,8 @@ OptionsBase::OptionsBase()
   useGammaToMuMu           = false;
   usePositronToMuMu        = false;
   usePositronToHadrons     = false;
+  restoreFTPFDiffractionForAGreater10 = true;
+
   beamPipeIsInfiniteAbsorber      = false;
   collimatorsAreInfiniteAbsorbers = false;
   tunnelIsInfiniteAbsorber        = false;
