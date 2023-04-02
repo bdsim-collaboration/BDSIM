@@ -150,7 +150,9 @@ void Options::PublishMembers()
   publish("geant4PhysicsMacroFileName", &Options::geant4PhysicsMacroFileName);
   publish("geant4PhysicsMacroFileNameFromExecOptions", &Options::geant4PhysicsMacroFileNameFromExecOptions);
   publish("visDebug",              &Options::visDebug);
+  publish("outfile",               &Options::outputFileName);
   publish("outputFileName",        &Options::outputFileName);
+  publish("output",                &Options::outputFormat);
   publish("outputFormat",          &Options::outputFormat);
   publish("outputDoublePrecision", &Options::outputDoublePrecision);
   publish("outputCompressionLevel",&Options::outputCompressionLevel);
