@@ -72,6 +72,7 @@ BDSMagnetOuterFactory::BDSMagnetOuterFactory()
   polesfacetcrop = new BDSMagnetOuterFactoryPolesFacetCrop();
   lhcright       = new BDSMagnetOuterFactoryLHCRight();
   lhcleft        = new BDSMagnetOuterFactoryLHCLeft();
+  sensitiveOuter = BDSGlobalConstants::Instance()->SensitiveOuter();
 }
 
 BDSMagnetOuterFactory::~BDSMagnetOuterFactory()
@@ -241,7 +242,10 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
   BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name,
                                                                             info->geometryTypeAndPath,
                                                                             &defaultMap,
-                                                                            info->autoColour);
+                                                                            info->autoColour,
+                                                                            0, 0,
+                                                                            nullptr,
+                                                                            sensitiveOuter);
 
   BDSExtent bpExtent = beampipe->GetExtent();
   BDSExtent magInner = geom->GetInnerExtent();
