@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define/>
+	<materials/>
+	<solids>
+		<box name="sbContainerSolid" x="200" y="200" z="200" lunit="mm"/>
+		<orb name="orb_0" r="100" lunit="mm"/>
+		<orb name="orb_1" r="90" lunit="mm"/>
+		<orb name="orb_2" r="80" lunit="mm"/>
+		<orb name="orb_3" r="70" lunit="mm"/>
+		<orb name="orb_4" r="60" lunit="mm"/>
+		<orb name="orb_5" r="50" lunit="mm"/>
+	</solids>
+	<structure>
+		<volume name="orb_5_lv">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="orb_5"/>
+		</volume>
+		<volume name="orb_4_lv">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="orb_4"/>
+			<physvol name="orb_5_pv">
+				<volumeref ref="orb_5_lv"/>
+			</physvol>
+		</volume>
+		<volume name="orb_3_lv">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="orb_3"/>
+			<physvol name="orb_4_pv">
+				<volumeref ref="orb_4_lv"/>
+			</physvol>
+		</volume>
+		<volume name="orb_2_lv">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="orb_2"/>
+			<physvol name="orb_3_pv">
+				<volumeref ref="orb_3_lv"/>
+			</physvol>
+		</volume>
+		<volume name="orb_1_lv">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="orb_1"/>
+			<physvol name="orb_2_pv">
+				<volumeref ref="orb_2_lv"/>
+			</physvol>
+		</volume>
+		<volume name="orb_0_lv">
+			<materialref ref="G4_Fe"/>
+			<solidref ref="orb_0"/>
+			<physvol name="orb_1_pv">
+				<volumeref ref="orb_1_lv"/>
+			</physvol>
+		</volume>
+		<volume name="sbContainerLV">
+			<materialref ref="G4_Be"/>
+			<solidref ref="sbContainerSolid"/>
+			<physvol name="orb_0_pv">
+				<volumeref ref="orb_0_lv"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="sbContainerLV"/>
+	</setup>
+</gdml>

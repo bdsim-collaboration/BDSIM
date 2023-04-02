@@ -6,12 +6,12 @@
 		<box name="sbContainerSolid" x="200" y="200" z="200" lunit="mm"/>
 		<box name="sbOuterSolid" x="100" y="100" z="100" lunit="mm"/>
 		<box name="sbInnerSolid" x="50" y="50" z="50" lunit="mm"/>
-		<box name="sbCordSolid" x="30" y="30" z="30" lunit="mm"/>
+		<box name="sbCoreSolid" x="30" y="30" z="30" lunit="mm"/>
 	</solids>
 	<structure>
 		<volume name="sbCoreLV">
 			<materialref ref="G4_Fe"/>
-			<solidref ref="sbCordSolid"/>
+			<solidref ref="sbCoreSolid"/>
 		</volume>
 		<volume name="sbInnerLV">
 			<materialref ref="G4_Ca"/>
