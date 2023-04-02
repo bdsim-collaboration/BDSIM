@@ -13,7 +13,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
-V1.7.0 - 2022 / XX / XX
+V1.7.0 - 2023 / XX / XX
 =======================
 
 * The input parser will now reject any duplicate object names (e.g. a field with the same name),
@@ -22,6 +22,8 @@ V1.7.0 - 2022 / XX / XX
   a name. In this case, the one it finds may be ambiguous or unexpected. The code was revised to
   purposively protect against this. This was always the case with beam line elements, but now it
   is also the case with all objects defined in the parser.
+* The input parser will now reject any variable names that are the same as an option name as
+  this is a common mistake where we put a semi-colon before another option then it has no effect.
 * GGMAD Geometry format is now deprecated. This was not maintained for a long time and with
   pyg4ometry and GDML we support much better geometry. The code is old and hard to maintain
   and really needs to be rewritten. The functionality was broken in making BDSIM compatible
@@ -29,6 +31,13 @@ V1.7.0 - 2022 / XX / XX
 * New executable options :code:`--reference` and :code:`--citation` to display the citation
   in Bibtex syntax to cite BDSIM easily.
 * The default yoke fields have changed and are on average stronger (and more correct). See below.
+* :code:`gradient` in the :code:`rf` component has the units of **V/m** and not MV/m as was
+  written in the manual. Any rf component in an existing model that is defined with a :code:`gradient` but
+  without units should be updated to include units of MV/m. The documentation has been fixed and is correct
+  and consistent. The units for :code:`E` have also been clarified as volts and that this voltage is assumed
+  across the length of the element :code:`l`.
+* File looping is no longer the default for filed-based input distributions. The default behaviour
+  is now **to match the length** of the input distribution file.
 
 
 New Features
@@ -38,24 +47,44 @@ New Features
 
 **Analysis**
 
-* New Spectra command for rebsdim to make very flexible sets of spectra automatically. See
+* New Spectra command for rebdsim to make very flexible sets of spectra automatically. See
   :ref:`spectra-definition` for more information.
-* rebdsim will now default to <inputfilename>_ana.root if no outputfile name is specified.
-* Similarly, rebdsimHistoMerge will default to <inputfilename>_histos.root; rebdsimOptics to
-  <intputfilename>_optics.root and bdskim to <inputfilename>_skimmed.root.
+* rebdsim will now default to `<inputfilename>_ana.root` if no outputfile name is specified.
+* Similarly, rebdsimHistoMerge will default to `<inputfilename>_histos.root`; rebdsimOptics to
+  `<intputfilename>_optics.root` and bdskim to `<inputfilename>_skimmed.root`.
+* bdsimCombine will now produce an extra tree in the output called "EventCombineInfo" that
+  contains an index to which file the event came from.
 
 **Beam**
 
+* New bunches feature allows offset in time for different bunches at a given repetition rate
+  or period with a certain number of events at a fixed bunch index generated. See :ref:`beam-bunches`.
 * The `square` bunch distribution can now have an uncorrelated `Z` distribution with time by
   explicitly specifying `envelopeZ`. If unspecified, the original behaviour remains.
 * New bunch distribution type `halosigma` that samples a flat halo distribution
   flat in terms of sigma. This is useful for re-weighting distributions based on
   the particle's distance from the core in terms of sigma.
+* The `halo` distribution now has an outer position cut in both X and Y axes, specified
+  by `haloXCutOuter` and `haloYCutOuter` respectively. Similar inner and outer cuts of the X and Y
+  momentum are also now possible, specified by same options as the position cuts but with a `p`
+  after the axis, e.g `haloXpCutOuter`.
+* The radius of the transverse momentum distribution of a circular beam no longer has to be finite.
+  This is useful for generation of an idealised pencil beam.
+* All neutrinos can be used as beam particles now (useful for visualisation of neutrino lines).
+* The `eventgenerator` and `bdsimsampler` distributions now have `eventGeneratorNEventsSkip`
+  in the beam command to allow skipping into the file.
+* Consistency between features between `eventgenerator` and `bdsimsampler` distribution.
+* A new executable option `--distrFileLoopNTimes=<N>` allows you to repeat an input file `N`
+  times while matching the length to replay the same input coordinates from a distribution
+  file with different physics easily.
 
 **Components**
 
 * A new `ct` keyword has been implemented to allow the conversion of DICOM CT images into
   voxelized geometries.
+* New `rfx` and `rfy` components for transverse RF fields.
+* New `target` beam line component. We could always create a block of material with a closed
+  `rcol` but this is more intuitive.
 
 **Fields**
 
@@ -68,8 +97,9 @@ New Features
 * New field drawing facility in the visualiser to draw query objects.
 * Field map reflections have been introduced allowing symmetry to be exploited.
   See :ref:`fields-transforms`.
-* "linearmag" experimental interpolation.
+* "linearmag" interpolation added.
 * New ability to arbitrarily scale the yoke fields.
+* New `modulator` object to modulate RF components (see :ref:`field-modulators`).
   
 **General**
 
@@ -87,9 +117,20 @@ New Features
 * New materials (Inermet170, Inermet176, Inermet180, Copper-Diamond, MoGr).
 * Nicer visualisation colours for charged particles. Green for neutrals is by default now at
   20% opacity as there are usually so many gammas.
+* New units: `mV`, `GV`, `nrad`, `THz`.
+* New :code:`verboseSensitivity` option to print out the sensitive detector by name at every
+  level of the hierarhcy.
 
 **Geometry**
 
+* An :code:`element` beam line component now works with :code:`angle` as a parameter and
+  the sign convention has been changed to match the bends as per MADX where a positive angle
+  corresponds to a displacement in negative `x` in a right handed coordinate system with the
+  beamline built along `z`. Drifts on either side will now match the element if `e1` and `e2`
+  (traditionally pole-face angles) are given for the element.
+* The length :code:`l` for :code:`element` is now treated as the chord length rather than the
+  arc length. This has no effect for straight components, but makes it easier to use angled
+  elements.
 * When loading geometry (e.g. a GDML file) to be used as a placement, you can now remove the
   outermost volume (e.g. the 'world' of that file) and place all the contents in the BDSIM
   world with the compound transforms: relative to the former outermost logical volume and also
@@ -98,22 +139,35 @@ New Features
   as required for NA62.
 * Ability to read GDML auxiliary information for the tag "colour" to provide colour information
   in the GDML file.
+* Beam pipe aperture may now be defined by a series of x,y points in a text file for an
+  arbitrary shaped beam pipe. This may also be used as the default one.
+* New :code:`rhombus` aperture type.
 
 **Physics**
 
+* New option :code:`restoreFTPFDiffractionForAGreater10` to turn back on nucleon diffraction
+  in hadronic physics for Geant4 v11.1 onwards. See :ref:`physics-proton-diffraction`. This
+  is **on** by default.
 * New muon-splitting biasing scheme.
-* New radioactivation physics list.
+* New "radioactivation" physics list.
+* New "gamma_to_mumu" physics list.
+* New "annihi_to_mumu" physics list.
+* New "muon_inelastic" physics list.
+* New option for excluding certain particles from cuts, e.g. exclude muons from the
+  minimumKineticEnergy option. See :code:`particlesToExcludeFromCuts` in :ref:`options-tracking`.
 
 **Sensitivity & Output**
 
+* Add an option :code:`uprootCompatible` to read the output file with uproot. If set to 1,
+  it corresponds to have :code:`samplersSplitLevel=1` and :code:`modelSplitLevel=2`.
 * Samplers now have the parameter :code:`partID={11,-11}`, which for example can be used
   to filter only which particles are recorded in a given sampler. See :ref:`sampler-filtering`.
   This also applies to sampler placements.
 * New **spherical** and **cylindrical** samplers.  See :ref:`sampler-types-and-shapes`.
-* The :code:`csample` command now works correctly and has been reimplemented for all beamline
+* The :code:`csample` command now works correctly and has been re-implemented for all beamline
   components.
 * A sampler in a BDSIM ROOT output file can now be used as an input beam distribution for
-  another simulation.  See :ref:`bunch-bdsimsampler`.
+  another simulation.  See :ref:`beam-bdsimsampler`.
 * Solenoid sheet / cylinder field has been added and is used by default on the solenoid yoke geometry.
 * Scoring of the differential flux (3D mesh + energy spectrum per cell) following either a linear,
   logarithmic or user-defined energy axis scale (requires Boost).
@@ -121,11 +175,22 @@ New Features
 * New type of scorermesh geometry: cylindrical.
 * Materials are now stored for each trajectory step point (optionally) as described
   by an integer ID.
+* New trajectory filter option to store only secondary particles. Can be used in combination
+  with particle type to select only secondary particles that may be the same type of particle
+  as the primary particle. The option is :code:`storeTrajectorySecondaryParticles`. The bitset
+  for which filter was passed has been accordingly extended from 9 bits to 10 bits and the new
+  filter is the the last one. This is reflected in the file header that stores the names of the
+  filters.
+* New options :code:`storeElossWorldIntegral` and :code:`storeElossworldContentsIntegral` that can
+  be used alone to store only the single total energy deposition (including weights) in the world and
+  world contents (in case of an externally provided world volume) without storing all the individual
+  hits that would use a lot of disk space.
 
 
 General Updates
 ---------------
 
+* The `userfile` distribution now doesn't count comment lines for `nlinesSkip` - only valid data lines.
 * When using the minimum kinetic energy option, tracks are now stopped in the stacking action
   rather than being allowed to be tracked for a single step. This should vastly improve the
   speed of some events with large numbers of tracks.
@@ -145,7 +210,7 @@ General Updates
   has been renamed to :code:`--geant4MacroFileName` to be the same as the option in
   the input GMAD file. The old one is still accepted for backwards compatibility.
 * The userfile distribution will tolerate `!` to denote a comment line to match GMAD syntax now.
-  It will also tolerate any whitespace before either `#` or `!` to mark a comment line,
+  It will also tolerate any white-space before either `#` or `!` to mark a comment line,
   whereas previously it would only identify a comment if the very first character
   of the line was `#`.
 * BDSGeometryComponent class refactored to permit a G4AssemblyVolume as the container
@@ -158,6 +223,19 @@ General Updates
   Geant4 names (e.g. "e-").
 * Print out extent of loaded world when using an external geometry file.
 * **EMD** physics has a minimum applicable kinetic energy of 1 MeV to prevent crashes in Geant4.
+* Optional executable argument added to ptc2bdsim to control ROOT split-level of sampler branches. Same
+  functionality as the BDSIM option :code:`samplersSplitLevel`.
+* The green colour for collimators and the new target component has been adjusted very slightly
+  to be a little brighter.
+* Parser error messages for samplers have been improved to give line numbers and exact
+  strings in quotes.
+* Samplers, sampler placements and their parallel world have been change to have a nullptr (no)
+  material. The parallel world material should not make a difference for the setup in BDSIM, but
+  now it is explicitly forbidden from having any effect by it being nullptr.
+* The material print out (:code:`bdsim --materials`) now includes aliases.
+* When using `autoScale` for a field map attached to the yoke of a magnet, the calculated scaling
+  factor is now always print out for feedback.
+* The visualiser command `/bds/beamline/list` now prints the S middle coordinate in metres.
 
 Bug Fixes
 ---------
@@ -167,6 +245,8 @@ Bug Fixes
 **Analysis**
 
 * rebdsim will now explicitly exit if a duplicate histogram name is detected whereas it didn't before.
+* If an electron was used as the beam particle, the mass might not be set correctly for optics analysis
+  (only) resulting in wrong results for sub-relativistic electron optics.
 * Fix warning when using sampler data in analysis in Python: ::
 
     input_line_154:2:36: warning: instantiation of variable 'BDSOutputROOTEventSampler<float>::particleTable' required here, but no
@@ -181,6 +261,17 @@ Bug Fixes
     translation unit
     BDSOutputROOTEventSampler<float>::particleTable;
 
+**Beam**
+
+* The `userfile` distribution now doesn't count comment lines for `nlinesSkip` - only valid data lines.
+* Fix infinite looping in the `userfile` distribution if `nlinesIgnore` or `nlinesSkip` were longer
+  than the number of lines in the file.
+* Fixed generation of circular beam distribution type. The beam previously was circular but was non-uniform with a strong
+  peak at the centre. The distribution is now uniform in x, y, xp & yp.
+* Fixed generation of ring beam distribution type. Similarly to the circular distribution, the beam had a higher density
+  of particles towards the ring's inner radius. The distribution is now uniform in x & y.
+* Fixed recreation when using a `ptc` distribution as the file wouldn't advance to the correct entry.
+
 **Biasing**
 
 * Fixed huge amount of print out for bias objects attached to a whole beam line. Now, bias
@@ -189,6 +280,7 @@ Bug Fixes
 
 **Fields**
 
+* Fix field maps being wrong if a GDML file was used multiple times with different fields.
 * Fix BDSIM-format field map loading with :code:`loopOrder> tzyx` in the header. It was not
   loaded correctly before. Also, there are corresponding fixes in the pybdsim package.
 * Fix lack of yoke fields for rbends.
@@ -203,16 +295,38 @@ Bug Fixes
 * Fix a bug in field map loading where a space was before the "!" character the columns
   wouldn't be parsed correctly.
 * Fix BDSIM field map format :code:`loopOrder` documentation. The variable can be either `xyzt` or `tzyx`.
+* The quadrupole field in an sbend or rbend with a k1 value specified was a factor of 1e6 too
+  low due to the placement of units. The integrator for tracking (which ignores the field) was
+  correct and still is, but the back up field used for non-paraxial particles had the wrong
+  effective k1.
+* Fix B field for the rf cavity field (`BDSFieldEMRFCavity` class). The direction of the vector was wrong
+  due to a wrong translation from radial to Cartesian coordinates. Previously there was no variation in local
+  `z`, which was wrong and has now been corrected.
 
 **Geometry**
-  
+
+* Fix caching of loaded geometry. A loaded piece of geometry will be reloaded (and possibly preprocessed)
+  if loaded in another beam line component to ensure we generate a unique set of logical volumes. This
+  fixes field maps, biasing, range cuts, regions and more being wrong if the same GDML file was reused
+  in different components. However, this can be explicitly circumvented with the new parameter
+  :code:`dontReloadGeometry` in a placement.
+* Fix a bug where BDSIM would exit complaining about a conflicting material after loading a GDML
+  file containing a material with the same name as one predefined in BDSIM.
 * If a multipole has a zero-length, it will be converted in a thin multipole.
 * Fixed issue where thin multipole & thinrmatrix elements would cause overlaps when located next to a dipole
   with pole face rotations. Issue #306.
 * Fix missing magnet coil end pieces despite being available space when the sequence
   is a magnet, drift, element, or the reverse.
 * Fix overlaps with various parameter combinations for an octagonal beam / aperture shape.
+* Fixed issued where sections of an angled dipole were shorter than their containers, resulting in visual gaps
+  in the geometry.
+* Compilation fixes in AWAKE module for Geant4.11.1.0.
+* Fix possible gap in angled geometry for `rectellipse` and `lhc` aperture types with strongly angled pole faces.
+* Fix erroneous error about beam pipe being too big for a magnet when no magnet geometry was selected.
 
+**Link**
+
+* Fix nullptr materials for samplers in mass world. Have to explicitly use function to make it valid for developers.
 
 **Output**
 
@@ -235,10 +349,16 @@ Bug Fixes
   is the access and update of a variable inside a defined object such as a field or scorer.
 * Fix parser :code:`print` command for all objects in the parser. Previously, only beam line elements
   would work with this command or variables in the input GMAD.
+* The parser will reject any variable name that is the same as an option name. When editing
+  option in input, a really common (hidden) error is that there's a semi-colon after an option.
+  Therefore, the next option gets interpreted as a new constant or variable resulting in it
+  having no effect at all. The parser will not prevent this from happening by complaining.
 
 **Sensitivity**
 
 * Fix a bug where a sampler before a dump wouldn't record any output.
+* Fix a bug where when turning off sensitive outers of magnets, an 'outer' loaded from
+  an external geometry file such as GDML would remain sensitive.
 
 **Tracking**
 
@@ -247,12 +367,23 @@ Bug Fixes
   speed of some events with large numbers of tracks.
 * Fix lack of user limits for RF cavity geometry.
 * Fix maximum step length user limit for externally loaded geometry.
+* Fix logic of building thin dipole fringe elements when using non-matrix integrator sets. As the
+  rotated poleface geometry will be constructed in such circumstances, the thin integrated pole face kick
+  is now not be applied as well. If finite fringe field quantities are specified, the thin elements will be built
+  but will only apply the fringe kicks and not the pole face effects. If using a non-matrix integrator set
+  and the option :code:`buildPoleFaceGeometry` is specified as false, thin pole face kicks will be applied.
+* Fix calculation of the z position in the quadrupole integrator. Previously the step always advanced along z by the
+  step length h regardless of the step's direction. Now, it advances along z by the projection of the step h onto
+  the z axis. This change will only produce a noticeable impact on particles with a large transverse momentum,
+  particularly those in low energy machines.
+* Fix dipole integrator track when K1 is negative. The overall strength parameter calculated for the integrator matrices
+  was incorrect when K1 < 0.
 
 **Visualisation**
 
 * GDML auto-colouring now works for G4 materials correctly. The name searching was broken. As a
   reminder, any material without a specific colour will default to a shade of grey according to
-  its density.
+  its density. The auto-colouring is also fixed when preprocessing is used (the default).
 * Fix visualisation of loaded GDML container volume.
   
 **General**
@@ -268,6 +399,11 @@ Bug Fixes
   materials have no effect when BDSIM is compiled with respect to Geant4 V11 onwards.
 * Fix uncaught Geant4 exceptions by introducing our own exception handler to intercept
   the Geant4 one and throw our own, safely handled exceptions a la standard C++.
+* Fix a bug where a particle could be misidentified as an ion and end up being a proton.
+  An example would be "pion+" which doesn't match the correct "pi+" name in Geant4 but
+  would pass through and become a proton despite its name.
+* Fix runtime exception with Geant4 V11.1.0 for default options applied in BDSIM from all
+  previous versions of Geant4 for epsilon max / min in all fields.
 
 
 
@@ -275,12 +411,15 @@ Bug Fixes
 Output Changes
 --------------
 * Add angle of the element in the Model Tree.
-* Add samplerSPosition in the Model Tree.
+* Add `samplerSPosition` in the Model Tree.
+* Add `pvName` and `pvNameWPointer` to the Model Tree.
 * Trajectories now have the variable `depth` for which level of the tree that trajectory is.
 * Trajectories now have the variable `materialID`, which is an integer ID for each material
   for a given model. In the Model tree, a map of this integer to the name is stored. An integer
   is used to save space as it is stored for every step of each trajectory stored.
 * Model tree now has two maps for material ID to name and vica-versa.
+* Cavity info is now optionally stored in the Model Tree which includes rf element parameters and
+  cavity geometry parameters. Default true.
 
 Output Class Versions
 ---------------------
@@ -300,11 +439,11 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCoords          | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventHeader          | N           | 4               | 4               |
+| BDSOutputROOTEventHeader          | Y           | 4               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventHistograms      | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventInfo            | N           | 6               | 6               |
+| BDSOutputROOTEventInfo            | Y           | 7               | 6               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventLoss            | N           | 5               | 5               |
 +-----------------------------------+-------------+-----------------+-----------------+

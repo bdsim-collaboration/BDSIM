@@ -84,6 +84,7 @@ void Element::PublishMembers()
   publish("frequency", &Element::frequency);
   publish("phase",     &Element::phase);
   publish("tOffset",   &Element::tOffset);
+  publish("fieldModulator", &Element::fieldModulator);
 
   // rmatrix elements, only 4x4
   publish("kick1",     &Element::kick1);
@@ -150,6 +151,8 @@ void Element::PublishMembers()
   publish("xsizeRight",       &Element::xsizeRight);
   publish("offsetX",     &Element::offsetX);
   publish("offsetY",     &Element::offsetY);
+  publish("jawTiltLeft",     &Element::jawTiltLeft);
+  publish("jawTiltRight",     &Element::jawTiltRight);
 
   // screen parameters
   publish("tscint",          &Element::tscint);
@@ -236,6 +239,7 @@ void Element::PublishMembers()
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
   publish("stripOuterVolume",    &Element::stripOuterVolume);
   publish("autoColour",          &Element::autoColour);
+  publish("elementLengthIsArcLength", &Element::elementLengthIsArcLength);
   publish("material",            &Element::material);
   publish("outerMaterial",       &Element::material);
   alternativeNames["outerMaterial"] = "material";
@@ -243,6 +247,7 @@ void Element::PublishMembers()
   publish("markAsCollimator",    &Element::markAsCollimator);
   publish("spec",                &Element::spec);
   publish("cavityModel",         &Element::cavityModel);
+  publish("cavityFieldType",     &Element::cavityFieldType);
 
   publish("dicomDataPath",       &Element::dicomDataPath);
   publish("dicomDataFile",       &Element::dicomDataFile);
@@ -414,10 +419,13 @@ void Element::print(int ident) const
     case ElementType::_TKICKER:
     case ElementType::_UNDULATOR:
     case ElementType::_RF:
+    case ElementType::_RFX:
+    case ElementType::_RFY:
       {
         std::cout << "scaling = " << scaling << std::endl;
         if (scalingFieldOuter != 1)
           {std::cout << "scalingFieldOuter = " << scalingFieldOuter << std::endl;}
+	std::cout << "fieldModulator = \"" << fieldModulator << "\"" << std::endl;
 	break;
       }
     default:
@@ -463,6 +471,7 @@ void Element::flush()
   frequency = 0;
   phase     = 0;
   tOffset   = 0;
+  fieldModulator = "";
 
   // rmatrix
   kick1 = 0;
@@ -513,6 +522,8 @@ void Element::flush()
   xsizeRight = 0;
   offsetX = 0;
   offsetY = 0;
+  jawTiltLeft = 0;
+  jawTiltRight = 0;
 
   // screen parameters
   tscint = 0.0003;
@@ -591,11 +602,13 @@ void Element::flush()
   geometryFile = "";
   stripOuterVolume = false;
   autoColour   = true;
+  elementLengthIsArcLength = false;
   material="";
   namedVacuumVolumes = "";
   markAsCollimator = false;
   spec = "";
   cavityModel = "";
+  cavityFieldType = "constantinz";
   
   dicomDataFile = "";
   dicomDataPath = "";

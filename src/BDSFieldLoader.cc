@@ -36,6 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArrayOperatorValueReflect.hh"
 #include "BDSArrayOperatorValueReflectDipoleXY.hh"
 #include "BDSArrayOperatorValueReflectDipoleY.hh"
+#include "BDSArrayOperatorValueReflectQuadrupoleXY.hh"
+#include "BDSArrayOperatorValueReflectSolenoidZ.hh"
 #include "BDSArrayOperatorValueV.hh"
 #include "BDSArrayReflectionType.hh"
 #include "BDSDebug.hh"
@@ -194,18 +196,18 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
 									      info.BRho());
       
       delete tempField; // clear up
-      
-      G4double ratio = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
+
+      G4double calculatedNumber = (*calculatedStrengths)[scalingKey];
+      G4double ratio = (*scalingStrength)[scalingKey] / calculatedNumber;
       if (!std::isnormal(ratio))
         {
           G4cout << __METHOD_NAME__ << "invalid ratio detected (" << ratio << ") setting to 1.0" << G4endl;
           ratio = 1;
         }
       G4double newScale = result->Scaling() * ratio;
-#ifdef BDSDEBUG
-      G4cout << "Ratio of supplied strength to calculated map strength: " << ratio << G4endl;
-      G4cout << "New scale factor (inc. units): " << newScale << G4endl;
-#endif
+      G4cout << "autoScale> Calculated " << scalingKey << " = " << calculatedNumber << G4endl;
+      G4cout << "autoScale> Ratio of supplied strength to calculated map strength: " << ratio << G4endl;
+      G4cout << "autoScale> New overall scaling factor: " << bScaling*ratio << G4endl;
       result->SetScaling(newScale);
       delete calculatedStrengths;
     }
@@ -671,17 +673,22 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
 	    valueOperators.emplace_back(new BDSArrayOperatorValueReflectDipoleY());
 	    break;
 	  }
-  case BDSArrayReflectionType::reflectyzdipole:
-    {
-      indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true, false, false, false}, arrayInfo));
-      valueOperators.emplace_back(new BDSArrayOperatorValueReflect({true, false,  false, false}, arrayInfo));
-      break;
-    }
+	case BDSArrayReflectionType::reflectyzdipole:
+	  {
+	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true, false, false, false}, arrayInfo));
+	    valueOperators.emplace_back(new BDSArrayOperatorValueReflect({true, false,  false, false}, arrayInfo));
+	    break;
+	  }
+	case BDSArrayReflectionType::reflectzsolenoid:
+	  {
+	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({false, false, true,  false}, arrayInfo));
+	    valueOperators.emplace_back(new BDSArrayOperatorValueReflectSolenoidZ());
+	    break;
+	  }
 	case BDSArrayReflectionType::reflectxyquadrupole:
-	  {// TBC
-      throw BDSException(__METHOD_NAME__, "Not yet implemented");
-	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true,  false, true,  false}, arrayInfo));
-	    valueOperators.emplace_back(new BDSArrayOperatorValueReflect({false, true,  false, false}, arrayInfo));
+	  {
+	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true, true, false, false}, arrayInfo));
+	    valueOperators.emplace_back(new BDSArrayOperatorValueReflectQuadrupoleXY());
 	    break;
 	  }
 	default:
