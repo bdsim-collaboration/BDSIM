@@ -100,6 +100,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #if G4VERSION_NUMBER > 1039
 #include "G4ChannelingOptrMultiParticleChangeCrossSection.hh"
 #endif
+#if G4VERSION_NUMBER > 1109
+#include "G4HadronicParameters.hh"
+#endif
 
 #ifdef BDSCHECKUSERLIMITS
 #include "G4UserLimits.hh"
@@ -131,6 +134,13 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
   verbose       = globals->Verbose();
   checkOverlaps = globals->CheckOverlaps();
   circular      = globals->Circular();
+
+  if (globals->RestoreFTPFDiffractionForAGreater10())
+#if G4VERSION_NUMBER > 1109
+    {G4HadronicParameters::Instance()->EnableDiffDissociationForBGreater10();}
+#else
+    {BDS::Warning(__METHOD_NAME__, "\"restoreFTPFDiffractionForAGreater10\" is only available for Geant4 v11.1 and later");}
+#endif
   
   BDSTrajectoryPoint::dEThresholdForScattering = globals->DEThresholdForScattering();
   
