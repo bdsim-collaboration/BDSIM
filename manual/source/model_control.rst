@@ -2157,7 +2157,7 @@ These cannot be used in combination with any other physics processes.
 .. note:: The range cuts specified with BDSIM options to not apply and cannot be used with a 'complete'
 	  physics list.
 
-
+.. _physics-proton-diffraction:
           
 Proton Diffraction
 ^^^^^^^^^^^^^^^^^^
@@ -2196,15 +2196,18 @@ target of carbon. This example can be found in :code:`bdsim/examples/features/pr
             :width: 80%
             :align: center
 
-            The relative change in the total energy of protons immmediately after the target.
+            The relative change in the momentum of protons immmediately after the target.
 
 
 .. figure:: figures/proton-diffraction-comparison-zoom.pdf
             :width: 80%
             :align: center
 
-            The relative change in the total energy of protons immmediately after the target. For a
-            narrow range close to the nominal energy (:math:`$\Delta$P = 0`).
+            The relative change in the momentum of protons immmediately after the target. For a
+            narrow range close to the nominal momentum (:math:`\Delta P / P = 0`).
+
+.. note:: Although, this is referred to proton diffraction this applies to all nucleons
+          and therefore will affect ion-ion collisions too.
 
 
 .. _physics-biasing:
