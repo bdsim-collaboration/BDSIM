@@ -16,9 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSBEAMPIPEFACTORYRHOMBUS_H
-#define BDSBEAMPIPEFACTORYRHOMBUS_H
+#ifndef BDSAPERTURERHOMBUS_H
+#define BDSAPERTURERHOMBUS_H
 
+/*
 #include "BDSBeamPipeFactoryPoints.hh"
 
 namespace BDS
@@ -30,6 +31,7 @@ namespace BDS
     G4double aper3;
   };
 }
+*/
 
 /**
  * @brief Factory for rhombus aperture model beampipes.
@@ -44,7 +46,7 @@ namespace BDS
  * 
  * @author Laurie Nevay
  */
-
+/*
 class BDSBeamPipeFactoryRhombus: public BDSBeamPipeFactoryPoints
 {
 public:
@@ -80,5 +82,49 @@ private:
                                  G4double aper3,
                                  G4double distance);
 };
-  
+*/
+
+
+#include "BDSAperture.hh"
+#include "BDSTiltOffset.hh"
+
+#include "G4Types.hh"
+
+#include <array>
+
+class BDSExtent;
+class BDSPolygon;
+
+
+class BDSApertureRhombus: public BDSAperture
+{
+public:
+  BDSApertureRhombus() = delete;
+  BDSApertureRhombus(G4double xIn,
+                     G4double yIn,
+                     G4double cornerRadiusIn);
+  virtual ~BDSApertureRhombus(){;}
+
+  G4double x;
+  G4double y;
+  G4double cornerRadius;
+
+  G4bool    Equals(const BDSAperture* other) const override;
+  void      CheckInfoOK()                    const override;
+  G4double  RadiusToEncompass()              const override;
+  BDSExtent Extent()                         const override;
+  unsigned int MinimumNumberOfPoints()          const override {return 8;}
+
+  BDSApertureRhombus        operator+ (G4double number) const;
+  const BDSApertureRhombus& operator+=(G4double number);
+  BDSApertureRhombus        operator* (G4double number) const;
+  const BDSApertureRhombus& operator*=(G4double number);
+
+  BDSAperture* Plus(G4double number) const override;
+  BDSAperture* Times(G4double number) const override;
+  BDSAperture* Clone() const override;
+  std::array<G4double, 7> ApertureNumbers() const override;
+
+  BDSPolygon PolygonNPoints(unsigned int nPointsIn) const override;
+};
 #endif

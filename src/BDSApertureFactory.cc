@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureRectangle.hh"
 #include "BDSApertureRectCircle.hh"
 #include "BDSApertureRectEllipse.hh"
+#include "BDSApertureRhombus.hh"
 #include "BDSApertureType.hh"
 #include "BDSBeamPipeToApertureType.hh"
 #include "BDSBeamPipeType.hh"
@@ -157,6 +158,8 @@ BDSAperture* BDSApertureFactory::CreateAperture(BDSApertureType at,
       {result = new BDSApertureOctagon(a1, a2, a3, a4);              break;}
     case BDSApertureType::clicpcl:
       {result = new BDSApertureClicPCL(a1, a2, a3, a4, nPoints);     break;}
+    case BDSApertureType::rhombus:
+      {result = new BDSApertureRhombus(a1, a2, a4);     break;}
     case BDSApertureType::points:
       {
 	G4String pointsFile;

@@ -112,16 +112,16 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(const G4String& nameIn,
 void BDSBeamPipeFactoryBase::SetVisAttributes(G4Material* beamPipeMaterialIn,
                                               G4Material* vacuumMaterialIn)
 {
-    if (beamPipeLV)
+  auto* cfm = BDSColourFromMaterial::Instance();
+  if (beamPipeLV)
     {
-  G4Colour* c = BDSColourFromMaterial::Instance()->GetColourWithDefault(beamPipeMaterialIn,
-                                                             BDSColours::Instance()->GetColour("beampipe"));
-  G4VisAttributes* pipeVisAttr = new G4VisAttributes(*c);
-  pipeVisAttr->SetVisibility(true);
-  pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  allVisAttributes.insert(pipeVisAttr);
-  beamPipeLV->SetVisAttributes(pipeVisAttr);
-
+      G4Colour* c = cfm->GetColourWithDefault(beamPipeMaterialIn, BDSColours::Instance()->GetColour("beampipe"));
+      G4VisAttributes* pipeVisAttr = new G4VisAttributes(*c);
+      pipeVisAttr->SetVisibility(true);
+      pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+      allVisAttributes.insert(pipeVisAttr);
+      beamPipeLV->SetVisAttributes(pipeVisAttr);
+    } 
   if (vacuumMaterialIn->GetDensity() > (1e-3*CLHEP::gram/CLHEP::cm3))
     {
       G4Colour* cv = cfm->GetColour(vacuumMaterialIn);
@@ -133,7 +133,7 @@ void BDSBeamPipeFactoryBase::SetVisAttributes(G4Material* beamPipeMaterialIn,
     }
   else
     {vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());}
-
+  
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }
 

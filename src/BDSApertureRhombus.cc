@@ -16,16 +16,141 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSBeamPipeFactoryRhombus.hh"
-#include "BDSBeamPipeFactoryPoints.hh"
+#include "BDSApertureRhombus.hh"
+//#include "BDSBeamPipeFactoryPoints.hh"
 
 #include "G4TwoVector.hh"
 #include "G4Types.hh"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <vector>
 
+#include "BDSAperture.hh"
+#include "BDSApertureOctagon.hh"
+#include "BDSApertureType.hh"
+#include "BDSExtent.hh"
+#include "BDSPolygon.hh"
+#include "BDSTiltOffset.hh"
+#include "BDSUtilities.hh"
+
+BDSApertureRhombus::BDSApertureRhombus(G4double xIn,
+                                       G4double yIn,
+                                       G4double cornerRadiusIn):
+  BDSAperture(BDSApertureType::rhombus),
+  x(xIn),
+  y(yIn),
+  cornerRadius(cornerRadiusIn)
+{;}
+
+G4bool BDSApertureRhombus::Equals(const BDSAperture* other) const
+{
+  if (!other)
+    {return false;}
+  else if (other->apertureType != apertureType)
+    {return false;}
+  else if (other->tiltOffset != tiltOffset)
+    {return false;}
+  else
+    {
+      const BDSApertureRhombus* oc = dynamic_cast<const BDSApertureRhombus*>(other);
+      return BDS::DoublesAreEqual(oc->x, x) &&
+        BDS::DoublesAreEqual(oc->y, y) &&
+        BDS::DoublesAreEqual(oc->cornerRadius, cornerRadius);
+    }
+}
+
+void BDSApertureRhombus::CheckInfoOK() const
+{
+  CheckRequiredParametersSet(x, true, y, true, cornerRadius, true);
+  CheckParameterIsPositive(x, "x");
+  CheckParameterIsPositive(y, "y");
+  CheckParameterIsPositive(cornerRadius, "cornerRadius");
+}
+
+G4double BDSApertureRhombus::RadiusToEncompass() const
+{
+  return 0; //TBC
+  //return std::max(std::hypot(x,yEdge), std::hypot(xEdge,y)) + tiltOffset.Radius();
+}
+
+BDSExtent BDSApertureRhombus::Extent() const
+{
+  BDSExtent simpleExtent(x, y, 0);
+  return ExtentOffsetTilt(simpleExtent);
+}
+
+BDSApertureRhombus BDSApertureRhombus::operator+ (G4double number) const
+{
+  BDSApertureRhombus result = BDSApertureRhombus(*this);
+  result += number;
+  return result;
+}
+
+const BDSApertureRhombus& BDSApertureRhombus::operator+=(G4double number)
+{
+  x += number;
+  y += number;
+  cornerRadius += number;
+  return *this;
+}
+
+BDSApertureRhombus BDSApertureRhombus::operator* (G4double number) const
+{
+  BDSApertureRhombus result = BDSApertureRhombus(*this);
+  result *= number;
+  return result;
+}
+
+const BDSApertureRhombus& BDSApertureRhombus::operator*=(G4double number)
+{
+  x *= number;
+  y *= number;
+  cornerRadius *= number;
+  return *this;
+}
+
+BDSAperture* BDSApertureRhombus::Plus(G4double number) const
+{
+  BDSApertureRhombus result = (*this) + number;
+  return new BDSApertureRhombus(result);
+}
+
+BDSAperture* BDSApertureRhombus::Times(G4double number) const
+{
+  BDSApertureRhombus result = (*this) * number;
+  return new BDSApertureRhombus(result);
+}
+
+BDSAperture* BDSApertureRhombus::Clone() const
+{
+  return new BDSApertureRhombus(*this);
+}
+
+std::array<G4double,7> BDSApertureRhombus::ApertureNumbers() const
+{
+  return {x,y,cornerRadius,0,tiltOffset.OffsetX(),tiltOffset.OffsetY(),tiltOffset.Tilt()};
+}
+
+BDSPolygon BDSApertureRhombus::PolygonNPoints(unsigned int nPointsIn) const
+{
+  nPointsIn = BDS::NextMultiple(nPointsIn, 8); // ensure multiple of 8
+  std::vector<G4TwoVector> r;
+  /*
+  /// TODO deal with nPoints
+  r.emplace_back(G4TwoVector( x,      yEdge));
+  r.emplace_back(G4TwoVector( x,     -yEdge));
+  r.emplace_back(G4TwoVector( xEdge, -y));
+  r.emplace_back(G4TwoVector(-xEdge, -y));
+  r.emplace_back(G4TwoVector(-x,     -yEdge));
+  r.emplace_back(G4TwoVector(-x,      yEdge));
+  r.emplace_back(G4TwoVector(-xEdge,  y));
+  r.emplace_back(G4TwoVector( xEdge,  y));
+  */
+  return BDSPolygon(r);
+}
+/*
 BDSBeamPipeFactoryRhombus::BDSBeamPipeFactoryRhombus()
 {;}
 
@@ -107,7 +232,7 @@ BDS::ThreePoints BDSBeamPipeFactoryRhombus::ExpandRhombus(G4double aper1,
 void BDSBeamPipeFactoryRhombus::GeneratePoints(G4double aper1,
                                                G4double aper2,
                                                G4double aper3,
-                                               G4double /*aper4*/,
+                                               G4double aper4,
                                                G4double beamPipeThickness,
                                                G4int    pointsPerTwoPi)
 {
@@ -127,8 +252,8 @@ void BDSBeamPipeFactoryRhombus::GeneratePoints(G4double aper1,
 
 G4double BDSBeamPipeFactoryRhombus::CalculateIntersectionRadius(G4double aper1,
                                                                 G4double aper2,
-                                                                G4double /*aper3*/,
-                                                                G4double /*aper4*/,
+                                                                G4double aper3,
+                                                                G4double aper4,
                                                                 G4double beamPipeThickness)
 {
   G4double dThickness = beamPipeThickness + 2*lengthSafetyLarge;
@@ -137,3 +262,4 @@ G4double BDSBeamPipeFactoryRhombus::CalculateIntersectionRadius(G4double aper1,
   result += lengthSafetyLarge;
   return result;
 }
+*/
