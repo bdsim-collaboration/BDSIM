@@ -321,7 +321,7 @@ Bug Fixes
 
 **Link**
 
-* Fix nullptr materials for samplers in mass world. Have to explicity use function to make it valid for developers.
+* Fix nullptr materials for samplers in mass world. Have to explicitly use function to make it valid for developers.
 
 **Output**
 
@@ -352,6 +352,8 @@ Bug Fixes
 **Sensitivity**
 
 * Fix a bug where a sampler before a dump wouldn't record any output.
+* Fix a bug where when turning off sensitive outers of magnets, an 'outer' loaded from
+  an external geometry file such as GDML would remain sensitive.
 
 **Tracking**
 
