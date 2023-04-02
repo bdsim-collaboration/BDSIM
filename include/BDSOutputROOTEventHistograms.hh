@@ -138,7 +138,7 @@ private:
   std::vector<TH3D*> histograms3D;
   std::vector<BDSBH4DBase*> histograms4D;
 
-  ClassDef(BDSOutputROOTEventHistograms,3);
+  ClassDef(BDSOutputROOTEventHistograms,4);
 };
 
 #endif

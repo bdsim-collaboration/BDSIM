@@ -59,7 +59,7 @@ public:
 #endif
   virtual void Flush();
 
-  ClassDef(BDSOutputROOTEventCollimatorInfo, 1);
+  ClassDef(BDSOutputROOTEventCollimatorInfo, 2);
 };
 
 
