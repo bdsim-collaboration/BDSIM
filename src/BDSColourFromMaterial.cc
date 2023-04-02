@@ -75,6 +75,7 @@ BDSColourFromMaterial::BDSColourFromMaterial()
   defines["stainless-steel"] = defines["stainlesssteel"];
   defines["sulphur"]     = c->GetColour("yellow");
   defines["s"]           = defines["sulphur"];
+  defines["vacuum"]      = defines["air"];
   defines["water"]       = c->GetColour("water:0 102 204 0.5");
   
   // for older versions of Geant4 < V11 we have to use G4DataVector which
@@ -90,16 +91,23 @@ BDSColourFromMaterial::BDSColourFromMaterial()
   generalDensity = new G4PhysicsFreeVector(densities, values);
 }
 
-G4Colour* BDSColourFromMaterial::GetColour(const G4Material* material)
+G4Colour* BDSColourFromMaterial::GetColour(const G4Material* material,
+                                           const G4String& prefixToStripFromName)
 {
   G4String materialName = material->GetName();
   materialName = BDS::LowerCase(materialName);
+  //G4cout << "original material name " << materialName << G4endl;
 
   // strip off g4 so we don't have to define duplicates of everything
   std::string toErase = "g4_";
   size_t pos = materialName.find(toErase);
   if (pos != std::string::npos)
     {materialName.erase(pos, toErase.length());}
+  
+  // note, not all material are prefixed by preprocessor and might not contain that prefix string
+  G4String prefixToStripFromNameLower = BDS::LowerCase(prefixToStripFromName);
+  if (!prefixToStripFromName.empty() && BDS::StrContains(materialName, prefixToStripFromNameLower))
+    {materialName.erase(0, prefixToStripFromName.size());}
 
   auto search = defines.find(materialName);
   if (search != defines.end())

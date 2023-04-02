@@ -145,6 +145,7 @@ private:
   void AllParticles();
   
   /// @{ Physics constructor loader.
+  void AnnihiToMuMu();
   void ChargeExchange();
   void Cherenkov();
   void CutsAndLimits();
@@ -164,6 +165,7 @@ private:
   void Em4();
   void FTFPBERT();
   void FTFPBERTHP();
+  void GammaToMuMu();
   void HadronicElastic();
   void HadronicElasticD();
   void HadronicElasticH();
@@ -177,8 +179,8 @@ private:
   void IonEMDissociation();
   void IonINCLXX();
   void LaserWire();
-  void Radioactivation();
   void Muon();
+  void MuonInelastic();
   void NeutronTrackingCut();
   void Optical();
   void QGSPBERT();
@@ -203,6 +205,7 @@ private:
 #if G4VERSION_NUMBER > 1039
   void Channelling();
   void DNA();
+  void Radioactivation();
   void ShieldingLEND();
 #endif
   /// @}

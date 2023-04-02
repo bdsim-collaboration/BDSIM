@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "G4Version.hh"
+#if G4VERSION_NUMBER > 1039
 #include "BDSPhysicsRadioactivation.hh"
 
 #include "G4GenericIon.hh"
@@ -56,7 +58,7 @@ void BDSPhysicsRadioactivation::ConstructProcess()
   // initialise atomic deexcitation
   G4LossTableManager* man = G4LossTableManager::Instance();
   G4VAtomDeexcitation* ad = man->AtomDeexcitation();
-  if(!ad)
+  if (!ad)
     {
       G4EmParameters::Instance()->SetAuger(true);
       ad = new G4UAtomicDeexcitation();
@@ -68,3 +70,5 @@ void BDSPhysicsRadioactivation::ConstructProcess()
 
   SetActivated();
 }
+
+#endif

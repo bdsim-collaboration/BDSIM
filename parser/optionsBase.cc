@@ -1,4 +1,4 @@
-/* 
+/*
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
 University of London 2001 - 2022.
 
@@ -63,6 +63,8 @@ OptionsBase::OptionsBase()
   verboseSteppingPrimaryOnly      = false;
   
   verboseImportanceSampling = 0;
+
+  verboseSensitivity = false;
   
   circular              = false;
   seed                  = -1;
@@ -126,6 +128,7 @@ OptionsBase::OptionsBase()
   coilWidthFraction          = -1;
   coilHeightFraction         = -1;
   ignoreLocalMagnetGeometry  = false;
+  buildPoleFaceGeometry      = true;
 
   preprocessGDML       = true;
   preprocessGDMLSchema = true;
@@ -145,9 +148,9 @@ OptionsBase::OptionsBase()
   beampipeThickness    = 0.0025;
   apertureType         = "circular";
   aper1                = 0.025; // also beampipeRadius
-  aper2                = 0.025;
-  aper3                = 0.025;
-  aper4                = 0.025;
+  aper2                = 0;
+  aper3                = 0;
+  aper4                = 0;
   beampipeMaterial     = "StainlessSteel";
   ignoreLocalAperture  = false;
   
@@ -197,6 +200,7 @@ OptionsBase::OptionsBase()
   minimumKineticEnergy     = 0;
   minimumKineticEnergyTunnel = 0;
   minimumRange             = 0;
+  particlesToExcludeFromCuts = "";
   defaultRangeCut          = 1e-3;
   prodCutPhotons           = 1e-3;
   prodCutElectrons         = 1e-3;
@@ -210,6 +214,8 @@ OptionsBase::OptionsBase()
   useGammaToMuMu           = false;
   usePositronToMuMu        = false;
   usePositronToHadrons     = false;
+  restoreFTPFDiffractionForAGreater10 = true;
+
   beamPipeIsInfiniteAbsorber      = false;
   collimatorsAreInfiniteAbsorbers = false;
   tunnelIsInfiniteAbsorber        = false;
@@ -217,6 +223,8 @@ OptionsBase::OptionsBase()
   muonSplittingThresholdParentEk = 0;
   muonSplittingFactor2 = 1;
   muonSplittingThresholdParentEk2 = 0;
+  muonSplittingExcludeWeight1Particles = false;
+  muonSplittingExclusionWeight = 1e99;
   
   // biasing options
   defaultBiasVacuum        = "";
@@ -228,6 +236,7 @@ OptionsBase::OptionsBase()
 
   // tracking options
   integratorSet            = "bdsimmatrix";
+  fieldModulator           = "";
   lengthSafety             = 1e-9;   // be very careful adjusting this as it affects all the geometry
   lengthSafetyLarge        = 1e-6;   // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
@@ -243,7 +252,7 @@ OptionsBase::OptionsBase()
   backupStepperMomLimit    = 0.1;   // fraction of unit momentum
 
   // default value in Geant4, old value 0 - error must be greater than this
-  minimumEpsilonStep       = 5e-25;
+  minimumEpsilonStep       = 1e-12;   // used to be 1e-25 but since v11.1 this has to be greater than double precision
   maximumEpsilonStep       = 1e-7;    // default value in Geant4, old value 1e-7
   deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
   stopSecondaries          = false;
@@ -265,6 +274,7 @@ OptionsBase::OptionsBase()
   storeApertureImpactsIons   = false;
   storeApertureImpactsAll    = false;
   apertureImpactsMinimumKE   = 0;
+  storeCavityInfo            = true;
   storeCollimatorInfo        = false;
   storeCollimatorHits        = false;
   storeCollimatorHitsLinks   = false;
@@ -278,7 +288,9 @@ OptionsBase::OptionsBase()
   storeElossTunnel           = false;
   storeElossTunnelHistograms = false;
   storeElossWorld            = false;
+  storeElossWorldIntegral    = false;
   storeElossWorldContents    = false;
+  storeElossWorldContentsIntegral = false;
   storeElossTurn             = false;
   storeElossLinks            = false;
   storeElossLocal            = false;
@@ -299,6 +311,7 @@ OptionsBase::OptionsBase()
   storeTrajectoryStepPointLast   = false;
   storeTrajectoryParticle        = "";
   storeTrajectoryParticleID      = "";
+  storeTrajectorySecondaryParticles = false;
   storeTrajectoryEnergyThreshold = -1.0;
   storeTrajectorySamplerID       = "";
   storeTrajectoryELossSRange     = "";
@@ -332,6 +345,8 @@ OptionsBase::OptionsBase()
   storeModel               = true;
 
   samplersSplitLevel       = 0;
+  modelSplitLevel          = 1;
+  uprootCompatible         = 0;
 
   // circular options
   nturns                   = 1;
