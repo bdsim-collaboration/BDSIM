@@ -33,7 +33,7 @@ struct beampipetypes_def
 {
   enum type {circular, rectangular, elliptical, lhc,
 	     lhcdetailed, rectellipse, racetrack, octagonal,
-	     circularvacuum, clicpcl, none, pointsfile};
+	     circularvacuum, clicpcl, pointsfile, rhombus, none};
 };
 
 typedef BDSTypeSafeEnum<beampipetypes_def,int> BDSBeamPipeType;

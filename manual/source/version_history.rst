@@ -118,6 +118,8 @@ New Features
 * Nicer visualisation colours for charged particles. Green for neutrals is by default now at
   20% opacity as there are usually so many gammas.
 * New units: `mV`, `GV`, `nrad`, `THz`.
+* New :code:`verboseSensitivity` option to print out the sensitive detector by name at every
+  level of the hierarhcy.
 
 **Geometry**
 
@@ -139,9 +141,13 @@ New Features
   in the GDML file.
 * Beam pipe aperture may now be defined by a series of x,y points in a text file for an
   arbitrary shaped beam pipe. This may also be used as the default one.
+* New :code:`rhombus` aperture type.
 
 **Physics**
 
+* New option :code:`restoreFTPFDiffractionForAGreater10` to turn back on nucleon diffraction
+  in hadronic physics for Geant4 v11.1 onwards. See :ref:`physics-proton-diffraction`. This
+  is **on** by default.
 * New muon-splitting biasing scheme.
 * New "radioactivation" physics list.
 * New "gamma_to_mumu" physics list.
@@ -229,6 +235,7 @@ General Updates
 * The material print out (:code:`bdsim --materials`) now includes aliases.
 * When using `autoScale` for a field map attached to the yoke of a magnet, the calculated scaling
   factor is now always print out for feedback.
+* The visualiser command `/bds/beamline/list` now prints the S middle coordinate in metres.
 
 Bug Fixes
 ---------
@@ -314,10 +321,12 @@ Bug Fixes
 * Fixed issued where sections of an angled dipole were shorter than their containers, resulting in visual gaps
   in the geometry.
 * Compilation fixes in AWAKE module for Geant4.11.1.0.
+* Fix possible gap in angled geometry for `rectellipse` and `lhc` aperture types with strongly angled pole faces.
+* Fix erroneous error about beam pipe being too big for a magnet when no magnet geometry was selected.
 
 **Link**
 
-* Fix nullptr materials for samplers in mass world. Have to explicity use function to make it valid for developers.
+* Fix nullptr materials for samplers in mass world. Have to explicitly use function to make it valid for developers.
 
 **Output**
 
@@ -348,6 +357,8 @@ Bug Fixes
 **Sensitivity**
 
 * Fix a bug where a sampler before a dump wouldn't record any output.
+* Fix a bug where when turning off sensitive outers of magnets, an 'outer' loaded from
+  an external geometry file such as GDML would remain sensitive.
 
 **Tracking**
 

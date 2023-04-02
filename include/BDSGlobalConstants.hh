@@ -118,6 +118,7 @@ public:
   inline G4int    VerboseSteppingEventContinueFor() const {return G4int (options.verboseSteppingEventContinueFor);}
   inline G4bool   VerboseSteppingPrimaryOnly()      const {return G4bool(options.verboseSteppingPrimaryOnly);}
   inline G4int    VerboseImportanceSampling()       const {return G4int (options.verboseImportanceSampling);}
+  inline G4bool   VerboseSensitivity()              const {return G4bool(options.verboseSensitivity);}
   inline G4bool   Circular()               const {return G4bool  (options.circular);}
   inline G4int    Seed()                   const {return G4int   (options.seed);}
   inline G4bool   SeedSet()                const {return G4bool  (options.HasBeenSet("seed"));}
@@ -182,6 +183,7 @@ public:
   inline G4bool   UseGammaToMuMu()           const {return G4bool  (options.useGammaToMuMu);}
   inline G4bool   UsePositronToMuMu()        const {return G4bool  (options.usePositronToMuMu);}
   inline G4bool   UsePositronToHadrons()     const {return G4bool  (options.usePositronToHadrons);}
+  inline G4bool   RestoreFTPFDiffractionForAGreater10() const {return G4bool(options.restoreFTPFDiffractionForAGreater10);}
   inline G4bool   BeamPipeIsInfiniteAbsorber() const {return G4bool(options.beamPipeIsInfiniteAbsorber);}
   inline G4bool   CollimatorsAreInfiniteAbsorbers() const {return G4bool(options.collimatorsAreInfiniteAbsorbers);}
   inline G4bool   TunnelIsInfiniteAbsorber() const {return G4bool  (options.tunnelIsInfiniteAbsorber);}
