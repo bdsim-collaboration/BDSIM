@@ -1457,11 +1457,17 @@ A completely custom aperture can be used with `pointsfile`. See the notes below.
 +----------------------+--------------+-------------------+-----------------+----------------+------------------+
 | `pointsfile` (\*\*)  | 0            | NA                | NA              | NA             | NA               |
 +----------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `rhombus` (\+)       | 2-3          | x half-width      | y half-width    | radius of      | NA               |
+|                      |              |                   |                 | corners        |                  |
++----------------------+--------------+-------------------+-----------------+----------------+------------------+
 
 .. note:: (\*) :code:`lhcdetailed` aperture type will result in the :code:`beampipeMaterial` being ignored
 	  and LHC-specific materials at 2K being used.
 
 .. note:: (\*\*) For points file, use :code:`apertureType="pointsfile:pathtofile.dat:cm";`. See below.
+
+.. note:: (\+) For the rhombus aperture, `aper1` and `aper2` are the maximum extents if there was no radius
+          of curvature for the corners. Therefore, the curved edges 'eat' into the shape.
 
 These parameters can be set with the *option* command, as the default parameters
 and also on a per element basis that overrides the defaults for that specific element.

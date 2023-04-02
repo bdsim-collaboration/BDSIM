@@ -84,6 +84,8 @@ namespace GMAD
     /// @}
     
     int  verboseImportanceSampling; ////< Verbosity about importance sampling.
+
+    bool verboseSensitivity;
   
     bool circular;                 ///< Flag for circular machine
     int  seed;                     ///< The seed value for the random number generator
@@ -255,6 +257,8 @@ namespace GMAD
     bool     useGammaToMuMu;
     bool     usePositronToMuMu;
     bool     usePositronToHadrons;
+    bool     restoreFTPFDiffractionForAGreater10;
+
     bool     beamPipeIsInfiniteAbsorber;
     bool     collimatorsAreInfiniteAbsorbers;
     bool     tunnelIsInfiniteAbsorber;
@@ -326,7 +330,9 @@ namespace GMAD
     bool        storeElossTunnel;
     bool        storeElossTunnelHistograms;
     bool        storeElossWorld;
+    bool        storeElossWorldIntegral;
     bool        storeElossWorldContents;
+    bool        storeElossWorldContentsIntegral;
     bool        storeElossTurn;
     bool        storeElossLinks;
     bool        storeElossLocal;
@@ -347,6 +353,7 @@ namespace GMAD
     bool        storeTrajectoryStepPointLast;
     std::string storeTrajectoryParticle;
     std::string storeTrajectoryParticleID;
+    bool        storeTrajectorySecondaryParticles;
     double      storeTrajectoryEnergyThreshold;
     std::string storeTrajectorySamplerID;
     std::string storeTrajectoryELossSRange;

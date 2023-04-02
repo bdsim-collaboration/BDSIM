@@ -207,6 +207,7 @@ The following elements may be defined
 * `kicker`_
 * `tkicker`_
 * `rf`_
+* :ref:`component-rfx-rfy`
 * `target`_
 * `rcol`_
 * `jcol`_
@@ -1077,6 +1078,8 @@ Pill-box field example::
 Elliptical SRF cavity geometry is also provided and may be specified by use of another
 'cavity' object in the parser. This cavity object can then be attached to an `rf`
 object by name. Details can be found in :ref:`cavity-geometry-parameters`.
+
+.. _component-rfx-rfy:
 
 rfx \& rfy
 ^^^^^^^^^^

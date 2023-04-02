@@ -516,10 +516,10 @@ BDSOutputROOTEventHeader
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+------------------------+--------------------------+---------------------------------------+
-| **Variable Name**      | **Type**                 | **Description**                       |
-+========================+==========================+=======================================+
-| bdsimVersion           | std::string              | Version of BDSIM used                 |
++---------------------------+--------------------------+---------------------------------------+
+| **Variable Name**         | **Type**                 | **Description**                       |
++===========================+==========================+=======================================+
+| bdsimVersion              | std::string              | Version of BDSIM used                 |
 +---------------------------+--------------------------+---------------------------------------+
 | geant4Version             | std::string              | Version of Geant4 used                |
 +---------------------------+--------------------------+---------------------------------------+
@@ -1017,7 +1017,10 @@ different value per-event run in BDSIM.
 * (\*) This is an optional branch that may not be present if its storage is turned off. See the option that
   matches the name of the branch.
 * ElossWorldContents is only included if the option :code:`storeElossWorldContents` is turned on
-  or importance sampling is used.
+  or importance sampling is used. It is possible to store only the integral in the Summary branch
+  using the options :code:`storeElossWorldContentsIntegral` and :code:`storeElossWorldIntegral`
+  without the corresponding options :code:`storeElossWorldContents` and :code:`storeElossWorld`,
+  which avoids the large file size from the individual energy deposition hits.
 * (\*\*) COLL_xxxx is only added per collimator when one of the options :code:`storeCollimatorInfo`,
   :code:`storeCollimatorHits`, :code:`storeCollimatorHitsIons`, :code:`storeCollimatorHitsAll` is used.
 
@@ -1160,8 +1163,12 @@ BDSOutputROOTEventInfo
 .. note:: :code:`energyDepositedVacuum` will only be non-zero if the option :code:`storeElossVacuum`
 	  is on which is off by default.
 
-.. note:: :code:`energyDepositedWorld` will only be non-zero if the option :code:`storeElossWorld`
-	  is on which is off by default.
+.. note:: :code:`energyDepositedWorld` will only be non-zero if **either** the options :code:`storeElossWorld`
+	  or :code:`storeElossWorldIntegral` are on which are off by default. If :code:`storeElossWorldIntegral`
+          is used, the energy deposition hits will be generated but won't be written to file to save space.
+          Similarly, the option :code:`storeElossWorldContentsIntegral` can be used to store the integral
+          only in the event summary of the energy deposition in the world daughter volumes when the
+          an externally provided world volume is used.
 
 .. note:: :code:`energyWorldExit` will only be non-zero if Geant4.10.3 or later is used as well
 	  as the option :code:`storeElossWorld` is on that is off by default.
@@ -1348,7 +1355,7 @@ This is the first (0th) trajectory for each event and the energy deposited of al
 +==========================+=====================================+=========================================================+
 | n                        | int                                 | The number of trajectories stored for this event        |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| filters                  | std::bitset<9>                      | Bits (0 or 1) representing which filters this           |
+| filters                  | std::bitset<10>                     | Bits (0 or 1) representing which filters this           |
 |                          |                                     | particular trajectory matched. See the header for their |
 |                          |                                     | description.                                            |
 +--------------------------+-------------------------------------+---------------------------------------------------------+

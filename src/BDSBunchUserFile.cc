@@ -358,6 +358,7 @@ void BDSBunchUserFile<T>::Initialise()
   auto g = BDSGlobalConstants::Instance();
   G4bool nGenerateHasBeenSet = g->NGenerateSet();
   G4int nEventsPerLoop = (G4int)(nLinesValidData - nlinesSkip);
+  nEventsInFile = nEventsPerLoop;
   G4int nAvailable     = nEventsPerLoop * distrFileLoopNTimes;
   G4int nGenerate = g->NGenerate();
   if (matchDistrFileLength)

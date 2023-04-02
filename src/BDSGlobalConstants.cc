@@ -148,6 +148,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   trajectoryFiltersSet[BDSTrajectoryFilter::elossSRange]     = options.HasBeenSet("storeTrajectoryElossSRange");
   trajectoryFiltersSet[BDSTrajectoryFilter::minimumZ]        = options.HasBeenSet("trajCutGTZ");
   trajectoryFiltersSet[BDSTrajectoryFilter::maximumR]        = options.HasBeenSet("trajCutLTR");
+  trajectoryFiltersSet[BDSTrajectoryFilter::secondary]       = options.HasBeenSet("storeTrajectorySecondaryParticles");
 
   if (StoreMinimalData())
     {
