@@ -338,6 +338,7 @@ void Options::PublishMembers()
   publish("useGammaToMuMu",              &Options::useGammaToMuMu);
   publish("usePositronToMuMu",           &Options::usePositronToMuMu);
   publish("usePositronToHadrons",        &Options::usePositronToHadrons);
+  publish("restoreFTPFDiffractionForAGreater10", &Options::restoreFTPFDiffractionForAGreater10);
   publish("beamPipeIsInfiniteAbsorber",  &Options::beamPipeIsInfiniteAbsorber);
   publish("collimatorsAreInfiniteAbsorbers", &Options::collimatorsAreInfiniteAbsorbers);
   publish("tunnelIsInfiniteAbsorber",        &Options::tunnelIsInfiniteAbsorber);

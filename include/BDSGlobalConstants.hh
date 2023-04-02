@@ -183,6 +183,7 @@ public:
   inline G4bool   UseGammaToMuMu()           const {return G4bool  (options.useGammaToMuMu);}
   inline G4bool   UsePositronToMuMu()        const {return G4bool  (options.usePositronToMuMu);}
   inline G4bool   UsePositronToHadrons()     const {return G4bool  (options.usePositronToHadrons);}
+  inline G4bool   RestoreFTPFDiffractionForAGreater10() const {return G4bool(options.restoreFTPFDiffractionForAGreater10);}
   inline G4bool   BeamPipeIsInfiniteAbsorber() const {return G4bool(options.beamPipeIsInfiniteAbsorber);}
   inline G4bool   CollimatorsAreInfiniteAbsorbers() const {return G4bool(options.collimatorsAreInfiniteAbsorbers);}
   inline G4bool   TunnelIsInfiniteAbsorber() const {return G4bool  (options.tunnelIsInfiniteAbsorber);}
