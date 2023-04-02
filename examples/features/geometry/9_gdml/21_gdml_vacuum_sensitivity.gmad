@@ -1,4 +1,4 @@
-e1: element, geometry="gdml:sensitive3.gdml", l=0.21*m, namedVacuumVolumes="orb_0_lv orb_2_lv orb_3_lv";
+e1: element, geometry="gdml:sensitive3.gdml", l=110*mm, namedVacuumVolumes="box_0_lv box_2_lv box_4_lv";
 
 l1: line = (e1);
 use,period=l1;
@@ -8,4 +8,9 @@ beam, particle="e-",
 
 option, physicsList="em",
         minimumKineticEnergy=10*MeV,
-        elossHistoBinWidth=0.3*cm;
+        elossHistoBinWidth=10*mm,
+        storeElossVacuumHistograms=1;
+
+option, verboseSensitivity=1;
+
+option, stopSecondaries=1;
