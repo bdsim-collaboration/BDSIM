@@ -144,13 +144,16 @@ void BDSGeometryFactorySQL::CleanUpSQL()
 }
 
 BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
-						  G4String fileName,
-						  std::map<G4String, G4Colour*>* colourMapping,
-						  G4bool                   autoColour,
-						  G4double                 suggestedLength,
-						  G4double                 suggestedHorizontalWidth,
-						  std::vector<G4String>* /*vacuumBiasVolumeNames*/,
-						  G4UserLimits*          /*userLimitsToAttachToAllLVs*/)
+                                                  G4String fileName,
+                                                  std::map<G4String, G4Colour*>* colourMapping,
+                                                  G4bool                   autoColour,
+                                                  G4double                 suggestedLength,
+                                                  G4double                 suggestedHorizontalWidth,
+                                                  std::vector<G4String>* /*namedVolumeNames*/,
+                                                  G4bool                 /*makeSensitive*/,
+                                                  BDSSDType              /*sensitivityType*/,
+                                                  BDSSDType              /*vacuumSensitivityType*/,
+                                                  G4UserLimits*          /*userLimitsToAttachToAllLVs*/)
 {
   CleanUp();
   

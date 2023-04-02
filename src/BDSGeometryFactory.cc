@@ -92,6 +92,7 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String               co
                                                        std::vector<G4String>* namedVacuumVolumes,
                                                        G4bool                 makeSensitive,
                                                        BDSSDType              sensitivityType,
+                                                       BDSSDType              vacuumSensitivityType,
                                                        G4bool                 stripOuterVolumeAndMakeAssembly,
                                                        G4UserLimits*          userLimitsToAttachToAllLVs,
                                                        G4bool                 dontReloadGeometry)
@@ -137,16 +138,16 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String               co
                                                suggestedLength,
                                                suggestedHorizontalWidth,
                                                namedVacuumVolumes,
+                                               makeSensitive,
+                                               sensitivityType,
+                                               vacuumSensitivityType,
                                                userLimitsToAttachToAllLVs);
   
   if (result)
     {
       if (stripOuterVolumeAndMakeAssembly)
         {result->StripOuterAndMakeAssemblyVolume();}
-      // Set all volumes to be sensitive.
-      if (makeSensitive)
-        {result->MakeAllVolumesSensitive(sensitivityType);}
-  
+
       // cache using optionally modified name
       auto key = std::make_pair((std::string)searchName, componentName);
       registry[key] = result;

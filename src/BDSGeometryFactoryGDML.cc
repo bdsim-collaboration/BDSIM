@@ -60,6 +60,9 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String               compon
                                                    G4double             /*suggestedLength*/,
                                                    G4double             /*suggestedHorizontalWidth*/,
                                                    std::vector<G4String>* namedVacuumVolumes,
+                                                   G4bool                 makeSensitive,
+                                                   BDSSDType              sensitivityType,
+                                                   BDSSDType              vacuumSensitivityType,
                                                    G4UserLimits*          userLimitsToAttachToAllLVs)
 {
   CleanUp();
@@ -169,6 +172,16 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String               compon
   result->RegisterPhysicalVolume(pvsGDML);
   result->RegisterVisAttributes(visesGDML);
   result->RegisterVacuumVolumes(GetVolumes(lvsGDML, namedVacuumVolumes, preprocessGDML, componentName));
+
+  if (makeSensitive)
+    {
+      const auto &vacuumVolumes = result->VacuumVolumes();
+      ApplySensitivity(result,
+                       result->GetAllLogicalVolumes(),
+                       sensitivityType,
+                       vacuumVolumes,
+                       vacuumSensitivityType);
+    }
   
   delete parser;
   return result;

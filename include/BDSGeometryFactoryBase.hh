@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSExtent.hh"
 #include "BDSFactoryBase.hh"
+#include "BDSSDType.hh"
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
@@ -52,13 +53,16 @@ public:
 
   /// Main method to load and construct geometry.
   virtual BDSGeometryExternal* Build(G4String componentName,
-				     G4String fileName,
-				     std::map<G4String, G4Colour*>* colourMapping    = nullptr,
-				     G4bool                 autoColour               = true,
-				     G4double               suggestedLength          = 0,
-				     G4double               suggestedHorizontalWidth = 0,
-				     std::vector<G4String>* vacuumBiasVolumeNames    = nullptr,
-				     G4UserLimits*          userLimitsToAttachToAllLVs = nullptr) = 0;
+                                     G4String fileName,
+                                     std::map<G4String, G4Colour*>* colourMapping    = nullptr,
+                                     G4bool                 autoColour               = true,
+                                     G4double               suggestedLength          = 0,
+                                     G4double               suggestedHorizontalWidth = 0,
+                                     std::vector<G4String>* vacuumBiasVolumeNames    = nullptr,
+                                     G4bool                 makeSensitive            = true,
+                                     BDSSDType              sensitivityType          = BDSSDType::energydep,
+                                     BDSSDType              vacuumSensitivityType    = BDSSDType::energydepvacuum,
+                                     G4UserLimits*          userLimitsToAttachToAllLVs = nullptr) = 0;
 
   /// Apply a colour mapping to a set of logical volumes.  This applies a colour from the map
   /// if the key value is found as a substring or whole part of the logical volume name. Ie
@@ -67,13 +71,20 @@ public:
   /// same colour) and returns those constructed. Map is searched through so key order gives
   /// precedence order.
   virtual std::set<G4VisAttributes*> ApplyColourMapping(std::set<G4LogicalVolume*>&    lvs,
-							std::map<G4String, G4Colour*>* mapping,
-							G4bool                         autoColour,
+                                                        std::map<G4String, G4Colour*>* mapping,
+                                                        G4bool                         autoColour,
                                                         const G4String&                preprocessPrefix = "");
 
   /// Attach a set of user limits to every logical volume supplied.
   virtual void ApplyUserLimits(const std::set<G4LogicalVolume*>& lvsIn,
-			       G4UserLimits* userLimits);
+                               G4UserLimits* userLimits);
+
+  /// Attach the relevant general and vacuum sensitivity to each volume.
+  virtual void ApplySensitivity(BDSGeometryExternal* result,
+                                const std::set<G4LogicalVolume*>& allLogicalVolumes,
+                                BDSSDType generalSensitivity,
+                                const std::set<G4LogicalVolume*>& vacuumLogicalVolumes,
+                                BDSSDType vacuumSensitivity);
 
 protected:
   /// Virtual clean up that derived classes can override that calls CleanUpBase().

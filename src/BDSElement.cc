@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
+#include "BDSSDType.hh"
 
 #include "G4String.hh"
 #include "G4Types.hh"
@@ -71,11 +72,17 @@ void BDSElement::BuildContainerLogicalVolume()
   // factory and built and attached in the Initialise() method of the base class. However, before Initialise()
   // is called, the member fieldInfo will be set. We pass it in here to make sure we don't reuse the same
   // geometry when a different field is required.
-  geometry = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName,
-                                                           nullptr, autoColourGeometry,
-                                                           chordLength, horizontalWidth,
-                                                           &namedVacuumVolumes, true,
-                                                           sensitivityToAttach, stripOuterVolume,
+  geometry = BDSGeometryFactory::Instance()->BuildGeometry(name,
+                                                           geometryFileName,
+                                                           nullptr,
+                                                           autoColourGeometry,
+                                                           chordLength,
+                                                           horizontalWidth,
+                                                           &namedVacuumVolumes,
+                                                           true,
+                                                           sensitivityToAttach,
+                                                           BDSSDType::energydepvacuum,
+                                                           stripOuterVolume,
                                                            userLimits);
   
   if (!geometry)

@@ -607,7 +607,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
                                                                                 0, 0,
                                                                                 &namedWorldVacuumVolumes,
                                                                                 true,
-                                                                                BDSSDType::energydepworldcontents);
+                                                                                BDSSDType::energydepworldcontents,
+                                                                                BDSSDType::energydepvacuum);
       
       // get list of 'material' and 'vacuum' volumes for possible biasing of this geometry
       worldVacuumLogicalVolumes = geom->VacuumVolumes();
