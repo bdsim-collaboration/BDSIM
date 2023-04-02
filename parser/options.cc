@@ -192,6 +192,7 @@ void Options::PublishMembers()
   publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
   publish("verbose_G4stepping",    &Options::verboseSteppingLevel); // to be compatible with exec options
   publish("verboseImportanceSampling", &Options::verboseImportanceSampling);
+  publish("verboseSensitivity",    &Options::verboseSensitivity);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
   publish("randomEngine",          &Options::randomEngine);

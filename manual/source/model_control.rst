@@ -3625,6 +3625,9 @@ The options listed below are list roughly in terms of the simulation hierarchy.
 | verboseTrackingLevel             | integer  | (0-5) level of Geant4 tracking level print out. The same          |
 |                                  |          | as `-\\-verbose_G4tracking=X` executable option.                  |
 +----------------------------------+----------+-------------------------------------------------------------------+
+| verboseSensitivity               | Boolean  | If true, print out the name of the sensitivte detector attached   |
+|                                  |          | to every single volume in the model once fully constructed.       |
++----------------------------------+----------+-------------------------------------------------------------------+
 
 Examples: ::
 

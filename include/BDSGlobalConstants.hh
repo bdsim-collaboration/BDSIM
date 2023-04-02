@@ -118,6 +118,7 @@ public:
   inline G4int    VerboseSteppingEventContinueFor() const {return G4int (options.verboseSteppingEventContinueFor);}
   inline G4bool   VerboseSteppingPrimaryOnly()      const {return G4bool(options.verboseSteppingPrimaryOnly);}
   inline G4int    VerboseImportanceSampling()       const {return G4int (options.verboseImportanceSampling);}
+  inline G4bool   VerboseSensitivity()              const {return G4bool(options.verboseSensitivity);}
   inline G4bool   Circular()               const {return G4bool  (options.circular);}
   inline G4int    Seed()                   const {return G4int   (options.seed);}
   inline G4bool   SeedSet()                const {return G4bool  (options.HasBeenSet("seed"));}

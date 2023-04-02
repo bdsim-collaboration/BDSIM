@@ -258,6 +258,8 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
     {G4cout << __METHOD_NAME__ << "detector Construction done" << G4endl;}
   
   fieldQueries = BDSDetectorConstruction::PrepareFieldQueries(mainBeamLine);
+  if (BDSGlobalConstants::Instance()->VerboseSensitivity())
+    {VerboseSensitivity();}
 
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "printing material table" << G4endl;
@@ -1474,3 +1476,28 @@ void BDSDetectorConstruction::PrintUserLimitsPV(const G4VPhysicalVolume* aPV, G4
     {PrintUserLimitsPV(lv->GetDaughter(i), globalMinEK);}
 }
 #endif
+
+void BDSDetectorConstruction::VerboseSensitivity() const
+{
+  if (!worldLogicalVolume)
+    {return;}
+  G4cout << "\nSensitivity Summary:\n" << G4endl;
+  PrintSensitiveDetectorsOfLV(worldLogicalVolume, 0);
+  G4cout << "\n\n" << G4endl;
+}
+
+void BDSDetectorConstruction::PrintSensitiveDetectorsOfLV(const G4LogicalVolume* lv, G4int currentDepth) const
+{
+  for (G4int i = 0; i < currentDepth; i++)
+    {G4cout << "-> ";}
+  G4cout << lv->GetName() << " ";
+  auto sensitiveDetector = lv->GetSensitiveDetector();
+  if (sensitiveDetector)
+    {G4cout << sensitiveDetector->GetName();}
+  else
+    {G4cout << "none";}
+  G4cout << G4endl;
+
+  for (std::size_t i = 0; i < lv->GetNoDaughters(); i++)
+    {PrintSensitiveDetectorsOfLV(lv->GetDaughter(i)->GetLogicalVolume(), currentDepth+1);}
+}
