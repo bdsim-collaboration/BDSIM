@@ -3086,142 +3086,145 @@ Physics Processes
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+----------------------------------+-------------------------------------------------------+
-| **Option**                       | **Function**                                          |
-+==================================+=======================================================+
-| biasForWorldVacuum               | In the case of externally provided world geometry and |
-|                                  | 'vacuum' volumes are named using the option           |
-|                                  | `worldVacuumVolumeNames`, name(s) of bias object(s)   |
-|                                  | can be given for these volumes.                       |
-+----------------------------------+-------------------------------------------------------+
-| biasForWorldVolume               | Name(s) of bias objects to be attached to the world   |
-|                                  | logical volume only (i.e. not the daughters). White   |
-|                                  | space separate list in a string.                      |
-+----------------------------------+-------------------------------------------------------+
-| biasForWorldContents             | Exclusively in the case of externally provided world  |
-|                                  | geometry, the daughter volumes in the loaded world    |
-|                                  | volume can be biased with this option. White space    |
-|                                  | separated list in a string. Does not apply to world   |
-|                                  | volume itself.                                        |
-+----------------------------------+-------------------------------------------------------+
-| defaultBiasVacuum                | Name of bias object(s) to be attached to vacuum       |
-|                                  | volumes by default. White space separate list in a    |
-|                                  | string, such as "bias1 bias2".                        |
-+----------------------------------+-------------------------------------------------------+
-| defaultBiasMaterial              | Name of bias object to be attached to general         |
-|                                  | material of components outside the vacuum by default  |
-+----------------------------------+-------------------------------------------------------+
-| defaultRangeCut                  | The default predicted range at which a particle is    |
-|                                  | cut. Overwrites other production cuts unless these    |
-|                                  | are explicitly set (default 1e-3) [m].                |
-+----------------------------------+-------------------------------------------------------+
-| geant4PhysicsMacroFileName       | The name of a text macro file with commands that are  |
-|                                  | suitable for the Geant4 interpreter that will be      |
-|                                  | executed after the physics list is constructed but    |
-|                                  | before a run.                                         |
-+----------------------------------+-------------------------------------------------------+
-| g4PhysicsUseBDSIMCutsAndLimits   | If on, the maximum step length will be limited to     |
-|                                  | 110% of the component length - this makes the         |
-|                                  | tracking more robust and is the default with a        |
-|                                  | regular BDSIM physics list. The minimum kinetic       |
-|                                  | option is also obeyed. Default off.                   |
-+----------------------------------+-------------------------------------------------------+
-| g4PhysicsUseBDSIMRangeCuts       | If on, this will apply the BDSIM range cut lengths    |
-|                                  | to the Geant4 physics list used. This is off by       |
-|                                  | default.                                              |
-+----------------------------------+-------------------------------------------------------+
-| minimumKineticEnergy             | A particle below this energy will be killed and the   |
-|                                  | energy deposition recorded at that location. [GeV]    |
-|                                  | See also, `particlesToExcludeFromCuts`.               |
-+----------------------------------+-------------------------------------------------------+
-| minimumKineticEnergyTunnel       | A particle below this energy in any BDSIM-generated   |
-|                                  | tunnel sections will be killed and the energy         |
-|                                  | deposition recorded at that location [GeV]            |
-+----------------------------------+-------------------------------------------------------+
-| minimumRange                     | A particle that would not travel this range           |
-|                                  | (a distance) in the current material will be cut [m]  |
-+----------------------------------+-------------------------------------------------------+
-| muonSplittingFactor              | An integer of 1 or greater. Number of muons to split  |
-|                                  | a muon into (biasing) for select processes. See       |
-|                                  | physics biasing for an explanation. 1 = no effect.    |
-|                                  | 1-206 (depends on Geant4) is acceptable.              |
-+----------------------------------+-------------------------------------------------------+
-| neutronTimeLimit                 | Maximum allowed tracking time for a neutron when      |
-|                                  | using the `neutron_tracking_cut` physics list [s]     |
-+----------------------------------+-------------------------------------------------------+
-| neutronKineticEnergyLimit        | Minimum allowed energy for neutrons when using the    |
-|                                  | `neutron_tracking_cut` physics list [GeV]             |
-+----------------------------------+-------------------------------------------------------+
-| particlesToExcludeFromCuts       | A white space separated string containing PDG IDs for |
-|                                  | particles to be excluded from `minimumKineticEnergy`, |
-|                                  | `minimumRange`, `maximumTrackingTime`, and            |
-|                                  | `maximumTrackLength`. e.g. `"13 -13"`.                |
-+----------------------------------+-------------------------------------------------------+
-| physicsEnergyLimitLow            | Optional lower energy level for all physics models.   |
-|                                  | This is usually 990 eV by default in Geant4. The user |
-|                                  | may change this if required. Warning, this must       |
-|                                  | be used only if the user understands how this will    |
-|                                  | affect the running of Geant4. [GeV]                   |
-+----------------------------------+-------------------------------------------------------+
-| physicsEnergyLimitHigh (\*)      | Optional upper energy level for all physics models.   |
-|                                  | This is usually 100 TeV by default in Geant4. The     |
-|                                  | user may change this if required. Warning, this must  |
-|                                  | be used only if the user understands how this will    |
-|                                  | affect the running of Geant4. [GeV]                   |
-+----------------------------------+-------------------------------------------------------+
-| physicsList                      | Which physics lists to use - default tracking only    |
-+----------------------------------+-------------------------------------------------------+
-| physicsVerbose                   | Prints out all processes linked to primary particle   |
-|                                  | and all physics processes registered in general       |
-+----------------------------------+-------------------------------------------------------+
-| physicsVerbosity                 | Set the physics verbosity for Geant4 (0,1,2).         |
-+----------------------------------+-------------------------------------------------------+
-| prodCutPhotons                   | Standard overall production cuts for photons          |
-|                                  | (default 1e-3) [m]                                    |
-+----------------------------------+-------------------------------------------------------+
-| prodCutElectrons                 | Standard overall production cuts for electrons        |
-|                                  | (default 1e-3) [m]                                    |
-+----------------------------------+-------------------------------------------------------+
-| prodCutPositrons                 | Standard overall production cuts for positrons        |
-|                                  | (default 1e-3) [m]                                    |
-+----------------------------------+-------------------------------------------------------+
-| prodCutProtons                   | Standard overall production cuts for protons          |
-|                                  | (default 1e-3) [m]                                    |
-+----------------------------------+-------------------------------------------------------+
-| stopSecondaries                  | Whether to stop secondaries or not (default = false)  |
-+----------------------------------+-------------------------------------------------------+
-| synchRadOn                       | Whether to use synchrotron radiation processes        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
-|                                  | should be killed or not (default = false)             |
-+----------------------------------+-------------------------------------------------------+
-| turnOnCerenkov                   | Whether to produce Cherenkov radiation                |
-+----------------------------------+-------------------------------------------------------+
-| useElectroNuclear                | Uses electro-nuclear processes when `em_extra` physics|
-|                                  | list is used. Default On. Requires Geant4.10.4 or     |
-|                                  | greater.                                              |
-+----------------------------------+-------------------------------------------------------+
-| useGammaToMuMu                   | Uses gamma to muon pair production process when using |
-|                                  | `em_extra` physics list is used. Default Off.         |
-|                                  | Requires Geant4.10.3 onwards.                         |
-+----------------------------------+-------------------------------------------------------+
-| useLENDGammaNuclear              | Uses the low-energy neutron data set, as provided by  |
-|                                  | the environmental variable `G4LENDDATA` when using    |
-|                                  | the `em_extra` physics list. Boolean. Available in    |
-|                                  | Geant4.10.4 onwards.                                  |
-+----------------------------------+-------------------------------------------------------+
-| useMuonNuclear                   | Uses muon-nuclear interaction processes when using    |
-|                                  | `em_extra` physics list. Default On. Requires         |
-|                                  | Geant4.10.2 onwards.                                  |
-+----------------------------------+-------------------------------------------------------+
-| usePositronToMuMu                | Uses muon pair production from positron annihilation  |
-|                                  | when using `em_extra` physics list. Default Off.      |
-|                                  | Requires Geant4.10.3 onwards.                         |
-+----------------------------------+-------------------------------------------------------+
-| usePositronToHadrons             | Uses hadron production from positron-electron         |
-|                                  | annihilation process when using `em_extra` physics    |
-|                                  | list. Default Off.  Requires Geant4.10.3 onwards.     |
-+----------------------------------+-------------------------------------------------------+
++-------------------------------------+-------------------------------------------------------+
+| **Option**                          | **Function**                                          |
++=====================================+=======================================================+
+| biasForWorldVacuum                  | In the case of externally provided world geometry and |
+|                                     | 'vacuum' volumes are named using the option           |
+|                                     | `worldVacuumVolumeNames`, name(s) of bias object(s)   |
+|                                     | can be given for these volumes.                       |
++-------------------------------------+-------------------------------------------------------+
+| biasForWorldVolume                  | Name(s) of bias objects to be attached to the world   |
+|                                     | logical volume only (i.e. not the daughters). White   |
+|                                     | space separate list in a string.                      |
++-------------------------------------+-------------------------------------------------------+
+| biasForWorldContents                | Exclusively in the case of externally provided world  |
+|                                     | geometry, the daughter volumes in the loaded world    |
+|                                     | volume can be biased with this option. White space    |
+|                                     | separated list in a string. Does not apply to world   |
+|                                     | volume itself.                                        |
++-------------------------------------+-------------------------------------------------------+
+| defaultBiasVacuum                   | Name of bias object(s) to be attached to vacuum       |
+|                                     | volumes by default. White space separate list in a    |
+|                                     | string, such as "bias1 bias2".                        |
++-------------------------------------+-------------------------------------------------------+
+| defaultBiasMaterial                 | Name of bias object to be attached to general         |
+|                                     | material of components outside the vacuum by default  |
++-------------------------------------+-------------------------------------------------------+
+| defaultRangeCut                     | The default predicted range at which a particle is    |
+|                                     | cut. Overwrites other production cuts unless these    |
+|                                     | are explicitly set (default 1e-3) [m].                |
++-------------------------------------+-------------------------------------------------------+
+| geant4PhysicsMacroFileName          | The name of a text macro file with commands that are  |
+|                                     | suitable for the Geant4 interpreter that will be      |
+|                                     | executed after the physics list is constructed but    |
+|                                     | before a run.                                         |
++-------------------------------------+-------------------------------------------------------+
+| g4PhysicsUseBDSIMCutsAndLimits      | If on, the maximum step length will be limited to     |
+|                                     | 110% of the component length - this makes the         |
+|                                     | tracking more robust and is the default with a        |
+|                                     | regular BDSIM physics list. The minimum kinetic       |
+|                                     | option is also obeyed. Default off.                   |
++-------------------------------------+-------------------------------------------------------+
+| g4PhysicsUseBDSIMRangeCuts          | If on, this will apply the BDSIM range cut lengths    |
+|                                     | to the Geant4 physics list used. This is off by       |
+|                                     | default.                                              |
++-------------------------------------+-------------------------------------------------------+
+| minimumKineticEnergy                | A particle below this energy will be killed and the   |
+|                                     | energy deposition recorded at that location. [GeV]    |
+|                                     | See also, `particlesToExcludeFromCuts`.               |
++-------------------------------------+-------------------------------------------------------+
+| minimumKineticEnergyTunnel          | A particle below this energy in any BDSIM-generated   |
+|                                     | tunnel sections will be killed and the energy         |
+|                                     | deposition recorded at that location [GeV]            |
++-------------------------------------+-------------------------------------------------------+
+| minimumRange                        | A particle that would not travel this range           |
+|                                     | (a distance) in the current material will be cut [m]  |
++-------------------------------------+-------------------------------------------------------+
+| muonSplittingFactor                 | An integer of 1 or greater. Number of muons to split  |
+|                                     | a muon into (biasing) for select processes. See       |
+|                                     | physics biasing for an explanation. 1 = no effect.    |
+|                                     | 1-206 (depends on Geant4) is acceptable.              |
++-------------------------------------+-------------------------------------------------------+
+| neutronTimeLimit                    | Maximum allowed tracking time for a neutron when      |
+|                                     | using the `neutron_tracking_cut` physics list [s]     |
++-------------------------------------+-------------------------------------------------------+
+| neutronKineticEnergyLimit           | Minimum allowed energy for neutrons when using the    |
+|                                     | `neutron_tracking_cut` physics list [GeV]             |
++-------------------------------------+-------------------------------------------------------+
+| particlesToExcludeFromCuts          | A white space separated string containing PDG IDs for |
+|                                     | particles to be excluded from `minimumKineticEnergy`, |
+|                                     | `minimumRange`, `maximumTrackingTime`, and            |
+|                                     | `maximumTrackLength`. e.g. `"13 -13"`.                |
++-------------------------------------+-------------------------------------------------------+
+| physicsEnergyLimitLow               | Optional lower energy level for all physics models.   |
+|                                     | This is usually 990 eV by default in Geant4. The user |
+|                                     | may change this if required. Warning, this must       |
+|                                     | be used only if the user understands how this will    |
+|                                     | affect the running of Geant4. [GeV]                   |
++-------------------------------------+-------------------------------------------------------+
+| physicsEnergyLimitHigh (\*)         | Optional upper energy level for all physics models.   |
+|                                     | This is usually 100 TeV by default in Geant4. The     |
+|                                     | user may change this if required. Warning, this must  |
+|                                     | be used only if the user understands how this will    |
+|                                     | affect the running of Geant4. [GeV]                   |
++-------------------------------------+-------------------------------------------------------+
+| physicsList                         | Which physics lists to use - default tracking only    |
++-------------------------------------+-------------------------------------------------------+
+| physicsVerbose                      | Prints out all processes linked to primary particle   |
+|                                     | and all physics processes registered in general       |
++-------------------------------------+-------------------------------------------------------+
+| physicsVerbosity                    | Set the physics verbosity for Geant4 (0,1,2).         |
++-------------------------------------+-------------------------------------------------------+
+| prodCutPhotons                      | Standard overall production cuts for photons          |
+|                                     | (default 1e-3) [m]                                    |
++-------------------------------------+-------------------------------------------------------+
+| prodCutElectrons                    | Standard overall production cuts for electrons        |
+|                                     | (default 1e-3) [m]                                    |
++-------------------------------------+-------------------------------------------------------+
+| prodCutPositrons                    | Standard overall production cuts for positrons        |
+|                                     | (default 1e-3) [m]                                    |
++-------------------------------------+-------------------------------------------------------+
+| prodCutProtons                      | Standard overall production cuts for protons          |
+|                                     | (default 1e-3) [m]                                    |
++-------------------------------------+-------------------------------------------------------+
+| restoreFTPFDiffractionForAGreater10 | Turn back on diffractive outcomes of hadronic         |
+|                                     | models. Default is **on**.                            |
++-------------------------------------+-------------------------------------------------------+
+| stopSecondaries                     | Whether to stop secondaries or not (default = false)  |
++-------------------------------------+-------------------------------------------------------+
+| synchRadOn                          | Whether to use synchrotron radiation processes        |
++-------------------------------------+-------------------------------------------------------+
+| tunnelIsInfiniteAbsorber            | Whether all particles entering the tunnel material    |
+|                                     | should be killed or not (default = false)             |
++-------------------------------------+-------------------------------------------------------+
+| turnOnCerenkov                      | Whether to produce Cherenkov radiation                |
++-------------------------------------+-------------------------------------------------------+
+| useElectroNuclear                   | Uses electro-nuclear processes when `em_extra` physics|
+|                                     | list is used. Default On. Requires Geant4.10.4 or     |
+|                                     | greater.                                              |
++-------------------------------------+-------------------------------------------------------+
+| useGammaToMuMu                      | Uses gamma to muon pair production process when using |
+|                                     | `em_extra` physics list is used. Default Off.         |
+|                                     | Requires Geant4.10.3 onwards.                         |
++-------------------------------------+-------------------------------------------------------+
+| useLENDGammaNuclear                 | Uses the low-energy neutron data set, as provided by  |
+|                                     | the environmental variable `G4LENDDATA` when using    |
+|                                     | the `em_extra` physics list. Boolean. Available in    |
+|                                     | Geant4.10.4 onwards.                                  |
++-------------------------------------+-------------------------------------------------------+
+| useMuonNuclear                      | Uses muon-nuclear interaction processes when using    |
+|                                     | `em_extra` physics list. Default On. Requires         |
+|                                     | Geant4.10.2 onwards.                                  |
++-------------------------------------+-------------------------------------------------------+
+| usePositronToMuMu                   | Uses muon pair production from positron annihilation  |
+|                                     | when using `em_extra` physics list. Default Off.      |
+|                                     | Requires Geant4.10.3 onwards.                         |
++-------------------------------------+-------------------------------------------------------+
+| usePositronToHadrons                | Uses hadron production from positron-electron         |
+|                                     | annihilation process when using `em_extra` physics    |
+|                                     | list. Default Off.  Requires Geant4.10.3 onwards.     |
++-------------------------------------+-------------------------------------------------------+
 
 * (\*) If using Geant4.10.7 or upwards, this will also set the high energy limit for the
   hadronic physics too. For previous versions of Geant4 it is required to edit the Geant4

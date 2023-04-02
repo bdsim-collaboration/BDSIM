@@ -146,7 +146,8 @@ New Features
 **Physics**
 
 * New option :code:`restoreFTPFDiffractionForAGreater10` to turn back on nucleon diffraction
-  in hadronic physics for Geant4 v11.1 onwards. See :ref:`physics-proton-diffraction`.
+  in hadronic physics for Geant4 v11.1 onwards. See :ref:`physics-proton-diffraction`. This
+  is **on** by default.
 * New muon-splitting biasing scheme.
 * New "radioactivation" physics list.
 * New "gamma_to_mumu" physics list.
