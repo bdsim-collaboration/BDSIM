@@ -50,13 +50,16 @@ public:
   /// Main interface overrides base class method to construct a file with
   /// optional colour mapping.
   virtual BDSGeometryExternal* Build(G4String componentName,
-				     G4String fileName,
-				     std::map<G4String, G4Colour*>* colourMapping    = nullptr,
-				     G4bool                 autoColour               = true,
-				     G4double               suggestedLength          = 0,
-				     G4double               suggestedHorizontalWidth = 0,
-				     std::vector<G4String>* namedVacuumVolumes       = nullptr,
-				     G4UserLimits*          userLimitsToAttachToAllLVs = nullptr);
+                                     G4String fileName,
+                                     std::map<G4String, G4Colour*>* colourMapping    = nullptr,
+                                     G4bool                 autoColour               = true,
+                                     G4double               suggestedLength          = 0,
+                                     G4double               suggestedHorizontalWidth = 0,
+                                     std::vector<G4String>* namedVacuumVolumes       = nullptr,
+                                     G4bool                 makeSensitive            = true,
+                                     BDSSDType              sensitivityType          = BDSSDType::energydep,
+                                     BDSSDType              vacuumSensitivityType    = BDSSDType::energydepvacuum,
+                                     G4UserLimits*          userLimitsToAttachToAllLVs = nullptr);
 
 protected:
   /// Use the GDML preprocessing scheme to prepare the preprocesseed volume names.

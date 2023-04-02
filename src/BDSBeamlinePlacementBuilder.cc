@@ -105,10 +105,12 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
                                                                     placement.geometryFile,
                                                                     nullptr,
                                                                     placement.autoColour,
-                                                                    0, 0,
+                                                                    0,
+                                                                    0,
                                                                     nullptr,
                                                                     placement.sensitive,
                                                                     BDSSDType::energydep,
+                                                                    BDSSDType::energydepvacuum,
                                                                     placement.stripOuterVolume,
                                                                     nullptr,
                                                                     placement.dontReloadGeometry);

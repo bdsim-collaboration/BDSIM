@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryBase.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSSDType.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
@@ -113,10 +114,30 @@ std::set<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::set<G
 }
 
 void BDSGeometryFactoryBase::ApplyUserLimits(const std::set<G4LogicalVolume*>& lvsIn,
-					     G4UserLimits* userLimits)
+                                             G4UserLimits* userLimits)
 {
   for (auto& lv : lvsIn)
     {lv->SetUserLimits(userLimits);}
+}
+
+void BDSGeometryFactoryBase::ApplySensitivity(BDSGeometryExternal* result,
+                                              const std::set<G4LogicalVolume*>& allLogicalVolumes,
+                                              BDSSDType generalSensitivity,
+                                              const std::set<G4LogicalVolume*>& vacuumLogicalVolumes,
+                                              BDSSDType vacuumSensitivity)
+{
+  std::map<G4LogicalVolume*, BDSSDType> sensitivityMapping;
+  std::set<G4LogicalVolume*> notVacuumVolumes;
+  std::set_difference(allLogicalVolumes.begin(),
+                      allLogicalVolumes.end(),
+                      vacuumLogicalVolumes.begin(),
+                      vacuumLogicalVolumes.end(),
+                      std::inserter(notVacuumVolumes, notVacuumVolumes.begin()));
+  for (auto lv : notVacuumVolumes)
+    {sensitivityMapping[lv] = generalSensitivity;}
+  for (auto lv : vacuumLogicalVolumes)
+    {sensitivityMapping[lv] = vacuumSensitivity;}
+  result->RegisterSensitiveVolume(sensitivityMapping);
 }
 
 void BDSGeometryFactoryBase::CleanUp()
