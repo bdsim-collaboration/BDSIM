@@ -6,4 +6,4 @@ use, period = l1;
 
 include options.gmad;
 
-option, ouptut="none";
+option, output="none";
