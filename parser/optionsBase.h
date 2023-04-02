@@ -84,6 +84,8 @@ namespace GMAD
     /// @}
     
     int  verboseImportanceSampling; ////< Verbosity about importance sampling.
+
+    bool verboseSensitivity;
   
     bool circular;                 ///< Flag for circular machine
     int  seed;                     ///< The seed value for the random number generator

@@ -63,6 +63,8 @@ OptionsBase::OptionsBase()
   verboseSteppingPrimaryOnly      = false;
   
   verboseImportanceSampling = 0;
+
+  verboseSensitivity = false;
   
   circular              = false;
   seed                  = -1;

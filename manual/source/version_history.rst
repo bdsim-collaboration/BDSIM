@@ -118,6 +118,8 @@ New Features
 * Nicer visualisation colours for charged particles. Green for neutrals is by default now at
   20% opacity as there are usually so many gammas.
 * New units: `mV`, `GV`, `nrad`, `THz`.
+* New :code:`verboseSensitivity` option to print out the sensitive detector by name at every
+  level of the hierarhcy.
 
 **Geometry**
 
