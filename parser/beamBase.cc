@@ -39,10 +39,16 @@ BeamBase::BeamBase()
   distrFile            = "";
   distrFileFormat      = "";
   distrFileFromExecOptions = false;
-  matchDistrFileLength = true;
+  distrFileMatchLength = true;
+  distrFileLoop        = false;
+  distrFileLoopNTimes  = 1;
   removeUnstableWithoutDecay = true;
   nlinesIgnore         = 0;
   nlinesSkip           = 0;
+  
+  bunchFrequency = 0;
+  bunchPeriod = 0;
+  eventsPerBunch = 0;
   
   X0  = 0.0;
   Y0  = 0.0;
@@ -114,11 +120,18 @@ BeamBase::BeamBase()
   haloNSigmaYOuter      = 1e9;
   haloXCutInner         = 0.0;
   haloYCutInner         = 0.0;
+  haloXCutOuter         = 1e9;
+  haloYCutOuter         = 1e9;
+  haloXpCutInner        = 0.0;
+  haloYpCutInner        = 0.0;
+  haloXpCutOuter        = 1e9;
+  haloYpCutOuter        = 1e9;
   haloPSWeightParameter = 1.0;
   haloPSWeightFunction  = "";
 
   offsetSampleMean = false;
-
+  
+  eventGeneratorNEventsSkip = 0;
   eventGeneratorMinX  = -1e6;
   eventGeneratorMaxX  =  1e6;
   eventGeneratorMinY  = -1e6;

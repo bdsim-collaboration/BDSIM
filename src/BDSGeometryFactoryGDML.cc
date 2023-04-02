@@ -53,14 +53,17 @@ class G4VSolid;
 BDSGeometryFactoryGDML::BDSGeometryFactoryGDML()
 {;}
 
-BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
-						   G4String fileName,
-						   std::map<G4String, G4Colour*>* mapping,
-						   G4bool                 autoColour,
-						   G4double             /*suggestedLength*/,
-						   G4double             /*suggestedHorizontalWidth*/,
-						   std::vector<G4String>* namedVacuumVolumes,
-						   G4UserLimits*          userLimitsToAttachToAllLVs)
+BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String               componentName,
+                                                   G4String               fileName,
+                                                   std::map<G4String, G4Colour*>* mapping,
+                                                   G4bool                 autoColour,
+                                                   G4double             /*suggestedLength*/,
+                                                   G4double             /*suggestedHorizontalWidth*/,
+                                                   std::vector<G4String>* namedVacuumVolumes,
+                                                   G4bool                 makeSensitive,
+                                                   BDSSDType              sensitivityType,
+                                                   BDSSDType              vacuumSensitivityType,
+                                                   G4UserLimits*          userLimitsToAttachToAllLVs)
 {
   CleanUp();
 
@@ -75,6 +78,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
     {processedFile = BDS::PreprocessGDMLSchemaOnly(fileName);} // use schema only method
   else // no processing
     {processedFile = fileName;}
+  G4String preprocessNameToStrip = preprocessGDML ? componentName+"_" : "";
   
   G4GDMLParser* parser = new G4GDMLParser();
   parser->SetOverlapCheck(BDSGlobalConstants::Instance()->CheckOverlaps());
@@ -95,7 +99,8 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   std::set<G4LogicalVolume*>   lvsGDML;
   std::map<G4String, G4Material*> materialsGDML;
   GetAllLogicalPhysicalAndMaterials(containerPV, pvsGDML, lvsGDML, materialsGDML);
-  BDSMaterials::Instance()->CacheMaterialsFromGDML(materialsGDML, componentName, preprocessGDML);
+  BDSMaterials::Instance()->CheckForConflictingMaterialsAfterLoad(fileName, componentName);
+  BDSMaterials::Instance()->CacheMaterialsFromGDML(materialsGDML);
 
   // load possible colours in auxiliary tags
   std::map<G4String, G4Colour*> gdmlColours;
@@ -104,26 +109,26 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
     {
       auto auxInfo = parser->GetVolumeAuxiliaryInformation(lv);
       for (const auto& af : auxInfo)
-	{
+        {
           if (af.type == "colour")
-	    {
-	      std::stringstream ss(af.value);
-	      std::vector<G4String> colVals((std::istream_iterator<G4String>(ss)), std::istream_iterator<G4String>());
-	      if (colVals.size() != 4)
-		{BDS::Warning(__METHOD_NAME__, "invalid number of colour values for logical volume " + lv->GetName());}
-	      G4String colourName = componentName + "_colour_"+std::to_string(iColour);
-	      iColour++;
-	      G4String colourString = colourName + ":";
-	      for (const auto& c : colVals)
-		{colourString += " " + c;}
-	      // false = don't normalie to 255 as already done so
-	      G4Colour* colour = BDSColours::Instance()->GetColour(colourString, false);
-	      gdmlColours[lv->GetName()] = colour;
-	    }
-	}
+            {
+              std::stringstream ss(af.value);
+              std::vector<G4String> colVals((std::istream_iterator<G4String>(ss)), std::istream_iterator<G4String>());
+              if (colVals.size() != 4)
+                {BDS::Warning(__METHOD_NAME__, "invalid number of colour values for logical volume " + lv->GetName());}
+              G4String colourName = componentName + "_colour_"+std::to_string(iColour);
+              iColour++;
+              G4String colourString = colourName + ":";
+              for (const auto& c : colVals)
+                {colourString += " " + c;}
+              // false = don't normalise to 255 as already done so
+              G4Colour* colour = BDSColours::Instance()->GetColour(colourString, false);
+              gdmlColours[lv->GetName()] = colour;
+            }
+        }
     }
 
-  G4cout << "Loaded GDML file \"" << fileName << "\" containing:" << G4endl;
+  G4cout << "Loaded GDML file \"" << processedFile << "\" containing:" << G4endl;
   G4cout << pvsGDML.size() << " physical volumes, and " << lvsGDML.size() << " logical volumes" << G4endl;
 
   // resolve loaded map with possible external map with minimal copying
@@ -143,7 +148,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   else
     {mappingToUse = mapping;}
   
-  auto visesGDML = ApplyColourMapping(lvsGDML, mappingToUse, autoColour);
+  auto visesGDML = ApplyColourMapping(lvsGDML, mappingToUse, autoColour, preprocessNameToStrip);
   if (deleteMap)
     {delete mappingToUse;}
   
@@ -151,7 +156,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   ApplyUserLimits(lvsGDML, ul);
   
   // make sure container is visible - Geant4 always makes the container invisible.
-  G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(containerLV->GetMaterial());
+  G4Colour* c = BDSColourFromMaterial::Instance()->GetColour(containerLV->GetMaterial(), preprocessNameToStrip);
   G4VisAttributes* vis = new G4VisAttributes(*c);
   vis->SetVisibility(true);
   visesGDML.insert(vis);
@@ -167,18 +172,28 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   result->RegisterPhysicalVolume(pvsGDML);
   result->RegisterVisAttributes(visesGDML);
   result->RegisterVacuumVolumes(GetVolumes(lvsGDML, namedVacuumVolumes, preprocessGDML, componentName));
+
+  if (makeSensitive)
+    {
+      const auto &vacuumVolumes = result->VacuumVolumes();
+      ApplySensitivity(result,
+                       result->GetAllLogicalVolumes(),
+                       sensitivityType,
+                       vacuumVolumes,
+                       vacuumSensitivityType);
+    }
   
   delete parser;
   return result;
 }
 
 G4String BDSGeometryFactoryGDML::PreprocessedName(const G4String& objectName,
-						  const G4String& acceleratorComponentName) const
+                                                  const G4String& acceleratorComponentName) const
 {return BDSGDMLPreprocessor::ProcessedNodeName(objectName, acceleratorComponentName);}
 
 void BDSGeometryFactoryGDML::GetAllLogicalPhysicalAndMaterials(const G4VPhysicalVolume*         volume,
-						                                       std::set<G4VPhysicalVolume*>&    pvsIn,
-						                                       std::set<G4LogicalVolume*>&      lvsIn,
+                                                               std::set<G4VPhysicalVolume*>&    pvsIn,
+                                                               std::set<G4LogicalVolume*>&      lvsIn,
                                                                std::map<G4String, G4Material*>& materialsGDML)
 {
   const auto& lv = volume->GetLogicalVolume();
@@ -194,9 +209,9 @@ void BDSGeometryFactoryGDML::GetAllLogicalPhysicalAndMaterials(const G4VPhysical
 }
 
 void BDSGeometryFactoryGDML::ReplaceStringInFile(const G4String& fileName,
-						 const G4String& outputFileName,
-						 const G4String& key,
-						 const G4String& replacement)
+                                                 const G4String& outputFileName,
+                                                 const G4String& key,
+                                                 const G4String& replacement)
 {
   // open input file in read mode
   std::ifstream ifs(fileName);
@@ -219,13 +234,13 @@ void BDSGeometryFactoryGDML::ReplaceStringInFile(const G4String& fileName,
     {// if we find key, replace it
       int f = buffer.find(key);    
       if (f != -1)
-	{
-	  std::string outputString = std::string(buffer);
-	  outputString.replace(f, lenOfKey, replacement);
-	  fout << outputString << "\n"; // getline strips \n
-	}
+        {
+          std::string outputString = std::string(buffer);
+          outputString.replace(f, lenOfKey, replacement);
+          fout << outputString << "\n"; // getline strips \n
+        }
       else // copy line to temp file as is
-	{fout << buffer << "\n";}
+        {fout << buffer << "\n";}
     }
 
   // clean up

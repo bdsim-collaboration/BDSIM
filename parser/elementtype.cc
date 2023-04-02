@@ -112,6 +112,12 @@ std::string GMAD::typestr(ElementType type)
       {return "dump";                break;}
     case ElementType::_CT:
       {return "ct";                  break;}
+    case ElementType::_TARGET:
+      {return "target";              break;}
+    case ElementType::_RFX:
+      {return "rfx";                 break;}
+    case ElementType::_RFY:
+      {return "rfy";                 break;}
     default:
       {return "none"; break;}
     }
