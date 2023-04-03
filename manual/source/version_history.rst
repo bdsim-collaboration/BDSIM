@@ -13,7 +13,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 * Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
-V1.7.0 - 2023 / XX / XX
+V1.7.0 - 2023 / 04 / 04
 =======================
 
 * The input parser will now reject any duplicate object names (e.g. a field with the same name),
