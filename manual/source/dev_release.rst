@@ -7,8 +7,7 @@ Things to update immediately before a release  (i.e. from a release candidate br
 
 #. README - update at the top and the version history.
 #. CMakeLists.txt - change major, minor and patch version at the very top.
-
-For each submodule:
+#. For each submodule:
 
     * Follow release procedure for PyPi: http://www.pp.rhul.ac.uk/bdsim/pybdsim/developer.html#release-checklist
     * Upload to testpypi.
@@ -16,8 +15,9 @@ For each submodule:
     * Update html manual on website.
 
 #. Update version number of each Python package in version history only.
-#. If the data format has changed increment the data version in each output class header in the ClassDef() at the bottom.
-   
+#. Check data versions and update samples:
+
+   * If the data format has changed increment the data version in each output class header in the ClassDef() at the bottom.
    * Check data version in :code:`configuration/BDSVersionData.hh`.
    * After updating the build, go to <bdsim-build-dir>/configuration and manually edit BDSVersion.hh to
      be the new version (e.g. v1.7.0) then make install. Then the data samples will have the right
