@@ -100,6 +100,7 @@ New Features
 * "linearmag" interpolation added.
 * New ability to arbitrarily scale the yoke fields.
 * New `modulator` object to modulate RF components (see :ref:`field-modulators`).
+* `reflectxydipole` added flip in Fz for y < 0.
   
 **General**
 

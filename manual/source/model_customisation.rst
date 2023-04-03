@@ -436,6 +436,7 @@ for the array look up. Then the value found at that location if changed as follo
 
 * if :math:`x < 0 \wedge y \geqslant 0`, :math:`B_x \mapsto -B_x`
 * if :math:`x \geqslant 0 \wedge y < 0`, :math:`B_x \mapsto -B_x`
+* if :math:`y < 0`, :math:`B_z \mapsto -B_z`
 * :math:`\wedge` is logical AND
 
 
