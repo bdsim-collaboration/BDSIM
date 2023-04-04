@@ -142,7 +142,10 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
       G4HadronicParameters::Instance()->SetEnableDiffDissociationForBGreater10(true);
     }
 #else
-    {BDS::Warning(__METHOD_NAME__, "\"restoreFTPFDiffractionForAGreater10\" is only available for Geant4 v11.1 and later");}
+    {
+      if (globals->RestoreFTPFDiffractionForAGreater10Set()) // shouldn't warn about default being on
+        {BDS::Warning(__METHOD_NAME__, "\"restoreFTPFDiffractionForAGreater10\" is only available for Geant4 v11.1 and later");}
+    }
 #endif
   
   BDSTrajectoryPoint::dEThresholdForScattering = globals->DEThresholdForScattering();
