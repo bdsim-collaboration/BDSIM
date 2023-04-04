@@ -12,7 +12,7 @@ Currently maintained and developed by:
 
 Laurie Nevay          <laurie.nevay@cern.ch> (main contact)
 Will Shields          <william.shields@rhul.ac.uk>
-Stewart Boogert       <stewart.boogert@rhul.ac.uk>
+Stewart Boogert       <stewart.boogert@cockcroft.ac.uk>
 Andrey Abramov        <andrey.abramov@cern.ch>
 Stuart Walker         <stuart.walker@desy.de>
 Jochem Snuverink      <jochem.snuverink@psi.ch>
