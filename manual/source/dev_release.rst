@@ -23,6 +23,7 @@ Things to update immediately before a release  (i.e. from a release candidate br
      be the new version (e.g. v1.7.0) then make install. Then the data samples will have the right
      version number in their header.bdsimVersion (rather than previous-version-dirty). If ccmake
      is run though, this will be overwritten.
+   * Also check :code:`<bdsim-build-dir>/src/BDSExecOptions.cc` for the "versionGit" string.
    * Regenerate data samples in :code:`examples/features/data/` using regenerateSamples.sh
    * Regenerate data sample :code:`examples/features/beam/userfile/userfile-sample.root` using regenerateUserFileSample.sh.
    * Regenerate data sample :code:`examples/features/beam/ptc/ptc-sample.root` using regeneratePtcSample.sh.
@@ -38,7 +39,8 @@ Things to update immediately before a release  (i.e. from a release candidate br
 
 #. If BDSColours has changed, run BDSIM with DEBUGOUTPUT build and copy print out of
    colours to manual (already in correct format) - model_customisation.rst : Colours.
-#. Check that the build (in ccmake) has USE_SPHINX_GOOGLE set to on. 
+#. Check that the build (in ccmake) has USE_SPHINX_GOOGLE set to on. Note, this will update the git version
+   in the data classes but this is OK as we won't generate any data for the release now.
 #. Regenerate BDSIM manual (pdf and html) and commit the new pdf version. Upload html version to website.
 #. Merge release candidate branch back into develop.
 #. In develop, put back README, CMakeLists.txt to new version.develop.
