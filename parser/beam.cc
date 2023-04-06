@@ -252,6 +252,7 @@ void Beam::PublishMembers()
   publish("envelopeE", &Beam::envelopeE);
   publish("envelopeR", &Beam::envelopeR);
   publish("envelopeRp",&Beam::envelopeRp);
+  publish("zFromT",    &Beam::zFromT);
 
   // options for beam distrType="gaussmatrix"
   publish("sigma11",&Beam::sigma11);

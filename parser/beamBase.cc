@@ -94,6 +94,7 @@ BeamBase::BeamBase()
   envelopeE  = 0.0;
   envelopeR  = 0.0;
   envelopeRp = 0.0;
+  zFromT = false;
   
   sigma11 = 0.0,sigma12 = 0.0,sigma13 = 0.0,sigma14 = 0.0,sigma15 = 0.0,sigma16 = 0.0;
   sigma22 = 0.0,sigma23 = 0.0,sigma24 = 0.0,sigma25 = 0.0,sigma26 = 0.0;

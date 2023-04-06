@@ -99,6 +99,7 @@ namespace GMAD
       double envelopeX, envelopeXp, envelopeY, envelopeYp, envelopeZ, envelopeZp;
       double envelopeT, envelopeE;
       double envelopeR, envelopeRp;
+      bool   zFromT;
       ///@}
       
       ///@{ for the gaussian sigma matrix distribution
