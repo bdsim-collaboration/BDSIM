@@ -46,10 +46,10 @@ BDSBunchSquare::~BDSBunchSquare()
 }
 
 void BDSBunchSquare::SetOptions(const BDSParticleDefinition* beamParticle,
-				const GMAD::Beam& beam,
-				const BDSBunchType& distrType,
-				G4Transform3D beamlineTransformIn,
-				const G4double beamlineSIn)
+                                const GMAD::Beam& beam,
+                                const BDSBunchType& distrType,
+                                G4Transform3D beamlineTransformIn,
+                                const G4double beamlineSIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   envelopeX  = beam.envelopeX  * CLHEP::m;
@@ -82,7 +82,7 @@ void BDSBunchSquare::CheckParameters()
 }
 
 BDSParticleCoordsFull BDSBunchSquare::GetNextParticleLocal()
-{  
+{
   G4double x  = X0  + envelopeX  * (1-2*flatGen->shoot());
   G4double y  = Y0  + envelopeY  * (1-2*flatGen->shoot());
   G4double xp = Xp0 + envelopeXp * (1-2*flatGen->shoot());
