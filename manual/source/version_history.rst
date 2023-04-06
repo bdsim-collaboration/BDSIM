@@ -11,7 +11,6 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Any aperture shape can be used for both the inside and the outside of a collimator.
 * Restructure code into proper C++ libraries rather than just analysis and bdsim.
 * Multiple beam line tracking.
-* Use sampler data from a BDSIM output file as input to another BDSIM simulation.
 
 V1.7.0 - 2023 / 04 / 04
 =======================

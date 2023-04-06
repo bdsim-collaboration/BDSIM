@@ -762,8 +762,13 @@ also to 0 so it has no variation in `Z`.
 ring
 ****
 
-The ring distribution randomly and uniformly fills a ring in `x` and `y` between two radii. For
+The ring distribution randomly and uniformly distributes particles around a circle in `x` and `y`. Then, for a given
+x,y the radius is randomly and uniformly distributed between and inner and outer radius. For
 all other parameters, the `reference`_ coordinates are used, i.e. `xp`, `yp` etc.
+
+.. note:: If a large difference in `Rmin` and `Rmax` are used (e.g. :math:`0 \mapsto R`), then the distribution
+          will appear not have a uniform density in `x-y` space but be more concentrated at the axis. This
+          distribution is more suitable for narrow rings where this effect is negligible.
 
 * All parameters from `reference`_ distribution are used as centroids.
 
