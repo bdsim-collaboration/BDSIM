@@ -271,6 +271,8 @@ Bug Fixes
 * Fixed generation of ring beam distribution type. Similarly to the circular distribution, the beam had a higher density
   of particles towards the ring's inner radius. The distribution is now uniform in x & y.
 * Fixed recreation when using a `ptc` distribution as the file wouldn't advance to the correct entry.
+* The `square` distribution now has uncorrelated `z` and `t`. You can restore the old behaviour with
+  the new beam parameter: :code:`beam, zFromT=1;` that only works for this distribution.
 
 **Biasing**
 
