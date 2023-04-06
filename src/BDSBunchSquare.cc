@@ -35,7 +35,7 @@ BDSBunchSquare::BDSBunchSquare():
   envelopeT(0.0),
   envelopeE(0.0),
   envelopeZ(0.0),
-  useEnvelopeZ(false)
+  correlatedZWithT(false)
 {
   flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
@@ -59,7 +59,7 @@ void BDSBunchSquare::SetOptions(const BDSParticleDefinition* beamParticle,
   envelopeT  = beam.envelopeT  * CLHEP::s;
   envelopeE  = beam.envelopeE  * CLHEP::GeV;
   envelopeZ  = beam.envelopeZ  * CLHEP::m;
-  useEnvelopeZ = beam.HasBeenSet("envelopeZ");
+  correlatedZWithT = beam.zFromT;
 }
 
 void BDSBunchSquare::CheckParameters()
@@ -91,7 +91,7 @@ BDSParticleCoordsFull BDSBunchSquare::GetNextParticleLocal()
   G4double dt = envelopeT * (1.-2.*flatGen->shoot());
   G4double t  = T0 + dt;
   G4double dz;
-  if (useEnvelopeZ)
+  if (correlatedZWithT)
     {dz = envelopeZ * (1.-2*flatGen->shoot());}
   else
     {dz = dt * CLHEP::c_light;}

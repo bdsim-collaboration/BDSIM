@@ -57,7 +57,7 @@ protected:
   G4double envelopeT;
   G4double envelopeE;
   G4double envelopeZ;
-  G4bool   useEnvelopeZ;
+  G4bool   correlatedZWithT;
   
   CLHEP::RandFlat* flatGen;
 };
