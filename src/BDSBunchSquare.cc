@@ -92,9 +92,10 @@ BDSParticleCoordsFull BDSBunchSquare::GetNextParticleLocal()
   G4double t  = T0 + dt;
   G4double dz;
   if (correlatedZWithT)
-    {dz = envelopeZ * (1.-2*flatGen->shoot());}
-  else
     {dz = dt * CLHEP::c_light;}
+  else
+    {dz = envelopeZ * (1.-2*flatGen->shoot());}
+
   G4double z  = Z0 + dz;
   G4double E  = E0 + envelopeE * (1 - 2*flatGen->shoot());
   
