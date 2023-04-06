@@ -5,7 +5,7 @@ beam,  particle="e-",
        envelopeY  = 0.002*mm, 
        envelopeXp = 0.09*0.005,
        envelopeYp = 0.09*0.005,
-       envelopeT  = 1e-9;
+       envelopeT  = 1e-3;
        envelopeE  = 1e-5;
 
 include options.gmad
