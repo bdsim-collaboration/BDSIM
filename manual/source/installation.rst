@@ -240,11 +240,11 @@ Requirements \& Environment
    or clang 6 or higher.
 2) `CMake`_ 3.1 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher, and typically 3.8 for later versions).
 3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_. Latest recommended but must be compatible with Geant4 version.
-4) *Optional* - Python (>=3.6, or 2.7) for Python utilities and easy data loading with ROOT.
+4) *Optional* - Python (>=3.6) for Python utilities and easy data loading with ROOT.
 5) `ROOT`_ 6.0 or higher, for output & analysis compiled **with** Python support (default is 3 series).
-6) *Optional* - Qt5 libraries for the best Geant4 visualiser.
+6) *Optional* - Qt5 libraries for the best Geant4 visualiser (Qt6 not supported in Geant4)
 7) *Optional* - Xerces-C++ 3.2 XML library for GDML geometry file loading in Geant4.
-8) `Geant4`_  - version 4.10 or higher (latest patch of that release). **Recommend 10.7.p01** or **10.4.p03** (for LHC energies). See `Geant4 Installation Guide`_
+8) `Geant4`_  - version 4.10 or higher (latest patch of that release). **Recommend 10.7.p04** or **10.4.p03** (for LHC energies). See `Geant4 Installation Guide`_
 9) Flex 2.5.37 or higher.
 10) Bison 2.3 or higher.
 11) *Optional* - HepMC3 for loading event generator output.
@@ -268,6 +268,7 @@ problems we have found:
 * Geant4 10.5.0  - the cashkarp integrator for fields will always crash. Events are not independent in rare occasions because of the magnetic field handling.
 * Geant4 10.5.pX - bug in G4Extruded solid may occasionally lead to crashes depending on the geometry involved.
 * Geant4 10.5 onwards - diffractive proton physics on light target nuclei is disabled by default (on going fix).
+* Geant4 11.0 - Bragg peaks are wrong from carbon ions in water.
 
 The authors typically use Geant4 10.4.p03 or Geant4.10.7.p01 for physics results production.
 
@@ -311,15 +312,41 @@ In this order:
 #. XQuartz should be installed - see `<https://www.xquartz.org>`_.
 #. The `make` command is available in the terminal.
 
-We recommend obtaining :ref:`required-packages` using the `MacPorts`_ package manager,
-although they can be obtained both through other package managers and by
+We recommend obtaining :ref:`required-packages` using either **HomeBrew** or `MacPorts`_
+package managesr, although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
 
-For MacPorts you can do: ::
+For Homebrew you can do: ::
+
+  brew install root6
+  brew install xerces-c flex bison clhep qt@5
+
+
+For **HomeBrew**, you should use a virtual env for python and then should install any Python packages
+through pip: ::
+
+  pip install matplotlib numpy
+
+To setup a virutal environment for Python, you can do: ::
+
+  python3 -m venv /path/to/new/virtual/environment
+  source <venv>/bin/activate
+
+Explicitly: ::
+
+  python3 -m venv ~/venv/py311
+
+Edit :code:`.profile` and add: ::
+
+  source ~/venv/py311/bin/activate
+
+
+For **MacPorts** you can do: ::
 
   sudo port install root6 +python39
   sudo port install xercesc3 flex bison clhep qt5
   sudo port install py39-matplotlib py39-numpy
+
 
 * It is best to install Geant4 manually to ensure you use the system CLHEP option (required
   by BDSIM for strong reproducibility) as well as visualiser choices and GDML geometry
@@ -777,58 +804,36 @@ These variables are set in the :code:`<bdsim-install-dir>/bin/bdsim.sh` provided
 Python Utilities
 ----------------
 
-* Quick setup: simply run ``make`` from the ``bdsim/utils`` directory.
+* Quick setup: simply run ``source pyutils.sh`` from the ``bdsim/utils`` directory.
   
-BDSIM includes copies of our accompanying Python utilities (pytransport, pymad8, pymadx
-and pybdsim) that can now be installed. These are included as "sub-repositories" in
-:code:`bdsim/utils/`. One should do the following from the root bdsim source directory
-to get git to download these. ::
-
-  pwd
-   bdsim
-  git submodule init
-  git submodule update
-
-This prepares and downloads the copies of other repositories. If you intend to edit these
-(as it's all open source), it is better to clone these elsewhere outside of the bdsim source.
-These all exist in separate git repositories in the following locations:
+The BDSIM Python utilities (`pytransport`, `pymad8`, `pymadx`, and `pybdsim`) all exist in
+separate git repositories in the following locations:
 
 * https://bitbucket.org/jairhul/pybdsim
 * https://bitbucket.org/jairhul/pymadx
 * https://bitbucket.org/jairhul/pymad8
 * https://bitbucket.org/jairhul/pytransport
 
-.. warning:: Do not edit the copies in :code:`bdsim/utils` - this will result in problems
-	     with git and make it harder to update bdsim later on. It is strongly recommended
-	     to clone each utility separately outside the BDSIM source directory and edit that version,
-	     leaving the included one untouched.
+These should be downloaded and installed **using pip** by default for users.
   
-These can all be set up separately, or alternatively the user can install all at
-once with the MakeFile added for convenience (running make command).  The Python package
-installer ("PIP") is required for this.
+If it is intended to edit these packages or add to them (always welcome!), then it
+is preferable to clone the git repository and use the commands in the Makefile in each
+one, such as :code:`pip install --editable .` that allows the package to be registered
+to your Python installation but it gets the files freshly each time from the git
+repository folder upon restarting Python.
 
-.. note:: ROOT should be compiled with Python support for the full functionality of
-	  pybdsim data loading to be exploited.
+To switch between these modes, simply uninstall the utilities, then reinstall. ::
 
-To set up all utilities at once:
+  pip uninstall pybdsim
+  pip uninstall pymadx
+  pip uninstall pymad8
+  pip uninstall pytransport
 
-.. code::
+.. note:: `pybdsim` depends on `pymadx`, `pymad8`, and `pytransport`, so if these are
+          not already available it will get them from PyPi on the internet. To use
+          multiple develop versions of these from local git repositories, install in
+          the order: `pytransport`, `pymad8`, `pymadx`, then `pybdsim`.
 
-   cd bdsim/utils
-   make
-
-The utilities should now be available through Python::
-
-  >>> import pybdsim
-  >>> import pymadx
-  >>> import pymad8
-  >>> import pytransport
-
-In each utility we use PIP to get any dependencies required. Using our MakeFile
-(:code:`make develop`)just does it in such a way
-(:code:`pip install --editable . --user`) that this copy is used and not copied
-somewhere else into the Python installation, so if you edit or git pull next time
-you import the utility in Python it will be automatically up to date.
 
 
 Upgrading BDSIM
