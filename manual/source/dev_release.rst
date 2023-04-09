@@ -44,7 +44,7 @@ Things to update immediately before a release  (i.e. from a release candidate br
 #. Regenerate BDSIM manual (pdf and html) and commit the new pdf version. Upload html version to website.
 #. Merge release candidate branch back into develop.
 #. In develop, put back README, CMakeLists.txt to new version.develop.
-#. Merge release candidate branch into master then delete.
+#. Merge release candidate branch into master then delete. (:code:`git checkout master; git merge --no-ff v1.X.0-rc`)
 #. Check all tests complete locally given merge before pushing.
 #. Tag master branch for version number.
 
