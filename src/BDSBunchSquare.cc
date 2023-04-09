@@ -36,14 +36,10 @@ BDSBunchSquare::BDSBunchSquare():
   envelopeE(0.0),
   envelopeZ(0.0),
   correlatedZWithT(false)
-{
-  flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
-}
+{;}
 
 BDSBunchSquare::~BDSBunchSquare()
-{
-  delete flatGen;
-}
+{;}
 
 void BDSBunchSquare::SetOptions(const BDSParticleDefinition* beamParticle,
                                 const GMAD::Beam& beam,
@@ -83,21 +79,21 @@ void BDSBunchSquare::CheckParameters()
 
 BDSParticleCoordsFull BDSBunchSquare::GetNextParticleLocal()
 {
-  G4double x  = X0  + envelopeX  * (1-2*flatGen->shoot());
-  G4double y  = Y0  + envelopeY  * (1-2*flatGen->shoot());
-  G4double xp = Xp0 + envelopeXp * (1-2*flatGen->shoot());
-  G4double yp = Yp0 + envelopeYp * (1-2*flatGen->shoot());
+  G4double x  = X0  + envelopeX  * (1-2*G4RandFlat::shoot());
+  G4double y  = Y0  + envelopeY  * (1-2*G4RandFlat::shoot());
+  G4double xp = Xp0 + envelopeXp * (1-2*G4RandFlat::shoot());
+  G4double yp = Yp0 + envelopeYp * (1-2*G4RandFlat::shoot());
   G4double zp = CalculateZp(xp,yp,Zp0);
-  G4double dt = envelopeT * (1.-2.*flatGen->shoot());
+  G4double dt = envelopeT * (1.-2.*G4RandFlat::shoot());
   G4double t  = T0 + dt;
   G4double dz;
   if (correlatedZWithT)
     {dz = dt * CLHEP::c_light;}
   else
-    {dz = envelopeZ * (1.-2*flatGen->shoot());}
+    {dz = envelopeZ * (1.-2*G4RandFlat::shoot());}
 
   G4double z  = Z0 + dz;
-  G4double E  = E0 + envelopeE * (1 - 2*flatGen->shoot());
+  G4double E  = E0 + envelopeE * (1 - 2*G4RandFlat::shoot());
   
   return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0+dz,E,/*weight=*/1.0);
 }

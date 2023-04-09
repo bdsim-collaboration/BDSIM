@@ -88,8 +88,6 @@ private:
   G4double yMax;
   G4double xpMax;
   G4double ypMax;
-
-  CLHEP::RandFlat* flatGen;
 };
 
 #endif

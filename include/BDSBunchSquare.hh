@@ -21,10 +21,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSBunch.hh"
 
-namespace CLHEP {
-  class RandFlat;
-}
-
 /**
  * @brief A bunch distribution that produces an uncorrelated uniform
  * random distribution within a square in phase space.
@@ -58,8 +54,6 @@ protected:
   G4double envelopeE;
   G4double envelopeZ;
   G4bool   correlatedZWithT;
-  
-  CLHEP::RandFlat* flatGen;
 };
 
 #endif

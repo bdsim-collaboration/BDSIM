@@ -51,11 +51,9 @@ namespace BDS
   }
 
   EllipsePointGenerator::EllipsePointGenerator(G4double actionIn,
-                                               const TwissPair& tp,
-                                               CLHEP::RandFlat* flatRandomGeneratorIn):
+                                               const TwissPair& tp):
     action(actionIn),
-    twisspair(tp),
-    flatRandomGenerator(flatRandomGeneratorIn)
+    twisspair(tp)
   {
     // Here: populate angles vector from 0 to 2pi and the corresponding arc
     // lengths from angle=0 to each angle.
@@ -83,7 +81,7 @@ namespace BDS
   PhaseSpaceCoord EllipsePointGenerator::GetRandomPointOnEllipse() const
   {
     // Select random point on the perimeter
-    G4double pathLength = EllipsePerimeter() * flatRandomGenerator->shoot();
+    G4double pathLength = EllipsePerimeter() * G4RandFlat::shoot();
     // Invert to get the angle and then use that to get the (x, xp) pair.
     G4double angle = PathLengthToAngle(pathLength);
     ActionAngleCoord aa = {action, angle};
@@ -117,9 +115,7 @@ BDSBunchHaloFlatSigma::BDSBunchHaloFlatSigma():
   sigmaX(0.0),  sigmaY(0.0),
   haloNSigmaXInner(0.0), haloNSigmaXOuter(0.0),
   haloNSigmaYInner(0.0), haloNSigmaYOuter(0.0)
-{
-  flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
-}
+{;}
 
 void BDSBunchHaloFlatSigma::SetOptions(const BDSParticleDefinition* beamParticle,
                                        const GMAD::Beam&   beam,
@@ -151,8 +147,8 @@ BDSParticleCoordsFull BDSBunchHaloFlatSigma::GetNextParticleLocal()
   // Sampler flat in nsigma between lower and upper.
   G4double xsigrange = (haloNSigmaXOuter - haloNSigmaXInner);
   G4double ysigrange = (haloNSigmaYOuter - haloNSigmaYInner);
-  G4double xnsig = haloNSigmaXInner + flatGen->shoot() * xsigrange;
-  G4double ynsig = haloNSigmaYInner + flatGen->shoot() * ysigrange;
+  G4double xnsig = haloNSigmaXInner + G4RandFlat::shoot() * xsigrange;
+  G4double ynsig = haloNSigmaYInner + G4RandFlat::shoot() * ysigrange;
 
   // Courant-snyder invariants for the particle, which are actually twice the
   // particle actions...
@@ -165,8 +161,8 @@ BDSParticleCoordsFull BDSBunchHaloFlatSigma::GetNextParticleLocal()
   BDS::TwissPair tx = {alphaX, betaX};
   BDS::TwissPair ty = {alphaY, betaY};
   
-  BDS::EllipsePointGenerator epgx = BDS::EllipsePointGenerator(jx, tx, flatGen);
-  BDS::EllipsePointGenerator epgy = BDS::EllipsePointGenerator(jy, ty, flatGen);
+  BDS::EllipsePointGenerator epgx = BDS::EllipsePointGenerator(jx, tx);
+  BDS::EllipsePointGenerator epgy = BDS::EllipsePointGenerator(jy, ty);
   auto xps = epgx.GetRandomPointOnEllipse();
   auto yps = epgy.GetRandomPointOnEllipse();
   
