@@ -40,10 +40,10 @@ BDSBunchRing::~BDSBunchRing()
 {;}
 
 void BDSBunchRing::SetOptions(const BDSParticleDefinition* beamParticle,
-			      const GMAD::Beam& beam,
-			      const BDSBunchType& distrType,
-			      G4Transform3D beamlineTransformIn,
-			      const G4double beamlineSIn)
+                              const GMAD::Beam& beam,
+                              const BDSBunchType& distrType,
+                              G4Transform3D beamlineTransformIn,
+                              const G4double beamlineSIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   rMin = beam.Rmin * CLHEP::m;
@@ -70,4 +70,3 @@ BDSParticleCoordsFull BDSBunchRing::GetNextParticleLocal()
   
   return BDSParticleCoordsFull(x,y,Z0,Xp0,Yp0,Zp0,T0,S0,E0,/*weight=*/1.0);
 }
-

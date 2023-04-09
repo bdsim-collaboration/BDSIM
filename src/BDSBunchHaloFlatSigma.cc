@@ -64,10 +64,10 @@ namespace BDS
     // leq (<=) so that can can interpolate up to 2pi.
     for (G4int i = 0; i <= npoints; ++i)
       {
-	G4double angle = i * CLHEP::twopi / npoints;
-	angles.push_back(angle);
-	ActionAngleCoord aa = {action, angle};
-	points.push_back(PhaseSpaceCoordFromActionAngle(aa, twisspair));
+        G4double angle = i * CLHEP::twopi / npoints;
+        angles.push_back(angle);
+        ActionAngleCoord aa = {action, angle};
+        points.push_back(PhaseSpaceCoordFromActionAngle(aa, twisspair));
       }
     // Get the cumulative distances from angle=0 to each angle.  The distance
     // between the first and second point is of course non-zero.  So we have to
