@@ -273,6 +273,10 @@ Bug Fixes
 * Fixed recreation when using a `ptc` distribution as the file wouldn't advance to the correct entry.
 * The `square` distribution now has uncorrelated `z` and `t`. You can restore the old behaviour with
   the new beam parameter: :code:`beam, zFromT=1;` that only works for this distribution.
+* General fix for use of static interfaces of the random number generator through instances. Uniform
+  flat distributions were constructed but always the static interface to the static generator was
+  used making it confusing. This has been fixed to explicitly use the static interface and not
+  construct and interface. The exact same results are produced reproducibly.
 
 **Biasing**
 
