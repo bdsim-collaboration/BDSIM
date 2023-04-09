@@ -32,11 +32,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <numeric>
 #include <vector>
 
-namespace CLHEP
-{
-  class RandFlat;
-}
-
 namespace GMAD
 {
   class Beam;
@@ -125,8 +120,7 @@ class EllipsePointGenerator
 {
 public:
   EllipsePointGenerator(G4double actionIn,
-                        const TwissPair& tp,
-                        CLHEP::RandFlat* flatRandomGeneratorIn);
+                        const TwissPair& tp);
   ~EllipsePointGenerator() = default;
   
   PhaseSpaceCoord GetRandomPointOnEllipse() const;
@@ -137,7 +131,6 @@ private:
   
   G4double action;
   TwissPair twisspair;
-  CLHEP::RandFlat* flatRandomGenerator;
   std::vector<G4double> angles;
   std::vector<G4double> pathLengths;
 };
@@ -179,8 +172,6 @@ private:
   G4double haloNSigmaXOuter;
   G4double haloNSigmaYInner;
   G4double haloNSigmaYOuter;
-
-  CLHEP::RandFlat* flatGen;
 };
 
 #endif

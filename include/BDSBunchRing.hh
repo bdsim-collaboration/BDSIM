@@ -52,8 +52,6 @@ public:
 protected:
   G4double rMin;
   G4double rMax;
-  G4double rDif;
-  CLHEP::RandFlat* flatGen;
 };
 
 #endif
