@@ -42,10 +42,10 @@ BDSBunchBox::~BDSBunchBox()
 {;}
 
 void BDSBunchBox::SetOptions(const BDSParticleDefinition* beamParticle,
-			     const GMAD::Beam& beam,
-			     const BDSBunchType& distrType,
-			     G4Transform3D beamlineTransformIn,
-			     const G4double beamlineSIn)
+                             const GMAD::Beam& beam,
+                             const BDSBunchType& distrType,
+                             G4Transform3D beamlineTransformIn,
+                             const G4double beamlineSIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   envelopeX  = beam.envelopeX  * CLHEP::m;

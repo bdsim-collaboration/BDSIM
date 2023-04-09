@@ -40,10 +40,10 @@ BDSBunchComposite::~BDSBunchComposite()
 }
 
 void BDSBunchComposite::SetOptions(const BDSParticleDefinition* beamParticle,
-				   const GMAD::Beam& beam,
-				   const BDSBunchType& distrType,
-				   G4Transform3D beamlineTransformIn,
-				   G4double beamlineSIn)
+                                   const GMAD::Beam& beam,
+                                   const BDSBunchType& distrType,
+                                   G4Transform3D beamlineTransformIn,
+                                   G4double beamlineSIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn,beamlineSIn);
   
@@ -108,8 +108,8 @@ BDSParticleCoordsFull BDSBunchComposite::GetNextParticleLocal()
   // TODO - the weight only comes from the x distribution here... should it be product of all?
   BDSParticleCoordsFull result(x.x, y.y, z.z,
                                x.xp, y.yp, z.zp,
-			       z.T, z.s,
-			       z.totalEnergy,
-			       x.weight);
+                               z.T, z.s,
+                               z.totalEnergy,
+                               x.weight);
   return result;
 }

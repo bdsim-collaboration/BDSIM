@@ -281,4 +281,3 @@ void BDSBunchPtc::RecreateAdvanceToEvent(G4int eventOffset)
   // generator action in the start of the event after BeamOn(nEvents) has been called
   // therefore this adjustment for recreation + match is done earlier in this class
 }
-
