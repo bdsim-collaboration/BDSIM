@@ -152,7 +152,7 @@ BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()
 	// determine weight, initialise 1 so always passes
 	double wx = 1.0;
 	double wy = 1.0;
-	if (weightFunction == "flat" || weightFunction == "" || weightFunction == "one")
+	if (weightFunction == "flat" || weightFunction.empty() || weightFunction == "one")
 	  {
 	    wx = 1.0;
 	    wy = 1.0;
