@@ -101,7 +101,7 @@ void PerEntryHistogramSet::CheckSampler()
     {
       sampler = event->GetSampler(branchName + "."); // cache sampler
       if (!sampler)
-        {throw RBDSException("cannot find sampler \"" + branchName + "\" or Model tree was not stored");}
+        {throw RBDSException("Cannot find sampler \"" + branchName + "\" or Model tree was not stored");}
     }
 }
 
