@@ -18,7 +18,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2
     rm -rfv cmake-3.22.2.tar.gz && \
     cd cmake-3.22.2 && \
     ./bootstrap && \
-    make install && \
+    make -j10 install && \
     cd ../ && \
     rm -rfv cmake-3.22.2
     
