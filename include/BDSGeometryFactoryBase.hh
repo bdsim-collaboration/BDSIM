@@ -81,7 +81,7 @@ public:
 
   /// Attach the relevant general and vacuum sensitivity to each volume.
   virtual void ApplySensitivity(BDSGeometryExternal* result,
-                                const std::set<G4LogicalVolume*>& allLogicalVolumes,
+                                const std::set<G4LogicalVolume*>& allLogicalVolumesIn,
                                 BDSSDType generalSensitivity,
                                 const std::set<G4LogicalVolume*>& vacuumLogicalVolumes,
                                 BDSSDType vacuumSensitivity);
