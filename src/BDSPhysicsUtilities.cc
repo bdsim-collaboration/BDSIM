@@ -299,11 +299,13 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
   G4String particleName = BDS::LowerCase(particleNameIn);
 
   std::map<G4String, G4String> commonSubstitutions = { {"photon", "gamma"},
-						       {"electron", "e-"},
-						       {"positron", "e+"},
+                                                       {"electron", "e-"},
+                                                       {"positron", "e+"},
                                                        {"pion+", "pi+"},
                                                        {"pion-", "pi-"},
-                                                       {"pion0", "pi0"} };
+                                                       {"pion0", "pi0"},
+                                                       {"antiproton", "anti_proton"},
+                                                       {"anti-proton", "anti_proton"} };
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   std::regex ionParticle("(ion\\s).*");
@@ -367,7 +369,7 @@ void BDS::ConstructBeamParticleG4(const G4String& name)
 {
   if (name == "proton")
     {G4Proton::ProtonDefinition();}
-  else if (name == "antiproton")
+  else if (name == "anti_proton")
     {G4AntiProton::AntiProtonDefinition();}
   else if (name == "e-")
     {G4Electron::ElectronDefinition();}

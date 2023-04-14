@@ -277,7 +277,9 @@ Bug Fixes
   flat distributions were constructed but always the static interface to the static generator was
   used making it confusing. This has been fixed to explicitly use the static interface and not
   construct and interface. The exact same results are produced reproducibly.
-
+* Fixed "antiproton" as a beam particle. Should really be "anti_proton" for Geant4 to find
+  the particle definition. Manual updated accordingly.
+  
 **Biasing**
 
 * Fixed huge amount of print out for bias objects attached to a whole beam line. Now, bias
