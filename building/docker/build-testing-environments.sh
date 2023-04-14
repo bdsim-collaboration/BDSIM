@@ -9,8 +9,6 @@
 # second one for host architecture arm64
 SUFFIX=" --platform linux/amd64"
 
-
-docker build . -f Dockerfile-centos7-bdsim-base-environment -t centos7-base-environment ${SUFFIX}
 docker build . -f Dockerfile-centos7-bdsim-geant4v10.1.3-environment -t centos7-geant4v10.1.3-environment ${SUFFIX}
 docker build . -f Dockerfile-centos7-bdsim-geant4v10.2.3-environment -t centos7-geant4v10.2.3-environment ${SUFFIX}
 docker build . -f Dockerfile-centos7-bdsim-geant4v10.3.3-environment -t centos7-geant4v10.3.3-environment ${SUFFIX}
