@@ -10,7 +10,7 @@ RUN yum -y install epel-release git make \
     openssl-devel bison flex boost-devel
 
 # Modern compilers 
-RUN yum -y install centos-release-scl && yum -y install devtoolset-7
+RUN yum -y install centos-release-scl && yum -y install devtoolset-9
 
 # CMake (3.22.2 from source)
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2.tar.gz && \
@@ -42,4 +42,4 @@ RUN yum -y install root python36-root
 RUN yum -y install HepMC3-rootIO-devel
 
 # turn on the useful compiler by default
-RUN echo 'source scl_source enable devtoolset-7' >> ~/.bashrc
+RUN echo 'source scl_source enable devtoolset-9' >> ~/.bashrc
