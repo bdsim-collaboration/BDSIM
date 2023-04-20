@@ -133,7 +133,7 @@ The beam particle may be specified by name
 as it is in Geant4 (exactly) or by its PDG ID. The follow are available by default:
 
 * `e-` or `e+`
-* `proton` or `antiproton`
+* `proton` or `anti_proton`
 * `gamma`
 * `neutron`
 * `mu-` or `mu+`

@@ -149,7 +149,7 @@ std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particl
   if (std::regex_search(selection, match, boolOperator))
     {// has boolean operator somewhere in it      
       std::string afterBool = match.suffix();
-      std::size_t bracketPos = afterBool.find(")");
+      std::size_t bracketPos = afterBool.find(')');
       result = selection; // copy it
       result.insert(match.position() + match.length() + bracketPos, "&&"+filter);
     }
