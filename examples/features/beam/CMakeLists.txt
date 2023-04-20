@@ -41,6 +41,7 @@ simple_testing(bunch-ion-h-minus              "--file=ion-hminus.gmad"          
 simple_testing(bunch-ion-q                    "--file=ionQ.gmad"                    "")
 simple_testing(bunch-ion-qe                   "--file=ionQE.gmad"                   "")
 simple_testing(bunch-particle-pdgid           "--file=particle-pdgid.gmad"          "")
+simple_testing(bunch-particle-anti_proton     "--file=particle-anti_proton.gmad"    "")
 simple_testing(bunch-period                   "--file=bunch-period.gmad"            "")
 simple_testing(bunch-reference                "--file=reference.gmad"               "")
 simple_testing(bunch-reference-backwards      "--file=reference-backwards.gmad"     "")

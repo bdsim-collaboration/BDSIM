@@ -154,8 +154,15 @@ int main(int argc, char *argv[])
 				     optAnalysis,
 				     modAnalysis};
 
-  for (auto& analysis : analyses)
-    {analysis->Execute();}
+  try
+    {
+      for (auto &analysis: analyses)
+        {analysis->Execute();}
+    }
+  catch (const RBDSException& error)
+    {std::cerr << error.what() << std::endl; exit(1);}
+  catch (const std::exception& error)
+    {std::cerr << error.what() << std::endl; exit(1);}
 
   // write output
   try

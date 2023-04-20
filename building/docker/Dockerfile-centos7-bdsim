@@ -69,22 +69,11 @@ RUN mkdir -p ~/.config/matplotlib && \
     sed -i -e 's/#backend: Agg/backend: Qt5Agg/g' ~/.config/matplotlib/matplotlibrc
 
 # Python support tools (pybdsim, pymadx, pymad8, pytransport, pyg4ometry)
-RUN ln -s /usr/bin/pip3 /usr/bin/pip
-RUN git clone https://bitbucket.org/jairhul/pymad8.git && \
-    cd pymad8 && \
-    make develop
+#RUN ln -s /usr/bin/pip3 /usr/bin/pip
+RUN pip3 install pybdsim && \
+    pip3 install pytransport
 
-RUN git clone https://bitbucket.org/jairhul/pytransport.git && \
-    cd pytransport && \
-    make develop
-
-RUN git clone https://bitbucket.org/jairhul/pymadx.git && \
-    cd pymadx && \
-    make develop
-
-RUN git clone https://bitbucket.org/jairhul/pybdsim.git && \
-    cd pybdsim && \
-    make develop
+RUN pip3 install pyg4ometry
 
 RUN dbus-uuidgen > /var/lib/dbus/machine-id && \
     mkdir -p /var/run/dbus && \
