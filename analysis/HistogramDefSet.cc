@@ -28,9 +28,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
-				 const HistogramDef* baseDefinitionIn,
-				 const std::set<ParticleSpec>& particlesSpecs,
-				 const std::string&  particleSpecificationIn):
+                                 const HistogramDef* baseDefinitionIn,
+                                 const std::set<ParticleSpec>& particlesSpecs,
+                                 const std::string&  particleSpecificationIn):
   branchName(branchNameIn),
   dynamicallyStoreIons(false),
   dynamicallyStoreParticles(particlesSpecs.empty()),
@@ -126,8 +126,8 @@ std::string HistogramDefSet::RemoveSubString(const std::string& stringIn,
 }
 
 std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particleSpec,
-						     const std::string& selection,
-						     const std::string& branchName)
+                                                     const std::string& selection,
+                                                     const std::string& branchName)
 {
   long long int pdgID = particleSpec.first;
   RBDS::SpectraParticles flag = particleSpec.second;
@@ -147,7 +147,7 @@ std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particl
   std::regex boolOperator("&&|[<>!=]=|[<>]|\\|\\|");
   std::smatch match;
   if (std::regex_search(selection, match, boolOperator))
-    {// has boolean operator somewhere in it      
+    {// has boolean operator somewhere in it
       std::string afterBool = match.suffix();
       std::size_t bracketPos = afterBool.find(')');
       result = selection; // copy it
