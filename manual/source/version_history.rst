@@ -247,6 +247,8 @@ Bug Fixes
 * rebdsim will now explicitly exit if a duplicate histogram name is detected whereas it didn't before.
 * If an electron was used as the beam particle, the mass might not be set correctly for optics analysis
   (only) resulting in wrong results for sub-relativistic electron optics.
+* Fix spectra in rebdsim when used with a selection. The selection would be built up wrongly and wouldn't
+  work in the past.
 * Fix warning when using sampler data in analysis in Python: ::
 
     input_line_154:2:36: warning: instantiation of variable 'BDSOutputROOTEventSampler<float>::particleTable' required here, but no
