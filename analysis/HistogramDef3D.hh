@@ -39,13 +39,13 @@ public:
 
   /// Use this constructor.
   HistogramDef3D(const std::string&      treeNameIn,
-		 const std::string&      histNameIn,
-		 const BinSpecification& xBinningIn,
-		 const BinSpecification& yBinningIn,
-		 const BinSpecification& zBinningIn,
-		 const std::string&      variableIn,
-		 const std::string&      selectionIn = "1",
-		 bool                    perEntryIn  = true);
+                 const std::string&      histNameIn,
+                 const BinSpecification& xBinningIn,
+                 const BinSpecification& yBinningIn,
+                 const BinSpecification& zBinningIn,
+                 const std::string&      variableIn,
+                 const std::string&      selectionIn = "1",
+                 bool                    perEntryIn  = true);
   
   virtual ~HistogramDef3D();
     

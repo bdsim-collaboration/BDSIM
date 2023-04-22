@@ -39,15 +39,15 @@ public:
   
   /// Use this constructor.
   HistogramDef4D(const std::string& treeNameIn,
-		 const std::string& histNameIn,
-		 const BinSpecification& xBinningIn,
-		 const BinSpecification& yBinningIn,
-		 const BinSpecification& zBinningIn,
-		 const BinSpecification& eBinningIn,
-		 const std::string&      variableIn,
-		 const std::string&      eScaleIn,
-		 const std::string&      selectionIn = "1",
-		 bool                    perEntryIn  = true);
+                 const std::string& histNameIn,
+                 const BinSpecification& xBinningIn,
+                 const BinSpecification& yBinningIn,
+                 const BinSpecification& zBinningIn,
+                 const BinSpecification& eBinningIn,
+                 const std::string&      variableIn,
+                 const std::string&      eScaleIn,
+                 const std::string&      selectionIn = "1",
+                 bool                    perEntryIn  = true);
   
   virtual ~HistogramDef4D();
 

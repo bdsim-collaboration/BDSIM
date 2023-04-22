@@ -30,11 +30,11 @@ HistogramDef::HistogramDef():
 {;}
 
 HistogramDef::HistogramDef(const std::string& treeNameIn,
-			   const std::string& histNameIn,
-			   int                nDimensionsIn,
-			   const std::string& variableIn,
-			   const std::string& selectionIn,
-			   bool               perEntryIn):
+                           const std::string& histNameIn,
+                           int                nDimensionsIn,
+                           const std::string& variableIn,
+                           const std::string& selectionIn,
+                           bool               perEntryIn):
   treeName(treeNameIn),
   histName(histNameIn),
   nDimensions(nDimensionsIn),

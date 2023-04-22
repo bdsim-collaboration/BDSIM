@@ -26,12 +26,12 @@ HistogramDef2D::HistogramDef2D():
 {;}
 
 HistogramDef2D::HistogramDef2D(const std::string&      treeNameIn,
-			       const std::string&      histNameIn,
-			       const BinSpecification& xBinningIn,
-			       const BinSpecification& yBinningIn,
-			       const std::string&      variableIn,
-			       const std::string&      selectionIn,
-			       bool                    perEntryIn):
+                               const std::string&      histNameIn,
+                               const BinSpecification& xBinningIn,
+                               const BinSpecification& yBinningIn,
+                               const std::string&      variableIn,
+                               const std::string&      selectionIn,
+                               bool                    perEntryIn):
   HistogramDef1D(treeNameIn, histNameIn, xBinningIn, variableIn, selectionIn, perEntryIn),
   yBinning(yBinningIn)
 {
