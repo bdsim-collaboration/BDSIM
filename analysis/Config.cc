@@ -722,6 +722,8 @@ std::set<ParticleSpec> Config::ParseParticles(const std::string& word) const
           catch (const std::exception& e)
             {throw RBDSException(e.what());}
         }
+      else if (res.find("total") != std::string::npos)
+        {result.insert(ParticleSpec(0, RBDS::SpectraParticles::all));}
       else
         {
           try

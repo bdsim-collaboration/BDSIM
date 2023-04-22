@@ -599,6 +599,9 @@ Particles can be specified in several ways:
 +---------------------+-------------------------------------------------------------------------+
 | {top10particles} \* | Similar to top10 but only for non-ions.                                 |
 +---------------------+-------------------------------------------------------------------------+
+| {total,11,-11,22}   | The keyword 'total' will make a histogram that accepts all particles    |
+|                     | for total. The total histogram is written out with PDG ID               |
++---------------------+-------------------------------------------------------------------------+
 
 .. warning:: (\*) The `topN` syntax cannot be used with simple histograms (e.g. with the syntax
 	     SimpleSpectra) because we need to perform per-event analysis to build up a set of
@@ -615,6 +618,9 @@ Particles can be specified in several ways:
 	     specific PDG IDs should be given.
 
 .. note:: No white space should be in the particle specification.
+
+.. note:: The total histogram, if requested, is written out with PDG ID 0.
+
 
 Logarithmic Binning
 -------------------
