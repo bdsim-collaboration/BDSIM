@@ -39,18 +39,24 @@ public:
 
   /// Use this constructor.
   HistogramDef3D(const std::string&      treeNameIn,
-		 const std::string&      histNameIn,
-		 const BinSpecification& xBinningIn,
-		 const BinSpecification& yBinningIn,
-		 const BinSpecification& zBinningIn,
-		 const std::string&      variableIn,
-		 const std::string&      selectionIn = "1",
-		 bool                    perEntryIn  = true);
+                 const std::string&      histNameIn,
+                 const BinSpecification& xBinningIn,
+                 const BinSpecification& yBinningIn,
+                 const BinSpecification& zBinningIn,
+                 const std::string&      variableIn,
+                 const std::string&      selectionIn = "1",
+                 bool                    perEntryIn  = true);
   
   virtual ~HistogramDef3D();
     
   /// Copy this instance. Virtual to be overridden in derived classes.
   virtual HistogramDef* Clone() const {return new HistogramDef3D(*this);}
+
+  /// Return n bins and ranges.
+  virtual std::string GetBinningString() const;
+
+  /// Get the first string that defines the histogram in rebdsim for feedback.
+  virtual std::string GetHistogramString() const;
 
   BinSpecification zBinning;
 
