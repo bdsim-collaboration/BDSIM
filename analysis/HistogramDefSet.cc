@@ -28,9 +28,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
-				 const HistogramDef* baseDefinitionIn,
-				 const std::set<ParticleSpec>& particlesSpecs,
-				 const std::string&  particleSpecificationIn):
+                                 const HistogramDef* baseDefinitionIn,
+                                 const std::set<ParticleSpec>& particlesSpecs,
+                                 const std::string&  particleSpecificationIn):
   branchName(branchNameIn),
   dynamicallyStoreIons(false),
   dynamicallyStoreParticles(particlesSpecs.empty()),
@@ -125,11 +125,23 @@ std::string HistogramDefSet::RemoveSubString(const std::string& stringIn,
   return result;
 }
 
+std::ostream& operator<< (std::ostream &out, const HistogramDefSet& s)
+{
+  out << "Spectra: " << s.baseDefinition->histName << "\n";
+  for (const auto* d : s.definitionsV)
+    {out << *d;}
+  return out;
+}
+
 std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particleSpec,
-						     const std::string& selection,
-						     const std::string& branchName)
+                                                     const std::string& selection,
+                                                     const std::string& branchName)
 {
   long long int pdgID = particleSpec.first;
+
+  if (pdgID == 0) // '0' is our code for total or really all particles in 1x histogram
+    {return selection;} // just return whatever selection is
+
   RBDS::SpectraParticles flag = particleSpec.second;
   std::string flagFilter;
   switch (flag)
@@ -142,20 +154,32 @@ std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particl
         {break;}
     }
   std::string filter = branchName+".partID=="+std::to_string(pdgID) + flagFilter;
-  // check if it has a boolean expression already in it
+
+  // input selection could be:
+  // 1
+  // samplerName.weight
+  // samplerName.variable*number/number
+  // samplerName.variable<value // Boolean expression
+  // variable*(Boolean)
+  // we need to put in the bonus Boolean if needed
+  // check if it has a Boolean expression already in it
   std::string result;
   std::regex boolOperator("&&|[<>!=]=|[<>]|\\|\\|");
   std::smatch match;
   if (std::regex_search(selection, match, boolOperator))
-    {// has boolean operator somewhere in it      
+    {// has boolean operator somewhere in it
       std::string afterBool = match.suffix();
       std::size_t bracketPos = afterBool.find(')');
       result = selection; // copy it
-      result.insert(match.position() + match.length() + bracketPos, "&&"+filter);
+      if (bracketPos == std::string::npos) // no bracket found - so just Boolean condition on its own
+        {result += "&&" + filter;}
+      else
+        {result.insert(match.position()+ match.length() + bracketPos, "&&"+filter);}
     }
-  else if (selection.empty())
+  else if (selection.empty() || selection == "1") // technically the selection shouldn't be empty, but just in case...
     {result = filter;}
   else
     {result = selection + "*("+filter+")";}
   return result;
 }
+
