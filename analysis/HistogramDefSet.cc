@@ -151,7 +151,10 @@ std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particl
       std::string afterBool = match.suffix();
       std::size_t bracketPos = afterBool.find(')');
       result = selection; // copy it
-      result.insert(match.position() + match.length() + bracketPos, "&&"+filter);
+      if (bracketPos == std::string::npos) // no bracket found - so just Boolean condition on its own
+        {result += "&&" + filter;}
+      else
+        {result.insert(match.position()+ match.length() + bracketPos, "&&"+filter);}
     }
   else if (selection.empty())
     {result = filter;}
