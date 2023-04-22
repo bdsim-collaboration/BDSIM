@@ -741,7 +741,9 @@ The following (case-insensitive) options may be specified in the top part.
 +----------------------------+------------------------------------------------------+
 | ProcessSamplers            | Whether to load the sampler data or not              |
 +----------------------------+------------------------------------------------------+
-
+| VerboseSpectra             | Print out the full expanded definition of any        |
+|                            | spectra that have been defined.                      |
++----------------------------+------------------------------------------------------+
 
 
 Variables In Data

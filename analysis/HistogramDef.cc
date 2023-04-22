@@ -18,6 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "HistogramDef.hh"
 
+#include <iostream>
+#include <string>
+
 ClassImp(HistogramDef)
 
 HistogramDef::HistogramDef():
@@ -42,3 +45,11 @@ HistogramDef::HistogramDef(const std::string& treeNameIn,
   selection(selectionIn),
   perEntry(perEntryIn)
 {;}
+
+std::ostream& operator<< (std::ostream& out, const HistogramDef& s)
+{
+  std::string hs = s.GetHistogramString();
+  std::string bs = s.GetBinningString();
+  out << hs << " " << s.treeName << " " << s.histName << " " << bs << " " << s.variable << " " << s.selection << "\n";
+  return out;
+}

@@ -541,6 +541,16 @@ void Config::SetBranchToBeActivated(const std::string& treeName,
     {v.push_back(branchName);}
 }
 
+void Config::PrintHistogramSetDefinitions() const
+{
+  std::cout << "Simple histogram set definitions for Event tree:" << std::endl;
+  for (const auto* def : eventHistoDefSetsSimple)
+    {std::cout << *def << std::endl;}
+  std::cout << "PerEntry histogram set definitions for Event tree:" << std::endl;
+  for (const auto* def : eventHistoDefSetsPerEntry)
+    {std::cout << *def << std::endl;}
+}
+
 void Config::CheckValidTreeName(std::string& treeName) const
 {
   // check it has a point at the end (simple mistake)
@@ -612,6 +622,7 @@ void Config::ParseBinning(const std::string& binning,
           (*values[counter]).n     = (int)binEdges->size() - 1;
           (*values[counter]).low   = binEdges->at(0);
           (*values[counter]).high  = binEdges->back();
+          (*values[counter]).edgesFileName = matchS;
         }
       else
         {// try to match ranges
@@ -634,6 +645,7 @@ void Config::ParseBinning(const std::string& binning,
                 {
                   std::vector<double> binEdges = RBDS::LogSpace((*values[counter]).low, (*values[counter]).high, (*values[counter]).n);
                   (*values[counter]).edges = new std::vector<double>(binEdges);
+                  (*values[counter]).isLogSpaced = true;
                 }
             }
         }    

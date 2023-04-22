@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BinSpecification.hh"
 #include "HistogramDef2D.hh"
 
+#include <string>
+
 ClassImp(HistogramDef2D)
 
 HistogramDef2D::HistogramDef2D():
@@ -40,3 +42,18 @@ HistogramDef2D::HistogramDef2D(const std::string&      treeNameIn,
 
 HistogramDef2D::~HistogramDef2D()
 {;}
+
+std::string HistogramDef2D::GetBinningString() const
+{
+  std::string result = "{" + std::to_string(xBinning.n) + "," + std::to_string(yBinning.n) + "} {";
+  result += xBinning.GetBinString() + "," + yBinning.GetBinString() + "}";
+  return result;
+}
+
+std::string HistogramDef2D::GetHistogramString() const
+{
+  std::string result = perEntry ? "Histogram2D" : "SimpleHistogram2D";
+  if (xBinning.isLogSpaced || yBinning.isLogSpaced)
+    {result += xBinning.GetLogString() + yBinning.GetLogString();}
+  return result;
+}

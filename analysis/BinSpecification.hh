@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BINSPECIFICATION_H
 #include "Rtypes.h"
 
+#include <string>
 #include <vector>
 
 /**
@@ -51,11 +52,19 @@ public:
   BinSpecification(BinSpecification&& other) noexcept;
   
   ~BinSpecification();
+
+  /// Return the filename or the binning.
+  std::string GetBinString() const;
+
+  /// Utility function.
+  inline std::string GetLogString() const {return isLogSpaced ? "Log" : "Lin";}
   
   double low;
   double high;
   int    n;
   std::vector<double>* edges;
+  bool   isLogSpaced;
+  std::string edgesFileName;
 };
   
 #endif

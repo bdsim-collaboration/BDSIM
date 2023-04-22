@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BinSpecification.hh"
 #include "HistogramDef1D.hh"
 
+#include <string>
+
 ClassImp(HistogramDef1D)
 
 HistogramDef1D::HistogramDef1D():
@@ -37,3 +39,17 @@ HistogramDef1D::HistogramDef1D(const std::string& treeNameIn,
 
 HistogramDef1D::~HistogramDef1D()
 {;}
+
+std::string HistogramDef1D::GetBinningString() const
+{
+  std::string result = "{" + std::to_string(xBinning.n) + "} {" + xBinning.GetBinString() + "}";
+  return result;
+}
+
+std::string HistogramDef1D::GetHistogramString() const
+{
+  std::string result = perEntry ? "Histogram1D" : "SimpleHistogram1D";
+  if (xBinning.isLogSpaced)
+    {result += "Log";}
+  return result;
+}
