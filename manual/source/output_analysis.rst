@@ -643,6 +643,7 @@ would be used::
 
   Histogram1DLog Event. EnergySpectrum {30} {-3:3} Eloss.energy 1
 
+
 Uneven Binning
 --------------
 
@@ -752,6 +753,7 @@ Variables In Data
 See :ref:`basic-data-inspection` for how to view the data and make the most basic
 on-the-fly histograms.
 
+
 .. _rebdsim-combine-tool:
 
 rebdsimCombine - Output Combination
@@ -769,6 +771,7 @@ in comparison to the analysis. `rebdsimCombine` is used as follows: ::
 
 where `<result.root>` is the desired name of the merged output file and `<fileX.root>` etc.
 are input files to be merged. This workflow is shown schematically in the figure below.
+
 
 .. _rebdsim-histo-merge-tool:
 
@@ -799,6 +802,7 @@ across all events.  This can only operate on BDSIM output files, not `rebdsim`
 output files.
 
 * The output file name is optional and will default to :code:`inputfilename_histos.root.`
+
 
 .. _rebdsim-optics-tool:
   
@@ -834,6 +838,7 @@ cavities are used, then the emittance on the fly option should be used.::
 * The output **is not** mergeable with `rebdsimCombine`.
 
 See :ref:`optical-validation` for more details.
+
 
 .. _rebdsim-orbit-tool:
 
@@ -879,6 +884,7 @@ each entry.
 `rebdsim` 'turns off' the loading of all data and only loads what is necessary for the
 given analysis.
 
+
 .. _output-analysis-scaling-up:
 
 Scaling Up - Parallelising Analysis
@@ -891,6 +897,7 @@ produce numerically identical output but make different use of computing resourc
 more data stored per event in the output files, the longer it takes to load it from disk and
 the longer the analysis. Similarly, the more events simulated, the longer the analysis will
 take. Of course either strategy can be used.
+
 
 Low-Data Volume
 ---------------
@@ -917,6 +924,7 @@ This is shown schematically in the figure below.
 This strategy works best for a relatively low number of events and data volume (example
 numbers might be < 10000 events and < 10 GB of data).
 
+
 High-Data Volume
 ----------------
 
@@ -936,6 +944,7 @@ file. This is numerically equivalent to analysing all the data in one execution 
 	    analysis configuration. Only the output files from `rebdsim` are then combined
 	    into a final output identical to what would have been produced from analysing
 	    all data at once, but in vastly reduced time.
+
 
 Raw Data Reduction
 ------------------
@@ -962,7 +971,8 @@ correctly later on to get the correct physical rate.
 	    BDSIM are executed in a script that then executes `bdskim` with a suitable
 	    selection file. Only the output files from `bdskim` are then combined
 	    into a final output.
-	    
+
+
 .. _output-user-analysis:
 
 User Analysis
@@ -978,6 +988,7 @@ library can be used interactively in Python and ROOT to load the data manually.
 A custom analysis can also be put in files the same as rebdsim would produce
 and then rebdsimCombine can be used on them. This allows us to scale up a custom
 analysis to any size. See :ref:`custom-analysis-rebdsim-file`.
+
 
 Analysis in Python
 ------------------
@@ -1007,6 +1018,7 @@ This can also be conveniently achieved with pybdsim: ::
 
 This raises a Python exception if the libraries aren't found correctly. This is done
 automatically when any BDSIM output file is loaded using the ROOT libraries.
+
 
 IPython
 *******
@@ -1136,8 +1148,8 @@ ROOT.
 accumulators (things that accumulate) are building up the average as they go.
 
 The :code:`HistogramAccumulator` class wraps a ROOT TH1D or TH2D or TH3D object and
-calcualtes a rolling average. The class is available in our rebdsim library which is
-imported automatially when loading a data file with pybdsim. However, one can explicitly
+calculates a rolling average. The class is available in our rebdsim library which is
+imported automatically when loading a data file with pybdsim. However, one can explicitly
 load it with: ::
 
   >>> import pybdsim
@@ -1145,7 +1157,7 @@ load it with: ::
 
 * HistogramAccumulator can be found in :code:`bdsim/analysis/HistogramAccumulator.hh`.
 * It works on TH1D, TH2D, TH3D histograms.
-* You do not need to speciy the number of dimensions of the histogram - it's automatic.
+* You do not need to specify the number of dimensions of the histogram - it's automatic.
 
 This is the basic usage of HistogramAccumulator in Python: ::
 
@@ -1167,7 +1179,7 @@ This is the basic usage of HistogramAccumulator in Python: ::
 
 
 .. note:: We need a basic ROOT histogram to base the accumulator off of. It needs to have a
-	  differnet name, but it can have the same title. The first argument, the object name,
+	  different name, but it can have the same title. The first argument, the object name,
 	  is the one used when writing to a file and ROOT uses this internally to identify it
 	  so it **must** be unique. Here, we append the suffix "BASE" onto its name for the
 	  simple histogram, and we give the accumulator the desired name without this suffix
@@ -1188,6 +1200,7 @@ An example in a loop: ::
   >>> outfile = pybdsim.Data.CreateEmptyRebdsimFile("somehistograms.root", d.header.nOriginalEvents)
   >>> pybdsim.Data.WriteROOTHistogramsToDirectory(outfile, "Event/PerEntryHistograms", [result])
   >>> outfile.Close()
+
 
 .. _custom-analysis-rebdsim-file:
 
@@ -1213,6 +1226,7 @@ match the layout of a regular rebdsim file. e.g. :
 
 * :code:`Event/PerEntryHistograms` for average histograms
 * :code:`Event/SimpleHistograms` for regular histograms that aren't averaged or event-normalised.
+
 
 REBDSIM In Python
 *****************
@@ -1308,6 +1322,7 @@ classes provided by the library::
 The header (".hh") files in :code:`<bdsim>/analysis` provide the contents and abilities
 of each class.
 
+
 Raw Data Loading
 ****************
 
@@ -1322,6 +1337,7 @@ sets the branch address on them (links them to the open file). For example::
   root> TTree* evtTree = dl->GetEventTree();
 
 Here, a file is loaded and by default all data is loaded in the file.
+
 
 REBDSIM Histogram Loading
 *************************
@@ -1375,6 +1391,7 @@ One may manually loop over the events in a macro::
 This would loop over all entries and print the number of energy deposition hits per
 event.
 
+
 Sampler Data
 ************
 
@@ -1399,6 +1416,7 @@ The following classes are used for data loading and can be found in `bdsim/analy
 * Options.hh
 * Run.hh
 
+
 .. _numerical-methods:
 
 Numerical Methods
@@ -1407,6 +1425,7 @@ Numerical Methods
 Algorithms used to accurately calculate quantities are described here. These are
 documented explicitly as a simple implementation of the mathematical formulae
 would result in an inaccurate answer in some cases.
+
 
 Numerically Stable Calculation of Mean \& Variance
 --------------------------------------------------
