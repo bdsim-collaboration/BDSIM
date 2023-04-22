@@ -202,14 +202,14 @@ void Config::ParseInputFile()
             {continue;} // skip empty lines
           else if (std::regex_search(line, comment))
             {continue;} // skip lines starting with '#'
+          else if (std::regex_search(line, particleSet)) // this has to be before an option as it also has only 2 words per line
+            {ParseParticleSetLine(line);}
           else if (std::regex_search(line, option))
             {ParseSetting(line);}
           else if (std::regex_search(line, histogram))
             {ParseHistogramLine(line);} // any histogram - must be before settings
           else if (std::regex_search(line, spectra))
             {ParseSpectraLine(line);}
-          else if (std::regex_search(line, particleSet))
-            {ParseParticleSetLine(line);}
           else
             {continue;}
         }
