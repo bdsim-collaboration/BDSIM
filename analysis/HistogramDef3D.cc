@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BinSpecification.hh"
 #include "HistogramDef3D.hh"
 
+#include <string>
+
 ClassImp(HistogramDef3D)
 
 HistogramDef3D::HistogramDef3D():
@@ -41,3 +43,18 @@ HistogramDef3D::HistogramDef3D(const std::string&      treeNameIn,
 
 HistogramDef3D::~HistogramDef3D()
 {;}
+
+std::string HistogramDef3D::GetBinningString() const
+{
+  std::string result = "{" + std::to_string(xBinning.n) + "," + std::to_string(yBinning.n) + "," + std::to_string(zBinning.n) + "} {";
+  result += xBinning.GetBinString() + "," + yBinning.GetBinString() + "," + zBinning.GetBinString() + "}";
+  return result;
+}
+
+std::string HistogramDef3D::GetHistogramString() const
+{
+  std::string result = perEntry ? "Histogram3D" : "SimpleHistogram3D";
+  if (xBinning.isLogSpaced || yBinning.isLogSpaced || zBinning.isLogSpaced)
+    {result += xBinning.GetLogString() + yBinning.GetLogString() + zBinning.GetLogString();}
+  return result;
+}

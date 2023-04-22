@@ -125,6 +125,14 @@ std::string HistogramDefSet::RemoveSubString(const std::string& stringIn,
   return result;
 }
 
+std::ostream& operator<< (std::ostream &out, const HistogramDefSet& s)
+{
+  out << "Spectra: " << s.baseDefinition->histName << "\n";
+  for (const auto* d : s.definitionsV)
+    {out << *d;}
+  return out;
+}
+
 std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particleSpec,
                                                      const std::string& selection,
                                                      const std::string& branchName)
@@ -146,7 +154,15 @@ std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particl
         {break;}
     }
   std::string filter = branchName+".partID=="+std::to_string(pdgID) + flagFilter;
-  // check if it has a boolean expression already in it
+
+  // input selection could be:
+  // 1
+  // samplerName.weight
+  // samplerName.variable*number/number
+  // samplerName.variable<value // Boolean expression
+  // variable*(Boolean)
+  // we need to put in the bonus Boolean if needed
+  // check if it has a Boolean expression already in it
   std::string result;
   std::regex boolOperator("&&|[<>!=]=|[<>]|\\|\\|");
   std::smatch match;
@@ -160,9 +176,10 @@ std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particl
       else
         {result.insert(match.position()+ match.length() + bracketPos, "&&"+filter);}
     }
-  else if (selection.empty())
+  else if (selection.empty() || selection == "1") // technically the selection shouldn't be empty, but just in case...
     {result = filter;}
   else
     {result = selection + "*("+filter+")";}
   return result;
 }
+

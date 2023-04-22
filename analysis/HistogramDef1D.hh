@@ -50,6 +50,12 @@ public:
   /// Copy this instance. Virtual to be overridden in derived classes.
   virtual HistogramDef* Clone() const {return new HistogramDef1D(*this);}
 
+  /// Return n bins and ranges.
+  virtual std::string GetBinningString() const;
+
+  /// Get the first string that defines the histogram in rebdsim for feedback.
+  virtual std::string GetHistogramString() const;
+
   BinSpecification xBinning;
 
   ClassDef(HistogramDef1D, 1);

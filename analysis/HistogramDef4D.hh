@@ -51,6 +51,12 @@ public:
   
   virtual ~HistogramDef4D();
 
+  /// Return n bins and ranges.
+  virtual std::string GetBinningString() const;
+
+  /// Get the first string that defines the histogram in rebdsim for feedback.
+  virtual std::string GetHistogramString() const;
+
   BinSpecification eBinning;
   std::string eScale;
 

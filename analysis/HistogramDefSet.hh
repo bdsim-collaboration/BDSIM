@@ -49,6 +49,8 @@ public:
   std::string RemoveSubString(const std::string& stringIn,
                               const std::string& wordToRemove) const;
 
+  friend std::ostream& operator<< (std::ostream &out, const HistogramDefSet& s);
+
   std::string   branchName;
   HistogramDef* baseDefinition;
   std::map<ParticleSpec, HistogramDef*> definitions;

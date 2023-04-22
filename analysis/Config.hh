@@ -140,6 +140,10 @@ public:
   inline bool   PerEntryOption() const {return optionsBool.at("perentryoption");}
   inline bool   PerEntryModel()  const {return optionsBool.at("perentrymodel");}
   /// @}
+
+  /// Print out the per event and simple histogram set definitions as these
+  /// are (assumed to be) spectra definitions that people might want to see expanded.
+  void PrintHistogramSetDefinitions() const;
   
  protected:
   /// Private constructor for singleton pattern.
