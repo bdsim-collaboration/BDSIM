@@ -437,7 +437,8 @@ void Config::ParseSpectraLine(const std::string& line)
   if (particles.empty() && !perEntry)
     {throw RBDSException("Simple spectra cannot be used with 'topN'- only works for specific particles");}
   
-  HistogramDef1D* def = new HistogramDef1D("Event.", histogramName,
+  HistogramDef1D* def = new HistogramDef1D("Event.",
+                                           histogramName,
                                            xBinning,
                                            samplerName + variable,
                                            selection, perEntry);
@@ -675,6 +676,9 @@ std::vector<std::string> Config::SplitOnWhiteSpace(const std::string& line) cons
 std::set<ParticleSpec> Config::ParseParticles(const std::string& word) const
 {
   std::string wordLower = LowerCase(word);
+  // check for special keys where we would ignore any other specific particles
+  // e.g. for 'topN' we're deciding which histograms to make so don't make a
+  // ParticleSpec.
   std::vector<std::string> specialKeys = {"top", "particles", "all", "ions"};
   for (const auto& key : specialKeys)
     {
