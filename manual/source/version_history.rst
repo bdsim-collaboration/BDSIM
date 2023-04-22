@@ -488,9 +488,10 @@ Output Class Versions
 Utilities
 ---------
 
-These are no longer included directly with BDSIM but are available through pip.
+These are no longer included directly with BDSIM but are available through pip. At the time
+of writing, the corresponding versions of each utility are:
 
-* pybdsim v3.1.0
+* pybdsim v3.1.1
 * pymadx v2.0.0
 * pymad8 v2.0.0
 * pytransport v2.0.0
