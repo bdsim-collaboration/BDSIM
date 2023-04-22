@@ -130,6 +130,10 @@ std::string HistogramDefSet::AddPDGFilterToSelection(const ParticleSpec& particl
                                                      const std::string& branchName)
 {
   long long int pdgID = particleSpec.first;
+
+  if (pdgID == 0) // '0' is our code for total or really all particles in 1x histogram
+    {return selection;} // just return whatever selection is
+
   RBDS::SpectraParticles flag = particleSpec.second;
   std::string flagFilter;
   switch (flag)
