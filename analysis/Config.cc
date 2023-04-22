@@ -130,6 +130,7 @@ void Config::InitialiseOptions(const std::string& analysisFile)
   optionsBool["perentryoption"]    = false;
   optionsBool["perentrymodel"]     = false;
   optionsBool["backwardscompatible"] = false; // ignore file types for old data
+  optionsBool["verbosespectra"]    = false;
 
   optionsString["inputfilepath"]  = "";
   optionsString["outputfilename"] = "";
@@ -183,6 +184,8 @@ void Config::ParseInputFile()
   // unique patterns to match
   // match a line starting with #
   std::regex comment("^\\#.*");
+  // match an option that has two words on the line
+  std::regex option(R"(^\s*(\S+)\s+(\S+)\s*$)");
   // match a line starting with 'histogram', ignoring case
   std::regex histogram("(?:simple)*histogram.*", std::regex_constants::icase);
   // match a line starting with 'spectra', ignoring case - quite exact to avoid mismatching 'spectra' in file name in options
@@ -199,6 +202,8 @@ void Config::ParseInputFile()
             {continue;} // skip empty lines
           else if (std::regex_search(line, comment))
             {continue;} // skip lines starting with '#'
+          else if (std::regex_search(line, option))
+            {ParseSetting(line);}
           else if (std::regex_search(line, histogram))
             {ParseHistogramLine(line);} // any histogram - must be before settings
           else if (std::regex_search(line, spectra))
@@ -206,7 +211,7 @@ void Config::ParseInputFile()
           else if (std::regex_search(line, particleSet))
             {ParseParticleSetLine(line);}
           else
-            {ParseSetting(line);} // any setting
+            {continue;}
         }
       catch (RBDSException& e)
         {
@@ -238,6 +243,9 @@ void Config::ParseInputFile()
     {eE = std::numeric_limits<double>::max();}
   if (eS < 0 || eS > eE)
     {throw RBDSException("Invalid starting event number " + std::to_string(eS));}
+
+  if (optionsBool.at("verbosespectra"))
+    {PrintHistogramSetDefinitions();}
 }
 
 void Config::ParseHistogramLine(const std::string& line)
