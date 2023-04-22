@@ -37,11 +37,11 @@ public:
 
   /// Use this constructor.
   HistogramDef(const std::string& treeNameIn,
-	       const std::string& histNameIn,
-	       int                nDimensionsIn,
+               const std::string& histNameIn,
+               int                nDimensionsIn,
                const std::string& variable,
-	       const std::string& selectionIn = "1",
-	       bool               perEnetry   = true);
+               const std::string& selectionIn = "1",
+               bool               perEnetry   = true);
   virtual ~HistogramDef(){;};
 
   /// Copy this instance. Virtual to be overridden in derived classes.

@@ -26,11 +26,11 @@ HistogramDef1D::HistogramDef1D():
 {;}
 
 HistogramDef1D::HistogramDef1D(const std::string& treeNameIn,
-			       const std::string& histNameIn,
-			       const BinSpecification& xBinningIn,
-			       const std::string& variableIn,
-			       const std::string& selectionIn,
-			       bool               perEntryIn):
+                               const std::string& histNameIn,
+                               const BinSpecification& xBinningIn,
+                               const std::string& variableIn,
+                               const std::string& selectionIn,
+                               bool               perEntryIn):
   HistogramDef(treeNameIn, histNameIn, 1, variableIn, selectionIn, perEntryIn),
   xBinning(xBinningIn)
 {;}

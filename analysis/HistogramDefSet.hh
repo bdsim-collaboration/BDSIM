@@ -36,14 +36,14 @@ class HistogramDefSet
 {
 public:
   HistogramDefSet(const std::string&  branchNameIn,
-		  const HistogramDef* baseDefinitionIn,
-		  const std::set<ParticleSpec>& particlesSpecs = {},
-		  const std::string&  particleSpecificationIn = "");
+                  const HistogramDef* baseDefinitionIn,
+                  const std::set<ParticleSpec>& particlesSpecs = {},
+                  const std::string&  particleSpecificationIn = "");
   ~HistogramDefSet();
 
   static std::string AddPDGFilterToSelection(const ParticleSpec& particleSpec,
-					     const std::string& selection,
-					     const std::string& branchName);
+                                             const std::string& selection,
+                                             const std::string& branchName);
 
   /// Remove a substring from a string.
   std::string RemoveSubString(const std::string& stringIn,
@@ -58,7 +58,7 @@ public:
 
   enum class writewhat {all, particles, ions, topN, topNParticles, topNIons};
   writewhat     what;
-  int           topN;  
+  int           topN;
 };
 
 #endif
