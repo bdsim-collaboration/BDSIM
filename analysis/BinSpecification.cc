@@ -31,8 +31,8 @@ BinSpecification::BinSpecification():
 {;}
 
 BinSpecification::BinSpecification(double lowIn,
-				   double highIn,
-				   int    nIn):
+                                   double highIn,
+                                   int    nIn):
   low(lowIn),
   high(highIn),
   n(nIn),
