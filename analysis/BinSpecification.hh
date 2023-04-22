@@ -41,8 +41,8 @@ public:
   BinSpecification();
   /// Linearly spaced bins.
   BinSpecification(double lowIn,
-		   double highIn,
-		   int    nIn);
+                   double highIn,
+                   int    nIn);
 
   /// Uneven binning - suitable for logarithmic etc.
   explicit BinSpecification(const std::vector<double>& edgesIn);

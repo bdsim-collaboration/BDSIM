@@ -62,7 +62,7 @@ private:
   /// Copy of definition used to identify only 'per entry' histogram definitions. Doesn't own.
   std::map<std::string, std::vector<HistogramDef*> > histoDefsPerEntry;
 
-  /// Sets of histogram definitions per particle.  Only for event branch.
+  /// Sets of histogram definitions per particle. Only for event branch.
   std::vector<HistogramDefSet*> eventHistoDefSetsSimple;
   std::vector<HistogramDefSet*> eventHistoDefSetsPerEntry;
   
