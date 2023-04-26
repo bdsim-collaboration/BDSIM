@@ -268,6 +268,9 @@ Bug Fixes
     translation unit
     BDSOutputROOTEventSampler<float>::particleTable;
 
+* Fix print out of event numbers in rebdsim being analysed when :code:`EventStart` and :code:`EventEnd` are
+  specified. Also the print out rate given the possibly reduced number of events.
+
 **Beam**
 
 * The `userfile` distribution now doesn't count comment lines for `nlinesSkip` - only valid data lines.

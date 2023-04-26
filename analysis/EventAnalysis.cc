@@ -48,7 +48,8 @@ EventAnalysis::EventAnalysis():
   processSamplers(false),
   emittanceOnTheFly(false),
   eventStart(0),
-  eventEnd(-1)
+  eventEnd(-1),
+  nEventsToProcess(0)
 {;}
 
 EventAnalysis::EventAnalysis(Event*   eventIn,
@@ -67,7 +68,8 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
   processSamplers(processSamplersIn),
   emittanceOnTheFly(emittanceOnTheFlyIn),
   eventStart(eventStartIn),
-  eventEnd(eventEndIn)
+  eventEnd(eventEndIn),
+  nEventsToProcess(eventEndIn - eventStartIn)
 {
   if (processSamplers)
     {// Create sampler analyses if needed
@@ -108,17 +110,17 @@ void EventAnalysis::Execute()
 {
   std::cout << "Analysis on \"" << treeName << "\" beginning" << std::endl;
   if (perEntry || processSamplers)
-  {
-    // ensure new histograms are added to file
-    // crucial for draw command to work as it identifies the histograms by name
-    TH1::AddDirectory(kTRUE);
-    TH2::AddDirectory(kTRUE);
-    TH3::AddDirectory(kTRUE);
-    BDSBH4DBase::AddDirectory(kTRUE);
-    PreparePerEntryHistograms();
-    PreparePerEntryHistogramSets();
-    Process();
-  }
+    {
+      // ensure new histograms are added to file
+      // crucial for draw command to work as it identifies the histograms by name
+      TH1::AddDirectory(kTRUE);
+      TH2::AddDirectory(kTRUE);
+      TH3::AddDirectory(kTRUE);
+      BDSBH4DBase::AddDirectory(kTRUE);
+      PreparePerEntryHistograms();
+      PreparePerEntryHistogramSets();
+      Process();
+    }
   SimpleHistograms();
   Terminate();
   std::cout << "Analysis on \"" << treeName << "\" complete" << std::endl;
@@ -126,7 +128,7 @@ void EventAnalysis::Execute()
 
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
-  printModulo = (int)std::ceil((double)entries * fraction);
+  printModulo = (int)std::ceil((double)nEventsToProcess * fraction);
   if (printModulo <= 0)
     {printModulo = 1;}
 }
