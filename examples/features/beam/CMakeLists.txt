@@ -15,6 +15,7 @@ simple_testing(bunch-composite-w-gauss        "--file=composite-w-gauss.gmad"   
 simple_testing(bunch-composite-sde            "--file=compositespacedirectionenergy.gmad" "")
 simple_testing(bunch-different-beam-particle  "--file=different-beam-particle.gmad" "")
 simple_testing(bunch-exotic-particle          "--file=exotic-particle.gmad"         "")
+simple_testing(bunch-exotic-particle2         "--file=exotic-particle2.gmad"        "")
 simple_testing(bunch-exotic-particle-pdgid    "--file=exotic-particle-pdgid.gmad"   "")
 simple_testing(bunch-eshell                   "--file=eshell.gmad"                  "")
 simple_testing(bunch-eshell-width             "--file=eshell-width.gmad"            "")
