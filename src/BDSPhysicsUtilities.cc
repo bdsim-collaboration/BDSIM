@@ -354,7 +354,11 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
             {throw BDSException(__METHOD_NAME__,"PDG ID \"" + particleName + "not found in particle table");}
         }
       catch (const std::logic_error&) // else, usual way by string search
-        {particleDef = particleTable->FindParticle(particleName);}
+        {
+          particleDef = particleTable->FindParticle(particleName);
+          if (!particleDef)
+            {particleDef = particleTable->FindParticle(particleNameIn);} // try with original case
+        }
       if (!particleDef)
         {
           BDS::PrintDefinedParticles();
@@ -367,6 +371,8 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
 
 void BDS::ConstructBeamParticleG4(const G4String& name)
 {
+  // note, we compare to the lower case name here, not the Geant4 one as
+  // we will already have converted to lower case when this is used
   if (name == "proton")
     {G4Proton::ProtonDefinition();}
   else if (name == "anti_proton")
@@ -409,7 +415,7 @@ void BDS::ConstructBeamParticleG4(const G4String& name)
     {G4AntiNeutrinoTau::AntiNeutrinoTauDefinition();}
   else
     {
-      G4String msg = "Unknown common particle type \"" + name;
+      G4String msg = "Unknown common beam particle type \"" + name;
       msg += "\" - if it doesn't work, include all \"all_particles\" in the physicsList option.";
       BDS::Warning(__METHOD_NAME__, msg);
     }

@@ -91,7 +91,8 @@ namespace BDS
                                                      G4double momentumIn,
 						     G4double ffact = 1);
 
-  /// Ensure required beam particle has been constructed for Geant4 purposes.
+  /// Ensure required beam particle has been constructed for Geant4 purposes. Expects
+  /// lowercase letters, not the Geant4 exact string.
   void ConstructBeamParticleG4(const G4String& name);
   
   /// Construct the minimum particle set required (gamma, electron, positron,
