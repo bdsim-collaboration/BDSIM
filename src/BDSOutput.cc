@@ -1203,14 +1203,12 @@ void BDSOutput::FillRunInfoAndUpdateHeader(const BDSEventInfo* info,
                                            unsigned long long int nEventsDistrFileSkippedIn)
 {
   if (info)
-    {
-      *runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());
-      // Note, check analysis/HeaderAnalysis.cc if the logic changes of only filling the 2nd
-      // entry in the header tree with this information
-      headerOutput->nEventsRequested = nEventsRequestedIn;
-      headerOutput->nEventsInFile = nEventsInOriginalDistrFileIn;
-      headerOutput->nEventsInFileSkipped = nEventsDistrFileSkippedIn;
-    }
+    {*runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());}
+  // Note, check analysis/HeaderAnalysis.cc if the logic changes of only filling the 2nd
+  // entry in the header tree with this information
+  headerOutput->nEventsRequested = nEventsRequestedIn;
+  headerOutput->nEventsInFile = nEventsInOriginalDistrFileIn;
+  headerOutput->nEventsInFileSkipped = nEventsDistrFileSkippedIn;
 }
 
 void BDSOutput::CopyFromHistToHist1D(const G4String& sourceName,
