@@ -268,6 +268,9 @@ Bug Fixes
     translation unit
     BDSOutputROOTEventSampler<float>::particleTable;
 
+* Fix print out of event numbers in rebdsim being analysed when :code:`EventStart` and :code:`EventEnd` are
+  specified. Also the print out rate given the possibly reduced number of events.
+
 **Beam**
 
 * The `userfile` distribution now doesn't count comment lines for `nlinesSkip` - only valid data lines.
@@ -286,6 +289,7 @@ Bug Fixes
   construct and interface. The exact same results are produced reproducibly.
 * Fixed "antiproton" as a beam particle. Should really be "anti_proton" for Geant4 to find
   the particle definition. Manual updated accordingly.
+* Fix "kaon0L" as a beam particle. Also allow "kaon0S" and "kaon0".
   
 **Biasing**
 
@@ -488,9 +492,10 @@ Output Class Versions
 Utilities
 ---------
 
-These are no longer included directly with BDSIM but are available through pip.
+These are no longer included directly with BDSIM but are available through pip. At the time
+of writing, the corresponding versions of each utility are:
 
-* pybdsim v3.1.0
+* pybdsim v3.1.1
 * pymadx v2.0.0
 * pymad8 v2.0.0
 * pytransport v2.0.0

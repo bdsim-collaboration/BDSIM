@@ -95,11 +95,11 @@ int main(int argc, char *argv[])
   try
     {
       dl = new DataLoader(config->InputFilePath(),
-			  debug,
-			  config->ProcessSamplers(),
-			  allBranches,
-			  branchesToActivate,
-			  config->GetOptionBool("backwardscompatible"));
+                          debug,
+                          config->ProcessSamplers(),
+                          allBranches,
+                          branchesToActivate,
+                          config->GetOptionBool("backwardscompatible"));
     }
   catch (const RBDSException& error)
     {std::cerr << error.what() << std::endl; exit(1);}
@@ -117,42 +117,42 @@ int main(int argc, char *argv[])
   delete ha;
   
   BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl->GetBeam(),
-						  dl->GetBeamTree(),
-						  config->PerEntryBeam(),
-						  debug);
+                                                  dl->GetBeamTree(),
+                                                  config->PerEntryBeam(),
+                                                  debug);
   EventAnalysis*   evtAnalysis;
   try
     {
       evtAnalysis = new EventAnalysis(dl->GetEvent(),
-				      dl->GetEventTree(),
-				      config->PerEntryEvent(),
-				      config->ProcessSamplers(),
-				      debug,
-				      config->PrintModuloFraction(),
-				      config->GetOptionBool("emittanceonthefly"),
-				      (long int) config->GetOptionNumber("eventstart"),
-				      (long int) config->GetOptionNumber("eventend"));
+                                      dl->GetEventTree(),
+                                      config->PerEntryEvent(),
+                                      config->ProcessSamplers(),
+                                      debug,
+                                      config->PrintModuloFraction(),
+                                      config->GetOptionBool("emittanceonthefly"),
+                                      (long int) config->GetOptionNumber("eventstart"),
+                                      (long int) config->GetOptionNumber("eventend"));
     }
   catch (const RBDSException& error)
     {std::cerr << error.what() << std::endl; exit(1);}
   RunAnalysis*     runAnalysis = new RunAnalysis(dl->GetRun(),
-						 dl->GetRunTree(),
-						 config->PerEntryRun(),
-						 debug);
+                                                 dl->GetRunTree(),
+                                                 config->PerEntryRun(),
+                                                 debug);
   OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl->GetOptions(),
-						     dl->GetOptionsTree(),
-						     config->PerEntryOption(),
-						     debug);
+                                                     dl->GetOptionsTree(),
+                                                     config->PerEntryOption(),
+                                                     debug);
   ModelAnalysis*   modAnalysis = new ModelAnalysis(dl->GetModel(),
-						   dl->GetModelTree(),
-						   config->PerEntryModel(),
-						   debug);
+                                                   dl->GetModelTree(),
+                                                   config->PerEntryModel(),
+                                                   debug);
 
   std::vector<Analysis*> analyses = {beaAnalysis,
-				     evtAnalysis,
-				     runAnalysis,
-				     optAnalysis,
-				     modAnalysis};
+                                     evtAnalysis,
+                                     runAnalysis,
+                                     optAnalysis,
+                                     modAnalysis};
 
   try
     {
@@ -184,19 +184,19 @@ int main(int argc, char *argv[])
       headerTree->Write("", TObject::kOverwrite);
       
       for (auto& analysis : analyses)
-	{analysis->Write(outputFile);}
+        {analysis->Write(outputFile);}
 
       // copy the model over and rename to avoid conflicts with Model directory
       TChain* modelTree = dl->GetModelTree();
       TTree* treeTest = modelTree->GetTree();
       if (treeTest)
-	{// TChain can be valid but TTree might not be in corrupt / bad file
-	  auto newTree = modelTree->CloneTree();
-	  // unfortunately we have a folder called Model in histogram output files
-	  // avoid conflict when copying the model for plotting
-	  newTree->SetName("ModelTree");
-	  newTree->Write("", TObject::kOverwrite);
-	}
+        {// TChain can be valid but TTree might not be in corrupt / bad file
+          auto newTree = modelTree->CloneTree();
+          // unfortunately we have a folder called Model in histogram output files
+          // avoid conflict when copying the model for plotting
+          newTree->SetName("ModelTree");
+          newTree->Write("", TObject::kOverwrite);
+        }
 
       outputFile->Close();
       delete outputFile;

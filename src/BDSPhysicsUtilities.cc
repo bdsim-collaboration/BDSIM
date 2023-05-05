@@ -53,9 +53,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4IonTable.hh"
 #include "G4KaonMinus.hh"
 #include "G4KaonPlus.hh"
-#include "G4MuonMinus.hh"
+#include "G4KaonZero.hh"
 #include "G4KaonZeroLong.hh"
+#include "G4KaonZeroShort.hh"
 #include "G4LeptonConstructor.hh"
+#include "G4MuonMinus.hh"
 #include "G4MuonPlus.hh"
 #include "G4NeutrinoE.hh"
 #include "G4NeutrinoMu.hh"
@@ -354,7 +356,11 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
             {throw BDSException(__METHOD_NAME__,"PDG ID \"" + particleName + "not found in particle table");}
         }
       catch (const std::logic_error&) // else, usual way by string search
-        {particleDef = particleTable->FindParticle(particleName);}
+        {
+          particleDef = particleTable->FindParticle(particleName);
+          if (!particleDef)
+            {particleDef = particleTable->FindParticle(particleNameIn);} // try with original case
+        }
       if (!particleDef)
         {
           BDS::PrintDefinedParticles();
@@ -367,6 +373,8 @@ BDSParticleDefinition* BDS::ConstructParticleDefinition(const G4String& particle
 
 void BDS::ConstructBeamParticleG4(const G4String& name)
 {
+  // note, we compare to the lower case name here, not the Geant4 one as
+  // we will already have converted to lower case when this is used
   if (name == "proton")
     {G4Proton::ProtonDefinition();}
   else if (name == "anti_proton")
@@ -393,8 +401,12 @@ void BDS::ConstructBeamParticleG4(const G4String& name)
     {G4KaonMinus::KaonMinusDefinition();}
   else if (name == "kaon+")
     {G4KaonPlus::KaonPlusDefinition();}
-  else if (name == "kaon0L")
+  else if (name == "kaon0")
+    {G4KaonZero::KaonZeroDefinition();}
+  else if (name == "kaon0l")
     {G4KaonZeroLong::KaonZeroLongDefinition();}
+  else if (name == "kaon0s")
+    {G4KaonZeroShort::KaonZeroShortDefinition();}
   else if (name == "nu_e")
     {G4NeutrinoE::NeutrinoEDefinition();}
   else if (name == "anti_nu_e")
@@ -409,7 +421,7 @@ void BDS::ConstructBeamParticleG4(const G4String& name)
     {G4AntiNeutrinoTau::AntiNeutrinoTauDefinition();}
   else
     {
-      G4String msg = "Unknown common particle type \"" + name;
+      G4String msg = "Unknown common beam particle type \"" + name;
       msg += "\" - if it doesn't work, include all \"all_particles\" in the physicsList option.";
       BDS::Warning(__METHOD_NAME__, msg);
     }

@@ -47,7 +47,11 @@ HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
       for (const auto& particleSpec : particlesSpecs)
         {
           HistogramDef* h = baseDefinitionIn->Clone();
-          h->histName = "Spectra_" + h->histName + "_" + std::to_string(particleSpec.first);
+          std::string thisHistName = "Spectra_" + h->histName + "_";
+          if (particleSpec.first > 0) // prepend + character for positive values so we always have + or -
+            {thisHistName += "+";}
+          thisHistName += std::to_string(particleSpec.first);
+          h->histName = thisHistName;
           std::string suffix;
           switch (particleSpec.second)
             {
