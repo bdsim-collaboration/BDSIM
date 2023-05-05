@@ -2400,6 +2400,15 @@ produce a muon in their "post step change", the splitting is invoked. In this ca
 #) The original muon(s) plus the new ones are added to the final "post step change", each with
    a weight of original weight / N muons.
 
+Schematically, this would look like:
+
+.. figure:: figures/muonsplitting.pdf
+            :width: 70%
+            :align: center
+
+            Schematic of a :math:`\pi^+` decay to a muon and a muon neutrino.
+
+   
 .. note:: This can safely be used in combination with BDSIM's cross-section biasing. The weights
 	  are compounded and no special action needs to be taken.
 
