@@ -378,11 +378,13 @@ void BDSOutput::CloseAndOpenNewFile()
 }
 
 void BDSOutput::FillRun(const BDSEventInfo* info,
+                        unsigned long long int nOriginalEventsIn,
                         unsigned long long int nEventsRequestedIn,
                         unsigned long long int nEventsInOriginalDistrFileIn,
-                        unsigned long long int nEventsDistrFileSkippedIn)
+                        unsigned long long int nEventsDistrFileSkippedIn,
+                        unsigned int distrFileLoopNTimesIn)
 {
-  FillRunInfoAndUpdateHeader(info, nEventsRequestedIn, nEventsInOriginalDistrFileIn, nEventsDistrFileSkippedIn);
+  FillRunInfoAndUpdateHeader(info, nOriginalEventsIn, nEventsRequestedIn, nEventsInOriginalDistrFileIn, nEventsDistrFileSkippedIn, distrFileLoopNTimesIn);
   WriteFileRunLevel();
   WriteHeaderEndOfFile();
   ClearStructuresRunLevel();
@@ -1198,17 +1200,21 @@ void BDSOutput::FillScorerHitsIndividualBLM(const G4String& histogramDefName,
 }
 
 void BDSOutput::FillRunInfoAndUpdateHeader(const BDSEventInfo* info,
+                                           unsigned long long int nOriginalEventsIn,
                                            unsigned long long int nEventsRequestedIn,
                                            unsigned long long int nEventsInOriginalDistrFileIn,
-                                           unsigned long long int nEventsDistrFileSkippedIn)
+                                           unsigned long long int nEventsDistrFileSkippedIn,
+                                           unsigned int distrFileLoopNTimesIn)
 {
   if (info)
     {*runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());}
   // Note, check analysis/HeaderAnalysis.cc if the logic changes of only filling the 2nd
   // entry in the header tree with this information
+  headerOutput->nOriginalEvents = nOriginalEventsIn;
   headerOutput->nEventsRequested = nEventsRequestedIn;
   headerOutput->nEventsInFile = nEventsInOriginalDistrFileIn;
   headerOutput->nEventsInFileSkipped = nEventsDistrFileSkippedIn;
+  headerOutput->distrFileLoopNTimes = distrFileLoopNTimesIn;
 }
 
 void BDSOutput::CopyFromHistToHist1D(const G4String& sourceName,
