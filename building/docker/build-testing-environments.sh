@@ -16,5 +16,7 @@ docker build . -f Dockerfile-centos7-bdsim-geant4v10.4.3-environment -t centos7-
 docker build . -f Dockerfile-centos7-bdsim-geant4v10.5.1-environment -t centos7-geant4v10.5.1-environment ${SUFFIX}
 docker build . -f Dockerfile-centos7-bdsim-geant4v10.6.3-environment -t centos7-geant4v10.6.3-environment ${SUFFIX}
 docker build . -f Dockerfile-centos7-bdsim-geant4v10.7.4-environment -t centos7-geant4v10.7.4-environment ${SUFFIX}
+docker build . -f Dockerfile-centos7-bdsim-geant4v10.7.2.3-jai-environment -t centos7-geant4v10.7.2.3-jai-environment ${SUFFIX}
 docker build . -f Dockerfile-centos7-bdsim-geant4v11.0.4-environment -t centos7-geant4v11.0.4-environment ${SUFFIX}
 docker build . -f Dockerfile-centos7-bdsim-geant4v11.1.1-environment -t centos7-geant4v11.1.1-environment ${SUFFIX}
+

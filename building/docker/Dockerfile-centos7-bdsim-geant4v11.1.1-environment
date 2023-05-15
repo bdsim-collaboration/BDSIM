@@ -1,8 +1,17 @@
-FROM jairhul/centos7-base-environment-dt9
+FROM jairhul/centos7-base-environment-dt9-no-root
 
 SHELL ["/bin/bash", "-c"]
 
 WORKDIR /tmp
+
+# ROOT - so it's compiled with the exact compiler available
+# if through a package manager it might not match and we can't compile against it
+RUN wget https://root.cern/download/root_v6.28.02.source.tar.gz && \
+    tar -xzf root_v6.28.02.source.tar.gz && \
+    source scl_source enable devtoolset-9 && \
+    mkdir root-build && cd root-build && \
+    cmake ../root-6.28.02 -Dbuiltin_glew=ON && \
+    make -j10 && make -j10 install && cd ../ && rm -rfv root-6.28.02 root-build
 
 # CLHEP
 RUN wget https://proj-clhep.web.cern.ch/proj-clhep/dist1/clhep-2.4.6.0.tgz && \
