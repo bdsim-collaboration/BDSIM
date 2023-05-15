@@ -93,12 +93,12 @@ int main(int argc, char* argv[])
     {
       TTree* original = dynamic_cast<TTree*>(input->Get(tn.c_str()));
       if (!original)
-	{
-	  std::cerr << "Failed to load Tree named " << tn << std::endl;
-	  delete output;
-	  delete input;
-	  return 1;
-	}
+        {
+          std::cerr << "Failed to load Tree named " << tn << std::endl;
+          delete output;
+          delete input;
+          return 1;
+        }
       auto clone = original->CloneTree();
       clone->AutoSave();
     }
