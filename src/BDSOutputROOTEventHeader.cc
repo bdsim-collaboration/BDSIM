@@ -35,7 +35,7 @@ ClassImp(BDSOutputROOTEventHeader)
 
 BDSOutputROOTEventHeader::BDSOutputROOTEventHeader()
 {
-  Flush();
+  FlushLocal();
 }
 
 BDSOutputROOTEventHeader::~BDSOutputROOTEventHeader()
