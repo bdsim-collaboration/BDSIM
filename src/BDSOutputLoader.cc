@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSOutputLoader::BDSOutputLoader(const G4String& filePath):
   dataVersion(-1),
+  nOriginalEvents(0),
   badFilePath(true),
   rootEventFile(false),
   localBeam(nullptr),
@@ -70,6 +71,7 @@ BDSOutputLoader::BDSOutputLoader(const G4String& filePath):
   headerTree->SetBranchAddress("Header.", &headerLocal);
   headerTree->GetEntry(0);
   dataVersion = headerLocal->dataVersion;
+  nOriginalEvents = headerLocal->nOriginalEvents;
   delete headerLocal;
 
   beamTree = dynamic_cast<TTree*>(file->Get("Beam"));
