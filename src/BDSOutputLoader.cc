@@ -59,7 +59,7 @@ BDSOutputLoader::BDSOutputLoader(const G4String& filePath):
     {// check it's a rootevent file - TBC - use analysis IsBDSIMFile after restructure
       rootEventFile = file->GetListOfKeys()->Contains("Event");
       if (!rootEventFile)
-	{throw BDSException(__METHOD_NAME__, "Not a BDSIM rootevent output format ROOT file");}
+        {throw BDSException(__METHOD_NAME__, "Not a BDSIM rootevent output format ROOT file");}
     }
 
   // extract data version
