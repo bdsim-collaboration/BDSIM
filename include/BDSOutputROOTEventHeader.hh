@@ -59,6 +59,7 @@ public:
   unsigned long long int nEventsRequested;     ///< Number of events requested to be simulated from the file.
   unsigned long long int nEventsInFile;        ///< Number of events in the input distribution file irrespective of filters.
   unsigned long long int nEventsInFileSkipped; ///< Number of events from distribution file that were skipped due to filters.
+  unsigned int distrFileLoopNTimes;            ///< Number of times a distribution file was replayed.
   
   /// Update the file type.
   void SetFileType(const std::string& fileTypeIn) {fileType = fileTypeIn;}

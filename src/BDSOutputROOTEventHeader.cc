@@ -59,6 +59,7 @@ void BDSOutputROOTEventHeader::FlushLocal()
   nEventsRequested = 0;
   nEventsInFileSkipped = 0;
   nEventsInFile = 0;
+  distrFileLoopNTimes = 0;
   
 #ifndef __ROOTDOUBLE__
   doublePrecisionOutput = false;
