@@ -77,7 +77,9 @@ int main(int argc, char* argv[])
     {std::cerr << "Error with header" << std::endl; return 1;}
   Header* headerLocal = new Header();
   headerLocal->SetBranchAddress(headerTree);
-  headerTree->GetEntry(0);
+  Long64_t nEntriesHeader = headerTree->GetEntries();
+  headerTree->GetEntry(nEntriesHeader - 1); // get the last entry (2nd is more up to date if it exists)
+  // We also want to explicitly copy the skim variables that might only be known in the 2nd instance.
   BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader(*(headerLocal->header));
   headerOut->skimmedFile = true;
   
@@ -112,9 +114,7 @@ int main(int argc, char* argv[])
     }
   TTree* selectEvents = allEvents->CopyTree(selection.c_str());
   selectEvents->Write();
-  
-  headerOut->nOriginalEvents = allEvents->GetEntries(); // update original number of entries
-  outputHeaderTree->Fill();
+
   output->Write(nullptr,TObject::kOverwrite);
   delete output;
   delete input;
