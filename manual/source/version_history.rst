@@ -118,7 +118,7 @@ New Features
   instructions on how to run Docker. This is a container system where a complete
   environment build on Centos7 will be built locally and works on Mac, Linux, Windows. It
   typically takes about 6Gb of space and is a great alternative to a virtual machine. An
-  XWindows server is required for the visualiser. See :ref:`docker-build`.
+  XWindows server is required for the visualiser. See :ref:`docker`.
 * New materials (Inermet170, Inermet176, Inermet180, Copper-Diamond, MoGr).
 * Nicer visualisation colours for charged particles. Green for neutrals is by default now at
   20% opacity as there are usually so many gammas.
