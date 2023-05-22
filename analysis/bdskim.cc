@@ -89,6 +89,7 @@ int main(int argc, char* argv[])
   output->cd();
   TTree* outputHeaderTree = new TTree("Header", "BDSIM Header");
   outputHeaderTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
+  outputHeaderTree->Fill();
 
   std::vector<std::string> treeNames = {"ParticleData", "Beam", "Options", "Model", "Run"};
   for (const auto& tn : treeNames)
