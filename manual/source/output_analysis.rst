@@ -1051,40 +1051,54 @@ As an example, the following 2-stage simulation is described:
    after the target
 #. The output from the first stage is skimmed as only (as an example) **1%** of data has a relevant
    muon in the sampler.
-#. The skimmed output (in BDSIM raw format) is then loaded as an input distribution into the second
+#. The files are combined 10 to 1 with bdsimCombine as each file now only has very few events. Each
+   resultant file has approximately 10x the 1% of events.
+#. The skimmed-then-combined output (in BDSIM raw format) is then loaded as an input distribution into the second
    stage simulation model of the rest of the beamline. Some filters are used in loading the events
    that results in **2%** of these remaining events being discarded. Additionally, each file is
    looped 5 times to repeat the same input particles with a different physics outcome to improve statistics.
-#. Histograms are made on the second stage simulation but must be normalised to protons on target.
+#. Histograms are made on the second stage simulation.
+#. Finally, the histograms are combined together from all simulations to form a single result set of histograms.
 
 .. note:: The example fractions are not specific and are just fictional example numbers to allow
           you to follow the calculation.
 
-In some cases the variable is just copied from one file to another.
-   
-The following table is an example of how the described numbers would evolve in the header **after**
-each step described.
+* In some cases the variable is just copied from one file to another. 
+* The following table is an example of how the described numbers would evolve in the header **after**
+  each step described. It represents the **most complicated** workflow possible, to show the evolution
+  of the numbers.
 
-+--------------+-----------------+---------------------+----------------------+-------------------+--------------------------+-------------------------+---------------------+
-| **After**    | **File Format** | **nOriginalEvents** | **nEventsRequested** | **nEventsInFile** | **nEventsInFileSkipped** | **distrFileLoopNTimes** | **TTree Entries**   |
-+==============+=================+=====================+======================+===================+==========================+=========================+=====================+
-| bdsim        | BDSIM Raw       | N                   | N                    | 0                 | 0                        | 1                       | N                   |
-+--------------+-----------------+---------------------+----------------------+-------------------+--------------------------+-------------------------+---------------------+
-| bdskim       | BDSIM Raw       | N                   | N                    | 0                 | 0                        | 1                       | 0.01 x N            |
-+--------------+-----------------+---------------------+----------------------+-------------------+--------------------------+-------------------------+---------------------+
-| bdsim (x5)   | BDSIM Raw       | N                   | 0.01 x N x 5         | 0.01 x N          | 0.01 x N x 0.2           | 5                       | 0.01 x N x 5 x 0.98 |
-+--------------+-----------------+---------------------+----------------------+-------------------+--------------------------+-------------------------+---------------------+
-| rebdsim      | REBDSIM         | N                   | 0.01 x N x 5         | 0.01 x N          | 0.01 x N x 0.2           | 5                       | NA                  |
-+--------------+-----------------+---------------------+----------------------+-------------------+--------------------------+-------------------------+---------------------+
++--------------------------+-----------------+---------------------+-----------------------+-------------------+------------------------------------+-------------------------+------------------------------+
+| **After**                | **File Format** | **nOriginalEvents** | **nEventsRequested**  | **nEventsInFile** | **nEventsInFileSkipped**           | **distrFileLoopNTimes** | **TTree / TH1 Entries**      |
++==========================+=================+=====================+=======================+===================+====================================+=========================+==============================+
+| bdsim                    | BDSIM Raw       | N                   | N                     | 0                 | 0                                  | 1                       | N                            |
++--------------------------+-----------------+---------------------+-----------------------+-------------------+------------------------------------+-------------------------+------------------------------+
+| bdskim (1%)              | BDSIM Raw       | N                   | N                     | 0                 | 0                                  | 1                       | 0.01 x N                     |
++--------------------------+-----------------+---------------------+-----------------------+-------------------+------------------------------------+-------------------------+------------------------------+
+| bdsimCombine (10 files)  | BDSIM Raw       | 10 x N              | 10 x N                | 0                 | 0                                  | 1                       | 10 x 0.01 x N                |
++--------------------------+-----------------+---------------------+-----------------------+-------------------+------------------------------------+-------------------------+------------------------------+
+| bdsim (5 loops of file)\ | BDSIM Raw       | 10 x N              | 5 x 10 x 0.01 x N     | 10 x 0.01 x N     | 0.02 x 10 x 0.01 x N               | 5                       | 5 x 10 x 0.01 x N x 0.98     |
+| (2% rejected on load)    |                 |                     |                       |                   |                                    |                         |                              |
++--------------------------+-----------------+---------------------+-----------------------+-------------------+------------------------------------+-------------------------+------------------------------+ 
+| rebdsim                  | REBDSIM         | 10 x N              | 5 x 10 x 0.01 x N     | 10 x 0.01 x N     | 5 x 0.02 x 10 x 0.01 x N           | 5                       | 5 x 10 x 0.01 x N x 0.98     |
++--------------------------+-----------------+---------------------+-----------------------+-------------------+------------------------------------+-------------------------+------------------------------+
+| rebdsimCombine (J files) | REBDSIM         | J x 10 x N          | J x 5 x 10 x 0.01 x N | J x 0.01 x N      | J x 5 x 0.02 x 10 x 0.01 x N       | 5                       | J x 5 x 10 x 0.01 x N x 0.98 |
++--------------------------+-----------------+---------------------+-----------------------+-------------------+------------------------------------+-------------------------+------------------------------+
 
-The final per-entry histograms have :math:`0.01 \times N \times 5 \times 0.98` entries, where one entry represents
-one event. The histograms must be multiplied by:
+.. note:: For J, it is not strictly J times but the sum over J. In the table, there is an assumption
+          there is the exact same number of events and skimmed events in each file, whereas, in reality,
+          it will be slightly different. These numbers are purely for illustrative purposes.
+
+
+The final per-entry histograms at the end of this workflow have :math:`J \times 5 \times 10 \times 0.01 \times N \times 0.98`
+entries, where one entry represents one event. The histograms must be multiplied by:
 
 .. math::
 
-   \mathrm{scaling} = \frac{0.01 \times N \times 5 \times 0.98}{N}
+   \mathrm{scaling} = \frac{5 \times 10 \times 0.01 \times N \times 0.98}{N}
 
-to recover the original rate per proton on target in this simulation.
+to recover the original rate per proton on target in this simulation. This is done automatically
+by rebdsim. rebdsimCombine just adds together the already correctly normalised histograms.
 
   
 .. _output-user-analysis:
