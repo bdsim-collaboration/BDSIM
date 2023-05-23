@@ -45,7 +45,8 @@ public:
   /// of the header in each file, if it exists. Will reset incoming variables to 0.
   unsigned long long int CountNOriginalEvents(unsigned long long int& nEventsInFileIn,
                                               unsigned long long int& nEventsInFileSkippedIn,
-                                              unsigned long long int& nEventsRequestedIn);
+                                              unsigned long long int& nEventsRequestedIn,
+                                              unsigned int& distrFileLoopNTimesIn);
 
 protected:
   std::vector<std::string> filenames;
