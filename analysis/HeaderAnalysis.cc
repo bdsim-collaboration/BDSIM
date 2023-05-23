@@ -45,6 +45,9 @@ unsigned long long int HeaderAnalysis::CountNOriginalEvents(unsigned long long i
                                                             unsigned long long int& nEventsRequestedIn)
 {
   unsigned long long int nOriginalEvents = 0;
+  nEventsInFileIn = 0;
+  nEventsInFileSkippedIn = 0;
+  nEventsRequestedIn = 0;
 
   for (const auto& fn : filenames)
     {
