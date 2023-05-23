@@ -42,12 +42,14 @@ HeaderAnalysis::~HeaderAnalysis() noexcept
 
 unsigned long long int HeaderAnalysis::CountNOriginalEvents(unsigned long long int& nEventsInFileIn,
                                                             unsigned long long int& nEventsInFileSkippedIn,
-                                                            unsigned long long int& nEventsRequestedIn)
+                                                            unsigned long long int& nEventsRequestedIn,
+                                                            unsigned int& distrFileLoopNTimesIn)
 {
   unsigned long long int nOriginalEvents = 0;
   nEventsInFileIn = 0;
   nEventsInFileSkippedIn = 0;
   nEventsRequestedIn = 0;
+  distrFileLoopNTimesIn = 0;
 
   for (const auto& fn : filenames)
     {
@@ -75,6 +77,7 @@ unsigned long long int HeaderAnalysis::CountNOriginalEvents(unsigned long long i
       nEventsInFileIn += ha->header->nEventsInFile;
       nEventsInFileSkippedIn += ha->header->nEventsInFileSkipped;
       nEventsRequestedIn += ha->header->nEventsRequested;
+      distrFileLoopNTimesIn += ha->header->distrFileLoopNTimes;
       ft->Close();
       delete ft;
       delete ha;

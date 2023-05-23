@@ -100,9 +100,11 @@ int main(int argc, char *argv[])
       unsigned long long int nEventsRequested = 0;
       unsigned long long int nEventsInFileTotal = 0;
       unsigned long long int nEventsInFileSkippedTotal = 0;
+      unsigned int distrFileLoopNTimes = 0;
       unsigned long long int nOriginalEvents = ha->CountNOriginalEvents(nEventsInFileTotal,
                                                                         nEventsInFileSkippedTotal,
-                                                                        nEventsRequested);
+                                                                        nEventsRequested,
+                                                                        distrFileLoopNTimes);
       delete ha;
       
       BeamAnalysis* beaAnalysis = new BeamAnalysis(dl->GetBeam(),
@@ -154,6 +156,7 @@ int main(int argc, char *argv[])
       headerOut->nEventsInFile = nEventsInFileTotal;
       headerOut->nEventsInFileSkipped = nEventsInFileSkippedTotal;
       headerOut->nEventsRequested = nEventsRequested;
+      headerOut->distrFileLoopNTimes = distrFileLoopNTimes;
       TTree* headerTree = new TTree("Header", "REBDSIM Header");
       headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
       headerTree->Fill();
