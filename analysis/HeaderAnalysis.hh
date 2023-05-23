@@ -36,14 +36,13 @@ class HeaderAnalysis
 public:
   /// Constructor intended for use to construct a model analysis object.
   HeaderAnalysis(const std::vector<std::string>& filenamesIn,
-		 Header* headerIn,
-		 TChain* chainIn);
+                 Header* headerIn,
+                 TChain* chainIn);
   virtual ~HeaderAnalysis() noexcept;
 
   /// Add up nOriginalEvents from each file in the chain and also nEventsInFile
-  /// and nEventsInFileSkipped so we have the total numbers. Only adds nOriginalEvents
-  /// from the first entry in each file, but adds the other two from all entries in the
-  /// header tree assuming that only the 2nd entry is filled.
+  /// and nEventsInFileSkipped so we have the total numbers. Use the second entry
+  /// of the header in each file, if it exists.
   unsigned long long int CountNOriginalEvents(unsigned long long int& nEventsInFileIn,
                                               unsigned long long int& nEventsInFileSkippedIn,
                                               unsigned long long int& nEventsRequestedIn);
