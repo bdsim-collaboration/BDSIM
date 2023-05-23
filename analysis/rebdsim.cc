@@ -110,17 +110,17 @@ int main(int argc, char *argv[])
   HeaderAnalysis* ha = new HeaderAnalysis(filenames,
                                           dl->GetHeader(),
                                           dl->GetHeaderTree());
+  unsigned long long int nEventsRequested;
   unsigned long long int nEventsInFileTotal;
   unsigned long long int nEventsInFileSkippedTotal;
-  unsigned long long int nEventsRequested;
   unsigned long long int nOriginalEvents = ha->CountNOriginalEvents(nEventsInFileTotal, nEventsInFileSkippedTotal, nEventsRequested);
   delete ha;
   
-  BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl->GetBeam(),
-                                                  dl->GetBeamTree(),
-                                                  config->PerEntryBeam(),
-                                                  debug);
-  EventAnalysis*   evtAnalysis;
+  BeamAnalysis* beaAnalysis = new BeamAnalysis(dl->GetBeam(),
+                                               dl->GetBeamTree(),
+                                               config->PerEntryBeam(),
+                                               debug);
+  EventAnalysis* evtAnalysis;
   try
     {
       evtAnalysis = new EventAnalysis(dl->GetEvent(),
