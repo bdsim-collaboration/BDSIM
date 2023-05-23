@@ -42,7 +42,7 @@ public:
 
   /// Add up nOriginalEvents from each file in the chain and also nEventsInFile
   /// and nEventsInFileSkipped so we have the total numbers. Use the second entry
-  /// of the header in each file, if it exists.
+  /// of the header in each file, if it exists. Will reset incoming variables to 0.
   unsigned long long int CountNOriginalEvents(unsigned long long int& nEventsInFileIn,
                                               unsigned long long int& nEventsInFileSkippedIn,
                                               unsigned long long int& nEventsRequestedIn);

@@ -97,9 +97,9 @@ int main(int argc, char *argv[])
       HeaderAnalysis* ha = new HeaderAnalysis(filenames,
                                               dl->GetHeader(),
                                               dl->GetHeaderTree());
-      unsigned long long int nEventsRequested;
-      unsigned long long int nEventsInFileTotal;
-      unsigned long long int nEventsInFileSkippedTotal;
+      unsigned long long int nEventsRequested = 0;
+      unsigned long long int nEventsInFileTotal = 0;
+      unsigned long long int nEventsInFileSkippedTotal = 0;
       unsigned long long int nOriginalEvents = ha->CountNOriginalEvents(nEventsInFileTotal,
                                                                         nEventsInFileSkippedTotal,
                                                                         nEventsRequested);
