@@ -120,7 +120,11 @@ int main(int argc, char *argv[])
   unsigned long long int nEventsInFileTotal;
   unsigned long long int nEventsInFileSkippedTotal;
   unsigned long long int nEventsRequested;
-  unsigned long long int nOriginalEvents = ha->CountNOriginalEvents(nEventsInFileTotal, nEventsInFileSkippedTotal, nEventsRequested);
+  unsigned int distrFileLoopNTimes;
+  unsigned long long int nOriginalEvents = ha->CountNOriginalEvents(nEventsInFileTotal,
+                                                                    nEventsInFileSkippedTotal,
+                                                                    nEventsRequested,
+                                                                    distrFileLoopNTimes);
 
   std::vector<Analysis*> analyses = {beaAnalysis,
 				     evtAnalysis,
