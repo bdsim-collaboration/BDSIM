@@ -81,48 +81,35 @@ int main(int argc, char *argv[])
     {
       Config::Instance(configFilePath, inputFilePath, outputFileName);
       config = Config::Instance();
-    }
-  catch (const RBDSException& error)
-    {std::cerr << error.what() << std::endl; exit(1);}
-  catch (const std::exception& error)
-    {std::cerr << error.what() << std::endl; exit(1);}
-  
-  bool allBranches = config->AllBranchesToBeActivated();
-  const RBDS::BranchMap* branchesToActivate = &(config->BranchesToBeActivated());
-  
-  bool debug = config->Debug();
-  DataLoader* dl = nullptr;
-  try
-    {
-      dl = new DataLoader(config->InputFilePath(),
-                          debug,
-                          config->ProcessSamplers(),
-                          allBranches,
-                          branchesToActivate,
-                          config->GetOptionBool("backwardscompatible"));
-    }
-  catch (const RBDSException& error)
-    {std::cerr << error.what() << std::endl; exit(1);}
-  catch (const std::exception& error)
-    {std::cerr << error.what() << std::endl; exit(1);}
-
-  auto filenames = dl->GetFileNames();
-  HeaderAnalysis* ha = new HeaderAnalysis(filenames,
-                                          dl->GetHeader(),
-                                          dl->GetHeaderTree());
-  unsigned long long int nEventsRequested;
-  unsigned long long int nEventsInFileTotal;
-  unsigned long long int nEventsInFileSkippedTotal;
-  unsigned long long int nOriginalEvents = ha->CountNOriginalEvents(nEventsInFileTotal, nEventsInFileSkippedTotal, nEventsRequested);
-  delete ha;
-  
-  BeamAnalysis* beaAnalysis = new BeamAnalysis(dl->GetBeam(),
-                                               dl->GetBeamTree(),
-                                               config->PerEntryBeam(),
-                                               debug);
-  EventAnalysis* evtAnalysis;
-  try
-    {
+      
+      bool allBranches = config->AllBranchesToBeActivated();
+      const RBDS::BranchMap* branchesToActivate = &(config->BranchesToBeActivated());
+      
+      bool debug = config->Debug();
+      DataLoader* dl = new DataLoader(config->InputFilePath(),
+                                      debug,
+                                      config->ProcessSamplers(),
+                                      allBranches,
+                                      branchesToActivate,
+                                      config->GetOptionBool("backwardscompatible"));
+      
+      auto filenames = dl->GetFileNames();
+      HeaderAnalysis* ha = new HeaderAnalysis(filenames,
+                                              dl->GetHeader(),
+                                              dl->GetHeaderTree());
+      unsigned long long int nEventsRequested;
+      unsigned long long int nEventsInFileTotal;
+      unsigned long long int nEventsInFileSkippedTotal;
+      unsigned long long int nOriginalEvents = ha->CountNOriginalEvents(nEventsInFileTotal,
+                                                                        nEventsInFileSkippedTotal,
+                                                                        nEventsRequested);
+      delete ha;
+      
+      BeamAnalysis* beaAnalysis = new BeamAnalysis(dl->GetBeam(),
+                                                   dl->GetBeamTree(),
+                                                   config->PerEntryBeam(),
+                                                   debug);
+      EventAnalysis* evtAnalysis;
       evtAnalysis = new EventAnalysis(dl->GetEvent(),
                                       dl->GetEventTree(),
                                       config->PerEntryEvent(),
@@ -132,43 +119,32 @@ int main(int argc, char *argv[])
                                       config->GetOptionBool("emittanceonthefly"),
                                       (long int) config->GetOptionNumber("eventstart"),
                                       (long int) config->GetOptionNumber("eventend"));
-    }
-  catch (const RBDSException& error)
-    {std::cerr << error.what() << std::endl; exit(1);}
-  RunAnalysis*     runAnalysis = new RunAnalysis(dl->GetRun(),
+      
+      RunAnalysis* runAnalysis = new RunAnalysis(dl->GetRun(),
                                                  dl->GetRunTree(),
                                                  config->PerEntryRun(),
                                                  debug);
-  OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl->GetOptions(),
-                                                     dl->GetOptionsTree(),
-                                                     config->PerEntryOption(),
+      OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl->GetOptions(),
+                                                         dl->GetOptionsTree(),
+                                                         config->PerEntryOption(),
+                                                         debug);
+      ModelAnalysis* modAnalysis = new ModelAnalysis(dl->GetModel(),
+                                                     dl->GetModelTree(),
+                                                     config->PerEntryModel(),
                                                      debug);
-  ModelAnalysis*   modAnalysis = new ModelAnalysis(dl->GetModel(),
-                                                   dl->GetModelTree(),
-                                                   config->PerEntryModel(),
-                                                   debug);
-
-  std::vector<Analysis*> analyses = {beaAnalysis,
-                                     evtAnalysis,
-                                     runAnalysis,
-                                     optAnalysis,
-                                     modAnalysis};
-
-  try
-    {
+      
+      std::vector<Analysis*> analyses = {beaAnalysis,
+                                         evtAnalysis,
+                                         runAnalysis,
+                                         optAnalysis,
+                                         modAnalysis};
+      
       for (auto &analysis: analyses)
         {analysis->Execute();}
-    }
-  catch (const RBDSException& error)
-    {std::cerr << error.what() << std::endl; exit(1);}
-  catch (const std::exception& error)
-    {std::cerr << error.what() << std::endl; exit(1);}
-
-  // write output
-  try
-    {
+      
+      // write output
       TFile* outputFile = new TFile(config->OutputFileName().c_str(),"RECREATE");
-
+      
       // add header for file type and version details
       outputFile->cd();
       BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
@@ -201,14 +177,15 @@ int main(int argc, char *argv[])
       outputFile->Close();
       delete outputFile;
       std::cout << "Result written to: " << config->OutputFileName() << std::endl;
+
+      delete dl;
+      for (auto analysis : analyses)
+        {delete analysis;}
     }
   catch (const RBDSException& error)
     {std::cerr << error.what() << std::endl; exit(1);}
   catch (const std::exception& error)
     {std::cerr << error.what() << std::endl; exit(1);}
-
-  delete dl;
-  for (auto analysis : analyses)
-    {delete analysis;}
+  
   return 0;
 }
