@@ -374,6 +374,7 @@ Bug Fixes
   option in input, a really common (hidden) error is that there's a semi-colon after an option.
   Therefore, the next option gets interpreted as a new constant or variable resulting in it
   having no effect at all. The parser will not prevent this from happening by complaining.
+* Fixed ambiguous warning about variable redefinition.
 
 **Sensitivity**
 
