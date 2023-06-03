@@ -289,7 +289,9 @@ Bug Fixes
   construct and interface. The exact same results are produced reproducibly.
 * Fixed "antiproton" as a beam particle. Should really be "anti_proton" for Geant4 to find
   the particle definition. Manual updated accordingly.
-* Fix "kaon0L" as a beam particle. Also allow "kaon0S" and "kaon0".
+* Fixed "kaon0L" as a beam particle. Also allow "kaon0S" and "kaon0".
+* Fixed beam offset with S when using negative `beamlineS` option for generally offsetting the
+  S coordinate (as a variable in all data).
   
 **Biasing**
 
