@@ -48,13 +48,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 G4double BDSBeamline::paddingLength = -1;
 
 BDSBeamline::BDSBeamline(const G4ThreeVector& initialGlobalPosition,
-			 G4RotationMatrix*    initialGlobalRotation,
-			 G4double             initialS):
+                         G4RotationMatrix*    initialGlobalRotation,
+                         G4double             initialSIn):
+  sInitial(initialSIn),
+  sMaximum(initialSIn),
   totalChordLength(0),
   totalArcLength(0),
   totalAngle(0),
   previousReferencePositionEnd(initialGlobalPosition),
-  previousSPositionEnd(initialS),
+  previousSPositionEnd(sInitial),
   transformHasJustBeenApplied(false)
 {
   // initialise extents
@@ -80,10 +82,10 @@ BDSBeamline::BDSBeamline(const G4ThreeVector& initialGlobalPosition,
 }
 
 BDSBeamline::BDSBeamline(G4Transform3D initialTransform,
-			 G4double      initialS):
+                         G4double      initialSIn):
   BDSBeamline(initialTransform.getTranslation(),
-	      new G4RotationMatrix(initialTransform.getRotation()),
-	      initialS)
+              new G4RotationMatrix(initialTransform.getRotation()),
+              initialSIn)
 {;}
 
 BDSBeamline::~BDSBeamline()
@@ -473,6 +475,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   G4double sPositionStart  = previousSPositionEnd;
   G4double sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
   G4double sPositionEnd    = previousSPositionEnd + arcLength;
+  sMaximum += arcLength;
 
   // integrate angle
   totalAngle += component->GetAngle();

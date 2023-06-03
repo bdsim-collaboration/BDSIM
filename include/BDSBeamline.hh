@@ -74,14 +74,14 @@ public:
   /// Versatile basic constructor that allows a finite position and rotation to be applied
   /// at the beginning of the beamline in global coordinates. Remember the maximum
   /// extents of the beamline will also be displaced. The default constructor is in effect
-  /// achieved via defaults
+  /// achieved via defaults.
   BDSBeamline(const G4ThreeVector& initialGlobalPosition = G4ThreeVector(0,0,0),
-	      G4RotationMatrix*    initialGlobalRotation = nullptr,
-	      G4double             initialS              = 0.0);
+              G4RotationMatrix*    initialGlobalRotation = nullptr,
+              G4double             initialSIn            = 0.0);
 
   /// Constructor with transform instance that uses other constructor.
   explicit BDSBeamline(G4Transform3D initialTransform,
-		       G4double      initialS         = 0.0);
+                       G4double      initialSIn       = 0.0);
   
   ~BDSBeamline();
 
@@ -194,6 +194,9 @@ public:
   /// For convenience, s positions are converted to metres in this function.
   std::vector<G4double> GetEdgeSPositions() const;
 
+  G4double GetSMinimum() const {return sInitial;}
+  G4double GetSMaximum() const {return sMaximum;}
+
   /// Return a pointer to the previous element. First this beamline is
   /// searched for the vector. If there is no such element or no previous
   /// element because it's the beginning, then a nullptr is returned. The
@@ -252,6 +255,9 @@ private:
   /// Register the fully created element to a map of names vs element pointers. Used to
   /// look up transforms by name.
   void RegisterElement(BDSBeamlineElement* element);
+
+  G4double sInitial; ///< Cache the initial S so we can tell if a requested S is too low.
+  G4double sMaximum;
 
   /// Sum of all chord lengths
   G4double totalChordLength;
