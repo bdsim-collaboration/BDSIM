@@ -236,8 +236,8 @@ if (USE_BOOST)
   target_link_libraries(${BDSIM_LIB_NAME} ${Boost_LIBRARIES})
 endif()
 if (USE_DICOM)
-  target_link_libraries(${BDSIM_LIB_NAME} ${DCMTK_LIBRARIES})
-  target_include_directories(${BDSIM_LIB_NAME} SYSTEM PUBLIC ${DCMTK_INCLUDE_DIRS})
+  target_link_libraries(${BDSIM_LIB_NAME} DCMTK::DCMTK)
+  #target_include_directories(${BDSIM_LIB_NAME} SYSTEM PUBLIC ${DCMTK_INCLUDE_DIRS})
 endif()
 
 # link against ROOT
