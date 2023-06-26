@@ -262,6 +262,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   for (const auto& kv : physicsConstructors)
     {incompatible.insert(std::make_pair(kv.first, std::vector<G4String>()));}
   incompatible["annihi_to_mumu"] = {"em_extra"};
+  incompatible["muon"] = {"em_extra"};
   incompatible["muon_inelastic"] = {"em_extra", "muon"};
   incompatible["em"]     = {"em_ss", "em_wvi", "em_1",   "em_2", "em_3", "em_4"};
   incompatible["em_ss"]  = {"em",    "em_wvi", "em_1",   "em_2", "em_3", "em_4"};
@@ -271,6 +272,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   incompatible["em_3"]   = {"em",    "em_ss",  "em_wvi", "em_1", "em_2", "em_4"};
   incompatible["em_4"]   = {"em",    "em_ss",  "em_wvi", "em_1", "em_2", "em_3"};
   incompatible["em_livermore"] = {"em_livermore_polarised"};
+  incompatible["em_extra"] = {"muon", "muon_inelastic"};
   incompatible["ftfp_bert"]    = {"ftfp_bert_hp", "qgsp_bert", "qgsp_bert_hp", "qgsp_bic", "qgsp_bic_hp"};
   incompatible["ftfp_bert_hp"] = {"ftfp_bert",    "qgsp_bert", "qgsp_bert_hp", "qgsp_bic", "qgsp_bic_hp"};
   incompatible["gamma_to_mumu"] = {"em_extra"};
