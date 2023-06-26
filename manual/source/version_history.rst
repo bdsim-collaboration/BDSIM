@@ -9,7 +9,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Tapered aperture for all elements.
 * Beam pipe sections to fill gaps between changes in aperture.
 * Any aperture shape can be used for both the inside and the outside of a collimator.
-* Restructure code into proper C++ libraries rather than just analysis and bdsim.
+* Restructure code into proper C++ libraries rather than just analysis and 'bdsim'.
 * Multiple beam line tracking.
 
 V1.7.0 - 2023 / 04 / 09
@@ -357,6 +357,10 @@ Bug Fixes
   was the creation of the particle and the post step was an interaction (i.e. not
   transportation). Previously, this step would not be stored breaking the indexing
   for parent step index.
+
+**Physics Lists**
+
+* :code:`em_extra`, :code:`muon`, and :code:`muon_inelastic` modular physics lists are now mutually exclusive.
 
 **Parser**
 
