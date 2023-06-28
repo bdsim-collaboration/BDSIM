@@ -387,7 +387,7 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 n2 = G4int(header[secondKeys.number]);
                 n3 = G4int(header[thirdKeys.number]);
                 n4 = G4int(header[fourthKeys.number]);
-                result = new BDSArray4DCoords(n1, n2, n3, n4
+                result = new BDSArray4DCoords(n1, n2, n3, n4,
                                               header[firstKeys.min] * firstUnit,
                                               header[firstKeys.max] * firstUnit,
                                               header[secondKeys.min] * CLHEP::cm,
@@ -395,7 +395,7 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                                               header[thirdKeys.min] * CLHEP::cm,
                                               header[thirdKeys.max] * CLHEP::cm,
                                               header[fourthKeys.min] * fourthUnit,
-                                              header[fourthKeys,max] * fourthUnit,
+                                              header[fourthKeys.max] * fourthUnit,
                                               firstDim,
                                               secondDim,
                                               thirdDim,
