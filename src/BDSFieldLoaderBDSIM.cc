@@ -328,15 +328,31 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
               }
             case 4:
               {
-                n1 = G4int(header["nx"]);
-                n2 = G4int(header["ny"]);
-                n3 = G4int(header["nz"]);
-                n4 = G4int(header["nt"]);
-                result = new BDSArray4DCoords(n1, n2, n3, n4,
-                                              header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
-                                              header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm,
-                                              header["zmin"] * CLHEP::cm, header["zmax"] * CLHEP::cm,
-                                              header["tmin"] * CLHEP::s,  header["tmax"] * CLHEP::s);
+                BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
+                BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
+                BDSDimensionType thirdDim  = BDS::DetermineDimensionType(columnNames[2]);
+                BDSDimensionType fourthDim = BDS::DetermineDimensionType(columnNames[3]);
+                auto firstKeys = dimKeyMap[firstDim];
+                auto secondKeys = dimKeyMap[secondDim];
+                auto thirdKeys = dimKeyMap[thirdDim];
+                auto fourthKeys = dimKeyMap[fourthDim];
+                n1 = G4int(header[firstKeys.number]);
+                n2 = G4int(header[secondKeys.number]);
+                n3 = G4int(header[thirdKeys.number]);
+                n4 = G4int(header[fourthKeys.number]);
+                result = new BDSArray4DCoords(n1, n2, n3, n4
+                                              header[firstKeys.min] * CLHEP::cm,
+                                              header[firstKeys.max] * CLHEP::cm,
+                                              header[secondKeys.min] * CLHEP::cm,
+                                              header[secondKeys.max] * CLHEP::cm,
+                                              header[thirdKeys.min] * CLHEP::cm,
+                                              header[thirdKeys.max] * CLHEP::cm,
+                                              header[fourthKeys.min] * CLHEP::cm,
+                                              header[fourthKeys,max] * CLHEP::cm,
+                                              firstDim,
+                                              secondDim,
+                                              thirdDim,
+                                              fourthDim);
                 break;
               }
             default:
