@@ -280,9 +280,7 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 BDSDimensionType firstDim = BDS::DetermineDimensionType(columnNames[0]);
                 G4double firstUnit = CLHEP::cm;
                 if (firstDim == BDSDimensionType::t)
-                  {
-                    firstUnit = CLHEP::s;
-                  }
+                  {firstUnit = CLHEP::s;}
                 auto keys = dimKeyMap[firstDim];
                 n1 = G4int(header[keys.number]);
                 result = new BDSArray1DCoords(n1,
@@ -302,13 +300,9 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 G4double firstUnit = CLHEP::cm;
                 G4double secondUnit = CLHEP::cm;
                 if (firstDim == BDSDimensionType::t)
-                  {
-                    firstUnit = CLHEP::s;
-                  }
+                  {firstUnit = CLHEP::s;}
                 else if (secondDim == BDSDimensionType::t)
-                  {
-                    secondUnit = CLHEP::s;
-                  }
+                  {secondUnit = CLHEP::s;}
                 auto fKeys = dimKeyMap[firstDim];
                 auto sKeys = dimKeyMap[secondDim];
                 n1 = G4int(header[fKeys.number]);
@@ -334,13 +328,9 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 G4double firstUnit = CLHEP::cm;
                 G4double thirdUnit = CLHEP::cm;
                 if (firstDim == BDSDimensionType::t)
-                  {
-                    firstUnit = CLHEP::s;
-                  }
+                  {firstUnit = CLHEP::s;}
                 else if (thirdDim == BDSDimensionType::t)
-                  {
-                    thirdUnit = CLHEP::s;
-                  }
+                  {thirdUnit = CLHEP::s;}
                 auto fKeys = dimKeyMap[firstDim];
                 auto sKeys = dimKeyMap[secondDim];
                 auto tKeys = dimKeyMap[thirdDim];
@@ -372,13 +362,9 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 G4double firstUnit = CLHEP::cm;
                 G4double fourthUnit = CLHEP::cm;
                 if (firstDim == BDSDimensionType::t)
-                  {
-                    firstUnit = CLHEP::s;
-                  }
+                  {firstUnit = CLHEP::s;}
                 else if (fourthDim == BDSDimensionType::t)
-                  {
-                    fourthUnit = CLHEP::s;
-                  }
+                  {fourthUnit = CLHEP::s;}
                 auto firstKeys = dimKeyMap[firstDim];
                 auto secondKeys = dimKeyMap[secondDim];
                 auto thirdKeys = dimKeyMap[thirdDim];
