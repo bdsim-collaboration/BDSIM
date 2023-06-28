@@ -278,11 +278,16 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
             case 1:
               {
                 BDSDimensionType firstDim = BDS::DetermineDimensionType(columnNames[0]);
+                G4double firstUnit = CLHEP::cm;
+                if (firstDim == BDSDimensionType::t)
+                  {
+                    firstUnit = CLHEP::s;
+                  }
                 auto keys = dimKeyMap[firstDim];
                 n1 = G4int(header[keys.number]);
                 result = new BDSArray1DCoords(n1,
-                                              header[keys.min] * CLHEP::cm,
-                                              header[keys.max] * CLHEP::cm,
+                                              header[keys.min] * firstUnit,
+                                              header[keys.max] * firstUnit,
                                               firstDim);
                 break;
               }
@@ -290,15 +295,29 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
               {
                 BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
                 BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
+                /*
+                By construction, the columns must be of ascending or descending order. That means, that
+                t can either be the first or second column.
+                */
+                G4double firstUnit = CLHEP::cm;
+                G4double secondUnit = CLHEP::cm;
+                if (firstDim == BDSDimensionType::t)
+                  {
+                    firstUnit = CLHEP::s;
+                  }
+                else if (secondDim == BDSDimensionType::t)
+                  {
+                    secondUnit = CLHEP::s;
+                  }
                 auto fKeys = dimKeyMap[firstDim];
                 auto sKeys = dimKeyMap[secondDim];
                 n1 = G4int(header[fKeys.number]);
                 n2 = G4int(header[sKeys.number]);
                 result = new BDSArray2DCoords(n1, n2,
-                                              header[fKeys.min] * CLHEP::cm,
-                                              header[fKeys.max] * CLHEP::cm,
-                                              header[sKeys.min] * CLHEP::cm,
-                                              header[sKeys.max] * CLHEP::cm,
+                                              header[fKeys.min] * firstUnit,
+                                              header[fKeys.max] * firstUnit,
+                                              header[sKeys.min] * secondUnit,
+                                              header[sKeys.max] * secondUnit,
                                               firstDim,
                                               secondDim);
                 break;
@@ -308,6 +327,20 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
                 BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
                 BDSDimensionType thirdDim  = BDS::DetermineDimensionType(columnNames[2]);
+                /*
+                By construction, the columns must be of ascending or descending order. That means, that
+                t can either be the first or third column.
+                */
+                G4double firstUnit = CLHEP::cm;
+                G4double thirdUnit = CLHEP::cm;
+                if (firstDim == BDSDimensionType::t)
+                  {
+                    firstUnit = CLHEP::s;
+                  }
+                else if (thirdDim == BDSDimensionType::t)
+                  {
+                    thirdUnit = CLHEP::s;
+                  }
                 auto fKeys = dimKeyMap[firstDim];
                 auto sKeys = dimKeyMap[secondDim];
                 auto tKeys = dimKeyMap[thirdDim];
@@ -315,12 +348,12 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 n2 = G4int(header[sKeys.number]);
                 n3 = G4int(header[tKeys.number]);
                 result = new BDSArray3DCoords(n1, n2, n3,
-                                              header[fKeys.min] * CLHEP::cm,
-                                              header[fKeys.max] * CLHEP::cm,
+                                              header[fKeys.min] * firstUnit,
+                                              header[fKeys.max] * firstUnit,
                                               header[sKeys.min] * CLHEP::cm,
                                               header[sKeys.max] * CLHEP::cm,
-                                              header[tKeys.min] * CLHEP::cm,
-                                              header[tKeys.max] * CLHEP::cm,
+                                              header[tKeys.min] * thirdUnit,
+                                              header[tKeys.max] * thirdUnit,
                                               firstDim,
                                               secondDim,
                                               thirdDim);
@@ -332,6 +365,20 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
                 BDSDimensionType thirdDim  = BDS::DetermineDimensionType(columnNames[2]);
                 BDSDimensionType fourthDim = BDS::DetermineDimensionType(columnNames[3]);
+                /*
+                By construction, the columns must be of ascending or descending order. That means, that
+                t can either be the first or fourth column.
+                */
+                G4double firstUnit = CLHEP::cm;
+                G4double fourthUnit = CLHEP::cm;
+                if (firstDim == BDSDimensionType::t)
+                  {
+                    firstUnit = CLHEP::s;
+                  }
+                else if (fourthDim == BDSDimensionType::t)
+                  {
+                    fourthUnit = CLHEP::s;
+                  }
                 auto firstKeys = dimKeyMap[firstDim];
                 auto secondKeys = dimKeyMap[secondDim];
                 auto thirdKeys = dimKeyMap[thirdDim];
@@ -341,14 +388,14 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 n3 = G4int(header[thirdKeys.number]);
                 n4 = G4int(header[fourthKeys.number]);
                 result = new BDSArray4DCoords(n1, n2, n3, n4
-                                              header[firstKeys.min] * CLHEP::cm,
-                                              header[firstKeys.max] * CLHEP::cm,
+                                              header[firstKeys.min] * firstUnit,
+                                              header[firstKeys.max] * firstUnit,
                                               header[secondKeys.min] * CLHEP::cm,
                                               header[secondKeys.max] * CLHEP::cm,
                                               header[thirdKeys.min] * CLHEP::cm,
                                               header[thirdKeys.max] * CLHEP::cm,
-                                              header[fourthKeys.min] * CLHEP::cm,
-                                              header[fourthKeys,max] * CLHEP::cm,
+                                              header[fourthKeys.min] * fourthUnit,
+                                              header[fourthKeys,max] * fourthUnit,
                                               firstDim,
                                               secondDim,
                                               thirdDim,
