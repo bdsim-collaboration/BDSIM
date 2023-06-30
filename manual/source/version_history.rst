@@ -326,6 +326,9 @@ Bug Fixes
 
 **Geometry**
 
+* Fix length of rbends being changed when specifying both `B` and `angle` and using a differet beam
+  particle from the design particle. The input length would be ignored and the arc length recalculated
+  based on the design beam particle.
 * Fix caching of loaded geometry. A loaded piece of geometry will be reloaded (and possibly preprocessed)
   if loaded in another beam line component to ensure we generate a unique set of logical volumes. This
   fixes field maps, biasing, range cuts, regions and more being wrong if the same GDML file was reused
