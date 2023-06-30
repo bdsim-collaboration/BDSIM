@@ -216,7 +216,7 @@ and the beam fired into the model is a 20 GeV positron beam. ::
         momentum=20.3*GeV,
 	beamParticleName="proton";
 
-This defines a machine designed with respect to an electron beam with 20.3 GeV of momentum but
+This (above) defines a machine designed with respect to an electron beam with 20.3 GeV of momentum but
 uses a beam of protons with the exact same momentum (kinetic energy and total energy are calculated
 from this value given the proton's mass).
 
