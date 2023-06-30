@@ -55,10 +55,16 @@ BDSFieldLoaderBDSIM<T>::BDSFieldLoaderBDSIM():
   indexOfFirstFieldValue(0)
 {
   dimKeyMap = {
-               {BDSDimensionType::x, {"nx", "xmin", "xmax"}},
-               {BDSDimensionType::y, {"ny", "ymin", "ymax"}},
-               {BDSDimensionType::z, {"nz", "zmin", "zmax"}},
-               {BDSDimensionType::t, {"nt", "tmin", "tmax"}}
+    {BDSDimensionType::x, {"nx", "xmin", "xmax"}},
+    {BDSDimensionType::y, {"ny", "ymin", "ymax"}},
+    {BDSDimensionType::z, {"nz", "zmin", "zmax"}},
+    {BDSDimensionType::t, {"nt", "tmin", "tmax"}}
+  };
+  dimUnitsMap = {
+    {BDSDimensionType::x, CLHEP::cm},
+    {BDSDimensionType::y, CLHEP::cm},
+    {BDSDimensionType::z, CLHEP::cm},
+    {BDSDimensionType::t, CLHEP::s},
   };
 }
 
@@ -278,14 +284,12 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
             case 1:
               {
                 BDSDimensionType firstDim = BDS::DetermineDimensionType(columnNames[0]);
-                G4double firstUnit = CLHEP::cm;
-                if (firstDim == BDSDimensionType::t)
-                  {firstUnit = CLHEP::s;}
                 auto keys = dimKeyMap[firstDim];
+                double unit = dimUnitsMap[firstDim];
                 n1 = G4int(header[keys.number]);
                 result = new BDSArray1DCoords(n1,
-                                              header[keys.min] * firstUnit,
-                                              header[keys.max] * firstUnit,
+                                              header[keys.min] * unit,
+                                              header[keys.max] * unit,
                                               firstDim);
                 break;
               }
@@ -293,25 +297,17 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
               {
                 BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
                 BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
-                /*
-                By construction, the columns must be of ascending or descending order. That means, that
-                t can either be the first or second column.
-                */
-                G4double firstUnit = CLHEP::cm;
-                G4double secondUnit = CLHEP::cm;
-                if (firstDim == BDSDimensionType::t)
-                  {firstUnit = CLHEP::s;}
-                else if (secondDim == BDSDimensionType::t)
-                  {secondUnit = CLHEP::s;}
                 auto fKeys = dimKeyMap[firstDim];
+                double fUnit = dimUnitsMap[firstDim];
                 auto sKeys = dimKeyMap[secondDim];
+                double sUnit = dimUnitsMap[secondDim];
                 n1 = G4int(header[fKeys.number]);
                 n2 = G4int(header[sKeys.number]);
                 result = new BDSArray2DCoords(n1, n2,
-                                              header[fKeys.min] * firstUnit,
-                                              header[fKeys.max] * firstUnit,
-                                              header[sKeys.min] * secondUnit,
-                                              header[sKeys.max] * secondUnit,
+                                              header[fKeys.min] * fUnit,
+                                              header[fKeys.max] * fUnit,
+                                              header[sKeys.min] * sUnit,
+                                              header[sKeys.max] * sUnit,
                                               firstDim,
                                               secondDim);
                 break;
@@ -321,29 +317,22 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
                 BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
                 BDSDimensionType thirdDim  = BDS::DetermineDimensionType(columnNames[2]);
-                /*
-                By construction, the columns must be of ascending or descending order. That means, that
-                t can either be the first or third column.
-                */
-                G4double firstUnit = CLHEP::cm;
-                G4double thirdUnit = CLHEP::cm;
-                if (firstDim == BDSDimensionType::t)
-                  {firstUnit = CLHEP::s;}
-                else if (thirdDim == BDSDimensionType::t)
-                  {thirdUnit = CLHEP::s;}
                 auto fKeys = dimKeyMap[firstDim];
+                double fUnit = dimUnitsMap[firstDim];
                 auto sKeys = dimKeyMap[secondDim];
+                double sUnit = dimUnitsMap[secondDim];
                 auto tKeys = dimKeyMap[thirdDim];
+                double tUnit = dimUnitsMap[thirdDim];
                 n1 = G4int(header[fKeys.number]);
                 n2 = G4int(header[sKeys.number]);
                 n3 = G4int(header[tKeys.number]);
                 result = new BDSArray3DCoords(n1, n2, n3,
-                                              header[fKeys.min] * firstUnit,
-                                              header[fKeys.max] * firstUnit,
-                                              header[sKeys.min] * CLHEP::cm,
-                                              header[sKeys.max] * CLHEP::cm,
-                                              header[tKeys.min] * thirdUnit,
-                                              header[tKeys.max] * thirdUnit,
+                                              header[fKeys.min] * fUnit,
+                                              header[fKeys.max] * fUnit,
+                                              header[sKeys.min] * sUnit,
+                                              header[sKeys.max] * sUnit,
+                                              header[tKeys.min] * tUnit,
+                                              header[tKeys.max] * tUnit,
                                               firstDim,
                                               secondDim,
                                               thirdDim);
@@ -351,41 +340,15 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
               }
             case 4:
               {
-                BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
-                BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
-                BDSDimensionType thirdDim  = BDS::DetermineDimensionType(columnNames[2]);
-                BDSDimensionType fourthDim = BDS::DetermineDimensionType(columnNames[3]);
-                /*
-                By construction, the columns must be of ascending or descending order. That means, that
-                t can either be the first or fourth column.
-                */
-                G4double firstUnit = CLHEP::cm;
-                G4double fourthUnit = CLHEP::cm;
-                if (firstDim == BDSDimensionType::t)
-                  {firstUnit = CLHEP::s;}
-                else if (fourthDim == BDSDimensionType::t)
-                  {fourthUnit = CLHEP::s;}
-                auto firstKeys = dimKeyMap[firstDim];
-                auto secondKeys = dimKeyMap[secondDim];
-                auto thirdKeys = dimKeyMap[thirdDim];
-                auto fourthKeys = dimKeyMap[fourthDim];
-                n1 = G4int(header[firstKeys.number]);
-                n2 = G4int(header[secondKeys.number]);
-                n3 = G4int(header[thirdKeys.number]);
-                n4 = G4int(header[fourthKeys.number]);
+                n1 = G4int(header["nx"]);
+                n2 = G4int(header["ny"]);
+                n3 = G4int(header["nz"]);
+                n4 = G4int(header["nt"]);
                 result = new BDSArray4DCoords(n1, n2, n3, n4,
-                                              header[firstKeys.min] * firstUnit,
-                                              header[firstKeys.max] * firstUnit,
-                                              header[secondKeys.min] * CLHEP::cm,
-                                              header[secondKeys.max] * CLHEP::cm,
-                                              header[thirdKeys.min] * CLHEP::cm,
-                                              header[thirdKeys.max] * CLHEP::cm,
-                                              header[fourthKeys.min] * fourthUnit,
-                                              header[fourthKeys.max] * fourthUnit,
-                                              firstDim,
-                                              secondDim,
-                                              thirdDim,
-                                              fourthDim);
+                                              header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
+                                              header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm,
+                                              header["zmin"] * CLHEP::cm, header["zmax"] * CLHEP::cm,
+                                              header["tmin"] * CLHEP::s,  header["tmax"] * CLHEP::s);
                 break;
               }
             default:
