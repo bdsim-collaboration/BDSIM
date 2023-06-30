@@ -200,8 +200,8 @@ Examples: ::
          energy=100*GeV,
 	 beamParticleName="e+";
 
-This specifies that the magnet field strengths are calculated with respect to a 100 GeV electron
-and the beam tracked is a 100 GeV positron beam (along with any other relevant distribution
+This (above) specifies that the magnet field strengths are calculated with respect to a 100 GeV electron
+but the beam fired into the model is a 100 GeV positron beam (along with any other relevant distribution
 parameters). ::
 
    beam, particle="e-",
@@ -209,8 +209,8 @@ parameters). ::
 	 beamParticleName="e+",
 	 E0=20*GeV;
 
-This specified that the magnet field strengths are calculated with respect to a 100 GeV electron
-and the beam tracked is a 20 GeV positron beam. ::
+This (above) specifies that the magnet field strengths are calculated with respect to a 100 GeV electron
+and the beam fired into the model is a 20 GeV positron beam. ::
 
   beam, particle="e-",
         momentum=20.3*GeV,
