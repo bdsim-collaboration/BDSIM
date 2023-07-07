@@ -59,7 +59,8 @@ public:
   static BDSPrimaryGeneratorFile* ConstructGenerator(const GMAD::Beam& beam,
                                                      BDSBunch* bunchIn,
                                                      G4bool recreate,
-                                                     G4int eventOffset);
+                                                     G4int eventOffset,
+                                                     G4bool batchMode);
 
   /// Return false if not able to generate a primary vertex.
   G4bool GeneratePrimaryVertexSafe(G4Event* event);

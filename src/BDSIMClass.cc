@@ -320,7 +320,7 @@ int BDSIM::Initialise()
 
   runManager->SetUserAction(new BDSStackingAction(globals));
   
-  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam());
+  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam(), globals->Batch());
   runManager->SetUserAction(primaryGeneratorAction);
   BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 
@@ -470,7 +470,7 @@ void BDSIM::GeneratePrimariesOnly(const BDSGlobalConstants* globals)
   bdsOutput->NewFile();
   const G4int nToGenerate = globals->NGenerate();
   const G4int printModulo = globals->PrintModuloEvents();
-  bdsBunch->BeginOfRunAction(nToGenerate);
+  bdsBunch->BeginOfRunAction(nToGenerate, globals->Batch());
   auto flagsCache(G4cout.flags());
   for (G4int i = 0; i < nToGenerate; i++)
     {

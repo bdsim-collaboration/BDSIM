@@ -42,3 +42,12 @@ void BDSBunchFileBased::SetOptions(const BDSParticleDefinition* beamParticle,
   distrFileLoop = beam.distrFileLoop;
   distrFileLoopNTimes = beam.distrFileLoopNTimes;
 }
+
+void BDSBunchFileBased::BeginOfRunAction(G4int /*numberOfEvents*/,
+                                         G4bool batchMode)
+{
+  // If interactive, we must permit looping as the user may request more
+  // events than are in a file, and they may not have explicitly set the
+  // right combination of options in the input.
+  distrFileLoop = !batchMode;
+}
