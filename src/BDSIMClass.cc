@@ -49,7 +49,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSColours.hh"
 #include "BDSComponentFactoryUser.hh"
 #include "BDSDebug.hh"
-#include "BDSDetectorConstruction.hh"   
+#include "BDSDetectorConstruction.hh"
 #include "BDSEventAction.hh"
 #include "BDSException.hh"
 #include "BDSFieldFactory.hh"
@@ -59,7 +59,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryWriter.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSMaterials.hh"
-#include "BDSOutput.hh" 
+#include "BDSOutput.hh"
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
@@ -130,7 +130,7 @@ int BDSIM::Initialise()
     {execOptions->Print();}
   ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
 
-  execOptions->PrintCopyright();  
+  execOptions->PrintCopyright();
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "DEBUG mode is on." << G4endl;
 #endif
@@ -147,7 +147,7 @@ int BDSIM::Initialise()
   BDSMaterials::Instance()->PrepareRequiredMaterials(execOptions->Options().verbose);
 
   /// No longer needed. Everything can safely use BDSGlobalConstants from now on.
-  delete execOptions; 
+  delete execOptions;
 
   /// Force construction of global constants after parser has been initialised (requires
   /// materials first). This uses the options and beam from BDSParser.
@@ -181,7 +181,7 @@ int BDSIM::Initialise()
   auto parallelWorldsRequiringPhysics = BDS::ConstructAndRegisterParallelWorlds(realWorld,
                                                                                 realWorld->BuildSamplerWorld(),
                                                                                 realWorld->BuildPlacementFieldsWorld());
-  runManager->SetUserInitialization(realWorld);  
+  runManager->SetUserInitialization(realWorld);
 
   /// For geometry sampling, phys list must be initialized before detector.
   /// BUT for samplers we use a parallel world and this HAS to be before the physics
@@ -238,7 +238,7 @@ int BDSIM::Initialise()
     {
       G4cout << "Design particle properties: " << G4endl << *designParticle;
       if (beamDifferentFromDesignParticle)
-	{G4cout << "Beam particle properties: " << G4endl << *beamParticle;}
+        {G4cout << "Beam particle properties: " << G4endl << *beamParticle;}
     }
   // update rigidity where needed
   realWorld->SetDesignParticle(designParticle);
@@ -272,7 +272,7 @@ int BDSIM::Initialise()
   /// Unfortunately, this has to be here as we can't query the geant4 particle table
   /// until after the physics list has been constructed and attached a run manager.
   if (globals->GeneratePrimariesOnly())
-    {      
+    {
       GeneratePrimariesOnly(globals);
       return 0;
     }
@@ -305,8 +305,8 @@ int BDSIM::Initialise()
   if (globals->VerboseSteppingBDSIM())
     {
       runManager->SetUserAction(new BDSSteppingAction(true,
-						      verboseSteppingEventStart,
-						      verboseSteppingEventStop));
+                                                      verboseSteppingEventStart,
+                                                      verboseSteppingEventStop));
     }
   
   runManager->SetUserAction(new BDSTrackingAction(globals->Batch(),
@@ -350,7 +350,7 @@ int BDSIM::Initialise()
   /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
   if (!bCloseGeometry)
-    { 
+    {
       G4cerr << __METHOD_NAME__ << "error - geometry not closed." << G4endl;
       return 1;
     }
@@ -387,33 +387,33 @@ void BDSIM::BeamOn(int nGenerate)
   try
     {
       if (!BDSGlobalConstants::Instance()->Batch())   // Interactive mode
-	{
-	  BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
-						   BDSGlobalConstants::Instance()->Geant4MacroFileName(),
-						   realWorld);
-	  visManager.StartSession(argcCache, argvCache);
-	}
+        {
+          BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
+                                                   BDSGlobalConstants::Instance()->Geant4MacroFileName(),
+                                                   realWorld);
+          visManager.StartSession(argcCache, argvCache);
+        }
       else
-	{// batch mode
-	  if (nGenerate < 0)
-	    {runManager->BeamOn(BDSGlobalConstants::Instance()->NGenerate());}
-	  else
-	    {runManager->BeamOn(nGenerate);}
-	}
+        {// batch mode
+          if (nGenerate < 0)
+            {runManager->BeamOn(BDSGlobalConstants::Instance()->NGenerate());}
+          else
+            {runManager->BeamOn(nGenerate);}
+        }
     }
   catch (const BDSException& exception)
     {
       // don't do this for now in case it's dangerous and we try tracking with open geometry
       //G4GeometryManager::GetInstance()->OpenGeometry();
       throw exception;
-    } 
+    }
 }
 
 BDSIM::~BDSIM()
 {
   /// Termination & clean up.
   G4GeometryManager::GetInstance()->OpenGeometry();
-    
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "deleting..." << G4endl;
 #endif
@@ -422,7 +422,7 @@ BDSIM::~BDSIM()
   try
     {
       // order important here because of singletons relying on each other
-	  delete BDSSDManager::Instance();
+      delete BDSSDManager::Instance();
       delete BDSBeamPipeFactory::Instance();
       delete BDSCavityFactory::Instance();
       delete BDSGeometryFactory::Instance();
@@ -434,16 +434,16 @@ BDSIM::~BDSIM()
       
       // instances not used in this file, but no other good location for deletion
       if (initialisationResult < 2)
-	{
-	  delete BDSColours::Instance();
-	  delete BDSFieldLoader::Instance();
-	  delete BDSSamplerRegistry::Instance();
-    BDSAperturePointsCache::Instance()->ClearCachedFiles();
-	}
+        {
+          delete BDSColours::Instance();
+          delete BDSFieldLoader::Instance();
+          delete BDSSamplerRegistry::Instance();
+          BDSAperturePointsCache::Instance()->ClearCachedFiles();
+        }
     }
   catch (...)
     {;} // ignore any exception as this is a destructor
-      
+  
   delete runManager;
   delete bdsBunch;
   delete parser;
@@ -453,7 +453,7 @@ BDSIM::~BDSIM()
 }
 
 void BDSIM::RegisterUserComponent(const G4String& componentTypeName,
-				  BDSComponentConstructor* componentConstructor)
+                                  BDSComponentConstructor* componentConstructor)
 {
   if (initialised)
     {BDS::Warning(__METHOD_NAME__, "BDSIM kernel already initialised - this component will not be available");}
@@ -461,7 +461,7 @@ void BDSIM::RegisterUserComponent(const G4String& componentTypeName,
     {userComponentFactory = new BDSComponentFactoryUser();}
 
   userComponentFactory->RegisterComponent(componentTypeName,
-					  componentConstructor);
+                                          componentConstructor);
 }
 
 void BDSIM::GeneratePrimariesOnly(const BDSGlobalConstants* globals)
