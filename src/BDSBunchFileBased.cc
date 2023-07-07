@@ -49,5 +49,5 @@ void BDSBunchFileBased::BeginOfRunAction(G4int /*numberOfEvents*/,
   // If interactive, we must permit looping as the user may request more
   // events than are in a file, and they may not have explicitly set the
   // right combination of options in the input.
-  distrFileLoop = !batchMode;
+  distrFileLoop = !batchMode || distrFileLoop;
 }
