@@ -114,7 +114,7 @@ namespace BDS
   G4GenericBiasingPhysics* BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
 
   /// Build muon splitting biasing and wrap the various processes in the physics list.
-  void BuildMuonBiasing(G4VModularPhysicsList* physicsList)
+  void BuildMuonBiasing(G4VModularPhysicsList* physicsList);
 
 #if G4VERSION_NUMBER > 1039
   /// Build the physics required for channelling to work correctly.
