@@ -282,7 +282,8 @@ void BDSBunch::RecreateAdvanceToEvent(G4int eventOffset)
   CalculateBunchIndex(eventOffset);
 }
 
-void BDSBunch::BeginOfRunAction(G4int /*numberOfEvents*/)
+void BDSBunch::BeginOfRunAction(G4int /*numberOfEvents*/,
+                                G4bool /*batchMode*/)
 {;}
 
 void BDSBunch::SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn)
