@@ -422,6 +422,8 @@ void BDSBunchUserFile<T>::EndOfFileAction()
       SkipNLinesIgnoreIntoFile(false);
       SkipNLinesSkip(false);
     }
+  else
+    {throw BDSException(__METHOD_NAME__, "distrFileLoop off but requesting another set of coordinates.");}
 }
 
 template<class T>
