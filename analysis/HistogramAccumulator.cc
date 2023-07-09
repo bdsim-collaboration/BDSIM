@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBH4DBase.hh"
 
 #include <cmath>
+#include <iostream>
 #include <stdexcept>
 #include <string>
 
@@ -132,13 +133,20 @@ HistogramAccumulator::~HistogramAccumulator()
   // leak result here as ROOT annoyingly requires this to be left
 }
 
-void HistogramAccumulator::Accumulate(TH1* newValue)
+void HistogramAccumulator::Accumulate(TH1* newValue, bool warnAboutZeroEntries)
 {
   // temporary variables
   double newMean = 0;
   double newVari = 0;
   const double error   = 0; // needed to pass reference to unused parameter
   const unsigned long nEntriesToAccumulate = 1;
+
+  if (newValue->GetEntries() == 0)
+    {
+      if (warnAboutZeroEntries)
+        {std::cout << "Histogram has no entries: \"" << newValue->GetName() << "\"" << std::endl;}
+      return; // can't accumulate nothing
+    }
   
   n++;
   switch (nDimensions)
