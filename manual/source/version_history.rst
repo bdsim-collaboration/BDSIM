@@ -270,6 +270,7 @@ Bug Fixes
 
 * Fix print out of event numbers in rebdsim being analysed when :code:`EventStart` and :code:`EventEnd` are
   specified. Also the print out rate given the possibly reduced number of events.
+* Fixed possible NANs in the merged output histograms if histograms were supplied with 0 entries.
 
 **Beam**
 
