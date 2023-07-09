@@ -231,8 +231,8 @@ void Config::ParseInputFile()
     }
   if (optionsBool.at("mergehistograms"))
     {
-      branches["Event."].push_back("Histos");
-      branches["Run."].push_back("Histos");
+      branches["Event."].emplace_back("Histos");
+      branches["Run."].emplace_back("Histos");
       optionsBool["perentryevent"]   = true;
     }
 
