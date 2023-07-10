@@ -55,10 +55,16 @@ BDSFieldLoaderBDSIM<T>::BDSFieldLoaderBDSIM():
   indexOfFirstFieldValue(0)
 {
   dimKeyMap = {
-               {BDSDimensionType::x, {"nx", "xmin", "xmax"}},
-               {BDSDimensionType::y, {"ny", "ymin", "ymax"}},
-               {BDSDimensionType::z, {"nz", "zmin", "zmax"}},
-               {BDSDimensionType::t, {"nt", "tmin", "tmax"}}
+    {BDSDimensionType::x, {"nx", "xmin", "xmax"}},
+    {BDSDimensionType::y, {"ny", "ymin", "ymax"}},
+    {BDSDimensionType::z, {"nz", "zmin", "zmax"}},
+    {BDSDimensionType::t, {"nt", "tmin", "tmax"}}
+  };
+  dimUnitsMap = {
+    {BDSDimensionType::x, CLHEP::cm},
+    {BDSDimensionType::y, CLHEP::cm},
+    {BDSDimensionType::z, CLHEP::cm},
+    {BDSDimensionType::t, CLHEP::s},
   };
 }
 
@@ -279,10 +285,11 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
               {
                 BDSDimensionType firstDim = BDS::DetermineDimensionType(columnNames[0]);
                 auto keys = dimKeyMap[firstDim];
+                double unit = dimUnitsMap[firstDim];
                 n1 = G4int(header[keys.number]);
                 result = new BDSArray1DCoords(n1,
-                                              header[keys.min] * CLHEP::cm,
-                                              header[keys.max] * CLHEP::cm,
+                                              header[keys.min] * unit,
+                                              header[keys.max] * unit,
                                               firstDim);
                 break;
               }
@@ -291,14 +298,16 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
                 BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
                 auto fKeys = dimKeyMap[firstDim];
+                double fUnit = dimUnitsMap[firstDim];
                 auto sKeys = dimKeyMap[secondDim];
+                double sUnit = dimUnitsMap[secondDim];
                 n1 = G4int(header[fKeys.number]);
                 n2 = G4int(header[sKeys.number]);
                 result = new BDSArray2DCoords(n1, n2,
-                                              header[fKeys.min] * CLHEP::cm,
-                                              header[fKeys.max] * CLHEP::cm,
-                                              header[sKeys.min] * CLHEP::cm,
-                                              header[sKeys.max] * CLHEP::cm,
+                                              header[fKeys.min] * fUnit,
+                                              header[fKeys.max] * fUnit,
+                                              header[sKeys.min] * sUnit,
+                                              header[sKeys.max] * sUnit,
                                               firstDim,
                                               secondDim);
                 break;
@@ -309,18 +318,21 @@ void BDSFieldLoaderBDSIM<T>::Load(const G4String& fileName,
                 BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
                 BDSDimensionType thirdDim  = BDS::DetermineDimensionType(columnNames[2]);
                 auto fKeys = dimKeyMap[firstDim];
+                double fUnit = dimUnitsMap[firstDim];
                 auto sKeys = dimKeyMap[secondDim];
+                double sUnit = dimUnitsMap[secondDim];
                 auto tKeys = dimKeyMap[thirdDim];
+                double tUnit = dimUnitsMap[thirdDim];
                 n1 = G4int(header[fKeys.number]);
                 n2 = G4int(header[sKeys.number]);
                 n3 = G4int(header[tKeys.number]);
                 result = new BDSArray3DCoords(n1, n2, n3,
-                                              header[fKeys.min] * CLHEP::cm,
-                                              header[fKeys.max] * CLHEP::cm,
-                                              header[sKeys.min] * CLHEP::cm,
-                                              header[sKeys.max] * CLHEP::cm,
-                                              header[tKeys.min] * CLHEP::cm,
-                                              header[tKeys.max] * CLHEP::cm,
+                                              header[fKeys.min] * fUnit,
+                                              header[fKeys.max] * fUnit,
+                                              header[sKeys.min] * sUnit,
+                                              header[sKeys.max] * sUnit,
+                                              header[tKeys.min] * tUnit,
+                                              header[tKeys.max] * tUnit,
                                               firstDim,
                                               secondDim,
                                               thirdDim);

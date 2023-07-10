@@ -100,6 +100,7 @@ private:
     G4String max;
   };
   std::map<BDSDimensionType, DimensionKeys> dimKeyMap;
+  std::map<BDSDimensionType, G4double> dimUnitsMap;
 };
 
 #endif

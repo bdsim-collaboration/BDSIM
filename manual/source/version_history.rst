@@ -9,7 +9,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Tapered aperture for all elements.
 * Beam pipe sections to fill gaps between changes in aperture.
 * Any aperture shape can be used for both the inside and the outside of a collimator.
-* Restructure code into proper C++ libraries rather than just analysis and bdsim.
+* Restructure code into proper C++ libraries rather than just analysis and 'bdsim'.
 * Multiple beam line tracking.
 
 V1.7.0 - 2023 / 04 / 09
@@ -118,7 +118,7 @@ New Features
   instructions on how to run Docker. This is a container system where a complete
   environment build on Centos7 will be built locally and works on Mac, Linux, Windows. It
   typically takes about 6Gb of space and is a great alternative to a virtual machine. An
-  XWindows server is required for the visualiser. See :ref:`docker-build`.
+  XWindows server is required for the visualiser. See :ref:`docker`.
 * New materials (Inermet170, Inermet176, Inermet180, Copper-Diamond, MoGr).
 * Nicer visualisation colours for charged particles. Green for neutrals is by default now at
   20% opacity as there are usually so many gammas.
@@ -270,6 +270,7 @@ Bug Fixes
 
 * Fix print out of event numbers in rebdsim being analysed when :code:`EventStart` and :code:`EventEnd` are
   specified. Also the print out rate given the possibly reduced number of events.
+* Fixed possible NANs in the merged output histograms if histograms were supplied with 0 entries.
 
 **Beam**
 
@@ -289,7 +290,9 @@ Bug Fixes
   construct and interface. The exact same results are produced reproducibly.
 * Fixed "antiproton" as a beam particle. Should really be "anti_proton" for Geant4 to find
   the particle definition. Manual updated accordingly.
-* Fix "kaon0L" as a beam particle. Also allow "kaon0S" and "kaon0".
+* Fixed "kaon0L" as a beam particle. Also allow "kaon0S" and "kaon0".
+* Fixed beam offset with S when using negative `beamlineS` option for generally offsetting the
+  S coordinate (as a variable in all data).
   
 **Biasing**
 
@@ -299,6 +302,8 @@ Bug Fixes
 
 **Fields**
 
+* Fix time units of BDSIM-format field maps that included time in any dimension. Previously,
+  they were always in 0.1s instead of 1s.
 * Fix field maps being wrong if a GDML file was used multiple times with different fields.
 * Fix BDSIM-format field map loading with :code:`loopOrder> tzyx` in the header. It was not
   loaded correctly before. Also, there are corresponding fixes in the pybdsim package.
@@ -324,6 +329,9 @@ Bug Fixes
 
 **Geometry**
 
+* Fix length of rbends being changed when specifying both `B` and `angle` and using a differet beam
+  particle from the design particle. The input length would be ignored and the arc length recalculated
+  based on the design beam particle.
 * Fix caching of loaded geometry. A loaded piece of geometry will be reloaded (and possibly preprocessed)
   if loaded in another beam line component to ensure we generate a unique set of logical volumes. This
   fixes field maps, biasing, range cuts, regions and more being wrong if the same GDML file was reused
@@ -356,6 +364,10 @@ Bug Fixes
   transportation). Previously, this step would not be stored breaking the indexing
   for parent step index.
 
+**Physics Lists**
+
+* :code:`em_extra`, :code:`muon`, and :code:`muon_inelastic` modular physics lists are now mutually exclusive.
+
 **Parser**
 
 * The input parser will now reject any duplicate object names (e.g. a field with the same name),
@@ -372,6 +384,7 @@ Bug Fixes
   option in input, a really common (hidden) error is that there's a semi-colon after an option.
   Therefore, the next option gets interpreted as a new constant or variable resulting in it
   having no effect at all. The parser will not prevent this from happening by complaining.
+* Fixed ambiguous warning about variable redefinition.
 
 **Sensitivity**
 
