@@ -44,6 +44,11 @@ public:
   BDSBunchFileBased(BDSBunchFileBased&) = delete;
   /// @}
 
+  /// Customise the beginning of run action to allow file looping always
+  /// when in interactive mode, i.e. not batch mode.
+  virtual void BeginOfRunAction(G4int numberOfEvents,
+                                G4bool batchMode);
+
   /// @{ Accessor.
   unsigned long long int NOriginalEvents() const {return nOriginalEvents;}
   unsigned long long int NEventsInFile() const {return nEventsInFile;}

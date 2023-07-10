@@ -95,7 +95,8 @@ void BDSBunchGaussian::SetOptions(const BDSParticleDefinition* beamParticle,
   meansGM[5] = 1;
 }
 
-void BDSBunchGaussian::BeginOfRunAction(G4int numberOfEvents)
+void BDSBunchGaussian::BeginOfRunAction(G4int numberOfEvents,
+                                        G4bool /*batchMode*/)
 {
   if (!offsetSampleMean)
     {return;}
