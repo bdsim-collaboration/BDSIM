@@ -302,6 +302,8 @@ Bug Fixes
 
 **Fields**
 
+* Fix time units of BDSIM-format field maps that included time in any dimension. Previously,
+  they were always in 0.1s instead of 1s.
 * Fix field maps being wrong if a GDML file was used multiple times with different fields.
 * Fix BDSIM-format field map loading with :code:`loopOrder> tzyx` in the header. It was not
   loaded correctly before. Also, there are corresponding fixes in the pybdsim package.
