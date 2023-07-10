@@ -40,6 +40,13 @@ HeaderAnalysis::HeaderAnalysis(const std::vector<std::string>& filenamesIn,
 HeaderAnalysis::~HeaderAnalysis() noexcept
 {;}
 
+double HeaderAnalysis::CalculateNormalisationFactor() const
+{
+  chain->GetEntry(chain->GetEntries()-1); // get the last entry
+  //header->header->
+  return 1.0;
+}
+
 unsigned long long int HeaderAnalysis::CountNOriginalEvents(unsigned long long int& nEventsInFileIn,
                                                             unsigned long long int& nEventsInFileSkippedIn,
                                                             unsigned long long int& nEventsRequestedIn,

@@ -118,7 +118,8 @@ void Config::InitialiseOptions(const std::string& analysisFile)
   // for backwards compatibility / verbose names
   alternateKeys["calculateopticalfunctions"]         = "calculateoptics";
   alternateKeys["calculateopticalfunctionsfilename"] = "opticsfilename";
-  
+
+  optionsBool["autohistogramnormalisation"] = true;
   optionsBool["debug"]             = false;
   optionsBool["processsamplers"]   = false;
   optionsBool["calculateoptics"]   = false;

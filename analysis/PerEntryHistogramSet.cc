@@ -141,6 +141,12 @@ void PerEntryHistogramSet::Terminate()
     {hist->Terminate();}
 }
 
+void PerEntryHistogramSet::Scale(double factor)
+{
+  for (auto hist : allPerEntryHistograms)
+    {hist->Scale(factor);}
+}
+
 void PerEntryHistogramSet::Write(TDirectory* dir)
 {
   if (what == HistogramDefSet::writewhat::all)

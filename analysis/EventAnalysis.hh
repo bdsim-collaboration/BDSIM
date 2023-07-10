@@ -56,7 +56,8 @@ public:
 		bool     emittanceOnTheFlyIn = false,
 		long int eventStartIn        = 0,
 		long int eventEndIn          = -1,
-		const std::string& primaryParticleName = "");
+		const std::string& primaryParticleName = "",
+    double   normalisationFactorIn = 1.0);
 
   virtual ~EventAnalysis() noexcept;
 
@@ -104,7 +105,8 @@ private:
   bool emittanceOnTheFly; ///< Whether to calculate emittance fresh at each sampler.
   long int eventStart;    ///< Event index to start analysis from.
   long int eventEnd;      ///< Event index to end analysis at.
-  long int nEventsToProcess; ///< Difference between start and stop.
+  long int nEventsToProcess;  ///< Difference between start and stop.
+  double normalisationFactor; ///< Normalisation if any to use on per-entry histograms.
 
   /// Cache of all per entry histogram sets.
   std::vector<PerEntryHistogramSet*> perEntryHistogramSets;

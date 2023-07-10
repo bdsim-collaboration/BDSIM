@@ -68,6 +68,7 @@ public:
 
   virtual void AccumulateCurrentEntry(long int entryNumber);
   virtual void Terminate();
+  virtual void Scale(double factor);
   virtual void Write(TDirectory* dir = nullptr);
   
   /// Ensure sampler is setup even if it wasn't on at the beginning when

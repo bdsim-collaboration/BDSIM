@@ -40,6 +40,9 @@ public:
                  TChain* chainIn);
   virtual ~HeaderAnalysis() noexcept;
 
+  /// From the header data, calculate the per-event normalisation factor.
+  double CalculateNormalisationFactor() const;
+
   /// Add up nOriginalEvents from each file in the chain and also nEventsInFile
   /// and nEventsInFileSkipped so we have the total numbers. Use the second entry
   /// of the header in each file, if it exists. Will reset incoming variables to 0.

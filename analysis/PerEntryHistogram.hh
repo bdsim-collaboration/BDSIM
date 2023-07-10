@@ -61,6 +61,10 @@ public:
   /// Terminate the accumulator and save the result to the result member variable.
   virtual void Terminate();
 
+  /// Scale the result histogram by a numerical factor. Should be used after
+  /// Terminate but will do nothing if no result exits.
+  virtual void Scale(double factor);
+
   /// Forwarding function - call Write on result histograms on the currently
   /// open file. Optional directory to specify where the histogram should be moved to.
   virtual void Write(TDirectory* dir = nullptr);

@@ -105,6 +105,7 @@ int main(int argc, char *argv[])
                                                                         nEventsInFileSkippedTotal,
                                                                         nEventsRequested,
                                                                         distrFileLoopNTimes);
+      double normalisationFactor = ha->CalculateNormalisationFactor();
       delete ha;
       
       BeamAnalysis* beaAnalysis = new BeamAnalysis(dl->GetBeam(),
@@ -120,7 +121,9 @@ int main(int argc, char *argv[])
                                       config->PrintModuloFraction(),
                                       config->GetOptionBool("emittanceonthefly"),
                                       (long int) config->GetOptionNumber("eventstart"),
-                                      (long int) config->GetOptionNumber("eventend"));
+                                      (long int) config->GetOptionNumber("eventend"),
+                                      "",
+                                      normalisationFactor);
       
       RunAnalysis* runAnalysis = new RunAnalysis(dl->GetRun(),
                                                  dl->GetRunTree(),

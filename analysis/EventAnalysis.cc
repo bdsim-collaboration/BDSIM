@@ -49,7 +49,8 @@ EventAnalysis::EventAnalysis():
   emittanceOnTheFly(false),
   eventStart(0),
   eventEnd(-1),
-  nEventsToProcess(0)
+  nEventsToProcess(0),
+  normalisationFactor(1.0)
 {;}
 
 EventAnalysis::EventAnalysis(Event*   eventIn,
@@ -61,7 +62,8 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
                              bool     emittanceOnTheFlyIn,
                              long int eventStartIn,
                              long int eventEndIn,
-                             const std::string& primaryParticleName):
+                             const std::string& primaryParticleName,
+                             double   normalisationFactorIn):
   Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
   printModulo(1),
@@ -69,7 +71,8 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
   emittanceOnTheFly(emittanceOnTheFlyIn),
   eventStart(eventStartIn),
   eventEnd(eventEndIn),
-  nEventsToProcess(eventEndIn - eventStartIn)
+  nEventsToProcess(eventEndIn - eventStartIn),
+  normalisationFactor(normalisationFactorIn)
 {
   if (processSamplers)
     {// Create sampler analyses if needed
@@ -219,6 +222,12 @@ void EventAnalysis::Terminate()
 {
   Analysis::Terminate();
   TerminatePerEntryHistogramSets();
+
+  // Normalise - 1.0 by default
+  for (auto& peHist : perEntryHistograms)
+    {peHist->Scale(normalisationFactor);}
+  for (auto& peHistSet : perEntryHistogramSets)
+    {peHistSet->Scale(normalisationFactor);}
 
   if (processSamplers)
     {

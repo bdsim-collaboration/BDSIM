@@ -129,6 +129,12 @@ void PerEntryHistogram::Terminate()
   result = accumulator->Terminate();
 }
 
+void PerEntryHistogram::Scale(double factor)
+{
+  if (result)
+    {result->Scale(factor);}
+}
+
 void PerEntryHistogram::Write(TDirectory* dir)
 {
   if (result)
