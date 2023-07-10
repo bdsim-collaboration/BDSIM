@@ -21,7 +21,8 @@ Solutions
 * :ref:`solution-cvmfs`
 * :ref:`solution-from-source`
 * :ref:`solution-windows`
-* :ref:`docker-build`
+* :ref:`docker`
+* :ref:`apptainer`
 
 .. _solution-precompiled:
 
@@ -117,7 +118,7 @@ BDSIM is available on Windows 10 through installation on the Windows Subsystem f
 from the Windows store. We currently advise that you should only install BDSIM on WSL 1 as difficulties have been
 encountered in installing BDSIM's dependencies and visualising GUIs with X servers on WSL 2.
 
-An alternative is to use DockerDesktop and build a docker image - instructions below - see :ref:`docker-build`.
+An alternative is to use DockerDesktop and build a docker image - instructions below - see :ref:`docker`.
 
 A number of Linux distributions are available, however BDSIM installation has only been tested
 on the Ubuntu distribution at present. Please note that we do not regularly test BDSIM on the Windows subsystems.
@@ -128,16 +129,22 @@ BDSIM visualiser from the Linux subsystem. We recommend installing the XMing dis
 to view windows with XMing you will need to run the command :code:`export DISPLAY=:0` in the Linux Bash environment.
 The command should be added to your ``.bashrc`` or profile so that it's loaded automatically every time.	  
 
-.. _docker-build:
+.. _docker:
 	  
 Docker
 ------
 
-Docker is a virtualisation tool that puts software and all libraries in a 'container'. This can be run
+Docker is a virtualisation tool that puts software in a 'container'. This can be run
 independently on an operating system and requires fewer resources than a virtual machine. It therefore
-allows us to use say a Centos container on a Mac or Windows machine.
+allows us to use say BDSIM a Centos7 container on a Mac or Windows machine.
 
 The initial setup takes about 30 minutes, but after that it is nearly instantaneous to start.
+
+A prebuilt image can be downloaded and run on your computer. First, donwload and install
+
+
+Docker Local Build
+******************
 
 Included with BDSIM we have a 'docker file' that docker can follow to build an image on your computer.
 This contains instructions about getting Centos, installing various packages and compiling Geant4 and
@@ -193,6 +200,24 @@ notes:
 * On a Mac, you may have to do :code:`xhost +` to allow X11 connections over the network.
 * On a Mac, you may have to set once :code:`defaults write org.xquartz.X11 enable_iglx -bool true`.
 * See :ref:`mac-xwindows`.
+
+
+.. _apptainer:
+  
+Apptainer (formerly Singularity)
+--------------------------------
+
+Apptainer (formerly known as singularity) is a container system similar to Docker. A key difference
+is that apptainer does not need administrator (root) access to run and therefore can be used on
+institute-provided machines such as `lxplus` at CERN for example.
+
+Currently, the apptainer containers are built from the docker images. BDSIM can be run as follows: ::
+
+  apptainer run docker://jairhul/centos7-geant4v10.7.4-environment bash
+
+
+Initially, this will take some time to download and convert to the apptainer format (e.g. 1-2 hours).
+After this initial step, it will run nearly instantly.
 
 
 

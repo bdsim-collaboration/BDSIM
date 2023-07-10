@@ -88,9 +88,9 @@ int main(int argc, char* argv[])
 
   if (inputFileName == outputFileName)
     {
-	    std::cout << "outputfile same as datafile" << std::endl;
-	    usage();
-	    return 1;
+      std::cout << "outputfile same as datafile" << std::endl;
+      usage();
+      return 1;
     }
   
   if (outputFileName.empty())
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
   try
     {
       evtAnalysis = new EventAnalysis(dl->GetEvent(), dl->GetEventTree(),
-				      false, true, false, -1, emittanceOnFly, 0, -1, particleName);
+                                      false, true, false, -1, emittanceOnFly, 0, -1, particleName);
       evtAnalysis->Execute();
     }
   catch (const RBDSException& error)
