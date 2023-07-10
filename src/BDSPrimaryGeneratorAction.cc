@@ -50,7 +50,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4RunManager.hh"
 
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
-                                                     const GMAD::Beam& beam):
+                                                     const GMAD::Beam& beam,
+                                                     G4bool            batchMode):
   bunch(bunchIn),
   recreateFile(nullptr),
   eventOffset(0),
@@ -81,7 +82,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
   particleGun->SetParticlePosition(G4ThreeVector());
   particleGun->SetParticleTime(0);
   
-  generatorFromFile = BDSPrimaryGeneratorFile::ConstructGenerator(beam, bunch, recreate, eventOffset);
+  generatorFromFile = BDSPrimaryGeneratorFile::ConstructGenerator(beam, bunch, recreate, eventOffset, batchMode);
 }
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()

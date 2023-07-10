@@ -86,7 +86,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   BDSAuxiliaryNavigator::ResetNavigatorStates();
   
   // Bunch generator beginning of run action (optional mean subtraction).
-  bunchGenerator->BeginOfRunAction(aRun->GetNumberOfEventToBeProcessed());
+  bunchGenerator->BeginOfRunAction(aRun->GetNumberOfEventToBeProcessed(), BDSGlobalConstants::Instance()->Batch());
   nEventsRequested = aRun->GetNumberOfEventToBeProcessed();
 
   SetTrajectorySamplerIDs();

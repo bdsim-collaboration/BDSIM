@@ -47,7 +47,8 @@ class BDSPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 public:
   /// Bunch must have a valid particle definition (ie not nullptr).
   BDSPrimaryGeneratorAction(BDSBunch*         bunchIn,
-                            const GMAD::Beam& beam);
+                            const GMAD::Beam& beam,
+                            G4bool            batchMode);
   virtual ~BDSPrimaryGeneratorAction();
 
   /// Main interface for Geant4. Prepare primary(ies) for the event.

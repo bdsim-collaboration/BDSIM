@@ -422,6 +422,8 @@ void BDSBunchUserFile<T>::EndOfFileAction()
       SkipNLinesIgnoreIntoFile(false);
       SkipNLinesSkip(false);
     }
+  else
+    {throw BDSException(__METHOD_NAME__, "distrFileLoop off but requesting another set of coordinates.");}
 }
 
 template<class T>
@@ -482,7 +484,7 @@ BDSParticleCoordsFullGlobal BDSBunchUserFile<T>::GetNextParticleValid(G4int /*ma
 template<class T>
 BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 {
-  if (InputBunchFile.eof())
+  if (InputBunchFile.eof() || InputBunchFile.fail())
     {EndOfFileAction();}
 
   G4double E = 0, Ek = 0, P = 0, x = 0, y = 0, z = 0, xp = 0, yp = 0, zp = 0, t = 0;
@@ -506,7 +508,7 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
     {
       if (SkippableLine(line))
         {
-          if (InputBunchFile.eof())
+          if (InputBunchFile.eof() || InputBunchFile.fail())
             {EndOfFileAction();}
           else
             {
