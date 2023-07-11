@@ -53,23 +53,18 @@ int main(int argc, char* argv[])
   std::string outputFileName = std::string(argv[2]);
   int index = 0;
   try
-  {
-    if (argc == 4)
-      {index = std::stoi(argv[3]);}
-  }
-  catch (const std::exception& e)
-    {std::cerr << e.what() << std::endl; return 1;}
-
-  try
     {
+      if (argc == 4)
+        {index = std::stoi(argv[3]);}
+      
       DataLoader dl = DataLoader(inputFileName, false, true, true);
       EventAnalysisOrbit* evtAnalysis = new EventAnalysisOrbit(dl.GetEvent(),
-							       dl.GetEventTree(),
-							       true, true);
+                                                               dl.GetEventTree(),
+                                                               true, true);
       evtAnalysis->ExtractOrbit(index);
       
       TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
-
+      
       // add header for file type and version details
       outputFile->cd();
       BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();

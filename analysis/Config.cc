@@ -48,8 +48,8 @@ Config* Config::instance = nullptr;
 std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Run.", "Event."};
 
 Config::Config(const std::string& inputFilePathIn,
-	       const std::string& outputFileNameIn,
-	       const std::string& defaultOutputFileSuffix):
+               const std::string& outputFileNameIn,
+               const std::string& defaultOutputFileSuffix):
   allBranchesActivated(false)
 {
   InitialiseOptions("");
@@ -67,14 +67,14 @@ Config::Config(const std::string& inputFilePathIn,
   optionsString["outputfilename"] = ofn;
 
   // turn on merging only
-  branches["Event."].push_back("Histos");
-  branches["Run."].push_back("Histos");
+  branches["Event."].emplace_back("Histos");
+  branches["Run."].emplace_back("Histos");
   optionsBool["perentryevent"] = true;
 }
 
 Config::Config(const std::string& fileNameIn,
-	       const std::string& inputFilePathIn,
-	       const std::string& outputFileNameIn,
+               const std::string& inputFilePathIn,
+               const std::string& outputFileNameIn,
                const std::string& defaultOutputFileSuffix):
   allBranchesActivated(false)
 {
@@ -88,11 +88,11 @@ Config::Config(const std::string& fileNameIn,
   else
     {
       if (optionsString["outputfilename"].empty())
-	{// no argument supplied and also no output name in input file - default to filename+_ana.root
-    std::string newOutputFilePath = RBDS::DefaultOutputName(optionsString["inputfilepath"], defaultOutputFileSuffix);
-    optionsString["outputfilename"] = newOutputFilePath;
-    std::cout << "Using default output file name with \"" << defaultOutputFileSuffix << "\" suffix  : " << optionsString.at("outputfilename") << std::endl;
-	}
+        {// no argument supplied and also no output name in input file - default to filename+_ana.root
+          std::string newOutputFilePath = RBDS::DefaultOutputName(optionsString["inputfilepath"], defaultOutputFileSuffix);
+          optionsString["outputfilename"] = newOutputFilePath;
+          std::cout << "Using default output file name with \"" << defaultOutputFileSuffix << "\" suffix  : " << optionsString.at("outputfilename") << std::endl;
+        }
     }
 }
 
@@ -103,7 +103,7 @@ Config::~Config()
   for (auto& nameDefs : histoDefs)
     {
       for (auto& histoDef : nameDefs.second)
-	{delete histoDef;}
+        {delete histoDef;}
     }
   for (auto def : eventHistoDefSetsSimple)
     {delete def;}
@@ -120,15 +120,16 @@ void Config::InitialiseOptions(const std::string& analysisFile)
   alternateKeys["calculateopticalfunctionsfilename"] = "opticsfilename";
   
   optionsBool["debug"]             = false;
-  optionsBool["processsamplers"]   = false;
   optionsBool["calculateoptics"]   = false;
-  optionsBool["mergehistograms"]   = true;
   optionsBool["emittanceonthefly"] = false;
+  optionsBool["mergehistograms"]   = true;
   optionsBool["perentrybeam"]      = false;
   optionsBool["perentryevent"]     = false;
   optionsBool["perentryrun"]       = false;
   optionsBool["perentryoption"]    = false;
   optionsBool["perentrymodel"]     = false;
+  optionsBool["printout"]          = true;
+  optionsBool["processsamplers"]   = false;
   optionsBool["backwardscompatible"] = false; // ignore file types for old data
   optionsBool["verbosespectra"]    = false;
 
@@ -799,7 +800,7 @@ void Config::ParseSetting(const std::string& line)
       else if (optionsNumber.find(key) != optionsNumber.end())
         {optionsNumber[key] = std::stod(value);}
       else
-      {throw RBDSException("Invalid option \"" + key + "\"");}
+        {throw RBDSException("Invalid option \"" + key + "\"");}
     }
   else
     {throw RBDSException("Invalid option line \"" + line + "\"");}
