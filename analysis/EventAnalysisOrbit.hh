@@ -50,6 +50,7 @@ public:
 		     bool     perEntryAnalysis    = true,
 		     bool     processSamplersIn   = true,
 		     bool     debugIn             = false,
+         bool     printOutIn          = true,
 		     double   printModuloFraction = 0.01,
 		     bool     emittanceOnTheFlyIn = false,
 		     long int eventStartIn        = 0,

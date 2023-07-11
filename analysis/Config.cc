@@ -120,15 +120,16 @@ void Config::InitialiseOptions(const std::string& analysisFile)
   alternateKeys["calculateopticalfunctionsfilename"] = "opticsfilename";
   
   optionsBool["debug"]             = false;
-  optionsBool["processsamplers"]   = false;
   optionsBool["calculateoptics"]   = false;
-  optionsBool["mergehistograms"]   = true;
   optionsBool["emittanceonthefly"] = false;
+  optionsBool["mergehistograms"]   = true;
   optionsBool["perentrybeam"]      = false;
   optionsBool["perentryevent"]     = false;
   optionsBool["perentryrun"]       = false;
   optionsBool["perentryoption"]    = false;
   optionsBool["perentrymodel"]     = false;
+  optionsBool["printout"]          = true;
+  optionsBool["processsamplers"]   = false;
   optionsBool["backwardscompatible"] = false; // ignore file types for old data
   optionsBool["verbosespectra"]    = false;
 
