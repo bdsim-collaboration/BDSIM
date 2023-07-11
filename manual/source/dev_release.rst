@@ -19,8 +19,9 @@ Things to update immediately before a release  (i.e. from a release candidate br
 
    * If the data format has changed increment the data version in each output class header in the ClassDef() at the bottom.
    * Check data version in :code:`configuration/BDSVersionData.hh`.
-   * After updating the build, go to <bdsim-build-dir>/configuration and manually edit BDSVersion.hh to
-     be the new version (e.g. v1.7.0) then make install. Then the data samples will have the right
+   * After updating the build, go to :code:`<bdsim-build-dir>/configuration` and manually edit BDSVersion.hh to
+     be the new version (e.g. v1.7.0) then make install. You may have to touch
+     :code:`<bdsim-dir>/src/BDSOutputROOTEventHeader.cc`. Then the data samples will have the right
      version number in their header.bdsimVersion (rather than previous-version-dirty). If ccmake
      is run though, this will be overwritten.
    * Also check :code:`<bdsim-build-dir>/src/BDSExecOptions.cc` for the "versionGit" string.
