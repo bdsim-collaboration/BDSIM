@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -16,11 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSArrayReflectionType.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldType.hh"
 #include "BDSIntegratorType.hh"
 #include "BDSInterpolatorType.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSModulatorInfo.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -45,9 +47,11 @@ BDSFieldInfo::BDSFieldInfo():
   magneticFieldFilePath(""),
   magneticFieldFormat(BDSFieldFormat::none),
   magneticInterpolatorType(BDSInterpolatorType::nearest3d),
+  magneticArrayReflectionTypeSet(BDSArrayReflectionTypeSet()),
   electricFieldFilePath(""),
   electricFieldFormat(BDSFieldFormat::none),
   electricInterpolatorType(BDSInterpolatorType::nearest3d),
+  electricArrayReflectionTypeSet(BDSArrayReflectionTypeSet()),
   cacheTransforms(true),
   eScaling(1.0),
   bScaling(1.0),
@@ -62,6 +66,7 @@ BDSFieldInfo::BDSFieldInfo():
   magneticSubFieldName(""),
   electricSubFieldName(""),
   usePlacementWorldTransform(false),
+  modulatorInfo(nullptr),
   transformBeamline(nullptr),
   nameOfParserDefinition("")
 {;}
@@ -98,9 +103,11 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   magneticFieldFilePath(magneticFieldFilePathIn),
   magneticFieldFormat(magneticFieldFormatIn),
   magneticInterpolatorType(magneticInterpolatorTypeIn),
+  magneticArrayReflectionTypeSet(BDSArrayReflectionTypeSet()),
   electricFieldFilePath(electricFieldFilePathIn),
   electricFieldFormat(electricFieldFormatIn),
   electricInterpolatorType(electricInterpolatorTypeIn),
+  electricArrayReflectionTypeSet(BDSArrayReflectionTypeSet()),
   cacheTransforms(cacheTransformsIn),
   eScaling(eScalingIn),
   bScaling(bScalingIn),
@@ -114,6 +121,7 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   magneticSubFieldName(magneticSubFieldNameIn),
   electricSubFieldName(electricSubFieldNameIn),
   usePlacementWorldTransform(false),
+  modulatorInfo(nullptr),
   transformBeamline(nullptr),
   nameOfParserDefinition("")
 {
@@ -143,9 +151,11 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   magneticFieldFilePath(other.magneticFieldFilePath),
   magneticFieldFormat(other.magneticFieldFormat),
   magneticInterpolatorType(other.magneticInterpolatorType),
+  magneticArrayReflectionTypeSet(other.magneticArrayReflectionTypeSet),
   electricFieldFilePath(other.electricFieldFilePath),
   electricFieldFormat(other.electricFieldFormat),
   electricInterpolatorType(other.electricInterpolatorType),
+  electricArrayReflectionTypeSet(other.electricArrayReflectionTypeSet),
   cacheTransforms(other.cacheTransforms),
   eScaling(other.eScaling),
   bScaling(other.bScaling),
@@ -159,6 +169,7 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   magneticSubFieldName(other.magneticSubFieldName),
   electricSubFieldName(other.electricSubFieldName),
   usePlacementWorldTransform(other.usePlacementWorldTransform),
+  modulatorInfo(other.modulatorInfo),
   transformBeamline(nullptr),
   nameOfParserDefinition(other.nameOfParserDefinition)
 {
@@ -193,10 +204,10 @@ void BDSFieldInfo::UpdateUserLimitsLengthMaximumStepSize(G4double maximumStepSiz
     {
       G4UserLimits* old = stepLimit;
       stepLimit = BDS::CreateUserLimits(stepLimit, maximumStepSize, 1.0);
-      if ((stepLimit != old) && (old != defaultUL))
-	{delete old;}
       if (stepLimit == old)
 	{warn = false;} // no change and warning would print out wrong number
+      if ((stepLimit != old) && (old != defaultUL))
+	{delete old;}
     }
   else
     {stepLimit = new G4UserLimits(maximumStepSize);}
@@ -218,9 +229,11 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "B map file:          " << info.magneticFieldFilePath    << G4endl;
   out << "B map file format:   " << info.magneticFieldFormat      << G4endl;
   out << "B interpolator       " << info.magneticInterpolatorType << G4endl;
+  out << "B array reflection:  " << info.magneticArrayReflectionTypeSet << G4endl;
   out << "E map file:          " << info.electricFieldFilePath    << G4endl;
   out << "E map file format:   " << info.electricFieldFormat      << G4endl;
   out << "E interpolator       " << info.electricInterpolatorType << G4endl;
+  out << "E array reflection:  " << info.electricArrayReflectionTypeSet << G4endl;
   out << "Transform caching:   " << info.cacheTransforms          << G4endl;
   out << "E Scaling:           " << info.eScaling                 << G4endl;
   out << "B Scaling:           " << info.bScaling                 << G4endl;
@@ -233,7 +246,10 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "Second field on left " << info.secondFieldOnLeft        << G4endl;
   out << "Magnetic Sub Field   " << info.magneticSubFieldName     << G4endl;
   out << "Electric Sub Field   " << info.electricSubFieldName     << G4endl;
+  if (info.modulatorInfo)
+    {out << "Modulator            " << *(info.modulatorInfo) << G4endl;}
   out << "Use Placement World Transform " << info.usePlacementWorldTransform << G4endl;
+
   if (info.magnetStrength)
     {out << "Magnet strength:     " << *(info.magnetStrength)      << G4endl;}
   if (info.stepLimit)

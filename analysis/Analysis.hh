@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4DBase.hh"
 
 #include <map>
 #include <string>
@@ -71,7 +72,7 @@ public:
   void PreparePerEntryHistograms();
 
   /// Accumulate means and variances for per entry histograms.
-  void AccumulatePerEntryHistograms(const long int& entryNumber);
+  void AccumulatePerEntryHistograms(long int entryNumber);
 
   /// Prepare result of per entry histogram accumulation.
   void TerminatePerEntryHistograms();
@@ -84,27 +85,23 @@ public:
   virtual void Write(TFile* outputFile);
 
 protected:
+  /// Create an individual histogram based on a definition.
+  void FillHistogram(HistogramDef* definition,
+                     std::vector<TH1*>* outputHistograms = nullptr);
+
   std::string treeName;
   TChain*     chain;
   std::string                 mergedHistogramName; ///< Name of directory for merged histograms.
-  std::vector<std::string>    histogramNames; ///< Rebdsim generated histogram names.
-  std::map<std::string, TH1*> histograms1D;   ///< Rebdsim 1d histograms for each 
-  std::map<std::string, TH2*> histograms2D;   ///< Rebdsim 2d histograms.
-  std::map<std::string, TH3*> histograms3D;   ///< Rebdsim 3d histograms.
+  std::vector<TH1*>           simpleHistograms;
   std::vector<PerEntryHistogram*> perEntryHistograms;
-  HistogramMeanFromFile*      histoSum;       ///< Merge of per event stored histograms.
-  bool                        debug;          ///< Whether debug print out is used or not.
-  long int                    entries;        ///< Number of entries in the chain.
-
-  /// Whether to analyse each entry in the tree in a for loop or not.
-  bool                        perEntry;
+  HistogramMeanFromFile*      histoSum; ///< Merge of per event stored histograms.
+  bool                        debug;    ///< Whether debug print out is used or not.
+  long int                    entries;  ///< Number of entries in the chain.
+  bool                        perEntry; ///< Whether to analyse each entry in the tree in a for loop or not.
   
 private:
   /// No default constructor for this base class.
   Analysis() = delete;
-  
-  /// Create an individual histogram based on a definition.
-  void FillHistogram(HistogramDef* definition);
 };
 
 #endif

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -22,8 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4DBase.hh"
 
 #include <cmath>
+#include <iostream>
 #include <string>
 
 ClassImp(HistogramAccumulatorMerge)
@@ -42,18 +44,37 @@ HistogramAccumulatorMerge::HistogramAccumulatorMerge(TH1*               baseHist
 		       resultHistTitleIn)
 {;}
 
-void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
+void HistogramAccumulatorMerge::Accumulate(TH1* newValue, bool warnAboutZeroEntries)
 {
   // temporary variables
   double newMean = 0;
   double newVari = 0;
   double var     = 0;
 
+  if (newValue->GetEntries() == 0)
+    {
+      if (warnAboutZeroEntries)
+        {std::cout << "Histogram has no entries: \"" << newValue->GetName() << "\"" << std::endl;}
+      return; // can't accumulate nothing
+    }
+
   // Want the number of events accumulated so far. We purposively set the entries
   // in the mean histogram as the number of events accumulated, not the number of
   // histograms (ie files here).
-  unsigned long oldEntries = (unsigned long)mean->GetEntries();       // works for base class*
-  unsigned long newEntries = (unsigned long)newValue->GetEntries(); // works for base class*
+  unsigned long oldEntries;
+  unsigned long newEntries;
+
+  if (nDimensions == 4)
+    {
+      oldEntries = (unsigned long)static_cast<BDSBH4DBase*>(mean)->GetEntries_BDSBH4D();
+      newEntries = (unsigned long)static_cast<BDSBH4DBase*>(newValue)->GetEntries_BDSBH4D();
+    }
+  else
+    {
+      oldEntries = (unsigned long)mean->GetEntries();   // works for base class*
+      newEntries = (unsigned long)newValue->GetEntries();   // works for base class*
+    }
+  
   unsigned long newTotalEntries = oldEntries + newEntries;
   const double nD     = (double)newEntries;
   const double factor = nD * (nD - 1);
@@ -126,11 +147,49 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
 	  }
 	break;
       }
+    case 4:
+      {
+#ifdef USE_BOOST
+	BDSBH4DBase* h1  = dynamic_cast<BDSBH4DBase*>(mean);
+	BDSBH4DBase* h1e = dynamic_cast<BDSBH4DBase*>(variance);
+	BDSBH4DBase* ht  = dynamic_cast<BDSBH4DBase*>(newValue);
+	for (int j = -1; j <= h1->GetNbinsX(); ++j)
+	  {
+	    for (int k = -1; k <= h1->GetNbinsY(); ++k)
+	      {
+		for (int l = -1; l <= h1->GetNbinsZ(); ++l)
+		  {
+		    for (int e = -1; e <= h1->GetNbinsE(); ++e)
+		      {
+			var = std::pow(ht->AtError(j,k,l,e), 2) * factor;
+			AccumulateSingleValue(h1->At(j,k,l,e),
+					      h1e->At(j,k,l,e),
+					      ht->At(j,k,l,e),
+					      var,
+					      oldEntries, newEntries,
+					      newMean, newVari);
+			h1->Set_BDSBH4D(j, k, l, e, newMean);
+			h1e->Set_BDSBH4D(j, k, l, e, newVari);
+		      }
+		  }
+	      }
+	  }
+	break;
+#endif
+      }
     default:
       {break;}
     }
-  mean->SetEntries(newTotalEntries);
-  variance->SetEntries(newTotalEntries);
+  if(nDimensions==4)
+    {
+      dynamic_cast<BDSBH4DBase*>(mean)->SetEntries_BDSBH4D(newTotalEntries);
+      dynamic_cast<BDSBH4DBase*>(variance)->SetEntries_BDSBH4D(newTotalEntries);
+    }
+  else
+    {
+      mean->SetEntries(newTotalEntries);
+      variance->SetEntries(newTotalEntries);
+    }
   n = newTotalEntries; // updated to Terminate() works correctly
 }
 

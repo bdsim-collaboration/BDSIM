@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <list>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -36,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "field.h"
 #include "fastlist.h"
 #include "material.h"
+#include "modulator.h"
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
@@ -50,6 +52,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 /// parser error message, defined in parser.y
 int yyerror(const char *);
+int yyerror2(const char *s); ///< Similar but without advice about semicolon
 /// declaration needed by bison
 extern int yylex();
 
@@ -106,35 +109,43 @@ namespace GMAD
     /// removes sublines from the beamline into one LINE.
     void expand_line(FastList<Element>& target,
                      const std::string& name,
-                     std::string        start = "",
-                     std::string        end   = "");
+                     const std::string& start = "",
+                     const std::string& end   = "");
 
     /// Expand the main beamline as defined by the use command.
-    void expand_line(const std::string& name, std::string start, std::string end);
+    void expand_line(const std::string& name,
+                     const std::string& start,
+                     const std::string& end);
 
     /// Find the sequence defined in the parser and expand it if not already
     /// done so. Cache result in map of fastlists.
     const FastList<Element>& get_sequence(const std::string& name);
-    
+  
+    /// Add a particle set for a sampler and return a unique integer ID for that set. If no list
+    /// or empty list given, returns -1, the default for 'no filter'.
+    int add_sampler_partIDSet(std::list<int>* samplerPartIDListIn);
     /// insert a sampler into beamline_list
-    void add_sampler(const std::string& name, int count, ElementType type);
-    /// insert a cylindrical sampler into beamline_list
-    void add_csampler(const std::string& name, int count, ElementType type);
+    void add_sampler(const std::string& name, int count, ElementType type, std::string samplerType, std::list<int>* samplerPartIDListIn = nullptr);
     /// Insert global object of parser class C in Container class
-    template <class C, class Container=std::vector<C>>
+    template <class C, class Container=FastList<C>>
     void Add();
+    template <class C, class Container=FastList<C>>
+    void Add(bool unique, const std::string& className);
     /// Get global object of parser class C
     template <class C>
     C& GetGlobal();
     /// Get list for parser class C
-    template <class C, class Container=std::vector<C>>
+    template <class C, class Container=FastList<C>>
     Container& GetList();
+  
+    const std::set<std::set<int>>& GetSamplerFilters() const {return samplerFilters;}
+    const std::map<int, std::set<int>>& GetSamplerFilterIDToSet() const {return samplerFilterIDToSet;}
 
     /// find element
     Element& find_element(const std::string& element_name);
     /// find element (const) 
     const Element& find_element(const std::string& element_name) const;
-    /// find element by pointer - nullptr if not found - searches elemnet_list
+    /// find element by pointer - nullptr if not found - searches element_list
     const Element* find_element_safe(const std::string& element_name) const;
     /// search placement_element
     const Element* find_placement_element_safe(const std::string& element_name) const;
@@ -145,6 +156,7 @@ namespace GMAD
     /// copy properties from Element into params, returns element type as integer, returs _NONE if not found
     int copy_element_to_params(const std::string& elementName);
 
+    bool InvalidSymbolName(const std::string& s, std::string& errorReason);
     /// create new parser symbol
     Symtab * symcreate(const std::string& s);
     /// look up parser symbol
@@ -166,6 +178,9 @@ namespace GMAD
     /// Get value for parser class (only for doubles)
     template <class C>
     double GetValue(std::string property);
+    
+    template<typename T>
+    std::list<T>* ArrayToList(Array*);
 
     /// Add value to be extended to object
     template <typename T>
@@ -180,21 +195,27 @@ namespace GMAD
     void PrintElements()const;
     void PrintOptions()const;
     ///@}
+    /// Search each member vector for an object with the matching name.
+    /// Return true if successfully printed.
+    bool TryPrintingObject(const std::string& objectName) const;
     
     ///@{ Name of beamline
     std::string current_line;
     std::string current_start;
     std::string current_end;
     ///@}
-    /// Beamline Access (for pybdsim)
-    const FastList<Element>& GetBeamline()const;
+    /// Beamline Access.
+    const FastList<Element>& GetBeamline() const;
     
   private:
     /// Set sampler
-    void set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius=0.0);
+    void set_sampler(const std::string& name,
+                     int count, ElementType type,
+                     const std::string& samplerType,
+                     double samplerRadius=0,
+                     int particleSetID = -1);
     /// Add function to parser
     void add_func(std::string name, double (*func)(double));
-    /// Add reserved variable to parser
     void add_var(std::string name, double value, int is_reserved = 0);
 
     /// Expand all sequences define with 'line' into FastLists.
@@ -208,34 +229,25 @@ namespace GMAD
     Options options;
     /// Beamline
     FastList<Element>   beamline_list;
-    /// List of parser defined atoms
-    std::vector<Atom>   atom_list;
-    std::vector<NewColour> colour_list; ///< List of parser defined colours.
-    std::vector<Crystal> crystal_list;  ///< List of parser defined crystals.
-    /// List of parser defined fields
-    std::vector<Field>  field_list;
-    /// List of parser defined materials
-    std::vector<Material> material_list;
-    /// List of parser defined query objects
-    std::vector<Query> query_list;
-    /// List of parser defined regions
-    std::vector<Region> region_list;
-    /// List of parser defined tunnels
-    std::vector<Tunnel> tunnel_list;
-    /// List of parser defined cross section biasing objects
+    /// @{ List of parser defined instances of that object.
+    FastList<Atom>   atom_list;
+    FastList<NewColour> colour_list;
+    FastList<Crystal> crystal_list;
+    FastList<Field>  field_list;
+    FastList<Material> material_list;
+    FastList<Query> query_list;
+    FastList<Region> region_list;
+    FastList<Tunnel> tunnel_list;
     FastList<PhysicsBiasing> xsecbias_list;
-    /// List of parser defined placements.
-    std::vector<Placement> placement_list;
-    /// List of parser defined rf cavity models
-    std::vector<CavityModel> cavitymodel_list;
-    /// List of parser defined sampler placements.
-    std::vector<SamplerPlacement> samplerplacement_list;
-    std::vector<Scorer> scorer_list;
-    std::vector<ScorerMesh> scorermesh_list;
-    /// List of parser defined apertures.
-    std::vector<Aperture> aperture_list;
-    /// List of parser defined blms.
-    std::vector<BLMPlacement> blm_list;
+    FastList<Placement> placement_list;
+    FastList<CavityModel> cavitymodel_list;
+    FastList<SamplerPlacement> samplerplacement_list;
+    FastList<Scorer> scorer_list;
+    FastList<ScorerMesh> scorermesh_list;
+    FastList<Aperture> aperture_list;
+    FastList<BLMPlacement> blm_list;
+    FastList<Modulator> modulator_list;
+    /// @}
 
   private:
     // *****************
@@ -251,38 +263,26 @@ namespace GMAD
     /// vector of defined lines for memory management
     std::vector<std::list<Element>*> allocated_lines;
 
-    /// Parameters to copy to Element
+    /// @{ The one instance we fill before appending to a list.
     Parameters params;
-    /// Atom instance;
     Atom atom;
-    NewColour  colour; ///< NewColour instance.
-    Crystal crystal;   ///< Crystal instance.
-    /// Field instance;
+    NewColour colour;
+    Crystal crystal;
     Field field;
-    /// Material instance;
     Material material;
-    /// PhysicsBiasing instance 
     PhysicsBiasing xsecbias;
-    /// Placement instance
     Placement placement;
-    /// Query instance
     Query query;
-    /// Region instance;
     Region region;
-    /// Tunnel instance
     Tunnel tunnel;
-    /// RF Cavity model instance
     CavityModel cavitymodel;
-    /// Sampler placement instance
     SamplerPlacement samplerplacement;
-    /// Scorer instance.
     Scorer scorer;
-    /// ScorerMesh instance.
     ScorerMesh scorermesh;
-    /// Aperture instance.
     Aperture aperture;
-    /// BLM instance.
     BLMPlacement blm;
+    Modulator modulator;
+    /// @}
     
     /// Find object by name in list
     template <class C>
@@ -319,6 +319,12 @@ namespace GMAD
     SymbolMap symtab_map;
     /// Variable vector for memory storage
     std::vector<std::string*> var_list;
+    
+    /// Set of unique sets of particle IDs. This will allow us to build up unique
+    /// Sensitive detectors for particles later on.
+    std::set<std::set<int>> samplerFilters;
+    std::map<int, std::set<int>> samplerFilterIDToSet;
+    std::map<std::set<int>, int> setToSamplerFilterID;
   };
 
   template <class C, typename T>
@@ -331,6 +337,21 @@ namespace GMAD
   double Parser::GetValue(std::string property)
   {
     return GetGlobal<C>().get_value(property);
+  }
+  
+  template<typename T>
+  std::list<T>* Parser::ArrayToList(Array* arrayIn)
+  {
+    if (!arrayIn)
+      {return nullptr;}
+    else
+    {
+      std::list<T>* result = new std::list<T>();
+      const auto& doubleData = arrayIn->GetDataList();
+      for (auto& value : doubleData)
+      {result->push_back((T)value);}
+      return result;
+    }
   }
 }
 

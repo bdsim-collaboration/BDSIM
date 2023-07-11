@@ -1,0 +1,20 @@
+c1: rcol, l=0.1*m, material="Cu";
+l1: line=(c1);
+use, l1;
+
+sample, all;
+
+beam, particle="proton",
+      kineticEnergy=100*GeV,
+      distrType="userfile",
+      distrFileFormat="pdgid",
+      distrFile="particles.dat";
+
+option, physicsList="g4FTFP_BERT",
+	minimumKineticEnergy=0.5*GeV,
+	worldMaterial="vacuum";
+
+option, seed=123;
+
+option, storeSamplerKineticEnergy=1;
+option, storeMinimalData=1;

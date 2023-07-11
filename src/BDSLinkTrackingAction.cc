@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -47,7 +47,7 @@ BDSLinkTrackingAction::BDSLinkTrackingAction(G4bool batchMode,
   verboseSteppingPrimaryOnly(verboseSteppingPrimaryOnlyIn),
   verboseSteppingLevel(verboseSteppingLevelIn)
 {
-  trajectoryStorageOptions = {false, true, true, false, false, false, false, false};
+  trajectoryStorageOptions = {false, true, true, false, false, false, false, false, false};
 }
 
 void BDSLinkTrackingAction::PreUserTrackingAction(const G4Track* track)

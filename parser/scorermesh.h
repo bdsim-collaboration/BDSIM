@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -39,13 +39,22 @@ namespace GMAD
   public:
     std::string name;          ///< Name of this placement.
     std::string scoreQuantity; ///< Name of scorer object to use.
+    std::string geometryType; ///< Name of scorermesh geometry to use.
     
     int nx;             ///< Number of bins in x.
     int ny;             ///< Number of bins in y.
     int nz;             ///< Number of bins in z.
+    int nr;             ///< Number of bins in R.
+    int nphi;           ///< Number of bins in Phi.
+    int ne;             ///< Number of bins in E.
     double xsize;       ///< X total width.
     double ysize;       ///< Y total width.
     double zsize;       ///< Z total width.
+    double rsize;       ///< R total length.
+    double eLow;        ///< E Low limit.
+    double eHigh;       ///< E High limit.
+    std::string eScale; ///< E scaling type.
+    std::string eBinsEdgesFilenamePath; ///< E bins edges filename path.
 
     // placement stuff
     std::string sequence;     ///< Name of sequence to place.
@@ -85,21 +94,21 @@ namespace GMAD
   
   template <typename T>
   void ScorerMesh::set_value(std::string property, T value)
-    {
+  {
 #ifdef BDSDEBUG
-      std::cout << "scorermesh> Setting value " << std::setw(25) << std::left
-		<< property << value << std::endl;
+    std::cout << "scorermesh> Setting value " << std::setw(25) << std::left
+              << property << value << std::endl;
 #endif
-      // member method can throw runtime_error, catch and exit gracefully
-      try
-	{set(this,property,value);}
-      catch (const std::runtime_error&)
-	{
-	  std::cerr << "Error: scorermesh> unknown option \"" << property
-		    << "\" with value " << value  << std::endl;
-	  exit(1);
-	}
-    }
+    // member method can throw runtime_error, catch and exit gracefully
+    try
+      {set(this,property,value);}
+    catch (const std::runtime_error&)
+      {
+        std::cerr << "Error: scorermesh> unknown option \"" << property
+                  << "\" with value \"" << value << "\" in definition \"" << this->name << "\"" << std::endl;
+        exit(1);
+      }
+  }
 }
 
 #endif

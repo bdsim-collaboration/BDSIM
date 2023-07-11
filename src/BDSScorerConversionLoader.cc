@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -20,10 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSException.hh"
 #include "BDSScorerConversionLoader.hh"
 
-#include "globals.hh"
-#include "G4PhysicsOrderedFreeVector.hh"
+#include "G4DataVector.hh"
+#include "G4PhysicsFreeVector.hh"
 #include "G4PhysicsVector.hh"
 #include "G4String.hh"
+#include "G4Types.hh"
 
 #include <algorithm>
 #include <fstream>
@@ -46,7 +47,8 @@ BDSScorerConversionLoader<T>::~BDSScorerConversionLoader()
 {;}
 
 template <class T>
-G4PhysicsVector* BDSScorerConversionLoader<T>::Load(const G4String& fileName)
+G4PhysicsVector* BDSScorerConversionLoader<T>::Load(const G4String& fileName,
+						    G4bool          silent)
 {
   file.open(fileName);
 
@@ -58,14 +60,14 @@ G4PhysicsVector* BDSScorerConversionLoader<T>::Load(const G4String& fileName)
 #endif
   if (!validFile)
     {throw BDSException(__METHOD_NAME__, "Invalid file name or no such file named \"" + fileName + "\"");}
-  else
+  if (!silent)
     {G4cout << "Scorer conversion factors - loading \"" << fileName << "\"" << G4endl;}
 
   G4int lineNumber = 1;
   std::string line;
 
-  std::vector<G4double> energy;
-  std::vector<G4double> conversionFactor;
+  G4DataVector energy;
+  G4DataVector conversionFactor;
 
   while (std::getline(file, line))
     {// read a line only if it's not a blank one
@@ -91,14 +93,15 @@ G4PhysicsVector* BDSScorerConversionLoader<T>::Load(const G4String& fileName)
 	  throw BDSException(__METHOD_NAME__, "Incomplete line " + std::to_string(lineNumber));
 	}
       
-      energy.push_back(numbers[0]);
-      conversionFactor.push_back(numbers[1]);
+      energy.emplace_back(numbers[0]);
+      conversionFactor.emplace_back(numbers[1]);
       
       lineNumber++;
     }
   
   file.close();
-  G4PhysicsOrderedFreeVector* results = new G4PhysicsOrderedFreeVector(&energy[0], &conversionFactor[0], energy.size());
+  // relies on energy being increasing from one value to another
+  G4PhysicsFreeVector* results = new G4PhysicsFreeVector(energy, conversionFactor);
   return results;
 }
 

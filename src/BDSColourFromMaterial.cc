@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -18,10 +18,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSColours.hh"
 #include "BDSColourFromMaterial.hh"
+#include "BDSUtilities.hh"
 
 #include "G4Colour.hh"
+#include "G4DataVector.hh"
 #include "G4Material.hh"
-#include "G4PhysicsOrderedFreeVector.hh"
+#include "G4PhysicsFreeVector.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
 
@@ -50,61 +52,62 @@ BDSColourFromMaterial::BDSColourFromMaterial()
   BDSColours* c = BDSColours::Instance();
   defines["air"]         = c->GetColour("air:240 240 240 0.05");
   defines["airbdsim"]    = defines["air"];
-  defines["G4_AIR"]      = defines["air"];
-  
   defines["boron"]       = c->GetColour("reallyreallydarkgrey");
-  defines["G4_BRASS"]    = c->GetColour("LHCcoil");
-  
+  defines["brass"]       = c->GetColour("LHCcoil");
   defines["carbon"]      = c->GetColour("reallyreallydarkgrey");
-  defines["G4_C"]        = defines["carbon"];
-  defines["G4_GRAPHITE"] = defines["carbon"];
-  
+  defines["c"]           = defines["carbon"];
+  defines["graphite"]    = defines["carbon"];
   defines["chlorine"]    = c->GetColour("yellow");
-  defines["G4_Cl"]       = defines["chlorine"];
-  
+  defines["cl"]          = defines["chlorine"];
   defines["concrete"]    = c->GetColour("tunnel");
   defines["lhcconcrete"] = defines["concrete"];
-  defines["G4_CONCRETE"] = defines["concrete"];
-  
   defines["copper"]      = c->GetColour("coil");
-  defines["G4_Cu"]       = defines["copper"];
-  
+  defines["cu"]          = defines["copper"];
   defines["iron"]        = c->GetColour("iron");
-  defines["G4_Fe"]       = defines["iron"];
-  
+  defines["fe"]          = defines["iron"];
+  defines["gold"]        = c->GetColour("gold:220 176 71");
+  defines["au"]          = defines["gold"];
   defines["kapton"]      = c->GetColour("kapton");
-  defines["G4_KAPTON"]   = defines["kapton"];
-  
   defines["lead"]        = c->GetColour("lead");
-  defines["G4_Pb"]       = defines["lead"];
-  
+  defines["pb"]          = defines["lead"];
   defines["marble"]      = c->GetColour("marble:228 228 228 1.0");
-  
   defines["stainlesssteel"] = c->GetColour("beampipe");
-  defines["G4_STAINLESS-STEEL"] = defines["stainlesssteel"];
-  
+  defines["stainless-steel"] = defines["stainlesssteel"];
   defines["sulphur"]     = c->GetColour("yellow");
-  
+  defines["s"]           = defines["sulphur"];
+  defines["vacuum"]      = defines["air"];
   defines["water"]       = c->GetColour("water:0 102 204 0.5");
-  defines["G4_WATER"]    = defines["water"];
   
-  std::vector<G4double> densities = {1e2,  1,   0.1,  0.01, 1e-4}; // high to low
-  for (auto& v : densities)
-    {v *= CLHEP::g / CLHEP::cm3;}
-  std::vector<G4double> values    = {100,  120,  150,  180,  210};
-  generalDensity = new G4PhysicsOrderedFreeVector(&densities[0], &values[0], values.size());
+  // for older versions of Geant4 < V11 we have to use G4DataVector which
+  // can't use list initialisation. In V11 onwards, G4PhysicsFreeVector
+  // changed to take std::vector<G4double> as arguments but G4DataVector
+  // inherits this so it's ok. Order must be ascending.
+  G4DataVector densities(5);
+  for (auto v : {1e-4, 0.01, 0.1, 1.0, 1e2})
+    {densities.emplace_back(v * CLHEP::g / CLHEP::cm3);}
+  G4DataVector values(5);
+  for (auto v : {210, 180, 150, 120, 100})
+    {values.emplace_back(v);}
+  generalDensity = new G4PhysicsFreeVector(densities, values);
 }
 
-G4Colour* BDSColourFromMaterial::GetColour(const G4Material* material)
+G4Colour* BDSColourFromMaterial::GetColour(const G4Material* material,
+                                           const G4String& prefixToStripFromName)
 {
   G4String materialName = material->GetName();
-  materialName.toLower();
+  materialName = BDS::LowerCase(materialName);
+  //G4cout << "original material name " << materialName << G4endl;
 
   // strip off g4 so we don't have to define duplicates of everything
   std::string toErase = "g4_";
   size_t pos = materialName.find(toErase);
   if (pos != std::string::npos)
     {materialName.erase(pos, toErase.length());}
+  
+  // note, not all material are prefixed by preprocessor and might not contain that prefix string
+  G4String prefixToStripFromNameLower = BDS::LowerCase(prefixToStripFromName);
+  if (!prefixToStripFromName.empty() && BDS::StrContains(materialName, prefixToStripFromNameLower))
+    {materialName.erase(0, prefixToStripFromName.size());}
 
   auto search = defines.find(materialName);
   if (search != defines.end())
@@ -141,17 +144,14 @@ G4Colour* BDSColourFromMaterial::GetColourWithDefault(const G4Material* material
                                                       G4Colour* defaultIn) const
 {
   G4String materialName = material->GetName();
-  materialName.toLower();
+  materialName = BDS::LowerCase(materialName);
   
   // strip off g4 so we don't have to define duplicates of everything
   std::string toErase = "g4_";
   size_t pos = materialName.find(toErase);
   if (pos != std::string::npos)
-  {materialName.erase(pos, toErase.length());}
+    {materialName.erase(pos, toErase.length());}
   
   auto search = defines.find(materialName);
-  if (search != defines.end())
-  {return search->second;}
-  else
-  {return defaultIn;}
+  return search != defines.end() ? search->second : defaultIn;
 }

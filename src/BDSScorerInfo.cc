@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -46,8 +46,8 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
 							   {"depositedenergy", "depositedenergy3d"},
 							   {"population",      "population3d"},
 							   {"cellflux",        "cellflux3d"},
-                               {"cellfluxscaled",  "cellfluxscaled3d"},
-                               {"cellfluxscaledperparticle", "cellfluxscaledperparticle3d"}
+							   {"cellfluxscaled",  "cellfluxscaled3d"},
+							   {"cellfluxscaledperparticle", "cellfluxscaledperparticle3d"}
   };
   
   std::string scorerTypeNameOriginal = scorer.type;
@@ -57,8 +57,24 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
       auto search = replacements.find(scorerTypeNameOriginal);
       if (search != replacements.end())
 	{scorerTypeName = search->second;}
-      else if (!G4String(scorerTypeNameOriginal).contains("3d"))
-	{throw BDSException(__METHOD_NAME__, "3D scorer required but a non-3D one specified.");}
+      else if (!BDS::StrContains(scorerTypeNameOriginal, "3d") && !BDS::StrContains(scorerTypeNameOriginal, "4d") )
+	{
+	  G4String msg = "scorer type \"" + scorerTypeNameOriginal + "\" specified which does not";
+	  msg += "\ncontain the suffix \"3d\" or \"4d\", and there is no known mapping to the required";
+	  msg += "\n3d one. Check the scorer name or specify it with the suffix explicitly.";
+	  msg += "\nAvailable 3d scorers are:\n";
+	  for (const auto& fs : replacements)
+	    {msg += "\"" + fs.first + "\" -> \"" + fs.second + "\"\n";}
+	  // now check if it's even a valid scorer type
+	  try
+	    {BDS::DetermineScorerType(G4String(scorerTypeNameOriginal));}
+	  catch (const BDSException& e)
+	    {
+	      msg += "\n";
+	      msg += e.what();
+	    }
+	  throw BDSException(__METHOD_NAME__, msg);
+	}
     }
   
   scorerType    = BDS::DetermineScorerType(G4String(scorerTypeName));
@@ -86,10 +102,10 @@ BDSScorerInfo::BDSScorerInfo(const GMAD::Scorer& scorer,
       CheckParticle(particle, scorer.name);
     }
 
-  for (const auto& mi : BDS::GetWordsFromString(scorer.materialToInclude))
+  for (const auto& mi : BDS::SplitOnWhiteSpace(scorer.materialToInclude))
     {materialsToInclude.push_back(BDSMaterials::Instance()->GetMaterial(mi));}
 
-  for (const auto& me : BDS::GetWordsFromString(scorer.materialToExclude))
+  for (const auto& me : BDS::SplitOnWhiteSpace(scorer.materialToExclude))
     {materialsToExclude.push_back(BDSMaterials::Instance()->GetMaterial(me));} 
 }
 

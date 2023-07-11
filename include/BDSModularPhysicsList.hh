@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -145,6 +145,7 @@ private:
   void AllParticles();
   
   /// @{ Physics constructor loader.
+  void AnnihiToMuMu();
   void ChargeExchange();
   void Cherenkov();
   void CutsAndLimits();
@@ -164,6 +165,7 @@ private:
   void Em4();
   void FTFPBERT();
   void FTFPBERTHP();
+  void GammaToMuMu();
   void HadronicElastic();
   void HadronicElasticD();
   void HadronicElasticH();
@@ -178,6 +180,7 @@ private:
   void IonINCLXX();
   void LaserWire();
   void Muon();
+  void MuonInelastic();
   void NeutronTrackingCut();
   void Optical();
   void QGSPBERT();
@@ -202,6 +205,7 @@ private:
 #if G4VERSION_NUMBER > 1039
   void Channelling();
   void DNA();
+  void Radioactivation();
   void ShieldingLEND();
 #endif
   /// @}

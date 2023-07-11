@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "HistogramDef4D.hh"
 #include "HistogramFactory.hh"
 #include "PerEntryHistogram.hh"
 #include "RBDSException.hh"
@@ -31,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4DBase.hh"
 
 #include <string>
 
@@ -46,7 +48,7 @@ PerEntryHistogram::PerEntryHistogram():
 {;}
 
 PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
-				     TChain*             chainIn):
+                                     TChain*             chainIn):
   accumulator(nullptr),
   chain(chainIn),
   selection(definition->selection),
@@ -67,24 +69,31 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
     {
     case 1:
       {
-	const HistogramDef1D* d = dynamic_cast<const HistogramDef1D*>(definition);
-	baseHist = factory.CreateHistogram1D(d, baseName, baseName);
-	temp = dynamic_cast<TH1D*>(baseHist->Clone(tempName.c_str()));
-	break;
+        const HistogramDef1D* d = dynamic_cast<const HistogramDef1D*>(definition);
+        baseHist = factory.CreateHistogram1D(d, baseName, baseName);
+        temp = dynamic_cast<TH1D*>(baseHist->Clone(tempName.c_str()));
+        break;
       }
     case 2:
       {
-	const HistogramDef2D* d = dynamic_cast<const HistogramDef2D*>(definition);
-	baseHist = factory.CreateHistogram2D(d, baseName, baseName);
-	temp = dynamic_cast<TH2D*>(baseHist->Clone(tempName.c_str()));
-	break;
+        const HistogramDef2D* d = dynamic_cast<const HistogramDef2D*>(definition);
+        baseHist = factory.CreateHistogram2D(d, baseName, baseName);
+        temp = dynamic_cast<TH2D*>(baseHist->Clone(tempName.c_str()));
+        break;
       }
       case 3:
       {
-	const HistogramDef3D* d = dynamic_cast<const HistogramDef3D*>(definition);
-	baseHist = factory.CreateHistogram3D(d, baseName, baseName);
-	temp = dynamic_cast<TH3D*>(baseHist->Clone(tempName.c_str()));
-	break;
+        const HistogramDef3D* d = dynamic_cast<const HistogramDef3D*>(definition);
+        baseHist = factory.CreateHistogram3D(d, baseName, baseName);
+        temp = dynamic_cast<TH3D*>(baseHist->Clone(tempName.c_str()));
+        break;
+      }
+    case 4:
+      {
+        const HistogramDef4D* d = static_cast<const HistogramDef4D*>(definition);
+        baseHist = factory.CreateHistogram4D(d, baseName, baseName);
+        temp = dynamic_cast<BDSBH4DBase*>(baseHist->Clone(tempName.c_str()));
+        break;
       }
     default:
       {throw RBDSException("Invalid number of dimensions"); break;}
@@ -103,9 +112,9 @@ PerEntryHistogram::~PerEntryHistogram()
   delete temp; // this removes it from the current ROOT file
   delete accumulator;
 }
-      
-void PerEntryHistogram::AccumulateCurrentEntry(const long int& entryNumber)
-{  
+
+void PerEntryHistogram::AccumulateCurrentEntry(long int entryNumber)
+{
   // Fill the temporary histogram with 1 event - the current one
   // This is used as it doesn't matter if the variable is a vector
   // or singly valued - therefore we don't need to keep a map of
@@ -125,7 +134,15 @@ void PerEntryHistogram::Write(TDirectory* dir)
   if (result)
     {
       if (dir)
-	{dir->Add(result);}
+        {dir->Add(result);}
       result->Write();
     }
+}
+
+double PerEntryHistogram::Integral() const
+{
+  if (!result)
+    {return 0;}
+  else
+    {return result->Integral();}
 }

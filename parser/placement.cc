@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "blmplacement.h"
 #include "placement.h"
+#include "query.h"
 #include "samplerplacement.h"
 #include "scorermesh.h"
 
@@ -53,7 +54,9 @@ void Placement::clear()
   side       = "";
   sideOffset = 0;
   autoColour = true;
+  stripOuterVolume = false;
   fieldAll   = "";
+  dontReloadGeometry = false;
 }
 
 void Placement::PublishMembers()
@@ -80,7 +83,9 @@ void Placement::PublishMembers()
   publish("side",          &Placement::side);
   publish("sideOffset",    &Placement::sideOffset);
   publish("autoColour",    &Placement::autoColour);
+  publish("stripOuterVolume", &Placement::stripOuterVolume);
   publish("fieldAll",      &Placement::fieldAll);
+  publish("dontReloadGeometry", &Placement::dontReloadGeometry);
 }
 
 void Placement::print()const
@@ -94,31 +99,29 @@ void Placement::print()const
 	    << "referenceElementNumber " << referenceElementNumber << "\n"
 	    << "s "             << s             << "\n"
 	    << "x "             << x             << "\n"
-    	    << "y "             << y             << "\n"
-    	    << "z "             << z             << "\n"
-    	    << "phi "           << phi           << "\n"
-    	    << "theta "         << theta         << "\n"
-    	    << "psi "           << psi           << "\n"
-    	    << "axisX "         << axisX         << "\n"
-    	    << "axisY "         << axisY         << "\n"
-    	    << "axisZ "         << axisZ         << "\n"
-    	    << "angle "         << angle         << "\n"
+      << "y "             << y             << "\n"
+    	<< "z "             << z             << "\n"
+      << "phi "           << phi           << "\n"
+      << "theta "         << theta         << "\n"
+      << "psi "           << psi           << "\n"
+      << "axisX "         << axisX         << "\n"
+      << "axisY "         << axisY         << "\n"
+      << "axisZ "         << axisZ         << "\n"
+      << "angle "         << angle         << "\n"
 	    << "sensitive "     << sensitive     << "\n"
 	    << "axisAngle "     << axisAngle     << "\n"
 	    << "side \""        << side          << "\"\n"
-            << "sideOffset "    << sideOffset    << "\n"
+      << "sideOffset "    << sideOffset    << "\n"
 	    << "axisAngle "     << axisAngle     << "\n"
-	    << "autoColour "    << autoColour    << "\n"
-	    << "fieldAll \""    << fieldAll      << "\"" << std::endl;
+      << "autoColour "    << autoColour    << "\n"
+      << "stripOuterVolume "    << stripOuterVolume << "\n"
+	    << "fieldAll \""    << fieldAll      << "\"" << "\n"
+      << "dontReloadGeometry " << dontReloadGeometry << std::endl;
 }
 
 Placement::Placement(const SamplerPlacement& sp):
-  geometryFile(""),
-  sequence(""),
   sensitive(false),
-  side(""),
-  sideOffset(0),
-  fieldAll("")
+  sideOffset(0)
 {
   name      = sp.name;
   referenceElement       = sp.referenceElement;
@@ -136,14 +139,13 @@ Placement::Placement(const SamplerPlacement& sp):
   angle     = sp.angle;
   axisAngle = sp.axisAngle;
   autoColour = false;
+  stripOuterVolume = false;
+  dontReloadGeometry = false;
 }
 
 Placement::Placement(const ScorerMesh& sm):
-  geometryFile(""),
   sensitive(false),
-  side(""),
-  sideOffset(0),
-  fieldAll("")
+  sideOffset(0)
 {
   name      = sm.name;
   sequence  = sm.sequence;
@@ -162,13 +164,12 @@ Placement::Placement(const ScorerMesh& sm):
   angle     = sm.angle;
   axisAngle = sm.axisAngle;
   autoColour = false;
+  stripOuterVolume = false;
+  dontReloadGeometry = false;
 }
 
 Placement::Placement(const BLMPlacement& bp):
-  geometryFile(""),
-  sequence(""),
-  sensitive(false),
-  fieldAll("")
+  sensitive(false)
 {
   name      = bp.name;
   referenceElement       = bp.referenceElement;
@@ -188,4 +189,30 @@ Placement::Placement(const BLMPlacement& bp):
   side       = bp.side;
   sideOffset = bp.sideOffset;
   autoColour = false;
+  stripOuterVolume = false;
+  dontReloadGeometry = false;
+}
+
+Placement::Placement(const Query& qu):
+  sensitive(false),
+  sideOffset(0),
+  autoColour(false),
+  stripOuterVolume(false)
+{
+  name      = qu.name;
+  referenceElement       = qu.referenceElement;
+  referenceElementNumber = qu.referenceElementNumber;
+  s          = qu.s;
+  x          = qu.x;
+  y          = qu.y;
+  z          = qu.z;
+  phi        = qu.phi;
+  theta      = qu.theta;
+  psi        = qu.psi;
+  axisX      = qu.axisX;
+  axisY      = qu.axisY;
+  axisZ      = qu.axisZ;
+  angle      = qu.angle;
+  axisAngle  = qu.axisAngle;
+  dontReloadGeometry = false;
 }

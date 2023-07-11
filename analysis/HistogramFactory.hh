@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -27,11 +27,13 @@ class HistogramDef;
 class HistogramDef1D;
 class HistogramDef2D;
 class HistogramDef3D;
+class HistogramDef4D;
 
 class TH1;
 class TH1D;
 class TH2D;
 class TH3D;
+class BDSBH4DBase;
 
 /**
  * @brief Class to manufacture histograms.
@@ -48,8 +50,8 @@ public:
   /// Create a histogram of the appropriate dimensions. Forwards to
   /// other Ndim specific functions.
   TH1* CreateHistogram(const HistogramDef* definition,
-		       const std::string&  overRideName,
-		       const std::string&  overRideTitle);
+		       const std::string&  overRideName  = "",
+		       const std::string&  overRideTitle = "");
 
   /// Whether name is set or not.
   void CheckNameAndTitle(std::string& name,
@@ -71,6 +73,11 @@ public:
   TH3D* CreateHistogram3D(const HistogramDef3D* d,
 			  const std::string& overRideName  = "",
 			  const std::string& overRideTitle = "");
+
+  /// Create 4D histogram.
+  BDSBH4DBase* CreateHistogram4D(const HistogramDef4D* d,
+                                 const std::string& overRideName  = "",
+                                 const std::string& overRideTitle = "");
 
   ClassDef(HistogramFactory, 1);
 };

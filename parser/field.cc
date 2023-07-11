@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -38,6 +38,7 @@ void Field::clear()
   magneticInterpolator = "cubic";
   electricFile         = "";
   electricInterpolator = "cubic";
+  fieldModulator       = "";
   x         = 0;
   y         = 0;
   z         = 0;
@@ -54,6 +55,9 @@ void Field::clear()
   maximumStepLength = -1;
   magneticSubField = "";
   electricSubField = "";
+  magneticReflection = "";
+  electricReflection = "";
+  fieldParameters = "";
 }
 
 void Field::PublishMembers()
@@ -68,6 +72,7 @@ void Field::PublishMembers()
   publish("magneticInterpolator", &Field::magneticInterpolator);
   publish("electricFile",         &Field::electricFile);
   publish("electricInterpolator", &Field::electricInterpolator);
+  publish("fieldModulator",       &Field::fieldModulator);
   publish("x",                    &Field::x);
   publish("y",                    &Field::y);
   publish("z",                    &Field::z);
@@ -84,6 +89,9 @@ void Field::PublishMembers()
   publish("maximumStepLength",    &Field::maximumStepLength);
   publish("magneticSubField",     &Field::magneticSubField);
   publish("electricSubField",     &Field::electricSubField);
+  publish("magneticReflection",   &Field::magneticReflection);
+  publish("electricReflection",   &Field::electricReflection);
+  publish("fieldParameters",      &Field::fieldParameters);
 }
 
 void Field::print()const
@@ -92,17 +100,23 @@ void Field::print()const
 	    << "name "                 << name                 << std::endl
 	    << "type "                 << type                 << std::endl
 	    << "eScaling "             << eScaling             << std::endl
-    	    << "bScaling "             << bScaling             << std::endl
+    	<< "bScaling "             << bScaling             << std::endl
 	    << "integrator "           << integrator           << std::endl
 	    << "magneticFile "         << magneticFile         << std::endl
 	    << "magneticInterpolator " << magneticInterpolator << std::endl
 	    << "electricFile "         << electricFile         << std::endl
 	    << "electricInterpolator " << electricInterpolator << std::endl
+        << "fieldModulator "       << fieldModulator       << std::endl
 	    << "x, y, z,t "            << x << " " << y << " " << z << " " << t << std::endl
 	    << "phi, theta, psi "      << phi   << " " << theta << " " << psi   << std::endl
 	    << "axisX, Y, Z "          << axisX << " " << axisY << " " << axisZ << std::endl
 	    << "angle "                << angle                << std::endl
 	    << "axisAngle "            << axisAngle            << std::endl
 	    << "autoScale "            << autoScale            << std::endl
-	    << "maximumStepLength "    << maximumStepLength    << std::endl;
+	    << "maximumStepLength "    << maximumStepLength    << std::endl
+	    << "electricSubField "     << electricSubField     << std::endl
+	    << "magneticSubField "     << magneticSubField     << std::endl
+	    << "magneticReflection "   << magneticReflection   << std::endl
+	    << "electricReflection "   << electricReflection   << std::endl
+	    << "fieldParameters "      << fieldParameters      << std::endl;
 }

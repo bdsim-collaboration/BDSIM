@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -40,6 +40,7 @@ namespace BDS
     G4bool storeLocal;
     G4bool storeLinks;
     G4bool storeIon;
+    G4bool storeMaterial;
   };
 }
   

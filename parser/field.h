@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -46,6 +46,7 @@ namespace GMAD
     std::string magneticInterpolator; ///< Interpolator for the magnetic field.
     std::string electricFile;         ///< File for the electric field map.
     std::string electricInterpolator; ///< Interpolator for the electric field.
+    std::string fieldModulator;       ///< Name of field modulator object.
 
     double x; ///< Offset in x.
     double y; ///< Offset in y.
@@ -71,6 +72,11 @@ namespace GMAD
 
     std::string magneticSubField;
     std::string electricSubField;
+
+    std::string magneticReflection;
+    std::string electricReflection;
+    
+    std::string fieldParameters;
     
     /// Constructor
     Field();
@@ -80,27 +86,28 @@ namespace GMAD
     void print()const;
     /// Set methods by property name and value
     template <typename T>
-      void set_value(std::string property, T value);
+    void set_value(std::string property, T value);
 
+    
   private:
     /// publish members
     void PublishMembers();
   };
   
   template <typename T>
-    void Field::set_value(std::string property, T value)
+  void Field::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
       std::cout << "field> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
-      try {
-        set(this,property,value);
-      }
-      catch(const std::runtime_error&) {
-        std::cerr << "Error: field> unknown option \"" << property << "\" with value " << value  << std::endl;
-        exit(1);
-      }
+      try
+	{set(this,property,value);}
+      catch (const std::runtime_error&)
+	{
+	  std::cerr << "Error: field> unknown option \"" << property << "\" with value \"" << value << "\"" << std::endl;
+	  exit(1);
+	}
     }
 }
 

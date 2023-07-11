@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -25,7 +25,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef USE_GDML
 #include "BDSGeometryFactoryGDML.hh"
 #endif
-#include "BDSGeometryFactoryGMAD.hh"
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryType.hh"
 #include "BDSSDType.hh"
@@ -34,8 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "G4Types.hh"
 
+#include <map>
 #include <string>
-#include <unordered_map>
 #include <utility>
 
 BDSGeometryFactory* BDSGeometryFactory::instance = nullptr;
@@ -54,14 +53,12 @@ BDSGeometryFactory::BDSGeometryFactory()
 #else
   gdml = nullptr;
 #endif
-  gmad = new BDSGeometryFactoryGMAD();
   sql  = new BDSGeometryFactorySQL();
 }
 
 BDSGeometryFactory::~BDSGeometryFactory()
 {
   delete gdml;
-  delete gmad;
   delete sql;
   for (auto& geom : storage)
     {delete geom;}
@@ -76,32 +73,51 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
     case BDSGeometryType::gdml:
       {return gdml; break;}
 #endif
-    case BDSGeometryType::gmad:
-      {return gmad; break;}
     case BDSGeometryType::mokka:
       {return sql; break;}
     default:
       {
-	G4cout << "Unsupported factory type " << type;
-	return nullptr;
+        G4cout << "Unsupported factory type " << type;
+        return nullptr;
       }
     }
 }
 
-BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(const G4String&  componentName,
-						       const G4String&  formatAndFileName,
-						       std::map<G4String, G4Colour*>* colourMapping,
-						       G4bool                 autoColour,
-						       G4double               suggestedLength,
-						       G4double               suggestedHorizontalWidth,
-						       std::vector<G4String>* namedVacuumVolumes,
-						       G4bool                 makeSensitive,
-						       BDSSDType              sensitivityType)
+BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String               componentName,
+                                                       const G4String&        formatAndFileName,
+                                                       std::map<G4String, G4Colour*>* colourMapping,
+                                                       G4bool                 autoColour,
+                                                       G4double               suggestedLength,
+                                                       G4double               suggestedHorizontalWidth,
+                                                       std::vector<G4String>* namedVacuumVolumes,
+                                                       G4bool                 makeSensitive,
+                                                       BDSSDType              sensitivityType,
+                                                       BDSSDType              vacuumSensitivityType,
+                                                       G4bool                 stripOuterVolumeAndMakeAssembly,
+                                                       G4UserLimits*          userLimitsToAttachToAllLVs,
+                                                       G4bool                 dontReloadGeometry)
 {
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
   G4String fileName = BDS::GetFullPath(ff.second);
 
-  const auto search = registry.find(fileName);
+  G4String searchName = fileName;
+  // If we strip the outer volume we're technically modifying the geometry
+  // and should prepare a unique load of it and cache that otherwise, we
+  // will get either the original or the stripped version only if we place
+  // the load the same geometry twice with/without stripping
+  if (stripOuterVolumeAndMakeAssembly)
+    {searchName += "_stripped";}
+  
+  // we have this option to purposively not reload geometry uniquely for multiple
+  // instances by different component names - we need this sometimes, but we must
+  // use it cautiously knowing all the instances will be identical
+  // therefore we use a fixed nonsense name that someone is prevented from calling
+  // a component (because it's an option)
+  if (dontReloadGeometry)
+    {componentName = "dontReloadGeometry";}
+  
+  auto nameAndField = std::make_pair(searchName, componentName);
+  const auto search = registry.find(nameAndField);
   if (search != registry.end())
     {return search->second;}// it was found already in registry
   // else wasn't found so continue
@@ -115,17 +131,26 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(const G4String&  componen
   if (!factory)
     {return nullptr;}
   
-  BDSGeometryExternal* result = factory->Build(componentName, fileName, colourMapping, autoColour,
-					       suggestedLength, suggestedHorizontalWidth,
-					       namedVacuumVolumes);
+  BDSGeometryExternal* result = factory->Build(componentName,
+                                               fileName,
+                                               colourMapping,
+                                               autoColour,
+                                               suggestedLength,
+                                               suggestedHorizontalWidth,
+                                               namedVacuumVolumes,
+                                               makeSensitive,
+                                               sensitivityType,
+                                               vacuumSensitivityType,
+                                               userLimitsToAttachToAllLVs);
   
   if (result)
     {
-      // Set all volumes to be sensitive.
-      if (makeSensitive)
-	{result->MakeAllVolumesSensitive(sensitivityType);}
-      
-      registry[(std::string)fileName] = result;
+      if (stripOuterVolumeAndMakeAssembly)
+        {result->StripOuterAndMakeAssemblyVolume();}
+
+      // cache using optionally modified name
+      auto key = std::make_pair((std::string)searchName, componentName);
+      registry[key] = result;
       storage.insert(result);
     }
   

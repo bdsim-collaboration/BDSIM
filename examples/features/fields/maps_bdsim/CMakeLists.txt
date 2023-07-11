@@ -10,17 +10,24 @@ simple_fail(field-map-invalid-step            "--file=1d_cubic-bad.gamd")
 simple_fail(interpolator-dimension-mismatch-b "--file=interpolator_dimension_mimatch_b.gmad")
 simple_fail(interpolator-dimension-mismatch-e "--file=interpolator_dimension_mimatch_e.gmad")
 
-#interpolator tests
-interpolator_test("interpolator-1d-nearest" "1d_nearest.gmad")
-interpolator_test("interpolator-1d-linear"  "1d_linear.gmad")
-interpolator_test("interpolator-1d-cubic"   "1d_cubic.gmad")
+# field map loop order
+simple_testing(field-map-b-2d-loopOrder_xyzt   "--file=b_field_2d_loopOrder_xyzt.gmad --output=none" "")
+simple_testing(field-map-b-2d-loopOrder_tzyx   "--file=b_field_2d_loopOrder_tzyx.gmad --output=none" "")
 
-interpolator_test("interpolator-2d-nearest" "2d_nearest.gmad")
-interpolator_test("interpolator-2d-linear"  "2d_linear.gmad")
-interpolator_test("interpolator-2d-cubic"   "2d_cubic.gmad")
+#interpolator tests
+interpolator_test("interpolator-1d-nearest"    "1d_nearest.gmad")
+interpolator_test("interpolator-1d-linear"     "1d_linear.gmad")
+interpolator_test("interpolator-1d-linearmag"  "1d_linearmag.gmad")
+interpolator_test("interpolator-1d-cubic"      "1d_cubic.gmad")
+
+interpolator_test("interpolator-2d-nearest"    "2d_nearest.gmad")
+interpolator_test("interpolator-2d-linear"     "2d_linear.gmad")
+interpolator_test("interpolator-2d-linearmag"  "2d_linearmag.gmad")
+interpolator_test("interpolator-2d-cubic"      "2d_cubic.gmad")
 
 if (USE_GDML)
   simple_testing(field-map-b-2d-tilt "--file=fieldmap-tilt-test.gmad" "")
+  simple_testing(field-map-gdml-reuse "--file=b_field_gdml_reuse.gmad" "")
 endif()
 
 if (USE_GDML AND USE_GZSTREAM)
@@ -30,14 +37,16 @@ endif()
 if (USE_GZSTREAM)
   simple_testing(field-map-b-2d-along-xz "--file=b_field_2d_along_xz.gmad --output=none" "")
 
-  interpolator_test("interpolator-3d-nearest-gz" "3d_nearest.gmad")
-  interpolator_test("interpolator-3d-linear-gz"  "3d_linear.gmad")
-  interpolator_test("interpolator-3d-cubic-gz"   "3d_cubic.gmad")
+  interpolator_test("interpolator-3d-nearest-gz"    "3d_nearest.gmad")
+  interpolator_test("interpolator-3d-linear-gz"     "3d_linear.gmad")
+  interpolator_test("interpolator-3d-linearmag-gz"  "3d_linearmag.gmad")
+  interpolator_test("interpolator-3d-cubic-gz"      "3d_cubic.gmad")
   interpolator_test("field-map-bdsim-format-loop-order" "3d_cubic_zyx.gmad")
   
-  interpolator_test("interpolator-4d-nearest-gz" "4d_nearest.gmad")
-  interpolator_test("interpolator-4d-linear-gz"  "4d_linear.gmad")
-  interpolator_test("interpolator-4d-cubic-gz"   "4d_cubic.gmad")
+  interpolator_test("interpolator-4d-nearest-gz"    "4d_nearest.gmad")
+  interpolator_test("interpolator-4d-linear-gz"     "4d_linear.gmad")
+  interpolator_test("interpolator-4d-linearmag-gz"  "4d_linearmag.gmad")  
+  interpolator_test("interpolator-4d-cubic-gz"      "4d_cubic.gmad")
   
   interpolator_test("interpolator-1d-nearest-gz" "1d_nearest_gz.gmad")
 

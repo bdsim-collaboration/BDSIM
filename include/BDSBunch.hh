@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -50,8 +50,9 @@ public:
   explicit BDSBunch(const G4String& nameIn);
   virtual ~BDSBunch();
 
-  /// Make BDSHepMC3Reader a friend so it can use the protected ApplyTransform function.
-  friend class BDSHepMC3Reader;
+  /// Make BDSPrimaryGeneratorFileHEPMC a friend so it can use the protected ApplyTransform function.
+  friend class BDSPrimaryGeneratorFileHEPMC;
+  friend class BDSPrimaryGeneratorFileSampler;
 
   /// Extract and set the relevant options from the beam definition. The distribution
   /// type is explicitly required as this function may be used inside a nested bunch distribution.
@@ -74,6 +75,9 @@ public:
   /// Main interface. Calls GetNextParticleLocal() and then applies the curvilinear
   /// transform if required.
   BDSParticleCoordsFullGlobal GetNextParticle();
+  
+  /// A hint of whether we expect to require and extended particle set (ie pions, kaons, muons).
+  virtual G4bool ExpectChangingParticleType() const {return false;}
 
   /// Interface to allow multiple calls until a safe particle is generated. This will
   /// repeatedly call GetNextParticle() until a particle is generated where the total
@@ -85,10 +89,11 @@ public:
   /// An action that is called at the beginning of a run when we know the number of
   /// events that'll be generated. By default this is nothing, but can be used to
   /// calculate sample mean offsets in some derived classes.
-  virtual void BeginOfRunAction(G4int numberOfEvents);
+  virtual void BeginOfRunAction(G4int numberOfEvents,
+                                G4bool batchMode);
 
   /// Access the beam particle definition.
-  inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
+  inline virtual const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
 
   /// Set the flag to whether we're only generating primaries only. This sets the member
   /// variable generatePrimariesOnly which skips trying to perform a curvilinear transform
@@ -107,8 +112,8 @@ public:
   /// be sufficient for the bunch to get the right distribution. This is true when
   /// the bunch coordinates are based on an external source of data i.e. user bunch
   /// file. This default method allows such a distribution to advance to the correct
-  /// event number.
-  virtual void RecreateAdvanceToEvent(G4int /*eventOffset*/){;}
+  /// event number. Updates the bunch index by default.
+  virtual void RecreateAdvanceToEvent(G4int eventOffset);
 
   /// Access whether the beam particle is an ion or not.
   inline G4bool BeamParticleIsAnIon() const {return particleDefinition->IsAnIon();}
@@ -117,7 +122,7 @@ public:
   /// case it's an ion. This can only be done later one once the run has started. Since
   /// the particle definition is kept here in the bunch this interface allows control
   /// over it being updated.
-  void UpdateIonDefinition();
+  virtual void UpdateIonDefinition();
 
   /// Whether the particle definition has been updated since the last call to
   /// GetNextParticle() or GetNextParticleValid().
@@ -135,8 +140,15 @@ public:
 			    G4double&         emittGeometricY,
 			    G4double&         emittNormalisedX,
 			    G4double&         emittNormalisedY);
-  
+
+  /// Distribution name.
   inline G4String Name() const {return name;}
+
+  /// Get the current bunch index for writing to output.
+  inline G4int CurrentBunchIndex() const {return currentBunchIndex;}
+
+  /// Calculate which bunch index we should be at given an event index.
+  void CalculateBunchIndex(G4int eventIndex);
 
 protected:
   /// Apply either the curvilinear transform if we're using curvilinear coordinates or
@@ -146,6 +158,9 @@ protected:
 
   /// Apply a rotation about unitZ for the local coordinates according to member variable tilt.
   void ApplyTilt(BDSParticleCoordsFull& localIn) const;
+  
+  /// Add on the offset in T for the current bunch number (i*bunchPeriod).
+  void ApplyBunchTiming(BDSParticleCoordsFullGlobal& localIn) const;
 
   /// Calculate the global coordinates from curvilinear coordinates of a beam line.
   BDSParticleCoordsFullGlobal ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const;
@@ -169,6 +184,13 @@ protected:
   G4double sigmaE;
   G4double sigmaEk;
   ///@}
+  
+  /// @{ Bunch offset in time parameters.
+  bool useBunchTiming;
+  G4int currentBunchIndex;
+  G4int eventsPerBunch;
+  G4double bunchPeriod;
+  /// @}
   
   /// Whether to ignore z and use s and transform for curvilinear coordinates
   G4bool useCurvilinear;

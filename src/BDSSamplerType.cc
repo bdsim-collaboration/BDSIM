@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -16,10 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSSamplerType.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSSamplerType.hh"
+#include "BDSUtilities.hh"
 
-#include "globals.hh" // geant4 types / globals
+#include "globals.hh"
+#include "G4String.hh"
 
 #include <map>
 #include <string>
@@ -28,28 +31,35 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template<>
 std::map<BDSSamplerType, std::string>* BDSSamplerType::dictionary =
   new std::map<BDSSamplerType, std::string> ({
-  {BDSSamplerType::none,     "none"},
-  {BDSSamplerType::plane,    "plane"},
-  {BDSSamplerType::cylinder, "cylinder"}
+  {BDSSamplerType::none,            "none"},
+  {BDSSamplerType::plane,           "plane"},
+  {BDSSamplerType::cylinder,        "cylinder"},
+  {BDSSamplerType::cylinderforward, "cylinderforward"},
+  {BDSSamplerType::sphere,          "sphere"},
+  {BDSSamplerType::sphereforward,   "sphereforward"}
 });
 
 BDSSamplerType BDS::DetermineSamplerType(G4String samplerType)
 {
   std::map<G4String, BDSSamplerType> types;
-  types["none"]     = BDSSamplerType::none;
-  types["plane"]    = BDSSamplerType::plane;
-  types["cylinder"] = BDSSamplerType::cylinder;
+  types["none"]            = BDSSamplerType::none;
+  types["plane"]           = BDSSamplerType::plane;
+  types["cylinder"]        = BDSSamplerType::cylinder;
+  types["cylinderforward"] = BDSSamplerType::cylinderforward;
+  types["sphere"]          = BDSSamplerType::sphere;
+  types["sphereforward"]   = BDSSamplerType::sphereforward;
 
-  samplerType.toLower();
+  samplerType = BDS::LowerCase(samplerType);
 
   auto result = types.find(samplerType);
   if (result == types.end())
-    {
-      // it's not a valid key
-      G4cerr << __METHOD_NAME__ << samplerType << " is not a valid sampler type" << G4endl;
-      // don't need to output types here as only for developer
-      exit(1);
+    {// it's not a valid key
+      G4String msg = "\"" + samplerType + "\" is not a valid sampler type\n";
+      for (const auto& it : types)
+	{msg += "\"" + it.first + "\"\n";}
+      throw BDSException(__METHOD_NAME__, msg);
     }
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "determined sampler type to be " << result->second << G4endl;
 #endif

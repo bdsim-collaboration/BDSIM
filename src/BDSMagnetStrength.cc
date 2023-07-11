@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -32,8 +32,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 const std::vector<G4String> BDSMagnetStrength::keys = {
   "beta0",           // relativistic beta for the primary particle - used in some integrators
   "field",           // constant field in G4units - magnitude of field only - use bx,by,bz to get direction
-  "efield",          // electric field in G4units - magnitude of field only
+  "efield",          // electric field in G4units - magnitude of field only - use ex,ey,ez to get direction
   "bx","by","bz",    // (assumed) unit vector components for field direction
+  "ex","ey","ez",    // (assumed) unit vector components for field direction
   "e1",              // entrance poleface rotation angle
   "e2",              // entrance poleface rotation angle
   "h1",              // poleface curvature for entrance face
@@ -59,10 +60,13 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k11", "k11s",
   "k12", "k12s",
   "frequency",       // frequency for time varying field (presumably em)
+  "tOffset",         // tOffset resulting in a phase for time varying field
   "phase",           // phase for time varying field
+  "synchronousT0",   // global T0 for the synchronous particle at the centre of the object
   "equatorradius",   // radius from axis at which field goes to 0
   "nominalenergy",   // nominal beam energy needed by some integrators
   "scaling",         // field scaling factor needed by dipolequadrupole integrator
+  "scalingOuter",    // arbitrary scaling for yoke fields - kept as a separate scaling number
   "isentrance",      // bool to determine is integrator is for entrance (1) or exit (0) face
   "kick1",
   "kick2",
@@ -93,6 +97,9 @@ const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::uni
     {"bx"            , {"",    1.0}},
     {"by"            , {"",    1.0}},
     {"bz"            , {"",    1.0}},
+    {"ex"            , {"",    1.0}},
+    {"ey"            , {"",    1.0}},
+    {"ez"            , {"",    1.0}},
     {"e1"            , {"rad", CLHEP::rad}},
     {"e2"            , {"rad", CLHEP::rad}},
     {"h1"            , {"rad", CLHEP::rad}},
@@ -132,10 +139,13 @@ const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::uni
     {"k11s"          , {"",    1.0}},
     {"k12s"          , {"",    1.0}},
     {"frequency"     , {"",    CLHEP::megahertz}},
+    {"tOffset"       , {"s",   CLHEP::s}},
     {"phase"         , {"rad", CLHEP::rad}},
+    {"synchronousT0" , {"s",   CLHEP::s}},
     {"equatorradius" , {"m",   CLHEP::m}},
     {"nominalenergy" , {"GeV", CLHEP::GeV}},
     {"scaling"       , {"",    1.0}},
+    {"scalingOuter"  , {"",    1.0}},
     {"isentrance"    , {"",    1.0}},
     {"kick1"         , {"",    1.0}},
     {"kick2"         , {"",    1.0}},
@@ -168,9 +178,9 @@ const std::vector<G4String> BDSMagnetStrength::skewComponentKeys = {
 const G4double BDSMagnetStrength::zero     = 0.0;
 G4double       BDSMagnetStrength::variable = 0.0;
 
-BDSMagnetStrength::BDSMagnetStrength(std::map<G4String, G4double> sts)
+BDSMagnetStrength::BDSMagnetStrength(const std::map<G4String, G4double>& sts)
 {
-  for (auto keyValue : sts)
+  for (const auto&  keyValue : sts)
     {
       if (ValidKey(keyValue.first))
 	{(*this)[keyValue.first] = keyValue.second;}
@@ -179,7 +189,7 @@ BDSMagnetStrength::BDSMagnetStrength(std::map<G4String, G4double> sts)
 
 std::ostream& operator<<(std::ostream& out, BDSMagnetStrength const &st)
 {
-  for (auto key : st.keys)
+  for (const auto& key : BDSMagnetStrength::keys)
     {out << key << ": " << st.GetValue(key) << ", ";}
   return out;
 }
@@ -238,7 +248,8 @@ const G4double& BDSMagnetStrength::operator[](const G4String& key) const
 std::vector<G4double> BDSMagnetStrength::NormalComponents() const
 {
   std::vector<G4double> result;
-  for (auto key : normalComponentKeys)
+  result.reserve(normalComponentKeys.size());
+  for (const auto& key : normalComponentKeys)
     {result.push_back(GetValue(key));}
   return result;
 }
@@ -246,7 +257,8 @@ std::vector<G4double> BDSMagnetStrength::NormalComponents() const
 std::vector<G4double> BDSMagnetStrength::SkewComponents() const
 {
   std::vector<G4double> result;
-  for (auto key : skewComponentKeys)
+  result.reserve(skewComponentKeys.size());
+  for (const auto& key : skewComponentKeys)
     {result.push_back(GetValue(key));}
   return result;
 }
@@ -266,4 +278,9 @@ const G4double& BDSMagnetStrength::GetValue(const G4String& key) const
     {return it->second;}
   else
     {return zero;}
+}
+
+G4bool BDSMagnetStrength::KeyHasBeenSet(const G4String& key) const
+{
+  return strengths.find(key) != strengths.end();
 }

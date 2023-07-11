@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -67,15 +67,18 @@ public:
   void AmalgamateBeam(const GMAD::Beam& beamIn, bool recreate);
   /// Check options for consistency. This also checks the beam options.
   void CheckOptions();
-
-  /// Return the vector of region objects.
-  inline const std::vector<GMAD::Atom>& GetAtoms() const {return atom_list;}
   
-  /// Return beamline.
-  inline const GMAD::FastList<GMAD::Element>& GetBeamline() const {return beamline_list;}
+  /// Return the beamline. See GMAD::Parser. Our inheritance here is private, so
+  /// we re-expose this function as public for use in BDSIM, without redefining it
+  /// or reimplementing it. const FastList<Element>& GMAD::Parser::GetBeamline() const;
+  using GMAD::Parser::GetBeamline;
+  
+  /// Import privately inherited function to access sampler filter map.
+  /// const std::map<int, std::set<int>>& GetSamplerFilterIDToSet() const {return samplerFilterIDToSet;}
+  using GMAD::Parser::GetSamplerFilterIDToSet;
 
   /// Return sequence.
-  inline const GMAD::FastList<GMAD::Element>& GetSequence(std::string name) {return get_sequence(name);}
+  inline const GMAD::FastList<GMAD::Element>& GetSequence(const std::string& name) {return get_sequence(name);}
   
   /// Return an element definition. Returns nullptr if not found. Note the element_list is
   /// emptied after parsing.
@@ -88,44 +91,25 @@ public:
   /// Return biasing list.
   inline const GMAD::FastList<GMAD::PhysicsBiasing>& GetBiasing() const {return xsecbias_list;}
 
-  /// Return cavity model list.
-  inline const std::vector<GMAD::CavityModel>& GetCavityModels() const {return cavitymodel_list;}
 
-  /// Return colour model list.
-  inline const std::vector<GMAD::NewColour>& GetColours() const {return colour_list;}
-
-  /// Return crystal model list.
-  inline const std::vector<GMAD::Crystal>& GetCrystals() const {return crystal_list;}
-
-  /// Return the vector of field objects.
-  inline const std::vector<GMAD::Field>& GetFields() const {return field_list;}
-
-  /// Return material list.
-  inline const std::vector<GMAD::Material>& GetMaterials() const {return material_list;}
-  
-  /// Return the vector of placement objects.
-  inline const std::vector<GMAD::Placement>& GetPlacements() const {return placement_list;}
-
-  /// Query list.
-  inline const std::vector<GMAD::Query>& GetQuery() const {return query_list;}
-  
-  /// Return region list.
-  inline const std::vector<GMAD::Region>& GetRegions() const {return region_list;}
-
-  /// Return sampler placement list.
-  inline const std::vector<GMAD::SamplerPlacement>& GetSamplerPlacements() const {return samplerplacement_list;}
-
-  /// Return scorer list.
-  inline const std::vector<GMAD::Scorer>& GetScorers() const {return scorer_list;}
-
-  /// Return scorermesh list.
-  inline const std::vector<GMAD::ScorerMesh>& GetScorerMesh() const {return scorermesh_list;}
-
-  /// Return blm list.
-  inline const std::vector<GMAD::BLMPlacement>& GetBLMs() const {return blm_list;}
-
-  /// Return aperture list.
-  inline const std::vector<GMAD::Aperture>& GetApertures() const {return aperture_list;}
+  /// @{ Return the parser list of that object.
+  inline std::vector<GMAD::Atom> GetAtoms() const {return atom_list.getVector();}
+  inline const std::vector<GMAD::PhysicsBiasing> GetBiasingVector() const {return xsecbias_list.getVector();}
+  inline std::vector<GMAD::CavityModel> GetCavityModels() const {return cavitymodel_list.getVector();}
+  inline std::vector<GMAD::NewColour> GetColours() const {return colour_list.getVector();}
+  inline std::vector<GMAD::Crystal> GetCrystals() const {return crystal_list.getVector();}
+  inline std::vector<GMAD::Field> GetFields() const {return field_list.getVector();}
+  inline std::vector<GMAD::Material> GetMaterials() const {return material_list.getVector();}
+  inline std::vector<GMAD::Placement> GetPlacements() const {return placement_list.getVector();}
+  inline std::vector<GMAD::Query> GetQuery() const {return query_list.getVector();}
+  inline std::vector<GMAD::Region> GetRegions() const {return region_list.getVector();}
+  inline std::vector<GMAD::SamplerPlacement> GetSamplerPlacements() const {return samplerplacement_list.getVector();}
+  inline std::vector<GMAD::Scorer> GetScorers() const {return scorer_list.getVector();}
+  inline std::vector<GMAD::ScorerMesh> GetScorerMesh() const {return scorermesh_list.getVector();}
+  inline std::vector<GMAD::BLMPlacement> GetBLMs() const {return blm_list.getVector();}
+  inline std::vector<GMAD::Modulator> GetModulators() const {return modulator_list.getVector();}
+  inline std::vector<GMAD::Aperture> GetApertures() const {return aperture_list.getVector();}
+  /// @}
   
 protected:
   /// Constructor from filename.

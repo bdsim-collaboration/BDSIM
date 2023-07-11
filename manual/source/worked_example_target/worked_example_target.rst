@@ -45,11 +45,9 @@ This examples illustrates the analysis and understanding of the products
 in an invisible 'sampler' plane after the target.
 
 The model consists of a small 1 cm vacuum pipe followed by a target. The
-solid box of target material is created by creating a collimator (`rcol`)
-with no specified aperture (`xsize` and `ysize`) and so a closed collimator
-is built (a solid box of material). The width of the target is the default
-`horizontalWidth` for all elements, which is 0.5 m. See :ref:`options-common`.
-The model looks like:
+solid box of target material is created using the `target` component.
+The width of the target is the default `horizontalWidth` for all elements,
+which is 0.5 m. See :ref:`options-common`. The model looks like:
 
 .. figure:: target-p-cu.png
 	    :width: 100%
@@ -66,8 +64,8 @@ The model was prepared by hand as it is quite simple. The input syntax is includ
 below: ::
 
  d1: drift, l=10*cm;
- c1: rcol, l=5*cm, material="copper";
- l1: line=(d1,c1);
+ t1: target, l=5*cm, material="copper";
+ l1: line=(d1,t1);
  use, l1;
 
  sample, all;
@@ -76,7 +74,7 @@ below: ::
        energy=6.5*TeV;
 
  option, physicsList="g4FTFP_BERT", 
-         defaultRangeCut=3*cm;
+         defaultRangeCut=1*cm;
 
  option, ngenerate=5,
          seed=123,
@@ -123,7 +121,7 @@ The :code:`--batch` option means that no visualiser is used and the events are s
 and BDSIM finishes.
 
 This creates an output ROOT file called `data1.root`. On the developer's laptop, this
-took approximately 8 seconds to run in total.
+took approximately 35 seconds to run in total.
 
 The model can also be run interactively, but given the large number of secondary particles
 it is advisable to run a low number of events e.g. 1 to 10. In this case you would run
@@ -211,8 +209,8 @@ Question 1
 * What fraction of the beam makes it through the target?
 
 Here we want to know the fraction of primary particles after the target. To do this we look
-at the data recorded in the sampler after the target. The target was called "c1" in the
-input so there will be a sampler structure in the Event tree of the output called "c1".
+at the data recorded in the sampler after the target. The target was called "t1" in the
+input so there will be a sampler structure in the Event tree of the output called "t1".
 
 To get this answer we can make a histogram using rebdsim. This may seem an unintuitive
 approach but it includes all the correct event averaging and uncertainty calculations.
@@ -227,8 +225,8 @@ with the filter ("selection") that only primary particles are filled. The defaul
 histogramming is per event, i.e. normalised to the number of events. Below are two
 possible ways to achieve the same answer. ::
 
-  Histogram1D   Event. Q1PrimaryFraction   {2}  {-0.5:1.5} c1.parentID==0 c1.parentID==0
-  Histogram1D   Event. Q1PrimaryFraction2  {1}  {-2:2}     c1.x           c1.parentID==0
+  Histogram1D   Event. Q1PrimaryFraction   {2}  {-0.5:1.5} t1.parentID==0 t1.parentID==0
+  Histogram1D   Event. Q1PrimaryFraction2  {1}  {-2:2}     t1.x           t1.parentID==0
 
 This file for this example is provided in :code:`bdsim/examples/target/analysisConfig.txt`. We
 run rebdsim with the following command: ::
@@ -300,26 +298,29 @@ energies, i.e. a line for each particle type. To do this, we again histogram the
 particles recorded in the sampler after the target. We histogram the energy for
 each particle species. The following analysis is used. ::
 
-  Histogram1D  Event.  Q2All               {130} {0:6500}  c1.energy  c1.zp>0
-  Histogram1D  Event.  Q2ProtonsPrimary    {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==2212&&c1.parentID==0
-  Histogram1D  Event.  Q2ProtonsSecondary  {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==2212&&c1.parentID>0
-  Histogram1D  Event.  Q2PiPlusMinus       {130} {0:6500}  c1.energy  c1.zp>0&&abs(c1.partID)==211
-  Histogram1D  Event.  Q2PiZero            {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==111
-  Histogram1D  Event.  Q2Electrons         {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==11
-  Histogram1D  Event.  Q2Positrons         {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==-11
-  Histogram1D  Event.  Q2Gammas            {130} {0:6500}  c1.energy  c1.zp>0&&c1.partID==22
-  Histogram1D  Event.  Q2Muons             {130} {0:6500}  c1.energy  c1.zp>0&&abs(c1.partID)==13
+  Histogram1D  Event.  Q2All               {130} {0:6500}  t1.energy  t1.zp>0
+  Histogram1D  Event.  Q2ProtonsPrimary    {130} {0:6500}  t1.energy  t1.zp>0&&t1.partID==2212&&t1.parentID==0
+  Histogram1D  Event.  Q2ProtonsSecondary  {130} {0:6500}  t1.energy  t1.zp>0&&t1.partID==2212&&t1.parentID>0
+  Histogram1D  Event.  Q2PiPlusMinus       {130} {0:6500}  t1.energy  t1.zp>0&&abs(t1.partID)==211
+  Histogram1D  Event.  Q2PiZero            {130} {0:6500}  t1.energy  t1.zp>0&&t1.partID==111
+  Histogram1D  Event.  Q2Electrons         {130} {0:6500}  t1.energy  t1.zp>0&&t1.partID==11
+  Histogram1D  Event.  Q2Positrons         {130} {0:6500}  t1.energy  t1.zp>0&&t1.partID==-11
+  Histogram1D  Event.  Q2Gammas            {130} {0:6500}  t1.energy  t1.zp>0&&t1.partID==22
+  Histogram1D  Event.  Q2Muons             {130} {0:6500}  t1.energy  t1.zp>0&&abs(t1.partID)==13
 
 The particle IDs are the Particle Data Group IDs that can be found online at
-`<http://pdg.lbl.gov/2018/reviews/rpp2018-rev-monte-carlo-numbering.pdf>`_.
-  
+`<https://pdg.lbl.gov/2021/web/viewer.html?file=%2F2021/reviews/rpp2020-rev-monte-carlo-numbering.pdf>`_.
+
+..
+    _Update the link in output also
+
 After the target there is air as this is the default `worldMaterial` (see
 :ref:`options-common`). Potentially, a (likely secondary) particle could
 bounce back off of the air and go through the sampler before hitting the
 target again. We could change to the world material option to vacuum
 (:code:`option, worldMaterial="G4_Galactic";`) to avoid this or add the
 filter of the z component of the momentum is
-positive - i.e. forwards travelling. This is why we have :code:`c1.zp>0`
+positive - i.e. forwards travelling. This is why we have :code:`t1.zp>0`
 in all of the selections above. We can quickly check if there are any backwards
 going particles at all by inspecting the data in a ROOT TBrowser (see
 :ref:`basic-data-inspection`). Below is a screenshot of ROOT.
@@ -340,53 +341,48 @@ run rebdsim with the following command: ::
 
   rebdsim analysisConfig.txt data1.root data1-analysis.root
 
-We can then load and plot the data in iPython (or Python) using pybdsim. This requires
-us to make our own plot. We can look at :code:`pybdsim/pybdsim/Plot.py : Histogram1D()`
-for inspiration and then make our own plot. Below is the Python code used to generate
-the plot. This is included with this example as :code:`plotSpectra.py`. ::
+We can then load and plot the data in iPython (or Python) using pybdsim. Below is the
+example Python code used to generate the plots here and this is included with this
+example as :code:`plotSpectra.py`. ::
 
   import matplotlib.pyplot as _plt
   import pybdsim
-  from OrderedDict import OrderedDict
-  
-  def Spectra(filename, outputfilename='spectra', log=False):
-      d = pybdsim.Data.Load(filename)
-  
-      keys = OrderedDict([("All",               "All"),
-                          ("ProtonsPrimary",    "p (primary)"),
-                          ("ProtonsSecondary",  "p (secondary)"),
-                          ("Neutrons",          "n"),
-                          ("PiPlusMinus",       "$\pi^{\pm}$"),
-                          ("PiZero",            "$\pi^{0}$"),
-                          ("Electrons",         "e$^{-}$"),
-                          ("Positrons",         "e$^{+}$"),
-                          ("Gammas",            "$\gamma$"),
-                          ("Muons",             "$\mu^{\pm}$")])
-      
-      _plt.figure()
-      extra = "Log" if log else ""
-      for k,name in keys.iteritems():
-          ho  = d.histograms1dpy["Event/PerEntryHistograms/Q2"+extra+k]
-          h   = pybdsim.Data.PadHistogram1D(ho)
-          _plt.errorbar(h.xcentres, h.contents, yerr=h.errors, drawstyle="steps-mid", label=name)
+ 
+  def PlotSpectra(filename, outputfilename='spectra', xlog=False, ylog=True):
+      d = pybdsim.Data.Load(filename) 
+ 
+      keyLabels = [("All",              "All"),
+                   ("ProtonsPrimary",   "p (primary)"),
+                   ("ProtonsSecondary", "p (secondary)"),
+                   ("Neutrons",         "n"),
+                   ("PiPlusMinus",      "$\pi^{\pm}$"),
+                   ("PiZero",           "$\pi^{0}$"),
+                   ("Electrons",        "e$^{-}$"),
+                   ("Positrons",        "e$^{+}$"),
+                   ("Gammas",           "$\gamma$"),
+                   ("Muons",            "$\mu^{\pm}$")]
 
-      binWidth = d.histogramspy["Event/PerEntryHistograms/Q2"+extra+"All"].xwidths[0]
-        
-      if log:
-          _plt.xscale("log")
-          _plt.ylabel("Number / Proton / d\,log(E) GeV")
-          _plt.xlim(9,6700)
-          _plt.ylim(1e-3,2)
+      logString = "Log" if xlog else ""
+      histograms = [ d.histogramspy["Event/PerEntryHistograms/Q2"+logString+keyLabel[0] ] for keyLabel in keyLabels ]
+      labels     = [kl[1] for kl in keyLabels]
+      xlabel     = "Total Particle Energy (GeV)"
+      ylabel     = "Number / Proton / "
+      binWidth   = d.histogramspy["Event/PerEntryHistograms/Q2"+logString+"All"].xwidths[0]
+      ylabel     += "dlog(E) GeV" if xlog else str(round(binWidth,0)) + " GeV"
+
+      pybdsim.Plot.Histogram1DMultiple(histograms,
+                                       labels,
+                                       log=ylog,
+                                       xlabel=xlabel,
+                                       ylabel=ylabel,
+                                       legendKwargs={'fontsize':'small'})
+    
+      if xlog:
+          _plt.xlim(1e1,1e4)
+          _plt.xscale('log')
       else:
-          _plt.ylabel("Number / Proton / " + str(round(binWidth,0)) + " GeV")
-          _plt.xlim(-50,6600)
-          _plt.ylim(1e-3,1e3)
-      
-      _plt.xlabel('Total Particle Energy (GeV)')
-      _plt.yscale('log', nonposy='clip')
-      _plt.legend(fontsize="small")
-      _plt.tight_layout()
-
+          _plt.xlim(-10,6600)
+        
       if not outputfilename.endswith(".pdf"):
           outputfilename += ".pdf"
       _plt.savefig(outputfilename)
@@ -394,7 +390,7 @@ the plot. This is included with this example as :code:`plotSpectra.py`. ::
 We can use this as follows: ::
 
   >>> import plotSpectra
-  >>> plotSpectra.Spectra('data1-analysis.root')
+  >>> plotSpectra.PlotSpectra('data1-analysis.root')
 
 This produces the following plot.
 
@@ -409,21 +405,21 @@ also make a logarithmically binned plot. We add more lines to the analysisConfig
 rebdsim. See :ref:`output-analysis-configuration-file` for more details. Here are the lines
 we add: ::
 
-  Histogram1DLog  Event.  Q2LogAll              {100} {1:3.82}  c1.energy  c1.zp>0
-  Histogram1DLog  Event.  Q2LogProtonsPrimary   {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==2212&&c1.parentID==0
-  Histogram1DLog  Event.  Q2LogProtonsSecondary {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==2212&&c1.parentID>0
-  Histogram1DLog  Event.  Q2LogNeutrons         {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==2112
-  Histogram1DLog  Event.  Q2LogPiPlusMinus      {100} {1:3.82}  c1.energy  c1.zp>0&&abs(c1.partID)==211
-  Histogram1DLog  Event.  Q2LogPiZero           {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==111
-  Histogram1DLog  Event.  Q2LogElectrons        {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==11
-  Histogram1DLog  Event.  Q2LogPositrons        {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==-11
-  Histogram1DLog  Event.  Q2LogGammas           {100} {1:3.82}  c1.energy  c1.zp>0&&c1.partID==22
-  Histogram1DLog  Event.  Q2LogMuons            {100} {1:3.82}  c1.energy  c1.zp>0&&abs(c1.partID)==13
+  Histogram1DLog  Event.  Q2LogAll              {100} {1:3.82}  t1.energy  t1.zp>0
+  Histogram1DLog  Event.  Q2LogProtonsPrimary   {100} {1:3.82}  t1.energy  t1.zp>0&&t1.partID==2212&&t1.parentID==0
+  Histogram1DLog  Event.  Q2LogProtonsSecondary {100} {1:3.82}  t1.energy  t1.zp>0&&t1.partID==2212&&t1.parentID>0
+  Histogram1DLog  Event.  Q2LogNeutrons         {100} {1:3.82}  t1.energy  t1.zp>0&&t1.partID==2112
+  Histogram1DLog  Event.  Q2LogPiPlusMinus      {100} {1:3.82}  t1.energy  t1.zp>0&&abs(t1.partID)==211
+  Histogram1DLog  Event.  Q2LogPiZero           {100} {1:3.82}  t1.energy  t1.zp>0&&t1.partID==111
+  Histogram1DLog  Event.  Q2LogElectrons        {100} {1:3.82}  t1.energy  t1.zp>0&&t1.partID==11
+  Histogram1DLog  Event.  Q2LogPositrons        {100} {1:3.82}  t1.energy  t1.zp>0&&t1.partID==-11
+  Histogram1DLog  Event.  Q2LogGammas           {100} {1:3.82}  t1.energy  t1.zp>0&&t1.partID==22
+  Histogram1DLog  Event.  Q2LogMuons            {100} {1:3.82}  t1.energy  t1.zp>0&&abs(t1.partID)==13
 
 We use the above plotting script in Python to make a logarithmically binned plot: ::
 
   >>> import plotSpectra
-  >>> plotSpectra.Spectra('data1-analysis.root', log=True)
+  >>> plotSpectra.PlotSpectra('data1-analysis.root', xlog=True)
 
 This produces the following figure.
 
@@ -435,27 +431,39 @@ This produces the following figure.
 
 
 This is more informative but still we are lacking statistics. Given the first generation
-of data took less than 10 seconds, we can rerun 3000, reanalyse the new data using rebdsim
-and make new plots. Below are such plots for 3000 events. On the developer's computer this
-took 90 seconds to run.
+of data took less than a minute, we can run more, reanalyse the new data using rebdsim
+and make new plots. Below are such plots for 10000 events. On the developer's computer this
+took 35 minutes to run.
 
-.. figure:: target-q2-spectra-3k.pdf
+.. figure:: target-q2-spectra-10k.pdf
 	    :width: 100%
 	    :align: center
 
-	    Spectra of particles for 3000 events through a 5cm target of copper.
+	    Spectra of particles for 10000 events through a 5cm target of copper.
 
-.. figure:: target-q2-spectra-3k-log.pdf
+.. figure:: target-q2-spectra-10k-log.pdf
 	    :width: 100%
 	    :align: center
 
-	    Spectra of particles for 3000 events through a 5cm target of copper.
+	    Spectra of particles for 10000 events through a 5cm target of copper.
 
 .. note:: The more histograms we add and the more filters we add, the slower the analysis will
 	  be. The analysis is actually very efficient for what it does. If the analysis
 	  becomes too long running, consider generating separate data files and analysing
 	  them separately, then combining the resultant histograms. For further details,
 	  see :ref:`output-analysis-scaling-up` and :ref:`output-analysis-efficiency`.
+
+This running time could be easily reduced by introducing a kinetic energy cut. We must
+acknowledge though that introduces some level of inaccuracy as we artificially stop
+particles below this kinetic energy so the ultimate energy deposition location will be
+different.  Given the very high initial energy, we could choose a cut of 1 GeV by adding
+the following to the input GMAD file: ::
+
+  option, minimumKineticEnergy=1*GeV;
+
+This reduces the run time on the developer's computer for 10000 events from 35 minutes
+to 5 minutes.
+
 	    
 Question 3
 **********

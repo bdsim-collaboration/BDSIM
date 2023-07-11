@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -19,10 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSApertureType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
 
 #include <map>
+#include <string>
 
 // dictionary for BDSApertureType
 template<>
@@ -55,18 +58,16 @@ BDSApertureType BDS::DetermineApertureType(G4String apertureType)
   types["circularvacuum"] = BDSApertureType::circularvacuum;
   types["clicpcl"]        = BDSApertureType::clicpcl;
 
-  apertureType.toLower();
+  apertureType = BDS::LowerCase(apertureType);
 
   auto result = types.find(apertureType);
   if (result == types.end())
-    {
-      // it's not a valid key
-      G4cerr << __METHOD_NAME__ << apertureType << " is not a valid apertureType" << G4endl;
-
-      G4cout << "Available geometry types are:" << G4endl;
-      for (auto it : types)
-	{G4cout << "\"" << it.first << "\"" << G4endl;}
-      throw BDSException(__METHOD_NAME__, "");
+    {// it's not a valid key
+      G4String msg = "\"" + apertureType + "\" is not a valid apertureType\n";
+      msg += "Available geometry types are:\n";
+      for (const auto& it : types)
+	{msg += "\"" + it.first + "\"\n";}
+      throw BDSException(__METHOD_NAME__, msg);
     }
   
 #ifdef BDSDEBUG

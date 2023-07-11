@@ -5,18 +5,111 @@ Installation
 Supported Systems
 =================
 
-BDSIM is developed and used on Mac OSX and (Scientific) Linux.
+BDSIM is developed and used on Mac OSX and (Scientific) Linux. It can be used
+on Windows through some virtualisation technology (e.g. a virtual machine, docker,
+or Cygwin, X11 and CVMFS access). See :ref:`solution-windows` for Windows setup.
 
-Tested systems:
+Tested systems: Mac OS 11, 12, both Intel & M1 (ARM64); Centos7, SLC6. A full list
+can be found in :ref:`tested-platforms`.
 
-* Mac OS 11.3 (Big Sur), XCode 12.5 (Apple clang version 12.0.5 (clang-1205.0.22.9)), Geant4 10.7.1, ROOT 6.24/00, CLHEP 2.4.4.1, Qt 5.15.2
-* Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4 10.7, ROOT 6.18/04, CLHEP 2.4.4.0, Qt 5.14.2
-* Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4 10.6.p02, ROOT 6.18/04, CLHEP 2.4.1.0, Qt 5.14.2
-* Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4 10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt 5.12.0
-* Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4 10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt 5.12.0
-* SLC6, GCC 4.9.3, Geant4 10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt 5.7.0
-* SLC6 as above with Geant4 10.4.p02, Geant4 10.3.p03, Geant4 10.2.p03, Geant4 10.1.p03
-* CERN CentOS 7, GCC 8.3, Geant4 10.7.1, 10.6, 10.4.3, ROOT 6.22.06, CLHEP 2.4.4.0 (i.e. lxplus at CERN)
+
+
+Solutions
+=========
+
+* :ref:`solution-precompiled`
+* :ref:`solution-cvmfs`
+* :ref:`solution-from-source`
+* :ref:`solution-windows`
+* :ref:`docker`
+* :ref:`apptainer`
+
+.. _solution-precompiled:
+
+Pre-Compiled Libraries
+----------------------
+
+These are not yet provided but will be shortly.
+
+.. _solution-cvmfs:
+
+Public Installation on CVMFS
+----------------------------
+
+If you have access to CVMFS (CERN Virtual Machine File System) as your university or lab
+is linked in some way with CERN or makes use of CVMFS, you can find builds of BDSIM there.
+CVMFS is a file system accessible over the internet, and in a certain folder we have some
+pre-made BDSIM libraries. These use CERN software for the all the dependencies also available
+on CVMFS. Currently, only Centos7 (CC7) builds are provided.
+
+.. _cvmfs-build:
+
+CentOS 7 with CVMFS Access
+**************************
+
+If you have a machine running CERN CentOS 7 and with access to the CVMFS file system (CERN Virtual Machine
+File System), you can access an installation of bdsim at: ::
+
+  /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt
+
+You can source a script for a specific version of Geant4 + BDSIM. e.g. ::
+
+  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.6.0-g4v10.7.2.3.sh
+
+
+* Tagged versions (e.g. v1.6.0) will remain even when newer versions of BDSIM are provided.
+* "develop" versions can change without notice.
+* The scripts require BASH (not ZSH) and currently only work on Centos7 as per the name of the directory.
+* Each provides: BDSIM, ROOT, Geant4, CLHEP, Python3, IPython, pybdsim, pymadx, pymad8 and pytransport.
+
+Each setup script includes Geant4, ROOT, CLHEP, IPython, Python, and all dependencies. This is based
+on CERN's LCG software release (currently #100 for BDSIM). Each build is in a directory with the
+naming convention: ::
+
+  bdsim-<version>-g4<g4version>.sh
+
+Optional BDSIM-group patches to Geant4 are represented by an extra patch number (e.g. 10.7.1.1 for our patch
+#1 on 10.7.1). The contents of the patches are documented in the build directory in a directory called
+"patches" as patch files. These are the patches that were applied to the public source code. Each directory
+has a text file in it named with the time of the build and contains any options used to configure the software
+so that anyone could reproduce the build.
+
+Example usage: ::
+
+  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.6.0-g4v10.7.2.3.sh
+  bdsim --help
+
+This may take some time the first time it is used (up to a minute or two), but CVMFS is highly efficient
+at caching files and it will subsequently be much faster.
+
+.. note:: When browsing CVMFS, you may not see the directory :code:`beam-physics.cern.ch`. It is there though.
+	  Type the full path and it will be accessible.  Once inside this directory (:code:`beam-physics.cern.ch`)
+	  you will be able to browse normally. CVMFS doesn't show directories the local computer has
+	  never visited before even though they are accessible.
+
+.. note:: MacOS and X11 and 3D visualisation. If using the visualiser on a Centos7 machine remotely (e.g. CERN's
+	  lxplus) over X-windows from a Mac, you may find that the whilst the visualiser window generally works,
+	  the actual visualisation itself is missing. This is because MacOS, by default, blocks OpenGL over X11.
+	  This should be re-enabled. See :ref:`mac-xwindows`.
+
+.. _solution-from-source:
+	  
+Compilation From Source
+-----------------------
+
+BDSIM source code can be downloaded and then compiled. For this, you need a compiler to be
+available as well as several other libraries. Most of these can be found through a package
+manager such as YUM, APT, MacPorts or HomeBrew. However, for Geant4, we recommend compiling
+it yourself for the best options compatible with BDSIM. See:
+
+#. :ref:`required-packages`
+#. :ref:`build-setup`
+   
+   *  :ref:`geant4-installation-guide`
+      
+#. :ref:`installation-building`
+
+.. _solution-windows:
 
 BDSIM on Windows
 ----------------
@@ -25,6 +118,8 @@ BDSIM is available on Windows 10 through installation on the Windows Subsystem f
 from the Windows store. We currently advise that you should only install BDSIM on WSL 1 as difficulties have been
 encountered in installing BDSIM's dependencies and visualising GUIs with X servers on WSL 2.
 
+An alternative is to use DockerDesktop and build a docker image - instructions below - see :ref:`docker`.
+
 A number of Linux distributions are available, however BDSIM installation has only been tested
 on the Ubuntu distribution at present. Please note that we do not regularly test BDSIM on the Windows subsystems.
 Follow the guide on the Microsoft website for installing the subsystem.
@@ -32,10 +127,102 @@ Follow the guide on the Microsoft website for installing the subsystem.
 To install BDSIM on the subsystem, follow the standard installation guide below. An X server is required to view the
 BDSIM visualiser from the Linux subsystem. We recommend installing the XMing display server to your Windows 10 machine;
 to view windows with XMing you will need to run the command :code:`export DISPLAY=:0` in the Linux Bash environment.
-The command should be added to your ``.bashrc`` or profile so that it's loaded automatically every time.
+The command should be added to your ``.bashrc`` or profile so that it's loaded automatically every time.	  
 
-Obtaining  BDSIM
-================
+.. _docker:
+	  
+Docker
+------
+
+Docker is a virtualisation tool that puts software in a 'container'. This can be run
+independently on an operating system and requires fewer resources than a virtual machine. It therefore
+allows us to use say BDSIM a Centos7 container on a Mac or Windows machine.
+
+The initial setup takes about 30 minutes, but after that it is nearly instantaneous to start.
+
+A prebuilt image can be downloaded and run on your computer. First, donwload and install
+
+
+Docker Local Build
+******************
+
+Included with BDSIM we have a 'docker file' that docker can follow to build an image on your computer.
+This contains instructions about getting Centos, installing various packages and compiling Geant4 and
+BDSIM. The docker file is a text file that one can read and use as a set of instructions to follow
+on your own system should you wish - of course not a literal set of copy-and-paste instructions as it
+uses some docker commands.
+
+To use this, do the following:
+
+1) Download the DockerDesktop application (e.g. `<https://www.docker.com/products/docker-desktop>`_).
+2) Clone the BDSIM git repository: :code:`git clone https://bitbucket.org/jairhul/bdsim`.
+3) In a terminal (unix or Cygwin), go to :code:`bdsim/building/docker`.
+4) Use the docker build script :code:`source build-centos-bdsim.sh` - this may take 20 mins. (\*)
+5) Adapt and use the run script :code:`run-centos-bdsim.sh` which is made for Mac / unix.
+
+
+The last step can commonly be made into an alias in your profile. On the developer's Mac, this is: ::
+
+  alias bdsimdocker="docker run -t -i -v `pwd`:/hostfs -e DISPLAY=`ipconfig getifaddr en0`:0 --rm bdsim bash
+
+This will start a terminal prompt that is a BASH shell 'inside' the container, so Centos7, with
+everything ready to go and the command :code:`bdsim` available.
+
+.. note:: (\*) The command in this script is a docker command and can be used in Windows.
+
+Some explanation of the contents of the run script. For a Mac, this reduces (removing the comments) to: ::
+
+  DV=`ipconfig getifaddr en0`
+  docker run -t -i -v `pwd`:/hostfs -e DISPLAY=$DV:0 --rm bdsim bash
+
+For docker to send an X-window to the host operating system, it uses the IP address of the computer. The
+first command gets this (on a Mac). The second command runs docker and links the display. The image is
+called "bdsim" here as per the build script, but it may also be referred to by its docker hexadecimal
+image name.
+
+The :code:`-v` syntax work as :code:`-v <host_dir_abs_path>:<container_dir_abs_path>`.
+
+Basic Docker Commands
+*********************
+
+* :code:`docker image ls`
+* :code:`docker container ls`
+* :code:`docker run -t -i --rm <image_name> bash`
+
+   
+X11 Notes
+*********
+
+Whilst the docker image will almost certainly work without problem, it is more common to have
+some issues with the visualiser, which requires sending the window by X11 ('xwindows'). A few
+notes:
+
+* On a Mac, you may have to do :code:`xhost +` to allow X11 connections over the network.
+* On a Mac, you may have to set once :code:`defaults write org.xquartz.X11 enable_iglx -bool true`.
+* See :ref:`mac-xwindows`.
+
+
+.. _apptainer:
+  
+Apptainer (formerly Singularity)
+--------------------------------
+
+Apptainer (formerly known as singularity) is a container system similar to Docker. A key difference
+is that apptainer does not need administrator (root) access to run and therefore can be used on
+institute-provided machines such as `lxplus` at CERN for example.
+
+Currently, the apptainer containers are built from the docker images. BDSIM can be run as follows: ::
+
+  apptainer run docker://jairhul/centos7-geant4v10.7.4-environment bash
+
+
+Initially, this will take some time to download and convert to the apptainer format (e.g. 1-2 hours).
+After this initial step, it will run nearly instantly.
+
+
+
+Download BDSIM Source Code
+==========================
 
 BDSIM may be obtained either from the BDSIM website or the git repository may be cloned.
 The user must compile it on their system and must have Geant4, CLHEP and ROOT already present.
@@ -46,8 +233,8 @@ create a separate copy.
 
 ..  _from-git-repository:
 
-From the GIT Repository
------------------------
+GIT Repository
+--------------
 
 To download the source from the git repository, use the command::
 
@@ -57,10 +244,10 @@ This will create a directory called ``bdsim``, inside which all the code, exampl
 and documentation is provided. Also, the Python utilities that come with BDSIM will be present
 when the :code:`--recursive` option is used.
 
-Download
---------
+Archive
+-------
 
-BDSIM versions can be downloaded from the git repository website:
+BDSIM source code versions can be downloaded as zipped archives from the git repository website:
 
 https://bitbucket.org/jairhul/bdsim/downloads/?tab=tags
 
@@ -68,49 +255,6 @@ https://bitbucket.org/jairhul/bdsim/downloads/?tab=tags
 	  a copy of the files. In the case of the develop branch, the BDSIM version recorded in the
 	  output will just be "develop" and not the specific git SHA1 commit ID. Therefore, if
 	  dealing with the develop branch, it's recommended to clone the repository.
-
-.. _cvmfs-build:
-	  
-CentOS 7 with CVMFS Access
---------------------------
-
-If you have a machine running CERN CentOS 7 and with access to the CVMFS file system (CERN Virtual Machine
-File System), you can access an installation of bdsim at: ::
-
-  /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt
-
-In this directory, there are several BASH environment scripts you can source to use the BDSIM
-installation there, including Geant4, ROOT, CLHEP and all dependencies. This is based on CERN's LCG
-software release (currently #99 for BDSIM). There are builds of the latest tagged version of BDSIM
-as well as a reasonably up to date "develop" branch build. The develop branch build may be updated
-without notice. Each build is in a directory with the naming convention: ::
-
-  bdsim-<version>-g4<g4version>.sh
-
-Optional group patches to Geant4 are represented by an extra patch number (e.g. 10.7.1.1 for our patch
-#1 on 10.7.1). The contents of the patches are documented in the build directory in a directory called
-"patches" as patch files. These are the patches that were applied to the public source code. Each directory
-has a text file in it named with the time of the build and contains any options used to configure the software
-so that anyone could reproduce the build.
-
-Example usage: ::
-
-  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.5.1-g4v10.7.1.1.sh
-  bdsim --help
-
-This may take some time the first time it is used (up to a minute or two), but CVMFS is highly efficient
-at caching files and it will subsequently be much faster.
-
-Sourcing this script will include BDSIM, ROOT, Geant4, CLHEP, Python3, IPython, pybdsim, pymadx, pymad8, and pytransport.
-Using this Python and IPython installation will provide the utilities.
-
-.. note:: We are currently fixing some ongoing issues with pybdsim loading ROOT data files and crashing
-	  due to a segfault in ROOT.
-
-.. note:: When browsing CVMFS, you may not see the directory :code:`beam-physics.cern.ch`. It is there though.
-	  Type the full path and it will be accessible.  Once inside this directory (:code:`beam-physics.cern.ch`)
-	  you will be able to browse normally. CVMFS doesn't show directories the local computer has
-	  never visited before even though they are accessible.
 	  
 .. _required-packages:
    
@@ -121,11 +265,11 @@ Requirements \& Environment
    or clang 6 or higher.
 2) `CMake`_ 3.1 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher, and typically 3.8 for later versions).
 3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_. Latest recommended but must be compatible with Geant4 version.
-4) *Optional* - Python (>=3.6, or 2.7) for Python utilities and easy data loading with ROOT.
+4) *Optional* - Python (>=3.6) for Python utilities and easy data loading with ROOT.
 5) `ROOT`_ 6.0 or higher, for output & analysis compiled **with** Python support (default is 3 series).
-6) *Optional* - Qt5 libraries for the best Geant4 visualiser.
+6) *Optional* - Qt5 libraries for the best Geant4 visualiser (Qt6 not supported in Geant4)
 7) *Optional* - Xerces-C++ 3.2 XML library for GDML geometry file loading in Geant4.
-8) `Geant4`_  - version 4.10 or higher (latest patch of that release). **Recommend 10.7.p01** or **10.4.p03** (for LHC energies). See `Geant4 Installation Guide`_
+8) `Geant4`_  - version 4.10 or higher (latest patch of that release). **Recommend 10.7.p04** or **10.4.p03** (for LHC energies). See `Geant4 Installation Guide`_
 9) Flex 2.5.37 or higher.
 10) Bison 2.3 or higher.
 11) *Optional* - HepMC3 for loading event generator output.
@@ -149,6 +293,7 @@ problems we have found:
 * Geant4 10.5.0  - the cashkarp integrator for fields will always crash. Events are not independent in rare occasions because of the magnetic field handling.
 * Geant4 10.5.pX - bug in G4Extruded solid may occasionally lead to crashes depending on the geometry involved.
 * Geant4 10.5 onwards - diffractive proton physics on light target nuclei is disabled by default (on going fix).
+* Geant4 11.0 - Bragg peaks are wrong from carbon ions in water.
 
 The authors typically use Geant4 10.4.p03 or Geant4.10.7.p01 for physics results production.
 
@@ -174,49 +319,69 @@ every time::
 
   source path/to/geant4/installation/bin/geant4.sh
 
+.. _build-setup:
 
-Setting Up
-==========
+Compilation Environment Setup
+=============================
 
 The following sections detail the setup process for different operating systems.
 
-- `Mac OSX`_
-- `Linux`_
-
-
-Mac OSX
--------
+Mac OSX Generally
+-----------------
 
 In this order:
 
-1) XCode should be installed.
-2) XCode command line tools should be installed (xcode-select --install).
-3) XQuartz should be installed - see `<https://www.xquartz.org>`_.
-4) The `make` command is available in the terminal.
+#. XCode should be installed.
+#. XCode command line tools should be installed (:code:`xcode-select --install`).
+#. XCode should be opened at least once and the license terms accepted.
+#. XQuartz should be installed - see `<https://www.xquartz.org>`_.
+#. The `make` command is available in the terminal.
 
-We recommend obtaining :ref:`required-packages` using the `MacPorts`_ package manager,
-although they can be obtained both through other package managers and by
+We recommend obtaining :ref:`required-packages` using either **HomeBrew** or `MacPorts`_
+package managesr, although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
 
-For MacPorts you can do: ::
+For Homebrew you can do: ::
+
+  brew install root6
+  brew install xerces-c flex bison clhep qt@5
+
+
+For **HomeBrew**, you should use a virtual env for python and then should install any Python packages
+through pip: ::
+
+  pip install matplotlib numpy
+
+To setup a virutal environment for Python, you can do: ::
+
+  python3 -m venv /path/to/new/virtual/environment
+  source <venv>/bin/activate
+
+Explicitly: ::
+
+  python3 -m venv ~/venv/py311
+
+Edit :code:`.profile` and add: ::
+
+  source ~/venv/py311/bin/activate
+
+
+For **MacPorts** you can do: ::
 
   sudo port install root6 +python39
   sudo port install xercesc3 flex bison clhep qt5
   sudo port install py39-matplotlib py39-numpy
 
+
 * It is best to install Geant4 manually to ensure you use the system CLHEP option (required
   by BDSIM for strong reproducibility) as well as visualiser choices and GDML geometry
   loading.
-* As of May 2021, clhep on macports is not 2.4.4.1, therefore if **Geant4 10.7** is used,
+* As of May 2021, CLHEP on macports is not 2.4.4.1, therefore if **Geant4 10.7** is used,
   CLHEP should be setup manually.
 
-* See :ref:`geant4-installation-guide` to install Geant4.
 
-After this, `Building`_ can be started.
-
-
-Linux
------
+Linux Generally
+---------------
 
 Install the :ref:`required-packages` preferably with a package manager.
 
@@ -229,12 +394,145 @@ can check the compiler version with::
   gcc --version
 
 
-After this, `Building`_ can be started.
+
+CLHEP Installation Guide
+------------------------
+
+If not installed with a package manager (MacPorts, HomeBrew, yum), download CLHEP from the `CLHEP`_ website.
+
+Move and unpack to a suitable place::
+
+   tar -xzf clhep-2.3.1.1.tgz
+   cd 2.3.1.1
+
+Make build directory::
+
+   mkdir build
+   cd build
+   cmake ../CLHEP
+
+Adapt parameters if needed with::
+
+   ccmake .
+
+Make and install::
+
+   make
+   sudo make install
+
+.. _geant4-installation-guide:
+
+Geant4 Installation Guide
+-------------------------
+
+* **Recommend** using Geant4.10.4.p03, or 10.6.p03, or 10.7
+* Do not recommend using Geant4.10.5 and Geant4.10.5.p01
+
+BDSIM builds with most recent versions of Geant4 (version 4.10 onwards). You can usually
+get Geant4 through a package manager such as MacPorts or HomeBrew, but often a manual installation
+is more flexible to allow choice of visualiser and use of GDML (necessary for external
+geometry). For manual installation, download the latest patch version from the
+Geant website. Move and unpack to a suitable place ::
+
+  tar -xzf geant4.10.6.p03.tar.gz
+  ls
+   geant4.10.6.p03
+
+Make a build and installation directory **outside** that directory ::
+
+  mkdir geant4.10.6.p03-build
+  mkdir geant4.10.6.p03-install
+
+Configure Geant4 using CMake ::
+
+  cd geant4.10.6.p03-build
+  cmake ../geant4.10.6.p03
+
+At this point it's useful to define the installation directory for Geant4 by
+modifying the CMake configuration as generally described in :ref:`configuring-bdsim`. ::
+
+  ccmake .
+
+It is useful to change a few options with Geant4 for practical purposes.
+
+.. figure:: figures/geant4options.png
+	    :width: 90%
+	    :align: center
+
+.. tabularcolumns:: |p{7cm}|p{8cm}|
+
++---------------------------------+-------------------------------------------------------------+
+| **Option**                      | **Description**                                             |
++---------------------------------+-------------------------------------------------------------+
+| **CMAKE_INSTALL_PREFIX**        | Useful to specify a known folder to install to.             |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_BUILD_MULTITHREADED**  | OFF - BDSIM does not support this yet.                      |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_INSTALL_DATA**         | ON - otherwise Geant will try to download data dynamically, |
+|                                 | as it's required during the simulation and it may not be    |
+|                                 | possible to run offline.                                    |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_GDML**             | ON - for external geometry import.                          |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_OPENGL_X11**       | ON - basic visualiser.                                      |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_QT**               | ON - the best and most interactive visualiser.              |
+|                                 | Needs Qt to be installed                                    |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_SYSTEM_CLHEP**     | ON - must be on so both Geant4 and BDSIM use the same CLHEP |
+|                                 | library. Therefore, there's only one random number          |
+|                                 | generator and simulations have strong reproducibility.      |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_SYSTEM_ZLIB**      | OFF - easier if we use the Geant4 internal version.         |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_RAYTRACER_X11**    | ON - The most accurate visualiser, but relatively slow and  |
+|                                 | not interactive. Useful for promotional materials.          |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_XM**               | ON - similar to Qt and the one to use if Qt isn't           |
+|                                 | available. Needs motif to be installed.                     |
++---------------------------------+-------------------------------------------------------------+
+
+.. warning:: Make sure **GEANT4_BUILD_MULTITHREADED** is off since this is currently not supported.
+
+.. note:: The CLHEP option is required. The GDML and QT options are strongly recommended. Others
+	  are to the user's preference.
+
+Once the installation directory is set, press ``c`` to run the configuration
+process, and when complete, press ``g`` to generate the build. If ``g`` is not an
+available option, then continue to press ``c`` until it becomes available. This
+typically takes two or three times - it is due to dependencies being dependent on
+other dependencies. Geant4 can then
+be compiled ::
+
+  make
+
+Note: Geant4 can take around 20 minutes to compile on a typical computer. If your
+computer has multiple cores, you can significantly decrease the time required to
+compile by using extra cores ::
+
+  make -jN
+
+where ``N`` is the number of cores on your computer [#ncoresnote]_. Geant4 should
+then be installed ::
+
+  make install
+
+Note: if you've specified the directory to install, you will not need the ``sudo``
+command. However, if you've left the settings as default, it'll be installed
+in a folder that requires ``sudo`` permissions such as ``/usr/local/``.
+
+**IMPORTANT** - you should source the Geant4 environment each time before running
+BDSIM, as this is required for the physics models of Geant4.  This can be done using ::
+
+  source path/to/geant4.10.6.p03-install/bin/geant4.sh
+
+It may be useful to add this command to your ``.bashrc`` or profile script.
+
 
 .. _installation-building:
    
-Building
---------
+Compiling BDSIM
+===============
 
 Once ready, make a directory **outside** the BDSIM source directory to build
 BDSIM in::
@@ -403,6 +701,10 @@ running CMake by prefixing them with "-D". The following options are available.
 +===============================+=============================================================+
 | **USE_AWAKE**                 | Use AWAKE model components. (default OFF)                   |
 +-------------------------------+-------------------------------------------------------------+
+| **USE_BOOST**                 | Whether to link againt Boost library. (default OFF)         |
+|                               | This options enables the differential flux scoring feature  |
+|                               | available using the scorer type cellflux4d.                 |
++-------------------------------+-------------------------------------------------------------+
 | **USE_CUSTOM_CHANNELLING**    | Use RHUL custom crystal channelling package in Geant4. Only |
 |                               | if you have this package patched onto Geant4.               |
 +-------------------------------+-------------------------------------------------------------+
@@ -527,225 +829,37 @@ These variables are set in the :code:`<bdsim-install-dir>/bin/bdsim.sh` provided
 Python Utilities
 ----------------
 
-* Quick setup: simply run ``make`` from the ``bdsim/utils`` directory.
+* Quick setup: simply run ``source pyutils.sh`` from the ``bdsim/utils`` directory.
   
-BDSIM includes copies of our accompanying Python utilities (pytransport, pymad8, pymadx
-and pybdsim) that can now be installed. These are included as "sub-repositories" in
-:code:`bdsim/utils/`. One should do the following from the root bdsim source directory
-to get git to download these. ::
-
-  pwd
-   bdsim
-  git submodule init
-  git submodule update
-
-This prepares and downloads the copies of other repositories. If you intend to edit these
-(as it's all open source), it is better to clone these elsewhere outside of the bdsim source.
-These all exist in separate git repositories in the following locations:
+The BDSIM Python utilities (`pytransport`, `pymad8`, `pymadx`, and `pybdsim`) all exist in
+separate git repositories in the following locations:
 
 * https://bitbucket.org/jairhul/pybdsim
 * https://bitbucket.org/jairhul/pymadx
 * https://bitbucket.org/jairhul/pymad8
 * https://bitbucket.org/jairhul/pytransport
 
-.. warning:: Do not edit the copies in :code:`bdsim/utils` - this will result in problems
-	     with git and make it harder to update bdsim later on. It is strongly recommended
-	     to clone each utility separately outside the BDSIM source directory and edit that version,
-	     leaving the included one untouched.
+These should be downloaded and installed **using pip** by default for users.
   
-These can all be set up separately, or alternatively the user can install all at
-once with the MakeFile added for convenience (running make command).  The Python package
-installer ("PIP") is required for this.
+If it is intended to edit these packages or add to them (always welcome!), then it
+is preferable to clone the git repository and use the commands in the Makefile in each
+one, such as :code:`pip install --editable .` that allows the package to be registered
+to your Python installation but it gets the files freshly each time from the git
+repository folder upon restarting Python.
 
-.. note:: ROOT should be compiled with Python support for the full functionality of
-	  pybdsim data loading to be exploited.
+To switch between these modes, simply uninstall the utilities, then reinstall. ::
 
-To set up all utilities at once:
+  pip uninstall pybdsim
+  pip uninstall pymadx
+  pip uninstall pymad8
+  pip uninstall pytransport
 
-.. code::
-
-   cd bdsim/utils
-   make
-
-The utilities should now be available through Python::
-
-  >>> import pybdsim
-  >>> import pymadx
-  >>> import pymad8
-  >>> import pytransport
-
-In each utility we use PIP to get any dependencies required. Using our MakeFile
-(:code:`make develop`)just does it in such a way
-(:code:`pip install --editable . --user`) that this copy is used and not copied
-somewhere else into the Python installation, so if you edit or git pull next time
-you import the utility in Python it will be automatically up to date.
-
-Making the Manual
------------------
-
-The manual is available online at http://www.pp.rhul.ac.uk/bdsim/manual and included
-as a pdf in the source directory, but if desired the user can compile the manual
-in both HTML and pdflatex from the build directory using the following command
-to make the HTML manual in the folder ``manual/html``::
-
-  make manual
-
-Similarly::
-
-  make manual-pdf
-
-will make the pdf Manual in the folder ``manual/latex``.
-
-.. note:: This requires the sphinx documentation system to be installed and all utility
-	  python packages to be available in python from any directory. The latexpdf build
-	  requires a full installation of pdflatex to be available as well.
+.. note:: `pybdsim` depends on `pymadx`, `pymad8`, and `pytransport`, so if these are
+          not already available it will get them from PyPi on the internet. To use
+          multiple develop versions of these from local git repositories, install in
+          the order: `pytransport`, `pymad8`, `pymadx`, then `pybdsim`.
 
 
-Making Doxygen Code Documentation
----------------------------------
-
-Doxygen code documentation is available online at
-http://www.pp.rhul.ac.uk/bdsim/doxygen/
-
-If desired the user can create this from the build directory using the following command
-to make the Doxygen documentation in a folder called ``Doxygen``.::
-
-  make doc
-
-.. note:: This requires the Doxygen documentation system to be installed.
-
-CLHEP Installation Guide
-------------------------
-
-If not installed with a package manager (MacPorts, HomeBrew, yum), download CLHEP from the `CLHEP`_ website.
-
-Move and unpack to a suitable place::
-
-   tar -xzf clhep-2.3.1.1.tgz
-   cd 2.3.1.1
-
-Make build directory::
-
-   mkdir build
-   cd build
-   cmake ../CLHEP
-
-Adapt parameters if needed with::
-
-   ccmake .
-
-Make and install::
-
-   make
-   sudo make install
-
-.. _geant4-installation-guide:
-
-Geant4 Installation Guide
--------------------------
-
-* **Recommend** using Geant4.10.4.p03, or 10.6.p03, or 10.7
-* Do not recommend using Geant4.10.5 and Geant4.10.5.p01
-
-BDSIM builds with most recent versions of Geant4 (version 4.10 onwards). You can usually
-get Geant4 through a package manager such as MacPorts or HomeBrew, but often a manual installation
-is more flexible to allow choice of visualiser and use of GDML (necessary for external
-geometry). For manual installation, download the latest patch version from the
-Geant website. Move and unpack to a suitable place ::
-
-  tar -xzf geant4.10.6.p03.tar.gz
-  ls
-   geant4.10.6.p03
-
-Make a build and installation directory **outside** that directory ::
-
-  mkdir geant4.10.6.p03-build
-  mkdir geant4.10.6.p03-install
-
-Configure Geant4 using CMake ::
-
-  cd geant4.10.6.p03-build
-  cmake ../geant4.10.6.p03
-
-At this point it's useful to define the installation directory for Geant4 by
-modifying the CMake configuration as generally described in :ref:`configuring-bdsim`. ::
-
-  ccmake .
-
-It is useful to change a few options with Geant4 for practical purposes.
-
-.. figure:: figures/geant4options.png
-	    :width: 90%
-	    :align: center
-
-.. tabularcolumns:: |p{7cm}|p{8cm}|
-
-+---------------------------------+-------------------------------------------------------------+
-| **Option**                      | **Description**                                             |
-+---------------------------------+-------------------------------------------------------------+
-| **CMAKE_INSTALL_PREFIX**        | Useful to specify a known folder to install to.             |
-+---------------------------------+-------------------------------------------------------------+
-| **GEANT4_BUILD_MULTITHREADED**  | OFF - BDSIM does not support this yet.                      |
-+---------------------------------+-------------------------------------------------------------+
-| **GEANT4_INSTALL_DATA**         | ON - otherwise Geant will try to download data dynamically, |
-|                                 | as it's required during the simulation and it may not be    |
-|                                 | possible to run offline.                                    |
-+---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_GDML**             | ON - for external geometry import.                          |
-+---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_OPENGL_X11**       | ON - basic visualiser.                                      |
-+---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_QT**               | ON - the best and most interactive visualiser.              |
-|                                 | Needs Qt to be installed                                    |
-+---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_SYSTEM_CLHEP**     | ON - must be on so both Geant4 and BDSIM use the same CLHEP |
-|                                 | library. Therefore, there's only one random number          |
-|                                 | generator and simulations have strong reproducibility.      |
-+---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_SYSTEM_ZLIB**      | OFF - easier if we use the Geant4 internal version.         |
-+---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_RAYTRACER_X11**    | ON - The most accurate visualiser, but relatively slow and  |
-|                                 | not interactive. Useful for promotional materials.          |
-+---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_XM**               | ON - similar to Qt and the one to use if Qt isn't           |
-|                                 | available. Needs motif to be installed.                     |
-+---------------------------------+-------------------------------------------------------------+
-
-.. warning:: Make sure **GEANT4_BUILD_MULTITHREADED** is off since this is currently not supported.
-
-.. note:: The CLHEP option is required. The GDML and QT options are strongly recommended. Others
-	  are to the user's preference.
-
-Once the installation directory is set, press ``c`` to run the configuration
-process, and when complete, press ``g`` to generate the build. If ``g`` is not an
-available option, then continue to press ``c`` until it becomes available. This
-typically takes two or three times - it is due to dependencies being dependent on
-other dependencies. Geant4 can then
-be compiled ::
-
-  make
-
-Note: Geant4 can take around 20 minutes to compile on a typical computer. If your
-computer has multiple cores, you can significantly decrease the time required to
-compile by using extra cores ::
-
-  make -jN
-
-where ``N`` is the number of cores on your computer [#ncoresnote]_. Geant4 should
-then be installed ::
-
-  make install
-
-Note: if you've specified the directory to install, you will not need the ``sudo``
-command. However, if you've left the settings as default, it'll be installed
-in a folder that requires ``sudo`` permissions such as ``/usr/local/``.
-
-**IMPORTANT** - you should source the Geant4 environment each time before running
-BDSIM, as this is required for the physics models of Geant4.  This can be done using ::
-
-  source path/to/geant4.10.6.p03-install/bin/geant4.sh
-
-It may be useful to add this command to your ``.bashrc`` or profile script.
 
 Upgrading BDSIM
 ===============
@@ -993,8 +1107,13 @@ set. See :ref:`installation-building` and :ref:`installation-environmental-varia
      /usr/lib/../lib64/libxml2.so: undefined reference to `gzdirect@ZLIB_1.2.2.3'
      collect2: error: ld returned 1 exit status
 
-   This probably means that the xml library is not properly installed. The easiest option may be not to use this part of BDSIM by switching off the CMake variable USE_LCDD (in ccmake).
+   This probably means that the xml library is not properly installed. The easiest option may be not to use this part of BDSIM by switching off the CMake variable USE_GDML (in ccmake).
 
+7) The visualiser starts but there is no 3D model present (BDSIM on CVMFS).
+
+This problem is encountered when using BDSIM over X11 / XWindows such as from lxplus at CERN
+and using the CVMFS installation and using it from a Mac computer. This is due to the X-server
+not allowing OpenGL by default (the 3D bit). See :ref:`mac-xwindows` for the solution.
 
 .. rubric:: Footnotes
 
@@ -1012,3 +1131,117 @@ set. See :ref:`installation-building` and :ref:`installation-environmental-varia
 .. _Geant4: http://geant4.cern.ch/
 .. _Macports: http://www.macports.org/
 .. _ROOT: http://root.cern.ch/
+
+
+.. _mac-xwindows:
+
+XWindows With MacOS
+===================
+
+If using a Mac computer and intending to use BDSIM via SSH / X-Windows, which may include
+using BDSIM via a Docker image, it is possible the display will appear but there will be
+no model present and just a **blank white screen**. This is due to the default settings
+of XQuartz (the most common Mac X-Windows server) not allowing 3D content (specifically openGL)
+over X-Windows by default. This was done for security reasons but since we typically connect
+to a 'window' via SSH, this is irrelevant.
+
+To fix this, we must change the settings.
+
+.. note:: These settings apply only for MacOS with XQuartz.
+
+1) In a terminal, do the following: ::
+
+     defaults write org.macosforge.xquartz.X11 enable_iglx -bool true
+     defaults write org.xquartz.X11 enable_iglx -bool true
+
+   which enables *indirect openGL over X*.
+
+2) Edit the X11 startup script to include the :code:`defaultserverargs="+iglx"`. ::
+
+     sudo emacs -nw /opt/X11/bin/startx
+
+Around line 58 we find the argument and edit it.
+
+.. figure:: figures/macx11.png
+	    :width: 100%
+	    :align: center
+
+	    Example of editing the X11 configuration in a terminal.
+
+If emacs is use, save and close with :code:`Ctrl X Ctrl S`, then :code:`Ctrl X Ctrl C`.
+
+3) Restart the mac to force a restart of X11.
+
+A test is to use the small utility program :code:`glxgears`, which when started will
+bring up a small window with 3 animated interlocking cogs that rotate.
+
+This is based on advice found at: https://www.visitusers.org/index.php?title=Re-enabling_INdirect_GLX_on_your_X_server .
+
+
+Programs Included
+=================
+
+BDSIM is a program but it is accompanied by other programs for various tasks. Here is a complete
+list of all executable programs included.
+
+
+.. tabularcolumns:: |p{3cm}|p{7cm}|
+
++--------------------+-----------------------------------------------------------+
+| **Program**        | **Description**                                           |
++====================+===========================================================+
+| bdsim              | The main tool to generate Monte Carlo simulation data.    |
++--------------------+-----------------------------------------------------------+
+| rebdsim            | Analysis tool to make histograms and calcualte optics.    |
++--------------------+-----------------------------------------------------------+
+| rebdsimCombine     | Combine multiple rebdsim output files into 1 file.        |
++--------------------+-----------------------------------------------------------+
+| rebdsimHistoMerge  | Operate on a bdsim output file and average the per-event  |
+|                    | pre-made histograms only.                                 |
++--------------------+-----------------------------------------------------------+
+| rebdsimOptics      | Operate on a bdsim output file and calculate optical      |
+|                    | functions from the sampler data - the 'optics'.           |
++--------------------+-----------------------------------------------------------+
+| rebdsimOrbit       | Operate on a bdsim output file and extrac the first       |
+|                    | entry in each sampler - assuming 1 primary this is the    |
+|                    | 'orbit' of that particle.                                 |
++--------------------+-----------------------------------------------------------+
+| bdskim             | Create a copy of a bdsim output file keeping only select  |
+|                    | events according to a selection - skim the data.          |
++--------------------+-----------------------------------------------------------+
+| bdsimCombine       | Combine bdsim output files together into a bigger file.   |
++--------------------+-----------------------------------------------------------+
+| bdsinterpolator    | Load a field map and query it by inteprolation.           |
++--------------------+-----------------------------------------------------------+
+| comparator         | Utility for numerically and statistically comparing bdsim |
+|                    | and rebdsim output files for regression testing.          |
++--------------------+-----------------------------------------------------------+
+| makematerialfile   | Export 2 files with materials and elements from NIST as   |
+|                    | required by pyg4ometry.                                   |
++--------------------+-----------------------------------------------------------+
+| ptc2bdsim          | Convert a PTC inrays file to one useable by bdsim.        |
++--------------------+-----------------------------------------------------------+
+| gmad               | The parser on its own as a program - no model is built.   |
++--------------------+-----------------------------------------------------------+
+
+.. _tested-platforms:
+
+Tested Platforms
+================
+
+
+* Mac OS 11.6.1 M1 (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 11.0.0, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* Mac OS 11.6.1 M1 (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 10.7.3, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* Mac OS 11.6.1 Intel (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 11.0.0, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* Mac OS 11.6.1 Intel (Big Sur), XCode 13.0 (Apple clang version 13.0.0 (clang-1300.0.29.3)), Geant4 10.7.3, ROOT 6.24/06, CLHEP, 2.4.4.2, Qt 5.15.2
+* CERN CentOS 7, GCC 9.2.0, Geant4 10.7.2, 10.6, 10.4.3, ROOT 6.24.00, CLHEP 2.4.4.0 (i.e. lxplus at CERN with LCG100)
+* SLC6, GCC 4.9.3, Geant4 10.5.1, ROOT 6.10/08, CLHEP 2.3.3.0, Qt 5.7.0
+* SLC6 as above with Geant4 10.4.p02, Geant4 10.3.p03, Geant4 10.2.p03, Geant4 10.1.p03
+
+Recently tested:
+
+* Mac OS 11.6.1 (Big Sur), XCode 12.5 (Apple clang version 12.0.5 (clang-1205.0.22.9)), Geant4 10.7.1, ROOT 6.24/00, CLHEP 2.4.4.1, Qt 5.15.2
+* Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4 10.7, ROOT 6.18/04, CLHEP 2.4.4.0, Qt 5.14.2
+* Mac OSX 10.14.6 (Mojave), XCode 10.3 (Apple LLVM version 10.0.1 (clang-1001.0.46.4)), Geant4 10.6.p02, ROOT 6.18/04, CLHEP 2.4.1.0, Qt 5.14.2
+* Mac OSX 10.14.3 (Mojave), XCode 10.1, Geant4 10.5, ROOT 6.16/00, CLHEP 2.4.1.0, Qt 5.12.0
+* Mac OSX 10.13.3 (High Sierra), XCode 10.1, Geant4 10.4.p02, ROOT 6.12/06, CLHEP 2.3.4.4, Qt 5.12.0

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <list>
 #include <map>
+#include <set>
 #include <vector>
 
 #include "globals.hh"
@@ -51,15 +52,18 @@ public:
   /// Get material by name
   G4Material* GetMaterial(G4String material) const;
   /// Get element by name
-  G4Element*  GetElement(G4String symbol) const;
+  G4Element*  GetElement(const G4String& symbol) const;
 
-  /// Introduce materials loaded from GDML into this instance. If a prepend was used
-  /// to load the material then it's cached both with and without it and the once without
-  /// the prepend is flagged as a possible dupliate. If it's defined more than one without
-  /// the prepend, then an exception will be thrown as the search is ambiguous.
-  void CacheMaterialsFromGDML(const std::map<G4String, G4Material*>& materialsGDML,
-                              const G4String& prepend,
-                              G4bool prependWasUsed);
+  /// Introduce materials loaded from GDML into this instance.
+  void CacheMaterialsFromGDML(const std::map<G4String, G4Material*>& materialsGDML);
+
+  /// This function will loop through the Geant4 global material table looking for
+  /// any duplicate names. This implicitly implies that a material was loaded from
+  /// the GDML file that is degenerate with a material already defined (e.g. from
+  /// BDSIM's predefined ones or ones defined in the parser through input GMAD.
+  /// Names do not conflict with any aliases in BDSIM.
+  void CheckForConflictingMaterialsAfterLoad(const G4String& geometryFileName,
+                                             const G4String& componentName) const;
 
 protected:
   BDSMaterials();
@@ -103,7 +107,7 @@ protected:
 		   const std::list<Type>&     componentFractions);
 
   /// Return element if defined (nullptr if not)
-  G4Element* CheckElement(G4String symbol) const;
+  G4Element* CheckElement(const G4String& symbol) const;
 
 private:
   /// Singleton instance
@@ -123,23 +127,27 @@ private:
 
   ///@{ Add a G4Element
   void AddElement(G4Element* element, const G4String& symbol);
-  void AddElement(G4String name, const G4String& symbol, G4double itsZ, G4double itsA);
+  void AddElement(const G4String& name, const G4String& symbol, G4double itsZ, G4double itsA);
   ///@}
 
   /// Print warning if density suspiciously high. Should be in g/cm3 in G4 units already.
-  void DensityCheck(const G4double  density,
+  void DensityCheck(G4double  density,
 		    const G4String& materialName) const;
 
   /// Print mass fractions of consituents of a given material.
   void PrintBasicMaterialMassFraction(G4Material* material) const;
 
-  /// <ap of materials, convention name lowercase.
+  /// Map of materials, convention name lowercase.
+  std::set<G4String> materialNames;
   std::map<G4String, G4Material*> materials;
-  /// Maps of other names to existing materials. To avoid double deletion. Also in lower case.
+  /// Map of other names to existing materials. To avoid double deletion. Also in lower case.
+  std::set<G4String> aliasNames;
   std::map<G4String, G4Material*> aliases;
-  /// Map of names of loaded materials externally to the number of times loaded for possible
-  /// duplicates.
-  std::map<G4String, G4int> possibleDuplicates;
+  /// Keep a vector of possible aliases for every material for print out and user feedback.
+  std::map<G4Material*, std::vector<G4String>> materialToAliases;
+  /// Keep hold of externally constructed materials to indicate conflicts to the user but not to delete.
+  std::set<G4String> externalMaterialNames;
+  std::map<G4String, G4Material*> externalMaterials;
   /// Map of elements, no lowercase convention.
   std::map<G4String,G4Element*>  elements;
   /// Material tables for storing pointers

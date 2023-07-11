@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -31,7 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4LogicalVolume.hh"
 
 
-BDSCavityElement::BDSCavityElement(G4String             nameIn,
+BDSCavityElement::BDSCavityElement(const G4String&       nameIn,
 				   G4double             chordLengthIn,
 				   G4Material*          vacuumMaterialIn,
 				   const BDSFieldInfo*  vacuumFieldInfoIn,
@@ -78,6 +78,9 @@ void BDSCavityElement::Build()
 
   // field
   BuildField();
+
+  BuildUserLimits();
+  AttachUserLimits();
 }
 
 void BDSCavityElement::BuildField()

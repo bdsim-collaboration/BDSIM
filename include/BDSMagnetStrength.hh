@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -30,12 +30,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Based on std::map, this class stores magnet strengths. 
  *
- * As there will be one of 
- * these for every magnet and they may in future have to go up to high order 
- * normal plus skew (~40 doubles), it is more efficient to only store the required
+ * As there will be one of these for every magnet and there are many parameters
+ * (e.g. up to ~40 doubles), it is more efficient to only store the required
  * parameters. A pure quadrupole has no need of k20s, but a multipole may do. A static
- * vector contains the possible magnet strength parameters that can be checked against.
- * If a parameter is not specified in the map, its value is return as 0.
+ * vector contains the allowed keys that can be checked against before setting
+ * the value. If a (valid) key is not specified in the map, its value is returned as 0.
  *
  * Angle in rad, Field in Geant4 units. k strengths as original (ie not converted to G4).
  * 
@@ -58,7 +57,7 @@ public:
   BDSMagnetStrength(){;}
 
   /// This constructor allows instantiation with a map of keys and values.
-  explicit BDSMagnetStrength(std::map<G4String, G4double> keyvalues);
+  explicit BDSMagnetStrength(const std::map<G4String, G4double>& keyvalues);
 
   ~BDSMagnetStrength(){;}
 
@@ -85,6 +84,9 @@ public:
 
   /// Accessor to all keys.
   static const std::vector<G4String>& AllKeys() {return keys;}
+  
+  /// Whether or not the supplied key is a valid magnet strength parameter.
+  static G4bool ValidKey(const G4String& key);
 
   /// Accessor to all units.
   static const std::map<G4String, unitsFactors>& UnitsAndFactors() {return unitsFactorsMap;}
@@ -107,6 +109,9 @@ public:
   /// Access a unit factor for a given key.
   static G4double Unit(const G4String& key);
   
+  /// Whether a key has been set.
+  G4bool KeyHasBeenSet(const G4String& key) const;
+  
   ///@{ Iterator mechanics.
   typedef StrengthMap::iterator       iterator;
   typedef StrengthMap::const_iterator const_iterator;
@@ -118,9 +123,6 @@ public:
   ///@}
   
 private:
-  /// Whether or not the supplied key is a valid magnet strength parameter.
-  static G4bool ValidKey(const G4String& key);
-
   /// Accessor similar to [] but without linear search through keys to check validity.
   /// for fast internal use.
   const G4double& GetValue(const G4String& key) const;

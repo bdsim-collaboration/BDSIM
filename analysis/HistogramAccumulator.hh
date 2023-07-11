@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -60,6 +60,13 @@ public:
   /// Default constructor only for ROOT reflexivity - not intended for use.
   HistogramAccumulator();
   
+  /// Construct Accumulator based on another histogram of 1,2, or 3 dimensions.
+  /// Inspects the TH1 (ie base class) instance to get the number of dimensions
+  /// then uses the next constructor.
+  HistogramAccumulator(TH1* baseHistogram,
+		       const std::string& resultHistNameIn,
+		       const std::string& resultHistTitleIn);
+  
   /// Construct accumulator based on another histogram of 1,2 or 3 dimensions.
   /// Note, the result name must be different from that of baseHistogram if
   /// baseHistogram exists in the currently open file.
@@ -75,7 +82,7 @@ public:
   /// Loop over the bins in a histogram and accumulate that bin from a new
   /// histogram ("newValue"). newValue is assumed to be the exact same as
   /// the baseHistogram the instance of this class was constructed with.
-  virtual void Accumulate(TH1* newValue);
+  virtual void Accumulate(TH1* newValue, bool warnAboutZeroEntries = false);
 
   /// Write the result to the result histogram. Calculate the standard error
   /// on the mean from the variance for the error in each bin.
@@ -83,6 +90,13 @@ public:
 
   /// Accessor.
   inline TH1* Result() const {return result;}
+
+  /// Permit the number of recorded entries to be incremented with zero values,
+  /// ie just increment n.
+  inline void AddNEmptyEntries(unsigned long i){n += i;}
+  
+  /// Access currently accumulated number of entries.
+  inline unsigned long N() const {return n;}
 
 protected:
   /// Accumulate a single value into the online mean and variance histograms.

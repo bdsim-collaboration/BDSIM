@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -36,6 +36,8 @@ class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
 class BDSOutputROOTEventLossWorld;
+class BDSOutputROOTEventSamplerC;
+class BDSOutputROOTEventSamplerS;
 class BDSOutputROOTEventTrajectory;
 
 /**
@@ -65,7 +67,7 @@ public:
   BDSOutputROOTEventLoss*            GetLossTunnel()       {return ElossTunnel;}
   BDSOutputROOTEventLossWorld*       GetLossWorld()        {return ElossWorld;}
   BDSOutputROOTEventLossWorld*       GetLossWorldContents(){return ElossWorldContents;}
-  BDSOutputROOTEventLossWorld*       GetLossworldExit()    {return ElossWorldExit;}
+  BDSOutputROOTEventLossWorld*       GetLossWorldExit()    {return ElossWorldExit;}
   BDSOutputROOTEventLoss*            GetPrimaryFirstHit()  {return PrimaryFirstHit;}
   BDSOutputROOTEventLoss*            GetPrimaryLastHit()   {return PrimaryLastHit;}
   BDSOutputROOTEventLoss*            GetTunnelHit()        {return TunnelHit;}
@@ -83,11 +85,17 @@ public:
 #else
   BDSOutputROOTEventSampler<float>*  GetSampler(int index);
 #endif
+  BDSOutputROOTEventSamplerC*        GetSamplerC(const std::string& name);
+  BDSOutputROOTEventSamplerC*        GetSamplerC(int index);
+  BDSOutputROOTEventSamplerS*        GetSamplerS(const std::string& name);
+  BDSOutputROOTEventSamplerS*        GetSamplerS(int index);
   BDSOutputROOTEventAperture*        GetAperture() {return ApertureImpacts;}
   BDSOutputROOTEventCollimator*      GetCollimator(const std::string& name);
   BDSOutputROOTEventCollimator*      GetCollimator(int index);
   int                                DataVersion() const {return dataVersion;}
   const std::vector<std::string>&    GetSamplerNames() const {return samplerNames;}
+  const std::vector<std::string>&    GetSamplerCylinderNames() const {return samplerCNames;}
+  const std::vector<std::string>&    GetSamplerSphereNames() const {return samplerSNames;}
   const std::vector<std::string>&    GetCollimatorNames() const {return collimatorNames;}
   /// @}
 
@@ -104,10 +112,12 @@ public:
   /// Set the branch addresses to address the contents of the file. The vector
   /// of sampler names is used to turn only the samplers required. 
   void SetBranchAddress(TTree* t,
-			const RBDS::VectorString* samplerNames     = nullptr,
-			bool                      allBranchesOn    = false,
-			const RBDS::VectorString* branchesToTurnOn = nullptr,
-			const RBDS::VectorString* collimatorNames  = nullptr);
+			const RBDS::VectorString* samplerNames      = nullptr,
+			bool                      allBranchesOn     = false,
+			const RBDS::VectorString* branchesToTurnOn  = nullptr,
+			const RBDS::VectorString* collimatorNamesIn = nullptr,
+			const RBDS::VectorString* samplerCNamesIn  = nullptr,
+			const RBDS::VectorString* samplerSNamesIn  = nullptr);
 
   /// @{ Local variable ROOT data is mapped to.
 #ifdef __ROOTDOUBLE__
@@ -131,6 +141,8 @@ public:
 #else
   std::vector<BDSOutputROOTEventSampler<float>*>  Samplers;
 #endif
+  std::vector<BDSOutputROOTEventSamplerC*> SamplersC;
+  std::vector<BDSOutputROOTEventSamplerS*> SamplersS;
   BDSOutputROOTEventHistograms* Histos;
   BDSOutputROOTEventInfo*       Summary;
   std::vector<BDSOutputROOTEventCollimator*> collimators;
@@ -140,14 +152,22 @@ public:
   BDSOutputROOTEventAperture*   ApertureImpacts;
 
   std::vector<std::string> samplerNames;
+  std::vector<std::string> samplerCNames;
+  std::vector<std::string> samplerSNames;
 #ifdef __ROOTDOUBLE__
   std::map<std::string, BDSOutputROOTEventSampler<double>* > samplerMap;
 #else
   std::map<std::string, BDSOutputROOTEventSampler<float>* >  samplerMap;
 #endif
+  std::map<std::string, BDSOutputROOTEventSamplerC*> samplerCMap;
+  std::map<std::string, BDSOutputROOTEventSamplerS*> samplerSMap;
 
   std::vector<std::string> collimatorNames;
   std::map<std::string, BDSOutputROOTEventCollimator*> collimatorMap;
+
+  /// Relink samplers - i.e. set branch address again in case they might
+  /// have changed in memory location by adding another.
+  void RelinkSamplers();
 
   /// Utility method.
   RBDS::VectorString RemoveDuplicates(const RBDS::VectorString& namesIn) const;
@@ -166,17 +186,18 @@ private:
   /// @{ Utility function to avoid repetition of code.
   void SetBranchAddressCollimators(TTree* t,
 				   const RBDS::VectorString* collimatorNames);
-  void SetBranchAddressCollimatorSingle(TTree* t,
-					const std::string& name,
-					int i);
+  Int_t SetBranchAddressCollimatorSingle(TTree* t,
+					 const std::string& name,
+					 int i);
   /// @}
   
-  bool debug           = false;
-  bool processSamplers = false;
-  int  dataVersion     = 0;
-  bool usePrimaries    = false;
+  TTree* tree;
+  bool debug;
+  bool processSamplers;
+  int  dataVersion;
+  bool usePrimaries;
 
-  ClassDef(Event, 2);
+  ClassDef(Event, 3);
 };
 
 #endif
