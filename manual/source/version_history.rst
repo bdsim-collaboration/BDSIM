@@ -190,6 +190,7 @@ New Features
   be used alone to store only the single total energy deposition (including weights) in the world and
   world contents (in case of an externally provided world volume) without storing all the individual
   hits that would use a lot of disk space.
+* :code:`storeSamplerKineticEnergy` is now on by default.
 
 
 General Updates
