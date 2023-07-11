@@ -67,8 +67,8 @@ Config::Config(const std::string& inputFilePathIn,
   optionsString["outputfilename"] = ofn;
 
   // turn on merging only
-  branches["Event."].push_back("Histos");
-  branches["Run."].push_back("Histos");
+  branches["Event."].emplace_back("Histos");
+  branches["Run."].emplace_back("Histos");
   optionsBool["perentryevent"] = true;
 }
 
