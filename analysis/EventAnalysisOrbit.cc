@@ -41,12 +41,13 @@ EventAnalysisOrbit::EventAnalysisOrbit(Event*   eventIn,
 				       bool     perEntryAnalysis,
 				       bool     processSamplersIn,
 				       bool     debugIn,
+               bool     printOutIn,
 				       double   printModuloFraction,
 				       bool     emittanceOnTheFlyIn,
 				       long int eventStartIn,
 				       long int eventEndIn):
   EventAnalysis(eventIn, chainIn, perEntryAnalysis, processSamplersIn,
-		debugIn, printModuloFraction, emittanceOnTheFlyIn,
+		debugIn, printOutIn, printModuloFraction, emittanceOnTheFlyIn,
 		eventStartIn, eventEndIn)
 {;}
 

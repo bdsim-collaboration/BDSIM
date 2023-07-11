@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
                                                      config->PerEntryEvent(),
                                                      config->ProcessSamplers(),
                                                      debug,
+                                                     config->PrintOut(),
                                                      config->PrintModuloFraction(),
                                                      config->GetOptionBool("emittanceonthefly"));
       

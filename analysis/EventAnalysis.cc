@@ -44,6 +44,7 @@ ClassImp(EventAnalysis)
 EventAnalysis::EventAnalysis():
   Analysis("Event.", nullptr, "EventHistogramsMerged"),
   event(nullptr),
+  printOut(false),
   printModulo(1),
   processSamplers(false),
   emittanceOnTheFly(false),
@@ -57,6 +58,7 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
                              bool     perEntryAnalysis,
                              bool     processSamplersIn,
                              bool     debugIn,
+                             bool     printOutIn,
                              double   printModuloFraction,
                              bool     emittanceOnTheFlyIn,
                              long int eventStartIn,
@@ -64,6 +66,7 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
                              const std::string& primaryParticleName):
   Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
+  printOut(printOutIn),
   printModulo(1),
   processSamplers(processSamplersIn),
   emittanceOnTheFly(emittanceOnTheFlyIn),
@@ -130,7 +133,7 @@ void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
   printModulo = (int)std::ceil((double)nEventsToProcess * fraction);
   if (printModulo <= 0)
-    {printModulo = 1;}
+    {printModulo = 100;}
 }
 
 EventAnalysis::~EventAnalysis() noexcept
@@ -165,7 +168,7 @@ void EventAnalysis::Process()
 
       chain->GetEntry(i);
       // event analysis feedback
-      if (i % printModulo == 0)
+      if (i % printModulo == 0 && printOut)
         {
           std::cout << "\rEvent #" << std::setw(8) << i << " of " << entries;
           if (!debug)
