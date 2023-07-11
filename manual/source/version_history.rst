@@ -469,7 +469,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCollimator      | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventCollimatorInfo  | Y           | 2               | 1               |
+| BDSOutputROOTEventCollimatorInfo  | Y           | 2               | 2               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventCoords          | N           | 3               | 3               |
 +-----------------------------------+-------------+-----------------+-----------------+
@@ -508,10 +508,10 @@ Utilities
 These are no longer included directly with BDSIM but are available through pip. At the time
 of writing, the corresponding versions of each utility are:
 
-* pybdsim v3.1.1
-* pymadx v2.0.0
-* pymad8 v2.0.0
-* pytransport v2.0.0
+* pybdsim v3.3.2
+* pymadx v2.0.1
+* pymad8 v2.0.1
+* pytransport v2.0.1
 
 
 V1.6.0 - 2021 / 06 / 16
