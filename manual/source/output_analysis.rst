@@ -736,6 +736,9 @@ The following (case-insensitive) options may be specified in the top part.
 | OpticsFileName             | The name of a separate text file copy of the         |
 |                            | optical functions output                             |
 +----------------------------+------------------------------------------------------+
+| PrintOut                   | Whether there is any per-event print out at all. The |
+|                            | default is True.                                     |
++----------------------------+------------------------------------------------------+
 | PrintModuloFraction        | The fraction of events to print out (default 0.01).  |
 |                            | If you require print out for every event, set this   |
 |                            | to 0.                                                |

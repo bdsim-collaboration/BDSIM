@@ -130,7 +130,9 @@ public:
   inline std::string CalculateOpticalFunctionsFileName() const {return optionsString.at("opticslfilename");}
   inline bool   Debug() const                     {return optionsBool.at("debug");}
   inline bool   CalculateOpticalFunctions() const {return optionsBool.at("calculateoptics");}
+  inline bool   EmittanceOnTheFly() const         {return optionsBool.at("emittanceonthefly");}
   inline bool   ProcessSamplers() const           {return optionsBool.at("processsamplers");}
+  inline bool   PrintOut() const                  {return optionsBool.at("printout");}
   inline double PrintModuloFraction() const       {return optionsNumber.at("printmodulofraction");}
   /// @}
   /// @{ Whether per entry loading is needed. Alternative is only TTree->Draw().

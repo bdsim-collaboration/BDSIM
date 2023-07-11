@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
   try
     {
       evtAnalysis = new EventAnalysis(dl->GetEvent(), dl->GetEventTree(),
-                                      false, true, false, -1, emittanceOnFly, 0, -1, particleName);
+                                      false, true, false, true, -1, emittanceOnFly, 0, -1, particleName);
       evtAnalysis->Execute();
     }
   catch (const RBDSException& error)
