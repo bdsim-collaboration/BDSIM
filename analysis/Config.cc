@@ -48,8 +48,8 @@ Config* Config::instance = nullptr;
 std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Run.", "Event."};
 
 Config::Config(const std::string& inputFilePathIn,
-	       const std::string& outputFileNameIn,
-	       const std::string& defaultOutputFileSuffix):
+               const std::string& outputFileNameIn,
+               const std::string& defaultOutputFileSuffix):
   allBranchesActivated(false)
 {
   InitialiseOptions("");
@@ -73,8 +73,8 @@ Config::Config(const std::string& inputFilePathIn,
 }
 
 Config::Config(const std::string& fileNameIn,
-	       const std::string& inputFilePathIn,
-	       const std::string& outputFileNameIn,
+               const std::string& inputFilePathIn,
+               const std::string& outputFileNameIn,
                const std::string& defaultOutputFileSuffix):
   allBranchesActivated(false)
 {
@@ -88,11 +88,11 @@ Config::Config(const std::string& fileNameIn,
   else
     {
       if (optionsString["outputfilename"].empty())
-	{// no argument supplied and also no output name in input file - default to filename+_ana.root
-    std::string newOutputFilePath = RBDS::DefaultOutputName(optionsString["inputfilepath"], defaultOutputFileSuffix);
-    optionsString["outputfilename"] = newOutputFilePath;
-    std::cout << "Using default output file name with \"" << defaultOutputFileSuffix << "\" suffix  : " << optionsString.at("outputfilename") << std::endl;
-	}
+        {// no argument supplied and also no output name in input file - default to filename+_ana.root
+          std::string newOutputFilePath = RBDS::DefaultOutputName(optionsString["inputfilepath"], defaultOutputFileSuffix);
+          optionsString["outputfilename"] = newOutputFilePath;
+          std::cout << "Using default output file name with \"" << defaultOutputFileSuffix << "\" suffix  : " << optionsString.at("outputfilename") << std::endl;
+        }
     }
 }
 
@@ -103,7 +103,7 @@ Config::~Config()
   for (auto& nameDefs : histoDefs)
     {
       for (auto& histoDef : nameDefs.second)
-	{delete histoDef;}
+        {delete histoDef;}
     }
   for (auto def : eventHistoDefSetsSimple)
     {delete def;}
@@ -800,7 +800,7 @@ void Config::ParseSetting(const std::string& line)
       else if (optionsNumber.find(key) != optionsNumber.end())
         {optionsNumber[key] = std::stod(value);}
       else
-      {throw RBDSException("Invalid option \"" + key + "\"");}
+        {throw RBDSException("Invalid option \"" + key + "\"");}
     }
   else
     {throw RBDSException("Invalid option line \"" + line + "\"");}
