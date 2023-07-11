@@ -12,7 +12,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Restructure code into proper C++ libraries rather than just analysis and 'bdsim'.
 * Multiple beam line tracking.
 
-V1.7.0 - 2023 / 04 / 09
+V1.7.0 - 2023 / 07 / 11
 =======================
 
 * The input parser will now reject any duplicate object names (e.g. a field with the same name),
