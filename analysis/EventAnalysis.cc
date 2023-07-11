@@ -44,6 +44,7 @@ ClassImp(EventAnalysis)
 EventAnalysis::EventAnalysis():
   Analysis("Event.", nullptr, "EventHistogramsMerged"),
   event(nullptr),
+  printOut(false),
   printModulo(1),
   processSamplers(false),
   emittanceOnTheFly(false),
@@ -58,6 +59,7 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
                              bool     perEntryAnalysis,
                              bool     processSamplersIn,
                              bool     debugIn,
+                             bool     printOutIn,
                              double   printModuloFraction,
                              bool     emittanceOnTheFlyIn,
                              long int eventStartIn,
@@ -66,6 +68,7 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
                              double   normalisationFactorIn):
   Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
+  printOut(printOutIn),
   printModulo(1),
   processSamplers(processSamplersIn),
   emittanceOnTheFly(emittanceOnTheFlyIn),
@@ -74,6 +77,10 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
   nEventsToProcess(eventEndIn - eventStartIn),
   normalisationFactor(normalisationFactorIn)
 {
+  // check we get this right for print out normalisation
+  if (eventEndIn == -1)
+    {nEventsToProcess = (long int)chainIn->GetEntries();}
+
   if (processSamplers)
     {// Create sampler analyses if needed
       // Analyse the primary sampler in the optics too.
@@ -168,7 +175,7 @@ void EventAnalysis::Process()
 
       chain->GetEntry(i);
       // event analysis feedback
-      if (i % printModulo == 0)
+      if (i % printModulo == 0 && printOut)
         {
           std::cout << "\rEvent #" << std::setw(8) << i << " of " << entries;
           if (!debug)

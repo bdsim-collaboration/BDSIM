@@ -46,14 +46,15 @@ public:
 
   /// Constructor intended for use to construct an event analysis object.
   EventAnalysisOrbit(Event*   eventIn,
-		     TChain*  chain,
-		     bool     perEntryAnalysis    = true,
-		     bool     processSamplersIn   = true,
-		     bool     debugIn             = false,
-		     double   printModuloFraction = 0.01,
-		     bool     emittanceOnTheFlyIn = false,
-		     long int eventStartIn        = 0,
-		     long int eventEndIn          = -1);
+                     TChain*  chain,
+                     bool     perEntryAnalysis    = true,
+                     bool     processSamplersIn   = true,
+                     bool     debugIn             = false,
+                     bool     printOutIn          = true,
+                     double   printModuloFraction = 0.01,
+                     bool     emittanceOnTheFlyIn = false,
+                     long int eventStartIn        = 0,
+                     long int eventEndIn          = -1);
 
   virtual ~EventAnalysisOrbit(){;}
 
