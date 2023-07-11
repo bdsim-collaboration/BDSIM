@@ -74,6 +74,10 @@ EventAnalysis::EventAnalysis(Event*   eventIn,
   eventEnd(eventEndIn),
   nEventsToProcess(eventEndIn - eventStartIn)
 {
+  // check we get this right for print out normalisation
+  if (eventEndIn == -1)
+    {nEventsToProcess = (long int)chainIn->GetEntries();}
+
   if (processSamplers)
     {// Create sampler analyses if needed
       // Analyse the primary sampler in the optics too.
@@ -133,7 +137,7 @@ void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
   printModulo = (int)std::ceil((double)nEventsToProcess * fraction);
   if (printModulo <= 0)
-    {printModulo = 100;}
+    {printModulo = 1;}
 }
 
 EventAnalysis::~EventAnalysis() noexcept
