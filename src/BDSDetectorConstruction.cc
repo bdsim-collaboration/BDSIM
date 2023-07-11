@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -143,7 +143,10 @@ BDSDetectorConstruction::BDSDetectorConstruction(BDSComponentFactoryUser* userCo
       G4HadronicParameters::Instance()->SetEnableDiffDissociationForBGreater10(true);
     }
 #else
-    {BDS::Warning(__METHOD_NAME__, "\"restoreFTPFDiffractionForAGreater10\" is only available for Geant4 v11.1 and later");}
+    {
+      if (globals->RestoreFTPFDiffractionForAGreater10Set()) // shouldn't warn about default being on
+        {BDS::Warning(__METHOD_NAME__, "\"restoreFTPFDiffractionForAGreater10\" is only available for Geant4 v11.1 and later");}
+    }
 #endif
   
   BDSTrajectoryPoint::dEThresholdForScattering = globals->DEThresholdForScattering();
@@ -351,9 +354,9 @@ void BDSDetectorConstruction::BuildBeamlines()
   delete finishingPoint;
 #ifdef BDSDEBUG
   G4cout << "Registry size "
-	 << BDSAcceleratorComponentRegistry::Instance()->size() << G4endl;
+         << BDSAcceleratorComponentRegistry::Instance()->size() << G4endl;
   G4cout << "Parser beam line size "
-	 << BDSParser::Instance()->GetBeamline().size() << G4endl;
+         << BDSParser::Instance()->GetBeamline().size() << G4endl;
   BDSAcceleratorComponentRegistry::Instance()->PrintNumberOfEachType();
 #endif
 
@@ -361,7 +364,7 @@ void BDSDetectorConstruction::BuildBeamlines()
   if (!circular && mainBeamline.massWorld)
     {
       if (mainBeamline.massWorld->ElementAnglesSumToCircle())
-	{BDS::Warning("Total sum of all element angles is approximately 2*pi but the circular option was not specified, this simulation may run indefinitely");}
+        {BDS::Warning("Total sum of all element angles is approximately 2*pi but the circular option was not specified, this simulation may run indefinitely");}
     }
   
   // register the beam line in the holder class for the full model
@@ -373,7 +376,7 @@ void BDSDetectorConstruction::BuildBeamlines()
   for (const auto& placement : placements)
     {
       if (placement.sequence.empty())
-	{continue;} // no sequence specified -> just a placement
+        {continue;} // no sequence specified -> just a placement
       auto parserLine = BDSParser::Instance()->GetSequence(placement.sequence);
 
       // determine offset in world for extra beam line
@@ -435,13 +438,13 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
     {
       G4bool unsuitable = UnsuitableFirstElement(beamLine.begin());
       if (unsuitable)
-	{
-	  G4cerr << "The first element in the beam line is unsuitable for a circular "
-		 << "model as the first element will " << G4endl << "overlap with the "
-		 << "teleporter and terminator - the necessary mechanics for a circular "
-		 << "model in Geant4" << G4endl;
-	  throw BDSException(__METHOD_NAME__, "check construction for circular machine");
-	}
+        {
+          G4cerr << "The first element in the beam line is unsuitable for a circular "
+                 << "model as the first element will " << G4endl << "overlap with the "
+                 << "teleporter and terminator - the necessary mechanics for a circular "
+                 << "model in Geant4" << G4endl;
+          throw BDSException(__METHOD_NAME__, "check construction for circular machine");
+        }
     }
 
   if (beamLine.size() <= 1) // if an empty LINE it still has 1 item in it
@@ -453,24 +456,24 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       const GMAD::Element* prevElement = nullptr;
       auto prevIt = elementIt;
       while (prevIt != beamLine.begin())
-	{
-	  --prevIt;
-	  if (prevIt->isSpecial() == false && prevIt->l > BDSGlobalConstants::Instance()->ThinElementLength())
-	    {
-	      prevElement = &(*prevIt);
-	      break;
-	    }
-	}
+        {
+          --prevIt;
+          if (prevIt->isSpecial() == false && prevIt->l > BDSGlobalConstants::Instance()->ThinElementLength())
+            {
+              prevElement = &(*prevIt);
+              break;
+            }
+        }
 
       const GMAD::Element* nextElement = nullptr;
       auto nextIt = elementIt;
       ++nextIt;
       G4double nextElementInputFace = 0; // get poleface angle for next element whilst testing if next element exists
       while (nextIt != beamLine.end())
-	{
-	  if (nextIt->isSpecial() == false && nextIt->l > BDSGlobalConstants::Instance()->ThinElementLength())
-	    {
-	      nextElement = &(*nextIt);
+        {
+          if (nextIt->isSpecial() == false && nextIt->l > BDSGlobalConstants::Instance()->ThinElementLength())
+            {
+              nextElement = &(*nextIt);
           //rotated entrance face of the next element may modify the exit face of the current element.
           nextElementInputFace = nextElement->e1;
           break;

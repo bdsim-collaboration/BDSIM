@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -661,7 +661,8 @@ symdecl : VARIABLE '='
         {
           if(execute)
             {
-              std::cout << "WARNING redefinition of variable " << $1->GetName() << " with old value: " << $1->GetNumber() << std::endl;
+              std::cout << "WARNING redefinition of variable " << $1->GetName() << " (old value: " << $1->GetNumber()
+                        << ") on line " << GMAD::line_num << std::endl;
               $$ = $1;
             }
         }
@@ -669,7 +670,8 @@ symdecl : VARIABLE '='
         {
           if(execute)
             {
-              std::cout << "WARNING redefinition of variable " << $1->GetName() << " with old value: " << $1->GetString() << std::endl;
+              std::cout << "WARNING redefinition of variable " << $1->GetName() << " (old value: " << $1->GetString()
+                        << ") on line " << GMAD::line_num << std::endl;
               $$ = $1;
             }
         }
@@ -677,7 +679,7 @@ symdecl : VARIABLE '='
         {
           if(execute)
             {
-              std::cout << "WARNING redefinition of array variable " << $1->GetName() << std::endl;
+              std::cout << "WARNING redefinition of array variable " << $1->GetName() << " on line " << GMAD::line_num << std::endl;
               $$=$1;
             }
         }
