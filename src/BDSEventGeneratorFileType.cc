@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -19,10 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSEventGeneratorFileType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
 
 #include <map>
+#include <string>
 
 // dictionary for BDSEventGeneratorFileType
 template<>
@@ -47,17 +50,16 @@ BDSEventGeneratorFileType BDS::DetermineEventGeneratorFileType(G4String distrTyp
   types["treeroot"]     = BDSEventGeneratorFileType::treeroot;
   types["lhef"]         = BDSEventGeneratorFileType::lhef;
 
-  distrType.toLower();
+  distrType = BDS::LowerCase(distrType);
 
   auto result = types.find(distrType);
   if (result == types.end())
-    {
-      // it's not a valid key
-      G4cerr << __METHOD_NAME__ << distrType << " is not a valid event generator file format" << G4endl;
-      G4cout << "Available formats are:" << G4endl;
-      for (auto it : types)
-	{G4cout << "\"" << it.first << "\"" << G4endl;}
-      throw BDSException(__METHOD_NAME__, "can't determine event generator file type");
+    {// it's not a valid key
+      G4String msg = "\"" + distrType + "\" is not a valid event generator file format\n";
+      msg += "Available formats are:\n";
+      for (const auto& it : types)
+	{msg += "\"" + it.first + "\"\n";}
+      throw BDSException(__METHOD_NAME__, msg);
     }
   
 #ifdef BDSDEBUG

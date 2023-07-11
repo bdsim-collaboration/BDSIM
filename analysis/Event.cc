@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -29,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventLossWorld.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSOutputROOTEventSamplerC.hh"
+#include "BDSOutputROOTEventSamplerS.hh"
 
 #include <set>
 #include <vector>
@@ -38,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 ClassImp(Event)
 
 Event::Event():
+  tree(nullptr),
   debug(false),
   processSamplers(false),
   dataVersion(0),
@@ -49,9 +52,11 @@ Event::Event():
 Event::Event(bool debugIn,
 	     bool processSamplersIn,
 	     int  dataVersionIn):
+  tree(nullptr),
   debug(debugIn),
   processSamplers(processSamplersIn),
-  dataVersion(dataVersionIn)
+  dataVersion(dataVersionIn),
+  usePrimaries(false)
 {
   CommonCtor();
 }
@@ -74,6 +79,10 @@ Event::~Event()
   delete Info;
   delete ApertureImpacts;
   for (auto s : Samplers)
+    {delete s;}
+  for (auto s : SamplersC)
+    {delete s;}
+  for (auto s : SamplersS)
     {delete s;}
   for (auto c : collimators)
     {delete c;}
@@ -113,7 +122,29 @@ BDSOutputROOTEventSampler<float>* Event::GetSampler(const std::string& name)
   if (found != samplerMap.end())
     {return found->second;}
   else
-    {return nullptr;}
+    {
+      if (tree)
+	{
+	  auto branch = tree->GetBranch(name.c_str());
+	  if (!branch)
+	    {return nullptr;}
+	  else
+	    {
+#ifdef __ROOTDOUBLE__
+	      Samplers.push_back(new BDSOutputROOTEventSampler<double>(name));
+#else
+	      Samplers.push_back(new BDSOutputROOTEventSampler<float>(name));
+#endif
+	      samplerNames.push_back(name);  // cache the name in a vector
+	      samplerMap[name] = Samplers.back();// cache the sampler in a map
+	      tree->SetBranchStatus((name+"*").c_str(), true);
+	      RelinkSamplers();
+	      return Samplers.back();
+	    }
+	}
+      else
+	{return nullptr;}
+    }
 }
 
 #ifdef __ROOTDOUBLE__
@@ -122,10 +153,29 @@ BDSOutputROOTEventSampler<double>* Event::GetSampler(int index)
 BDSOutputROOTEventSampler<float>* Event::GetSampler(int index)
 #endif
 {
-  if (index >= (int) Samplers.size())
-    {return nullptr;}
-  else
-    {return Samplers[index];}
+  return index >= (int) Samplers.size() ? nullptr : Samplers[index];
+}
+
+BDSOutputROOTEventSamplerC* Event::GetSamplerC(const std::string& name)
+{
+  auto found = samplerCMap.find(name);
+  return found != samplerCMap.end() ? found->second : nullptr;
+}
+
+BDSOutputROOTEventSamplerC* Event::GetSamplerC(int index)
+{
+  return index >= (int) SamplersC.size() ? nullptr : SamplersC[index];
+}
+
+BDSOutputROOTEventSamplerS* Event::GetSamplerS(const std::string& name)
+{
+  auto found = samplerSMap.find(name);
+  return found != samplerSMap.end() ? found->second : nullptr;
+}
+
+BDSOutputROOTEventSamplerS* Event::GetSamplerS(int index)
+{
+  return index >= (int) SamplersS.size() ? nullptr : SamplersS[index];
 }
 
 BDSOutputROOTEventCollimator* Event::GetCollimator(const std::string& name)
@@ -157,11 +207,15 @@ void Event::SetBranchAddress(TTree* t,
 			     const RBDS::VectorString* samplerNamesIn,
 			     bool                      allBranchesOn,
 			     const RBDS::VectorString* branchesToTurnOn,
-			     const RBDS::VectorString* collimatorNamesIn)
+			     const RBDS::VectorString* collimatorNamesIn,
+			     const RBDS::VectorString* samplerCNamesIn,
+			     const RBDS::VectorString* samplerSNamesIn)
 {
-  if(debug)
+  if (debug)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
 
+  tree = t; // cache tree used in case we update samplers later
+  
   // turn off all branches by default and build up by turning things back on
   // loop speed is dependent on how much we load each event -> only what we need
   t->SetBranchStatus("*", false);
@@ -242,46 +296,52 @@ void Event::SetBranchAddress(TTree* t,
       // of the object type and not the base class (say TObject) so there's no
       // way to easily map these -> ifs
       // special case first, then alphabetical as this is how they'll come from a set (optimisation)
+
+      // we record the return result of SetBranchAddress but don't test it - only
+      // for debugging purposes
+      Int_t addressSetResult = 0;
       if (name == "Primary")
 	{// special case
 	  usePrimaries = true;
-	  t->SetBranchAddress("Primary.", &Primary);
+	  addressSetResult = t->SetBranchAddress("Primary.", &Primary);
 	}
       else if (name == "ApertureImpacts")
-	{t->SetBranchAddress("ApertureImpacts.",  &ApertureImpacts);}
+	{addressSetResult = t->SetBranchAddress("ApertureImpacts.", &ApertureImpacts);}
       else if (name == "Eloss")
-	{t->SetBranchAddress("Eloss.",       &Eloss);}
+	{addressSetResult = t->SetBranchAddress("Eloss.",           &Eloss);}
       else if (name == "ElossVacuum")
-	{t->SetBranchAddress("ElossVacuum.", &ElossVacuum);}
+	{addressSetResult = t->SetBranchAddress("ElossVacuum.",     &ElossVacuum);}
       else if (name == "ElossTunnel")
-	{t->SetBranchAddress("ElossTunnel.", &ElossTunnel);}
+	{addressSetResult = t->SetBranchAddress("ElossTunnel.",     &ElossTunnel);}
       else if (name == "ElossWorld")
-	{t->SetBranchAddress("ElossWorld.",  &ElossWorld);}
+	{addressSetResult = t->SetBranchAddress("ElossWorld.",      &ElossWorld);}
       else if (name == "ElossWorldContents")
-	{t->SetBranchAddress("ElossWorldContents.", &ElossWorldContents);}
+	{addressSetResult = t->SetBranchAddress("ElossWorldContents.", &ElossWorldContents);}
       else if (name == "ElossWorldExit")
-	{t->SetBranchAddress("ElossWorldExit.",     &ElossWorldExit);}
+	{addressSetResult = t->SetBranchAddress("ElossWorldExit.",  &ElossWorldExit);}
       else if (name == "Histos")
-	{t->SetBranchAddress("Histos.",  &Histos);}
+	{addressSetResult = t->SetBranchAddress("Histos.",          &Histos);}
       else if (name == "Info")
-	{t->SetBranchAddress("Info.",    &Info);}
+	{addressSetResult = t->SetBranchAddress("Info.",            &Info);}
       else if (name == "Summary")
-	{t->SetBranchAddress("Summary.", &Summary);}
+	{addressSetResult = t->SetBranchAddress("Summary.",         &Summary);}
       else if (name == "PrimaryGlobal")
-	{t->SetBranchAddress("PrimaryGlobal.",   &PrimaryGlobal);}
+	{addressSetResult = t->SetBranchAddress("PrimaryGlobal.",   &PrimaryGlobal);}
       else if (name == "PrimaryFirstHit")
-	{t->SetBranchAddress("PrimaryFirstHit.", &PrimaryFirstHit);}
+	{addressSetResult = t->SetBranchAddress("PrimaryFirstHit.", &PrimaryFirstHit);}
       else if (name == "PrimaryLastHit")
-	{t->SetBranchAddress("PrimaryLastHit.",  &PrimaryLastHit);}
+	{addressSetResult = t->SetBranchAddress("PrimaryLastHit.",  &PrimaryLastHit);}
       else if (name == "TunnelHit")
-	{t->SetBranchAddress("TunnelHit.",       &TunnelHit);}
+	{addressSetResult = t->SetBranchAddress("TunnelHit.",       &TunnelHit);}
       else if (name == "Trajectory")
-	{t->SetBranchAddress("Trajectory.",      &Trajectory);}
+	{addressSetResult = t->SetBranchAddress("Trajectory.",      &Trajectory);}
       else if (name.substr(0,4) == "COLL")
 	{
-	  SetBranchAddressCollimatorSingle(t, name+".", ithCollimator);
+	  addressSetResult = SetBranchAddressCollimatorSingle(t, nameDot, ithCollimator);
 	  ithCollimator++;
 	}
+      if (debug) // has to be done inside loop
+        {std::cout << "SetBranchAddress result: " << addressSetResult << std::endl;}
     }
   
   if (debug)
@@ -302,7 +362,7 @@ void Event::SetBranchAddress(TTree* t,
       std::cout << "Event::SetBranchAddress> Info.               " << Info               << std::endl;
     }
 
-  if (processSamplers && samplerNamesIn)
+  if (processSamplers || samplerNamesIn)
     {
       unsigned int nrSamplers = samplerNamesIn->size();
       Samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
@@ -319,10 +379,54 @@ void Event::SetBranchAddress(TTree* t,
 	    
 	  t->SetBranchAddress(sampName.c_str(), &Samplers[i]);
 	  t->SetBranchStatus((sampName+"*").c_str(), true);
-	  if(debug)
+	  if (debug)
 	    {std::cout << "Event::SetBranchAddress> " << (*samplerNamesIn)[i] << " " << Samplers[i] << std::endl;}
 	}
     }
+  
+  if (processSamplers || samplerCNamesIn)
+    {
+      unsigned int nrSamplers = samplerCNamesIn->size();
+      SamplersC.resize(nrSamplers); // reserve and nominally instantiate instances.
+      for (unsigned int i=0; i < nrSamplers; ++i)
+	{
+	  const auto sampName = (*samplerCNamesIn)[i];
+	  SamplersC[i] = new BDSOutputROOTEventSamplerC(sampName);
+	  samplerCNames.push_back(sampName);  // cache the name in a vector
+	  samplerCMap[sampName] = SamplersC[i];// cache the sampler in a map
+	  
+	  t->SetBranchAddress(sampName.c_str(), &SamplersC[i]);
+	  t->SetBranchStatus((sampName+"*").c_str(), true);
+	  if (debug)
+	    {std::cout << "Event::SetBranchAddress> " << (*samplerCNamesIn)[i] << " " << SamplersC[i] << std::endl;}
+	}
+    }
+  
+  if (processSamplers || samplerSNamesIn)
+    {
+      unsigned int nrSamplers = samplerSNamesIn->size();
+      SamplersS.resize(nrSamplers); // reserve and nominally instantiate instances.
+      for (unsigned int i=0; i < nrSamplers; ++i)
+	{
+	  const auto sampName = (*samplerSNamesIn)[i];
+	  SamplersS[i] = new BDSOutputROOTEventSamplerS(sampName);
+	  samplerSNames.push_back(sampName);  // cache the name in a vector
+	  samplerSMap[sampName] = SamplersS[i];// cache the sampler in a map
+	  
+	  t->SetBranchAddress(sampName.c_str(), &SamplersC[i]);
+	  t->SetBranchStatus((sampName+"*").c_str(), true);
+	  if (debug)
+	    {std::cout << "Event::SetBranchAddress> " << (*samplerSNamesIn)[i] << " " << SamplersS[i] << std::endl;}
+	}
+    }
+}
+
+void Event::RelinkSamplers()
+{
+  if (!tree)
+    {throw RBDSException("Event::RelinkSamplers>", "no tree from set branch address");}
+  for (const auto& item : samplerMap)
+    {tree->SetBranchAddress(item.first.c_str(), (void*)&item.second);}
 }
 
 RBDS::VectorString Event::RemoveDuplicates(const RBDS::VectorString& namesIn) const
@@ -372,19 +476,21 @@ void Event::SetBranchAddressCollimators(TTree* t,
     }
 }
 
-void Event::SetBranchAddressCollimatorSingle(TTree* t,
-					     const std::string& name,
-					     int i)
+Int_t Event::SetBranchAddressCollimatorSingle(TTree* t,
+					      const std::string& name,
+					      int i)
 {
   // we must not push_back to collimators (vector) as this might expand it
   // and invalidate all addresses to pointers in that vector
   collimators[i] = new BDSOutputROOTEventCollimator();
   collimatorNames.push_back(name);
   collimatorMap[name] = collimators[i];
-  
-  t->SetBranchAddress(name.c_str(), &collimators[i]);
+
+  // record result purely for debugging purposes
+  Int_t addressSetResult = t->SetBranchAddress(name.c_str(), &collimators[i]);
   if (debug)
     {std::cout << "Event::SetBranchAddress> " << name << " " << collimators[i] << std::endl;}
+  return addressSetResult;
 }
 
 void Event::Fill(Event* other)
@@ -408,6 +514,12 @@ void Event::Fill(Event* other)
 
   for (unsigned long i = 0; i < Samplers.size(); i++)
     {Samplers[i]->Fill(other->Samplers[i]);}
+  
+  for (unsigned long i = 0; i < SamplersC.size(); i++)
+    {SamplersC[i]->Fill(other->SamplersC[i]);}
+  
+  for (unsigned long i = 0; i < SamplersS.size(); i++)
+    {SamplersS[i]->Fill(other->SamplersS[i]);}
 
   for (unsigned long i = 0; i < collimators.size(); i++)
     {collimators[i]->Fill(other->collimators[i]);}
@@ -439,11 +551,14 @@ void Event::FlushSamplers()
 {
   for (auto s : Samplers)
     {s->Flush();}
+  for (auto s : SamplersC)
+    {s->Flush();}
+  for (auto s : SamplersS)
+    {s->Flush();}
 }
 
 void Event::FlushCollimators()
 {
   for (auto c : collimators)
     {c->Flush();}
-
 }

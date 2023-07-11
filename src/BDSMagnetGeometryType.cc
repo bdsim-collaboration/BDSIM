@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -16,12 +16,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSMagnetGeometryType.hh"
 #include "BDSDebug.hh"
+#include "BDSException.hh"
+#include "BDSMagnetGeometryType.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
 
 #include <map>
+#include <string>
 
 // dictionary for BDSMagnetGeometryType
 template<>
@@ -41,7 +45,7 @@ std::map<BDSMagnetGeometryType, std::string>* BDSMagnetGeometryType::dictionary 
 BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
 {
   // If it contains a colon ":" it must be external geometry format format:filepath
-  if (geometryType.contains(":"))
+  if (BDS::StrContains(geometryType, ":"))
     {return BDSMagnetGeometryType::external;}
   
   std::map<G4String, BDSMagnetGeometryType> types;
@@ -55,18 +59,16 @@ BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
   types["lhcright"]        = BDSMagnetGeometryType::lhcright;
   types["format:filepath"] = BDSMagnetGeometryType::external;
 
-  geometryType.toLower();
+  geometryType = BDS::LowerCase(geometryType);
   
   auto result = types.find(geometryType);
   if (result == types.end())
-    {
-      // it's not a valid key
-      G4cout << __METHOD_NAME__ << "\"" << geometryType << "\" is not a valid geometry type" << G4endl;
-      
-      G4cout << "Available magnet geometry types are:" << G4endl;
-      for (auto& it : types)
-	{G4cout << "\"" << it.first << "\"" << G4endl;}
-      exit(1);
+    {// it's not a valid key
+      G4String msg = "\"" + geometryType + "\" is not a valid geometry type\n";
+      msg += "Available magnet geometry types are:\n";
+      for (const auto& it : types)
+	{msg += "\"" + it.first + "\"\n";}
+      throw BDSException(__METHOD_NAME__, msg);
     }
   
 #ifdef BDSDEBUG

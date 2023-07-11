@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -62,7 +62,7 @@ void BDSDump::BuildContainerLogicalVolume()
       containerSolid = new G4Tubs(name + "_solid",
 				  0,
 				  0.5*horizontalWidth,
-				  0.5*chordLength,
+				  0.5*chordLength - 2*lengthSafetyLarge,
 				  0,
 				  CLHEP::twopi);
     }
@@ -71,7 +71,7 @@ void BDSDump::BuildContainerLogicalVolume()
       containerSolid = new G4Box(name + "_solid",
 				 0.5*horizontalWidth,
 				 0.5*horizontalWidth,
-				 0.5*chordLength);
+				 0.5*chordLength - 2*lengthSafetyLarge);
     }
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,

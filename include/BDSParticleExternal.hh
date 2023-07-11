@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -39,7 +39,7 @@ public:
 		      const BDSParticleCoordsFull& coordsIn,
 		      G4int                        externalParticleIDIn,
 		      G4int                        externalParentIDIn);
-  /// @{ Define copy, move and assignment constructor2 as this class owns the particleDefinition.
+  /// @{ Define copy, move and move-assignment constructor as this class owns the particleDefinition.
   BDSParticleExternal(const BDSParticleExternal& other);
   BDSParticleExternal(BDSParticleExternal&& other) noexcept;
   BDSParticleExternal& operator=(BDSParticleExternal&& other) noexcept;

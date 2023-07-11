@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -39,19 +39,19 @@ class G4LogicalVolume;
 class BDSGeometryExternal: public BDSGeometryComponent
 {
 public:
+  /// No default constructor
+  BDSGeometryExternal() = delete;
   /// Use constructors of BDSGeometryComponent
   using BDSGeometryComponent::BDSGeometryComponent;
 
   virtual ~BDSGeometryExternal(){;}
 
   /// Register a set of volumes to be identified as vacuum volumes for the BDSAcceleratorComponent.
-  void RegisterVacuumVolumes(const std::set<G4LogicalVolume*> vacuumVolumesIn){vacuumVolumes = vacuumVolumesIn;}
+  void RegisterVacuumVolumes(const std::set<G4LogicalVolume*>& vacuumVolumesIn){vacuumVolumes = vacuumVolumesIn;}
   /// Access the vacuum volumes.
   const std::set<G4LogicalVolume*>& VacuumVolumes() const {return vacuumVolumes;}
-private:
-  /// No default constructor
-  BDSGeometryExternal() = delete;
 
+private:
   std::set<G4LogicalVolume*> vacuumVolumes;
 };
 

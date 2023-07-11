@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <cstring>
 #include <iostream>
+#include <list>
 #include <string>
   
   using namespace GMAD;
@@ -53,6 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
     bool execute = true;
     int element_count = -1; // for samplers , ranges etc. -1 means add to all
     ElementType element_type = ElementType::_NONE; // for samplers, ranges etc.
+    std::list<int>* samplerPartIDList = nullptr;
 
     /// helper method for undeclared variables
     void undeclaredVariable(std::string s)
@@ -92,9 +94,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %token <ival> SOLENOID RCOL JCOL ECOL LINE LASER TRANSFORM3D MUONSPOILER MUSPOILER
 %token <ival> SHIELD DEGRADER GAP CRYSTALCOL WIRESCANNER
 %token <ival> VKICKER HKICKER KICKER TKICKER THINRMATRIX PARALLELTRANSPORTER
-%token <ival> RMATRIX UNDULATOR USERCOMPONENT DUMP
+%token <ival> RMATRIX UNDULATOR USERCOMPONENT DUMP CT TARGET RFX RFY
 %token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR SAMPLERPLACEMENT
-%token SCORER SCORERMESH BLM
+%token SCORER SCORERMESH BLM MODULATOR
 %token CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL APERTURE
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
@@ -106,7 +108,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %type <str> use_parameters
 %type <ival> component component_with_params newinstance
 %type <str> sample_options
-%type <str> csample_options
 %type <str> paramassign string
 
 /* printout format for debug output */
@@ -207,7 +208,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : atom" << std::endl;
              Parser::Instance()->SetValue<Atom>("name",*($1));
-             Parser::Instance()->Add<Atom>();
+             Parser::Instance()->Add<Atom>(true, "atom");
          }
      }
      | VARIABLE ':' material
@@ -215,7 +216,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : material" << std::endl;
              Parser::Instance()->SetValue<Material>("name",*($1));
-             Parser::Instance()->Add<Material>();
+             Parser::Instance()->Add<Material>(true, "material");
          }
      }
      | VARIABLE ':' tunnel
@@ -223,7 +224,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : tunnel" << std::endl;
              Parser::Instance()->SetValue<Tunnel>("name",*($1));
-             Parser::Instance()->Add<Tunnel>();
+             Parser::Instance()->Add<Tunnel>(true, "tunnel");
          }
      }
      | VARIABLE ':' region
@@ -231,7 +232,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : region" << std::endl;
              Parser::Instance()->SetValue<Region>("name",*($1));
-             Parser::Instance()->Add<Region>();
+             Parser::Instance()->Add<Region>(true, "region");
          }
      }
      | VARIABLE ':' placement
@@ -239,7 +240,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : placement" << std::endl;
              Parser::Instance()->SetValue<Placement>("name",*($1));
-             Parser::Instance()->Add<Placement>();
+             Parser::Instance()->Add<Placement>(true, "placement");
          }
      }
      | VARIABLE ':' scorer
@@ -247,7 +248,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : scorer" << std::endl;
              Parser::Instance()->SetValue<Scorer>("name",*($1));
-             Parser::Instance()->Add<Scorer>();
+             Parser::Instance()->Add<Scorer>(true, "scorer");
          }
      }
      | VARIABLE ':' scorermesh
@@ -255,7 +256,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : scorermesh" << std::endl;
              Parser::Instance()->SetValue<ScorerMesh>("name",*($1));
-             Parser::Instance()->Add<ScorerMesh>();
+             Parser::Instance()->Add<ScorerMesh>(true, "scorermesh");
          }
      }
      | VARIABLE ':' samplerplacement
@@ -263,7 +264,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : samplerplacement" << std::endl;
              Parser::Instance()->SetValue<SamplerPlacement>("name",*($1));
-             Parser::Instance()->Add<SamplerPlacement>();
+             Parser::Instance()->Add<SamplerPlacement>(true, "samplerplacement");
          }
      }
      | VARIABLE ':' blm
@@ -271,7 +272,15 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : blm" << std::endl;
              Parser::Instance()->SetValue<BLMPlacement>("name",*($1));
-             Parser::Instance()->Add<BLMPlacement>();
+             Parser::Instance()->Add<BLMPlacement>(true, "blm");
+         }
+     }
+     | VARIABLE ':' modulator
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : modulator" << std::endl;
+             Parser::Instance()->SetValue<Modulator>("name", *($1));
+             Parser::Instance()->Add<Modulator>(true, "modulator");
          }
      }
      | VARIABLE ':' query
@@ -279,7 +288,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : query" << std::endl;
              Parser::Instance()->SetValue<Query>("name", *($1));
-             Parser::Instance()->Add<Query>();
+             Parser::Instance()->Add<Query>(true, "query");
          }
      }
       | VARIABLE ':' newcolour
@@ -287,7 +296,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : newcolour" << std::endl;
              Parser::Instance()->SetValue<NewColour>("name", *($1));
-             Parser::Instance()->Add<NewColour>();
+             Parser::Instance()->Add<NewColour>(true, "newcolour");
          }
      }
       | VARIABLE ':' crystal
@@ -295,7 +304,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : crystal" << std::endl;
              Parser::Instance()->SetValue<Crystal>("name", *($1));
-             Parser::Instance()->Add<Crystal>();
+             Parser::Instance()->Add<Crystal>(true, "crystal");
          }
      }
      | VARIABLE ':' field
@@ -303,7 +312,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : field" << std::endl;
              Parser::Instance()->SetValue<Field>("name", *($1));
-             Parser::Instance()->Add<Field>();
+             Parser::Instance()->Add<Field>(true, "field");
          }
      }
      | VARIABLE ':' cavitymodel
@@ -311,7 +320,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : cavitymodel" << std::endl;
              Parser::Instance()->SetValue<CavityModel>("name",*($1));
-             Parser::Instance()->Add<CavityModel>();
+             Parser::Instance()->Add<CavityModel>(true, "cavitymodel");
          }
      }
      | VARIABLE ':' xsecbias
@@ -319,7 +328,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : xsecbias" << std::endl;
              Parser::Instance()->SetValue<PhysicsBiasing>("name",*($1));
-             Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
+             Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>(true,"xsecbias");
          }
      }
      | VARIABLE ':' aperture
@@ -327,7 +336,7 @@ decl : VARIABLE ':' component_with_params
          if(execute) {
              if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : aperture" << std::endl;
              Parser::Instance()->SetValue<Aperture>("name",*($1));
-             Parser::Instance()->Add<Aperture>();
+             Parser::Instance()->Add<Aperture>(true, "aperture");
          }
      }
      | VARIABLE ':' component
@@ -393,6 +402,10 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | UNDULATOR   {$$=static_cast<int>(ElementType::_UNDULATOR);}
           | USERCOMPONENT {$$=static_cast<int>(ElementType::_USERCOMPONENT);}
           | DUMP        {$$=static_cast<int>(ElementType::_DUMP);}
+          | CT          {$$=static_cast<int>(ElementType::_CT);}
+          | TARGET      {$$=static_cast<int>(ElementType::_TARGET);}
+          | RFX         {$$=static_cast<int>(ElementType::_RFX);}
+          | RFY         {$$=static_cast<int>(ElementType::_RFY);}
 
 atom        : ATOM        ',' atom_options
 material    : MATERIAL    ',' material_options
@@ -410,6 +423,7 @@ scorer      : SCORER      ',' scorer_options
 scorermesh  : SCORERMESH  ',' scorermesh_options
 aperture    : APERTURE    ',' aperture_options
 blm         : BLM         ',' blm_options
+modulator   : MODULATOR   ',' modulator_options
 
 // every object needs parameters
 object_noparams : MATERIAL
@@ -428,6 +442,7 @@ object_noparams : MATERIAL
                 | SCORERMESH
                 | APERTURE
                 | BLM
+                | MODULATOR
 
 newinstance : VARIABLE ',' parameters
             {
@@ -635,6 +650,9 @@ symdecl : VARIABLE '='
         {
           if(execute)
             {
+              std::string errorReason;
+              if (Parser::Instance()->InvalidSymbolName(*($1), errorReason))
+                {yyerror(errorReason.c_str());}
               Symtab *sp = Parser::Instance()->symcreate(*($1));
               $$ = sp;
             }
@@ -643,7 +661,8 @@ symdecl : VARIABLE '='
         {
           if(execute)
             {
-              std::cout << "WARNING redefinition of variable " << $1->GetName() << " with old value: " << $1->GetNumber() << std::endl;
+              std::cout << "WARNING redefinition of variable " << $1->GetName() << " (old value: " << $1->GetNumber()
+                        << ") on line " << GMAD::line_num << std::endl;
               $$ = $1;
             }
         }
@@ -651,7 +670,8 @@ symdecl : VARIABLE '='
         {
           if(execute)
             {
-              std::cout << "WARNING redefinition of variable " << $1->GetName() << " with old value: " << $1->GetString() << std::endl;
+              std::cout << "WARNING redefinition of variable " << $1->GetName() << " (old value: " << $1->GetString()
+                        << ") on line " << GMAD::line_num << std::endl;
               $$ = $1;
             }
         }
@@ -659,7 +679,7 @@ symdecl : VARIABLE '='
         {
           if(execute)
             {
-              std::cout << "WARNING redefinition of array variable " << $1->GetName() << std::endl;
+              std::cout << "WARNING redefinition of array variable " << $1->GetName() << " on line " << GMAD::line_num << std::endl;
               $$=$1;
             }
         }
@@ -765,17 +785,22 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
         | print OPTION { if(execute) Parser::Instance()->PrintOptions(); }
         | print VARIABLE
           {
-            if(execute) {
-              Symtab *sp = Parser::Instance()->symlook(*($2));
-              if (!sp) {
-                // variable not defined, maybe an element? (will exit if not)
-                const Element& element = Parser::Instance()->find_element(*($2));
-                element.print();
-              }
-              else {
-                sp->Print();
-              }
-            }
+            if(execute)
+	      {
+		Symtab* sp = Parser::Instance()->symlook(*($2));
+		if (!sp)
+		  {
+		    bool printedObjectOk = Parser::Instance()->TryPrintingObject(*($2));
+		    if (!printedObjectOk)
+		      {
+			// variable not defined, maybe an element? (will exit if not)
+			const Element& element = Parser::Instance()->find_element(*($2));
+			element.print();
+		      }
+		  }
+		else
+		  {sp->Print();}
+	      }
           }
         | print STR    { if(execute) std::cout << *($2) << std::endl;}
         | print symbol { if(execute) $2->Print();}
@@ -789,27 +814,29 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> SAMPLE" << std::endl;
-              Parser::Instance()->add_sampler(*($3), element_count, element_type);
+              Parser::Instance()->add_sampler(*($3), element_count, element_type, "plane", samplerPartIDList);
               element_count = -1;
               Parser::Instance()->ClearParams();
+              delete samplerPartIDList; samplerPartIDList = nullptr;
             }
         }
-        | CSAMPLE ',' csample_options // cylindrical sampler
+        | CSAMPLE ',' sample_options
         {
-          if(execute)
-            {
-              if(ECHO_GRAMMAR) std::cout << "command -> CSAMPLE" << std::endl;
-              Parser::Instance()->add_csampler(*($3), element_count, element_type);
-              element_count = -1;
-              Parser::Instance()->ClearParams();
-            }
-        }
+	  if(execute)
+	    {
+	      if(ECHO_GRAMMAR) std::cout << "command -> CSAMPLE" << std::endl;
+	      Parser::Instance()->add_sampler(*($3), element_count, element_type, "cylinder", samplerPartIDList);
+	      element_count = -1;
+	      Parser::Instance()->ClearParams();
+	      delete samplerPartIDList; samplerPartIDList = nullptr;
+	    }
+	}
         | ATOM ',' atom_options // atom
         {
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> ATOM" << std::endl;
-              Parser::Instance()->Add<Atom>();
+              Parser::Instance()->Add<Atom>(true, "atom");
             }
         }
         | MATERIAL ',' material_options // material
@@ -817,7 +844,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {  
               if(ECHO_GRAMMAR) std::cout << "command -> MATERIAL" << std::endl;
-              Parser::Instance()->Add<Material>();
+              Parser::Instance()->Add<Material>(true, "material");
             }
         }
         | TUNNEL ',' tunnel_options // tunnel
@@ -825,7 +852,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
                 if(ECHO_GRAMMAR) std::cout << "command -> TUNNEL" << std::endl;
-                Parser::Instance()->Add<Tunnel>();
+                Parser::Instance()->Add<Tunnel>(true, "tunnel");
             }
         }
         | REGION ',' region_options // region
@@ -833,7 +860,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {  
               if(ECHO_GRAMMAR) std::cout << "command -> REGION" << std::endl;
-              Parser::Instance()->Add<Region>();
+              Parser::Instance()->Add<Region>(true, "region");
             }
         }
         | PLACEMENT ',' placement_options // placement
@@ -841,7 +868,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> PLACEMENT" << std::endl;
-              Parser::Instance()->Add<Placement>();
+              Parser::Instance()->Add<Placement>(true, "placement");
             }
         }
         | SAMPLERPLACEMENT ',' samplerplacement_options // placement
@@ -849,7 +876,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> SAMPLERPLACEMENT" << std::endl;
-              Parser::Instance()->Add<SamplerPlacement>();
+              Parser::Instance()->Add<SamplerPlacement>(true, "samplerplacement");
             }
         }
         | SCORER ',' scorer_options // placement
@@ -857,7 +884,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> SCORER" << std::endl;
-              Parser::Instance()->Add<Scorer>();
+              Parser::Instance()->Add<Scorer>(true, "scorer");
             }
         }
         | SCORERMESH ',' scorermesh_options // placement
@@ -865,7 +892,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> SCORERMESH" << std::endl;
-              Parser::Instance()->Add<ScorerMesh>();
+              Parser::Instance()->Add<ScorerMesh>(true, "scorermesh");
             }
         }
         | BLM ',' blm_options // blm
@@ -873,7 +900,15 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> BLM" << std::endl;
-              Parser::Instance()->Add<BLMPlacement>();
+              Parser::Instance()->Add<BLMPlacement>(true, "blm");
+            }
+        }
+        | MODULATOR ',' modulator_options // modulator
+        {
+          if(execute)
+            {
+              if(ECHO_GRAMMAR) std::cout << "command -> MODULATOR" << std::endl;
+              Parser::Instance()->Add<Modulator>(true, "modulator");
             }
         }
         | NEWCOLOUR ',' colour_options // colour
@@ -881,7 +916,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> NEWCOLOUR" << std::endl;
-              Parser::Instance()->Add<NewColour>();
+              Parser::Instance()->Add<NewColour>(true, "newcolour");
             }
         }
         | CRYSTAL ',' crystal_options // crystal
@@ -889,7 +924,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> CRYSTAL" << std::endl;
-              Parser::Instance()->Add<Crystal>();
+              Parser::Instance()->Add<Crystal>(true, "crystal");
             }
         }
         | FIELD ',' field_options // field
@@ -897,7 +932,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> FIELD" << std::endl;
-              Parser::Instance()->Add<Field>();
+              Parser::Instance()->Add<Field>(true, "field");
             }
         }
         | CAVITYMODEL ',' cavitymodel_options // cavitymodel
@@ -905,7 +940,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> CAVITYMODEL" << std::endl;
-              Parser::Instance()->Add<CavityModel>();
+              Parser::Instance()->Add<CavityModel>(true, "cavitymodel");
             }
         }
         | QUERY ',' query_options // query
@@ -913,7 +948,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> QUERY" << std::endl;
-              Parser::Instance()->Add<Query>();
+              Parser::Instance()->Add<Query>(true, "query");
             }
         }
         | XSECBIAS ',' xsecbias_options // xsecbias
@@ -921,7 +956,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> XSECBIAS" << std::endl;
-              Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
+              Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>(true, "xsecbias");
             }
         }
         | APERTURE ',' aperture_options // aperture
@@ -929,7 +964,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> APERTURE" << std::endl;
-              Parser::Instance()->Add<Aperture>();
+              Parser::Instance()->Add<Aperture>(true, "aperture");
             }
         }
 
@@ -964,17 +999,24 @@ use_parameters :  VARIABLE
                    }
                }
 
-sample_options: RANGE '=' VARIABLE
+sample_options_extend : /* nothing */
+                      | ',' sample_options
+
+sample_options: RANGE '=' VARIABLE sample_options_extend
               {
                 if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << *($3) << std::endl;
                 if(execute) $$ = $3;
               }
-              | RANGE '=' VARIABLE '[' NUMBER ']'
+              | RANGE '=' VARIABLE '[' NUMBER ']' sample_options_extend
               {
                 if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << *($3) << " [" << $5 << "]" << std::endl;
-                if(execute) { $$ = $3; element_count = (int)$5; }
+                if(execute)
+                  {
+                    $$ = $3;
+                    element_count = (int)$5;
+                  }
               }
-              | ALL
+              | ALL sample_options_extend
               {
                 if(ECHO_GRAMMAR) std::cout << "sample_opt, all" << std::endl;
                 // -2: convention to add to all elements
@@ -986,30 +1028,27 @@ sample_options: RANGE '=' VARIABLE
                     element_type=ElementType::_NONE;
                   }
               }
-	            | component
+	      | component sample_options_extend
               {
-                if(ECHO_GRAMMAR) std::cout << "sample_opt, all " << typestr(static_cast<ElementType>($1)) << std::endl;
-                if(execute) {
-                  element_type = static_cast<ElementType>($1);
-                  element_count = -2;
-                  $$ = new std::string("");
-                }
+                if(ECHO_GRAMMAR) std::cout << "sample_opt, component " << typestr(static_cast<ElementType>($1)) << std::endl;
+                if(execute)
+                  {
+                    element_type = static_cast<ElementType>($1);
+                    element_count = -2;
+                    $$ = new std::string("");
+                  }
               }
-
-csample_options_extend : /* nothing */
-                       | ',' csample_options
-
-csample_options : paramassign '=' aexpr csample_options_extend
+              | paramassign '=' vecexpr sample_options_extend
+              {//not extend in this rule as it should come last
+                if(ECHO_GRAMMAR) std::cout << "sample_opt, vecexpr " << std::endl;
+                if(execute)
                   {
-                    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
-                    if(execute)
-                      Parser::Instance()->SetValue<Parameters>(*($1),$3);
+                    std::string parameterName = std::string(*$1);
+                    if (parameterName != "partID")
+                      {throw std::invalid_argument("invalid sampler parameter " + parameterName);}
+                    samplerPartIDList = Parser::Instance()->ArrayToList<int>($3);
                   }
-                | sample_options csample_options_extend
-                  {
-                    if(ECHO_GRAMMAR) std::cout << "csample_opt -> sopt, csopt" << std::endl;
-                    $$ = $1;
-                  }
+              }
 
 cavitymodel_options_extend : /* nothing */
                            | ',' cavitymodel_options
@@ -1060,7 +1099,20 @@ samplerplacement_options : paramassign '=' aexpr samplerplacement_options_extend
                     { if(execute) Parser::Instance()->SetValue<SamplerPlacement>((*$1),$3);}
                   | paramassign '=' string samplerplacement_options_extend
                     { if(execute) Parser::Instance()->SetValue<SamplerPlacement>(*$1,*$3);}
-
+                  | paramassign '=' vecexpr samplerplacement_options_extend
+                    {
+		      if(execute)
+                        {
+                          Parser::Instance()->SetValue<SamplerPlacement>(*($1),$3);
+                          if (*($1) == "partID")
+                          {// manually register the particle filter set
+                             std::list<int>* partIDSet = Parser::Instance()->ArrayToList<int>($3);
+                             int setID = Parser::Instance()->add_sampler_partIDSet(partIDSet);
+                             Parser::Instance()->GetGlobal<SamplerPlacement>().partIDSetID = setID;
+                             //Parser::Instance()->SetValue<SamplerPlacement>("partIDSetID", setID);
+                          }
+                        }
+                   }
 scorer_options_extend : /* nothing */
                   | ',' scorer_options
 
@@ -1085,6 +1137,14 @@ blm_options : paramassign '=' aexpr blm_options_extend
                     { if(execute) Parser::Instance()->SetValue<BLMPlacement>((*$1),$3);}
                   | paramassign '=' string blm_options_extend
                     { if(execute) Parser::Instance()->SetValue<BLMPlacement>(*$1,*$3);}
+
+modulator_options_extend : /* nothing */
+                         | ',' modulator_options
+
+modulator_options : paramassign '=' aexpr modulator_options_extend
+                    { if(execute) Parser::Instance()->SetValue<Modulator>((*$1),$3);}
+                  | paramassign '=' string modulator_options_extend
+                    { if(execute) Parser::Instance()->SetValue<Modulator>(*$1,*$3);}
 
 query_options_extend : /* nothing */
                      | ',' query_options
@@ -1176,6 +1236,12 @@ int yyerror(const char *s)
 {
   std::cout << s << " at line " << GMAD::line_num << " of file " << yyfilename << std::endl;
   std::cout << "symbol '" << yytext << "' unexpected (misspelt or semicolon forgotten?)" << std::endl;
+  exit(1);
+}
+
+int yyerror2(const char *s)
+{
+  std::cout << s << " at line " << GMAD::line_num << " of file " << yyfilename << std::endl;
   exit(1);
 }
 

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -19,10 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBLMType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
 
 #include <map>
+#include <string>
 
 // dictionary for BDSBLMType
 template<>
@@ -40,18 +43,16 @@ BDSBLMType BDS::DetermineBLMType(G4String blmType)
   types["cube"]     = BDSBLMType::cube;
   types["sphere"]   = BDSBLMType::sphere;
 
-  blmType.toLower();
+  blmType = BDS::LowerCase(blmType);
 
   auto result = types.find(blmType);
   if (result == types.end())
-    {
-      // it's not a valid key
-      G4cerr << __METHOD_NAME__ << "\"" << blmType << "\" is not a valid blmType" << G4endl;
-
-      G4cout << "Available geometry types are:" << G4endl;
-      for (auto it : types)
-	{G4cout << "\"" << it.first << "\"" << G4endl;}
-      throw BDSException(__METHOD_NAME__, "");
+    {// it's not a valid key
+      G4String msg = "\"" + blmType + "\" is not a valid blmType\n";
+      msg += "Available geometry types are:\n";
+      for (const auto& it : types)
+	{msg += "\"" + it.first + "\"\n";}
+      throw BDSException(__METHOD_NAME__, msg);
     }
   
 #ifdef BDSDEBUG

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -518,7 +518,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(const G4String&
   poleIntersectionSolid = new G4Tubs(name + "_yoke_intersection_solid", // name
 				     0,                                 // start radius
 				     yokeStartRadius - lengthSafetyLarge,
-				     length,  // long half length for unamibiguous intersection
+				     length,  // long half-length for unambiguous intersection
 				     0,                                 // start angle
 				     CLHEP::twopi);                     // sweep angle
   allSolids.insert(poleIntersectionSolid);
@@ -937,20 +937,8 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(G4bool    hStyle,
   // outer container full length -> length - 2*ls
   // full magnet container full length -> container length
   // if we have angled faces, make square faced solids longer for intersection.
-  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
-    {
-      // In the case of angled faces, calculate a length so that the straight solids
-      // used in intersection are long enough to reach the edges of the angled faces.
-      // Could simply do 2x length, but for short dipole sections with strongly angled
-      // faces this doesn't work. Calculate extent along z for each angled face. This
-      // is called the 'safe' length -> sLength
-      G4double hypotenuse = std::hypot(yokeWidth, yokeHalfHeight);
-      G4double dzIn  = std::tan(std::abs(angleIn))  * 1.2*hypotenuse; // 20% over estimation for safety
-      G4double dzOut = std::tan(std::abs(angleOut)) * 1.2*hypotenuse;
-      // take the longest of different estimations (2x and 1.5x + dZs)
-      sLength = std::max(2*length, 1.5*length + dzIn + dzOut);
-      containerSLength = sLength;
-    }
+  sLength = BDS::CalculateSafeAngledVolumeLength(angleIn, angleOut, length, yokeWidth, yokeHalfHeight);
+  containerSLength = sLength;
 
   intersectionRadius = std::hypot(0.5*poleWidth + yokeOverHang, poleHalfGap + poleHeight);
   // if finite thickness yoke (independent of overall size)
@@ -1065,8 +1053,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(const G4String&   
   G4double extXNeg = 0;
   G4double extYPos = 0;
   G4double extYNeg = 0;
-  // Typically we have a positive bend angle that (by convention) causes a
-  // bend to the -ve x direction in right handed coordinates. Also, typically,
+  // Typically, we have a positive bend angle that (by convention) causes a
+  // bend to the -ve x direction in right-handed coordinates. Also, typically,
   // a C shaped magnet has the yoke to the inside so there is an aperture for
   // any radiation to escape to the outside. Therefore, we build the yoke like this
   // and flip it if required. Points are done in clock wise order from the bottom left
@@ -1687,7 +1675,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(const G
   G4double inXO = poleHalfWidth - lsl;
 
   // create an ellipse with no angle, then shear it to match the angle
-  G4int nSegments = ceil((G4double)nSegmentsPerCircle / 4.0);
+  G4int nSegments = std::ceil((G4double)nSegmentsPerCircle / 4.0);
   G4double increment = CLHEP::halfpi/nSegments;
   G4double epWidth = buildVertically ? coilHeight : coilWidth;
   for (G4double t = -CLHEP::pi; t <= -CLHEP::halfpi + 1e-9; t += increment)

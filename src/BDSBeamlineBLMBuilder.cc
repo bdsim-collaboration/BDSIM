@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -69,7 +69,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
     }
 
   // we need to loop over all the blm definitions to work out the unique combinations of
-  // scorers that need to created. multiple scorers for a single blm ultimately have to be
+  // scorers that need to be created. multiple scorers for a single blm ultimately have to be
   // in one G4MultiFunctionalSD sensitive detector.
   std::vector<GMAD::Scorer> scorers = BDSParser::Instance()->GetScorers();
   // convert all the parser scorer definitions into recipes (including parameter checking)
@@ -85,7 +85,7 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
   std::map<std::string, std::pair<std::set<G4String>, G4String> >blmScoringInfo;
   for (const auto& bp : blmPlacements)
     {
-      std::vector<G4String> scorersForThisBLM = BDS::GetWordsFromString(G4String(bp.scoreQuantity));
+      std::vector<G4String> scorersForThisBLM = BDS::SplitOnWhiteSpace(G4String(bp.scoreQuantity));
       std::set<G4String> requiredScorers;
       for (const auto& name : scorersForThisBLM)
         {
@@ -125,6 +125,10 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Making unique SD " << combinedName << G4endl;
 #endif
+      // If the sensitive detector with a unique combination of scorers is constructed already, skip
+      if (sensitiveDetectors.count(combinedName) > 0)
+	{continue;}
+
       G4MultiFunctionalDetector* sd = new G4MultiFunctionalDetector("blm_"+combinedName);
       for (const auto& name : ssAndCombinedName.second.first)
 	{

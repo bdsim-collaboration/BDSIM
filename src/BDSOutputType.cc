@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -17,17 +17,22 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSException.hh"
 #include "BDSOutputType.hh"
+#include "BDSUtilities.hh"
 
-#include "globals.hh" // geant4 types  globals
+#include "globals.hh"
+#include "G4String.hh"
 
 #include <map>
+#include <string>
 
 template<>
 std::map<BDSOutputType,std::string>* BDSOutputType::dictionary=
-  new std::map<BDSOutputType,std::string>
-  ({{BDSOutputType::none,"none"}
-    ,{BDSOutputType::rootevent,"rootevent"}});
+  new std::map<BDSOutputType,std::string> ({
+      {BDSOutputType::none,"none"},
+      {BDSOutputType::rootevent,"rootevent"}
+    });
 
 BDSOutputType BDS::DetermineOutputType(G4String outputType)
 {
@@ -35,22 +40,20 @@ BDSOutputType BDS::DetermineOutputType(G4String outputType)
   types["none"]      = BDSOutputType::none;
   types["rootevent"] = BDSOutputType::rootevent;
 
-  outputType.toLower();
+  outputType = BDS::LowerCase(outputType);
 
   auto result = types.find(outputType);
   if (result == types.end())
-    {
-      G4cerr << __METHOD_NAME__ << "unknown output format \""
-	     << outputType << "\" please specify one of:" << G4endl;
-      G4cout << "Available output types are:" << G4endl;
-      for (auto keyvalue : types)
-	{G4cout << "\"" << keyvalue.first << "\"" << G4endl;}
-      exit(1);
+    {// it's not a valid key
+      G4String msg = "\"" + outputType + "\" is not a valid output format\n";
+      msg += "Available output formats are:\n";
+      for (const auto& it : types)
+	{msg += "\"" + it.first + "\"\n";}
+      throw BDSException(__METHOD_NAME__, msg);
     }
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "determined format \"" << outputType << "\" to be "
-	 << result->first << G4endl;
-#endif
   
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "determined format \"" << outputType << "\" to be " << result->first << G4endl;
+#endif
   return result->second;
 }

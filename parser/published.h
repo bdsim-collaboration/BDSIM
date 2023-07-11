@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "array.h"
 #include <list>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -44,10 +45,13 @@ namespace GMAD
   template<typename C>
     class Published
     {
+    public:
+      bool NameExists(const std::string& name) const {return allNames.count(name) > 0;}
+      
     protected:
       /// Make pointer to member from class C and type T with accessible with a name
       template<typename T>
-        void publish(const std::string& name, T C::*mp);
+      void publish(const std::string& name, T C::*mp);
       ///@{
       /// Set member with name of class instance to value.
       /// Throws std::runtime_error if not found
@@ -62,20 +66,23 @@ namespace GMAD
       
       /// Define AttributeMap of string and class member pointer
       template <typename T>
-        using AttributeMap = typename std::unordered_map<std::string, T C::*>;
+      using AttributeMap = typename std::unordered_map<std::string, T C::*>;
       
       /// Access method to static map for type T and class C
       template <typename T>
-       	AttributeMap<T>& attribute_map() const;
+     	AttributeMap<T>& attribute_map() const;
 
       /// Get method for class C
       template <typename T>
-        T get(const C* instance, const std::string& name) const;
+      T get(const C* instance, const std::string& name) const;
       
     private:
       /// Access to member pointer
       template<typename T>
-        T C::* member(const std::string& name) const;
+      T C::* member(const std::string& name) const;
+
+      /// A cache of all names defined through publish().
+      std::set<std::string> allNames;
     };
 
   // implementation for templated class needs to be in header
@@ -83,7 +90,10 @@ namespace GMAD
   template<typename C>
     template<typename T>
     void Published<C>::publish(const std::string& name, T C::*mp)
-    {attribute_map<T>()[name] = mp;}
+    {
+      attribute_map<T>()[name] = mp;
+      allNames.insert(name);
+    }
 
   template<typename C>
     void Published<C>::set(C* instance, const std::string& name, double value)

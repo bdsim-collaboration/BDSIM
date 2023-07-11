@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -16,11 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSDebug.hh"
 #include "BDSFieldClassType.hh"
-
-#include "globals.hh"
-#include "G4String.hh"
 
 #include <map>
 #include <string>
@@ -46,6 +42,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::bmap4d:
     case BDSFieldType::mokka:
     case BDSFieldType::solenoid:
+    case BDSFieldType::solenoidsheet:
     case BDSFieldType::dipole:
     case BDSFieldType::dipole3d:
     case BDSFieldType::quadrupole:
@@ -79,7 +76,9 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::emap2d:
     case BDSFieldType::emap3d:
     case BDSFieldType::emap4d:
-    case BDSFieldType::rf:
+    case BDSFieldType::rfconstantinx:
+    case BDSFieldType::rfconstantiny:
+    case BDSFieldType::rfconstantinz:
       {return BDSFieldClassType::electric;}
     case BDSFieldType::none:
     case BDSFieldType::ebfieldzero:
@@ -87,7 +86,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::ebmap2d:
     case BDSFieldType::ebmap3d:
     case BDSFieldType::ebmap4d:
-    case BDSFieldType::rfcavity:
+    case BDSFieldType::rfpillbox:
       {return BDSFieldClassType::electromagnetic;}
     case BDSFieldType::teleporter:
     case BDSFieldType::rmatrix:

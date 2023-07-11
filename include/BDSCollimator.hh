@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -37,10 +37,10 @@ class G4VSolid;
 class BDSCollimator: public BDSAcceleratorComponent
 {
 public:
-  BDSCollimator(G4String    name,
-		G4double    length,
-		G4double    horizontalWidth,
-		G4String    type,
+  BDSCollimator(const G4String& name,
+		G4double        length,
+		G4double        horizontalWidth,
+		const G4String& type,
 		G4Material* collimatorMaterial,
 		G4Material* vacuumMaterial,
 		G4double    xApertureIn    = 0,

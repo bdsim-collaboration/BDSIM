@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -23,11 +23,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSModularPhysicsList.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicalConstants.hh"
+#include "BDSPhysicsAnnihiToMuMu.hh"
 #include "BDSPhysicsCherenkov.hh"
 #include "BDSPhysicsCutsAndLimits.hh"
 #include "BDSPhysicsEMDissociation.hh"
+#include "BDSPhysicsGammaToMuMu.hh"
 #include "BDSPhysicsLaserWire.hh"
 #include "BDSPhysicsMuon.hh"
+#include "BDSPhysicsMuonInelastic.hh"
 #include "BDSPhysicsSynchRad.hh"
 #include "BDSPhysicsUtilities.hh"
 #include "BDSUtilities.hh"
@@ -41,6 +44,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
+#include "G4String.hh"
 #include "G4Version.hh"
 
 // physics processes / builders (assumed Geant4.10.0 and upwards)
@@ -105,6 +109,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #if G4VERSION_NUMBER > 1039
 #include "BDSPhysicsChannelling.hh"
+#include "BDSPhysicsRadioactivation.hh"
 #include "G4EmDNAPhysics.hh"
 #include "G4EmDNAPhysics_option1.hh"
 #include "G4EmDNAPhysics_option2.hh"
@@ -159,6 +164,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   SetVerboseLevel(1);
 
   physicsConstructors.insert(std::make_pair("all_particles",          &BDSModularPhysicsList::AllParticles));
+  physicsConstructors.insert(std::make_pair("annihi_to_mumu",         &BDSModularPhysicsList::AnnihiToMuMu));
   physicsConstructors.insert(std::make_pair("charge_exchange",        &BDSModularPhysicsList::ChargeExchange));
   physicsConstructors.insert(std::make_pair("cherenkov",              &BDSModularPhysicsList::Cherenkov));
   physicsConstructors.insert(std::make_pair("cuts_and_limits",        &BDSModularPhysicsList::CutsAndLimits));
@@ -178,6 +184,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   physicsConstructors.insert(std::make_pair("em_4",                   &BDSModularPhysicsList::Em4));
   physicsConstructors.insert(std::make_pair("ftfp_bert",              &BDSModularPhysicsList::FTFPBERT));
   physicsConstructors.insert(std::make_pair("ftfp_bert_hp",           &BDSModularPhysicsList::FTFPBERTHP));
+  physicsConstructors.insert(std::make_pair("gamma_to_mumu",          &BDSModularPhysicsList::GammaToMuMu));
   physicsConstructors.insert(std::make_pair("hadronic_elastic",       &BDSModularPhysicsList::HadronicElastic));
   physicsConstructors.insert(std::make_pair("hadronic_elastic_d",     &BDSModularPhysicsList::HadronicElasticD));
   physicsConstructors.insert(std::make_pair("hadronic_elastic_h",     &BDSModularPhysicsList::HadronicElasticH));
@@ -192,6 +199,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   physicsConstructors.insert(std::make_pair("ion_inclxx",             &BDSModularPhysicsList::IonINCLXX));
   physicsConstructors.insert(std::make_pair("lw",                     &BDSModularPhysicsList::LaserWire));
   physicsConstructors.insert(std::make_pair("muon",                   &BDSModularPhysicsList::Muon));
+  physicsConstructors.insert(std::make_pair("muon_inelastic",         &BDSModularPhysicsList::MuonInelastic));
   physicsConstructors.insert(std::make_pair("neutron_tracking_cut",   &BDSModularPhysicsList::NeutronTrackingCut));
   physicsConstructors.insert(std::make_pair("optical",                &BDSModularPhysicsList::Optical));
   physicsConstructors.insert(std::make_pair("qgsp_bert",              &BDSModularPhysicsList::QGSPBERT));
@@ -223,6 +231,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   physicsConstructors.insert(std::make_pair("dna_5",                  &BDSModularPhysicsList::DNA));
   physicsConstructors.insert(std::make_pair("dna_6",                  &BDSModularPhysicsList::DNA));
   physicsConstructors.insert(std::make_pair("dna_7",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("radioactivation",        &BDSModularPhysicsList::Radioactivation));
   physicsConstructors.insert(std::make_pair("shielding_lend",         &BDSModularPhysicsList::ShieldingLEND));
 #endif
 
@@ -244,7 +253,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   // prepare vector of valid names for searching when parsing physics list string
   for (const auto& constructor : physicsConstructors)
     {
-      physicsLists.push_back(constructor.first);
+      physicsLists.emplace_back(constructor.first);
       physicsActivated[constructor.first] = false;
     }
 
@@ -252,6 +261,9 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   // initialise all to empty vectors and specify only ones that have some incompatible physics lists
   for (const auto& kv : physicsConstructors)
     {incompatible.insert(std::make_pair(kv.first, std::vector<G4String>()));}
+  incompatible["annihi_to_mumu"] = {"em_extra"};
+  incompatible["muon"] = {"em_extra"};
+  incompatible["muon_inelastic"] = {"em_extra", "muon"};
   incompatible["em"]     = {"em_ss", "em_wvi", "em_1",   "em_2", "em_3", "em_4"};
   incompatible["em_ss"]  = {"em",    "em_wvi", "em_1",   "em_2", "em_3", "em_4"};
   incompatible["em_wvi"] = {"em",    "em_ss",  "em_1",   "em_2", "em_3", "em_4"};
@@ -260,8 +272,10 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   incompatible["em_3"]   = {"em",    "em_ss",  "em_wvi", "em_1", "em_2", "em_4"};
   incompatible["em_4"]   = {"em",    "em_ss",  "em_wvi", "em_1", "em_2", "em_3"};
   incompatible["em_livermore"] = {"em_livermore_polarised"};
+  incompatible["em_extra"] = {"muon", "muon_inelastic"};
   incompatible["ftfp_bert"]    = {"ftfp_bert_hp", "qgsp_bert", "qgsp_bert_hp", "qgsp_bic", "qgsp_bic_hp"};
   incompatible["ftfp_bert_hp"] = {"ftfp_bert",    "qgsp_bert", "qgsp_bert_hp", "qgsp_bic", "qgsp_bic_hp"};
+  incompatible["gamma_to_mumu"] = {"em_extra"};
   incompatible["hadronic_elastic"]      = {"hadronic_elastic_d", "hadronic_elastic_h", "hadronic_elastic_hp", "hadronic_elastic_lend", "hadronic_elastic_xs"};
   incompatible["hadronic_elastic_d"]    = {"hadronic_elastic",   "hadronic_elastic_h", "hadronic_elastic_hp", "hadronic_elastic_lend", "hadronic_elastic_xs"};
   incompatible["hadronic_elastic_h"]    = {"hadronic_elastic",   "hadronic_elastic_d", "hadronic_elastic_hp", "hadronic_elastic_lend", "hadronic_elastic_xs"};
@@ -344,22 +358,21 @@ void BDSModularPhysicsList::ParsePhysicsList(const G4String& physListName)
   for (const auto& physicsListName : physicsListNamesS)
     {
       G4String name = G4String(physicsListName); // convert string to G4String.
-      name.toLower(); // change to lower case - physics lists are case insensitive
-
+      name = BDS::LowerCase(name);
       temporaryName = name; // copy to temporary variable
       
       // search aliases
       auto result = aliasToOriginal.find(name);
       if (result != aliasToOriginal.end())
-	{
-	  G4cout << __METHOD_NAME__ << "alias \"" << name << "\" forwarding to \""
-		 << result->second << "\"" << G4endl;
-	  name = result->second; // overwrite name with the correct one
-	}
+        {
+          G4cout << __METHOD_NAME__ << "alias \"" << name << "\" forwarding to \""
+                 << result->second << "\"" << G4endl;
+          name = result->second; // overwrite name with the correct one
+        }
       physicsListNames.push_back(name);
     }
 
-  // seach for em physics (could be any order) - needed for different construction of muon phyiscs
+  // search for em physics (could be any order) - needed for different construction of muon phyiscs
   if (std::find(physicsListNames.begin(), physicsListNames.end(), "em") != physicsListNames.end())
     {emWillBeUsed = true;}
 
@@ -367,19 +380,19 @@ void BDSModularPhysicsList::ParsePhysicsList(const G4String& physListName)
     {
       auto result = physicsConstructors.find(name);
       if (result != physicsConstructors.end())
-	{
-	  G4cout << __METHOD_NAME__ << "Constructing \"" << result->first << "\" physics list" << G4endl;
-	  CheckIncompatiblePhysics(name);
-	  auto mem = result->second;
-	  (this->*mem)(); // call the function pointer in this instance of the class
-	}
+        {
+          G4cout << __METHOD_NAME__ << "Constructing \"" << result->first << "\" physics list" << G4endl;
+          CheckIncompatiblePhysics(name);
+          auto mem = result->second;
+          (this->*mem)(); // call the function pointer in this instance of the class
+        }
       else
-	{
-	  G4cout << "\"" << name << "\" is not a valid physics list. Available ones are: " << G4endl;
-	  for (const auto& listName : physicsLists)
-	    {G4cout << "\"" << listName << "\"" << G4endl;}
-	  throw BDSException(__METHOD_NAME__, "Invalid physics list.");
-	}
+        {
+          G4cout << "\"" << name << "\" is not a valid physics list. Available ones are: " << G4endl;
+          for (const auto& listName : physicsLists)
+            {G4cout << "\"" << listName << "\"" << G4endl;}
+          throw BDSException(__METHOD_NAME__, "Invalid physics list.");
+        }
     }
 
   //Always load cuts and limits.
@@ -421,6 +434,8 @@ void BDSModularPhysicsList::ConfigurePhysics()
 
 void BDSModularPhysicsList::ConfigureOptical()
 {
+  G4long maxPhotonsPerStep = globals->MaximumPhotonsPerStep();
+#if G4VERSION_NUMBER < 1079
   // cherenkov turned on with optical even if it's not on as separate list
   opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov, true);
   opticalPhysics->Configure(G4OpticalProcessIndex::kScintillation, true);                                ///< Scintillation process index
@@ -430,9 +445,20 @@ void BDSModularPhysicsList::ConfigureOptical()
   opticalPhysics->Configure(G4OpticalProcessIndex::kBoundary,      globals->TurnOnOpticalSurface());     ///< Boundary process index
   opticalPhysics->Configure(G4OpticalProcessIndex::kWLS,           true);                                ///< Wave Length Shifting process index
   opticalPhysics->SetScintillationYieldFactor(globals->ScintYieldFactor());
-  G4long maxPhotonsPerStep = globals->MaximumPhotonsPerStep();
   if (maxPhotonsPerStep >= 0)
     {opticalPhysics->SetMaxNumPhotonsPerStep(maxPhotonsPerStep);}
+#else
+  G4OpticalParameters* opticalParameters = G4OpticalParameters::Instance();
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kCerenkov), true);
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kScintillation), true);
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kAbsorption), globals->TurnOnOpticalAbsorption());
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kRayleigh), globals->TurnOnRayleighScattering());
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kMieHG), globals->TurnOnMieScattering());
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kBoundary), globals->TurnOnOpticalSurface());
+  opticalParameters->SetProcessActivation(G4OpticalProcessName(G4OpticalProcessIndex::kWLS), true);
+  if (maxPhotonsPerStep >= 0)
+    {opticalParameters->SetCerenkovMaxPhotonsPerStep((G4int)maxPhotonsPerStep);}
+#endif
 }
 
 void BDSModularPhysicsList::CheckIncompatiblePhysics(const G4String& singlePhysicsIn) const
@@ -443,14 +469,14 @@ void BDSModularPhysicsList::CheckIncompatiblePhysics(const G4String& singlePhysi
   for (const auto& key : forbidden)
     {// for each forbidden physics list, check if it's activated
       if (physicsActivated.at(key))
-	{
-	  G4cerr << __METHOD_NAME__ << "Incompatible physics list \"" << singlePhysicsIn
-		 << "\" being used with already used \"" << key << "\"" << G4endl;
-	  G4cout << "\"" << singlePhysicsIn << "\" cannot be used with the following:" << G4endl;
-	  for (const auto& v : forbidden)
-	    {G4cout << "\"" << v << "\"" << G4endl;}
-	  throw BDSException(__METHOD_NAME__, "Incompatible physics list.");
-	}
+        {
+          G4cerr << __METHOD_NAME__ << "Incompatible physics list \"" << singlePhysicsIn
+                 << "\" being used with already used \"" << key << "\"" << G4endl;
+          G4cout << "\"" << singlePhysicsIn << "\" cannot be used with the following:" << G4endl;
+          for (const auto& v : forbidden)
+            {G4cout << "\"" << v << "\"" << G4endl;}
+          throw BDSException(__METHOD_NAME__, "Incompatible physics list.");
+        }
     }
 }
 
@@ -461,6 +487,15 @@ void BDSModularPhysicsList::AllParticles()
   ConstructAllMesons();
   ConstructAllBaryons();
   ConstructAllIons();
+}
+
+void BDSModularPhysicsList::AnnihiToMuMu()
+{
+  if (!physicsActivated["annihi_to_mumu"])
+    {
+      constructors.push_back(new BDSPhysicsAnnihiToMuMu());
+      physicsActivated["annihi_to_mumu"] = true;
+    }
 }
 
 void BDSModularPhysicsList::ChargeExchange()
@@ -478,10 +513,10 @@ void BDSModularPhysicsList::Cherenkov()
   if (!physicsActivated["cherenkov"])
     {
       constructors.push_back(new BDSPhysicsCherenkov(BDSGlobalConstants::Instance()->MaximumPhotonsPerStep(),
-						     BDSGlobalConstants::Instance()->MaximumBetaChangePerStep()));
+                                                     BDSGlobalConstants::Instance()->MaximumBetaChangePerStep()));
       physicsActivated["cherenkov"] = true;
       if (!physicsActivated["em"])
-	{Em();} // requires em physics to work (found empirically)
+        {Em();} // requires em physics to work (found empirically)
     }
 }
 
@@ -489,7 +524,7 @@ void BDSModularPhysicsList::CutsAndLimits()
 {
   if (!physicsActivated["cuts_and_limits"])
     {
-      constructors.push_back(new BDSPhysicsCutsAndLimits());
+      constructors.push_back(new BDSPhysicsCutsAndLimits(BDSGlobalConstants::Instance()->ParticlesToExcludeFromCutsAsSet()));
       physicsActivated["cuts_and_limits"] = true;
     }
 }
@@ -555,11 +590,11 @@ void BDSModularPhysicsList::EmExtra()
 #if G4VERSION_NUMBER > 1039
       G4bool useLENDGammaNuclear = BDSGlobalConstants::Instance()->UseLENDGammaNuclear();
       if (useLENDGammaNuclear)
-	{
-	  BDS::CheckLowEnergyNeutronDataExists("em_extra");
-	  constructor->LENDGammaNuclear(true);
-	  G4cout << __METHOD_NAME__ << "G4EmExtraPhysics> LEND gamma nuclear : " << BDS::BoolToString(useMuonNuclear) << G4endl;
-	}
+        {
+          BDS::CheckLowEnergyNeutronDataExists("em_extra");
+          constructor->LENDGammaNuclear(true);
+          G4cout << __METHOD_NAME__ << "G4EmExtraPhysics> LEND gamma nuclear : " << BDS::BoolToString(useMuonNuclear) << G4endl;
+        }
       G4bool useElectroNuclear = BDSGlobalConstants::Instance()->UseElectroNuclear();
       constructor->ElectroNuclear(useElectroNuclear);
 #endif
@@ -597,7 +632,7 @@ void BDSModularPhysicsList::EmLowEP()
       physicsActivated["em_low_ep"] = true;
     }
 }
-							  
+
 void BDSModularPhysicsList::EmPenelope()
 {
   ConstructAllLeptons();
@@ -687,6 +722,15 @@ void BDSModularPhysicsList::FTFPBERTHP()
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());
       physicsActivated["ftfp_bert_hp"] = true;
+    }
+}
+
+void BDSModularPhysicsList::GammaToMuMu()
+{
+  if (!physicsActivated["gamma_to_mumu"])
+    {
+      constructors.push_back(new BDSPhysicsGammaToMuMu());
+      physicsActivated["gamma_to_mumu"] = true;
     }
 }
 
@@ -851,14 +895,23 @@ void BDSModularPhysicsList::LaserWire()
       constructors.push_back(new BDSPhysicsLaserWire());
       physicsActivated["lw"] = true;
     }
-}							  
-							  
+}
+
 void BDSModularPhysicsList::Muon()
 {
   if (!physicsActivated["muon"])
     {
       constructors.push_back(new BDSPhysicsMuon(emWillBeUsed));
       physicsActivated["muon"] = true;
+    }
+}
+
+void BDSModularPhysicsList::MuonInelastic()
+{
+  if (!physicsActivated["muon_inelastic"])
+    {
+      constructors.push_back(new BDSPhysicsMuonInelastic());
+      physicsActivated["muon_inelastic"] = true;
     }
 }
 
@@ -877,12 +930,12 @@ void BDSModularPhysicsList::NeutronTrackingCut()
       physicsActivated["neutron_tracking_cut"] = true;
     }
 }
-							  
+
 void BDSModularPhysicsList::Optical()
 {
   if (!physicsActivated["optical"])
     {
-      opticalPhysics = new G4OpticalPhysics();		  
+      opticalPhysics = new G4OpticalPhysics();
       constructors.push_back(opticalPhysics);
       physicsActivated["optical"] = true;
     }
@@ -1023,30 +1076,29 @@ void BDSModularPhysicsList::DNA()
   if (!physicsActivated["dna"])
     {
       // only one DNA physics list possible
-      if (temporaryName.contains("option"))
-	{
-	  if (temporaryName.contains("1"))
-	    {constructors.push_back(new G4EmDNAPhysics_option1());}
-	  if (temporaryName.contains("2"))
-	    {constructors.push_back(new G4EmDNAPhysics_option2());}
-	  if (temporaryName.contains("3"))
-	    {constructors.push_back(new G4EmDNAPhysics_option3());}
-	  if (temporaryName.contains("4"))
-	    {constructors.push_back(new G4EmDNAPhysics_option4());}
-	  if (temporaryName.contains("5"))
-	    {constructors.push_back(new G4EmDNAPhysics_option5());}
-	  if (temporaryName.contains("6"))
-	    {constructors.push_back(new G4EmDNAPhysics_option6());}
-	  if (temporaryName.contains("7"))
-	    {constructors.push_back(new G4EmDNAPhysics_option7());}
-	}
+      if (BDS::StrContains(temporaryName, "option"))
+        {
+          if (BDS::StrContains(temporaryName, "1"))
+            {constructors.push_back(new G4EmDNAPhysics_option1());}
+          if (BDS::StrContains(temporaryName, "2"))
+            {constructors.push_back(new G4EmDNAPhysics_option2());}
+          if (BDS::StrContains(temporaryName, "3"))
+            {constructors.push_back(new G4EmDNAPhysics_option3());}
+          if (BDS::StrContains(temporaryName, "4"))
+            {constructors.push_back(new G4EmDNAPhysics_option4());}
+          if (BDS::StrContains(temporaryName, "5"))
+            {constructors.push_back(new G4EmDNAPhysics_option5());}
+          if (BDS::StrContains(temporaryName, "6"))
+            {constructors.push_back(new G4EmDNAPhysics_option6());}
+          if (BDS::StrContains(temporaryName, "7"))
+            {constructors.push_back(new G4EmDNAPhysics_option7());}
+        }
       else
-	{constructors.push_back(new G4EmDNAPhysics());}
+        {constructors.push_back(new G4EmDNAPhysics());}
       
       physicsActivated["dna"] = true;
     }
 }
-
 
 void BDSModularPhysicsList::Channelling()
 {
@@ -1058,6 +1110,15 @@ void BDSModularPhysicsList::Channelling()
       constructors.push_back(new BDSPhysicsChannelling());
       physicsActivated["channelling"] = true;
     }
+}
+
+void BDSModularPhysicsList::Radioactivation()
+{
+  if (!physicsActivated["radioactivation"])
+  {
+    constructors.push_back(new BDSPhysicsRadioactivation());
+    physicsActivated["radioactivation"] = true;
+  }
 }
 
 void BDSModularPhysicsList::ShieldingLEND()

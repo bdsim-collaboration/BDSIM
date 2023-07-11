@@ -7,7 +7,7 @@
 # ROOT_LIBRARY_DIR    PATH to the library directory
 # ROOT_EXECUTABLE     executable for root
 
-MESSAGE(STATUS "Looking for ROOT...")
+MESSAGE(STATUS "Looking for ROOT")
 
 if (DEFINED ENV{ROOTSYS})
   set(ROOTSYS $ENV{ROOTSYS})
@@ -75,6 +75,17 @@ else()
     OUTPUT_VARIABLE ROOT_LIBRARY_DIR
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+  execute_process(
+          COMMAND ${ROOT_CONFIG_EXECUTABLE} --has-mathmore
+          OUTPUT_VARIABLE ROOT_HAS_MATHMORE
+          OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if (ROOT_HAS_MATHMORE STREQUAL "yes")
+    # string append or prepend doesn't seem to work yet again
+    # replace a known library name in the middle of the string with that plus the new one
+    STRING (REPLACE "-lMathCore" "-lMathCore -lMathMore" ROOT_LIBRARIES ${ROOT_LIBRARIES})
+    add_definitions("-DROOT_HAS_MATHMORE")
+  endif()
+
   # Make variables changeble to the advanced user
   mark_as_advanced(ROOT_CONFIG_EXECUTABLE)
 
@@ -110,6 +121,12 @@ removeCXXStandardFlags("${CMAKE_CXX_FLAGS}" CMAKE_CXX_FLAGS)
 
 # now remove any duplicates we have to keep things tidy
 removeDuplicateSubstring("${CMAKE_CXX_FLAGS}" $CMAKE_CXX_FLAGS)
+
+if (NOT USE_BOOST)
+  set(BOOSTINCLUDES "")
+else()
+  set(BOOSTINCLUDES "-I${Boost_INCLUDE_DIRS}")
+endif()
 
 # ROOT can be compiled with C++17 (or 14) and therefore BDSIM won't compile if it doesn't have
 # at least that standard, so we pick apart ROOT stuff to find out and update the standard

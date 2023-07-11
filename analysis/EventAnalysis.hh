@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -26,6 +26,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Rtypes.h" // for classdef
 
 class Event;
+class HistogramDefSet;
+class PerEntryHistogramSet;
 class SamplerAnalysis;
 class TChain;
 class TFile;
@@ -50,6 +52,7 @@ public:
 		bool     perEntryAnalysis    = true,
 		bool     processSamplersIn   = true,
 		bool     debugIn             = false,
+    bool     printOutIn          = true,
 		double   printModuloFraction = 0.01,
 		bool     emittanceOnTheFlyIn = false,
 		long int eventStartIn        = 0,
@@ -65,6 +68,8 @@ public:
   /// Operate on each entry in the event tree.
   virtual void Process();
 
+  virtual void SimpleHistograms();
+
   /// Terminate each individual sampler analysis and append optical functions.
   virtual void Terminate();
 
@@ -76,6 +81,15 @@ protected:
   std::vector<SamplerAnalysis*> samplerAnalyses; ///< Holder for sampler analysis objects.
   std::vector<std::vector<std::vector<double> > > opticalFunctions; ///< Optical functions from all samplers.
 
+  void PreparePerEntryHistogramSets();
+  void AccumulatePerEntryHistogramSets(long int entryNumber);
+  void TerminatePerEntryHistogramSets();
+  
+  void CheckSpectraBranches();
+
+  /// Fill a set of simple histograms across all events.
+  void FillHistogram(HistogramDefSet* definition);
+
 private:
   /// Set how often to print out information about the event.
   void SetPrintModuloFraction(double fraction);
@@ -86,13 +100,21 @@ private:
   /// Process each sampler analysis object.
   void ProcessSamplers(bool firstTime = false);
 
+  bool printOut;          ///< Whether to print out at all per-event.
   int  printModulo;       ///< Cache of print modulo fraction
   bool processSamplers;   ///< Whether to process samplers.
   bool emittanceOnTheFly; ///< Whether to calculate emittance fresh at each sampler.
   long int eventStart;    ///< Event index to start analysis from.
   long int eventEnd;      ///< Event index to end analysis at.
+  long int nEventsToProcess; ///< Difference between start and stop.
+
+  /// Cache of all per entry histogram sets.
+  std::vector<PerEntryHistogramSet*> perEntryHistogramSets;
+
+  /// Map of simple histograms created per histogram set for writing out.
+  std::map<HistogramDefSet*, std::vector<TH1*> > simpleSetHistogramOutputs;
   
-  ClassDef(EventAnalysis,1);
+  ClassDef(EventAnalysis,2);
 };
 
 #endif

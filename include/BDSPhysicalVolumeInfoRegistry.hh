@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <set>
 
 class G4VPhysicalVolume;
+class BDSBeamlineElement;
 class BDSPhysicalVolumeInfo;
 
 typedef std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*>::iterator BDSPVInfoIterator;
@@ -73,6 +74,12 @@ public:
 		    BDSPhysicalVolumeInfo* info,
 		    G4bool                 isReadOutVolume = false,
 		    G4bool                 isTunnel = false);
+  
+  /// Loop version of the same function above but for a set of pvs.
+  void RegisterInfo(const std::set<G4VPhysicalVolume*>& physicalVolumes,
+		    BDSPhysicalVolumeInfo* info,
+		    G4bool                 isReadOutVolume = false,
+		    G4bool                 isTunnel = false);
 
   /// Get the logical volume info for a particular logical volume (by address). Note,
   /// returns null pointer if none found. If isTunnel, gets only from tunnelRegistry.
@@ -85,8 +92,16 @@ public:
   /// the main search each time.
   void RegisterExcludedPV(G4VPhysicalVolume* physicalVolume);
 
+  /// Register a set of PVs with respect to a beamline element for the purpose of
+  /// providing this information in the output. Not for memory management.
+  void RegisterPVsForOutput(const BDSBeamlineElement* element,
+			    const std::set<G4VPhysicalVolume*>& physicalVolumes);
+
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSPhysicalVolumeInfoRegistry const &r);
+  
+  /// Access a set of volumes registered for the placement of a beamline element.
+  const std::set<G4VPhysicalVolume*>* PVsForBeamlineElement(BDSBeamlineElement* element) const;
 
 private:
   /// Default constructor is private as singleton
@@ -110,7 +125,7 @@ private:
   BDSPVInfoIterator tunnelSearch;
   /// @}
   
-  /// The singleton instane
+  /// The singleton instance
   static BDSPhysicalVolumeInfoRegistry* instance;
 
   /// Registry is a map - note 'register' is a protected keyword.
@@ -118,6 +133,12 @@ private:
   std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> backupRegister;
   std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> tunnelRegister;
   std::set<G4VPhysicalVolume*> excludedVolumes;
+  
+  std::set<BDSPhysicalVolumeInfo*> pvInfosForDeletion;
+
+  /// This map is kept not for memory management, but for keeping a record of PVs
+  /// for each beamline element placed. This information can be written to the output.
+  std::map<const BDSBeamlineElement*, std::set<G4VPhysicalVolume*> > pvsForAGivenElement;
 };
 
 

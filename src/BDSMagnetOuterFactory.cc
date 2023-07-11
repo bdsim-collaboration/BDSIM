@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -39,6 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMaterials.hh"
+#include "BDSWarning.hh"
 
 #include "globals.hh"         // geant4 globals / types
 #include "G4Box.hh"
@@ -71,6 +72,7 @@ BDSMagnetOuterFactory::BDSMagnetOuterFactory()
   polesfacetcrop = new BDSMagnetOuterFactoryPolesFacetCrop();
   lhcright       = new BDSMagnetOuterFactoryLHCRight();
   lhcleft        = new BDSMagnetOuterFactoryLHCLeft();
+  sensitiveOuter = BDSGlobalConstants::Instance()->SensitiveOuter();
 }
 
 BDSMagnetOuterFactory::~BDSMagnetOuterFactory()
@@ -110,17 +112,17 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
       {return nullptr; break;}
     default:
       {
-	throw BDSException(__METHOD_NAME__, "unknown type \"" + magnetTypeIn.ToString() + "\"");
-	break;
+        throw BDSException(__METHOD_NAME__, "unknown type \"" + magnetTypeIn.ToString() + "\"");
+        break;
       }
     }
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       magnetType,
-							 BDSMagnetOuterInfo* outerInfo,
-							 G4double            outerLength,
-							 G4double            containerLength,
-							 BDSBeamPipe*        beamPipe)
+                                                         BDSMagnetOuterInfo* outerInfo,
+                                                         G4double            outerLength,
+                                                         G4double            containerLength,
+                                                         BDSBeamPipe*        beamPipe)
 {
   BDSMagnetOuter* outer = nullptr;
 
@@ -132,15 +134,16 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
       outer = CreateExternal(name, outerInfo, outerLength, containerLength, beamPipe);
       G4double loadedLength = outer->GetExtent().DZ();
       if (loadedLength > outerLength)
-	{
-	  throw BDSException(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
-			     + "m too long for magnet of length " + std::to_string(outerLength/CLHEP::m) + "m. ");
-	}
+        {
+          BDS::Warning(__METHOD_NAME__, "External geometry of length " + std::to_string(loadedLength/CLHEP::m)
+                             + "m\nappears to be too long for magnet of length " + std::to_string(outerLength/CLHEP::m) + "m. ");
+        }
       return outer;
     }
 
   // Check dimensions
-  CheckOuterBiggerThanBeamPipe(name, outerInfo, beamPipe);
+  if (geometryType != BDSMagnetGeometryType::none)
+    {CheckOuterBiggerThanBeamPipe(name, outerInfo, beamPipe);}
 
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(geometryType);
   
@@ -148,65 +151,65 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
     {
     case BDSMagnetType::decapole:
       {
-	outer = factory->CreateDecapole(name, outerLength, beamPipe, containerLength, outerInfo);
-	break;
+        outer = factory->CreateDecapole(name, outerLength, beamPipe, containerLength, outerInfo);
+        break;
       }
     case BDSMagnetType::vkicker:
       {
-	outer = factory->CreateKicker(name, outerLength, beamPipe, containerLength, outerInfo, true);
-	break;
+        outer = factory->CreateKicker(name, outerLength, beamPipe, containerLength, outerInfo, true);
+        break;
       }
     case BDSMagnetType::hkicker:
       {
-	outer = factory->CreateKicker(name, outerLength, beamPipe, containerLength, outerInfo, false);
-	break;
+        outer = factory->CreateKicker(name, outerLength, beamPipe, containerLength, outerInfo, false);
+        break;
       }
     case BDSMagnetType::muonspoiler:
       {
-	outer = factory->CreateMuonSpoiler(name, outerLength, beamPipe, containerLength, outerInfo);
-	break;
+        outer = factory->CreateMuonSpoiler(name, outerLength, beamPipe, containerLength, outerInfo);
+        break;
       }
     case BDSMagnetType::octupole:
       {
-	outer = factory->CreateOctupole(name, outerLength, beamPipe, containerLength, outerInfo);
-	break;
+        outer = factory->CreateOctupole(name, outerLength, beamPipe, containerLength, outerInfo);
+        break;
       }
     case BDSMagnetType::quadrupole:
       {
-	outer = factory->CreateQuadrupole(name, outerLength, beamPipe, containerLength, outerInfo);
-	break;
+        outer = factory->CreateQuadrupole(name, outerLength, beamPipe, containerLength, outerInfo);
+        break;
       }
     case BDSMagnetType::rfcavity:
       {
-	outer = factory->CreateRfCavity(name, outerLength, beamPipe, containerLength, outerInfo);
-	break;
+        outer = factory->CreateRfCavity(name, outerLength, beamPipe, containerLength, outerInfo);
+        break;
       }
     case BDSMagnetType::sectorbend:
       {
-	outer = factory->CreateSectorBend(name, outerLength, beamPipe,
-					  containerLength, outerInfo);
-	break;
+        outer = factory->CreateSectorBend(name, outerLength, beamPipe,
+                                          containerLength, outerInfo);
+        break;
       }
     case BDSMagnetType::rectangularbend:
       {
-	outer = factory->CreateRectangularBend(name, outerLength, beamPipe,
-					       containerLength, outerInfo);
-	break;
+        outer = factory->CreateRectangularBend(name, outerLength, beamPipe,
+                                               containerLength, outerInfo);
+        break;
       }
     case BDSMagnetType::sextupole:
       {
-	outer = factory->CreateSextupole(name, outerLength, beamPipe, containerLength, outerInfo);
-	break;
+        outer = factory->CreateSextupole(name, outerLength, beamPipe, containerLength, outerInfo);
+        break;
       }
     case BDSMagnetType::solenoid:
       {
-	outer = factory->CreateSolenoid(name, outerLength, beamPipe, containerLength, outerInfo);
-	break;
+        outer = factory->CreateSolenoid(name, outerLength, beamPipe, containerLength, outerInfo);
+        break;
       }
     case BDSMagnetType::multipole:
       {
-	outer = factory->CreateMultipole(name, outerLength, beamPipe, containerLength, outerInfo);
-	break;
+        outer = factory->CreateMultipole(name, outerLength, beamPipe, containerLength, outerInfo);
+        break;
       }
     case BDSMagnetType::thinmultipole:
     case BDSMagnetType::dipolefringe:
@@ -222,10 +225,10 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
-						      BDSMagnetOuterInfo* info,
-						      G4double          /*length*/,
+                                                      BDSMagnetOuterInfo* info,
+                                                      G4double          /*length*/,
                                                       G4double            magnetContainerLength,
-						      BDSBeamPipe*        beampipe)
+                                                      BDSBeamPipe*        beampipe)
 {
   std::map<G4String, G4Colour*> defaultMap = {
     {"coil", BDSColours::Instance()->GetColour("coil")},
@@ -237,9 +240,12 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
     {"dec",  BDSColours::Instance()->GetColour("decapole")}
   };
   BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name,
-									    info->geometryTypeAndPath,
-									    &defaultMap,
-									    info->autoColour);
+                                                                            info->geometryTypeAndPath,
+                                                                            &defaultMap,
+                                                                            info->autoColour,
+                                                                            0, 0,
+                                                                            nullptr,
+                                                                            sensitiveOuter);
 
   BDSExtent bpExtent = beampipe->GetExtent();
   BDSExtent magInner = geom->GetInnerExtent();
@@ -248,14 +254,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
     {
       std::stringstream ss, ss2, ss3;
       ss << info->geometryTypeAndPath;
-      std::string sss = ss.str();
-      sss += " will not fit around beam pipe in element \"" + name + "\"\n";
-      sss += "Determined extents to be:\n";
       ss2 << magInner;
-      sss += "External geometry inner " + ss2.str();
       ss3 << bpExtent;
-      sss += "Beam pipe outer " + ss3.str();
-      throw BDSException(__METHOD_NAME__, sss);
+      std::string sss = ss.str();
+      sss += " will not fit around beam pipe\nin element \"" + name + "\" and could potentially overlap with it\n";
+      sss += "Determined extents to be:\n";
+      sss += "External geometry inner: " + ss2.str() + "\n";
+      sss += "Beam pipe outer        : " + ss3.str() + "\n";
+      sss += "Check for overlaps with /geometry/test/run";
+      BDS::Warning(__METHOD_NAME__, sss);
     }
     
   BDSGeometryComponent* container = CreateContainerForExternal(name, magnetContainerLength, geom, beampipe);
@@ -265,9 +272,9 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
 }
 
 BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainerForExternal(const G4String&      name,
-									G4double             length,
-									BDSGeometryExternal* external,
-									BDSBeamPipe*         beampipe)
+                                                                        G4double             length,
+                                                                        BDSGeometryExternal* external,
+                                                                        BDSBeamPipe*         beampipe)
 {
   G4ThreeVector  inputFace = beampipe->InputFaceNormal();
   G4ThreeVector outputFace = beampipe->OutputFaceNormal();
@@ -281,42 +288,42 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainerForExternal(const G4
       G4double negR = std::hypot(outer.XNeg(),outer.YNeg());
       G4double magnetContainerRadius = std::max(posR, negR) + 1*CLHEP::mm; // generous margin
       containerSolid = new G4CutTubs(name + "_container_solid",   // name
-				     0,                           // inner radius
-				     magnetContainerRadius,       // outer radius
-				     length * 0.5,                // z half length
-				     0,                           // starting angle
-				     CLHEP::twopi,                // sweep angle
-				     inputFace,
-				     outputFace);
+                                     0,                           // inner radius
+                                     magnetContainerRadius,       // outer radius
+                                     length * 0.5,                // z half length
+                                     0,                           // starting angle
+                                     CLHEP::twopi,                // sweep angle
+                                     inputFace,
+                                     outputFace);
       containerExt = BDSExtent(magnetContainerRadius, magnetContainerRadius, 0.5*length);
     }
   else
     {// flat faces so use a box
       G4double radius = outer.MaximumAbsTransverse() + 1*CLHEP::mm; // generous margin
       containerSolid = new G4Box(name + "_container_solid", // name
-				 radius,
-				 radius,
-				 length*0.5);
+                                 radius,
+                                 radius,
+                                 length*0.5);
       containerExt = BDSExtent(radius, radius, length*0.5);
     }
 
   G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
-						     worldMaterial,
-						     name + "_container_lv");
+                                                     worldMaterial,
+                                                     name + "_container_lv");
 
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
   BDSGeometryComponent* container = new BDSGeometryComponent(containerSolid,
-							     containerLV,
-							     containerExt);
+                                                             containerLV,
+                                                             containerExt);
   
   return container;
 }
-						      
+                                                      
 void BDSMagnetOuterFactory::CheckOuterBiggerThanBeamPipe(const G4String&           name,
-							 const BDSMagnetOuterInfo* outerInfo,
-							 const BDSBeamPipe*        beamPipe) const
+                                                         const BDSMagnetOuterInfo* outerInfo,
+                                                         const BDSBeamPipe*        beamPipe) const
 {
   G4double outerHorizontal = outerInfo->horizontalWidth;
   G4double outerVertical   = outerInfo->horizontalWidth * outerInfo->vhRatio;

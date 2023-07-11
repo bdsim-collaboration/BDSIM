@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -24,7 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class G4Colour;
 class G4Material;
-class G4PhysicsOrderedFreeVector;
+class G4PhysicsFreeVector;
 
 /**
  * @brief Automatic colours from materials.
@@ -40,7 +40,8 @@ public:
   ~BDSColourFromMaterial();
 
   /// Get colour from name
-  G4Colour* GetColour(const G4Material* material);
+  G4Colour* GetColour(const G4Material* material,
+                      const G4String& prefixToStripFromName = "");
   
   /// Get colour from name - if not found return the supplied default.
   G4Colour* GetColourWithDefault(const G4Material* material,
@@ -51,7 +52,7 @@ private:
   static BDSColourFromMaterial* instance;
 
   std::map<G4String, G4Colour*> defines; ///< Specially defined material colours.
-  G4PhysicsOrderedFreeVector* generalDensity;
+  G4PhysicsFreeVector* generalDensity;
 };
 
 #endif

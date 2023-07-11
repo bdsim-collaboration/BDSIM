@@ -117,13 +117,29 @@ else()
   set(G4_PATCH_LEVEL 9)
 endif()
 
-if (${G4_MINOR_VERSION} GREATER 5)
+if(${G4_MINOR_VERSION} GREATER 5 OR ${G4_MAJOR_VERSION} GREATER 10)
   add_definitions("-DG4VIS_USE")
   add_definitions("-DG4UI_USE")
 endif()
 
-# remove the C++ standard set by geant4 so we can enforce our own
-removeCXXStandardFlags(${CMAKE_CXX_FLAGS} CMAKE_CXX_FLAGS)
+# might be empty depending on geant4 version - must avoid error in empty argument to function call
+if (NOT ${CMAKE_CXX_FLAGS} STREQUAL "")
+  # remove the C++ standard set by geant4 so we can enforce our own
+  removeCXXStandardFlags(${CMAKE_CXX_FLAGS} CMAKE_CXX_FLAGS)
 
-# now remove any duplicates we have to keep things tidy
-removeDuplicateSubstring(${CMAKE_CXX_FLAGS} CMAKE_CXX_FLAGS)
+  # now remove any duplicates we have to keep things tidy
+  removeDuplicateSubstring(${CMAKE_CXX_FLAGS} CMAKE_CXX_FLAGS)
+endif()
+
+string(FIND ${Geant4_CXX_FLAGS} "c++14" _G4CXX14FOUND)
+string(FIND ${Geant4_CXX_FLAGS} "c++17" _G4CXX17FOUND)
+string(FIND ${Geant4_CXX_FLAGS} "c++1z" _G4CXX17FOUND2)
+if (_G4CXX17FOUND STRGREATER -1 OR _G4CXX17FOUND2 STRGREATER -1)
+  message(STATUS "Geant4 compiled with cxx17 -> changing to C++17 for BDSIM")
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+elseif(_G4CXX14FOUND STRGREATER -1)
+  message(STATUS "Geant4 compiled with cxx14 -> changing to C++14 for BDSIM")
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()

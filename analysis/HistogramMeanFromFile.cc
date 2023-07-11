@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -25,6 +25,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4DBase.hh"
+
+#include "TTree.h"
+#include "TFile.h"
 
 #include <string>
 #include <vector>
@@ -57,6 +61,13 @@ HistogramMeanFromFile::HistogramMeanFromFile(BDSOutputROOTEventHistograms* h)
       histograms3d.push_back(new HistogramAccumulator(hist, 3, name, title));
     }
 
+  for (auto hist : h->Get4DHistograms())
+    {
+      std::string name  = hist->GetName();
+      std::string title = hist->GetTitle();
+      histograms4d.push_back(new HistogramAccumulator(hist, 4, name, title));
+    }
+
   Accumulate(h);
 }
 
@@ -68,30 +79,37 @@ HistogramMeanFromFile::~HistogramMeanFromFile()
     {delete h;}
   for (auto h : histograms3d)
     {delete h;}
+  for (auto h : histograms4d)
+    {delete h;}
 }
 
-void HistogramMeanFromFile::Accumulate(BDSOutputROOTEventHistograms* hNew)
+void HistogramMeanFromFile::Accumulate(BDSOutputROOTEventHistograms* hNew, bool warnAboutZeroEntries)
 {
   auto h1i = hNew->Get1DHistograms();
   for (unsigned int i = 0; i < (unsigned int)histograms1d.size(); ++i)
-    {histograms1d[i]->Accumulate(h1i[i]);}
+    {histograms1d[i]->Accumulate(h1i[i], warnAboutZeroEntries);}
   auto h2i = hNew->Get2DHistograms();
   for (unsigned int i = 0; i < (unsigned int)histograms2d.size(); ++i)
-    {histograms2d[i]->Accumulate(h2i[i]);}
+    {histograms2d[i]->Accumulate(h2i[i], warnAboutZeroEntries);}
   auto h3i = hNew->Get3DHistograms();
   for (unsigned int i = 0; i < (unsigned int)histograms3d.size(); ++i)
-    {histograms3d[i]->Accumulate(h3i[i]);}
+    {histograms3d[i]->Accumulate(h3i[i], warnAboutZeroEntries);}
+  auto h4i = hNew->Get4DHistograms();
+  for (unsigned int i = 0; i < (unsigned int)histograms4d.size(); ++i)
+    {histograms4d[i]->Accumulate(h4i[i], warnAboutZeroEntries);}
 }
 
 void HistogramMeanFromFile::Terminate()
 {
-  // terminate each accumualtor
+  // terminate each accumulator
   // this returns a pointer to the result but no need to store
   for (auto& h : histograms1d)
     {h->Terminate();}
   for (auto& h : histograms2d)
     {h->Terminate();}
   for (auto& h : histograms3d)
+    {h->Terminate();}
+  for (auto& h : histograms4d)
     {h->Terminate();}
 }
 
@@ -105,6 +123,8 @@ void HistogramMeanFromFile::Write(TDirectory* dir)
 	{dir->Add(h->Result());}
       for (auto& h : histograms3d)
 	{dir->Add(h->Result());}
+      for (auto& h : histograms4d)
+	{dir->Add(h->Result());}
     }
 
   // write to currently open file.
@@ -113,6 +133,8 @@ void HistogramMeanFromFile::Write(TDirectory* dir)
   for (auto& h : histograms2d)
     {h->Result()->Write();}
   for (auto& h : histograms3d)
+    {h->Result()->Write();}
+  for (auto& h : histograms4d)
     {h->Result()->Write();}
 }
 

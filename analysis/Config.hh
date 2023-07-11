@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -23,12 +23,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Rtypes.h" // for classdef
 
 #include "RebdsimTypes.hh"
+#include "SpectraParticles.hh"
 
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
-#include <map>
 
 class HistogramDef;
+class HistogramDefSet;
 
 /**
  * @brief Configuration and configuration parser class.
@@ -58,6 +61,14 @@ private:
 
   /// Copy of definition used to identify only 'per entry' histogram definitions. Doesn't own.
   std::map<std::string, std::vector<HistogramDef*> > histoDefsPerEntry;
+
+  /// Sets of histogram definitions per particle. Only for event branch.
+  std::vector<HistogramDefSet*> eventHistoDefSetsSimple;
+  std::vector<HistogramDefSet*> eventHistoDefSetsPerEntry;
+  
+  /// List of branches in event tree to produce ParticleSet objects on. (per event and simple).
+  std::vector<std::string> eventParticleSetBranches;
+  std::vector<std::string> eventParticleSetSimpleBranches;
   
 public:
   virtual ~Config();
@@ -65,7 +76,8 @@ public:
   /// Singleton accessor
   static Config* Instance(const std::string& fileName = "",
 			  const std::string& inputFilePath = "",
-			  const std::string& outputFileName = "");
+			  const std::string& outputFileName = "",
+			  const std::string& defaultOutputFileSuffix = "_ana");
 
   void ParseInputFile();
 
@@ -86,6 +98,15 @@ public:
   /// Access all per entry histogram definitions - throws exception if out of range.
   inline const std::vector<HistogramDef*>& HistogramDefinitionsPerEntry(const std::string& treeName) const
   {return histoDefsPerEntry.at(treeName);}
+
+  inline const std::vector<HistogramDefSet*>& EventHistogramSetDefinitionsSimple() const
+  {return eventHistoDefSetsSimple;}
+
+  inline const std::vector<HistogramDefSet*>& EventHistogramSetDefinitionsPerEntry() const
+  {return eventHistoDefSetsPerEntry;}
+  
+  inline const std::vector<std::string>& EventParticleSetNamesSimple()   const {return eventParticleSetSimpleBranches;}
+  inline const std::vector<std::string>& EventParticleSetNamesPerEntry() const {return eventParticleSetBranches;}
 
   /// Access all branches that are required for activation. This does not specialise on the
   /// leaf inside the branch and if one variable is required, the whole branch will be activated
@@ -109,7 +130,9 @@ public:
   inline std::string CalculateOpticalFunctionsFileName() const {return optionsString.at("opticslfilename");}
   inline bool   Debug() const                     {return optionsBool.at("debug");}
   inline bool   CalculateOpticalFunctions() const {return optionsBool.at("calculateoptics");}
+  inline bool   EmittanceOnTheFly() const         {return optionsBool.at("emittanceonthefly");}
   inline bool   ProcessSamplers() const           {return optionsBool.at("processsamplers");}
+  inline bool   PrintOut() const                  {return optionsBool.at("printout");}
   inline double PrintModuloFraction() const       {return optionsNumber.at("printmodulofraction");}
   /// @}
   /// @{ Whether per entry loading is needed. Alternative is only TTree->Draw().
@@ -119,17 +142,23 @@ public:
   inline bool   PerEntryOption() const {return optionsBool.at("perentryoption");}
   inline bool   PerEntryModel()  const {return optionsBool.at("perentrymodel");}
   /// @}
+
+  /// Print out the per event and simple histogram set definitions as these
+  /// are (assumed to be) spectra definitions that people might want to see expanded.
+  void PrintHistogramSetDefinitions() const;
   
  protected:
   /// Private constructor for singleton pattern.
   Config() = delete;
   /// Constructor used when merging only.
   Config(const std::string& inputFilePathIn,
-	 const std::string& outputFileNameIn);
+	 const std::string& outputFileNameIn,
+         const std::string& defaultOutputFileSuffix = "_ana");
   /// Desired constructor, also private for singleton pattern.
   Config(const std::string& fileNameIn,
 	 const std::string& inputFilePathIn,
-	 const std::string& outputFileNameIn);
+	 const std::string& outputFileNameIn,
+	 const std::string& defaultOutputFileSuffix);
 
   /// Set defaults in member maps for all options so that the keys can
   /// always be accessed.
@@ -138,6 +167,12 @@ public:
   /// Parse a line beginning with histogram. Uses other functions if appropriately defined.
   void ParseHistogramLine(const std::string& line);
 
+  /// Parse a spectra definition line.
+  void ParseSpectraLine(const std::string& line);
+
+  /// Parse a particle set line.
+  void ParseParticleSetLine(const std::string& line);
+
   /// Parse everything after the histogram declaration and check all parameters.
   void ParseHistogram(const std::string& line, const int nDim);
 
@@ -145,6 +180,10 @@ public:
   /// if so, it's not a per-entry histogram.
   void ParsePerEntry(const std::string& name, bool& perEntry) const;
 
+  /// Return true if 'input' contains 'word' - CI = case insensitive.
+  bool ContainsWordCI(const std::string& input,
+		      const std::string& word) const;
+  
   /// Parse whether each dimension is log or linear.
   void ParseLog(const std::string& definition,
 		bool& xLog,
@@ -188,12 +227,21 @@ public:
                     bool xLog,
                     bool yLog,
                     bool zLog) const;
-  
+  /// Return a vector of strings by splitting on whitespace.
+  std::vector<std::string> SplitOnWhiteSpace(const std::string& line) const;
+    
+  /// Parser a list of particle PDG IDs into a set.
+  std::set<ParticleSpec> ParseParticles(const std::string& word) const;
+    
   /// Parse a settings line in input file and appropriate update member map.
   void ParseSetting(const std::string& line);
 
   /// Return a lower case copy of a string.
   std::string LowerCase(const std::string& st) const;
+  
+  /// Register a histogram name for future checking against. If it already exists, the
+  /// function returns true, else false for successful registration.
+  bool RegisterHistogramName(const std::string& newHistName);
 
   static Config* instance;
 
@@ -208,6 +256,12 @@ public:
 
   /// Whether all branches will be activated - ie for optics.
   bool allBranchesActivated;
+
+  /// Cache of all spectra names declared to permit unique naming of histograms
+  /// when there's more than one spectra per branch used.
+  std::map<std::string, int> spectraNames;
+  
+  std::set<std::string> histogramNames;
 
   ClassDef(Config,1);
 };

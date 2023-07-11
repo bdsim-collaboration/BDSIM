@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -92,6 +92,8 @@ std::string yyfilename;
 marker { return MARKER; } // reserved elements
 drift { return DRIFT; }
 rf { return RF; }
+rfx { return RFX; }
+rfy { return RFY; }
 rfcavity { return RF; }
 sbend { return SBEND; } 
 rbend {return RBEND; }
@@ -128,6 +130,8 @@ wirescanner { return WIRESCANNER; }
 undulator { return UNDULATOR; }
 usercomponent { return USERCOMPONENT; }
 dump { return DUMP; }
+ct { return CT; }
+target { return TARGET; }
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
@@ -144,6 +148,7 @@ xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }
 aperture {return APERTURE; }
 blm {return BLM;}
+modulator {return MODULATOR;}
 
 matdef { return MATERIAL; }
 atom { return ATOM; }
@@ -254,6 +259,11 @@ csample { return CSAMPLE; }
   }
 
   std::cout << "parser> reading file " << includefilename << std::endl; //yytext
+  if (includefilename == yyfilename)
+    {
+       std::string errorstring = "\nError: recursively including the same file inside itself!\n\n Problem"; // at line.. etc
+       yyerror(errorstring.c_str());
+    }
   if(include_stack_ptr >= max_include_depth - 1)
     {
       std::string errorstring = "Error : Include depth exceeds " + std::to_string(max_include_depth);

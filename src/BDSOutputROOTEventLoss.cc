@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -115,7 +115,7 @@ void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPointHit* hit)
   
   if (storePhysicsProcesses)
     {
-      postStepProcessType.push_back( (int) (hit->point->GetPostProcessSubType()));
+      postStepProcessType.push_back( (int) (hit->point->GetPostProcessType()));
       postStepProcessSubType.push_back( (int) (hit->point->GetPostProcessSubType()));
     }
 }

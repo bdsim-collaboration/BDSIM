@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSGlobalConstants;
 class BDSOutputROOTEventAperture;
 class BDSOutputROOTEventBeam;
+class BDSOutputROOTEventCavityInfo;
 class BDSOutputROOTEventCollimator;
 class BDSOutputROOTEventCollimatorInfo;
 class BDSOutputROOTEventCoords;
@@ -42,8 +43,11 @@ class BDSOutputROOTEventModel;
 class BDSOutputROOTEventOptions;
 class BDSOutputROOTEventRunInfo;
 template<class T> class BDSOutputROOTEventSampler;
+class BDSOutputROOTEventSamplerC;
+class BDSOutputROOTEventSamplerS;
 class BDSOutputROOTEventTrajectory;
 class BDSOutputROOTParticleData;
+class G4Material;
 
 /**
  * @brief Holder for output information.
@@ -64,6 +68,9 @@ protected:
   /// Construct samplers.
   void InitialiseSamplers();
   
+  /// Construct a map of material pointer to integer ID and name.
+  void InitialiseMaterialMap();
+  
   /// Interface to allow setting up samplers later for dynamic geometry construction a la SixTrack. Not for regular use.
   G4int UpdateSamplerStructures();
   
@@ -72,7 +79,10 @@ protected:
   /// required or not based on number of collimators.
   void PrepareCollimatorInformation();
 
-  /// Construct collimtors.
+  /// Extract number of collimators and their names from beam line.
+  void PrepareCavityInformation();
+
+  /// Construct collimators.
   void InitialiseCollimators();
 
   /// Clear the local particle data structure.
@@ -110,6 +120,14 @@ protected:
 			  G4int    nBinsX, G4double xMin, G4double xMax,
 			  G4int    nBinsY, G4double yMin, G4double yMax,
 			  G4int    nBinsZ, G4double zMin, G4double zMax);
+  G4int Create4DHistogram(const G4String& name,
+			  const G4String& title,
+			  const G4String& eScale,
+			  const std::vector<double>& eBinsEdges,
+			  G4int    nBinsX, G4double xMin, G4double xMax,
+			  G4int    nBinsY, G4double yMin, G4double yMax,
+			  G4int    nBinsZ, G4double zMin, G4double zMax,
+			  G4int    nBinsE, G4double eMin, G4double eMax);
   ///@}
 
   BDSOutputROOTParticleData* particleDataOutput; ///< Geant4 information / particle tables.
@@ -132,6 +150,13 @@ protected:
   std::vector<BDSOutputROOTEventSampler<float>*> samplerTrees;
 #endif
   std::vector<std::string> samplerNames; ///< Sampler names to use.
+  std::vector<BDSOutputROOTEventSamplerC*> samplerCTrees;
+  std::vector<BDSOutputROOTEventSamplerS*> samplerSTrees;
+  std::vector<std::string> samplerCNames;
+  std::vector<std::string> samplerSNames;
+  std::map<G4int, G4int> samplerIDToIndexPlane;
+  std::map<G4int, G4int> samplerIDToIndexCylinder;
+  std::map<G4int, G4int> samplerIDToIndexSphere;
   
   BDSOutputROOTEventRunInfo*    runInfo;            ///< Run information.
   BDSOutputROOTEventHistograms* runHistos;          ///< Run level histograms
@@ -158,6 +183,16 @@ protected:
   /// Cache of aperture differences for each collimator info to avoid repeated calculation and
   /// to avoid storing unnecessary output in the collimator info.
   std::vector<std::pair<G4double, G4double> >   collimatorDifferences;
+
+  // cavity specific output
+  std::vector<G4String>     cavityNames;         ///< Names of cavities in output structures.
+  G4int                     nCavities;           ///< Number of cavities in beam line.
+  std::vector<G4int>        cavityIndices;       ///< Indices in beam line that are cavities.
+  std::map<G4String, G4int> cavityIndicesByName; ///< Indices mapped to their name.
+  std::vector<BDSOutputROOTEventCavityInfo> cavityInfo; ///< Cavity parameters.
+
+  std::map<G4Material*, short int> materialToID;
+  std::map<short int, G4String>    materialIDToNameUnique;
   
 private:
   /// Whether we've set up the member vector of samplers. Can only be done once the geometry

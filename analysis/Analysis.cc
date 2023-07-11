@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "HistogramDef4D.hh"
 #include "HistogramFactory.hh"
 #include "HistogramMeanFromFile.hh"
 #include "PerEntryHistogram.hh"
@@ -33,16 +34,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+#include "BDSBH4DBase.hh"
 
 #include <iostream>
 #include <string>
 #include <vector>
 
 Analysis::Analysis(const std::string& treeNameIn,
-		   TChain*            chainIn,
-		   const std::string& mergedHistogramNameIn,
-		   bool               perEntryAnalysis,
-		   bool               debugIn):
+                   TChain*            chainIn,
+                   const std::string& mergedHistogramNameIn,
+                   bool               perEntryAnalysis,
+                   bool               debugIn):
   treeName(treeNameIn),
   chain(chainIn),
   mergedHistogramName(mergedHistogramNameIn),
@@ -69,6 +71,7 @@ void Analysis::Execute()
       TH1::AddDirectory(kTRUE);
       TH2::AddDirectory(kTRUE);
       TH3::AddDirectory(kTRUE);
+      BDSBH4DBase::AddDirectory(kTRUE);
       PreparePerEntryHistograms();
       Process();
     }
@@ -90,7 +93,7 @@ void Analysis::SimpleHistograms()
     {
       auto definitions = Config::Instance()->HistogramDefinitionsSimple(treeName);
       for (auto definition : definitions)
-	{FillHistogram(definition);}
+            {FillHistogram(definition);}
     }
 }
 
@@ -105,7 +108,7 @@ void Analysis::PreparePerEntryHistograms()
     }
 }
 
-void Analysis::AccumulatePerEntryHistograms(const long int& entryNumber)
+void Analysis::AccumulatePerEntryHistograms(long int entryNumber)
 {
   for (auto& peHist : perEntryHistograms)
     {peHist->AccumulateCurrentEntry(entryNumber);}
@@ -144,18 +147,10 @@ void Analysis::Write(TFile* outputFile)
 
   // simple histograms
   simpleDir->cd();
-  for (auto& h : histograms1D)
-    {simpleDir->Add(h.second);}
-  for (auto& h : histograms2D)
-    {simpleDir->Add(h.second);}
-  for (auto& h : histograms3D)
-    {simpleDir->Add(h.second);}
-  for (auto& h : histograms1D)
-    {h.second->Write();}
-  for (auto& h : histograms2D)
-    {h.second->Write();}
-  for (auto& h : histograms3D)
-    {h.second->Write();}
+  for (auto& h : simpleHistograms)
+    {simpleDir->Add(h);}
+  for (auto& h : simpleHistograms)
+    {h->Write();}
 
   // merged histograms
   if (histoSum)
@@ -168,53 +163,29 @@ void Analysis::Write(TFile* outputFile)
   outputFile->cd("/");  // return to root of the file
 }
 
-void Analysis::FillHistogram(HistogramDef* definition)
+void Analysis::FillHistogram(HistogramDef* definition,
+                             std::vector<TH1*>* outputHistograms)
 {
   // ensure new histograms are added to file..
   // this is crucial for the draw command to work as it finds the histograms by name
   TH1::AddDirectory(kTRUE);
   TH2::AddDirectory(kTRUE);
   TH3::AddDirectory(kTRUE);
+  BDSBH4DBase::AddDirectory(kTRUE);
+
   
   // pull out communal information in base class
-  int         nDim      = definition->nDimensions;
   std::string name      = definition->histName;
   std::string command   = definition->variable + " >> " + definition->histName;
   std::string selection = definition->selection;
 
   HistogramFactory factory;
-  
-  switch (nDim)
-    {
-    case 1:
-      {
-	HistogramDef1D* d = static_cast<HistogramDef1D*>(definition);
-	TH1D* h = factory.CreateHistogram1D(d);
-	chain->Draw(command.c_str(), selection.c_str(),"goff");
-	histogramNames.push_back(name);
-	histograms1D[name] = h;
-	break;
-      }
-    case 2:
-      {
-	HistogramDef2D* d = static_cast<HistogramDef2D*>(definition);
-	TH2D* h = factory.CreateHistogram2D(d);
-	chain->Draw(command.c_str(), selection.c_str(),"goff");
-	histogramNames.push_back(name);
-	histograms2D[name] = h;
-	break;
-      }
-    case 3:
-      {
-	HistogramDef3D* d = static_cast<HistogramDef3D*>(definition);
-	TH3D* h = factory.CreateHistogram3D(d);
-	chain->Draw(command.c_str(), selection.c_str(),"goff");
-	histogramNames.push_back(name);
-	histograms3D[name] = h;
-	break;
-      }
-    default:
-      {break;}
-    }
-}
+  TH1* h = factory.CreateHistogram(definition);
+  chain->Draw(command.c_str(), selection.c_str(),"goff");
 
+  if (outputHistograms)
+    {outputHistograms->push_back(h);}
+  else
+    {simpleHistograms.push_back(h);}
+
+}

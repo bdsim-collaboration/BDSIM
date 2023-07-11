@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -19,6 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCavityType.hh"
 #include "BDSDebug.hh"
 #include "BDSException.hh"
+#include "BDSUtilities.hh"
+
+#include "globals.hh"
+#include "G4String.hh"
 
 #include <map>
 #include <string>
@@ -38,18 +42,17 @@ BDSCavityType BDS::DetermineCavityType(G4String cavityType)
   types["elliptical"]  = BDSCavityType::elliptical;
   types["rectangular"] = BDSCavityType::rectangular;
   types["pillbox"]     = BDSCavityType::pillbox;
-  
-  cavityType.toLower();
+
+  cavityType = BDS::LowerCase(cavityType);
 
   auto result = types.find(cavityType);
   if (result == types.end())
-    {
-      // it's not a valid key
-      G4cout << __METHOD_NAME__ << "\"" << cavityType << "\" is not a valid cavity type" << G4endl;
-      G4cout << "Available cavity types are:" << G4endl;
-      for (auto it : types)
-	{G4cout << "\"" << it.first << "\"" << G4endl;}
-      throw BDSException(__METHOD_NAME__, "");
+    {// it's not a valid key
+      G4String msg = "\"" + cavityType + "\" is not a valid cavity type\n";
+      msg += "Available cavity types are:\n";
+      for (const auto& it : types)
+	{msg += "\"" + it.first + "\"\n";}
+      throw BDSException(__METHOD_NAME__, msg);
     }
   
 #ifdef BDSDEBUG

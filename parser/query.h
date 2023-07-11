@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -37,7 +37,6 @@ namespace GMAD
   {
   public:
     std::string name;   ///< Name of object.
-    int nDimensions;    ///< Number of dimensions to query.
     int nx;             ///< Number of samples in x.
     int ny;             ///< Number of samples in y.
     int nz;             ///< Number of samples in z.
@@ -50,8 +49,46 @@ namespace GMAD
     double zmax;        ///< Z finish.
     double tmin;        ///< T start.
     double tmax;        ///< T finish.
-    std::string outfile;     ///< Output file name.
+    std::string outfileMagnetic; ///< Output file name.
+    std::string outfileElectric;
     std::string fieldObject; ///< Name of field to query.
+
+    bool queryMagneticField; ///< Whether to query the magnetic field.
+    bool queryElectricField; ///< Whether to query the electric field.
+    
+    bool overwriteExistingFiles;
+    bool printTransform;
+    
+    bool   drawArrows;
+    bool   drawZeroValuePoints;
+    bool   drawBoxes;
+    double boxAlpha;
+    
+    std::string pointsFile; ///< File with 3D points to use
+
+    // For 3d query in a real model - all the possible transform information required
+    std::string referenceElement; ///< Name of reference element w.r.t. to place to.
+    int         referenceElementNumber; ///< Index of repetition of element if there are multiple uses.
+    double s; ///< Curvilinear s position to place w.r.t..
+    double x; ///< Offset in x.
+    double y; ///< Offset in y.
+    double z; ///< Offset in z.
+    /// @{ Euler angle for rotation.
+    double phi;
+    double theta;
+    double psi;
+    /// @}
+    /// @{ Axis angle rotation.
+    double axisX;
+    double axisY;
+    double axisZ;
+    double angle;
+    /// @}
+    bool   axisAngle;     ///< Flag to use the axis angle construction of rotation.
+  
+    /// For internal use to speed up testing - we use degenerate input for bdsim and bdsinterpolator
+    /// and want to avoid warnings that slow things down, so allow us to bypass it. Not documented.
+    bool checkParameters;
     
     /// Constructor
     Query();
@@ -61,7 +98,7 @@ namespace GMAD
     void print()const;
     /// Set methods by property name and value
     template <typename T>
-      void set_value(std::string property, T value);
+    void set_value(std::string property, T value);
 
   private:
     /// publish members
@@ -69,19 +106,19 @@ namespace GMAD
   };
   
   template <typename T>
-    void Query::set_value(std::string property, T value)
+  void Query::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
       std::cout << "query> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
-      try {
-	set(this,property,value);
-      }
-      catch(const std::runtime_error&) {
-	std::cerr << "Error: query> unknown option \"" << property << "\" with value " << value  << std::endl;
-	exit(1);
-      }
+      try
+	{set(this,property,value);}
+      catch (const std::runtime_error&)
+	{
+	  std::cerr << "Error: query> unknown option \"" << property << "\" with value \"" << value << "\"" << std::endl;
+	  exit(1);
+	}
     }
 }
 

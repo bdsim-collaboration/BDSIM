@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2021.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSBunch;
 class BDSComponentConstructor;
 class BDSComponentFactoryUser;
+class BDSDetectorConstruction;
+class BDSGlobalConstants;
 class BDSOutput;
 class BDSParser;
 class BDSRunManager;
@@ -76,6 +78,10 @@ public:
   /// and the (user-provided) constructor that can construct it.
   void RegisterUserComponent(const G4String& componentTypeName,
 			     BDSComponentConstructor* componentConstructor);
+
+  /// Generate the primaries, fill in the output and close the output. In a function to
+  /// simplify the main.
+  void GeneratePrimariesOnly(const BDSGlobalConstants* globals);
   
   /// Provide a physics list that will be used inplace of the BDSIM generate one.
   void RegisterUserPhysicsList(G4VModularPhysicsList* userPhysicsListIn) {userPhysicsList = userPhysicsListIn;}
@@ -97,8 +103,9 @@ private:
   BDSOutput*     bdsOutput;
   BDSBunch*      bdsBunch;
   BDSRunManager* runManager;
-  BDSComponentFactoryUser* userComponentFactory; ///< Optional user registered compont factory.
+  BDSComponentFactoryUser* userComponentFactory; ///< Optional user registered component factory.
   G4VModularPhysicsList* userPhysicsList;        ///< Optional user registered physics list.
+  BDSDetectorConstruction* realWorld;
   /// @}
 };
 
