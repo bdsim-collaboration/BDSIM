@@ -46,22 +46,9 @@ RUN git clone https://bitbucket.org/jairhul/bdsim.git && cd bdsim && git checkou
     # && \ cd ../ && rm -rfv bdsim-build bdsim 
 
 # Python support tools (pybdsim, pymadx, pymad8, pytransport, pyg4ometry)
-RUN git clone https://stewartboogert@bitbucket.org/jairhul/pymadx.git && \
-    cd pymadx && \
-    make develop
-
-RUN git clone https://stewartboogert@bitbucket.org/jairhul/pymad8.git && \
-    cd pymad8 && \
-    make develop
-
-RUN git clone https://stewartboogert@bitbucket.org/jairhul/pytransport.git && \
-    cd pytransport && \
-    make develop
-
-RUN git clone https://stewartboogert@bitbucket.org/jairhul/pybdsim.git && \
-    cd pybdsim && \
-    make develop
+RUN pip3 install pybdsim pymadx pymad8 pytransport ipython
 
 RUN echo 'source /usr/local/bin/geant4.sh' >> ~/.bashrc && \
-    echo 'export PYTHONPATH=$PYTHONPATH:/usr/local/lib' >> ~/.bashrc
+    echo 'export PYTHONPATH=$PYTHONPATH:/usr/local/lib' >> ~/.bashrc && \
+    echo 'source /usr/local/bin/bdsim.sh' >> ~/.bashrc
    
