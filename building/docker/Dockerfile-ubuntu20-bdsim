@@ -40,8 +40,8 @@ RUN wget https://github.com/Geant4/geant4/archive/v10.4.3.tar.gz && \
 
 SHELL ["/bin/bash", "-c"]
 
-# bdsim 
-RUN git clone https://stewartboogert@bitbucket.org/jairhul/bdsim.git && cd bdsim && git checkout develop && cd ../ && \
+# BDSIM
+RUN git clone https://bitbucket.org/jairhul/bdsim.git && cd bdsim && git checkout v1.7.0 && cd ../ && \
     . /usr/local/bin/thisroot.sh && mkdir bdsim-build && cd bdsim-build && cmake ../bdsim && make -j`nproc` && make install
     # && \ cd ../ && rm -rfv bdsim-build bdsim 
 
