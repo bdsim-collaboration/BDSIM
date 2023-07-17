@@ -34,7 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class G4Colour;
 class G4Material;
 
-BDSShield::BDSShield(G4String         nameIn,
+BDSShield::BDSShield(const G4String&  nameIn,
                      G4double         lengthIn,
                      G4double         horizontalWidthIn,
                      G4double         xSizeIn,
