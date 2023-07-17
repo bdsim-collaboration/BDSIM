@@ -111,7 +111,7 @@ void BDSShield::BuildShield()
   if (sensitiveOuter)
     {RegisterSensitiveVolume(shieldLV, BDSSDType::energydep);}
 
-  G4VisAttributes* shieldVisAttr = new G4VisAttributes(colour);
+  G4VisAttributes* shieldVisAttr = new G4VisAttributes(*colour);
   shieldVisAttr->SetVisibility(true);
   shieldLV->SetVisAttributes(shieldVisAttr);
   RegisterVisAttributes(shieldVisAttr);
