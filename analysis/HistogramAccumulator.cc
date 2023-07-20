@@ -141,14 +141,15 @@ void HistogramAccumulator::Accumulate(TH1* newValue, bool warnAboutZeroEntries)
   const double error   = 0; // needed to pass reference to unused parameter
   const unsigned long nEntriesToAccumulate = 1;
 
+  n++; // must always count even if nothing to add up
+
   if (newValue->GetEntries() == 0)
     {
       if (warnAboutZeroEntries)
         {std::cout << "Histogram has no entries: \"" << newValue->GetName() << "\"" << std::endl;}
       return; // can't accumulate nothing
     }
-  
-  n++;
+
   switch (nDimensions)
     {
     case 1:
