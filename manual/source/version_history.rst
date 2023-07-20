@@ -18,6 +18,8 @@ V1.7.1 - 2023 / 07 / 20
 * Fix NANs appearing in merged histograms from rebdsimCombine where histograms were empty.
 * Fix wrong number of entries in per-entry histograms (e.g. per-event histograms)
   from rebdsim.
+* Fix crash from Geant4 GDML writer when exporting GDML geometry from BDSIM where
+  a directory is included in the destination file path but it does not exist.
 
 
 V1.7.0 - 2023 / 07 / 11
