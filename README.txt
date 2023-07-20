@@ -23,7 +23,8 @@ Originally started by G.A. Blair. See manual for full authorship.
 History
 =======
 
-v1.7.0  04.04.23
+v1.7.1  20.07.23
+v1.7.0  11.07.23
 v1.6.0  16.12.21
 v1.5.1  21.12.21
 v1.5.0  16.12.20
