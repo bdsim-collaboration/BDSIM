@@ -92,6 +92,13 @@ of writing, the corresponding versions of each utility are:
 
 
 
+V1.7.3 - 2023 / 08 / 11
+=======================
+
+* Hotfix - undo recent optimisation for histograms as it accidentally affected the mean
+  in non-simple (i.e. per-entry average) histograms.
+  
+
 V1.7.2 - 2023 / 08 / 11
 =======================
 
