@@ -12,6 +12,38 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Restructure code into proper C++ libraries rather than just analysis and 'bdsim'.
 * Multiple beam line tracking.
 
+
+V1.7.2 - 2023 / 08 / 11
+=======================
+
+General Updates
+---------------
+
+* Determine extents of any container solid loaded from an external geometry file.
+
+Bug Fixes
+---------
+
+**Installation**
+
+* Fix compilation when BDSIM is compiled with GDML on but the Geant4 used does not
+  have GDML compiled into it. This would result in a compilation error rather than
+  a CMake error at configuration time.
+
+**Geometry**
+
+* A placement where the outermost solid was an extruded solid would cause the extents
+  not to be determined properly and therefore the maximum step size to be set to 1 micron,
+  which would result in very slow running events. Fixed by automatically determining the
+  size of any potential solid given from externally loaded geometry.
+* Generic BLM shapes now have consistent user limits for tracking applied as other volumes.
+* Do not allocate a G4UserLimits object for every placement that wasn't used.
+
+**Visualisation**
+
+* `shield` component now obeys `colour` property correctly.
+
+  
 V1.7.1 - 2023 / 07 / 20
 =======================
 
