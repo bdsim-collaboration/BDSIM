@@ -13,7 +13,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 
 
-V1.X.X - 2023 / XX / XX
+V1.7.2 - 2023 / 08 / 11
 =======================
 
 New Features
@@ -31,74 +31,17 @@ Bug Fixes
   have GDML compiled into it. This would result in a compilation error rather than
   a CMake error at configuration time.
 
+**Geometry**
+
+* A placement where the outermost solid was an extruded solid would cause the extents
+  not to be determined properly and therefore the maximum step size to be set to 1 micron,
+  which would result in very slow running events. Fixed by automatically determining the
+  size of any potential solid given from externally loaded geometry.
+* Generic BLM shapes now have consistent user limits for tracking applied as other volumes.
+
 **Visualisation**
 
 * `shield` component now obeys `colour` property correctly.
-
-Output Changes
---------------
-
-Output Class Versions
----------------------
-
-* Data Version 9.
-
-+-----------------------------------+-------------+-----------------+-----------------+
-| **Class**                         | **Changed** | **Old Version** | **New Version** |
-+===================================+=============+=================+=================+
-| BDSOutputROOTEventAperture        | N           | 1               | 1               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventBeam            | N           | 6               | 6               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventCavityInfo      | N           | 1               | 1               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventCollimator      | N           | 1               | 1               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventCollimatorInfo  | N           | 2               | 2               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventCoords          | N           | 3               | 3               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventHeader          | N           | 5               | 5               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventHistograms      | N           | 4               | 4               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventInfo            | N           | 7               | 7               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventLoss            | N           | 5               | 5               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventModel           | N           | 6               | 6               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventOptions         | N           | 7               | 7               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventRunInfo         | N           | 3               | 3               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventSampler         | N           | 5               | 5               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventSamplerC        | N           | 1               | 1               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventSamplerS        | N           | 1               | 1               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventTrajectory      | N           | 5               | 5               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventTrajectoryPoint | N           | 6               | 6               |
-+-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTParticleData         | N           | 1               | 1               |
-+-----------------------------------+-------------+-----------------+-----------------+
-
-
-Utilities
----------
-
-These are no longer included directly with BDSIM but are available through pip. At the time
-of writing, the corresponding versions of each utility are:
-
-* pybdsim v3.3.2
-* pymadx v2.0.1
-* pymad8 v2.0.1
-* pytransport v2.0.1
-
 
   
 V1.7.1 - 2023 / 07 / 20
