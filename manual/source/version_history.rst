@@ -13,6 +13,13 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 
 
+V1.7.3 - 2023 / 08 / 11
+=======================
+
+* Hotfix - undo recent optimisation for histograms as it accidentally affected the mean
+  in non-simple (i.e. per-entry average) histograms.
+  
+
 V1.7.2 - 2023 / 08 / 11
 =======================
 
