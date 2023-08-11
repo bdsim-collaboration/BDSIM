@@ -16,11 +16,10 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.7.2 - 2023 / 08 / 11
 =======================
 
-New Features
-------------
-
 General Updates
 ---------------
+
+* Determine extents of any container solid loaded from an external geometry file.
 
 Bug Fixes
 ---------
@@ -38,6 +37,7 @@ Bug Fixes
   which would result in very slow running events. Fixed by automatically determining the
   size of any potential solid given from externally loaded geometry.
 * Generic BLM shapes now have consistent user limits for tracking applied as other volumes.
+* Do not allocate a G4UserLimits object for every placement that wasn't used.
 
 **Visualisation**
 
