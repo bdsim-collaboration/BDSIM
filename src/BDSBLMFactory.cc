@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtent.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 
@@ -160,7 +161,7 @@ BDSBLM* BDSBLMFactory::CommonConstruction(const G4String&  name,
 {
   G4Material* mat = BDSMaterials::Instance()->GetMaterial(material);
   G4LogicalVolume* lv = new G4LogicalVolume(shape, mat, name + "_lv");
-  
+  lv->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
   BDSBLM* result = new BDSBLM(shape, lv, extent);
   return result;
 }

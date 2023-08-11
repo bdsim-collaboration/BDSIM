@@ -59,14 +59,6 @@ BDSSimpleComponent::BDSSimpleComponent(const G4String&       nameIn,
 void BDSSimpleComponent::Build()
 {
   BuildContainerLogicalVolume();
-  
-  // set user limits for container & visual attributes
-  if (containerLogicalVolume || containerAssembly)
-    {
-      BuildUserLimits();
-      if (containerIsAssembly)
-        {AttachUserLimitsToAssembly(containerAssembly, userLimits);}
-      else
-        {containerLogicalVolume->SetUserLimits(userLimits);}
-    }
+  // in each case this is used, user limits are attached already,
+  // so it is not needed to overwrite them here.
 }
