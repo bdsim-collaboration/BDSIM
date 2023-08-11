@@ -133,7 +133,7 @@ HistogramAccumulator::~HistogramAccumulator()
   // leak result here as ROOT annoyingly requires this to be left
 }
 
-void HistogramAccumulator::Accumulate(TH1* newValue, bool warnAboutZeroEntries)
+void HistogramAccumulator::Accumulate(TH1* newValue)
 {
   // temporary variables
   double newMean = 0;
@@ -142,13 +142,6 @@ void HistogramAccumulator::Accumulate(TH1* newValue, bool warnAboutZeroEntries)
   const unsigned long nEntriesToAccumulate = 1;
 
   n++; // must always count even if nothing to add up
-
-  if (newValue->GetEntries() == 0)
-    {
-      if (warnAboutZeroEntries)
-        {std::cout << "Histogram has no entries: \"" << newValue->GetName() << "\"" << std::endl;}
-      return; // can't accumulate nothing
-    }
 
   switch (nDimensions)
     {
