@@ -50,14 +50,14 @@ CentOS 7 with CVMFS Access
 If you have a machine running CERN CentOS 7 and with access to the CVMFS file system (CERN Virtual Machine
 File System), you can access an installation of bdsim at: ::
 
-  /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt
+  /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc11-opt
 
 You can source a script for a specific version of Geant4 + BDSIM. e.g. ::
 
-  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.6.0-g4v10.7.2.3.sh
+  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc11-opt/bdsim-env-v1.7.1-g4v10.7.2.3-ftfp-boost.sh
 
 
-* Tagged versions (e.g. v1.6.0) will remain even when newer versions of BDSIM are provided.
+* Tagged versions (e.g. v1.7.1) will remain even when newer versions of BDSIM are provided.
 * "develop" versions can change without notice.
 * The scripts require BASH (not ZSH) and currently only work on Centos7 as per the name of the directory.
 * Each provides: BDSIM, ROOT, Geant4, CLHEP, Python3, IPython, pybdsim, pymadx, pymad8 and pytransport.
@@ -76,8 +76,9 @@ so that anyone could reproduce the build.
 
 Example usage: ::
 
-  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc8-opt/bdsim-env-v1.6.0-g4v10.7.2.3.sh
+  source /cvmfs/beam-physics.cern.ch/bdsim/x86_64-centos7-gcc11-opt/bdsim-env-v1.7.1-g4v10.7.2.3-ftfp-boost.sh
   bdsim --help
+
 
 This may take some time the first time it is used (up to a minute or two), but CVMFS is highly efficient
 at caching files and it will subsequently be much faster.
@@ -875,7 +876,6 @@ changes from the git repository and then update the build.
 
    cd bdsim
    git pull
-   git submodule update
 
 You then have two options: 1) make a clean build or 2) update the current build. The first option
 is generally more robust and we recommend that. Both are described for completeness.
@@ -888,6 +888,7 @@ Clean Build
    cd ../bdsim-build
    rm -rf *
    cmake ../bdsim
+   # do any configuration steps in ccmake .
    make -j4
    make install
 
@@ -904,7 +905,6 @@ Updated Existing Build
    cmake ../bdsim
    make -j4
    make install
-   
 
 
 .. _Troubleshooting:

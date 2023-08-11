@@ -25,6 +25,12 @@ General Updates
 Bug Fixes
 ---------
 
+**Installation**
+
+* Fix compilation when BDSIM is compiled with GDML on but the Geant4 used does not
+  have GDML compiled into it. This would result in a compilation error rather than
+  a CMake error at configuration time.
+
 **Visualisation**
 
 * `shield` component now obeys `colour` property correctly.
