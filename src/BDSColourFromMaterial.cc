@@ -63,6 +63,7 @@ BDSColourFromMaterial::BDSColourFromMaterial()
   defines["lhcconcrete"] = defines["concrete"];
   defines["copper"]      = c->GetColour("coil");
   defines["cu"]          = defines["copper"];
+  defines["cuh2o"]       = defines["copper"];
   defines["iron"]        = c->GetColour("iron");
   defines["fe"]          = defines["iron"];
   defines["gold"]        = c->GetColour("gold:220 176 71");
