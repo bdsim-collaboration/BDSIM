@@ -179,7 +179,11 @@ BDSBeamline* BDS::BuildBLMs(const std::vector<GMAD::BLMPlacement>& blmPlacements
       // do a little checking here as transform code in CreatePlacement can't
       // know who's calling it to warn
       if (BDS::IsFinite(bp.s) && transform == G4Transform3D::Identity)
-	{throw BDSException(__METHOD_NAME__, "the S coordinate (" + std::to_string(bp.s) + " m) for blm \"" + bp.name + "\" was not found in the beam line - please check");}
+        {
+          G4String msg = "the S coordinate (" + std::to_string(bp.s) + " m) for blm \"" + bp.name;
+          msg += "\" was not found in the beam line - please check";
+          throw BDSException(__METHOD_NAME__, msg);
+        }
       
       BDSBLMRegistry::Instance()->RegisterBLM(bp.name, blm, S);
       
