@@ -26,6 +26,11 @@ General Updates
 Bug Fixes
 ---------
 
+* Fix S coordinate of primaries in the output if a negative :code:`option, beamlineS`
+  was used. It would previously always be 0.
+
+  
+
 Output Changes
 --------------
 
