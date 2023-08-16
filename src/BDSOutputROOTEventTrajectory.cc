@@ -164,6 +164,8 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
       filters.push_back(trajectories->filtersMatched.at(traj));
       
       XYZ.push_back(itj.XYZ);
+      p.push_back(itj.p);
+      charge.push_back(itj.charge);
       modelIndicies.push_back(itj.modelIndex);
       
       if (stMo)
@@ -198,9 +200,8 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSTrajectoriesToStore* trajectori
           pxpypz.push_back(itj.pxpypz);
         }
 
-      if (!itj.charge.empty())
-        {
-          charge.push_back(itj.charge);
+      if (!itj.mass.empty())
+	{
           turnsTaken.push_back(itj.turn);
           mass.push_back(itj.mass);
           rigidity.push_back(itj.rigidity);
@@ -297,6 +298,8 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   itj.S.push_back(point->GetPreS() / CLHEP::m);
   itj.T.push_back(point->GetPreGlobalTime() / CLHEP::ns);
   itj.kineticEnergy.push_back(point->GetKineticEnergy() / CLHEP::GeV);
+  itj.p.push_back(mom.mag());
+  itj.charge.push_back((int) (point->GetCharge() / (G4double)CLHEP::eplus));
   
   itj.materialID.push_back(materialToID.at(point->GetMaterial()));
   
@@ -314,7 +317,6 @@ void BDSOutputROOTEventTrajectory::FillIndividualTrajectory(IndividualTrajectory
   
   if (point->extraLink)
     {
-      itj.charge.push_back((int) (point->GetCharge() / (G4double)CLHEP::eplus));
       itj.turn.push_back(point->GetTurnsTaken());
       itj.mass.push_back(point->GetMass() / CLHEP::GeV);
       itj.rigidity.push_back(point->GetRigidity() / (CLHEP::tesla*CLHEP::m));
@@ -365,6 +367,7 @@ void BDSOutputROOTEventTrajectory::FlushLocal()
   XYZ.clear();
   S.clear();
   PXPYPZ.clear();
+  p.clear();
   T.clear();
   
   xyz.clear();
@@ -418,7 +421,7 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
   S                   = other->S;
   PXPYPZ              = other->PXPYPZ;
   T                   = other->T;
-
+  p                   = other->p;
   xyz                 = other->xyz;
   pxpypz              = other->pxpypz;
   charge              = other->charge;
@@ -497,7 +500,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
   bool useT      = !T.empty();
   bool useIon    = !isIon.empty();
   bool useLocal  = !xyz.empty();
-  bool useLinks  = !charge.empty();
+  bool useLinks  = !mass.empty();
   bool useEK     = !kineticEnergy.empty();
   bool useMat    = !materialID.empty();
   
@@ -524,6 +527,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
                                               energyDeposit[ti][i],
                                               XYZ[ti][i],
                                               usePXPYPZ ? PXPYPZ[ti][i] : TVector3(),
+                                              p[ti][i],
                                               modelIndicies[ti][i],
                                               useT ? T[ti][i]      : 0,
                                               useLocal ? xyz[ti][i] : TVector3(),
@@ -601,12 +605,12 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::parentProcessPoi
   bool useT      = !T.empty();
   bool useIon    = !isIon.empty();
   bool useLocal  = !xyz.empty();
-  bool useLinks  = !charge.empty();
+  bool useLinks  = !mass.empty();
   bool useEK     = !kineticEnergy.empty();
   bool useMat    = !materialID.empty();
 
-  BDSOutputROOTEventTrajectoryPoint p(partID[pi],
-                                      trackID[pi],
+  BDSOutputROOTEventTrajectoryPoint tp(partID[pi],
+				      trackID[pi],
                                       parentID[pi],
                                       parentIndex[pi],
                                       postProcessTypes[pi][si],
@@ -615,6 +619,7 @@ BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::parentProcessPoi
                                       energyDeposit[pi][si],
                                       XYZ[pi][si],
                                       usePXPYPZ ? PXPYPZ[pi][si] : TVector3(),
+                                      p[pi][si],
                                       modelIndicies[pi][si],
                                       useT ? T[pi][si]      : 0,
                                       useLocal ? xyz[pi][si] : TVector3(),
@@ -654,7 +659,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
   bool useT      = !T.empty();
   bool useIon    = !isIon.empty();
   bool useLocal  = !xyz.empty();
-  bool useLinks  = !charge.empty();
+  bool useLinks  = !mass.empty();
   bool useEK     = !kineticEnergy.empty();
   bool useMat    = !materialID.empty();
 
@@ -679,6 +684,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
                                           energyDeposit[pi][psi],
                                           XYZ[pi][psi],
                                           usePXPYPZ ? PXPYPZ[ti][psi] : TVector3(),
+                                          p[pi][psi],
                                           modelIndicies[ti][psi],
                                           useT ? T[ti][psi]      : 0,
                                           useLocal ? xyz[ti][psi] : TVector3(),
@@ -694,7 +700,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
                                           useIon ? nElectrons[ti][psi] : 0,
                                           useMat ? materialID[ti][psi] : -1,
                                           (int)psi);
-      tpv.push_back(p);
+      tpv.push_back(tp);
       ti = (int)pi;
     }
   std::reverse(tpv.begin(),tpv.end());

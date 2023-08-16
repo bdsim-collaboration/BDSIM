@@ -35,6 +35,7 @@ BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint(int        
 								     double          energyDepositedIn,
 								     const TVector3& positionIn,
 								     const TVector3& momentumIn,
+                     double          pIn,
 								     int             modelIn,
 								     double          timeIn,
 								     const TVector3& positionLocalIn,
@@ -60,6 +61,7 @@ BDSOutputROOTEventTrajectoryPoint::BDSOutputROOTEventTrajectoryPoint(int        
   energyDeposited(energyDepositedIn),
   position(positionIn),
   momentum(momentumIn),
+  p(pIn),
   model(modelIn),
   time(timeIn),
   positionLocal(positionLocalIn),
@@ -89,6 +91,7 @@ void BDSOutputROOTEventTrajectoryPoint::ClearContents()
   energyDeposited = -1.0;
   position = {0,0,0};
   momentum = {0,0,0};
+  p = -1.0;
   model = -1;
   time = 0;
   positionLocal = {0,0,0};

@@ -33,8 +33,7 @@ public:
   /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
-  BDSTrajectoryPointLink(G4int    chargeIn,
-			 G4int    turnsTakenIn,
+  BDSTrajectoryPointLink(G4int turnsTakenIn,
 			 G4double massIn,
 			 G4double rigidityIn);
   
@@ -43,7 +42,6 @@ public:
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);
   
-  G4int    charge;
   G4int    turnsTaken;
   G4double mass;
   G4double rigidity;

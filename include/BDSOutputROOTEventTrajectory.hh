@@ -140,8 +140,8 @@ public:
     std::vector<double>   T;    
     std::vector<TVector3> xyz;
     std::vector<TVector3> pxpypz;  
-    std::vector<int>      charge;
     std::vector<double>   kineticEnergy;
+    std::vector<double>   p;
     std::vector<int>      turn;
     std::vector<double>   mass;
     std::vector<double>   rigidity;    
@@ -149,6 +149,7 @@ public:
     std::vector<int>      ionA;
     std::vector<int>      ionZ;
     std::vector<int>      nElectrons;
+    std::vector<int>      charge;
     std::vector<int>      modelIndex;
     std::vector<short int> materialID;
   };
@@ -192,6 +193,8 @@ public:
   std::vector<std::vector<double>>   S;
   std::vector<std::vector<TVector3>> PXPYPZ;
   std::vector<std::vector<double>>   T;
+  std::vector<std::vector<double>>   p;
+  std::vector<std::vector<int>>      charge;
 
   /// @{ Local coordinates.
   std::vector<std::vector<TVector3>> xyz;
@@ -199,7 +202,6 @@ public:
   /// @}
 
   /// @{ Link trajectory information.
-  std::vector<std::vector<int>>      charge;
   std::vector<std::vector<double>>   kineticEnergy;
   std::vector<std::vector<int>>      turnsTaken;
   std::vector<std::vector<double>>   mass;

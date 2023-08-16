@@ -41,6 +41,7 @@ public:
 				    double          energyDepositedIn,
 				    const TVector3& positionIn,
 				    const TVector3& momentumIn,
+            double          pIn,
 				    int             modelIn,
 				    double          timeIn,
 				    const TVector3& positionLocalIn,
@@ -71,6 +72,7 @@ public:
   double   energyDeposited;
   TVector3 position;
   TVector3 momentum;
+  double   p;
   int      model;
   double   time;
   TVector3 positionLocal;

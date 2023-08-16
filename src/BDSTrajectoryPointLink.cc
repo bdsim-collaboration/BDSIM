@@ -22,11 +22,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 G4Allocator<BDSTrajectoryPointLink> BDSAllocatorTrajectoryPointLink;
 
-BDSTrajectoryPointLink::BDSTrajectoryPointLink(G4int    chargeIn,
-					       G4int    turnsTakenIn,
+BDSTrajectoryPointLink::BDSTrajectoryPointLink(G4int turnsTakenIn,
 					       G4double massIn,
 					       G4double rigidityIn):
-  charge(chargeIn),
   turnsTaken(turnsTakenIn),
   mass(massIn),
   rigidity(rigidityIn)

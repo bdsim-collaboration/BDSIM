@@ -86,6 +86,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track,
   postMomentum   = preMomentum;
   preGlobalTime  = track->GetGlobalTime();
   postGlobalTime = preGlobalTime;
+  charge         = track->GetDynamicParticle()->GetCharge();
   // when we construct a trajectory from a track it hasn't taken a step yet,
   // so we don't know the material
   material       = nullptr;
@@ -156,6 +157,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step,
   preGlobalTime  = prePoint->GetGlobalTime();
   postGlobalTime = postPoint->GetGlobalTime();
   material       = prePoint->GetMaterial();
+  charge         = step->GetTrack()->GetDynamicParticle()->GetCharge();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
@@ -213,6 +215,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const BDSTrajectoryPoint& other):
   prePosLocal        = other.prePosLocal;
   postPosLocal       = other.postPosLocal;
   material           = other.material;
+  charge             = other.charge;
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
@@ -240,6 +243,7 @@ void BDSTrajectoryPoint::InitialiseVariables()
   preGlobalTime      = 0;
   postGlobalTime     = 0;
   beamlineIndex      = -1;
+  charge             = 0.;
   beamline           = nullptr;
   prePosLocal        = G4ThreeVector();
   postPosLocal       = G4ThreeVector();
@@ -252,12 +256,11 @@ void BDSTrajectoryPoint::InitialiseVariables()
 void BDSTrajectoryPoint::StoreExtrasLink(const G4Track* track)
 {
   const G4DynamicParticle* dynamicParticleDef = track->GetDynamicParticle();
-  G4double charge   = dynamicParticleDef->GetCharge();
+  G4double particleCharge = dynamicParticleDef->GetCharge();
   G4double rigidity = 0;
-  if (BDS::IsFinite(charge))
-    {rigidity = BDS::Rigidity(track->GetMomentum().mag(), charge);}
-  extraLink = new BDSTrajectoryPointLink((G4int)charge,
-					 BDSGlobalConstants::Instance()->TurnsTaken(),
+  if (BDS::IsFinite(particleCharge))
+    {rigidity = BDS::Rigidity(track->GetMomentum().mag(), particleCharge);}
+  extraLink = new BDSTrajectoryPointLink(BDSGlobalConstants::Instance()->TurnsTaken(),
 					 dynamicParticleDef->GetMass(),
 					 rigidity);
 }

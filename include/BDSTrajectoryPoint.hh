@@ -112,6 +112,7 @@ public:
   inline G4ThreeVector GetPrePosLocal()        const {return prePosLocal;}
   inline G4ThreeVector GetPostPosLocal()       const {return postPosLocal;}
   inline G4Material* GetMaterial()             const {return material;}
+  inline G4double GetCharge()                  const {return charge;}
   
   /// For initial points in a trajectory it is not possible to yet know the
   /// material so it has to be updated after the first step.
@@ -123,7 +124,6 @@ public:
   /// @}
 
   /// @{ Accessor for the extra information links.
-  inline G4int      GetCharge()         const {return extraLink ? extraLink->charge        : 0;}
   inline G4double   GetKineticEnergy()  const {return preEnergy;}
   inline G4int      GetTurnsTaken()     const {return extraLink ? extraLink->turnsTaken    : 0;}
   inline G4double   GetMass()           const {return extraLink ? extraLink->mass          : 0;}
@@ -191,6 +191,7 @@ private:
   G4double preGlobalTime;         ///< Time since event started of pre-step point.
   G4double postGlobalTime;        ///< Time since event started of post-step point.
   G4int    beamlineIndex;         ///< Index to beam line element in the mass world beam line.
+  G4double charge;                ///< Electric charge of the particle in the trajectory
   BDSBeamline* beamline;          ///< Beam line (if any) point belongs to (always mass world).
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;     ///< Local coordinates of post-step point
