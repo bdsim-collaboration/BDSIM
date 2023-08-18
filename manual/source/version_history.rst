@@ -23,6 +23,10 @@ New Features
 General Updates
 ---------------
 
+* Fix manual description of 3D histograms in rebdsim. Should be :code:`z:y:x` for 3D histogram
+  variables. :code:`y:x` for 2D, and :code:`x` for 1D histograms.
+
+
 Bug Fixes
 ---------
 

@@ -428,7 +428,7 @@ Below is a complete of a rebdsim analysis configuration text file.
 
 .. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
 	     method. If 1D, there is just :code:`x`. If 2D, it's :code:`y : x`.
-       If 3D, it's :code:`z : y : x`. This **only** applies to the variable and
+             If 3D, it's :code:`z : y : x`. This **only** applies to the variable and
 	     **not** to the bin specification. 
 
 
