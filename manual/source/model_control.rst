@@ -2551,7 +2551,7 @@ We cannot use a factor of say, 1 million and only sample 1 event, because we wou
 sample 1 (e.g.) decay in 1 location. We must still sample many locations well to properly
 estimate the muon flux.
 
-.. figure:: figures/muon_splitting_comparison_with_divsym.eps
+.. figure:: figures/muon_splitting_comparison_with_divsym.png
 	    :width: 70%
 	    :align: center
                     
