@@ -427,8 +427,8 @@ Below is a complete of a rebdsim analysis configuration text file.
   Histogram2DLog  Event  PhaseSpaceXYAbs2 {20,30}    {-6:-3,-1e-6:1e-5}  abs(Primary.y):Primary.x 1
 
 .. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
-	     method.  This is **totally inconsistent**.  If 1D, there is just :code:`x`.  If 2D, it's
-	     :code:`y : x`. If 3D, it's :code:`x : y : z`.  This **only** applies to the variable and
+	     method. If 1D, there is just :code:`x`. If 2D, it's :code:`y : x`.
+       If 3D, it's :code:`z : y : x`. This **only** applies to the variable and
 	     **not** to the bin specification. 
 
 
