@@ -2554,10 +2554,11 @@ estimate the muon flux.
 .. figure:: figures/muon_splitting_comparison_with_divsym.eps
 	    :width: 70%
 	    :align: center
+                    
+            Comparison of the muon spectrum for the same model with activated muon splitting
+            and without muon splitting [F. Metzger, `Examination of the RF separated beam
+            technique at CERN's M2 beam line`, PhD thesis (in progress)].
 
-	    Comparison of the muon spectrum for the same model with activated muon splitting
-      and without muon splitting [F. Metzger, `Examination of the RF separated beam
-      technique at CERN's M2 beam line`, PhD thesis (in progress)].
 
 **Notes:**
 
