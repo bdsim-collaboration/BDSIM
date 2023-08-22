@@ -32,7 +32,9 @@ Bug Fixes
 
 * Fix S coordinate of primaries in the output if a negative :code:`option, beamlineS`
   was used. It would previously always be 0.
-
+* Fix print out in terminal of how many events have been completed when using a file-based
+  beam distribution. It would always be each event instead of the usual 10%, which may have
+  slowed down simulations or inflated log files.
   
 
 Output Changes
