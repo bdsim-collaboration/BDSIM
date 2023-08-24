@@ -16,6 +16,12 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.7.4 - 2023 / 08 / 25
 =======================
 
+New Features
+------------
+
+* Spectra by momentum: :code:`SpectraMomentum` in rebdsim.
+
+
 General Updates
 ---------------
 
