@@ -544,11 +544,15 @@ The following commands are accepted.
 +========================+===========================================+
 | Spectra                | Per-event histograms in kinetic energy    |
 +------------------------+-------------------------------------------+
+| SpectraMomentum        | Per-event histograms in momentum          |
++------------------------+-------------------------------------------+
 | SpectraTE              | Per-event histograms in total energy      |
 +------------------------+-------------------------------------------+
 | SpectraRigidity        | Per-event histograms in rigidity          |
 +------------------------+-------------------------------------------+
 | SimpleSpectra          | Total histograms in kinetic energy        |
++------------------------+-------------------------------------------+
+| SimpleSpectraMomentum  | Total histograms in momentum              |
 +------------------------+-------------------------------------------+
 | SimpleSpectraTE        | Total histograms in total energy          |
 +------------------------+-------------------------------------------+
