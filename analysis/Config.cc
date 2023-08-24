@@ -457,7 +457,8 @@ void Config::ParseSpectraLine(const std::string& line)
   HistogramDefSet* result = new HistogramDefSet(samplerName,
                                                 def,
                                                 particles,
-                                                results[4]);
+                                                results[4],
+                                                line);
   delete def; // no longer needed
   
   if (perEntry)
