@@ -269,10 +269,10 @@ Notes:
           raw BDSIM output data. `rebdsimCombine` handles output from the analysis
           tool `rebdsim`.
 
-To merge files together in small chunks to reduce a data size (e.g. every 10 files into 1), a small
-Python (3) script is available in :code:`bdsim/utils/chunkermp.py`. This allows us to reduce a data
-set into fewer files in parallel. Note, this may cause intensive disk usage, but usually using some
-parallel processes will be significantly faster than just one.
+To merge files together in small chunks to reduce a data size (e.g. every 10 files into 1), a utility
+function in pybdsim is provided. See :code:`pybdsim.Run.Reduce` and :code:`pybdsim.Run.ReduceParallel`.
+This allows us to reduce a data set into fewer files in parallel. Note, this may cause intensive disk
+usage, but usually using some parallel processes will be significantly faster than just one.
 
 Example: ::
 
