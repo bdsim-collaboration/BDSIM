@@ -2551,6 +2551,15 @@ We cannot use a factor of say, 1 million and only sample 1 event, because we wou
 sample 1 (e.g.) decay in 1 location. We must still sample many locations well to properly
 estimate the muon flux.
 
+.. figure:: figures/muon_splitting_comparison_with_divsym.png
+	    :width: 70%
+	    :align: center
+                    
+            Comparison of the muon spectrum for the same model with activated muon splitting
+            and without muon splitting [F. Metzger, `Examination of the RF separated beam
+            technique at CERN's M2 beam line`, PhD thesis (in progress)].
+
+
 **Notes:**
 
 * A factor of 1 means no splitting is done.

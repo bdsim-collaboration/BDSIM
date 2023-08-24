@@ -13,6 +13,32 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 
 
+V1.7.4 - 2023 / 08 / 25
+=======================
+
+New Features
+------------
+
+* Spectra by momentum: :code:`SpectraMomentum` in rebdsim.
+
+
+General Updates
+---------------
+
+* Fix manual description of 3D histograms in rebdsim. Should be :code:`z:y:x` for 3D histogram
+  variables. :code:`y:x` for 2D, and :code:`x` for 1D histograms.
+
+
+Bug Fixes
+---------
+
+* Fix S coordinate of primaries in the output if a negative :code:`option, beamlineS`
+  was used. It would previously always be 0.
+* Fix print out in terminal of how many events have been completed when using a file-based
+  beam distribution. It would always be each event instead of the usual 10%, which may have
+  slowed down simulations or inflated log files.
+
+
 V1.7.3 - 2023 / 08 / 11
 =======================
 
