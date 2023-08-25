@@ -1347,20 +1347,20 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
       G4String geometryType = BDS::LowerCase(G4String(mesh.geometryType));
 
       if (geometryType == "box")
-	{// create a scoring box
-	  scorerBox = new BDSScoringMeshBox(meshName, meshRecipe, placement);
-	  mapper = scorerBox->Mapper();
-	}
+        {// create a scoring box
+          scorerBox = new BDSScoringMeshBox(meshName, meshRecipe, placement);
+          mapper = scorerBox->Mapper();
+        }
       else if (geometryType == "cylindrical")
-	{// create a scoring cylinder
-	  scorerCylindrical = new BDSScoringMeshCylinder(meshName, meshRecipe, placement);
-	  mapper = scorerCylindrical->Mapper();
-	}
+        {// create a scoring cylinder
+          scorerCylindrical = new BDSScoringMeshCylinder(meshName, meshRecipe, placement);
+          mapper = scorerCylindrical->Mapper();
+        }
       else
-	{
-	  G4String msg = "mesh geometry type \"" + geometryType + "\" is not correct. The possible options are \"box\" and \"cylindrical\"";
+        {
+          G4String msg = "mesh geometry type \"" + geometryType + "\" is not correct. The possible options are \"box\" and \"cylindrical\"";
           throw BDSException(__METHOD_NAME__, msg);
-	}
+        }
 
       // add the scorer(s) to the scoring mesh
       std::vector<G4String> meshPrimitiveScorerNames; // final vector of unique mesh + ps names
@@ -1369,36 +1369,36 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
 
       std::vector<G4String> words = BDS::SplitOnWhiteSpace(mesh.scoreQuantity);
       for (const auto& word : words)
-	{
-	  auto search = scorerRecipes.find(word);
-	  if (search == scorerRecipes.end())
-	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for mesh \"" + meshName + "\" not found.");}
+        {
+          auto search = scorerRecipes.find(word);
+          if (search == scorerRecipes.end())
+            {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for mesh \"" + meshName + "\" not found.");}
 
-	  G4double psUnit = 1.0;
-	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper, &psUnit, worldLV);
-	  // The mesh internally creates a multifunctional detector which is an SD and has
-	  // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
-	  // the hits map we need the full name of the unique primitive scorer so we build that
-	  // name here and store it.
-	  G4String uniqueName = meshName + "/" + ps->GetName();
-	  meshPrimitiveScorerNames.push_back(uniqueName);
-	  meshPrimitiveScorerUnits.push_back(psUnit);
+          G4double psUnit = 1.0;
+          G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper, &psUnit, worldLV);
+          // The mesh internally creates a multifunctional detector which is an SD and has
+          // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
+          // the hits map we need the full name of the unique primitive scorer so we build that
+          // name here and store it.
+          G4String uniqueName = meshName + "/" + ps->GetName();
+          meshPrimitiveScorerNames.push_back(uniqueName);
+          meshPrimitiveScorerUnits.push_back(psUnit);
 
-	  // sets the current ps but appends to list of multiple
-	  if (geometryType == "box")
-	    {scorerBox->SetPrimitiveScorer(ps);} 
-	  else if (geometryType == "cylindrical")
-	    {scorerCylindrical->SetPrimitiveScorer(ps);}
-	  
-	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
-	  BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
-	  BDSAcceleratorModel::Instance()->RegisterScorerPlacement(meshName, placement);
-	}
+          // sets the current ps but appends to list of multiple
+          if (geometryType == "box")
+            {scorerBox->SetPrimitiveScorer(ps);} 
+          else if (geometryType == "cylindrical")
+            {scorerCylindrical->SetPrimitiveScorer(ps);}
+          
+          BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
+          BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
+          BDSAcceleratorModel::Instance()->RegisterScorerPlacement(meshName, placement);
+        }
       
       if (geometryType == "box")
-	{scManager->RegisterScoringMesh(scorerBox);} // sets the current ps but appends to list of multiple
+        {scManager->RegisterScoringMesh(scorerBox);} // sets the current ps but appends to list of multiple
       else if (geometryType == "cylindrical")
-	{scManager->RegisterScoringMesh(scorerCylindrical);}// sets the current ps but appends to list of multiple
+        {scManager->RegisterScoringMesh(scorerCylindrical);}// sets the current ps but appends to list of multiple
 
       // register it with the sd manager as this is where we get all collection IDs from
       // in the end of event action. This must come from the mesh as it creates the
@@ -1414,53 +1414,53 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
   for (const auto& def : parserQueries)
     {
       if (!def.queryMagneticField && !def.queryElectricField)
-	{throw BDSException(__METHOD_NAME__, "neither \"queryMagneticField\" nor \"queryElectricField\" are true (=1) - one must be turned on.");}
+        {throw BDSException(__METHOD_NAME__, "neither \"queryMagneticField\" nor \"queryElectricField\" are true (=1) - one must be turned on.");}
 
       if (!def.pointsFile.empty())
-	{
-	  std::vector<G4String> columnNames;
-	  auto points = BDS::LoadFieldQueryPoints(G4String(def.pointsFile), &columnNames);
-	  result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
-						    G4String(def.outfileMagnetic),
-						    G4String(def.outfileElectric),
-						    G4bool(def.queryMagneticField),
-						    G4bool(def.queryElectricField),
-						    points,
-						    columnNames,
-						    G4bool(def.overwriteExistingFiles),
-						    G4String(def.fieldObject),
-						    def.checkParameters,
-						    def.drawArrows,
-						    def.drawZeroValuePoints,
-						    def.drawBoxes,
-						    def.boxAlpha));
-	}
+        {
+          std::vector<G4String> columnNames;
+          auto points = BDS::LoadFieldQueryPoints(G4String(def.pointsFile), &columnNames);
+          result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
+                                                    G4String(def.outfileMagnetic),
+                                                    G4String(def.outfileElectric),
+                                                    G4bool(def.queryMagneticField),
+                                                    G4bool(def.queryElectricField),
+                                                    points,
+                                                    columnNames,
+                                                    G4bool(def.overwriteExistingFiles),
+                                                    G4String(def.fieldObject),
+                                                    def.checkParameters,
+                                                    def.drawArrows,
+                                                    def.drawZeroValuePoints,
+                                                    def.drawBoxes,
+                                                    def.boxAlpha));
+        }
       else
-	{
-	  G4Transform3D globalTransform3D = CreatePlacementTransform(def, mainBeamline);
-	  auto rot = globalTransform3D.getRotation();
-	  rot = rot.inverse();
-	  G4AffineTransform globalTransform(rot, globalTransform3D.getTranslation());
-	  
-	  result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
-						    G4String(def.outfileMagnetic),
-						    G4String(def.outfileElectric),
-						    G4bool(def.queryMagneticField),
-						    G4bool(def.queryElectricField),
-						    {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
-						    {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
-						    {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
-						    {def.nt, def.tmin*CLHEP::ns, def.tmax*CLHEP::ns},
-						    globalTransform,
-						    G4bool(def.overwriteExistingFiles),
-						    G4String(def.fieldObject),
-						    G4bool(def.printTransform),
-						    def.checkParameters,
-						    def.drawArrows,
-						    def.drawZeroValuePoints,
-						    def.drawBoxes,
-						    def.boxAlpha));
-	}
+        {
+          G4Transform3D globalTransform3D = CreatePlacementTransform(def, mainBeamline);
+          auto rot = globalTransform3D.getRotation();
+          rot = rot.inverse();
+          G4AffineTransform globalTransform(rot, globalTransform3D.getTranslation());
+          
+          result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
+                                                    G4String(def.outfileMagnetic),
+                                                    G4String(def.outfileElectric),
+                                                    G4bool(def.queryMagneticField),
+                                                    G4bool(def.queryElectricField),
+                                                    {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
+                                                    {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
+                                                    {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
+                                                    {def.nt, def.tmin*CLHEP::ns, def.tmax*CLHEP::ns},
+                                                    globalTransform,
+                                                    G4bool(def.overwriteExistingFiles),
+                                                    G4String(def.fieldObject),
+                                                    G4bool(def.printTransform),
+                                                    def.checkParameters,
+                                                    def.drawArrows,
+                                                    def.drawZeroValuePoints,
+                                                    def.drawBoxes,
+                                                    def.boxAlpha));
+        }
     }
   return result;
 }
@@ -1484,7 +1484,7 @@ void BDSDetectorConstruction::PrintUserLimitsPV(const G4VPhysicalVolume* aPV, G4
       G4double ekUL = ul->GetUserMinEkine(dummyTrack);
       //G4cout << lv->GetName() << " Ek Min: " << ekUL << G4endl;
       if (ekUL < globalMinEK)
-	{G4cout << lv->GetName() << " Ek Min: " << ekUL << " MeV < global: " << globalMinEK << " MeV" << G4endl;}
+        {G4cout << lv->GetName() << " Ek Min: " << ekUL << " MeV < global: " << globalMinEK << " MeV" << G4endl;}
     }
   else
     {G4cout << lv->GetName() << " no G4UserLimits" << G4endl;}
