@@ -34,14 +34,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 
-#include "G4BooleanSolid.hh"
-#include "G4BooleanProcessorCGAL.hh"
-
 int main(int argc, char** argv)
 {
-
-  G4BooleanSolid::SetExternalBooleanProcessor(new G4BooleanProcessorCGAL());
-
   BDSIM* bds = nullptr;
   try
     {

@@ -79,6 +79,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSVisManager.hh"
 #include "BDSWarning.hh"
 
+#ifdef USE_CGAL_BOOLEAN_PROCESSOR
+#include "BDSBooleanProcessorCGAL.hh"
+#include "BDSBooleanSolid.hh"
+#endif
+
 BDSIM::BDSIM():
   ignoreSIGINT(false),
   usualPrintOut(true),
@@ -133,6 +138,10 @@ int BDSIM::Initialise()
   execOptions->PrintCopyright();
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "DEBUG mode is on." << G4endl;
+#endif
+
+#ifdef USE_CGAL_BOOLEAN_PROCESSOR
+  G4BooleanSolid::SetExternalBooleanProcessor(new BDSBooleanProcessorCGAL());
 #endif
 
   /// Parse lattice file
