@@ -27,13 +27,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PolyhedronArbitrary.hh"
 
 
+BDSBooleanProcessorCGAL::BDSBooleanProcessorCGAL()
+{;}
+
+BDSBooleanProcessorCGAL::~BDSBooleanProcessorCGAL()
+{;}
+
 G4PolyhedronArbitrary* BDSBooleanProcessorCGAL::Intersection(G4Polyhedron* p1, G4Polyhedron* p2)
 {
   BDSSurfaceMeshCGAL* sm1 = new BDSSurfaceMeshCGAL();
   BDSSurfaceMeshCGAL* sm2 = new BDSSurfaceMeshCGAL();
-  sm1->fill(p1);
-  sm2->fill(p2);
-  G4SurfaceMeshCGAL* sm3 = sm1->Intersection(sm2);
+  sm1->Fill(p1);
+  sm2->Fill(p2);
+  BDSSurfaceMeshCGAL* sm3 = sm1->Intersection(sm2);
   G4PolyhedronArbitrary* ap = sm3->GetPolyhedronArbitrary();
   delete sm1;
   delete sm2;
@@ -45,9 +51,9 @@ G4PolyhedronArbitrary* BDSBooleanProcessorCGAL::Union(G4Polyhedron* p1, G4Polyhe
 {
   BDSSurfaceMeshCGAL* sm1 = new BDSSurfaceMeshCGAL();
   BDSSurfaceMeshCGAL* sm2 = new BDSSurfaceMeshCGAL();
-  sm1->fill(p1);
-  sm2->fill(p2);
-  G4SurfaceMeshCGAL* sm3 = sm1->Union(sm2);
+  sm1->Fill(p1);
+  sm2->Fill(p2);
+  BDSSurfaceMeshCGAL* sm3 = sm1->Union(sm2);
   G4PolyhedronArbitrary* ap = sm3->GetPolyhedronArbitrary();
   delete sm1;
   delete sm2;
@@ -59,9 +65,9 @@ G4PolyhedronArbitrary* BDSBooleanProcessorCGAL::Subtraction(G4Polyhedron* p1, G4
 {
   BDSSurfaceMeshCGAL* sm1 = new BDSSurfaceMeshCGAL();
   BDSSurfaceMeshCGAL* sm2 = new BDSSurfaceMeshCGAL();
-  sm1->fill(p1);
-  sm2->fill(p2);
-  G4SurfaceMeshCGAL* sm3 = sm1->Subtraction(sm2);
+  sm1->Fill(p1);
+  sm2->Fill(p2);
+  BDSSurfaceMeshCGAL* sm3 = sm1->Subtraction(sm2);
   G4PolyhedronArbitrary* ap = sm3->GetPolyhedronArbitrary();
   delete sm1;
   delete sm2;

@@ -74,8 +74,6 @@ public:
 private:
   Surface_mesh sm;
 };
-
-
 #endif
 
 #endif

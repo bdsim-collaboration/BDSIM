@@ -30,8 +30,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSBooleanProcessorCGAL: public G4VBooleanProcessor
 {
 public:
-  G4BooleanProcessorCGAL() {}
-  virtual ~G4BooleanProcessorCGAL() = default;
+  BDSBooleanProcessorCGAL();
+  virtual ~BDSBooleanProcessorCGAL();
 
   virtual G4PolyhedronArbitrary* Intersection(G4Polyhedron* p1, G4Polyhedron* p2);
   virtual G4PolyhedronArbitrary* Union(G4Polyhedron* p1, G4Polyhedron* p2);

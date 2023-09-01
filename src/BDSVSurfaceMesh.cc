@@ -64,7 +64,7 @@ G4PolyhedronArbitrary* BDSVSurfaceMesh::GetPolyhedronArbitrary()
   for (auto i = 0; i < NumberOfVertices(); i++)
     {
       auto v = GetVertex(i);
-      G4ThreeVector v3 = G4ThreeVector(v[0],v[1],v[2]);
+      G4ThreeVector v3 = G4ThreeVector(v[0], v[1], v[2]);
       poly->AddVertex(v3);
     }
 
@@ -72,9 +72,9 @@ G4PolyhedronArbitrary* BDSVSurfaceMesh::GetPolyhedronArbitrary()
     {
       auto f = GetFace(i);
       if (f.size() == 3)
-        {poly->AddFacet(f[0]+1,f[1]+1,+f[2]+1);}
+        {poly->AddFacet(f[0]+1, f[1]+1, +f[2]+1);}
       else if(f.size() == 4)
-        {poly->AddFacet(f[0]+1,f[1]+1,f[2]+1,f[3]+1);}
+        {poly->AddFacet(f[0]+1, f[1]+1, f[2]+1, f[3]+1);}
     }
   poly->SetReferences();
   return poly;

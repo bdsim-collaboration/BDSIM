@@ -36,16 +36,16 @@ BDSSurfaceMeshCGAL::BDSSurfaceMeshCGAL()
 BDSSurfaceMeshCGAL::~BDSSurfaceMeshCGAL()
 {;}
 
-void BDSSurfaceMeshCGAL::fill(G4Polyhedron* polyIn)
+void BDSSurfaceMeshCGAL::Fill(G4Polyhedron* polyIn)
 {
-  G4VSurfaceMesh::fill(polyIn);
+  BDSVSurfaceMesh::Fill(polyIn);
   CGAL::Polygon_mesh_processing::triangulate_faces(sm);
 }
 
 BDSSurfaceMeshCGAL* BDSSurfaceMeshCGAL::Subtraction(BDSSurfaceMeshCGAL* s1)
 {
   Surface_mesh s2 = Surface_mesh();
-  CGAL::Polygon_mesh_processing::corefine_and_compute_difference(sm,s1->sm,s2);
+  CGAL::Polygon_mesh_processing::corefine_and_compute_difference(sm, s1->sm, s2);
 
   BDSSurfaceMeshCGAL* res = new BDSSurfaceMeshCGAL();
   res->sm = s2;
@@ -56,9 +56,9 @@ BDSSurfaceMeshCGAL* BDSSurfaceMeshCGAL::Subtraction(BDSSurfaceMeshCGAL* s1)
 BDSSurfaceMeshCGAL* BDSSurfaceMeshCGAL::Union(BDSSurfaceMeshCGAL* s1)
 {
   Surface_mesh s2 = Surface_mesh();
-  CGAL::Polygon_mesh_processing::corefine_and_compute_union(sm,s1->sm,s2);
+  CGAL::Polygon_mesh_processing::corefine_and_compute_union(sm, s1->sm, s2);
 
-  G4SurfaceMeshCGAL* res = new BDSSurfaceMeshCGAL();
+  BDSSurfaceMeshCGAL* res = new BDSSurfaceMeshCGAL();
   res->sm = s2;
 
   return res;
@@ -67,7 +67,7 @@ BDSSurfaceMeshCGAL* BDSSurfaceMeshCGAL::Union(BDSSurfaceMeshCGAL* s1)
 BDSSurfaceMeshCGAL* BDSSurfaceMeshCGAL::Intersection(BDSSurfaceMeshCGAL *s1)
 {
   Surface_mesh s2 = Surface_mesh();
-  CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(sm,s1->sm,s2);
+  CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(sm, s1->sm, s2);
 
   BDSSurfaceMeshCGAL* res = new BDSSurfaceMeshCGAL();
   res->sm = s2;
@@ -92,7 +92,7 @@ void BDSSurfaceMeshCGAL::AddFace(int i1, int i2, int i3, int i4)
 {
   sm.add_face(Surface_mesh::Vertex_index(i1),
               Surface_mesh::Vertex_index(i2),
-              Surface_mesh::Vertex_index(i3),Surface_mesh::Vertex_index(i4));
+              Surface_mesh::Vertex_index(i3), Surface_mesh::Vertex_index(i4));
 }
 
 std::vector<G4double> BDSSurfaceMeshCGAL::GetVertex(G4int iVertex)
@@ -108,11 +108,11 @@ std::vector<G4double> BDSSurfaceMeshCGAL::GetVertex(G4int iVertex)
 
 std::vector<G4int> BDSSurfaceMeshCGAL::GetFace(G4int iFace)
 {
-  std::vector <G4int> f;
+  std::vector<G4int> f;
   Surface_mesh::Face_index fd = Surface_mesh::Face_index(iFace);
 
-  for (Surface_mesh::Halfedge_index hd: CGAL::halfedges_around_face(sm.halfedge(fd), sm))
-    {f.push_back((int) sm.source(hd));}
+  for (Surface_mesh::Halfedge_index hd : CGAL::halfedges_around_face(sm.halfedge(fd), sm))
+    {f.push_back((int)sm.source(hd));}
   return f;
 }
 
