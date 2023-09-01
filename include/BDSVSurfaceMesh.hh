@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSVSURFACEMESH_H
 #define BDSVSURFACEMESH_H
 
+#ifdef USE_CGAL_BOOLEAN_PROCESSOR
 #include "G4Types.hh"
 
 #include <vector>
@@ -42,5 +43,5 @@ public:
   virtual int NumberOfVertices() = 0;
   virtual int NumberOfFaces() = 0;
 };
-
+#endif
 #endif

@@ -16,10 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "G4Version.hh"
-
-#if G4VERSION_NUMBER > 1120
-
+#ifdef USE_CGAL_BOOLEAN_PROCESSOR
 
 #include "BDSSurfaceMeshCGAL.hh"
 

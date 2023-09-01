@@ -19,9 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBOOLEANPROCESSOR_H
 #define BDSBOOLEANPROCESSOR_H
 
-#include "G4Version.hh"
-
-#if G4VERSION_NUMBER > 1120
+#ifdef USE_CGAL_BOOLEAN_PROCESSOR
 
 #include "G4VBooleanProcessor.hh"
 #include "G4Polyhedron.hh"

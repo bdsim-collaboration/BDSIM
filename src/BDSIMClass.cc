@@ -81,7 +81,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef USE_CGAL_BOOLEAN_PROCESSOR
 #include "BDSBooleanProcessorCGAL.hh"
-#include "BDSBooleanSolid.hh"
+#include "G4BooleanSolid.hh"
 #endif
 
 BDSIM::BDSIM():

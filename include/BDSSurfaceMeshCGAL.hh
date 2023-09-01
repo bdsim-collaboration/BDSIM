@@ -19,10 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSURFACEMESHCGAL_H
 #define BDSSURFACEMESHCGAL_H
 
-#include "G4Version.hh"
-
-#if G4VERSION_NUMBER > 1120
-
+#ifdef USE_CGAL_BOOLEAN_PROCESSOR
 class G4Polyhedron;
 
 #pragma GCC diagnostic push

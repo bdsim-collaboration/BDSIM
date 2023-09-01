@@ -18,6 +18,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSVSurfaceMesh.hh"
 
+#ifdef USE_CGAL_BOOLEAN_PROCESSOR
+
 #include "G4ios.hh"
 #include "G4Point3D.hh"
 #include "G4Polyhedron.hh"
@@ -79,3 +81,5 @@ G4PolyhedronArbitrary* BDSVSurfaceMesh::GetPolyhedronArbitrary()
   poly->SetReferences();
   return poly;
 }
+
+#endif
