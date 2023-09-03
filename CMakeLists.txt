@@ -222,7 +222,7 @@ target_link_libraries(${BDSIM_LIB_NAME} gmad)
 
 option( USE_CGAL_BOOLEAN_PROCESSOR "Use CGAL for creating boolean meshes for visualisation." OFF)
 if (USE_CGAL_BOOLEAN_PROCESSOR)
-  if(${G4_MINOR_VERSION} GREATER 2 AND ${G4_MAJOR_VERSION} GREATER 10)
+  if(${G4_MINOR_VERSION} GREATER 0 AND ${G4_MAJOR_VERSION} GREATER 10)
     find_package(CGAL 5 REQUIRED)
     target_link_libraries(${BDSIM_LIB_NAME} CGAL::CGAL)
     add_definitions("-DUSE_CGAL_BOOLEAN_PROCESSOR")
