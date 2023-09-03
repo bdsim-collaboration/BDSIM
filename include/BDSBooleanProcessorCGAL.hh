@@ -25,17 +25,24 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Polyhedron.hh"
 #include "G4PolyhedronArbitrary.hh"
 
+/**
+ * @brief Custom Boolean mesh processor using CGAL.
+ *
+ * @author Stewart Boogert
+ */
+
 class BDSBooleanProcessorCGAL: public G4VBooleanProcessor
 {
 public:
   BDSBooleanProcessorCGAL();
   virtual ~BDSBooleanProcessorCGAL();
 
+  /// @{ Overload the relevant mesh generation for each Boolean operation.
   virtual G4PolyhedronArbitrary* Intersection(G4Polyhedron* p1, G4Polyhedron* p2);
   virtual G4PolyhedronArbitrary* Union(G4Polyhedron* p1, G4Polyhedron* p2);
   virtual G4PolyhedronArbitrary* Subtraction(G4Polyhedron* p1, G4Polyhedron* p2);
+  /// @}
 };
 
 #endif
-
 #endif

@@ -27,13 +27,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class G4Polyhedron;
 class G4PolyhedronArbitrary;
 
+/**
+ * @brief Pure virtual base class for a surface mesh.
+ *
+ * @author Stewart Boogert
+ */
+
 class BDSVSurfaceMesh
 {
 public:
   BDSVSurfaceMesh();
   virtual ~BDSVSurfaceMesh();
 
-  virtual void Fill(G4Polyhedron *polyIn);
+  virtual void Fill(G4Polyhedron* polyIn);
   virtual G4PolyhedronArbitrary* GetPolyhedronArbitrary();
   virtual void AddVertex(double x, double y, double z) = 0 ;
   virtual void AddFace(G4int i1, G4int i2, G4int i3) = 0;
@@ -43,5 +49,6 @@ public:
   virtual int NumberOfVertices() = 0;
   virtual int NumberOfFaces() = 0;
 };
+
 #endif
 #endif

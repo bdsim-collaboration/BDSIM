@@ -48,6 +48,12 @@ typedef CGAL::Aff_transformation_3<Kernel>                Aff_transformation_3;
 
 #include <vector>
 
+/**
+ * @brief Mesh based on CGAL.
+ *
+ * @author Stewart Boogert
+ */
+
 class BDSSurfaceMeshCGAL: public BDSVSurfaceMesh
 {
 public:
@@ -71,6 +77,6 @@ public:
 private:
   Surface_mesh sm;
 };
-#endif
 
+#endif
 #endif
