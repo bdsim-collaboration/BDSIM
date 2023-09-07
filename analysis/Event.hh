@@ -173,8 +173,8 @@ public:
   RBDS::VectorString RemoveDuplicates(const RBDS::VectorString& namesIn) const;
   
   /// @{ Utility method for interface building events.
-  void RegisterCollimator(std::string collimatorName);
-  void RegisterSampler(std::string samplerName);
+  void RegisterCollimator(const std::string& collimatorName);
+  void RegisterSampler(const std::string& samplerName);
   /// @}
 
   /// @{ Flushing functions.
