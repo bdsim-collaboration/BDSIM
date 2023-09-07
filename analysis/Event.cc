@@ -228,26 +228,26 @@ void Event::SetBranchAddress(TTree* t,
     {bToTurnOn = RBDS::VectorString(*branchesToTurnOn);}
 
   // Few very small things on always for loading
-  bToTurnOn.push_back("Primary");
-  bToTurnOn.push_back( dataVersion < 4 ? "Info" : "Summary" );
-  bToTurnOn.push_back("PrimaryFirstHit");
-  bToTurnOn.push_back("PrimaryLastHit");
+  bToTurnOn.emplace_back("Primary");
+  bToTurnOn.emplace_back( dataVersion < 4 ? "Info" : "Summary" );
+  bToTurnOn.emplace_back("PrimaryFirstHit");
+  bToTurnOn.emplace_back("PrimaryLastHit");
   
   if (allBranchesOn)
     {
       t->SetBranchStatus("*", true);
-      bToTurnOn.push_back("Eloss");
-      bToTurnOn.push_back("Histos");
-      bToTurnOn.push_back( dataVersion > 4 ? "ElossTunnel" : "TunnelHit" );
-      bToTurnOn.push_back("Trajectory");
+      bToTurnOn.emplace_back("Eloss");
+      bToTurnOn.emplace_back("Histos");
+      bToTurnOn.emplace_back( dataVersion > 4 ? "ElossTunnel" : "TunnelHit" );
+      bToTurnOn.emplace_back("Trajectory");
 
       if (dataVersion > 3)
         {
-          bToTurnOn.push_back("PrimaryGlobal");
-          bToTurnOn.push_back("ElossVacuum");
-          bToTurnOn.push_back("ElossWorld");
-          bToTurnOn.push_back("ElossWorldContents");
-          bToTurnOn.push_back("ElossWorldExit");
+          bToTurnOn.emplace_back("PrimaryGlobal");
+          bToTurnOn.emplace_back("ElossVacuum");
+          bToTurnOn.emplace_back("ElossWorld");
+          bToTurnOn.emplace_back("ElossWorldContents");
+          bToTurnOn.emplace_back("ElossWorldExit");
           // add all collimators but ensure not duplicate from user supplied branch names
           if (collimatorNamesIn)
             {
@@ -256,7 +256,7 @@ void Event::SetBranchAddress(TTree* t,
             }
         }
       if (dataVersion > 4)
-        {bToTurnOn.push_back("ApertureImpacts");}
+        {bToTurnOn.emplace_back("ApertureImpacts");}
     }
   bToTurnOn = RemoveDuplicates(bToTurnOn);
 
