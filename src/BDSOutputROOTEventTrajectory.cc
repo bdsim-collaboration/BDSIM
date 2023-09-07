@@ -41,7 +41,9 @@ ClassImp(BDSOutputROOTEventTrajectory)
 BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory():
   auxNavigator(nullptr),
   n(0)
-{;}
+{
+  FlushLocal();
+}
 
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 {
@@ -335,6 +337,11 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSHitsCollectionEnergyDeposition*
 #endif
 
 void BDSOutputROOTEventTrajectory::Flush()
+{
+  FlushLocal();
+}
+
+void BDSOutputROOTEventTrajectory::FlushLocal()
 {
   n = 0;
   filters.clear();
