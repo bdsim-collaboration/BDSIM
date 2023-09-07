@@ -436,7 +436,7 @@ RBDS::VectorString Event::RemoveDuplicates(const RBDS::VectorString& namesIn) co
   return namesUnique;
 }
 
-void Event::RegisterCollimator(std::string collimatorName)
+void Event::RegisterCollimator(const std::string& collimatorName)
 {
   // be careful of push_back to collimators vector as this might invalidate
   // any &pointers used with SetBranchAddress
@@ -446,7 +446,7 @@ void Event::RegisterCollimator(std::string collimatorName)
   collimatorMap[collimatorName] = collimator;
 }
 
-void Event::RegisterSampler(std::string samplerName)
+void Event::RegisterSampler(const std::string& samplerName)
 {
 #ifdef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<double>* sampler = new BDSOutputROOTEventSampler<double>();
