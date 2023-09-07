@@ -345,28 +345,35 @@ void BDSOutputROOTEventTrajectory::Flush()
   parentStepIndex.clear();
   primaryStepIndex.clear();
   depth.clear();
+  
   preProcessTypes.clear();
   preProcessSubTypes.clear();
   postProcessTypes.clear();
   postProcessSubTypes.clear();
+  
   preWeights.clear();
   postWeights.clear();
   energyDeposit.clear();
+  
   XYZ.clear();
   S.clear();
   PXPYPZ.clear();
   T.clear();
+  
   xyz.clear();
   pxpypz.clear();
+
   charge.clear();
   kineticEnergy.clear();
   turnsTaken.clear();
   mass.clear();
   rigidity.clear();
+
   isIon.clear();
   ionA.clear();
   ionZ.clear();
   nElectrons.clear();
+
   materialID.clear();
   modelIndicies.clear();
   trackID_trackIndex.clear();
@@ -390,13 +397,16 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
   parentStepIndex     = other->parentStepIndex;
   primaryStepIndex    = other->primaryStepIndex;
   depth               = other->depth;
+  
   preProcessTypes     = other->preProcessTypes;
   preProcessSubTypes  = other->preProcessSubTypes;
   postProcessTypes    = other->postProcessTypes;
   postProcessSubTypes = other->postProcessSubTypes;
+
   preWeights          = other->preWeights;
   postWeights         = other->postWeights;
   energyDeposit       = other->energyDeposit;
+
   XYZ                 = other->XYZ;
   S                   = other->S;
   PXPYPZ              = other->PXPYPZ;
