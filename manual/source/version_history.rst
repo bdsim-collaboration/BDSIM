@@ -25,6 +25,8 @@ General Updates
 Bug Fixes
 ---------
 
+* :code:`BDSOutputROOTEventTrajectory` copy constructor did not copy the `mass` variable.
+
 Output Changes
 --------------
 

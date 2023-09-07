@@ -410,8 +410,6 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
   XYZ                 = other->XYZ;
   S                   = other->S;
   PXPYPZ              = other->PXPYPZ;
-  modelIndicies       = other->modelIndicies;
-  trackID_trackIndex  = other->trackID_trackIndex;
   T                   = other->T;
 
   xyz                 = other->xyz;
@@ -419,12 +417,18 @@ void BDSOutputROOTEventTrajectory::Fill(const BDSOutputROOTEventTrajectory* othe
   charge              = other->charge;
   kineticEnergy       = other->kineticEnergy;
   turnsTaken          = other->turnsTaken;
+  mass                = other->mass;
   rigidity            = other->rigidity;
+  
   isIon               = other->isIon;
   ionA                = other->ionA;
   ionZ                = other->ionZ;
   nElectrons          = other->nElectrons;
+
   materialID          = other->materialID;
+  modelIndicies       = other->modelIndicies;
+  trackID_trackIndex  = other->trackID_trackIndex;
+
 }
 
 #if 0
