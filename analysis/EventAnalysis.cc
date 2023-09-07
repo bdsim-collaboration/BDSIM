@@ -152,7 +152,7 @@ void EventAnalysis::Process()
 {
   Initialise();
 
-  if(debug)
+  if (debug)
     {std::cout << __METHOD_NAME__ << "Entries: " << chain->GetEntries() << " " << std::endl;}
 
   // loop over events
@@ -182,7 +182,7 @@ void EventAnalysis::Process()
         }
 
       // merge histograms stored per event in the output
-      if(firstLoop)
+      if (firstLoop)
         {histoSum = new HistogramMeanFromFile(event->Histos);}
       else
         {histoSum->Accumulate(event->Histos);}

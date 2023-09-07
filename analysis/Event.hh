@@ -51,8 +51,8 @@ class Event
 public:
   Event();
   Event(bool debugIn,
-	bool processSamplersIn = false,
-	int  dataVersionIn     = 0);
+        bool processSamplersIn = false,
+        int  dataVersionIn     = 0);
   void CommonCtor();
   virtual ~Event();
 
@@ -112,12 +112,12 @@ public:
   /// Set the branch addresses to address the contents of the file. The vector
   /// of sampler names is used to turn only the samplers required. 
   void SetBranchAddress(TTree* t,
-			const RBDS::VectorString* samplerNames      = nullptr,
-			bool                      allBranchesOn     = false,
-			const RBDS::VectorString* branchesToTurnOn  = nullptr,
-			const RBDS::VectorString* collimatorNamesIn = nullptr,
-			const RBDS::VectorString* samplerCNamesIn  = nullptr,
-			const RBDS::VectorString* samplerSNamesIn  = nullptr);
+                        const RBDS::VectorString* samplerNames      = nullptr,
+                        bool                      allBranchesOn     = false,
+                        const RBDS::VectorString* branchesToTurnOn  = nullptr,
+                        const RBDS::VectorString* collimatorNamesIn = nullptr,
+                        const RBDS::VectorString* samplerCNamesIn  = nullptr,
+                        const RBDS::VectorString* samplerSNamesIn  = nullptr);
 
   /// @{ Local variable ROOT data is mapped to.
 #ifdef __ROOTDOUBLE__
@@ -185,10 +185,10 @@ public:
 private:
   /// @{ Utility function to avoid repetition of code.
   void SetBranchAddressCollimators(TTree* t,
-				   const RBDS::VectorString* collimatorNames);
+                                   const RBDS::VectorString* collimatorNames);
   Int_t SetBranchAddressCollimatorSingle(TTree* t,
-					 const std::string& name,
-					 int i);
+                                         const std::string& name,
+                                         int i);
   /// @}
   
   TTree* tree;
