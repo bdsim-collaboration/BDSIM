@@ -167,8 +167,8 @@ void EventAnalysis::Process()
   bool firstLoop = true;
   for (auto i = (Long64_t)eventStart; i < (Long64_t)eventEnd; ++i)
     {
-    if (firstLoop) // ensure samplers setup for spectra before we load data
-      {CheckSpectraBranches();}
+      if (firstLoop) // ensure samplers setup for spectra before we load data
+        {CheckSpectraBranches();}
 
       chain->GetEntry(i);
       // event analysis feedback
