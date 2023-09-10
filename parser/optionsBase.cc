@@ -336,7 +336,7 @@ OptionsBase::OptionsBase()
   storeSamplerAll          = false;
   storeSamplerPolarCoords  = false;
   storeSamplerCharge       = false;
-  storeSamplerKineticEnergy = false;
+  storeSamplerKineticEnergy = true;
   storeSamplerMass         = false;
   storeSamplerRigidity     = false;
   storeSamplerIon          = false;

@@ -185,7 +185,7 @@ void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
       G4double length = blElement.l;
       G4double angle  = blElement.angle;
       if (!BDS::IsFinite(length))
-	    {continue;} // avoid divide by 0
+        {continue;} // avoid divide by 0
       G4double ratio  = angle / length;
       maxBendingRatio = std::max(maxBendingRatio, ratio);
     }
@@ -226,10 +226,10 @@ void BDSDetectorConstruction::CountPlacementFields()
   G4int nFields = 0;
   const auto& placements = BDSParser::Instance()->GetPlacements();
   for (const auto& placement : placements)
-  {// here we assume if a bdsim element is used at all that it's active even though it may not be
-    if (!placement.fieldAll.empty() || !placement.bdsimElement.empty())
-    {nFields++;}
-  }
+    {// here we assume if a bdsim element is used at all that it's active even though it may not be
+      if (!placement.fieldAll.empty() || !placement.bdsimElement.empty())
+      {nFields++;}
+    }
   buildPlacementFieldsWorld = nFields > 0;
 }
 
@@ -257,8 +257,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
   delete componentFactory;
 
-  BDSBeamline* blms = BDS::BuildBLMs(BDSParser::Instance()->GetBLMs(),
-				     mainBeamLine);
+  BDSBeamline* blms = BDS::BuildBLMs(BDSParser::Instance()->GetBLMs(), mainBeamLine);
   if (blms)
     {BDSAcceleratorModel::Instance()->RegisterBLMs(blms);} // Acc model owns it
   
@@ -1370,20 +1369,20 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
       G4String geometryType = BDS::LowerCase(G4String(mesh.geometryType));
 
       if (geometryType == "box")
-	{// create a scoring box
-	  scorerBox = new BDSScoringMeshBox(meshName, meshRecipe, placement);
-	  mapper = scorerBox->Mapper();
-	}
+        {// create a scoring box
+          scorerBox = new BDSScoringMeshBox(meshName, meshRecipe, placement);
+          mapper = scorerBox->Mapper();
+        }
       else if (geometryType == "cylindrical")
-	{// create a scoring cylinder
-	  scorerCylindrical = new BDSScoringMeshCylinder(meshName, meshRecipe, placement);
-	  mapper = scorerCylindrical->Mapper();
-	}
+        {// create a scoring cylinder
+          scorerCylindrical = new BDSScoringMeshCylinder(meshName, meshRecipe, placement);
+          mapper = scorerCylindrical->Mapper();
+        }
       else
-	{
-	  G4String msg = "mesh geometry type \"" + geometryType + "\" is not correct. The possible options are \"box\" and \"cylindrical\"";
+        {
+          G4String msg = "mesh geometry type \"" + geometryType + "\" is not correct. The possible options are \"box\" and \"cylindrical\"";
           throw BDSException(__METHOD_NAME__, msg);
-	}
+        }
 
       // add the scorer(s) to the scoring mesh
       std::vector<G4String> meshPrimitiveScorerNames; // final vector of unique mesh + ps names
@@ -1392,36 +1391,36 @@ void BDSDetectorConstruction::ConstructScoringMeshes()
 
       std::vector<G4String> words = BDS::SplitOnWhiteSpace(mesh.scoreQuantity);
       for (const auto& word : words)
-	{
-	  auto search = scorerRecipes.find(word);
-	  if (search == scorerRecipes.end())
-	    {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for mesh \"" + meshName + "\" not found.");}
+        {
+          auto search = scorerRecipes.find(word);
+          if (search == scorerRecipes.end())
+            {throw BDSException(__METHOD_NAME__, "scorerQuantity \"" + word + "\" for mesh \"" + meshName + "\" not found.");}
 
-	  G4double psUnit = 1.0;
-	  G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper, &psUnit, worldLV);
-	  // The mesh internally creates a multifunctional detector which is an SD and has
-	  // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
-	  // the hits map we need the full name of the unique primitive scorer so we build that
-	  // name here and store it.
-	  G4String uniqueName = meshName + "/" + ps->GetName();
-	  meshPrimitiveScorerNames.push_back(uniqueName);
-	  meshPrimitiveScorerUnits.push_back(psUnit);
+          G4double psUnit = 1.0;
+          G4VPrimitiveScorer* ps = scorerFactory.CreateScorer(&(search->second), mapper, &psUnit, worldLV);
+          // The mesh internally creates a multifunctional detector which is an SD and has
+          // the name of the mesh. Any primitive scorer attached is added to the mfd. To get
+          // the hits map we need the full name of the unique primitive scorer so we build that
+          // name here and store it.
+          G4String uniqueName = meshName + "/" + ps->GetName();
+          meshPrimitiveScorerNames.push_back(uniqueName);
+          meshPrimitiveScorerUnits.push_back(psUnit);
 
-	  // sets the current ps but appends to list of multiple
-	  if (geometryType == "box")
-	    {scorerBox->SetPrimitiveScorer(ps);} 
-	  else if (geometryType == "cylindrical")
-	    {scorerCylindrical->SetPrimitiveScorer(ps);}
-	  
-	  BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
-	  BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
-	  BDSAcceleratorModel::Instance()->RegisterScorerPlacement(meshName, placement);
-	}
+          // sets the current ps but appends to list of multiple
+          if (geometryType == "box")
+            {scorerBox->SetPrimitiveScorer(ps);} 
+          else if (geometryType == "cylindrical")
+            {scorerCylindrical->SetPrimitiveScorer(ps);}
+          
+          BDSScorerHistogramDef outputHistogram(meshRecipe, uniqueName, ps->GetName(), psUnit, *mapper);
+          BDSAcceleratorModel::Instance()->RegisterScorerHistogramDefinition(outputHistogram);
+          BDSAcceleratorModel::Instance()->RegisterScorerPlacement(meshName, placement);
+        }
       
       if (geometryType == "box")
-	{scManager->RegisterScoringMesh(scorerBox);} // sets the current ps but appends to list of multiple
+        {scManager->RegisterScoringMesh(scorerBox);} // sets the current ps but appends to list of multiple
       else if (geometryType == "cylindrical")
-	{scManager->RegisterScoringMesh(scorerCylindrical);}// sets the current ps but appends to list of multiple
+        {scManager->RegisterScoringMesh(scorerCylindrical);}// sets the current ps but appends to list of multiple
 
       // register it with the sd manager as this is where we get all collection IDs from
       // in the end of event action. This must come from the mesh as it creates the
@@ -1440,7 +1439,7 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
       if (!def.queryMagneticField && !def.queryElectricField)
         {
           assumeQueryMagnetic = true;
-          G4cout << __METHOD_NAME__ << "neither \"queryMagneticField\" nor \"queryElectricField are turned on for definition \""
+          G4cout << __METHOD_NAME__ << "neither \"queryMagneticField\" nor \"queryElectricField\" are turned on for definition \""
           << def.name << "\"" << G4endl;
           G4cout << "-> querying magnetic field by default" << G4endl;
         }
@@ -1513,7 +1512,7 @@ void BDSDetectorConstruction::PrintUserLimitsPV(const G4VPhysicalVolume* aPV, G4
       G4double ekUL = ul->GetUserMinEkine(dummyTrack);
       //G4cout << lv->GetName() << " Ek Min: " << ekUL << G4endl;
       if (ekUL < globalMinEK)
-	{G4cout << lv->GetName() << " Ek Min: " << ekUL << " MeV < global: " << globalMinEK << " MeV" << G4endl;}
+        {G4cout << lv->GetName() << " Ek Min: " << ekUL << " MeV < global: " << globalMinEK << " MeV" << G4endl;}
     }
   else
     {G4cout << lv->GetName() << " no G4UserLimits" << G4endl;}
