@@ -1013,7 +1013,7 @@ the edge effects are provided by default and are controllable with the option `i
 | `cavityModel`  | Name of cavity model object   | ""           | No                  |
 +----------------+-------------------------------+--------------+---------------------+
 
-Either :code:`gradient` or :code:`E` should be specified. :code:`E` (the *voltage* is given in Volts,
+Either :code:`gradient` or :code:`E` should be specified. :code:`E` (the *voltage*) is given in Volts,
 and internally is divided by the length of the element (:code:`l`) to give the electric
 field in Volts/m. If :code:`gradient` is specified, this is already Volts/m and the length
 is not involved. The slight misnomer of `E` instead of say `voltage` is historical.
@@ -1022,11 +1022,11 @@ is not involved. The slight misnomer of `E` instead of say `voltage` is historic
 difference whether you write :code:`gradient=10*MV/m` or :code:`gradient=10*MV`. However,
 it is best to be explicit in units or none at all and assume the default ones.
 
-.. note:: The design energy of the machine is not affected, so the strength and fields
-	  of components after an RF cavity in a lattice are calculated with respect to
-	  the design energy, the particle and therefore, design rigidity. The user should
-	  scale the strength values appropriately if they wish to match the increased
-	  momentum of the particle.
+.. note:: The design energy of the machine is affected by the accelerator (or decceleration)
+          and the nominal rigidity used to calculate fields from normalised strenghts
+          such as :code:`k1` for a quadrupole will be updated accordingly. This is the
+          default behaviour since v1.8.0 and can be turned off with
+          :code:`option, integrateKineticEnergyAlongBeamline=0;`.
 
 .. warning:: The elliptical cavity geometry may not render or appear in the Geant4
 	     QT visualiser.  The geometry exists and is valid, but this is due to
@@ -1035,28 +1035,25 @@ it is best to be explicit in units or none at all and assume the default ones.
 
 * The field is such that a positive E-field results in acceleration of the primary particle
   (depending on the primary particle charge).
-* The phase is calculated automatically such that zero phase results in the peak E-field at
-  the centre of the component for its position in the lattice.
+* The global phase (timing) is calculated automatically such that zero phase results in the
+  peak E-field at the centre of the component for its position in the lattice.
 * Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
+* If `phase` is specified, this is added to the calculated synchronous (global) phase from
+  either the lattice position or `tOffset`.
 * The material must be specified in the `rf` gmad element or in the attached cavity model
   by name. The cavity model will override the element material.
 * The entrance / exit cavity fringes are not constructed if the previous / next element
   is also an rf cavity.
 * The cavity fringe element is by default the same radius as the beam pipe radius. If a cavity
   model is supplied, the cavity fringes are built with the same radius as the model iris radius.
-* If `phase` is specified, this is added to the calculated phase offset from either the lattice
-  position or `tOffset`.
 * The step length in the cavity is limited for all particles to be 2.5% of the minimum
   of the element length and the wavelength (given the frequency). In the case of 0 frequency,
   only the length is considered. This is to ensure accurate numerical integration of the
   motion through the varying field.
 * If `tOffset` is specified, a phase offset is calculated from this and the frequency provided.
-* In the case where `frequency` is not set, the phase offset is ignored and only the `phase` is
-  used. See the developer documentation :ref:`field-sinusoid-efield` for a description of the field.
-  
-.. note:: As the phase offset is calculated from the speed of light in a vacuum, this is
-	  only correct for already relativistic beams. Development is underway to improve
-	  this calculation for sub-relativistic beams.
+* In the case where `frequency` is not set and therefore 0, the field is multiplied by the
+  cosine of the phase. See the developer documentation :ref:`field-sinusoid-efield` for a
+  description of the field.
 
 
 Simple examples: ::
