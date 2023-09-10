@@ -158,16 +158,16 @@ Acceleration
 ------------
 
 BDSIM includes acceleration of particles. Along a beamline the nominal momentum of the
-beam may change. Up until BDSIM V1.7 it was the user's responsibility to recalculate
+beam may change. Up until BDSIM v1.8.0 it was the user's responsibility to recalculate
 normalised magnet strengths (such as k1 for a quadrupole) and scaling factors for
-dipoles externally to the program. Since V1.7, BDSIM calculates the change in kinetic
+dipoles externally to the program. Since v1.8.0, BDSIM calculates the change in kinetic
 energy and therefore momentum and rigidity of the nominal 'design' beam particle along
 the beamline and adjusts the rigidity used to calculate real field gradients from normalised
 strengths.
 
-The old behaviour (i.e. no rolling rigidity adjustment) can be restored with the option: ::
+The old behaviour (i.e. no rolling rigidity adjustment) can be restored by turning off the option: ::
 
-  option, scaleRigidityWithMomentum=0;
+  option, integrateKineticEnergyInBeamline=0;
 
 
 which is turned on by default.

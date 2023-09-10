@@ -143,7 +143,7 @@ OptionsBase::OptionsBase()
   yokeFieldsMatchLHCGeometry = true;
   useOldMultipoleOuterFields = false;
   scalingFieldOuter    = 1.0;
-  scaleRigidityWithMomentum = true;
+  integrateKineticEnergyAlongBeamline = true;
   
   cavityFieldType = "constantinz";
   

@@ -336,7 +336,7 @@ void BDSDetectorConstruction::BuildBeamlines()
   auto g = BDSGlobalConstants::Instance();
   G4Transform3D initialTransform = g->BeamlineTransform();
   
-  BDSBeamlineIntegral startingPoint(*designParticle, 0, g->BeamlineS(), g->ScaleRigidityWithMomentum());
+  BDSBeamlineIntegral startingPoint(*designParticle, 0, g->BeamlineS(), g->IntegrateKineticEnergyAlongBeamline());
   BDSBeamlineIntegral* finishingPoint = new BDSBeamlineIntegral(startingPoint);
   
   BDSBeamlineSet mainBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
@@ -387,7 +387,7 @@ void BDSDetectorConstruction::BuildBeamlines()
       
       /// TODO - we use the initial design particle... if this splits off the main beam line it
       /// should be the particle at that point
-      BDSBeamlineIntegral thisBeamlineStartingPoint(startingPoint.designParticle, 0, startS, g->ScaleRigidityWithMomentum());
+      BDSBeamlineIntegral thisBeamlineStartingPoint(startingPoint.designParticle, 0, startS, g->IntegrateKineticEnergyAlongBeamline());
       BDSBeamlineIntegral* thisBeamlineFinishingPoint = new BDSBeamlineIntegral(thisBeamlineStartingPoint);
 
       // aux beam line must be non-circular by definition to branch off of beam line (for now)
@@ -506,7 +506,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       if (integral->changeOfEnergyEncountered && integral->integrateKineticEnergy)
         {
           G4String msg = "a change in energy was encountered in a circular machine and both\n";
-          msg +=         "scaleRigidityWithMomentum=1 (default is 1) and circular options were used.\n";
+          msg +=         "integrateKineticEnergyAlongBeamline=1 (default is 1) and circular options were used.\n";
           msg +=         "This will be wrong for more than one turn...";
           BDS::Warning(__METHOD_NAME__, msg);
         }

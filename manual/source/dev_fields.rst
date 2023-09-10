@@ -201,11 +201,10 @@ outgoing velocity. :math:`l_i` is the length of the i-th component being conside
 Energy, Momentum and Rigidity
 -----------------------------
 
-The kinetic energy of the particle is integrated across each component. From this the
+The kinetic energy of the particle is integrated across each component. From this, the
 design particle definition is updated including re-calculation of the total energy,
-momentum, relativistic gamma and beta, and the rigidity.
-
-The change in kinetic energy is calculated depending on the field used.
+momentum, relativistic gamma and beta, and the rigidity. The change in kinetic energy
+is calculated depending on the field used.
 
 **Sinusoidal Electric Field** (see :ref:`field-sinusoid-efield`)
 

@@ -1,3 +1,3 @@
 include rigidity-w-acceleration.gmad;
 
-option, scaleRigidityWithMomentum=0;
+option, integrateKineticEnergyAlongBeamline=0;

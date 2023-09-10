@@ -13,11 +13,43 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 
 
-v1.X.X - 2023 / XX / XX
+v1.8.0 - 2023 / XX / XX
 =======================
+
+* For models with acceleration, the rigidity and synchronous time are now calculated
+  along the beamline and pre-calculated **scaling factors are no longer needed**.
+
 
 New Features
 ------------
+
+**Fields**
+
+* The `rf` beamline element now has the parameter :code:`cavityFieldType` to specify which
+  field model to use rather than specifying :code:`fieldVacuum` and a corresonding field
+  definition.
+* The option :code:`cavityFieldType` may be used to set the default field model for all `rf`
+  elements.
+* The "rfcavity" field is now "rfpillbox".
+
+
+
+New Options
+-----------
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+
++-------------------------------------+-------------------------------------------------------+
+| **Option**                          | **Function**                                          |
++=====================================+=======================================================+
+| cavityFieldType                     | Default cavity field type ('constantinz', 'pillbox')  |
+|                                     | to use for all rf elements unless otherwise specified.|
++-------------------------------------+-------------------------------------------------------+
+| integrateKineticEnergyAlongBeamline | Integrate changes to the nominal beam energy along    |
+|                                     | the beamline such as from accelerator and adjust      |
+|                                     | the design rigitidy for normalised fields             |
+|                                     | accordingly.                                          |
++-------------------------------------+-------------------------------------------------------+
 
 General Updates
 ---------------
@@ -169,8 +201,6 @@ V1.7.1 - 2023 / 07 / 20
 V1.7.0 - 2023 / 07 / 11
 =======================
 
-* For models with acceleration, the rigidity and synchronous time are now calculated
-  along the beamline and pre-calculated **scaling factors are no longer needed**.
 * The input parser will now reject any duplicate object names (e.g. a field with the same name),
   whereas it didn't before. In the past, multiple objects would be created ignoring their name.
   However, after the input is loaded, BDSIM itself may look through the objects for one matching
@@ -248,12 +278,6 @@ New Features
 
 **Fields**
 
-* The `rf` beamline element now has the parameter :code:`cavityFieldType` to specify which
-  field model to use rather than specifying :code:`fieldVacuum` and a corresonding field
-  definition.
-* The option :code:`cavityFieldType` may be used to set the default field model for all `rf`
-  elements.
-* The "rfcavity" field is now "rfpillbox".
 * New ability to use any "pure" field (i.e. one from equations inside BDSIM) as a field
   and attach it to placements, or beam line geometry, as well as query it to generate
   an external field map.
@@ -353,23 +377,6 @@ New Features
   world contents (in case of an externally provided world volume) without storing all the individual
   hits that would use a lot of disk space.
 * :code:`storeSamplerKineticEnergy` is now on by default.
-
-New Options
------------
-
-.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
-
-+----------------------------------+-------------------------------------------------------+
-| **Option**                       | **Function**                                          |
-+==================================+=======================================================+
-| cavityFieldType                  | Default cavity field type ('constantinz', 'pillbox')  |
-|                                  | to use for all rf elements unless otherwise specified.|
-+----------------------------------+-------------------------------------------------------+
-| scaleRigidityWithMomentum        | Change the design rigidity as the kinetic energy and  |
-|                                  | therefore momentum of the design particle changes     |
-|                                  | along the beam line during construction due to        |
-|                                  | acceleration. Default 1.0.                            |
-+----------------------------------+-------------------------------------------------------+
   
 
 General Updates

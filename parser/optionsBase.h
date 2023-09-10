@@ -173,7 +173,7 @@ namespace GMAD
     bool      yokeFieldsMatchLHCGeometry;
     bool      useOldMultipoleOuterFields;
     double    scalingFieldOuter;
-    bool      scaleRigidityWithMomentum;
+    bool      integrateKineticEnergyAlongBeamline;
     
     std::string cavityFieldType;
 
