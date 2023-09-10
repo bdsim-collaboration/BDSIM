@@ -1445,50 +1445,50 @@ std::vector<BDSFieldQueryInfo*> BDSDetectorConstruction::PrepareFieldQueries(con
         }
 
       if (!def.pointsFile.empty())
-	{
-	  std::vector<G4String> columnNames;
-	  auto points = BDS::LoadFieldQueryPoints(G4String(def.pointsFile), &columnNames);
-	  result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
-						    G4String(def.outfileMagnetic),
-						    G4String(def.outfileElectric),
-						    G4bool(def.queryMagneticField) || assumeQueryMagnetic,
-						    G4bool(def.queryElectricField),
-						    points,
-						    columnNames,
-						    G4bool(def.overwriteExistingFiles),
-						    G4String(def.fieldObject),
-						    def.checkParameters,
-						    def.drawArrows,
-						    def.drawZeroValuePoints,
-						    def.drawBoxes,
-						    def.boxAlpha));
-	}
+        {
+          std::vector<G4String> columnNames;
+          auto points = BDS::LoadFieldQueryPoints(G4String(def.pointsFile), &columnNames);
+          result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
+                                                    G4String(def.outfileMagnetic),
+                                                    G4String(def.outfileElectric),
+                                                    G4bool(def.queryMagneticField) || assumeQueryMagnetic,
+                                                    G4bool(def.queryElectricField),
+                                                    points,
+                                                    columnNames,
+                                                    G4bool(def.overwriteExistingFiles),
+                                                    G4String(def.fieldObject),
+                                                    def.checkParameters,
+                                                    def.drawArrows,
+                                                    def.drawZeroValuePoints,
+                                                    def.drawBoxes,
+                                                    def.boxAlpha));
+        }
       else
-	{
-	  G4Transform3D globalTransform3D = CreatePlacementTransform(def, mainBeamline);
-	  auto rot = globalTransform3D.getRotation();
-	  rot = rot.inverse();
-	  G4AffineTransform globalTransform(rot, globalTransform3D.getTranslation());
-	  
-	  result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
-						    G4String(def.outfileMagnetic),
-						    G4String(def.outfileElectric),
-						    G4bool(def.queryMagneticField) || assumeQueryMagnetic,
-						    G4bool(def.queryElectricField),
-						    {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
-						    {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
-						    {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
-						    {def.nt, def.tmin*CLHEP::ns, def.tmax*CLHEP::ns},
-						    globalTransform,
-						    G4bool(def.overwriteExistingFiles),
-						    G4String(def.fieldObject),
-						    G4bool(def.printTransform),
-						    def.checkParameters,
-						    def.drawArrows,
-						    def.drawZeroValuePoints,
-						    def.drawBoxes,
-						    def.boxAlpha));
-	}
+        {
+          G4Transform3D globalTransform3D = CreatePlacementTransform(def, mainBeamline);
+          auto rot = globalTransform3D.getRotation();
+          rot = rot.inverse();
+          G4AffineTransform globalTransform(rot, globalTransform3D.getTranslation());
+          
+          result.emplace_back(new BDSFieldQueryInfo(G4String(def.name),
+                                                    G4String(def.outfileMagnetic),
+                                                    G4String(def.outfileElectric),
+                                                    G4bool(def.queryMagneticField) || assumeQueryMagnetic,
+                                                    G4bool(def.queryElectricField),
+                                                    {def.nx, def.xmin*CLHEP::m, def.xmax*CLHEP::m},
+                                                    {def.ny, def.ymin*CLHEP::m, def.ymax*CLHEP::m},
+                                                    {def.nz, def.zmin*CLHEP::m, def.zmax*CLHEP::m},
+                                                    {def.nt, def.tmin*CLHEP::ns, def.tmax*CLHEP::ns},
+                                                    globalTransform,
+                                                    G4bool(def.overwriteExistingFiles),
+                                                    G4String(def.fieldObject),
+                                                    G4bool(def.printTransform),
+                                                    def.checkParameters,
+                                                    def.drawArrows,
+                                                    def.drawZeroValuePoints,
+                                                    def.drawBoxes,
+                                                    def.boxAlpha));
+        }
     }
   return result;
 }
