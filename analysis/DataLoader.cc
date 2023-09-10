@@ -298,7 +298,7 @@ void DataLoader::SetBranchAddress(bool allOn,
             }
         }
     }
-  evt->SetBranchAddress(evtChain, &samplerNames, allOn, evtBranches, &collimatorNames, &samplerCNames, &samplerSNames);
+  //evt->SetBranchAddress(evtChain, &samplerNames, allOn, evtBranches, &collimatorNames, &samplerCNames, &samplerSNames);
 
   const RBDS::VectorString* runBranches = nullptr;
   if (bToTurnOn)
