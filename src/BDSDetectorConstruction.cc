@@ -184,7 +184,7 @@ void BDSDetectorConstruction::UpdateSamplerDiameterAndCountSamplers()
       G4double length = blElement.l;
       G4double angle  = blElement.angle;
       if (!BDS::IsFinite(length))
-	    {continue;} // avoid divide by 0
+        {continue;} // avoid divide by 0
       G4double ratio  = angle / length;
       maxBendingRatio = std::max(maxBendingRatio, ratio);
     }
@@ -225,10 +225,10 @@ void BDSDetectorConstruction::CountPlacementFields()
   G4int nFields = 0;
   const auto& placements = BDSParser::Instance()->GetPlacements();
   for (const auto& placement : placements)
-  {// here we assume if a bdsim element is used at all that it's active even though it may not be
-    if (!placement.fieldAll.empty() || !placement.bdsimElement.empty())
-    {nFields++;}
-  }
+    {// here we assume if a bdsim element is used at all that it's active even though it may not be
+      if (!placement.fieldAll.empty() || !placement.bdsimElement.empty())
+      {nFields++;}
+    }
   buildPlacementFieldsWorld = nFields > 0;
 }
 
@@ -255,8 +255,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
   delete componentFactory;
 
-  BDSBeamline* blms = BDS::BuildBLMs(BDSParser::Instance()->GetBLMs(),
-				     mainBeamLine);
+  BDSBeamline* blms = BDS::BuildBLMs(BDSParser::Instance()->GetBLMs(), mainBeamLine);
   if (blms)
     {BDSAcceleratorModel::Instance()->RegisterBLMs(blms);} // Acc model owns it
   
