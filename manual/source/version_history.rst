@@ -25,6 +25,7 @@ General Updates
 Bug Fixes
 ---------
 
+* CMake fix for HepMC3 for versions greater than 3.1.1.
 * :code:`BDSOutputROOTEventTrajectory` copy constructor did not copy the `mass` variable.
 
 Output Changes
