@@ -26,6 +26,8 @@ Bug Fixes
 ---------
 
 * CMake fix for HepMC3 for versions greater than 3.1.1.
+* Fix :code:`geant4Version` in the header output as it didn't contain the patch number
+  as Geant4's string for this is a little inconsistent.
 * :code:`BDSOutputROOTEventTrajectory` copy constructor did not copy the `mass` variable.
 
 Output Changes
