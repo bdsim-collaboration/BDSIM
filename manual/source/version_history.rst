@@ -22,6 +22,14 @@ New Features
 General Updates
 ---------------
 
+* The ability to purposively override the (good) default maximum step length in a
+  field map is provided in a field definition. Normally, the maximum step length is
+  limited to 1x the minimum grid spacing of a field map in any dimension. Larger
+  steps result in the field only being evaluated on that length scale and therefore
+  giving a possibly wrong numerical integration of the field. However, in specific
+  high-energy cases, it is a useful optimisation to increase this length. This must
+  be used with knowledge and caution though.
+
 Bug Fixes
 ---------
 
