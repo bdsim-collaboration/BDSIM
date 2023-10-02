@@ -29,6 +29,7 @@ Bug Fixes
 * Fix :code:`geant4Version` in the header output as it didn't contain the patch number
   as Geant4's string for this is a little inconsistent.
 * :code:`BDSOutputROOTEventTrajectory` copy constructor did not copy the `mass` variable.
+* Weights for primaries loaded from :code:`bdsimsampler` fixed, which were previously all 1
 
 Output Changes
 --------------
