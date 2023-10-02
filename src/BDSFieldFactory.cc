@@ -298,11 +298,18 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
         }
       
       G4UserLimits* fieldLimit = nullptr;
-      if (definition.maximumStepLength > 0)
+      G4bool ignoreUpdateOfMaximumStepSize = definition.maximumStepLengthOverride > 0;
+      if (definition.maximumStepLength > 0 || ignoreUpdateOfMaximumStepSize)
         {// only assign if specified
           auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
           // copy the default and update with the length of the object rather than the default 1m
           G4double limit = G4double(definition.maximumStepLength) * CLHEP::m;
+          if (ignoreUpdateOfMaximumStepSize)
+            {
+              limit = definition.maximumStepLengthOverride * CLHEP::m;
+              G4cout << __METHOD_NAME__ << "\"maximumStepLengthOverride\" = " << limit << " m for field definition \""
+                     << definition.name << " -> careful" << G4endl;
+            }
           G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
           // only specify a user limit object if the step length was specified
           if (ul != defaultUL)
@@ -334,7 +341,9 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
                                             fieldLimit);
       info->SetScalingRadius(poleTipRadius);
       info->SetModulatorInfo(GetModulatorDefinition(definition.fieldModulator));
-      
+      if (ignoreUpdateOfMaximumStepSize)
+        {info->SetIgnoreUpdateOfMaximumStepSize(true);}
+
       if (!definition.magneticSubField.empty())
         {
           if (definition.magneticSubField == definition.name)
