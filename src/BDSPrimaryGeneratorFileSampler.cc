@@ -208,7 +208,7 @@ void BDSPrimaryGeneratorFileSampler::ReadSingleEvent(G4long index, G4Event* anEv
                                   centralCoords.T,
                                   centralCoords.s,
                                   vertex->GetTotalEnergy(),
-                                  overallWeight);
+                                  vertex->GetWeight());
 
       if (!bunch->AcceptParticle(local, rp, vertex->GetKineticEnergy(), vertex->GetPDGcode()))
         {
@@ -251,6 +251,7 @@ void BDSPrimaryGeneratorFileSampler::ReadSingleEvent(G4long index, G4Event* anEv
       prim->SetMomentumDirection(G4ThreeVector(fullCoordsGlobal.global.xp,
                                                fullCoordsGlobal.global.yp,
                                                fullCoordsGlobal.global.zp));
+      prim->SetWeight(vertex->GetWeight());
       g4vtx->SetPrimary(prim);
       g4vtx->SetUserInformation(vertexInfo);
       currentVertices.push_back(g4vtx);
