@@ -97,26 +97,26 @@ void Field::PublishMembers()
 void Field::print()const
 {
   std::cout << "field: "
-	    << "name "                 << name                 << std::endl
-	    << "type "                 << type                 << std::endl
-	    << "eScaling "             << eScaling             << std::endl
-    	<< "bScaling "             << bScaling             << std::endl
-	    << "integrator "           << integrator           << std::endl
-	    << "magneticFile "         << magneticFile         << std::endl
-	    << "magneticInterpolator " << magneticInterpolator << std::endl
-	    << "electricFile "         << electricFile         << std::endl
-	    << "electricInterpolator " << electricInterpolator << std::endl
-        << "fieldModulator "       << fieldModulator       << std::endl
-	    << "x, y, z,t "            << x << " " << y << " " << z << " " << t << std::endl
-	    << "phi, theta, psi "      << phi   << " " << theta << " " << psi   << std::endl
-	    << "axisX, Y, Z "          << axisX << " " << axisY << " " << axisZ << std::endl
-	    << "angle "                << angle                << std::endl
-	    << "axisAngle "            << axisAngle            << std::endl
-	    << "autoScale "            << autoScale            << std::endl
-	    << "maximumStepLength "    << maximumStepLength    << std::endl
-	    << "electricSubField "     << electricSubField     << std::endl
-	    << "magneticSubField "     << magneticSubField     << std::endl
-	    << "magneticReflection "   << magneticReflection   << std::endl
-	    << "electricReflection "   << electricReflection   << std::endl
-	    << "fieldParameters "      << fieldParameters      << std::endl;
+            << "name "                 << name                 << std::endl
+            << "type "                 << type                 << std::endl
+            << "eScaling "             << eScaling             << std::endl
+            << "bScaling "             << bScaling             << std::endl
+            << "integrator "           << integrator           << std::endl
+            << "magneticFile "         << magneticFile         << std::endl
+            << "magneticInterpolator " << magneticInterpolator << std::endl
+            << "electricFile "         << electricFile         << std::endl
+            << "electricInterpolator " << electricInterpolator << std::endl
+            << "fieldModulator "       << fieldModulator       << std::endl
+            << "x, y, z,t "            << x << " " << y << " " << z << " " << t << std::endl
+            << "phi, theta, psi "      << phi   << " " << theta << " " << psi   << std::endl
+            << "axisX, Y, Z "          << axisX << " " << axisY << " " << axisZ << std::endl
+            << "angle "                << angle                << std::endl
+            << "axisAngle "            << axisAngle            << std::endl
+            << "autoScale "            << autoScale            << std::endl
+            << "maximumStepLength "    << maximumStepLength    << std::endl
+            << "electricSubField "     << electricSubField     << std::endl
+            << "magneticSubField "     << magneticSubField     << std::endl
+            << "magneticReflection "   << magneticReflection   << std::endl
+            << "electricReflection "   << electricReflection   << std::endl
+            << "fieldParameters "      << fieldParameters      << std::endl;
 }
