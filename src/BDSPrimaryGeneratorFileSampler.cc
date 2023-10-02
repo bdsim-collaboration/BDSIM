@@ -134,7 +134,9 @@ void BDSPrimaryGeneratorFileSampler::ReadPrimaryParticlesFloat(G4long index)
       G4double x = (G4double)sampler->x[i] * CLHEP::m;
       G4double y = (G4double)sampler->y[i] * CLHEP::m;
       G4ThreeVector localPosition(x,y,0);
+      G4double weight = (G4double)sampler->weight[i];
       auto g4prim = new G4PrimaryParticle(pdgID, momentum.x(), momentum.y(), momentum.z());
+      g4prim->SetWeight(weight);
       vertices.emplace_back(DisplacedVertex{localPosition, g4prim});
     }
 }
@@ -156,7 +158,9 @@ void BDSPrimaryGeneratorFileSampler::ReadPrimaryParticlesDouble(G4long index)
       G4double x = (G4double)sampler->x[i] * CLHEP::m;
       G4double y = (G4double)sampler->y[i] * CLHEP::m;
       G4ThreeVector localPosition(x,y,0);
+      G4double weight = (G4double)sampler->weight[i];
       auto g4prim = new G4PrimaryParticle(pdgID, momentum.x(), momentum.y(), momentum.z());
+      g4prim->SetWeight(weight);
       vertices.emplace_back(DisplacedVertex{localPosition, g4prim});
     }
 }
