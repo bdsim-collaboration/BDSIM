@@ -307,8 +307,8 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
           if (ignoreUpdateOfMaximumStepSize)
             {
               limit = definition.maximumStepLengthOverride * CLHEP::m;
-              G4cout << __METHOD_NAME__ << "\"maximumStepLengthOverride\" = " << limit << " m for field definition \""
-                     << definition.name << " -> careful" << G4endl;
+              G4cout << __METHOD_NAME__ << "maximumStepLengthOverride set to " << limit << " mm for field definition \""
+                     << definition.name << "\" -> careful!" << G4endl;
             }
           G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
           // only specify a user limit object if the step length was specified
@@ -854,6 +854,12 @@ BDSFieldMag* BDSFieldFactory::CreateFieldMagRaw(const BDSFieldInfo&      info,
           if (modulator->VariesWithTime() && field->TimeVarying())
             {BDS::Warning(__METHOD_NAME__, "using a time varying modulation on a time varying field for field \"" + info.NameOfParserDefinition() + "\"");}
           field->SetModulator(modulator);
+          if (info.IgnoreUpdateOfMaximumStepSize())
+            {
+              G4cout << "maximumStepLengthOverride used for field definition \"" << info.NameOfParserDefinition()
+                     << "\" so will not reduce maximum step size for modulator\n";
+              G4cout << "Would be " << modulator->RecommendedMaxStepLength() << " mm" << G4endl;
+            }
           info.UpdateUserLimitsLengthMaximumStepSize(modulator->RecommendedMaxStepLength(), true);
         }
     }
