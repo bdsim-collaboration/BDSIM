@@ -70,6 +70,11 @@ namespace GMAD
     /// Maximum permitted step length in the volumes the field is attached to.
     double maximumStepLength;
 
+    /// Normal maximum step length will be the minimum of maximumStepLength and
+    /// the minimum spacing in the field map. This value will override this behaviour.
+    /// Done entirely at the users' responsibility.
+    double maximumStepLengthOverride;
+
     std::string magneticSubField;
     std::string electricSubField;
 
