@@ -172,7 +172,6 @@ void BDSPrimaryGeneratorFileSampler::ReadSingleEvent(G4long index, G4Event* anEv
   else
     {ReadPrimaryParticlesFloat(index);}
   
-  double overallWeight = 1.0;
   G4int nParticlesSkipped = 0;
   for (const auto& xyzVertex : vertices)
     {
@@ -251,7 +250,6 @@ void BDSPrimaryGeneratorFileSampler::ReadSingleEvent(G4long index, G4Event* anEv
       prim->SetMomentumDirection(G4ThreeVector(fullCoordsGlobal.global.xp,
                                                fullCoordsGlobal.global.yp,
                                                fullCoordsGlobal.global.zp));
-      prim->SetWeight(vertex->GetWeight());
       g4vtx->SetPrimary(prim);
       g4vtx->SetUserInformation(vertexInfo);
       currentVertices.push_back(g4vtx);
