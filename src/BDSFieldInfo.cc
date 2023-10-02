@@ -72,28 +72,28 @@ BDSFieldInfo::BDSFieldInfo():
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
-			   G4double                 brhoIn,
-			   BDSIntegratorType        integratorTypeIn,
-			   BDSMagnetStrength*       magnetStrengthIn,
-			   G4bool                   provideGlobalTransformIn,
-			   const G4Transform3D&     transformIn,
-			   const G4String&          magneticFieldFilePathIn,
-			   BDSFieldFormat           magneticFieldFormatIn,
-			   BDSInterpolatorType      magneticInterpolatorTypeIn,
-			   const G4String&          electricFieldFilePathIn,
-			   BDSFieldFormat           electricFieldFormatIn,
-			   BDSInterpolatorType      electricInterpolatorTypeIn,
-			   G4bool                   cacheTransformsIn,
-			   G4double                 eScalingIn,
-			   G4double                 bScalingIn,
-			   G4double                 timeOffsetIn,
-			   G4bool                   autoScaleIn,
-			   G4UserLimits*            stepLimitIn,
-			   G4double                 poleTipRadiusIn,
-			   G4double                 beamPipeRadiusIn,
-			   G4bool                   leftIn,
-			   const G4String&          magneticSubFieldNameIn,
-			   const G4String&          electricSubFieldNameIn):
+                           G4double                 brhoIn,
+                           BDSIntegratorType        integratorTypeIn,
+                           BDSMagnetStrength*       magnetStrengthIn,
+                           G4bool                   provideGlobalTransformIn,
+                           const G4Transform3D&     transformIn,
+                           const G4String&          magneticFieldFilePathIn,
+                           BDSFieldFormat           magneticFieldFormatIn,
+                           BDSInterpolatorType      magneticInterpolatorTypeIn,
+                           const G4String&          electricFieldFilePathIn,
+                           BDSFieldFormat           electricFieldFormatIn,
+                           BDSInterpolatorType      electricInterpolatorTypeIn,
+                           G4bool                   cacheTransformsIn,
+                           G4double                 eScalingIn,
+                           G4double                 bScalingIn,
+                           G4double                 timeOffsetIn,
+                           G4bool                   autoScaleIn,
+                           G4UserLimits*            stepLimitIn,
+                           G4double                 poleTipRadiusIn,
+                           G4double                 beamPipeRadiusIn,
+                           G4bool                   leftIn,
+                           const G4String&          magneticSubFieldNameIn,
+                           const G4String&          electricSubFieldNameIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -205,9 +205,9 @@ void BDSFieldInfo::UpdateUserLimitsLengthMaximumStepSize(G4double maximumStepSiz
       G4UserLimits* old = stepLimit;
       stepLimit = BDS::CreateUserLimits(stepLimit, maximumStepSize, 1.0);
       if (stepLimit == old)
-	{warn = false;} // no change and warning would print out wrong number
+        {warn = false;} // no change and warning would print out wrong number
       if ((stepLimit != old) && (old != defaultUL))
-	{delete old;}
+        {delete old;}
     }
   else
     {stepLimit = new G4UserLimits(maximumStepSize);}
@@ -215,7 +215,7 @@ void BDSFieldInfo::UpdateUserLimitsLengthMaximumStepSize(G4double maximumStepSiz
   if (warn)
     {
       G4cout << "Reducing maximum step size of field definition \"" << nameOfParserDefinition
-	     << "\" to " << maximumStepSize << " mm " << G4endl;
+             << "\" to " << maximumStepSize << " mm " << G4endl;
     }
 }
 
