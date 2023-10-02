@@ -53,6 +53,7 @@ void Field::clear()
   axisAngle = false;
   autoScale = false;
   maximumStepLength = -1;
+  maximumStepLengthOverride = -1;
   magneticSubField = "";
   electricSubField = "";
   magneticReflection = "";
@@ -87,6 +88,7 @@ void Field::PublishMembers()
   publish("axisAngle",            &Field::axisAngle);
   publish("autoScale",            &Field::autoScale);
   publish("maximumStepLength",    &Field::maximumStepLength);
+  publish("maximumStepLengthOverride", &Field::maximumStepLengthOverride);
   publish("magneticSubField",     &Field::magneticSubField);
   publish("electricSubField",     &Field::electricSubField);
   publish("magneticReflection",   &Field::magneticReflection);
@@ -114,6 +116,7 @@ void Field::print()const
             << "axisAngle "            << axisAngle            << std::endl
             << "autoScale "            << autoScale            << std::endl
             << "maximumStepLength "    << maximumStepLength    << std::endl
+            << "maximumStepLengthOverride " << maximumStepLengthOverride << std::endl
             << "electricSubField "     << electricSubField     << std::endl
             << "magneticSubField "     << magneticSubField     << std::endl
             << "magneticReflection "   << magneticReflection   << std::endl
