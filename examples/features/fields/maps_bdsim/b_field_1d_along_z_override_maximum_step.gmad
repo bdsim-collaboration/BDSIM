@@ -6,7 +6,7 @@ f1: field, type="bmap1d",
 	   integrator="g4classicalrk4",
 	   bScaling=20,
 	   z=-30*cm,
-	   maximumStepLengthOverride=3*cm;
+           maximumStepLengthOverride=3*cm;
 
 ! here the maximum step length of 0.5mm is shorter than the minimal
 ! spacing in the field map (detected automatically) of 6mm, so this should
