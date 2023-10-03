@@ -42,6 +42,8 @@ Things to update immediately before a release  (i.e. from a release candidate br
    colours to manual (already in correct format) - model_customisation.rst : Colours.
 #. Regenerate BDSIM manual (pdf and html) and check the version number then commit the new
    pdf version. Upload html version to website. May have to re-run cmake to update version number.
+   If the manual won't copy to the build directory it's because there is a temporary file starting
+   with a `#` is present in the source directory.
 #. Merge release candidate branch back into develop.
 #. In develop, put back README, CMakeLists.txt to new version.develop.
 #. Merge release candidate branch into master then delete. (:code:`git checkout master; git merge --no-ff v1.X.0-rc`)
