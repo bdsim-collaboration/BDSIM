@@ -229,6 +229,15 @@ When defining a :code:`field`, the following parameters can be specified. Exampl
 |                      | Currently, sin/SIN/Sin and cos/COS/Cos can be used.             |
 +----------------------+-----------------------------------------------------------------+
 
+Advanced parameter to be used with caution:
+
++---------------------------+--------------------------------------------------------------+
+| maximumStepLengthOverride | Maximum step length (m) in the field that will override the  |
+|                           | length calcualted from the minimal field map grid spacing.   |
+|                           | This overrides `maximumStepLength` and the one calculated.   |
++---------------------------+--------------------------------------------------------------+
+
+
 Simple example: ::
 
   detectorField: field, type="bmap2d",
