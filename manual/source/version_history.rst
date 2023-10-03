@@ -25,11 +25,13 @@ General Updates
 Bug Fixes
 ---------
 
+* Weights for primaries were not loaded from file when using a :code:`bdsimsampler` distribution.
+  Previously, they were all weight 1 by default. This affects any second stage simulation where
+  biasing was used in the first stage.
 * CMake fix for HepMC3 for versions greater than 3.1.1.
 * Fix :code:`geant4Version` in the header output as it didn't contain the patch number
   as Geant4's string for this is a little inconsistent.
 * :code:`BDSOutputROOTEventTrajectory` copy constructor did not copy the `mass` variable.
-* Weights for primaries loaded from :code:`bdsimsampler` fixed, which were previously all 1
 
 Output Changes
 --------------
