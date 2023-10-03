@@ -20,11 +20,6 @@ set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/html")
 set(SPHINX_LATEX_DIR "${CMAKE_CURRENT_BINARY_DIR}/latex")
 # Add directory to be able to add manual-pdf command in one go (hack)
 file(MAKE_DIRECTORY ${SPHINX_LATEX_DIR})
-  
-if (USE_SPHINX_GOOGLE)
-  set(BDSIM_USE_SPHINX_GOOGLE ",\n    'sphinxcontrib.googleanalytics'")
-  message(STATUS "Using sphinx google extension")
-endif()
 
 configure_file(
       "${CMAKE_CURRENT_SOURCE_DIR}/source/conf.py.in"

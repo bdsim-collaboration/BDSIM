@@ -804,10 +804,6 @@ effects.
 | **USE_SIXTRACK_LINK**              | Use experimental sixtrack link interface. Affects output.   |
 |                                    | (default OFF)                                               |
 +------------------------------------+-------------------------------------------------------------+
-| **USE_SPHINX_GOOGLE**              | Assume we have the patched google analytics package for     |
-|                                    | for sphinx contrib installed. It's no longer supported, but |
-|                                    | works with a trivial import patch.                          |
-+------------------------------------+-------------------------------------------------------------+
 
 .. _installation-environmental-variables:
   
