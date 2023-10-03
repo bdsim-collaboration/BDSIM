@@ -106,6 +106,36 @@ of writing, the corresponding versions of each utility are:
 * pytransport v2.0.1
 
 
+
+
+
+v1.7.5 - 2023 / 10 / 03
+=======================
+
+General Updates
+---------------
+
+* The ability to purposively override the (good) default maximum step length in a
+  field map is provided in a field definition. Normally, the maximum step length is
+  limited to 1x the minimum grid spacing of a field map in any dimension. Larger
+  steps result in the field only being evaluated on that length scale and therefore
+  giving a possibly wrong numerical integration of the field. However, in specific
+  high-energy cases, it is a useful optimisation to increase this length. This must
+  be used with knowledge and caution though.
+
+Bug Fixes
+---------
+
+* Weights for primaries were not loaded from file when using a :code:`bdsimsampler` distribution.
+  Previously, they were all weight 1 by default. This affects any second stage simulation where
+  biasing was used in the first stage.
+* CMake fix for HepMC3 for versions greater than 3.1.1.
+* Fix :code:`geant4Version` in the header output as it didn't contain the patch number
+  as Geant4's string for this is a little inconsistent.
+* :code:`BDSOutputROOTEventTrajectory` copy constructor did not copy the `mass` variable.
+
+  
+
 V1.7.4 - 2023 / 08 / 25
 =======================
 
