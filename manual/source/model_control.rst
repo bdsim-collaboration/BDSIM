@@ -1455,6 +1455,9 @@ compiled with respect to it.  See :ref:`installation-bdsim-config-options` for m
 When using an event generator file, the **design** particle and total energy must still be
 specified. These are used to calculate the magnetic field strengths.
 
+Per-event weights are not yet supported in BDSIM or rebdsim (the analysis tool) and are
+set to 1.0.
+
 The following parameters are used to control the use of an event generator file. These are
 implemented as :math:`>=` and :math:`<=` for `Min` and `Max` respectively. i.e.
 
