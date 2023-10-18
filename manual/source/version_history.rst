@@ -105,6 +105,9 @@ In short, particles that were not in the list (pi+, pi-, e+, kaon+, kaon-, kaon0
 weight from other biasing would have their weights reset to 1, only after splitting had occurred once
 in that run. And for every subsequent event.
 
+* It is not required to set :code:`beam, distrFileLoop=1` if :code:`beam, distrFileLoopNTimes` is set
+  to a value greater than 1 for any file-based input distributions.
+
   
 v1.7.5 - 2023 / 10 / 03
 =======================
