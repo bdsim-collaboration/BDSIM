@@ -13,6 +13,26 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Multiple beam line tracking.
 
 
+
+V1.7.6 - 2023 / 10 / 18
+=======================
+
+Hot-fix for muon splitting. When muon splitting occurred it turned on a flag in the G4VParticleChange
+object belonging to the physics process in Geant4 as required to give each particle unique weights
+(as non-muon secondaries are not split). However, most processes in Geant4 reuse the same object and
+do not reset this with each initialisation of a track so it remains in place. Also, the same G4Decay
+process object is registered to different particle definitions. When decay happens for another particle
+after this (for a particle that is not in the muon splitting), the flag results in the weights not being
+transferred to the new secondaries.
+
+In short, particles that were not in the list (pi+, pi-, e+, kaon+, kaon-, kaon0L) that had an incoming
+weight from other biasing would have their weights reset to 1, only after splitting had occurred once
+in that run. And for every subsequent event.
+
+* It is not required to set :code:`beam, distrFileLoop=1` if :code:`beam, distrFileLoopNTimes` is set
+  to a value greater than 1 for any file-based input distributions.
+
+  
 v1.7.5 - 2023 / 10 / 03
 =======================
 
