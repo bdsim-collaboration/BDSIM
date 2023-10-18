@@ -90,6 +90,21 @@ of writing, the corresponding versions of each utility are:
 * pytransport v2.0.1
 
 
+V1.7.6 - 2023 / 10 / 17
+=======================
+
+Hot-fix for muon splitting. When muon splitting occurred it turned on a flag in the G4VParticleChange
+object belonging to the physics process in Geant4 as required to give each particle unique weights
+(as non-muon secondaries are not split). However, most processes in Geant4 reuse the same object and
+do not reset this with each initialisation of a track so it remains in place. Also, the same G4Decay
+process object is registered to different particle definitions. When decay happens for another particle
+after this (for a particle that is not in the muon splitting), the flag results in the weights not being
+transferred to the new secondaries.
+
+In short, particles that were not in the list (pi+, pi-, e+, kaon+, kaon-, kaon0L) that had an incoming
+weight from other biasing would have their weights reset to 1, only after splitting had occurred once
+in that run. And for every subsequent event.
+
   
 v1.7.5 - 2023 / 10 / 03
 =======================
