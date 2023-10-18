@@ -185,8 +185,8 @@ G4VParticleChange* BDSWrapperMuonSplitting::PostStepDoIt(const G4Track& track,
     }
   // IMPORTANT - we must reset this back to its default value as the process owns
   // (usually) a single particle change object that it reuses, so setting this flag
-  // will change that processes behaviour forever more in the run even if this wrapper
-  // decides not to act. We reset it after AddSecondary().
+  // will change that process's behaviour forever more in the run even if this wrapper
+  // decides not to act. We must reset it after AddSecondary().
   particleChange->SetSecondaryWeightByProcess(originalSetSecondaryWeightByProcess);
 
   nCallsThisEvent++;
