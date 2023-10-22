@@ -149,7 +149,7 @@ BDSOutputStructures::~BDSOutputStructures()
 }
 
 G4int BDSOutputStructures::Create1DHistogramEvent(const G4String& name, const G4String& title,
-						  G4int nbins, G4double xmin, G4double xmax)
+                                                  G4int nbins, G4double xmin, G4double xmax)
 {
   return evtHistos->Create1DHistogram(name, title, nbins, xmin, xmax);
 }
