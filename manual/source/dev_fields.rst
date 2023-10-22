@@ -95,7 +95,7 @@ parameters required.
 +---------------------------------+--------------------------------------------+
 | **Field Type Name**             | **Parameters**                             |
 +=================================+============================================+
-| solenoidsheet                   | length, field                              |
+| solenoidsheet                   | length, field, poletipradius               |
 +---------------------------------+--------------------------------------------+
 | dipole, solenoid, dipole3d      | field, bx, by, bz                          |
 +---------------------------------+--------------------------------------------+
@@ -121,9 +121,10 @@ parameters required.
 +---------------------------------+--------------------------------------------+
 | skewdecapole                    | k4                                         |
 +---------------------------------+--------------------------------------------+
-| rfcavity                        | equatroradius, efield, frequency, phase    |
+| rfconstantinx, rfconstantiny,   | efield, frequency, phase                   |
+| rfconstantinz                   |                                            |
 +---------------------------------+--------------------------------------------+
-| rf                              | efield, frequency, phase                   |
+| rfpillbox                       | equatoradius, efield, frequency, phase     |
 +---------------------------------+--------------------------------------------+
 | undulator                       | length, field                              |
 +---------------------------------+--------------------------------------------+
@@ -486,7 +487,7 @@ Wire locations:
 
 .. math::
 
-   \mathbf{c}_i =
+
    \begin{bmatrix}
    x \\
    y \\
@@ -671,11 +672,20 @@ Electric Fields From Equations
 Sinusoidal Electric Field
 -------------------------
 
-This field provides an electric field along local `z` direction with an amplitude
-`E` that does not vary with position (`x`, `y`, `z`), but only varies sinusoidally
-with time (`t`). A cosine is used so when the default phase is zero, a maximum acceleration
-is provided. Aside from the field amplitude `E`, the frequency `f` (Hz) along with
-the phase :math:`\phi` are used.
+This field provides an electric field along local unit `u` direction (e.g. unit `z` or unit `x`)
+with an amplitude `E` that **does not vary** with position (`x`, `y`, `z`), but only varies sinusoidally
+with time (`t`). Therefore, this field does not represent a realistic cavity with no variation in say
+`z` in the strength of electric field, but is useful nonetheless.
+
+A cosine is used so when the default phase is zero, a maximum acceleration
+is provided for a synchronous particle at the centre of the object. An rf cavity using this
+field can be constructed with `E` as peak voltage (subsequently divided by length), or the
+field itself as `gradient`.
+
+The field is given by the combination of the peak field `E`, the frequency `f` (Hz) along
+with the phase :math:`\phi`. Typically, the synchronous time at the centre of the element
+it is attached to as well as the frequency are used to calculate a global phase for the
+arrival time of the synchronous particle to the centre of the object.
 
 .. math::
 
@@ -702,8 +712,19 @@ Electromagnetic Fields From Equations
 Pill-Box Cavity
 ---------------
 
-The pill-box cavity field is constructed with an electric field amplitude :math:`E`, a
-frequency :math:`f`, phase :math:`\psi` and cavity radius. The cavity radius is used to
+The pill-box cavity field is constructed with a peak electric field :math:`E`, a
+frequency :math:`f`, phase :math:`\psi` and a cavity radius. It represents the
+TM010 mode of a simple pill-box cavity.
+
+Geant4 queries the field in (local) Cartesian coordinates and we require cylindrical
+coordinates for the field description. These are converted as:
+
+.. math::
+
+     \phi & = \tan^{-1} ( \frac{y}{x} ) \\
+     r    & = \sqrt{x^2 + y^2}
+
+The cavity radius is used to
 normalise the Bessel function so that the field drops to zero at this point. The field
 is time-dependent and the :math:`E_z` and :math:`B_{\phi}` components are calculated
 and then returned in 3D Cartesian coordinates. The cavity radius is used to calculate
@@ -717,33 +738,45 @@ The electric field is calculated as:
 
 .. math::
 
-   E_z      & = E \, J_{0}(r) \cos(2\,\pi\,f\,t + \psi) \\
+   E_z(r_n, z ,t) & = E \, J_{0}(r_n) \cos(2\,\pi\,f\,t + \psi)\,\cos(\frac{2\,\pi\,f\,z}{c})\\
 
-The B-field amplitude is calculated from the E-field amplitude.
+The radial B-field amplitude is calculated from the E-field amplitude.
 
 .. math::
 
-   H & = \frac{E_z}{Z_{0}} \\
-   B & = \mu_{0} H
+   H_{\phi}(r_n, z, t) & = \frac{E}{Z_{0}} \, J_{1}(r_n) \sin(2\,\pi\,f\,t + \psi)\,\cos(\frac{2\,\pi\,f\,z}{c})\\
+   B_{\phi}(r_n, z, t) & = \mu_{0} H_{\phi}
 
 where :math:`Z_{0}` is the impedance of free space. To calculate B, a vacuum is assumed
 and therefore only the vacuum permeability is used to calculate B from H.
-
-The radial magnetic field in the pill-box field is:
-
-.. math::
-
-   B_{\phi} = \frac{E \, \mu_0 } { Z_0 } J_{1}(r) \sin(2\,\pi\,f\,t + \psi)
-
 
 The 3D Cartesian field vectors are therefore:
 
 .. math::
 
-   \mathbf{B} & = (B_{\phi}\cos(\phi),\, B_{\phi}\sin(\phi), \,0) \\
+   \begin{bmatrix}
+   B_x \\
+   B_y \\
+   \end{bmatrix}
+   =
+   \begin{bmatrix}
+   0  \\
+   B_{\phi} \\
+   \end{bmatrix}
+   \begin{bmatrix}
+   \cos \phi & - \sin \phi \\
+   \sin \phi & \cos \phi   \\
+   \end{bmatrix}
+
+The final 3-vectors are constructed as:
+
+.. math::
+
+   \mathbf{B} & = (B_x,\, B_y \,0) \\
    \mathbf{E} & = (0, \,0, \,E_z)
 
-Where :math:`\phi` is the polar coordinate.
+
+
 
 .. _field-map-formats:
 
@@ -816,7 +849,7 @@ For a field that varies in :math:`x`.
 +--------------------+-------------------------------------------------------------------+
 | xmax               | The upper spatial coordinate in x associated with the field map   |
 +--------------------+-------------------------------------------------------------------+
-| nx                 | Number of elements in x - 1 counting                              |
+| nx                 | Number of elements in x (1 counting)                              |
 +--------------------+-------------------------------------------------------------------+
 
 Example syntax is shown below and there is an example in
@@ -856,7 +889,7 @@ All of the 1D parameters, plus:
 +--------------------+---------------------------------------------------------------------------+
 | ymax               | The upper spatial coordinate in :math:`y` associated with the field map   |
 +--------------------+---------------------------------------------------------------------------+
-| ny                 | Number of elements in y - 1 counting                                      |
+| ny                 | Number of elements in y (1 counting)                                      |
 +--------------------+---------------------------------------------------------------------------+
 
 Example syntax is shown below and there is an example in
@@ -909,7 +942,7 @@ All of the 1D and 2D parameters, plus:
 +--------------------+---------------------------------------------------------------------------+
 | zmax               | The upper spatial coordinate in :math:`z` associated with the field map   |
 +--------------------+---------------------------------------------------------------------------+
-| nz                 | Number of elements in z - 1 counting                                      |
+| nz                 | Number of elements in z (1 counting)                                      |
 +--------------------+---------------------------------------------------------------------------+
 
 Example syntax is shown below and there is an example in
@@ -1001,7 +1034,7 @@ All of the 1D, 2D and 3D parameters, plus:
 +--------------------+---------------------------------------------------------------------------+
 | tmax               | The upper spatial coordinate in :math:`t` associated with the field map   |
 +--------------------+---------------------------------------------------------------------------+
-| nt                 | Number of elements in t - 1 counting                                      |
+| nt                 | Number of elements in t (1 counting)                                      |
 +--------------------+---------------------------------------------------------------------------+
 
 There is an example in :code:`bdsim/examples/features/fields/4_bdsimformat/tdexample.tar.gz`.
@@ -1181,13 +1214,14 @@ Linear Magnitude
 
 in this case, the interpolation is also linear. However, additionally, the magnitude of
 the field vector is also linearly interpolated. Imagine linear interpolation between two
-vectors pointing up and left with magnitude 1. The linearly interpolated vector exactly
+vectors pointing up and right with magnitude 1. The linearly interpolated vector exactly
 half way between would be at 45 degrees point to the top right. As the components of the
-vector are linearly interpolated, (0,1) to (1,0), then the components would be (0.5,0.5)
-with a magnitude of :math:`\sqrt{2 \times 0.5^2} = 0.707`. This is shown in the figure below.
+vector are linearly interpolated separately, (0,1) to (1,0), then the components would be (0.5,0.5).
+This would result in a magnitude of :math:`\sqrt{2 \times 0.5^2} = 0.707`. This is
+shown in the figure below.
 
-With this interpolator, the magnitude would be linearly interpolated betwen 1 and 1, so
-would remain 1.
+However, with this 'linear-magnitude' interpolator, the magnitude would be also linearly
+interpolated between 1 and 1, so would remain 1.
 
 This interpolator is most useful when linear interpolation is desired, but the field map
 is relatively sparse.

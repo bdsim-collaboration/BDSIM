@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -150,7 +150,9 @@ void Options::PublishMembers()
   publish("geant4PhysicsMacroFileName", &Options::geant4PhysicsMacroFileName);
   publish("geant4PhysicsMacroFileNameFromExecOptions", &Options::geant4PhysicsMacroFileNameFromExecOptions);
   publish("visDebug",              &Options::visDebug);
+  publish("outfile",               &Options::outputFileName);
   publish("outputFileName",        &Options::outputFileName);
+  publish("output",                &Options::outputFormat);
   publish("outputFormat",          &Options::outputFormat);
   publish("outputDoublePrecision", &Options::outputDoublePrecision);
   publish("outputCompressionLevel",&Options::outputCompressionLevel);
@@ -192,6 +194,7 @@ void Options::PublishMembers()
   publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
   publish("verbose_G4stepping",    &Options::verboseSteppingLevel); // to be compatible with exec options
   publish("verboseImportanceSampling", &Options::verboseImportanceSampling);
+  publish("verboseSensitivity",    &Options::verboseSensitivity);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
   publish("randomEngine",          &Options::randomEngine);
@@ -282,7 +285,7 @@ void Options::PublishMembers()
   publish("coilWidthFraction",    &Options::coilWidthFraction);
   publish("coilHeightFraction",   &Options::coilHeightFraction);
   publish("ignoreLocalMagnetGeometry", &Options::ignoreLocalMagnetGeometry);
-
+  publish("buildPoleFaceGeometry", &Options::buildPoleFaceGeometry);
   publish("preprocessGDML",       &Options::preprocessGDML);
   publish("preprocessGDMLSchema", &Options::preprocessGDMLSchema);
   
@@ -322,6 +325,7 @@ void Options::PublishMembers()
   publish("minimumKineticEnergy",        &Options::minimumKineticEnergy);
   publish("minimumKineticEnergyTunnel",  &Options::minimumKineticEnergyTunnel);
   publish("minimumRange",                &Options::minimumRange);
+  publish("particlesToExcludeFromCuts",  &Options::particlesToExcludeFromCuts);
   
   publish("prodCutPhotons",              &Options::prodCutPhotons);
   publish("prodCutElectrons",            &Options::prodCutElectrons);
@@ -336,9 +340,16 @@ void Options::PublishMembers()
   publish("useGammaToMuMu",              &Options::useGammaToMuMu);
   publish("usePositronToMuMu",           &Options::usePositronToMuMu);
   publish("usePositronToHadrons",        &Options::usePositronToHadrons);
+  publish("restoreFTPFDiffractionForAGreater10", &Options::restoreFTPFDiffractionForAGreater10);
   publish("beamPipeIsInfiniteAbsorber",  &Options::beamPipeIsInfiniteAbsorber);
   publish("collimatorsAreInfiniteAbsorbers", &Options::collimatorsAreInfiniteAbsorbers);
   publish("tunnelIsInfiniteAbsorber",        &Options::tunnelIsInfiniteAbsorber);
+  publish("muonSplittingFactor",             &Options::muonSplittingFactor);
+  publish("muonSplittingThresholdParentEk",  &Options::muonSplittingThresholdParentEk);
+  publish("muonSplittingFactor2",            &Options::muonSplittingFactor2);
+  publish("muonSplittingThresholdParentEk2", &Options::muonSplittingThresholdParentEk2);
+  publish("muonSplittingExcludeWeight1Particles", &Options::muonSplittingExcludeWeight1Particles);
+  publish("muonSplittingExclusionWeight",    &Options::muonSplittingExclusionWeight);
   
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
@@ -350,6 +361,7 @@ void Options::PublishMembers()
 
   // options which influence tracking
   publish("integratorSet",            &Options::integratorSet);
+  publish("fieldModulator",           &Options::fieldModulator);
   publish("lengthSafety",             &Options::lengthSafety);
   publish("lengthSafetyLarge",        &Options::lengthSafetyLarge);
   publish("maximumTrackingTime",      &Options::maximumTrackingTime);
@@ -370,6 +382,7 @@ void Options::PublishMembers()
   publish("nominalMatrixRelativeMomCut", &Options::nominalMatrixRelativeMomCut);
   publish("teleporterFullTransform",  &Options::teleporterFullTransform);
   publish("dEThresholdForScattering", &Options::dEThresholdForScattering);
+  publish("backupStepperMomLimit",    &Options::backupStepperMomLimit);
 
   // hit generation
   publish("sensitiveOuter",              &Options::sensitiveOuter);
@@ -389,6 +402,7 @@ void Options::PublishMembers()
   publish("storeApertureImpactsAll",        &Options::storeApertureImpactsAll);
   publish("storeApertureImpactsHistograms", &Options::storeApertureImpactsHistograms);
   publish("apertureImpactsMinimumKE",       &Options::apertureImpactsMinimumKE);
+  publish("storeCavityInfo",                &Options::storeCavityInfo);
   publish("storeCollimatorInfo",            &Options::storeCollimatorInfo);
   publish("storeCollimatorHits",            &Options::storeCollimatorHits);
   publish("storeCollimatorHitsLinks",       &Options::storeCollimatorHitsLinks); // backwards compatibility
@@ -410,8 +424,12 @@ void Options::PublishMembers()
   publish("storeELossTunnelHistograms",     &Options::storeElossTunnelHistograms);
   publish("storeElossWorld",                &Options::storeElossWorld);
   publish("storeELossWorld",                &Options::storeElossWorld);
+  publish("storeElossWorldIntegral",        &Options::storeElossWorldIntegral);
+  publish("storeELossWorldIntegral",        &Options::storeElossWorldIntegral);
   publish("storeElossWorldContents",        &Options::storeElossWorldContents);
   publish("storeELossWorldContents",        &Options::storeElossWorldContents);
+  publish("storeElossWorldContentsIntegral",&Options::storeElossWorldContentsIntegral);
+  publish("storeELossWorldContentsIntegral",&Options::storeElossWorldContentsIntegral);
   publish("storeElossTurn",                 &Options::storeElossTurn);
   publish("storeELossTurn",                 &Options::storeElossTurn);
   publish("storeElossLinks",                &Options::storeElossLinks);
@@ -444,6 +462,7 @@ void Options::PublishMembers()
   publish("storeTrajectoryStepPointLast",       &Options::storeTrajectoryStepPointLast);
   publish("storeTrajectoryParticle",            &Options::storeTrajectoryParticle);
   publish("storeTrajectoryParticleID",          &Options::storeTrajectoryParticleID);
+  publish("storeTrajectorySecondaryParticles",  &Options::storeTrajectorySecondaryParticles);
   publish("storeTrajectoryEnergyThreshold",     &Options::storeTrajectoryEnergyThreshold);
   publish("storeTrajectorySamplerID",           &Options::storeTrajectorySamplerID);
   publish("storeTrajectoryELossSRange",         &Options::storeTrajectoryELossSRange);
@@ -479,6 +498,8 @@ void Options::PublishMembers()
   publish("storeModel",                     &Options::storeModel);
 
   publish("samplersSplitLevel",             &Options::samplersSplitLevel);
+  publish("modelSplitLevel",                &Options::modelSplitLevel);
+  publish("uprootCompatible",               &Options::uprootCompatible);
 
   // circular options
   publish("nturns",                   &Options::nturns);

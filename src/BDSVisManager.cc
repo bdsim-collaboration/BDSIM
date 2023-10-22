@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSColours.hh"
 #include "BDSVisManager.hh"
 
 #include "G4UIterminal.hh"
@@ -80,7 +81,11 @@ void BDSVisManager::StartSession(int argc, char** argv)
   visManager->Initialize();
   
   // setup trajectory colouring
-  G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
+  G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("bdsim_traj_by_charge");
+  const auto colours = BDSColours::Instance();
+  trajModel1->Set(G4TrajectoryDrawByCharge::Charge::Neutral,  *(colours->GetColour("traj_neutral")));
+  trajModel1->Set(G4TrajectoryDrawByCharge::Charge::Positive, *(colours->GetColour("traj_positive")));
+  trajModel1->Set(G4TrajectoryDrawByCharge::Charge::Negative, *(colours->GetColour("traj_negative")));
   visManager->RegisterModel(trajModel1);
   visManager->SelectTrajectoryModel(trajModel1->Name());
 #endif
@@ -90,7 +95,7 @@ void BDSVisManager::StartSession(int argc, char** argv)
 #ifdef G4VIS_USE
 
   G4UImanager* UIManager = G4UImanager::GetUIpointer();
-  // setup paths to look for macros for the install then the build directory
+  // setup paths to look for macros for the installation then the build directory
   G4String bdsimExecPath = G4String(BDS::GetBDSIMExecPath());
   G4String macroPaths    = bdsimExecPath + "../share/bdsim/vis:@CMAKE_BINARY_DIR@/vis:./";
   G4cout << __METHOD_NAME__ << "Setting macro path to: " << macroPaths << G4endl;

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2023.
 
 This file is part of BDSIM.
 
@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ostream>
 
 class BDSMagnetStrength;
+class BDSModulatorInfo;
 class G4UserLimits;
 
 /**
@@ -125,6 +126,8 @@ public:
   inline G4bool              UsePlacementWorldTransform() const {return usePlacementWorldTransform;}
   inline const BDSArrayReflectionTypeSet& MagneticArrayReflectionType() const {return magneticArrayReflectionTypeSet;}
   inline const BDSArrayReflectionTypeSet& ElectricArrayReflectionType() const {return electricArrayReflectionTypeSet;}
+  inline BDSModulatorInfo*   ModulatorInfo()            const {return modulatorInfo;}
+  inline G4bool IgnoreUpdateOfMaximumStepSize() const {return ignoreUpdateOfMaximumStepSize;}
   /// @}
   
   G4Transform3D Transform() const;         ///< Transform for the field definition only.
@@ -147,6 +150,8 @@ public:
   inline void SetMagneticSubField(const G4String& mfnIn) {magneticSubFieldName = mfnIn;}
   inline void SetElectricSubField(const G4String& efnIn) {electricSubFieldName = efnIn;}
   inline void SetUsePlacementWorldTransform(G4bool use) {usePlacementWorldTransform = use;}
+  inline void SetModulatorInfo(BDSModulatorInfo* modulatorInfoIn) {modulatorInfo = modulatorInfoIn;}
+  inline void SetIgnoreUpdateOfMaximumStepSize(G4bool ignoreUpdateOfMaximumStepSizeIn) {ignoreUpdateOfMaximumStepSize = ignoreUpdateOfMaximumStepSizeIn;}
 
   /// *= for BScaling.
   inline void CompoundBScaling(G4double extraBScalingIn) {bScaling *= extraBScalingIn;}
@@ -207,6 +212,9 @@ private:
   G4String                 magneticSubFieldName;
   G4String                 electricSubFieldName;
   G4bool                   usePlacementWorldTransform;
+  BDSModulatorInfo*        modulatorInfo;
+  G4bool                   ignoreUpdateOfMaximumStepSize; ///< To be used when enforcing a larger maximum step size value.
+  
   /// Transform from curvilinear frame to this field - ie beam line bit only.
   G4Transform3D*           transformBeamline;
 
