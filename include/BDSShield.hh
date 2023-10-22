@@ -40,13 +40,13 @@ class BDSShield: public BDSAcceleratorComponent
 {
 public:
   BDSShield(const G4String&  name,
-	    G4double         length,
-	    G4double         horizontalWidthIn,
-	    G4double         xSize,
-	    G4double         ySize,
-	    G4Material*      materialIn,
-	    G4Colour*        colourIn,
-	    BDSBeamPipeInfo2* beamPipeInfoIn = nullptr);
+            G4double         length,
+            G4double         horizontalWidthIn,
+            G4double         xSize,
+            G4double         ySize,
+            G4Material*      materialIn,
+            G4Colour*        colourIn,
+            BDSBeamPipeInfo2* beamPipeInfoIn = nullptr);
   virtual ~BDSShield();
 
 protected:
