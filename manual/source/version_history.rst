@@ -57,8 +57,6 @@ General Updates
 Bug Fixes
 ---------
 
-* :code:`BDSOutputROOTEventTrajectory` copy constructor did not copy the `mass` variable.
-
 Output Changes
 --------------
 
@@ -123,6 +121,52 @@ of writing, the corresponding versions of each utility are:
 * pymad8 v2.0.1
 * pytransport v2.0.1
 
+
+V1.7.6 - 2023 / 10 / 18
+=======================
+
+Hot-fix for muon splitting. When muon splitting occurred it turned on a flag in the G4VParticleChange
+object belonging to the physics process in Geant4 as required to give each particle unique weights
+(as non-muon secondaries are not split). However, most processes in Geant4 reuse the same object and
+do not reset this with each initialisation of a track so it remains in place. Also, the same G4Decay
+process object is registered to different particle definitions. When decay happens for another particle
+after this (for a particle that is not in the muon splitting), the flag results in the weights not being
+transferred to the new secondaries.
+
+In short, particles that were not in the list (pi+, pi-, e+, kaon+, kaon-, kaon0L) that had an incoming
+weight from other biasing would have their weights reset to 1, only after splitting had occurred once
+in that run. And for every subsequent event.
+
+* It is not required to set :code:`beam, distrFileLoop=1` if :code:`beam, distrFileLoopNTimes` is set
+  to a value greater than 1 for any file-based input distributions.
+
+  
+v1.7.5 - 2023 / 10 / 03
+=======================
+
+General Updates
+---------------
+
+* The ability to purposively override the (good) default maximum step length in a
+  field map is provided in a field definition. Normally, the maximum step length is
+  limited to 1x the minimum grid spacing of a field map in any dimension. Larger
+  steps result in the field only being evaluated on that length scale and therefore
+  giving a possibly wrong numerical integration of the field. However, in specific
+  high-energy cases, it is a useful optimisation to increase this length. This must
+  be used with knowledge and caution though.
+
+Bug Fixes
+---------
+
+* Weights for primaries were not loaded from file when using a :code:`bdsimsampler` distribution.
+  Previously, they were all weight 1 by default. This affects any second stage simulation where
+  biasing was used in the first stage.
+* CMake fix for HepMC3 for versions greater than 3.1.1.
+* Fix :code:`geant4Version` in the header output as it didn't contain the patch number
+  as Geant4's string for this is a little inconsistent.
+* :code:`BDSOutputROOTEventTrajectory` copy constructor did not copy the `mass` variable.
+
+  
 
 V1.7.4 - 2023 / 08 / 25
 =======================
