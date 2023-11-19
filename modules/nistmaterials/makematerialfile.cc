@@ -54,10 +54,10 @@ int main(int, char**)
   // calling this forces construction of all elements and NIST materials
   G4NistManager* nm = G4NistManager::Instance();
   
-  efile << "# V1.0\n";
+  efile << "# V1.1\n";
   efile << "# NIST Elements from BDSIM for pyg4ometry\n";
   efile << "# Geant4 version: " << G4Version << "\n";
-  efile << "# element\tZ\tName\tdensity(g/cm^3)\tI(eV)\tnIsotopes\tstate\n";
+  efile << "# element\tZ\tName\tdensity(g/cm^3)\tI(eV)\tnIsotopes\tstate\ttemperature[K]\tpressure[Pa]\n";
   efile << "# for each isotope\n";
   efile << "# \tA\tfractional abundance\tmolar mass (g)\n";
 
@@ -80,8 +80,9 @@ int main(int, char**)
       // we have to do this instead of << std::defaultfloat because GCC4.9 doesn't include this
       // despite being in the standard for C++11
       efile.unsetf(std::ios_base::floatfield);
-      efile << "\t" << nIsotopes
-      << "\t" << stateMap[mat->GetState()] << "\n";
+      efile << "\t" << nIsotopes << "\t" << stateMap[mat->GetState()]
+            << "\t" << mat->GetTemperature() / CLHEP::kelvin
+            << "\t" << mat->GetPressure() / CLHEP::hep_pascal << "\n";
       
       G4double* abundances = el->GetRelativeAbundanceVector();
       G4IsotopeVector* isotopes = el->GetIsotopeVector();
@@ -110,7 +111,7 @@ int main(int, char**)
   mfile << "# Geant4 version: " << G4Version << "\n";
   mfile << "# NIST materials by # of atoms of each element - each element includes isotopes\n";
   mfile << "# of atoms per unit is only approximate from Geant4 so best to go by fraction of mass\n";
-  mfile << "# material   # of elements\t         name\t                density(g/cm^3)\tI(eV)\t\tstate\n";
+  mfile << "# material   # of elements\t         name\t                density(g/cm^3)\tI(eV)\t\tstate\ttemperature[K]\tpressure[Pa]\n";
   mfile << "# for each element\n";
   mfile << "# \t         name\tZ\t# atoms    fraction of mass\n";
   
@@ -146,11 +147,13 @@ int main(int, char**)
       mfile << "material " << std::setw(4);
       mfile.unsetf(std::ios_base::floatfield);
       mfile << mat->GetNumberOfElements()
-	    << "\t" << std::setw(40) << mat->GetName()
-	    << "\t" << std::setw(12) << std::scientific << mat->GetDensity() / gcm3
-	    << "\t" << meanIonisationEnergy / CLHEP::eV
-      << "\t" << stateMap[mat->GetState()]
-	    << "\n";
+            << "\t" << std::setw(40) << mat->GetName()
+            << "\t" << std::setw(12) << std::scientific << mat->GetDensity() / gcm3
+            << "\t" << meanIonisationEnergy / CLHEP::eV
+            << "\t" << stateMap[mat->GetState()]
+            << "\t" << mat->GetTemperature() / CLHEP::kelvin
+            << "\t" << mat->GetPressure() / CLHEP::hep_pascal
+            << "\n";
   
       const G4ElementVector* elementArray = mat->GetElementVector();
       const G4double* fractionArray = mat->GetFractionVector();
