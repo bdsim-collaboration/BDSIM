@@ -64,7 +64,7 @@ session box (terminal prompt) inside the visualiser:
 * :code:`/vis/viewer/set/targetPoint 0 0 20 m` - sets the rotation view point at 0,0,20 m as an example
 * :code:`/vis/scene/add/axes 0 0 0` - adds a set of unit vector axes at position (0,0,0)
 * :code:`/vis/drawVolume worlds` - view all invisible geometry including samplers
-* :code:`/vis/viewer/set/lightsVecto 1 1 1` - change the orientation of the lighting to
+* :code:`/vis/viewer/set/lightsVector 1 1 1` - change the orientation of the lighting to
   roughly opposite
 * :code:`/vis/viewer/set/viewpointThetaPhi 180 0` - look along the beam line
 * :code:`/bds/beamline/goto d1` - reposition the view point at beam line element named `d1`
