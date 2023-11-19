@@ -74,9 +74,9 @@ int main(int, char**)
       G4double meanIonisationEnergy = nm->GetMeanIonisationEnergy(Z);
       G4int nIsotopes = (G4int)el->GetNumberOfIsotopes();
       efile << "element"
-	    << "\t" << Z << "\t" << name
-	    << "\t" << std::setw(12) << std::scientific << mat->GetDensity() / gcm3
-	    << "\t" << meanIonisationEnergy / CLHEP::eV ;
+            << "\t" << Z << "\t" << name
+            << "\t" << std::setw(12) << std::scientific << mat->GetDensity() / gcm3
+            << "\t" << meanIonisationEnergy / CLHEP::eV;
       // we have to do this instead of << std::defaultfloat because GCC4.9 doesn't include this
       // despite being in the standard for C++11
       efile.unsetf(std::ios_base::floatfield);
@@ -86,18 +86,18 @@ int main(int, char**)
       G4double* abundances = el->GetRelativeAbundanceVector();
       G4IsotopeVector* isotopes = el->GetIsotopeVector();
       if (isotopes)
-	{
-	  int i = 0;
-	  for (const auto& iso : *isotopes)
-	    {
+        {
+          int i = 0;
+          for (const auto& iso : *isotopes)
+            {
         efile.unsetf(std::ios_base::floatfield);
-	      efile << "\t" << iso->GetN() // number of nucleons
-		    << "\t" << std::setw(12) << std::scientific << abundances[i]
-		    << "\t" << std::setw(12) << std::scientific << iso->GetA() / ( CLHEP::g/CLHEP::mole)
-		    << "\n";
-	      i++;
-	    }
-	}
+              efile << "\t" << iso->GetN() // number of nucleons
+                    << "\t" << std::setw(12) << std::scientific << abundances[i]
+                    << "\t" << std::setw(12) << std::scientific << iso->GetA() / ( CLHEP::g/CLHEP::mole)
+                    << "\n";
+              i++;
+            }
+        }
       
     }
   efile.close();
@@ -131,7 +131,7 @@ int main(int, char**)
   for (const auto& name : elementNames)
     {
       if (!name.empty()) // apparently some are just empty...
-	{g4ElementNames.insert("G4_"+name);}
+        {g4ElementNames.insert("G4_"+name);}
     }
   std::set<G4String> materialSet = {materialNames.begin(), materialNames.end()};
   for (const auto& name : g4ElementNames)
@@ -157,16 +157,16 @@ int main(int, char**)
       const G4int* atomsVector      = mat->GetAtomsVector();
       
       for (int i = 0; i < (int)elementArray->size(); i++)
-	{
-	  const auto element = (*elementArray)[i];
-	  mfile.unsetf(std::ios_base::floatfield);
-	  mfile << "\t" << std::setw(12) << element->GetName() << "\t";
-	  mfile.unsetf(std::ios_base::floatfield);
-	  mfile << element->GetZ()
-		<< "\t" << (*atomsVector + i)
-		<< "\t" << std::setw(12) << std::scientific << fractionArray[i]
-		<< "\n";
-	}
+        {
+          const auto element = (*elementArray)[i];
+          mfile.unsetf(std::ios_base::floatfield);
+          mfile << "\t" << std::setw(12) << element->GetName() << "\t";
+          mfile.unsetf(std::ios_base::floatfield);
+          mfile << element->GetZ()
+                << "\t" << (*atomsVector + i)
+                << "\t" << std::setw(12) << std::scientific << fractionArray[i]
+                << "\n";
+        }
     }
   mfile.close();
   return 0;
