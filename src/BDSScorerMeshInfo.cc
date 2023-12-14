@@ -49,45 +49,31 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
 
   if (geometryType == "box")
     {
-        if (!BDS::IsFinite(mesh.xsize)) {
-            throw BDSException(__METHOD_NAME__, "xsize must be finite in mesh \"" + mesh.name + "\"");
-        }
-        if (!BDS::IsFinite(mesh.ysize)) {
-            throw BDSException(__METHOD_NAME__, "ysize must be finite in mesh \"" + mesh.name + "\"");
-        }
-        if (!BDS::IsFinite(mesh.zsize)) {
-            throw BDSException(__METHOD_NAME__, "zsize must be finite in mesh \"" + mesh.name + "\"");
-        }
-
-        if (!BDS::IsFinite(nBinsX)){
-            throw BDSException(__METHOD_NAME__, "nx must be finite in mesh \"" + mesh.name + "\"");
-        }
-        if (!BDS::IsFinite(nBinsY)){
-            throw BDSException(__METHOD_NAME__, "ny must be finite in mesh \"" + mesh.name + "\"");
-        }
-        if (!BDS::IsFinite(nBinsZ)){
-            throw BDSException(__METHOD_NAME__, "nz must be finite in mesh \"" + mesh.name + "\"");
-        }
-
+      if (!BDS::IsFinite(mesh.xsize))
+        {throw BDSException(__METHOD_NAME__, "xsize must be > 0 and finite in mesh \"" + mesh.name + "\"");}
+      if (!BDS::IsFinite(mesh.ysize))
+        {throw BDSException(__METHOD_NAME__, "ysize must be > 0 and finite in mesh \"" + mesh.name + "\"");}
+      if (!BDS::IsFinite(mesh.zsize))
+        {throw BDSException(__METHOD_NAME__, "zsize must be > 0 and finite in mesh \"" + mesh.name + "\"");}
+      if (!BDS::IsFinite(nBinsX))
+        {throw BDSException(__METHOD_NAME__, "nx must be > 0 and finite in mesh \"" + mesh.name + "\"");}
+      if (!BDS::IsFinite(nBinsY))
+        {throw BDSException(__METHOD_NAME__, "ny must be > 0 and finite in mesh \"" + mesh.name + "\"");}
+      if (!BDS::IsFinite(nBinsZ))
+        {throw BDSException(__METHOD_NAME__, "nz must be > 0 and finite in mesh \"" + mesh.name + "\"");}
     }
   else if (geometryType == "cylindrical")
    {
-       if (!BDS::IsFinite(mesh.zsize)) {
-           throw BDSException(__METHOD_NAME__, "zsize must be finite in mesh \"" + mesh.name + "\"");
-       }
-       if (!BDS::IsFinite(mesh.rsize)) {
-           throw BDSException(__METHOD_NAME__, "rsize must be finite in mesh \"" + mesh.name + "\"");
-       }
-       if (!BDS::IsFinite(nBinsZ)){
-           throw BDSException(__METHOD_NAME__, "nz must be finite in mesh \"" + mesh.name + "\"");
-       }
-       if (!BDS::IsFinite(nBinsPhi)){
-           throw BDSException(__METHOD_NAME__, "nphi must be finite in mesh \"" + mesh.name + "\"");
-       }
-       if (!BDS::IsFinite(nBinsR)){
-           throw BDSException(__METHOD_NAME__, "nr must be finite in mesh \"" + mesh.name + "\"");
-       }
-
+     if (!BDS::IsFinite(mesh.zsize))
+       {throw BDSException(__METHOD_NAME__, "zsize must be > 0 and finite in mesh \"" + mesh.name + "\"");}
+     if (!BDS::IsFinite(mesh.rsize))
+       {throw BDSException(__METHOD_NAME__, "rsize must be > 0 and finite in mesh \"" + mesh.name + "\"");}
+     if (!BDS::IsFinite(nBinsZ))
+       {throw BDSException(__METHOD_NAME__, "nz must be > 0 and finite in mesh \"" + mesh.name + "\"");}
+     if (!BDS::IsFinite(nBinsPhi))
+       {throw BDSException(__METHOD_NAME__, "nphi must be > 0 and finite in mesh \"" + mesh.name + "\"");}
+     if (!BDS::IsFinite(nBinsR))
+       {throw BDSException(__METHOD_NAME__, "nr must be > 0 and finite in mesh \"" + mesh.name + "\"");}
    }
 
   xLow  = -0.5*mesh.xsize * CLHEP::m;
