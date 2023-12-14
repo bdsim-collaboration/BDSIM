@@ -89,8 +89,8 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
   eScale = mesh.eScale;
 
   extent = BDSExtent(xLow, xHigh,
-		     yLow, yHigh,
-		     zLow, zHigh);
+                     yLow, yHigh,
+                     zLow, zHigh);
 
   if (eScale == "user")
     {// In future we can move RBDS::BinLoader to a separate library and use that both here and in rebdsim
@@ -98,16 +98,16 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
       std::ifstream file(BinsEdgesFile.c_str());
         
       if (file)
-	{
-	  // Reading of the bins edges file.
+        {
+          // Reading of the bins edges file.
           std::istream_iterator<double> it(file);
           std::istream_iterator<double> end;
           std::back_insert_iterator<std::vector<double>> it2(eBinsEdges);
-	  
+          
           std::copy(it, end, it2);
-	}
+        }
       else
-	{throw BDSException(__METHOD_NAME__, "eBinsEdgesFilenamePath must be the path to a .txt file");}
+        {throw BDSException(__METHOD_NAME__, "eBinsEdgesFilenamePath must be the path to a .txt file");}
       
       nBinsE = (G4int)eBinsEdges.size()-1;
       eLow   = eBinsEdges[0];
@@ -118,17 +118,17 @@ BDSScorerMeshInfo::BDSScorerMeshInfo(const GMAD::ScorerMesh& mesh)
     {
 #ifdef USE_BOOST
       if (eScale == "linear")
-	{energyAxis = new boost_histogram_linear_axis(nBinsE, eLow, eHigh, "energy");}
+        {energyAxis = new boost_histogram_linear_axis(nBinsE, eLow, eHigh, "energy");}
       else if (eScale == "log")
-	{energyAxis = new boost_histogram_log_axis(nBinsE, eLow, eHigh, "energy");}
+        {energyAxis = new boost_histogram_log_axis(nBinsE, eLow, eHigh, "energy");}
       else if (eScale == "user")
-	{
-	  std::vector<double> eBinsEdgesEnergyAxis = eBinsEdges;
-	  std::for_each(eBinsEdgesEnergyAxis.begin(), eBinsEdgesEnergyAxis.end(), [](double& el){el *= CLHEP::GeV;});
-	  energyAxis = new boost_histogram_variable_axis(eBinsEdgesEnergyAxis, "energy");
-	}
+        {
+          std::vector<double> eBinsEdgesEnergyAxis = eBinsEdges;
+          std::for_each(eBinsEdgesEnergyAxis.begin(), eBinsEdgesEnergyAxis.end(), [](double& el){el *= CLHEP::GeV;});
+          energyAxis = new boost_histogram_variable_axis(eBinsEdgesEnergyAxis, "energy");
+        }
       else
-	{throw BDSException(__METHOD_NAME__, "eScale must be 'linear', 'log' or 'user' in mesh \"" + mesh.name + "\"");}
+        {throw BDSException(__METHOD_NAME__, "eScale must be 'linear', 'log' or 'user' in mesh \"" + mesh.name + "\"");}
 #endif
     }
 }
