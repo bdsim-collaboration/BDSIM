@@ -983,7 +983,7 @@ halosigma
 Similar to type `halo` except instead of uniformly sampling :math:`J`, the single
 particle emittance (action), the particle's :math:`n\sigma` is sampled uniformly
 instead. The particle action :math:`J` is expressed in terms of the multiple of
-sigma, :math:`n`, the one-sigma transverse beamsize :math:`\sigma` and the Twiss
+sigma, :math:`n`, the one-sigma transverse beam size :math:`\sigma` and the Twiss
 beta function :math:`\beta` using
 
 .. math::
@@ -994,7 +994,7 @@ This randomly generated action variable, combined with the Twiss parameters
 randomly generated on this ellipse to get the position and momentum pair for the
 given transverse dimension.  This is useful for situations where beam halo intensity
 distributions are expressed in terms of :math:`\sigma`, allowing for easier
-reweighting in post-processing.
+re-weighting in post-processing.
 
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
@@ -1691,9 +1691,18 @@ and pattern 2) as Geant4 reference physics lists.
      option, physicsList = "completechannelling";
 
 
-For general high energy hadron physics we recommend::
+For general high energy hadron physics it is recommended to use::
 
-  option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
+  option, physicsList = "g4FTFP_BERT";
+
+For similar high-energy studies, but concerned with muons it is recommended to use a :ref:`physics-marco-file`
+with the following options: ::
+
+  /physics_lists/em/GammaToMuons true
+  /physics_lists/em/PositronToMuons true
+  /physics_lists/em/PositronToHadrons true
+  /physics_lists/em/MuonNuclear true
+  /physics_lists/em/GammaNuclear true
 
 
 Some physics lists are only available in later versions of Geant4. These are filtered at compile
@@ -1724,7 +1733,6 @@ Inside this file, the following commands were used: ::
   /physics_lists/em/GammaToMuons true
   /physics_lists/em/PositronToMuons true
   /physics_lists/em/PositronToHadrons true
-  /physics_lists/em/NeutrinoActivation true
   /physics_lists/em/MuonNuclear true
   /physics_lists/em/GammaNuclear true
 
