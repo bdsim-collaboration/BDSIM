@@ -89,6 +89,15 @@ of writing, the corresponding versions of each utility are:
 * pymad8 v2.0.1
 * pytransport v2.0.1
 
+V1.7.7 - 2024 / 01 / 12
+=======================
+
+* Fix for C++20 compilation for ROOT installations that now have C++20 on LCG.
+* Update copyright year throughout code.
+* Updated format for :code:`makematerialfile` program for exporting NIST information to pyg4ometry.
+* Improved error messages for bad scorer mesh definition.
+* Improved description in manual of physics list recommendation.
+
 
 V1.7.6 - 2023 / 10 / 18
 =======================
