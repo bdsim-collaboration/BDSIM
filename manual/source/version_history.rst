@@ -19,6 +19,8 @@ v1.8.X - 2023 / XX / XX
 New Features
 ------------
 
+* Control over surface roughness for X-ray reflection.
+
 General Updates
 ---------------
 
@@ -100,6 +102,7 @@ V1.7.7 - 2024 / 01 / 19
 * Improved description in manual of physics list recommendation.
 * Fix for parser rounding of double values put into integer parameters.
 * Fix overwriting of ROOT_INCLUDE_PATH environmental variable if it already existed in :code:`bdsim.sh`.
+* Introduced X-ray reflection from Geant4 11.2 onwards but without control over the surface roughness.
 
 In the parser, it is possible to do some simple calculations and use these variables
 as input to parameters. For example, calculating the number of bins in a mesh. When
