@@ -99,6 +99,7 @@ V1.7.7 - 2024 / 01 / 19
 * Improved error messages for bad scorer mesh definition.
 * Improved description in manual of physics list recommendation.
 * Fix for parser rounding of double values put into integer parameters.
+* Fix overwriting of ROOT_INCLUDE_PATH environmental variable if it already existed in :code:`bdsim.sh`.
 
 In the parser, it is possible to do some simple calculations and use these variables
 as input to parameters. For example, calculating the number of bins in a mesh. When
