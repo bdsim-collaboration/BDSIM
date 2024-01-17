@@ -19,7 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PUBLISHED_H
 #define PUBLISHED_H
 
-#include "array.h"
+#include <array>
+#include <cmath>
 #include <list>
 #include <set>
 #include <string>
@@ -109,7 +110,7 @@ namespace GMAD
       catch (const std::runtime_error&) {
         try {
           int C::* mp = member<int>(name);
-            (instance)->*mp = value;
+            (instance)->*mp = std::round(value);
         }
         catch (const std::runtime_error&) {
           try {
