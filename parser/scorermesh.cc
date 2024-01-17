@@ -101,7 +101,7 @@ void ScorerMesh::PublishMembers()
 
 void ScorerMesh::print()const
 {
-  std::cout << "ScorerMesh: "
+  std::cout << "ScorerMesh: "   << std::endl
             << "name "          << name          << std::endl
             << "scoreQuantity " << scoreQuantity << std::endl
             << "nx "            << nx            << std::endl
@@ -115,9 +115,9 @@ void ScorerMesh::print()const
             << "eHigh "         << eHigh         << std::endl
             << "eScale "        << eScale        << std::endl
             << "sequence "      << sequence      << std::endl
-            << "referenceElement" << referenceElement << std::endl
-            << "referenceElementNumber" << referenceElementNumber << std::endl
-            << "s"              << s             << std::endl
+            << "referenceElement " << referenceElement << std::endl
+            << "referenceElementNumber " << referenceElementNumber << std::endl
+            << "s "             << s             << std::endl
             << "x "             << x             << std::endl
             << "y "             << y             << std::endl
             << "z "             << z             << std::endl
