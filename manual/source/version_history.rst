@@ -89,7 +89,8 @@ of writing, the corresponding versions of each utility are:
 * pymad8 v2.0.1
 * pytransport v2.0.1
 
-V1.7.7 - 2024 / 01 / 12
+
+V1.7.7 - 2024 / 01 / 19
 =======================
 
 * Fix for C++20 compilation for ROOT installations that now have C++20 on LCG.
@@ -97,6 +98,15 @@ V1.7.7 - 2024 / 01 / 12
 * Updated format for :code:`makematerialfile` program for exporting NIST information to pyg4ometry.
 * Improved error messages for bad scorer mesh definition.
 * Improved description in manual of physics list recommendation.
+* Fix for parser rounding of double values put into integer parameters.
+
+In the parser, it is possible to do some simple calculations and use these variables
+as input to parameters. For example, calculating the number of bins in a mesh. When
+the parameter type was an integer, but a floating point number was given (perhaps from
+the calculation or from writing a ".0" after a number), the floating point double would
+be put into an integer and you may get rounding errors. e.g. 29.999999999997 becomes 29
+instead of the 30 that was expected. This has been fixed by rounding to the nearest integer
+only when using a double into a integer parameter.
 
 
 V1.7.6 - 2023 / 10 / 18
