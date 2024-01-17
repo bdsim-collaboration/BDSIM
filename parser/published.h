@@ -19,13 +19,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PUBLISHED_H
 #define PUBLISHED_H
 
-#include <array>
 #include <cmath>
 #include <list>
 #include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include "array.h" // our array header
 
 namespace GMAD
 {
