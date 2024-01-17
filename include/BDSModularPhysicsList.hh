@@ -208,6 +208,9 @@ private:
   void Radioactivation();
   void ShieldingLEND();
 #endif
+#if G4VERSION_NUMBER > 1119
+  void XrayReflection();
+#endif
   /// @}
 };
 

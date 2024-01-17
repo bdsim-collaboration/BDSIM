@@ -1945,6 +1945,9 @@ Examples: ::
 |                              | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
 |                              | `G4SynchrotronRadiation`.                                              |
 +------------------------------+------------------------------------------------------------------------+
+| xray_reflection              | X-ray reflection for most materials. Available from Geant4.11.2        |
+|                              | onwards.                                                               |
++------------------------------+------------------------------------------------------------------------+
 
 The following are also accepted as aliases to current physics lists. These are typically previously
 used names.
