@@ -47,10 +47,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 #include "BDSVisCommandSceneAddQueryMagneticField.hh"
 
+#include <string>
+
 
 BDSVisManager::BDSVisManager(const G4String& visMacroFileNameIn,
                              const G4String& geant4MacroFileNameIn,
-                             const BDSDetectorConstruction* realWorldIn):
+                             const BDSDetectorConstruction* realWorldIn,
+                             G4int visVerbosity):
   uiSession(nullptr),
   visManager(nullptr),
   bdsMessenger(nullptr),
@@ -62,7 +65,7 @@ BDSVisManager::BDSVisManager(const G4String& visMacroFileNameIn,
 #else
   uiSession = new G4UIterminal();
 #endif
-  visManager = new G4VisExecutive("0");
+  visManager = new G4VisExecutive(std::to_string(visVerbosity));
   bdsMessenger = new BDSMessenger();
   if (realWorldIn)
     {visManager->RegisterMessenger(new BDSVisCommandSceneAddQueryMagneticField(realWorldIn));}

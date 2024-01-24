@@ -3272,6 +3272,9 @@ Visualisation
 |                                  | of the geometry - only the visualisation (default =   |
 |                                  | 50).                                                  |
 +----------------------------------+-------------------------------------------------------+
+| visVerbosity                     | (0-5 inclusive) the verbosity level passed into the   |
+|                                  | Geant4 visualisation system. 0 is the default.        |
++----------------------------------+-------------------------------------------------------+
 
 .. _bdsim-options-output:
 
