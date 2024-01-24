@@ -50,10 +50,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSVisManager::BDSVisManager(const G4String& visMacroFileNameIn,
 			     const G4String& geant4MacroFileNameIn,
 			     const BDSDetectorConstruction* realWorldIn):
+                             const BDSDetectorConstruction* realWorldIn):
+  uiSession(nullptr),
+  visManager(nullptr),
+  bdsMessenger(nullptr),
   visMacroFileName(visMacroFileNameIn),
   geant4MacroFileName(geant4MacroFileNameIn)
 {
-  visManager = new G4VisExecutive();
+#ifdef G4UI_USE_TCSH
+  uiSession = new G4UIterminal(new G4UItcsh);
+#else
+  uiSession = new G4UIterminal();
+#endif
+  visManager = new G4VisExecutive("2");
   bdsMessenger = new BDSMessenger();
   if (realWorldIn)
     {visManager->RegisterMessenger(new BDSVisCommandSceneAddQueryMagneticField(realWorldIn));}
@@ -61,18 +70,13 @@ BDSVisManager::BDSVisManager(const G4String& visMacroFileNameIn,
 
 BDSVisManager::~BDSVisManager()
 {
+  delete uiSession;
   delete visManager;
   delete bdsMessenger;
 }
 
 void BDSVisManager::StartSession(int argc, char** argv)
 {
-#ifdef G4UI_USE_TCSH
-  G4UIsession* session = new G4UIterminal(new G4UItcsh);
-#else
-  G4UIsession* session = new G4UIterminal();
-#endif
-
 #ifdef G4VIS_USE
 #ifdef BDSDEBUG 
   G4cout<< __METHOD_NAME__ << "Initializing Visualisation Manager"<<G4endl;
@@ -152,5 +156,4 @@ void BDSVisManager::StartSession(int argc, char** argv)
   session2->SessionStart();
   delete session2;
 #endif
-  delete session;
 }
