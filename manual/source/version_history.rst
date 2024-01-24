@@ -114,6 +114,26 @@ be put into an integer and you may get rounding errors. e.g. 29.999999999997 bec
 instead of the 30 that was expected. This has been fixed by rounding to the nearest integer
 only when using a double into a integer parameter.
 
+**New beam command options:**
+
++-------------------------------------+------------------------------------------------------+
+| eventGeneratorWarnSkippedParticles  | 1 (true) by default. Print a small warning for each  |
+|                                     | event if any particles loaded were skipped or there  |
+|                                     | were none suitable at all and the event was skipped. |
++-------------------------------------+------------------------------------------------------+
+
+**New options:**
+
++-------------------------------------+-------------------------------------------------------+
+| visVerbosity                        | (0-5 inclusive) the verbosity level passed into the   |
+|                                     | Geant4 visualisation system. 0 is the default.        |
++-------------------------------------+-------------------------------------------------------+
+| xrayAllSurfaceRoughness             | The length scale of roughness features for the X-ray  |
+|                                     | reflection model (from the `xray_reflection` physics  |
+|                                     | modular list). Default 0, units metres. A typical     |
+|                                     | value would be 5 nm. This applies to all surfaces.    |
++-------------------------------------+-------------------------------------------------------+
+
 
 V1.7.6 - 2023 / 10 / 18
 =======================

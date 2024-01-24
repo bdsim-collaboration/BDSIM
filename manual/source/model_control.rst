@@ -1526,6 +1526,13 @@ where `W` is some coordinate.
 |                            | without producing any secondaries.                        |
 +----------------------------+-----------------------------------------------------------+
 
++-------------------------------------+------------------------------------------------------+
+| eventGeneratorWarnSkippedParticles  | 1 (true) by default. Print a small warning for each  |
+|                                     | event if any particles loaded were skipped or there  |
+|                                     | were none suitable at all and the event was skipped. |
++-------------------------------------+------------------------------------------------------+
+
+
 * The filters are applied **before** any offset is added from the reference distribution, i.e.
   in the original coordinates of the event generator file.
 
