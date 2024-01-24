@@ -98,6 +98,7 @@ public:
   inline G4String Geant4PhysicsMacroFileName()    const {return G4String(options.geant4PhysicsMacroFileName);}
   inline G4bool   Geant4PhysicsMacroFileNameFromExecOptions() const {return G4bool(options.geant4PhysicsMacroFileNameFromExecOptions);}
   inline G4bool   VisDebug()               const {return G4bool  (options.visDebug);}
+  inline G4int    VisVerbosity()           const {return G4int   (options.visVerbosity);}
   inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
   inline G4bool   OutputFileNameSet()      const {return G4bool  (options.HasBeenSet("outputFileName"));}
   inline BDSOutputType OutputFormat()      const {return outputType;}

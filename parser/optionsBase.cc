@@ -33,6 +33,8 @@ OptionsBase::OptionsBase()
   geant4PhysicsMacroFileName = "";
   geant4PhysicsMacroFileNameFromExecOptions = false;
   visDebug              = false;
+  visVerbosity          = 0;
+  
   outputFileName        = "output";
   outputFormat          = "rootevent";
 #ifdef __ROOTDOUBLE__

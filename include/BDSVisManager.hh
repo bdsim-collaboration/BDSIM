@@ -39,7 +39,8 @@ class BDSVisManager
 public:
   BDSVisManager(const G4String& visMacroFileNameIn,
                 const G4String& geant4MacroFileNameIn,
-                const BDSDetectorConstruction* realWorldIn = nullptr);
+                const BDSDetectorConstruction* realWorldIn = nullptr,
+                G4int visVerbosity = 0);
   
   ~BDSVisManager();
 
