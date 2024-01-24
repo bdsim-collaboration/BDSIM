@@ -47,9 +47,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 #include "BDSVisCommandSceneAddQueryMagneticField.hh"
 
+
 BDSVisManager::BDSVisManager(const G4String& visMacroFileNameIn,
-			     const G4String& geant4MacroFileNameIn,
-			     const BDSDetectorConstruction* realWorldIn):
+                             const G4String& geant4MacroFileNameIn,
                              const BDSDetectorConstruction* realWorldIn):
   uiSession(nullptr),
   visManager(nullptr),
@@ -78,10 +78,6 @@ BDSVisManager::~BDSVisManager()
 void BDSVisManager::StartSession(int argc, char** argv)
 {
 #ifdef G4VIS_USE
-#ifdef BDSDEBUG 
-  G4cout<< __METHOD_NAME__ << "Initializing Visualisation Manager"<<G4endl;
-#endif
-  // initialize visualisation
   visManager->Initialize();
   
   // setup trajectory colouring
@@ -95,7 +91,7 @@ void BDSVisManager::StartSession(int argc, char** argv)
 #endif
  
 #ifdef G4UI_USE
-  G4UIExecutive* session2 = new G4UIExecutive(argc, argv);
+  G4UIExecutive* uiExecutive = new G4UIExecutive(argc, argv);
 #ifdef G4VIS_USE
 
   G4UImanager* UIManager = G4UImanager::GetUIpointer();
@@ -148,7 +144,7 @@ void BDSVisManager::StartSession(int argc, char** argv)
     }
   
 #if G4VERSION_NUMBER < 1030
-  if (session2->IsGUI())
+  if (uiExecutive->IsGUI())
     {// these were added by default in Geant4.10.3 onwards
       UIManager->ApplyCommand("/control/execute bdsim_default_icons.mac"); // add icons
       UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" run.png"); // add run icon
@@ -157,7 +153,7 @@ void BDSVisManager::StartSession(int argc, char** argv)
 #endif
 #endif
   // run gui
-  session2->SessionStart();
-  delete session2;
+  uiExecutive->SessionStart();
+  delete uiExecutive;
 #endif
 }
