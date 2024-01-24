@@ -109,10 +109,14 @@ void BDSVisManager::StartSession(int argc, char** argv)
   G4String visMacPath = visMacName; // by default just copy it
   if (visMacName.empty()) // none specified - use default in BDSIM
     {
+#if G4VERSION_NUMBER > 1119
+      visMacName = "bdsim_default_vis_11p2.mac";
+#else
 #ifdef G4VIS_USE_OPENGLQT
       visMacName = "bdsim_default_vis.mac";
 #else
       visMacName = "bdsim_default_dawnfile.mac";
+#endif
 #endif
       // check if we find the file to at least let the user know what's being executed
       visMacPath = UIManager->FindMacroPath(visMacName);
