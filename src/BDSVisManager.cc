@@ -62,7 +62,7 @@ BDSVisManager::BDSVisManager(const G4String& visMacroFileNameIn,
 #else
   uiSession = new G4UIterminal();
 #endif
-  visManager = new G4VisExecutive("2");
+  visManager = new G4VisExecutive("0");
   bdsMessenger = new BDSMessenger();
   if (realWorldIn)
     {visManager->RegisterMessenger(new BDSVisCommandSceneAddQueryMagneticField(realWorldIn));}
