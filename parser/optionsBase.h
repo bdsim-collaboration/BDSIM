@@ -266,6 +266,7 @@ namespace GMAD
     double   muonSplittingThresholdParentEk2;
     bool     muonSplittingExcludeWeight1Particles;
     double   muonSplittingExclusionWeight;
+    double   xrayAllSurfaceRoughness;
     ///@}
 
     // biasing options

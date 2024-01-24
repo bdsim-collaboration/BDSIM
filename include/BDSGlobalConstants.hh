@@ -195,7 +195,7 @@ public:
   inline G4double MuonSplittingThresholdParentEk2() const {return G4double(options.muonSplittingThresholdParentEk2) * CLHEP::GeV;}
   inline G4bool   MuonSplittingExcludeWeight1Particles() const {return G4bool(options.muonSplittingExcludeWeight1Particles);}
   inline G4double MuonSplittingExclusionWeight() const {return G4double(options.muonSplittingExclusionWeight);}
-  inline G4double XraySurfaceRoughness()     const {return 0;} // in next version we will make it controllable
+  inline G4double XrayAllSurfaceRoughness()  const {return G4double(options.xrayAllSurfaceRoughness*CLHEP::m);}
   inline G4String BiasForWorldVolume()       const {return G4String(options.biasForWorldVolume);}
   inline G4String BiasForWorldContents()     const {return G4String(options.biasForWorldContents);}
   inline G4String BiasForWorldVacuum()       const {return G4String(options.biasForWorldVacuum);}
