@@ -3252,6 +3252,11 @@ Physics Processes
 |                                     | annihilation process when using `em_extra` physics    |
 |                                     | list. Default Off.  Requires Geant4.10.3 onwards.     |
 +-------------------------------------+-------------------------------------------------------+
+| xrayAllSurfaceRoughness             | The length scale of roughness features for the X-ray  |
+|                                     | reflection model (from the `xray_reflection` physics  |
+|                                     | modular list). Default 0, units metres. A typical     |
+|                                     | value would be 5 nm. This applies to all surfaces.    |
++-------------------------------------+-------------------------------------------------------+
 
 * (\*) If using Geant4.10.7 or upwards, this will also set the high energy limit for the
   hadronic physics too. For previous versions of Geant4 it is required to edit the Geant4

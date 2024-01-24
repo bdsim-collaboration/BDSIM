@@ -352,6 +352,7 @@ void Options::PublishMembers()
   publish("muonSplittingThresholdParentEk2", &Options::muonSplittingThresholdParentEk2);
   publish("muonSplittingExcludeWeight1Particles", &Options::muonSplittingExcludeWeight1Particles);
   publish("muonSplittingExclusionWeight",    &Options::muonSplittingExclusionWeight);
+  publish("xrayAllSurfaceRoughness",         &Options::xrayAllSurfaceRoughness);
   
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);

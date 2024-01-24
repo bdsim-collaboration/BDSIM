@@ -227,6 +227,7 @@ OptionsBase::OptionsBase()
   muonSplittingThresholdParentEk2 = 0;
   muonSplittingExcludeWeight1Particles = false;
   muonSplittingExclusionWeight = 1e99;
+  xrayAllSurfaceRoughness = 0;
   
   // biasing options
   defaultBiasVacuum        = "";
