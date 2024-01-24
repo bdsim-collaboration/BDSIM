@@ -92,7 +92,7 @@ of writing, the corresponding versions of each utility are:
 * pytransport v2.0.1
 
 
-V1.7.7 - 2024 / 01 / 19
+V1.7.7 - 2024 / 01 / 24
 =======================
 
 * Fix for C++20 compilation for ROOT installations that now have C++20 on LCG.
@@ -103,6 +103,8 @@ V1.7.7 - 2024 / 01 / 19
 * Fix for parser rounding of double values put into integer parameters.
 * Fix overwriting of ROOT_INCLUDE_PATH environmental variable if it already existed in :code:`bdsim.sh`.
 * Introduced X-ray reflection from Geant4 11.2 onwards but without control over the surface roughness.
+* Fix obeying the Geant4 default visualiser for 11.2 onwards.
+* Reduced printout for the visualisation.
 
 In the parser, it is possible to do some simple calculations and use these variables
 as input to parameters. For example, calculating the number of bins in a mesh. When
