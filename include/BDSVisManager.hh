@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSDetectorConstruction;
 class BDSMessenger;
+class G4UIsession;
 class G4VisManager;
 
 /**
@@ -46,6 +47,7 @@ public:
   void StartSession(int argc, char** argv);
 
 private:
+  G4UIsession* uiSession;
   G4VisManager* visManager;
   BDSMessenger* bdsMessenger;
   G4String visMacroFileName;    ///< Full macro file path to run for visualisation.
