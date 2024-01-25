@@ -128,6 +128,7 @@ public:
   inline const BDSArrayReflectionTypeSet& ElectricArrayReflectionType() const {return electricArrayReflectionTypeSet;}
   inline BDSModulatorInfo*   ModulatorInfo()            const {return modulatorInfo;}
   inline G4bool IgnoreUpdateOfMaximumStepSize() const {return ignoreUpdateOfMaximumStepSize;}
+  inline G4bool              IsThin()                   const {return isThin;}
   /// @}
   
   G4Transform3D Transform() const;         ///< Transform for the field definition only.
@@ -182,7 +183,10 @@ public:
   friend std::ostream& operator<< (std::ostream &out, BDSFieldInfo const &info);
 
   static G4UserLimits* defaultUL; ///< Cache of default user limits
-  
+
+  /// Set thin to allow geant tracking error controls to be set seperately for thin elements
+  void SetFieldAsThin();
+
 private: 
   BDSFieldType             fieldType;
   G4double                 brho;
@@ -214,7 +218,8 @@ private:
   G4bool                   usePlacementWorldTransform;
   BDSModulatorInfo*        modulatorInfo;
   G4bool                   ignoreUpdateOfMaximumStepSize; ///< To be used when enforcing a larger maximum step size value.
-  
+  G4bool                   isThin;
+
   /// Transform from curvilinear frame to this field - ie beam line bit only.
   G4Transform3D*           transformBeamline;
 
