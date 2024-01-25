@@ -205,6 +205,8 @@ public:
   inline G4double DeltaOneStep()             const {return G4double(options.deltaOneStep)*CLHEP::m;}
   inline G4double MinimumEpsilonStep()       const {return G4double(options.minimumEpsilonStep);}
   inline G4double MaximumEpsilonStep()       const {return G4double(options.maximumEpsilonStep);}
+  inline G4double MinimumEpsilonStepThin()   const {return G4double(options.minimumEpsilonStepThin);}
+  inline G4double MaximumEpsilonStepThin()   const {return G4double(options.maximumEpsilonStepThin);}
   inline G4String FieldModulator()           const {return G4String(options.fieldModulator);}
   inline G4double MaxTime()                  const {return G4double(options.maximumTrackingTime)*CLHEP::s;}
   inline G4double MaxStepLength()            const {return G4double(options.maximumStepLength)*CLHEP::m;}

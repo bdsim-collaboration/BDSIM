@@ -254,6 +254,8 @@ OptionsBase::OptionsBase()
   // default value in Geant4, old value 0 - error must be greater than this
   minimumEpsilonStep       = 1e-12;   // used to be 1e-25 but since v11.1 this has to be greater than double precision
   maximumEpsilonStep       = 1e-7;    // default value in Geant4, old value 1e-7
+  minimumEpsilonStepThin   = 1e-12;   // only for thin elements
+  maximumEpsilonStepThin   = 1e-3;    // only for thin elements
   deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
   stopSecondaries          = false;
   killNeutrinos            = false;

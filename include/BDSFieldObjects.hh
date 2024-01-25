@@ -134,6 +134,12 @@ private:
 
   /// EM field integrator driver (optional) - only for EM fields.
   G4MagInt_Driver* magIntDriver;
+
+  /// Field manager settings
+  void SetFieldManagerOptions();
+
+  /// Field manager settings for thin elements
+  void SetFieldManagerOptionsThin();
 };
 
 #endif
