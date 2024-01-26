@@ -92,6 +92,14 @@ of writing, the corresponding versions of each utility are:
 * pytransport v2.0.1
 
 
+V1.7.8 - 2024 / 01 / 26
+=======================
+
+Hot-fix for issue #377. A tracking issue appeared in thin elements due to a too small maximum value for the
+relative error, epsilonStep, resulting in incorrect kicks being applied. This occured only when BDSIM is compiled
+against versions of Geant4 11.0 onwards. The maximum value is now set separately for thick and thin volumes.
+
+
 V1.7.7 - 2024 / 01 / 24
 =======================
 

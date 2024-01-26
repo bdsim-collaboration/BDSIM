@@ -373,6 +373,8 @@ void Options::PublishMembers()
   publish("deltaIntersection",        &Options::deltaIntersection);
   publish("minimumEpsilonStep",       &Options::minimumEpsilonStep);
   publish("maximumEpsilonStep",       &Options::maximumEpsilonStep);
+  publish("minimumEpsilonStepThin",   &Options::minimumEpsilonStepThin);
+  publish("maximumEpsilonStepThin",   &Options::maximumEpsilonStepThin);
   publish("deltaOneStep",             &Options::deltaOneStep);
   publish("stopSecondaries",          &Options::stopSecondaries);
   publish("killNeutrinos",            &Options::killNeutrinos);

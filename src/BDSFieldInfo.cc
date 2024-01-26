@@ -69,7 +69,8 @@ BDSFieldInfo::BDSFieldInfo():
   modulatorInfo(nullptr),
   ignoreUpdateOfMaximumStepSize(false),
   transformBeamline(nullptr),
-  nameOfParserDefinition("")
+  nameOfParserDefinition(""),
+  isThin(false)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -125,7 +126,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   modulatorInfo(nullptr),
   ignoreUpdateOfMaximumStepSize(false),
   transformBeamline(nullptr),
-  nameOfParserDefinition("")
+  nameOfParserDefinition(""),
+  isThin(false)
 {
   if (transformIn != G4Transform3D::Identity)
     {transform = new G4Transform3D(transformIn);}
@@ -174,7 +176,8 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   modulatorInfo(other.modulatorInfo),
   ignoreUpdateOfMaximumStepSize(other.ignoreUpdateOfMaximumStepSize),
   transformBeamline(nullptr),
-  nameOfParserDefinition(other.nameOfParserDefinition)
+  nameOfParserDefinition(other.nameOfParserDefinition),
+  isThin(other.isThin)
 {
   if (other.transform)
     {transform = new G4Transform3D(*other.transform);}
@@ -304,4 +307,9 @@ void BDSFieldInfo::SetTransformBeamline(const G4Transform3D& transformIn)
 {
   delete transformBeamline;
   transformBeamline = new G4Transform3D(transformIn);
+}
+
+void BDSFieldInfo::SetFieldAsThin()
+{
+  isThin = true;
 }

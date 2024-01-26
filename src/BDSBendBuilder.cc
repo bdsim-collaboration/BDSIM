@@ -836,6 +836,7 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 					       true,
 					       fieldTiltOffset);
   vacuumField->SetModulatorInfo(fieldModulator);
+  vacuumField->SetFieldAsThin();
 
   return new BDSMagnet(BDSMagnetType::dipolefringe,
 		       name,
