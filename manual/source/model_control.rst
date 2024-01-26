@@ -3727,6 +3727,7 @@ The options listed below are list roughly in terms of the simulation hierarchy.
 |                                  |          | to every single volume in the model once fully constructed.       |
 +----------------------------------+----------+-------------------------------------------------------------------+
 
+
 Examples: ::
 
   option, verboseEventStart=3,
@@ -3892,6 +3893,10 @@ should only be used with understanding.
 | maximumEpsilonStep                | Maximum relative error acceptable in stepping                      |
 +-----------------------------------+--------------------------------------------------------------------+
 | minimumEpsilonStep                | Minimum relative error acceptable in stepping                      |
++-----------------------------------+--------------------------------------------------------------------+
+| maximumEpsilonStepThin            | Similar to maximumEpsilonStep but for thin objects                 |
++-----------------------------------+--------------------------------------------------------------------+
+| minimumEpsilonStepThin            | Similar to minimumEpsilonStep but for thin objects                 |
 +-----------------------------------+--------------------------------------------------------------------+
 | sampleElementsWithPoleface        | Default false. Samplers are not to be attached to elements with    |
 |                                   | poleface rotations, as the sampler will overlap with the mass world|
