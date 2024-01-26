@@ -288,6 +288,8 @@ namespace GMAD
     double   deltaIntersection;
     double   minimumEpsilonStep;
     double   maximumEpsilonStep;
+    double   minimumEpsilonStepThin;
+    double   maximumEpsilonStepThin;
     double   deltaOneStep;
     bool     stopSecondaries;
     bool     killNeutrinos;

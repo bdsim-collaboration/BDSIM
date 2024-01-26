@@ -264,7 +264,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
     {
 	  yTempOut[i]     = pos[i];
 	  yTempOut[i + 3] = globalMom[i];
-      yErr[i]         = globalMomU[i];
+      yErr[i]         = globalMomU[i]*1e-10;
       yErr[i + 3]     = 1e-40;
     }
 
