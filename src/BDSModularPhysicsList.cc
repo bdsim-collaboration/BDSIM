@@ -1144,7 +1144,7 @@ void BDSModularPhysicsList::XrayReflection()
 {
   if (!physicsActivated["xray_relfection"])
     {
-      G4double sr = BDSGlobalConstants::Instance()->XraySurfaceRoughness();
+      G4double sr = BDSGlobalConstants::Instance()->XrayAllSurfaceRoughness();
       constructors.push_back(new BDSPhysicsXrayReflection(sr));
       physicsActivated["xray_relfection"] = true;
     }

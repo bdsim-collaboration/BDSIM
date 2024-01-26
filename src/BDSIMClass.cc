@@ -392,7 +392,8 @@ void BDSIM::BeamOn(int nGenerate)
         {
           BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
                                                    BDSGlobalConstants::Instance()->Geant4MacroFileName(),
-                                                   realWorld);
+                                                   realWorld,
+                                                   BDSGlobalConstants::Instance()->VisVerbosity());
           visManager.StartSession(argcCache, argvCache);
         }
       else

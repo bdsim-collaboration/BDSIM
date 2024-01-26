@@ -43,6 +43,7 @@ namespace GMAD
     std::string geant4PhysicsMacroFileName; ///< Geant4 physics macro
     bool        geant4PhysicsMacroFileNameFromExecOptions;
     bool        visDebug;            ///< Flag for visualisation debug.
+    int         visVerbosity;        ///< Geant4 vis system verbosity.
   
     ///@{ Parameter for output format
     std::string outputFileName;
@@ -265,6 +266,7 @@ namespace GMAD
     double   muonSplittingThresholdParentEk2;
     bool     muonSplittingExcludeWeight1Particles;
     double   muonSplittingExclusionWeight;
+    double   xrayAllSurfaceRoughness;
     ///@}
 
     // biasing options

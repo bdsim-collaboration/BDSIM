@@ -33,6 +33,8 @@ OptionsBase::OptionsBase()
   geant4PhysicsMacroFileName = "";
   geant4PhysicsMacroFileNameFromExecOptions = false;
   visDebug              = false;
+  visVerbosity          = 0;
+  
   outputFileName        = "output";
   outputFormat          = "rootevent";
 #ifdef __ROOTDOUBLE__
@@ -225,6 +227,7 @@ OptionsBase::OptionsBase()
   muonSplittingThresholdParentEk2 = 0;
   muonSplittingExcludeWeight1Particles = false;
   muonSplittingExclusionWeight = 1e99;
+  xrayAllSurfaceRoughness = 0;
   
   // biasing options
   defaultBiasVacuum        = "";

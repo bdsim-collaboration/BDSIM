@@ -1526,6 +1526,13 @@ where `W` is some coordinate.
 |                            | without producing any secondaries.                        |
 +----------------------------+-----------------------------------------------------------+
 
++-------------------------------------+------------------------------------------------------+
+| eventGeneratorWarnSkippedParticles  | 1 (true) by default. Print a small warning for each  |
+|                                     | event if any particles loaded were skipped or there  |
+|                                     | were none suitable at all and the event was skipped. |
++-------------------------------------+------------------------------------------------------+
+
+
 * The filters are applied **before** any offset is added from the reference distribution, i.e.
   in the original coordinates of the event generator file.
 
@@ -3252,6 +3259,11 @@ Physics Processes
 |                                     | annihilation process when using `em_extra` physics    |
 |                                     | list. Default Off.  Requires Geant4.10.3 onwards.     |
 +-------------------------------------+-------------------------------------------------------+
+| xrayAllSurfaceRoughness             | The length scale of roughness features for the X-ray  |
+|                                     | reflection model (from the `xray_reflection` physics  |
+|                                     | modular list). Default 0, units metres. A typical     |
+|                                     | value would be 5 nm. This applies to all surfaces.    |
++-------------------------------------+-------------------------------------------------------+
 
 * (\*) If using Geant4.10.7 or upwards, this will also set the high energy limit for the
   hadronic physics too. For previous versions of Geant4 it is required to edit the Geant4
@@ -3271,6 +3283,9 @@ Visualisation
 |                                  | visualiser. Note, this does not affect the accuracy   |
 |                                  | of the geometry - only the visualisation (default =   |
 |                                  | 50).                                                  |
++----------------------------------+-------------------------------------------------------+
+| visVerbosity                     | (0-5 inclusive) the verbosity level passed into the   |
+|                                  | Geant4 visualisation system. 0 is the default.        |
 +----------------------------------+-------------------------------------------------------+
 
 .. _bdsim-options-output:
