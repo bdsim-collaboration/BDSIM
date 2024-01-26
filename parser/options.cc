@@ -150,6 +150,8 @@ void Options::PublishMembers()
   publish("geant4PhysicsMacroFileName", &Options::geant4PhysicsMacroFileName);
   publish("geant4PhysicsMacroFileNameFromExecOptions", &Options::geant4PhysicsMacroFileNameFromExecOptions);
   publish("visDebug",              &Options::visDebug);
+  publish("visVerbosity",          &Options::visVerbosity);
+  
   publish("outfile",               &Options::outputFileName);
   publish("outputFileName",        &Options::outputFileName);
   publish("output",                &Options::outputFormat);
@@ -350,6 +352,7 @@ void Options::PublishMembers()
   publish("muonSplittingThresholdParentEk2", &Options::muonSplittingThresholdParentEk2);
   publish("muonSplittingExcludeWeight1Particles", &Options::muonSplittingExcludeWeight1Particles);
   publish("muonSplittingExclusionWeight",    &Options::muonSplittingExclusionWeight);
+  publish("xrayAllSurfaceRoughness",         &Options::xrayAllSurfaceRoughness);
   
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
