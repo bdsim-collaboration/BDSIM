@@ -3744,6 +3744,10 @@ Offset for Main Beam Line
 The following options may be used to offset the main beam line with respect to the world
 volume, which is the outermost coordinate system.
 
+.. warning:: The beam definition moves with the beamline. It is 'attached' or relative
+             to the start of the beamline. Consider introducing a `transform3d` element
+             at the start if you want to offset the beamline but not the beam.
+
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------+--------------------------------------------------------------------+
