@@ -14,7 +14,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 
 
 
-V1.7.7 - 2024 / 01 / 26
+V1.7.7 - 2024 / 01 / 29
 =======================
 
 
