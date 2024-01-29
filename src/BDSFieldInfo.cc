@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -68,6 +68,7 @@ BDSFieldInfo::BDSFieldInfo():
   usePlacementWorldTransform(false),
   modulatorInfo(nullptr),
   ignoreUpdateOfMaximumStepSize(false),
+  isThin(false),
   transformBeamline(nullptr),
   nameOfParserDefinition("")
 {;}
@@ -124,6 +125,7 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   usePlacementWorldTransform(false),
   modulatorInfo(nullptr),
   ignoreUpdateOfMaximumStepSize(false),
+  isThin(false),
   transformBeamline(nullptr),
   nameOfParserDefinition("")
 {
@@ -173,6 +175,7 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   usePlacementWorldTransform(other.usePlacementWorldTransform),
   modulatorInfo(other.modulatorInfo),
   ignoreUpdateOfMaximumStepSize(other.ignoreUpdateOfMaximumStepSize),
+  isThin(other.isThin),
   transformBeamline(nullptr),
   nameOfParserDefinition(other.nameOfParserDefinition)
 {
@@ -304,4 +307,9 @@ void BDSFieldInfo::SetTransformBeamline(const G4Transform3D& transformIn)
 {
   delete transformBeamline;
   transformBeamline = new G4Transform3D(transformIn);
+}
+
+void BDSFieldInfo::SetFieldAsThin()
+{
+  isThin = true;
 }
