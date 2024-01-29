@@ -17,6 +17,8 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 V1.7.7 - 2024 / 01 / 29
 =======================
 
+Reminder: the Python utilities (pybdsim, pymadx, pymad8, pytransport) are published and
+updated through pip and are not distributioned with BDSIM itself.
 
 New Features
 ------------
