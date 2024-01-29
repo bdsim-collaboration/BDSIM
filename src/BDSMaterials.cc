@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -21,17 +21,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "BDSUtilities.hh"
+#include "BDSWarning.hh"
 
 #include "G4MaterialTable.hh"
 #include "G4String.hh"
 #include "G4NistManager.hh"
 #include "G4Version.hh"
 
-#include <chrono>
 #include <iomanip>
 #include <list>
 #include <map>
-#include <thread>
+#include <set>
+#include <vector>
 
 BDSMaterials* BDSMaterials::instance = nullptr;
 
@@ -202,7 +203,7 @@ void BDSMaterials::DefineMetals()
 	      {"C", "Mn", "Si", "Fe"},
 	      std::list<double>{0.002, 0.005, 0.0015, 0.99150});
   
-  // Pure tungsten is not typically used, but instead instead as part of "heavy
+  // Pure tungsten is not typically used, but instead part of "heavy
   // alloy."  I think "heavy" in the sense that the tungsten makes up almost
   // all of the composition, and tungsten is a very dense metal.
   AddMaterial("tungsten_heavy_alloy",
@@ -210,6 +211,27 @@ void BDSMaterials::DefineMetals()
 	      kStateSolid, 87, 1,
       {"W", "Ni", "Fe"},
 	      std::list<double>{0.97, 0.02, 0.01});
+  
+  // For HL-LHC Collimation - Inermet170
+  AddMaterial("inermet170",
+              17.0,
+              kStateSolid, 300, 1,
+              {"W", "Ni", "Cu"},
+              std::list<double>{0.90, 0.05, 0.05});
+  
+  // For HL-LHC Collimation - Inermet176
+  AddMaterial("inermet176",
+              17.6,
+              kStateSolid, 300, 1,
+              {"W", "Ni", "Cu"},
+              std::list<double>{0.925, 0.0375, 0.0375});
+  
+  // For HL-LHC Collimation - Inermet180
+  AddMaterial("inermet180",
+              18.0,
+              kStateSolid, 300, 1,
+              {"W", "Ni", "Cu"},
+              std::list<double>{0.95, 0.025, 0.025});
 }
 
 void BDSMaterials::DefineSuperconductors()
@@ -425,8 +447,7 @@ void BDSMaterials::DefineScintillators()
   tmpMaterial = new G4Material("ups923a",polystyrene->GetDensity(),1);
   tmpMaterial->AddMaterial(polystyrene,1);
   tmpMaterial->SetName("ups923a");
-  const G4int ups923a_numentries = 67;
-  G4double ups923a_PhotonEnergy[ups923a_numentries]   = {
+  std::vector<G4double> ups923a_PhotonEnergy = {
     3.35,    3.31,    3.28,    3.26,    3.25,    3.23,    3.23,
     3.22,    3.21,    3.19,    3.18,    3.17,    3.16,    3.15,
     3.14,    3.14,    3.13,    3.11,    3.1,     3.09,    3.09,
@@ -437,7 +458,26 @@ void BDSMaterials::DefineScintillators()
     2.74,    2.72,    2.71,    2.68,    2.66,    2.64,    2.62,
     2.61,    2.58,    2.55,    2.53,    2.5,     2.48,    2.46,
     2.44,    2.41,    2.38,    2.35  };
+  std::reverse(ups923a_PhotonEnergy.begin(), ups923a_PhotonEnergy.end());
+  
+  // AUG 21 - these were previously just one number as a const property but they should be non-const
+  // which requires vs energy numbers - so just use arrays the same shape
+  std::vector<G4double> ups923a_RINDEX(ups923a_PhotonEnergy.size(), 1.52);
+  std::vector<G4double> ups923a_ABSLENGTH(ups923a_PhotonEnergy.size(), 1*CLHEP::m);
+  
+  G4MaterialPropertiesTable* ups923a_mt = CreatePropertiesTable();
+#if G4VERSION_NUMBER < 1070
+  ups923a_mt->AddProperty("RINDEX",    ups923a_PhotonEnergy.data(), ups923a_RINDEX.data(),    (int)ups923a_PhotonEnergy.size());
+  ups923a_mt->AddProperty("ABSLENGTH", ups923a_PhotonEnergy.data(), ups923a_ABSLENGTH.data(), (int)ups923a_PhotonEnergy.size());
+#else
+  ups923a_mt->AddProperty("RINDEX",    ups923a_PhotonEnergy, ups923a_RINDEX);
+  ups923a_mt->AddProperty("ABSLENGTH", ups923a_PhotonEnergy, ups923a_ABSLENGTH);
+#endif
+  //Birk's constant
+  birks = (0.014/1.06)*CLHEP::cm/CLHEP::MeV;
+  tmpMaterial->GetIonisation()->SetBirksConstant(birks);
 #if G4VERSION_NUMBER < 1079
+  const G4int ups923a_numentries = 67;
   G4double ups923a_emission[ups923a_numentries]   = {
     0,       0.04,    0.11,    0.2,     0.3,     0.4,     0.52,
     0.62,    0.67,    0.68,    0.67,    0.62,    0.53,    0.48,
@@ -449,26 +489,8 @@ void BDSMaterials::DefineScintillators()
     0.37,    0.33,    0.31,    0.29,    0.28,    0.26,    0.24,
     0.2,     0.17,    0.12,    0.09,    0.08,    0.07,
     0.06,    0.04,    0.02,    0.01,    0.01  };
-#endif
-  G4double ups923a_RINDEX[ups923a_numentries];
-  G4double ups923a_ABSLENGTH[ups923a_numentries];
-  for (G4int i=0; i < ups923a_numentries; i++)
-  {
-    ups923a_RINDEX[i] = 1.52;
-    ups923a_ABSLENGTH[i] = 1*CLHEP::m;
-  }
-  
-  G4MaterialPropertiesTable* ups923a_mt = CreatePropertiesTable();
-  // AUG 21 - these were previously just one number as a const property but they should be non-const
-  // which requires vs energy numbers - so just use arrays the same shape
-  ups923a_mt->AddProperty("RINDEX",    ups923a_PhotonEnergy, ups923a_RINDEX,    ups923a_numentries);
-  ups923a_mt->AddProperty("ABSLENGTH", ups923a_PhotonEnergy, ups923a_ABSLENGTH, ups923a_numentries);
-  //Birk's constant
-  birks = (0.014/1.06)*CLHEP::cm/CLHEP::MeV;
-  tmpMaterial->GetIonisation()->SetBirksConstant(birks);
-#if G4VERSION_NUMBER < 1079
   ups923a_mt->AddConstProperty("FASTTIMECONSTANT",3.3*CLHEP::ns);
-  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries)->SetSpline(true);
+  ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy.data(), ups923a_emission, ups923a_numentries)->SetSpline(true);
   ups923a_mt->AddConstProperty("YIELDRATIO",1.0);
 #endif
   ups923a_mt->AddConstProperty("RESOLUTIONSCALE",2.0); //Check this
@@ -779,6 +801,22 @@ void BDSMaterials::DefineLHCComponents()
 	      kStateSolid, 4, 1,
 	      {"nbti_87k","cu_4k"},
 	      std::list<double>{1.0/5.4, 4.4/5.4});
+  
+  // For HL-LHC Collimation - Copper Diamond - TBC - component fractions
+  AddMaterial("copperdiamond",
+              5.3,
+              kStateSolid, 300, 1,
+              {"Cu", "C"},
+              std::list<double>{0.32, 0.68});
+  AddExistingMaterialAlias("copperdiamond", "cucd");
+  
+  // For HL-LHC Collimation - Copper Diamond
+  AddMaterial("molybdenumcarbide",
+              8.9,
+              kStateSolid, 300, 1,
+              {"Mo", "C"},
+              std::list<int>{1, 1});
+  AddExistingMaterialAlias("molybdenumcarbide", "mogr");
 }
 
 void BDSMaterials::DefineLiquids()
@@ -913,11 +951,10 @@ void BDSMaterials::DefineVacuums()
 void BDSMaterials::AddMaterial(G4Material* material, G4String name)
 {
   name = BDS::LowerCase(name);
-  if (materials.insert(make_pair(name, material)).second)
+  if (materialNames.count(name) == 0) // not defined already
     {
-#ifdef BDSDEBUG
-      G4cout << "New material : " << name << G4endl;
-#endif
+      materials[name] = material;
+      materialNames.insert(name);
     }
   else
     {throw BDSException(__METHOD_NAME__, "Material \"" + name + "\" already exists");}
@@ -929,6 +966,13 @@ void BDSMaterials::AddExistingMaterialAlias(const G4String &existingMaterialName
   alias = BDS::LowerCase(alias);
   G4Material* material = GetMaterial(existingMaterialName);
   aliases[alias] = material; // store in lower case as that's how we search
+  aliasNames.insert(alias);
+  
+  // cache aliases for a given material for feedback
+  auto search = materialToAliases.find(material);
+  if (search == materialToAliases.end())
+    {materialToAliases[material] = {};}
+  materialToAliases[material].push_back(alias);
 }
 
 void BDSMaterials::AddMaterial(G4String name,
@@ -981,7 +1025,7 @@ void BDSMaterials::AddMaterial(G4String name,
       G4cout << "BDSMaterials::AddMaterial: " << *sIter << G4endl;
 #endif
       G4Element* element = CheckElement(*sIter);
-      if(element)
+      if (element)
 	{tmpMaterial->AddElement(element, (*dIter));}
       else
 	{tmpMaterial->AddMaterial(GetMaterial(*sIter), (*dIter));}
@@ -1019,25 +1063,17 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
     {
       // find material regardless of capitalisation
       material = BDS::LowerCase(material);
-      auto search = possibleDuplicates.find(material);
-      if (search != possibleDuplicates.end())
-        {
-          if (search->second > 1)
-            {
-              throw BDSException(__METHOD_NAME__, "material \"" + materialOriginal
-              + "\" has been loaded from multiple GDML files and is ambiguous.\n"
-              + "Please prepend with the BDSIM element used to load the file to be explicit.");
-            }
-        }
-      auto iter = materials.find(material);
-      if (iter != materials.end())
-        {return (*iter).second;}
+
+      // search predefined + parser materials
+      if (materialNames.count(material) == 1)
+        {return materials.at(material);}
+      else if (aliasNames.count(material) == 1)
+        {return aliases.at(material);}
       else
         {
           // search aliases
-          auto iter2 = aliases.find(material);
-          if (iter2 != aliases.end())
-            {return iter2->second;}
+          if (externalMaterialNames.count(material) == 1)
+            {return externalMaterials.at(material);}
           else
             {// can't find it -> warn and exit
               ListMaterials();
@@ -1047,28 +1083,71 @@ G4Material* BDSMaterials::GetMaterial(G4String material) const
     }
 }
 
-void BDSMaterials::CacheMaterialsFromGDML(const std::map<G4String, G4Material*>& materialsGDML,
-                                          const G4String& prepend,
-                                          G4bool prependWasUsed)
+void BDSMaterials::CheckForConflictingMaterialsAfterLoad(const G4String& geometryFileName,
+                                                         const G4String& componentName) const
 {
-  // Register in "aliases" member so we don't try to delete - geant4 will
-  // do this for ones loaded in GDML. Therefore, avoid double deletion.
+  G4MaterialTable* table = G4Material::GetMaterialTable();
+  
+  G4bool check = false;
+  std::map<G4String, G4int> nameCount;
+  for (const auto& mat : *table)
+    {
+      G4String name = mat->GetName();
+      auto search = nameCount.find(name);
+      if (search == nameCount.end())
+        {nameCount[name] = 0;}
+      nameCount[name] += 1;
+      check = check || nameCount[name] > 1; // flag for efficiency - don't loop again if we don't need to
+    }
+  
+  if (check)
+    {
+      for (const auto& nc: nameCount)
+        {
+          if (nc.second > 1)
+            {
+              G4String msg = "the material \"" + nc.first + "\" has been defined more\n";
+              msg += "than once now and will cause the wrong material to be used for any future usages.\n";
+              msg += "Error caused by GDML file \""+geometryFileName+"\" in component \""+componentName+"\"\n";
+              msg += "This is most likely due to a material name in the GDML file conflicting with a predefined one in BDSIM.";
+              if (BDS::StartsWith(BDS::LowerCase(nc.first), "g4_"))
+                {BDS::Warning(msg);} // only warn for a NIST one as ultimately it won't be that different even if redefined from reloading
+              else
+                {throw BDSException(__METHOD_NAME__, msg);}
+            }
+        }
+    }
+}
+
+
+void BDSMaterials::CacheMaterialsFromGDML(const std::map<G4String, G4Material*>& materialsGDML)
+{
+  // this function is really just concerning GDML material caching and not
+  // all external format name caching...
   for (const auto& kv : materialsGDML)
     {
       G4String nameLower = BDS::LowerCase(kv.first);
-      //G4bool startsWithPrepend = prependExists ? BDS::StartsWith(kv.first, prepend) : false;
+      
+      // We have to allow names that are in bdsim materials as the user could have
+      // used just a bdsim material by name. However, we can't know if that was one
+      // that was constructed uniquely with the same name. For this, we need to check
+      // the material table in the above function.
       if (BDS::StartsWith(nameLower, "g4_") || materials.find(nameLower) != materials.end())
         {continue;} // a Geant4 material or a BDSIM one
-      aliases[nameLower] = kv.second;
 
-      if (prependWasUsed)
-        {// cache without prefix
-          G4String nameCopy = kv.first;
-          nameCopy.erase(0, prepend.size() + 1);
-          nameCopy = BDS::LowerCase(nameCopy);
-          aliases[nameCopy] = kv.second;
-          possibleDuplicates[nameCopy]++;
+      if (externalMaterialNames.count(nameLower) == 1)
+        {
+          G4String msg = "the material \""+kv.first+"\" is already defined and has\n";
+          msg += "already been loaded from a previous GDML file(s) and is ambiguous.\n";
+          msg += "Please prepend with the BDSIM element used to load the file to be explicit.";
+          throw BDSException(__METHOD_NAME__, msg);
         }
+      
+      // it's ok for a GDML material to have a material name the same as a BDSIM
+      // alias as only the real name will conflict
+      
+      externalMaterials[nameLower] = kv.second;
+      externalMaterialNames.insert(nameLower);
     }
 }
 
@@ -1084,25 +1163,22 @@ void BDSMaterials::AddElement(G4Element* element, const G4String& symbol)
 }
 
 void BDSMaterials::AddElement(const G4String& name,
-			      const G4String& symbol,
-			      G4double Z,
-			      G4double A)
+                              const G4String& symbol,
+                              G4double Z,
+                              G4double A)
 {
   G4Element* tmpElement = new G4Element(name, symbol, Z, A*CLHEP::g/CLHEP::mole);
   AddElement(tmpElement, symbol);
 }
 
 void BDSMaterials::DensityCheck(G4double  density,
-				const G4String& materialName) const
+                                const G4String& materialName) const
 {
   if (density > 1e2)
     {// so greater than 100g / cm3, the densest natural material is around 23g/cm3
-      G4cout << G4endl << G4endl;
-      G4cout << __METHOD_NAME__ << "material \"" << materialName
-	     << "\" has a density higher than 100g/cm3! Perhaps check this!" << G4endl
-	     << "Density: " << density << "g/cm3" << G4endl << G4endl;
-      std::this_thread::sleep_for(std::chrono::seconds(2));
-      G4cout << "Proceeding..." << G4endl;
+      G4String msg = "material \"" + materialName + "\"has a density higher than 100g/cm3! Perhaps check this!\n";
+      msg += "Density: " + std::to_string(density) + " g/cm3... proceeding";
+      BDS::Warning(__METHOD_NAME__, msg);
     }
 }
 
@@ -1133,7 +1209,7 @@ void BDSMaterials::PrintBasicMaterialMassFraction(G4Material* material) const
   for (G4int i = 0; i < (G4int)material->GetNumberOfElements(); i++)
     {
       G4cout << (*(material->GetElementVector()))[i]->GetName() << "\t "
-	     << (material->GetFractionVector()[i])/CLHEP::perCent << " %"  << G4endl;
+             << (material->GetFractionVector()[i])/CLHEP::perCent << " %"  << G4endl;
     }
 }
 
@@ -1155,7 +1231,7 @@ void BDSMaterials::ListMaterials() const
     {
       G4cout << "Extra defined elements are:" << G4endl;
       for (const auto& element : elements)
-	{G4cout << std::left << std::setw(12) << element.second->GetName() << " - " << element.second->GetSymbol() << G4endl;}
+        {G4cout << std::left << std::setw(12) << element.second->GetName() << " - " << element.second->GetSymbol() << G4endl;}
       G4cout << G4endl;
     }
   
@@ -1165,10 +1241,25 @@ void BDSMaterials::ListMaterials() const
       G4cout << material.first;
       G4String realName = material.second->GetName();
       if (realName != material.first)
-	{G4cout << " (" << material.second->GetName() << ")" << G4endl;}
+        {G4cout << " (" << material.second->GetName() << ")" << G4endl;}
       else
-	{G4cout << G4endl;}
+        {G4cout << G4endl;}
+
+      auto aliasSearch = materialToAliases.find(material.second);
+      if (aliasSearch != materialToAliases.end())
+        {
+          const auto v = aliasSearch->second;
+          G4cout << "Aliases: ";
+          for (const auto& n : v)
+            {G4cout << "\"" << n << "\" ";}
+          G4cout << G4endl;
+        }
     }
+  G4cout << G4endl;
+  G4cout << "All aliases: (alias, real name)" << G4endl;
+  for (const auto& aliasMaterial : aliases)
+    {
+      G4cout << aliasMaterial.first << " : " << aliasMaterial.second->GetName() << G4endl;}
   G4cout << G4endl;
   G4cout << "Available NIST materials are:" << G4endl;
   G4NistManager::Instance()->ListMaterials("all");
@@ -1180,6 +1271,11 @@ BDSMaterials::~BDSMaterials()
   for (auto& material : materials)
     {delete material.second;}
   materials.clear();
+  materialNames.clear();
+
+  // we don't delete externalMaterials as any loaded from GDML will be
+  // deleted by Geant4
+  externalMaterialNames.clear();
 
   for (auto& element : elements)
     {delete element.second;}
@@ -1216,19 +1312,19 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
     {
       G4State itsState;
       if      (it.state=="solid")
-	{itsState = kStateSolid;}
+        {itsState = kStateSolid;}
       else if (it.state=="liquid")
-	{itsState = kStateLiquid;}
+        {itsState = kStateLiquid;}
       else if (it.state=="gas")
-	{itsState = kStateGas;}
+        {itsState = kStateGas;}
       else
-	{
-	  G4cout << "Unknown material state "<< it.state 
-		 << ", setting it to default (solid)"
-		 << G4endl;
-	  it.state="solid";
-	  itsState = kStateSolid;
-	}
+        {
+          G4cout << "Unknown material state "<< it.state 
+                 << ", setting it to default (solid)"
+                 << G4endl;
+          it.state="solid";
+          itsState = kStateSolid;
+        }
       
 #ifdef BDSDEBUG  
       G4cout << "---->adding Material, ";
@@ -1236,46 +1332,46 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
 #endif
       
       if(it.Z != 0)
-	{
-	  AddMaterial(it.name,
-		      it.Z,
-		      it.A,
-		      it.density,
-		      itsState,
-		      it.temper,
-		      it.pressure);
-	}
+        {
+          AddMaterial(it.name,
+                      it.Z,
+                      it.A,
+                      it.density,
+                      itsState,
+                      it.temper,
+                      it.pressure);
+        }
       else if(!(it.components.empty()))
-	{
-	  std::list<G4String> tempComponents;
-	  for (const auto& jt : it.components)
-	    {tempComponents.emplace_back(G4String(jt));}
-	  
-	  if(it.componentsWeights.size()==it.components.size())
-	    {
-	      AddMaterial(it.name,
-			  it.density,
-			  itsState,
-			  it.temper,
-			  it.pressure,
-			  tempComponents,
-			  it.componentsWeights);
-	    }
-	  else if(it.componentsFractions.size()==it.components.size())
-	    {
-	      AddMaterial(it.name,
-			  it.density,
-			  itsState,
-			  it.temper,
-			  it.pressure,
-			  tempComponents,
-			  it.componentsFractions);
-	    }
-	  else
-	    {throw BDSException(__METHOD_NAME__, "Badly defined material - number of components is not equal to number of weights or mass fractions!");}
-	}
+        {
+          std::list<G4String> tempComponents;
+          for (const auto& jt : it.components)
+            {tempComponents.emplace_back(G4String(jt));}
+          
+          if(it.componentsWeights.size()==it.components.size())
+            {
+              AddMaterial(it.name,
+                          it.density,
+                          itsState,
+                          it.temper,
+                          it.pressure,
+                          tempComponents,
+                          it.componentsWeights);
+            }
+          else if(it.componentsFractions.size()==it.components.size())
+            {
+              AddMaterial(it.name,
+                          it.density,
+                          itsState,
+                          it.temper,
+                          it.pressure,
+                          tempComponents,
+                          it.componentsFractions);
+            }
+          else
+            {throw BDSException(__METHOD_NAME__, "Badly defined material - number of components is not equal to number of weights or mass fractions!");}
+        }
       else
-	{throw BDSException(__METHOD_NAME__, "Badly defined material - need more information!");}
+        {throw BDSException(__METHOD_NAME__, "Badly defined material - need more information!");}
     }
   if (verbose || debug)
     {G4cout << "size of material list: "<< BDSParser::Instance()->GetMaterials().size() << G4endl;}

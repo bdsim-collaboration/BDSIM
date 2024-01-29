@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -42,6 +42,8 @@ public:
   explicit BDSArrayOperatorIndexFlip(const std::array<G4bool,4>& xyztIn):
     BDSArrayOperatorIndexFlip()
   {
+    operatesOn = xyztIn;
+    
     for (G4int i = 0; i < 4; i++)
       {xyzt[0] = xyztIn[i] ? -1 : 1;}
   

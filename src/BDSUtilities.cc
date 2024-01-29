@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -95,11 +95,37 @@ G4String BDS::LowerCase(const G4String& str)
   return result;
 }
 
+G4String BDS::StrStrip(const G4String& str,
+                       char ch,
+                       StringStripType stripType)
+{
+  G4String result = str;
+  switch (stripType)
+    {
+#if G4VERSION_NUMBER > 1099
+    case StringStripType::leading:
+      {G4StrUtil::lstrip(result, ch); break;}
+    case StringStripType::trailing:
+      {G4StrUtil::rstrip(result, ch); break;}
+    case StringStripType::both:
+      {G4StrUtil::strip(result, ch); break;}
+#else
+    case StringStripType::leading:
+      {result.strip(G4String::stripType::leading, ch); break;}
+    case StringStripType::trailing:
+      {result.strip(G4String::stripType::trailing, ch); break;}
+    case StringStripType::both:
+      {result.strip(G4String::stripType::both, ch); break;}
+#endif
+    }
+  return result;
+}
+
 G4String BDS::PrepareSafeName(G4String name)
 {
   //remove white space
   name.erase(std::remove_if(name.begin(),name.end(),isspace),name.end());
-  //remove non alpha numeric characters
+  //remove non alpha-numeric characters
   std::replace_if(name.begin(),name.end(),BDS::non_alpha(),'_');
   
   return name;
@@ -345,6 +371,14 @@ void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
 
 G4bool BDS::Geant4EnvironmentIsSet()
 {
+#if G4VERSION_NUMBER > 1102
+  // Since V4.11.p03, there is just 1 environmental variable to check for
+  std::string entireDataDir = "GEANT4_DATA_DIR";
+  const char* envVar = std::getenv( entireDataDir.c_str() );
+  if (envVar)
+    {return true;}
+#endif
+
   std::vector<G4String> variables = {//"G4ABLADATA",
 				     "G4NEUTRONHPDATA",
 				     "G4RADIOACTIVEDATA",
@@ -503,8 +537,8 @@ G4bool BDS::WillIntersect(const G4double& angleIn,
 {
   // Calculate the z component of triangle with each angle and
   // axis along length.
-  G4double dzIn  = horizontalWidth * tan(angleIn);
-  G4double dzOut = horizontalWidth * tan(angleOut);
+  G4double dzIn  = horizontalWidth * std::tan(angleIn);
+  G4double dzOut = horizontalWidth * std::tan(angleOut);
   if (dzIn > length - dzOut)
     {return true;}
   else
@@ -536,9 +570,6 @@ G4ThreeVector BDS::RotateToReferenceFrame(G4ThreeVector faceNormal, G4double ful
 
 std::pair<G4String, G4String> BDS::SplitOnColon(const G4String& formatAndPath)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << formatAndPath << G4endl;
-#endif
   if(!formatAndPath.empty())
     {
       std::size_t found = formatAndPath.find(":");
@@ -551,10 +582,6 @@ std::pair<G4String, G4String> BDS::SplitOnColon(const G4String& formatAndPath)
 	{
 	  G4String format   = formatAndPath.substr(0,found);
 	  G4String filePath = formatAndPath.substr(found+1); // get everything after ":"
-#ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "format: " << format   << G4endl;
-	  G4cout << __METHOD_NAME__ << "file:   " << filePath << G4endl;
-#endif
 	  return std::make_pair(format,filePath);
 	}
     }
@@ -573,6 +600,8 @@ G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
       result = new G4UserLimits(*defaultUL);
       G4double lengthScale = length * fraction;
       lengthScale = std::max(lengthScale, 1.0*CLHEP::um); // no smaller than 1um limit
+      if (!BDS::IsFinite(lengthScale))
+        {lengthScale = 1*CLHEP::mm;} // if identically 0 due to some upstream issue, set a small default
       result->SetMaxAllowedStep(lengthScale);
     }
   return result;
@@ -637,4 +666,50 @@ G4double BDS::Rigidity(G4double momentumMagnitude,
 		       G4double charge)
 {
   return momentumMagnitude / CLHEP::GeV / BDS::cOverGeV / charge;
+}
+
+G4double BDS::CalculateSafeAngledVolumeLength(G4ThreeVector inputfaceIn,
+                                              G4ThreeVector outputfaceIn,
+                                              G4double length,
+                                              G4double containerWidth,
+                                              G4double containerHeight)
+{
+  G4double angleIn = inputfaceIn.angle();
+  G4double angleOut = outputfaceIn.angle();
+  return BDS::CalculateSafeAngledVolumeLength(angleIn, angleOut, length, containerWidth, containerHeight);
+}
+
+G4double BDS::CalculateSafeAngledVolumeLength(G4double angleIn,
+                                              G4double angleOut,
+                                              G4double length,
+                                              G4double containerWidth,
+                                              G4double containerHeight)
+{
+  G4double sLength = length;
+  if (!BDS::IsFinite(containerHeight))
+    {containerHeight = containerWidth;}
+
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
+    {
+      // In the case of angled faces, calculate a length so that the straight solids
+      // used in intersection are long enough to reach the edges of the angled faces.
+      // Could simply do 2x length, but for short dipole sections with strongly angled
+      // faces this doesn't work. Calculate extent along z for each angled face. This
+      // is called the 'safe' length -> sLength
+      G4double hypotenuse = std::hypot(containerWidth, containerHeight);
+      G4double dzIn = std::tan(std::abs(angleIn)) * 1.2 * hypotenuse; // 20% over estimation for safety
+      G4double dzOut = std::tan(std::abs(angleOut)) * 1.2 * hypotenuse;
+      // take the longest of different estimations (2x and 1.5x + dZs)
+      sLength = std::max(2 * length, 1.5 * length + dzIn + dzOut);
+    }
+  return sLength;
+}
+
+G4double BDS::ArcLengthFromChordLength(G4double chordLength, G4double angle)
+{
+  if (!BDS::IsFinite(angle))
+    {return chordLength;} // avoid division by zero in the following lines
+  G4double radiusOfCurvature = 0.5*chordLength / std::sin(0.5*std::abs(angle));
+  G4double arcLength = radiusOfCurvature * std::abs(angle);
+  return arcLength;
 }

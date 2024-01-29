@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -50,10 +50,17 @@ public:
   inline G4int GetFilterSetID() const {return filterSetID;}
   /// @}
   
+  /// Normally the sampler has nullptr material. But, in case we use it in the mass
+  /// world, we should set a valid material. This function sets it to G4_GALACTIC.
+  void MakeMaterialValidForUseInMassWorld();
+  
 protected:
   /// Common construction tasks such as creating a logical volume from the solid
   /// and visualisation options.
-  void CommonConstruction();
+  virtual void CommonConstruction();
+  
+  /// Attach sensitive detector to containerLogicalVolume.
+  virtual void SetSensitivity();
   
   const G4String name;
   const G4int    filterSetID;

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @file bdskim.cc
  */
+#include "AnalysisUtilities.hh"
 #include "FileMapper.hh"
 #include "Header.hh"
 #include "SelectionLoader.hh"
@@ -35,15 +36,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 int main(int argc, char* argv[])
 {
-  if (argc != 4)
+  if (argc < 3 || argc > 4)
     {
-      std::cout << "usage: bdskim skimselection.txt input_bdsim_raw.root output_bdsim_raw.root" << std::endl;
+      std::cout << "usage: bdskim skimselection.txt input_bdsim_raw.root (output_bdsim_raw.root)" << std::endl;
+      std::cout << "default output name if none given is <inputname>_skimmed.root" << std::endl;
       return 1;
     }
 
   std::string selectionFile = std::string(argv[1]);
   std::string inputFile     = std::string(argv[2]);
-  std::string outputFile    = std::string(argv[3]);
+  std::string outputFile;
+  if (argc == 4)
+    {outputFile = std::string(argv[3]);}
+  else
+    {
+      outputFile = RBDS::DefaultOutputName(inputFile, "_skimmed");
+      std::cout << "Using default output file name with \"_skimmed\" suffix  : " << outputFile << std::endl;
+    }
 
   // load selection
   std::string selection;
@@ -65,31 +74,34 @@ int main(int argc, char* argv[])
  
   TTree* headerTree = dynamic_cast<TTree*>(input->Get("Header")); // should be safe given check we've just done
   if (!headerTree)
-    {std::cerr << "Error with header" << std::endl; exit(1);}
+    {std::cerr << "Error with header" << std::endl; return 1;}
   Header* headerLocal = new Header();
   headerLocal->SetBranchAddress(headerTree);
-  headerTree->GetEntry(0);
+  Long64_t nEntriesHeader = headerTree->GetEntries();
+  headerTree->GetEntry(nEntriesHeader - 1); // get the last entry (2nd is more up to date if it exists)
+  // We also want to explicitly copy the skim variables that might only be known in the 2nd instance.
   BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader(*(headerLocal->header));
   headerOut->skimmedFile = true;
   
   TFile* output = new TFile(outputFile.c_str(), "RECREATE");
   if (output->IsZombie())
-    {std::cerr << "Couldn't open output file " << outputFile << std::endl; exit(1);}
+    {std::cerr << "Couldn't open output file " << outputFile << std::endl; return 1;}
   output->cd();
   TTree* outputHeaderTree = new TTree("Header", "BDSIM Header");
   outputHeaderTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
+  outputHeaderTree->Fill();
 
   std::vector<std::string> treeNames = {"ParticleData", "Beam", "Options", "Model", "Run"};
   for (const auto& tn : treeNames)
     {
       TTree* original = dynamic_cast<TTree*>(input->Get(tn.c_str()));
       if (!original)
-	{
-	  std::cerr << "Failed to load Tree named " << tn << std::endl;
-	  delete output;
-	  delete input;
-	  return 1;
-	}
+        {
+          std::cerr << "Failed to load Tree named " << tn << std::endl;
+          delete output;
+          delete input;
+          return 1;
+        }
       auto clone = original->CloneTree();
       clone->AutoSave();
     }
@@ -103,9 +115,7 @@ int main(int argc, char* argv[])
     }
   TTree* selectEvents = allEvents->CopyTree(selection.c_str());
   selectEvents->Write();
-  
-  headerOut->nOriginalEvents = allEvents->GetEntries(); // update original number of entries
-  outputHeaderTree->Fill();
+
   output->Write(nullptr,TObject::kOverwrite);
   delete output;
   delete input;

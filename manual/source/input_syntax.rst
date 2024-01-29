@@ -35,6 +35,26 @@ While GMAD is very similar to MAD-X, not all MAD-X commands are supported.
 * !Comments start with an exclamation mark "!"
 * A variable may inherit values (via copy) from another variable using :code:`newvariable : existingvariable;`
 
+Extending Objects
+^^^^^^^^^^^^^^^^^
+
+If an object (or beam line element) is already defined, a parameter can be updated in it. We call this 'extending'
+the object. Examples can be found in :code:`bdsim/parser/test/extend*`. E.g. ::
+
+  d1: drift, l=1*m;
+  print, d1;
+  ! now we update the d1 definition
+  d1: aper1=5*cm;
+
+
+.. note:: Beam line elements can only effectively be updated **before** the :code:`use` command
+	  is called as this command will copy the current definitions to a new place in memory.
+
+.. warning:: When extending an object the parameter "type" must not be used first after the semi-colon.
+	     This is a limitation of the parser that understands the input syntax. Any other parameter
+	     can be updated first then (if appropriate) "type" can be set.
+
+
 .. _mathematical-functions:
   
 Mathematical Functions
@@ -77,6 +97,14 @@ Examples: ::
    mat = "copper";
 
 
+Floating Point and Integer Numbers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The result of a calculation may be a floating point number. If assigned to what should
+be an integer value, such as the number of bins in a scoring mesh, the number is rounded
+to the nearest integer.
+
+   
 Common Pitfalls
 ^^^^^^^^^^^^^^^
 
@@ -155,13 +183,16 @@ uJ          :math:`10^{-6}`
 nJ          :math:`10^{-9}`
 pJ          :math:`10^{-12}`
 V           1
+mV          :math:`10^{-3}`
 kV          :math:`10^{3}`
 MV          :math:`10^{6}`
+GV          :math:`10^{9}`
 Tesla       1
 T           1
 rad         1
 mrad        :math:`10^{-3}`
 urad        :math:`10^{-6}`
+nrad        :math:`10^{-9}`
 clight      :math:`2.99792458 \times 10^{8}`
 km          :math:`10^{3}`
 m           1
@@ -181,6 +212,7 @@ Hz          1
 kHz         :math:`10^{3}`
 MHz         :math:`10^{6}`
 GHz         :math:`10^{9}`
+THz         :math:`10^{12}`
 ==========  =================================
 
 As an example, one can write either :code:`100*eV` or :code:`0.1*keV` to specify an energy value in GMAD.

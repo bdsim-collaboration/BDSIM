@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4DisplacedSolid.hh"
+#include "G4EllipticalTube.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4Tubs.hh"
@@ -58,10 +59,18 @@ std::pair<BDSExtent, BDSExtent> BDS::DetermineExtents(const G4VSolid* solid)
     {return BDS::InspectTubs(solid);}
   else if (className == "G4CutTubs")
     {return BDS::InspectCutTubs(solid);}
+  else if (className == "G4EllipticalTube")
+    {return BDS::InspectEllipticalTube(solid);}
   else
     {
-      G4cout << "BDS::DetermineExtents> Solid of type \"" << className << "\" is not supported" << G4endl;
-      return std::make_pair(BDSExtent(), BDSExtent());
+      G4ThreeVector low, high;
+      solid->BoundingLimits(low, high);
+      // take abs of low and high
+      BDSExtent outer = BDSExtent(std::max(std::abs(low.x()), std::abs(high.x())),
+                                  std::max(std::abs(low.y()), std::abs(high.y())),
+                                  std::max(std::abs(low.z()), std::abs(high.z())));
+      BDSExtent inner = BDSExtent();
+      return std::make_pair(outer, inner);
     }
 }
 
@@ -204,5 +213,21 @@ std::pair<BDSExtent, BDSExtent> BDS::InspectCutTubs(const G4VSolid* solidIn)
   BDSExtent inner(-innerR, innerR,
 		  -innerR, innerR,
                   -zmaxV.z(), zmaxV.z());
+  return std::make_pair(outer, inner);
+}
+
+std::pair<BDSExtent, BDSExtent> BDS::InspectEllipticalTube(const G4VSolid* solidIn)
+{
+  const G4EllipticalTube* solid = dynamic_cast<const G4EllipticalTube*>(solidIn);
+  if (!solid)
+    {return std::make_pair(BDSExtent(), BDSExtent());}
+  
+  G4double dX = solid->GetDx();
+  G4double dY = solid->GetDy();
+  G4double dZ = solid->GetDz();
+  
+  G4double lsl = BDSGlobalConstants::Instance()->LengthSafetyLarge();
+  BDSExtent outer(dX + lsl, dY + lsl, dZ);
+  BDSExtent inner(0, 0, dZ);
   return std::make_pair(outer, inner);
 }

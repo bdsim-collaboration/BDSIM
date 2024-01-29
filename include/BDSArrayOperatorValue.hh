@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -44,13 +44,10 @@ public:
   /// to be negative. No action by default.
   virtual BDSFieldValue Apply(BDSFieldValue v,
                               G4int /*xInd*/,
-                              G4int yInd = 0,
-                              G4int zInd = 0,
-                              G4int tInd = 0) const
-  {
-    yInd = 2; zInd = 3; tInd = 4;// to retain default values and prevent compiler warnings
-    return v;
-  }
+                              G4int /*yInd */ = 0,
+                              G4int /*zInd */ = 0,
+                              G4int /*tInd */ = 0) const
+  {return v;}
   
 protected:
   G4String name;

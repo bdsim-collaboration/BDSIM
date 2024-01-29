@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTEVENTMODEL_H
 #define BDSOUTPUTROOTEVENTMODEL_H
 
+#include "BDSOutputROOTEventCavityInfo.hh"
 #include "BDSOutputROOTEventCollimatorInfo.hh"
 
 #include <map>
@@ -58,8 +59,9 @@ public:
   int findNearestElement(const TVector3& point) const;
 
 #ifndef __ROOTBUILD__
-  /// Constructor for whether to store collimator information or not.
-  explicit BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn);
+  /// Constructor for whether to store collimator and cavity information or not.
+  explicit BDSOutputROOTEventModel(G4bool storeCollimatorInfoIn,
+                                   G4bool storeCavityInfoIn);
   
   /// Utility function.
   TRotation ConvertToROOT(const G4RotationMatrix* rm) const;
@@ -71,14 +73,16 @@ public:
                     const std::map<G4String, G4int>& collimatorIndicesByNameIn = {},
                     const std::vector<BDSOutputROOTEventCollimatorInfo>& collimatorInfoIn = {},
                     const std::vector<G4String>& collimatorBranchNamesIn = {},
+                    const std::vector<G4int>& cavityIndicesIn = {},
+                    const std::map<G4String, G4int>& cavityIndicesByNameIn = {},
+                    const std::vector<BDSOutputROOTEventCavityInfo>& cavityInfoIn = {},
+                    const std::vector<G4String>& cavityBranchNamesIn = {},
                     const std::map<G4String, G4Transform3D>* scorerMeshPlacements = nullptr,
 		    const std::map<short int, G4String>* materialIDToNameUnique = nullptr,
 		    G4bool storeTrajectory = false);
 #endif
   
   int n;
-  std::vector<std::string> samplerNamesUnique;
-  std::vector<double>      samplerSPosition;
   std::vector<std::string> componentName;
   std::vector<std::string> placementName;
   std::vector<std::string> componentType;
@@ -144,10 +148,28 @@ public:
   std::vector<float>       fintx;
   std::vector<float>       fintk2;
   std::vector<float>       fintxk2;
+  std::vector<std::vector<std::string>> pvName;
+  std::vector<std::vector<std::string>> pvNameWPointer;
 
   /// Whether optional collimator information was stored.
   bool storeCollimatorInfo;
-  
+
+  /// Whether optional cavity information was stored.
+  bool storeCavityInfo;
+
+  /// Optional cache of indices in beam line of cavities used to extract
+  /// cavity information.
+  std::vector<int> cavityIndices;
+
+  /// Similar cache but by name of cavity as built by BDSIM.
+  std::map<std::string, int> cavityIndicesByName;
+
+  int nCavities; ///< Number of cavities in beam line.
+  std::vector<BDSOutputROOTEventCavityInfo> cavityInfo; ///< cavity information explicitly.
+
+  /// Vector of all cavity branch names in event tree used to load data.
+  std::vector<std::string> cavityBranchNamesUnique;
+
   /// Optional cache of indices in beam line of collimators used to extract
   /// collimator information.
   std::vector<int> collimatorIndices;
@@ -167,6 +189,13 @@ public:
 
   std::map<short int, std::string> materialIDToName;
   std::map<std::string, short int> materialNameToID;
+  
+  std::vector<std::string> samplerNamesUnique;
+  std::vector<double>      samplerSPosition;
+  std::vector<std::string> samplerCNamesUnique;
+  std::vector<std::string> samplerSNamesUnique;
+  std::map<std::string, double> samplerCRadius;
+  std::map<std::string, double> samplerSRadius;
 
   ClassDef(BDSOutputROOTEventModel, 6);
 };

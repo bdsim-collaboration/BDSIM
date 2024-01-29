@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -122,7 +122,7 @@ public:
   BDSExtent Tilted(G4double angle) const;
 
   /// @{ Provide a new copy of this extent with an offset applied.
-  BDSExtent Translate(G4ThreeVector offset) const {return Translate(offset.x(), offset.y(), offset.z());}
+  BDSExtent Translate(const G4ThreeVector& offset) const {return Translate(offset.x(), offset.y(), offset.z());}
   BDSExtent Translate(G4double dx, G4double dy, G4double dz) const;
   /// @}
 
@@ -147,6 +147,9 @@ public:
 
   /// Return the minimum absolute value considering only x,y.
   G4double MinimumAbsTransverse() const;
+  
+  /// Return a radius that would encompass the maximum x,y extent.
+  G4double TransverseBoundingRadius() const;
 
   /// Return a copy expanded in all dimensions by the given margin.
   BDSExtent ExpandBy(G4double margin) const;

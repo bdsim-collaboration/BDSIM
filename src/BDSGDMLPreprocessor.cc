@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -346,7 +346,7 @@ void BDSGDMLPreprocessor::ProcessAttributes(DOMNamedNodeMap* attributeMap,
 	{
 	  std::string expression = XMLString::transcode(attr->getNodeValue());
 	  // Iterate over all the names that have been defined.
-	  for (auto defined_name : names)
+	  for (const auto& defined_name : names)
 	    {
 	      // Check if whole name is found (don't match substrings).
 	      // \\b = word boundary.  $& = the matched string.

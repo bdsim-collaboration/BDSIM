@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -48,6 +48,8 @@ BDSStackingAction::BDSStackingAction(const BDSGlobalConstants* globals)
   maxTracksPerEvent = globals->MaximumTracksPerEvent();
   if (maxTracksPerEvent == 0) // 0 is default -> no action - set maximum possible number
     {maxTracksPerEvent = LONG_MAX;}
+  minimumEK = globals->MinimumKineticEnergy();
+  particlesToExcludeFromCuts = globals->ParticlesToExcludeFromCutsAsSet();
 }
 
 BDSStackingAction::~BDSStackingAction()
@@ -68,20 +70,23 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 	<< std::setw(6) << SM->GetNPostponedTrack()
 	<< G4endl;
 #endif
-
+  G4int pdgCode = aTrack->GetParticleDefinition()->GetPDGEncoding();
+  if ( (aTrack->GetKineticEnergy() < minimumEK) && (particlesToExcludeFromCuts.count(pdgCode) == 0) )
+    {classification = fKill;}
+  
   // If beyond max number of tracks, kill it
   if (aTrack->GetTrackID() > maxTracksPerEvent)
     {classification = fKill;}
 
-  // Kill all neutrinos
+  // Optionally kill all neutrinos
   if (killNeutrinos)
     {
-      G4int pdgNr = std::abs(aTrack->GetParticleDefinition()->GetPDGEncoding());
+      G4int pdgNr = std::abs(pdgCode);
       if( pdgNr == 12 || pdgNr == 14 || pdgNr == 16)
 	{classification = fKill;}
     }
 
-  // kill secondaries
+  // Optionally kill secondaries
   if (stopSecondaries && (aTrack->GetParentID() > 0))
     {classification = fKill;}
 
@@ -150,7 +155,6 @@ void BDSStackingAction::NewStage()
 #ifdef BDSDEBUG
   G4cout<<"StackingAction: New stage"<<G4endl;
 #endif
-  return;
 }
     
 void BDSStackingAction::PrepareNewEvent()

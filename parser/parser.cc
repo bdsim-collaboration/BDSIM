@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -65,6 +65,7 @@ namespace GMAD {
   template void Parser::Add<ScorerMesh, FastList<ScorerMesh> >(bool unique, const std::string& className);
   template void Parser::Add<CavityModel, FastList<CavityModel> >(bool unique, const std::string& className);
   template void Parser::Add<BLMPlacement, FastList<BLMPlacement> >(bool unique, const std::string& className);
+  template void Parser::Add<Modulator, FastList<Modulator> >(bool unique, const std::string& className);
   template void Parser::Add<SamplerPlacement, FastList<SamplerPlacement> >(bool unique, const std::string& className);
   template void Parser::Add<Atom, FastList<Atom> >(bool unique, const std::string& className);
   template void Parser::Add<Field, FastList<Field> >(bool unique, const std::string& className);
@@ -221,9 +222,11 @@ void Parser::Initialise()
   add_var("nJ", 1e-9,  reserved);
   add_var("pJ", 1e-12, reserved);
 
+  add_var("mV",1e-3,reserved);
   add_var("V" ,1.0, reserved);
   add_var("kV",1e+3,reserved);
   add_var("MV",1e+6,reserved);
+  add_var("GV",1e+9,reserved);
 
   add_var("Tesla",1.0,reserved);
   add_var("T",    1.0,reserved);
@@ -248,10 +251,12 @@ void Parser::Initialise()
   add_var("kHz",1e+3, reserved);
   add_var("MHz",1e+6, reserved);
   add_var("GHz",1e+9, reserved);
+  add_var("THz",1e+12,reserved);
 
-  add_var("rad" ,1.0  ,reserved);
-  add_var("mrad",1.e-3,reserved);
-  add_var("urad",1.e-6,reserved);
+  add_var("rad" ,1.0, reserved);
+  add_var("mrad",1e-3,reserved);
+  add_var("urad",1e-6,reserved);
+  add_var("nrad",1e-9,reserved);
 
   add_var("degrees",std::atan(1)/45,reserved);
 
@@ -293,15 +298,17 @@ void Parser::expand_sequences()
     }
 }
 
-void Parser::expand_line(const std::string& name, std::string start, std::string end)
+void Parser::expand_line(const std::string& name,
+                         const std::string& start,
+                         const std::string& end)
 {
   expand_line(beamline_list, name, start, end);
 }
 
 void Parser::expand_line(FastList<Element>& target,
                          const std::string& name,
-                         std::string        start,
-                         std::string        end)
+                         const std::string& start,
+                         const std::string& end)
 {
   const Element& line = find_element(name);
   if(line.type != ElementType::_LINE && line.type != ElementType::_REV_LINE )
@@ -473,7 +480,7 @@ void Parser::set_sampler(const std::string& name,
   // skip first element and add one at the end
   if (count == -2)
     {
-      for (auto it=beamline_list.begin(); it!=beamline_list.end(); ++it)
+      for (auto it = beamline_list.begin(); it != beamline_list.end(); ++it)
 	{// skip LINEs
 	  if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)
 	    {continue;}
@@ -483,17 +490,16 @@ void Parser::set_sampler(const std::string& name,
 	  
 	  (*it).setSamplerInfo(samplerType,(*it).name,samplerRadius,particleSetID);
 	}
-    }
-  // if count equal to -1 add sampler to all element instances
-  else if (count == -1)
+    } 
+  else if (count == -1) // if count equal to -1 add sampler to all element instances
     {
       auto itPair = beamline_list.equal_range(name);
-      if (itPair.first==itPair.second)
+      if (itPair.first == itPair.second)
 	{
-	  std::cerr<<"current beamline doesn't contain element "<< name << std::endl;
-	  exit(1);
+	  std::string msg = "parser> SetSampler> current beamline doesn't contain element \"" + name + "\"";
+	  yyerror2(msg.c_str());
 	}
-      for (auto it = itPair.first; it!= itPair.second; ++it)
+      for (auto it = itPair.first; it != itPair.second; ++it)
 	{
 	  // if sampler is attached to a marker, really attach it to the previous element with the name of marker
 	  auto elementIt = (it->second);
@@ -506,12 +512,13 @@ void Parser::set_sampler(const std::string& name,
 		{
 		  elementIt--;
 		  // have to break first before continue since in while loop
-		  if (elementIt==beamline_list.begin()) break;
+		  if (elementIt == beamline_list.begin())
+		    {break;}
 		}
 	  
 	      if (elementIt==beamline_list.begin())
 		{
-		  std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+		  std::cout << "parser> SetSampler> WARNING: no element before marker " << name << ", no sampler added" << std::endl;
 		  continue;
 		}
 	    }
@@ -523,8 +530,8 @@ void Parser::set_sampler(const std::string& name,
       auto it = beamline_list.find(name,count);
       if (it==beamline_list.end())
 	{
-	  std::cerr<<"current beamline doesn't contain element "<<name<<" with number "<<count<<std::endl;
-	  exit(1);
+	  std::string msg = "parser> SetSampler> current beamline doesn't contain element \"" + name + "\" with number " + std::to_string(count);
+	  yyerror2(msg.c_str());
 	}
       // if sampler is attached to a marker, really attach it to the previous element with the name of marker
       std::string samplerName = (*it).name;
@@ -535,9 +542,9 @@ void Parser::set_sampler(const std::string& name,
 	  while ((*it).isSpecial())
 	    {
 	      it--;
-	      if (it==beamline_list.begin())
+	      if (it == beamline_list.begin())
 		{
-		  std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+		  std::cout << "parser> SetSampler> WARNING: no element before marker " << name << ", no sampler added" << std::endl;
 		  return;
 		}
 	    }
@@ -567,9 +574,10 @@ int Parser::add_sampler_partIDSet(std::list<int>* samplerPartIDListIn)
 void Parser::add_sampler(const std::string& name, int count, ElementType type, std::string samplerType, std::list<int>* samplerPartIDListIn)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting sampler "<<name;
-  if (count>=0) std::cout<<"["<< count <<"]";
-  std::cout<<std::endl;
+  std::cout << "inserting sampler " << name;
+  if (count>=0)
+    {std::cout << "[" << count << "]";}
+  std::cout << std::endl;
 #endif
   int particleSetID = add_sampler_partIDSet(samplerPartIDListIn);
   set_sampler(name,count,type,samplerType,0,particleSetID);
@@ -591,15 +599,13 @@ Element& Parser::find_element(const std::string& element_name)
 
 const Element& Parser::find_element(const std::string& element_name)const
 {
-  std::list<Element>::const_iterator it = element_list.find(element_name);
-  std::list<Element>::const_iterator iterEnd = element_list.end();
-
-  if(it == iterEnd)
+  auto search = element_list.find(element_name);
+  if (search == element_list.end())
     {
       std::cerr << "parser.h> Error: unknown element \"" << element_name << "\"." << std::endl; 
       exit(1);
     }
-  return (*it);
+  return (*search);
 }
 
 const Element* Parser::find_placement_element_safe(const std::string& element_name) const
@@ -636,7 +642,8 @@ void Parser::add_element_temp(const std::string& name, int number, bool pushfron
 {
 #ifdef BDSDEBUG
   std::cout << "matched sequence element, " << name;
-  if (number > 1) std::cout << " * " << number;
+  if (number > 1)
+    {std::cout << " * " << number;}
   std::cout << std::endl;
 #endif
   // add to temporary element sequence
@@ -646,12 +653,12 @@ void Parser::add_element_temp(const std::string& name, int number, bool pushfron
   e.lst = nullptr;
   if (pushfront)
     {
-      for(int i=0;i<number;i++)
+      for (int i = 0; i < number; i++)
 	{tmp_list.push_front(e);}
     }
   else
     {
-      for(int i=0;i<number;i++)
+      for (int i = 0; i < number; i++)
 	{tmp_list.push_back(e);}
     }
 }
@@ -679,8 +686,16 @@ void Parser::add_func(std::string name, double (*func)(double))
 
 void Parser::add_var(std::string name, double value, int is_reserved)
 {
-  Symtab *sp=symtab_map.symcreate(name);
+  Symtab* sp = symtab_map.symcreate(name);
   sp->Set(value,is_reserved);
+}
+
+bool Parser::InvalidSymbolName(const std::string& s, std::string& errorReason)
+{
+  bool result = false;
+  if (options.NameExists(s))
+    {result = true; errorReason = "The variable name \"" + s + "\" is an option name and cannot be used as a variable name";}
+  return result;
 }
 
 Symtab * Parser::symcreate(const std::string& s)
@@ -760,6 +775,7 @@ void Parser::Overwrite(const std::string& objectName)
     else if ( (extended = FindAndExtend<ScorerMesh> (objectName)) ) {}
     else if ( (extended = FindAndExtend<Aperture>   (objectName)) ) {}
     else if ( (extended = FindAndExtend<BLMPlacement> (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Modulator>  (objectName)) ) {}
   }
 
   if (!extended)
@@ -877,6 +893,9 @@ bool Parser::TryPrintingObject(const std::string& objectName) const
   auto searchBLMPlacement = std::find_if(blm_list.begin(), blm_list.end(), [&on](const BLMPlacement& obj) {return obj.name == on;});
   if (searchBLMPlacement != blm_list.end())
     {searchBLMPlacement->print(); return true;}
+  auto searchModulator = std::find_if(modulator_list.begin(), modulator_list.end(), [&on](const Modulator& obj) {return obj.name == on;});
+  if (searchModulator != modulator_list.end())
+    {searchModulator->print(); return true;}
   
   return false;
 }
@@ -987,6 +1006,12 @@ namespace GMAD {
 
   template<>
   FastList<BLMPlacement>& Parser::GetList<BLMPlacement>() {return blm_list;}
+
+  template<>
+  Modulator& Parser::GetGlobal() {return modulator;}
+
+  template<>
+  FastList<Modulator>& Parser::GetList<Modulator>() {return modulator_list;}
 
   template<>
   Aperture& Parser::GetGlobal() {return aperture;}

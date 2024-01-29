@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VUserDetectorConstruction.hh"
 
 #include <list>
+#include <map>
 #include <set>
 #include <string>
 #include <vector>
@@ -115,7 +116,8 @@ public:
 				   G4bool                setRegions        = false,
 				   G4bool                registerInfo      = false,
 				   G4bool                useCLPlacementTransform = false,
-				   G4bool                useIncrementalCopyNumbers = false);
+				   G4bool                useIncrementalCopyNumbers = false,
+				   G4bool                registerPlacementNamesForOutput = false);
 
   /// Create a transform based on the information in the placement. If S is supplied, it's
   /// updated with the final S coordinate calculated. If an extent is given - only in the
@@ -124,7 +126,8 @@ public:
   static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement,
 						const BDSBeamline*     beamLine,
 						G4double*              S               = nullptr,
-						BDSExtent*             placementExtent = nullptr);
+						BDSExtent*             placementExtent = nullptr,
+						const G4String&        objectTypeForErrorMsg = "placement");
 
   // Create a scorermesh placement transform. Turns the scorermesh into a
   /// placement and uses the above function.
@@ -234,10 +237,15 @@ private:
 
   /// Construct scoring meshes.
   void ConstructScoringMeshes();
-  
+
+  /// Print out the sensitivity of every single volume so far constructed in the world.
+  void VerboseSensitivity() const;
+  /// Recursive function to print out each sensitive detector name.
+  void PrintSensitiveDetectorsOfLV(const G4LogicalVolume* lv, G4int currentDepth) const;
 
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;
+  std::map<G4String, BDSBOptrMultiParticleChangeCrossSection*> biasSetObjects;
 #endif
 
 #ifdef BDSDEBUG
@@ -275,6 +283,12 @@ private:
   G4LogicalVolume* worldLogicalVolume;
   
   std::vector<BDSFieldQueryInfo*> fieldQueries;
+
+  // for developer checks only
+#ifdef BDSCHECKUSERLIMITS
+  void PrintUserLimitsSummary(const G4VPhysicalVolume* world) const;
+  void PrintUserLimitsPV(const G4VPhysicalVolume* aPV, G4double globalMinEK) const;
+#endif
 };
 
 #endif

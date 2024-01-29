@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -36,6 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArrayOperatorValueReflect.hh"
 #include "BDSArrayOperatorValueReflectDipoleXY.hh"
 #include "BDSArrayOperatorValueReflectDipoleY.hh"
+#include "BDSArrayOperatorValueReflectQuadrupoleXY.hh"
+#include "BDSArrayOperatorValueReflectSolenoidZ.hh"
 #include "BDSArrayOperatorValueV.hh"
 #include "BDSArrayReflectionType.hh"
 #include "BDSDebug.hh"
@@ -130,8 +132,8 @@ void BDSFieldLoader::DeleteArrays()
 }
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      info,
-						      const BDSMagnetStrength* scalingStrength,
-						      const G4String&          scalingKey)
+                                                      const BDSMagnetStrength* scalingStrength,
+                                                      const G4String&          scalingKey)
 {
   BFilePathOK(info);
   G4String                    filePath = info.MagneticFile();
@@ -190,22 +192,22 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
       // calculate field gradients and therefore associated strengths for a given rigidity
       BDSFieldMagGradient calculator;
       BDSMagnetStrength* calculatedStrengths = calculator.CalculateMultipoles(tempField,
-									      5,/*up to 5th order*/
-									      info.BRho());
+                                                                              5,/*up to 5th order*/
+                                                                              info.BRho());
       
       delete tempField; // clear up
-      
-      G4double ratio = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
+
+      G4double calculatedNumber = (*calculatedStrengths)[scalingKey];
+      G4double ratio = (*scalingStrength)[scalingKey] / calculatedNumber;
       if (!std::isnormal(ratio))
         {
           G4cout << __METHOD_NAME__ << "invalid ratio detected (" << ratio << ") setting to 1.0" << G4endl;
           ratio = 1;
         }
       G4double newScale = result->Scaling() * ratio;
-#ifdef BDSDEBUG
-      G4cout << "Ratio of supplied strength to calculated map strength: " << ratio << G4endl;
-      G4cout << "New scale factor (inc. units): " << newScale << G4endl;
-#endif
+      G4cout << "autoScale> Calculated " << scalingKey << " = " << calculatedNumber << G4endl;
+      G4cout << "autoScale> Ratio of supplied strength to calculated map strength: " << ratio << G4endl;
+      G4cout << "autoScale> New overall scaling factor: " << bScaling*ratio << G4endl;
       result->SetScaling(newScale);
       delete calculatedStrengths;
     }
@@ -499,7 +501,7 @@ BDSArray4DCoords* BDSFieldLoader::LoadBDSIM4D(const G4String& filePath)
 }
 
 BDSInterpolator1D* BDSFieldLoader::CreateInterpolator1D(BDSArray1DCoords*   array,
-							BDSInterpolatorType interpolatorType) const
+                                                        BDSInterpolatorType interpolatorType) const
 {
   BDSInterpolator1D* result = nullptr;
   switch (interpolatorType.underlying())
@@ -519,7 +521,7 @@ BDSInterpolator1D* BDSFieldLoader::CreateInterpolator1D(BDSArray1DCoords*   arra
 }
 
 BDSInterpolator2D* BDSFieldLoader::CreateInterpolator2D(BDSArray2DCoords*   array,
-							BDSInterpolatorType interpolatorType) const
+                                                        BDSInterpolatorType interpolatorType) const
 {
   BDSInterpolator2D* result = nullptr;
   switch (interpolatorType.underlying())
@@ -539,7 +541,7 @@ BDSInterpolator2D* BDSFieldLoader::CreateInterpolator2D(BDSArray2DCoords*   arra
 }
 
 BDSInterpolator3D* BDSFieldLoader::CreateInterpolator3D(BDSArray3DCoords*   array,
-							BDSInterpolatorType interpolatorType) const
+                                                        BDSInterpolatorType interpolatorType) const
 {
   BDSInterpolator3D* result = nullptr;
   switch (interpolatorType.underlying())
@@ -559,7 +561,7 @@ BDSInterpolator3D* BDSFieldLoader::CreateInterpolator3D(BDSArray3DCoords*   arra
 }
 
 BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   array,
-							BDSInterpolatorType interpolatorType) const
+                                                        BDSInterpolatorType interpolatorType) const
 {
   BDSInterpolator4D* result = nullptr;
   switch (interpolatorType.underlying())
@@ -575,13 +577,13 @@ BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   arra
     default:
       {throw BDSException(__METHOD_NAME__, "Invalid interpolator type for 4D field: " + interpolatorType.ToString()); break;}
     }
-  return result;	
+  return result;        
 }
 
 void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflectionTypes,
-				     const BDSArray4DCoords* existingArray,
-				     BDSArrayOperatorIndex*& indexOperator,
-				     BDSArrayOperatorValue*& valueOperator) const
+                                     const BDSArray4DCoords* existingArray,
+                                     BDSArrayOperatorIndex*& indexOperator,
+                                     BDSArrayOperatorValue*& valueOperator) const
 {
   G4String details;
   G4bool problem = BDS::ProblemWithArrayReflectionCombination(*reflectionTypes, &details);
@@ -593,7 +595,6 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
     }
   
   auto arrayInfo = BDSArrayInfo(existingArray);
-  ReportIfProblemWithReflection(arrayInfo);
   
   std::vector<BDSArrayOperatorIndex*> indexOperators;
   std::vector<BDSArrayOperatorValue*> valueOperators;
@@ -610,18 +611,18 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
   for (auto& reflectionType : *reflectionTypes)
     {
       switch (reflectionType.underlying())
-	{
-	case BDSArrayReflectionType::flipx:
-	  {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::x)] = true; break;}
-	case BDSArrayReflectionType::flipy:
-	  {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::y)] = true; break;}
-	case BDSArrayReflectionType::flipz:
-	  {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::z)] = true; break;}
-	case BDSArrayReflectionType::flipt:
-	  {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::t)] = true; break;}
-	default:
-	  {break;}
-	}
+        {
+        case BDSArrayReflectionType::flipx:
+          {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::x)] = true; break;}
+        case BDSArrayReflectionType::flipy:
+          {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::y)] = true; break;}
+        case BDSArrayReflectionType::flipz:
+          {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::z)] = true; break;}
+        case BDSArrayReflectionType::flipt:
+          {flipIndexOperators[existingArray->DimensionIndex(BDSDimensionType::t)] = true; break;}
+        default:
+          {break;}
+        }
     }
   G4bool anyFlipIndexOperators = std::any_of(std::begin(flipIndexOperators), std::end(flipIndexOperators), [](bool i){return i;});
   if (anyFlipIndexOperators)
@@ -635,18 +636,18 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
   for (auto& reflectionType : *reflectionTypes)
     {
       switch (reflectionType.underlying())
-	{
-	case BDSArrayReflectionType::reflectx:
-	  {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::x)] = true; break;}
-	case BDSArrayReflectionType::reflecty:
-	  {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::y)] = true; break;}
-	case BDSArrayReflectionType::reflectz:
-	  {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::z)] = true; break;}
-	case BDSArrayReflectionType::reflectt:
-	  {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::t)] = true; break;}
-	default:
-	  {break;}
-	}
+        {
+        case BDSArrayReflectionType::reflectx:
+          {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::x)] = true; break;}
+        case BDSArrayReflectionType::reflecty:
+          {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::y)] = true; break;}
+        case BDSArrayReflectionType::reflectz:
+          {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::z)] = true; break;}
+        case BDSArrayReflectionType::reflectt:
+          {reflectIndexOperators[existingArray->DimensionIndex(BDSDimensionType::t)] = true; break;}
+        default:
+          {break;}
+        }
     }
   G4bool anyReflectIndexOperators = std::any_of(std::begin(reflectIndexOperators), std::end(reflectIndexOperators), [](bool i){return i;});
   if (anyReflectIndexOperators)
@@ -659,35 +660,40 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
   for (auto& reflectionType : *reflectionTypes)
     {
       switch (reflectionType.underlying())
-	{
-	case BDSArrayReflectionType::reflectxydipole:
-	  {
-	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true, true, false, false}, arrayInfo));
-	    valueOperators.emplace_back(new BDSArrayOperatorValueReflectDipoleXY());
-	    break;
-	  }
-	case BDSArrayReflectionType::reflectxzdipole:
-	  {
-	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({false, true, false, false}, arrayInfo));
-	    valueOperators.emplace_back(new BDSArrayOperatorValueReflectDipoleY());
-	    break;
-	  }
-  case BDSArrayReflectionType::reflectyzdipole:
-    {
-      indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true, false, false, false}, arrayInfo));
-      valueOperators.emplace_back(new BDSArrayOperatorValueReflect({true, false,  false, false}, arrayInfo));
-      break;
-    }
-	case BDSArrayReflectionType::reflectxyquadrupole:
-	  {// TBC
-      throw BDSException(__METHOD_NAME__, "Not yet implemented");
-	    indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true,  false, true,  false}, arrayInfo));
-	    valueOperators.emplace_back(new BDSArrayOperatorValueReflect({false, true,  false, false}, arrayInfo));
-	    break;
-	  }
-	default:
-	  {break;}
-	}
+        {
+        case BDSArrayReflectionType::reflectxydipole:
+          {
+            indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true, true, false, false}, arrayInfo));
+            valueOperators.emplace_back(new BDSArrayOperatorValueReflectDipoleXY());
+            break;
+          }
+        case BDSArrayReflectionType::reflectxzdipole:
+          {
+            indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({false, true, false, false}, arrayInfo));
+            valueOperators.emplace_back(new BDSArrayOperatorValueReflectDipoleY());
+            break;
+          }
+        case BDSArrayReflectionType::reflectyzdipole:
+          {
+            indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true, false, false, false}, arrayInfo));
+            valueOperators.emplace_back(new BDSArrayOperatorValueReflect({true, false,  false, false}, arrayInfo));
+            break;
+          }
+        case BDSArrayReflectionType::reflectzsolenoid:
+          {
+            indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({false, false, true,  false}, arrayInfo));
+            valueOperators.emplace_back(new BDSArrayOperatorValueReflectSolenoidZ());
+            break;
+          }
+        case BDSArrayReflectionType::reflectxyquadrupole:
+          {
+            indexOperators.emplace_back(new BDSArrayOperatorIndexReflect({true, true, false, false}, arrayInfo));
+            valueOperators.emplace_back(new BDSArrayOperatorValueReflectQuadrupoleXY());
+            break;
+          }
+        default:
+          {break;}
+        }
     }
   
   if (indexOperators.size() > 1)
@@ -707,23 +713,26 @@ void BDSFieldLoader::CreateOperators(const BDSArrayReflectionTypeSet* reflection
       valueOperator = valueOperators[0];
     }
   
+  ReportIfProblemWithReflection(arrayInfo, indexOperator->OperatesOnXYZT());
+  
   G4cout << "Array ( index | value ) operator: (" << indexOperator->Name() << " | " << valueOperator->Name() << ")" << G4endl;
 }
 
 void BDSFieldLoader::ReportIfProblemWithReflection(const BDSArrayInfo& info,
+                                                   const std::array<G4bool, 4>& operatesOnXYZT,
                                                    G4double tolerance) const
 {
   G4String suffix[4] = {"st", "nd", "rd", "th"};
   for (G4int i = 0; i < 4; i++)
     {
       G4double integerPart = 0;
-      if (std::modf(std::abs(info.zeroPoint[i]), &integerPart) > tolerance)
-	{
-	  G4String msg = "Array reflection will not work as intended as the axis zero point is not an integer number of \n";
-	  msg += "array steps from 0 in the " + std::to_string(i + 1) + suffix[i];
-	  msg += " dimension of the array (tolerance 5% of array step size)";
-	  BDS::Warning(msg);
-	}
+      if ( (std::modf(std::abs(info.zeroPoint[i]), &integerPart) > tolerance) && operatesOnXYZT[i])
+        {
+          G4String msg = "Array reflection will not work as intended as the axis zero point is not an integer number of \n";
+          msg += "array steps from 0 in the " + std::to_string(i + 1) + suffix[i];
+          msg += " dimension of the array (tolerance 5% of array step size)";
+          BDS::Warning(msg);
+        }
     }
 }
 
@@ -734,9 +743,9 @@ G4bool BDSFieldLoader::NeedToProvideTransform(const BDSArrayReflectionTypeSet* r
   else
     {
       if (reflectionTypes->empty())
-	{return false;}
+        {return false;}
       else
-	{return true;}
+        {return true;}
     }
 }
 
@@ -793,10 +802,10 @@ BDSArray4DCoords* BDSFieldLoader::CreateArrayReflected(BDSArray4DCoords* existin
 }
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM1DB(const G4String&      filePath,
-						      BDSInterpolatorType  interpolatorType,
-						      const G4Transform3D& transform,
-						      G4double             bScaling,
-						      const BDSArrayReflectionTypeSet* reflection)
+                                                      BDSInterpolatorType  interpolatorType,
+                                                      const G4Transform3D& transform,
+                                                      G4double             bScaling,
+                                                      const BDSArrayReflectionTypeSet* reflection)
 
 {
   G4double   bScalingUnits = bScaling * CLHEP::tesla;
@@ -808,9 +817,9 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM1DB(const G4String&      fileP
 }
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM2DB(const G4String&      filePath,
-						      BDSInterpolatorType  interpolatorType,
-						      const G4Transform3D& transform,
-						      G4double             bScaling,
+                                                      BDSInterpolatorType  interpolatorType,
+                                                      const G4Transform3D& transform,
+                                                      G4double             bScaling,
                                                       const BDSArrayReflectionTypeSet* reflection)
 {
   G4double   bScalingUnits = bScaling * CLHEP::tesla;
@@ -822,9 +831,9 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM2DB(const G4String&      fileP
 }
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM3DB(const G4String&      filePath,
-						      BDSInterpolatorType  interpolatorType,
-						      const G4Transform3D& transform,
-						      G4double             bScaling,
+                                                      BDSInterpolatorType  interpolatorType,
+                                                      const G4Transform3D& transform,
+                                                      G4double             bScaling,
                                                       const BDSArrayReflectionTypeSet* reflection)
 {
   G4double   bScalingUnits = bScaling * CLHEP::tesla;
@@ -836,9 +845,9 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM3DB(const G4String&      fileP
 }
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM4DB(const G4String&      filePath,
-						      BDSInterpolatorType  interpolatorType,
-						      const G4Transform3D& transform,
-						      G4double             bScaling,
+                                                      BDSInterpolatorType  interpolatorType,
+                                                      const G4Transform3D& transform,
+                                                      G4double             bScaling,
                                                       const BDSArrayReflectionTypeSet* reflection)
 {
   G4double   bScalingUnits = bScaling * CLHEP::tesla;
@@ -850,9 +859,9 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadBDSIM4DB(const G4String&      fileP
 }
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishB(const G4String&      filePath,
-							       BDSInterpolatorType  interpolatorType,
-							       const G4Transform3D& transform,
-							       G4double             bScaling,
+                                                               BDSInterpolatorType  interpolatorType,
+                                                               const G4Transform3D& transform,
+                                                               G4double             bScaling,
                                                                const BDSArrayReflectionTypeSet* reflection)
 {
   G4double   bScalingUnits = bScaling * CLHEP::gauss;
@@ -864,9 +873,9 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishB(const G4String&  
 }
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBQuad(const G4String&      filePath,
-								   BDSInterpolatorType  interpolatorType,
-								   const G4Transform3D& transform,
-								   G4double             bScaling,
+                                                                   BDSInterpolatorType  interpolatorType,
+                                                                   const G4Transform3D& transform,
+                                                                   G4double             bScaling,
                                                                    const BDSArrayReflectionTypeSet* /*reflection*/)
 {
   G4double  bScalingUnits = bScaling * CLHEP::gauss;
@@ -881,9 +890,9 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBQuad(const G4Strin
 }
 
 BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBDipole(const G4String&      filePath,
-								     BDSInterpolatorType  interpolatorType,
-								     const G4Transform3D& transform,
-								     G4double             bScaling,
+                                                                     BDSInterpolatorType  interpolatorType,
+                                                                     const G4Transform3D& transform,
+                                                                     G4double             bScaling,
                                                                      const BDSArrayReflectionTypeSet* /*reflection*/)
 {
   G4double  bScalingUnits = bScaling * CLHEP::gauss;
@@ -896,9 +905,9 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBDipole(const G4Str
 }
 
 BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM1DE(const G4String&      filePath,
-						    BDSInterpolatorType  interpolatorType,
-						    const G4Transform3D& transform,
-						    G4double             eScaling,
+                                                    BDSInterpolatorType  interpolatorType,
+                                                    const G4Transform3D& transform,
+                                                    G4double             eScaling,
                                                     const BDSArrayReflectionTypeSet* reflection)
 {
   G4double   eScalingUnits = eScaling * CLHEP::volt/CLHEP::m;
@@ -910,9 +919,9 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM1DE(const G4String&      filePat
 }
 
 BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM2DE(const G4String&      filePath,
-						    BDSInterpolatorType  interpolatorType,
-						    const G4Transform3D& transform,
-						    G4double             eScaling,
+                                                    BDSInterpolatorType  interpolatorType,
+                                                    const G4Transform3D& transform,
+                                                    G4double             eScaling,
                                                     const BDSArrayReflectionTypeSet* reflection)
 {
   G4double   eScalingUnits = eScaling * CLHEP::volt/CLHEP::m;
@@ -924,9 +933,9 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM2DE(const G4String&      filePat
 }
 
 BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM3DE(const G4String&      filePath,
-						    BDSInterpolatorType  interpolatorType,
-						    const G4Transform3D& transform,
-						    G4double             eScaling,
+                                                    BDSInterpolatorType  interpolatorType,
+                                                    const G4Transform3D& transform,
+                                                    G4double             eScaling,
                                                     const BDSArrayReflectionTypeSet* reflection)
 {
   G4double   eScalingUnits = eScaling * CLHEP::volt/CLHEP::m;
@@ -938,9 +947,9 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM3DE(const G4String&      filePat
 }
 
 BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM4DE(const G4String&      filePath,
-						    BDSInterpolatorType  interpolatorType,
-						    const G4Transform3D& transform,
-						    G4double             eScaling,
+                                                    BDSInterpolatorType  interpolatorType,
+                                                    const G4Transform3D& transform,
+                                                    G4double             eScaling,
                                                     const BDSArrayReflectionTypeSet* reflection)
 {
   G4double   eScalingUnits = eScaling * CLHEP::volt/CLHEP::m;
@@ -952,12 +961,12 @@ BDSFieldEInterpolated* BDSFieldLoader::LoadBDSIM4DE(const G4String&      filePat
 }
 
 BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM1DEM(const G4String&      eFilePath,
-						      const G4String&      bFilePath,
-						      BDSInterpolatorType  eInterpolatorType,
-						      BDSInterpolatorType  bInterpolatorType,
-						      const G4Transform3D& transform,
-						      G4double             eScaling,
-						      G4double             bScaling,
+                                                      const G4String&      bFilePath,
+                                                      BDSInterpolatorType  eInterpolatorType,
+                                                      BDSInterpolatorType  bInterpolatorType,
+                                                      const G4Transform3D& transform,
+                                                      G4double             eScaling,
+                                                      G4double             bScaling,
                                                       const BDSArrayReflectionTypeSet* eReflection,
                                                       const BDSArrayReflectionTypeSet* bReflection)
 {
@@ -970,17 +979,17 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM1DEM(const G4String&      eFile
   BDSInterpolator1D*   eInt = CreateInterpolator1D(eArrayR, eInterpolatorType);
   BDSInterpolator1D*   bInt = CreateInterpolator1D(bArrayR, bInterpolatorType);
   BDSFieldEMInterpolated* result = new BDSFieldEMInterpolated1D(eInt, bInt, transform,
-								eScalingUnits, bScalingUnits);
+                                                                eScalingUnits, bScalingUnits);
   return result;
 }
 
 BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM2DEM(const G4String&      eFilePath,
-						      const G4String&      bFilePath,
-						      BDSInterpolatorType  eInterpolatorType,
-						      BDSInterpolatorType  bInterpolatorType,
-						      const G4Transform3D& transform,
-						      G4double             eScaling,
-						      G4double             bScaling,
+                                                      const G4String&      bFilePath,
+                                                      BDSInterpolatorType  eInterpolatorType,
+                                                      BDSInterpolatorType  bInterpolatorType,
+                                                      const G4Transform3D& transform,
+                                                      G4double             eScaling,
+                                                      G4double             bScaling,
                                                       const BDSArrayReflectionTypeSet* eReflection,
                                                       const BDSArrayReflectionTypeSet* bReflection)
 {
@@ -993,17 +1002,17 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM2DEM(const G4String&      eFile
   BDSInterpolator2D*   eInt = CreateInterpolator2D(eArrayR, eInterpolatorType);
   BDSInterpolator2D*   bInt = CreateInterpolator2D(bArrayR, bInterpolatorType);
   BDSFieldEMInterpolated* result = new BDSFieldEMInterpolated2D(eInt, bInt, transform,
-								eScalingUnits, bScalingUnits);
+                                                                eScalingUnits, bScalingUnits);
   return result;
 }
 
 BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM3DEM(const G4String&      eFilePath,
-						      const G4String&      bFilePath,
-						      BDSInterpolatorType  eInterpolatorType,
-						      BDSInterpolatorType  bInterpolatorType,
-						      const G4Transform3D& transform,
-						      G4double             eScaling,
-						      G4double             bScaling,
+                                                      const G4String&      bFilePath,
+                                                      BDSInterpolatorType  eInterpolatorType,
+                                                      BDSInterpolatorType  bInterpolatorType,
+                                                      const G4Transform3D& transform,
+                                                      G4double             eScaling,
+                                                      G4double             bScaling,
                                                       const BDSArrayReflectionTypeSet* eReflection,
                                                       const BDSArrayReflectionTypeSet* bReflection)
 {
@@ -1016,17 +1025,17 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM3DEM(const G4String&      eFile
   BDSInterpolator3D*   eInt = CreateInterpolator3D(eArrayR, eInterpolatorType);
   BDSInterpolator3D*   bInt = CreateInterpolator3D(bArrayR, bInterpolatorType);
   BDSFieldEMInterpolated* result = new BDSFieldEMInterpolated3D(eInt, bInt, transform,
-								eScalingUnits, bScalingUnits);
+                                                                eScalingUnits, bScalingUnits);
   return result;
 }
 
 BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM4DEM(const G4String&      eFilePath,
-						      const G4String&      bFilePath,
-						      BDSInterpolatorType  eInterpolatorType,
-						      BDSInterpolatorType  bInterpolatorType,
-						      const G4Transform3D& transform,
-						      G4double             eScaling,
-						      G4double             bScaling,
+                                                      const G4String&      bFilePath,
+                                                      BDSInterpolatorType  eInterpolatorType,
+                                                      BDSInterpolatorType  bInterpolatorType,
+                                                      const G4Transform3D& transform,
+                                                      G4double             eScaling,
+                                                      G4double             bScaling,
                                                       const BDSArrayReflectionTypeSet* eReflection,
                                                       const BDSArrayReflectionTypeSet* bReflection)
 {
@@ -1039,6 +1048,6 @@ BDSFieldEMInterpolated* BDSFieldLoader::LoadBDSIM4DEM(const G4String&      eFile
   BDSInterpolator4D*   eInt = CreateInterpolator4D(eArrayR, eInterpolatorType);
   BDSInterpolator4D*   bInt = CreateInterpolator4D(bArrayR, bInterpolatorType);
   BDSFieldEMInterpolated* result = new BDSFieldEMInterpolated4D(eInt, bInt, transform,
-								eScalingUnits, bScalingUnits);
+                                                                eScalingUnits, bScalingUnits);
   return result;
 }

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
       glob_t glob_result;
       glob(inputFiles[0].c_str(),GLOB_TILDE,nullptr,&glob_result);
       for (unsigned int i=0; i<glob_result.gl_pathc; ++i)
-	{fileNamesTemp.emplace_back(glob_result.gl_pathv[i]);}
+        {fileNamesTemp.emplace_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
       inputFiles = fileNamesTemp;
     }
@@ -87,48 +87,59 @@ int main(int argc, char* argv[])
   else
     {std::cout << "Finished merge of Event Tree" << std::endl;}
   
-  // loop over input files loading headers to accumulate number of original events
+  // loop over input files loading headers to accumulate number of original events and
+  // the number of input events from an optional distribution file
   unsigned long long int nOriginalEvents = 0;
+  unsigned long long int nEventsRequested = 0;
+  unsigned long long int nEventsInFile = 0;
+  unsigned long long int nEventsInFileSkipped = 0;
+  unsigned int distrFileLoopNTimes = 0;
   bool skimmedFile = false;
   unsigned long int i = 0;
   std::cout << "Counting number of original events from headers of files" << std::endl;
+  std::vector<unsigned long long int> nEventsPerTree;
   for (const auto& filename : inputFiles)
     {
       TFile* f = new TFile(filename.c_str(), "READ");
       if (!RBDS::IsBDSIMOutputFile(f))
-	{
-	  std::cout << "File \"" << filename << "\" skipped as not a valid BDSIM file" << std::endl;
-	  if (!f->IsZombie())
-	    {f->Close();}
-	  delete f;
-	  continue;
-	}
+        {
+          std::cout << "File \"" << filename << "\" skipped as not a valid BDSIM file" << std::endl;
+          if (!f->IsZombie())
+            {f->Close();}
+          delete f;
+          continue;
+        }
       std::cout << "Accumulating> " << filename << std::endl;
       TTree* headerTree = dynamic_cast<TTree*>(f->Get("Header")); // should be safe given check we've just done
       if (!headerTree)
-	{
-	  std::cerr << "Problem getting header from file " << filename << std::endl;
-	  f->Close();
-	  delete f;
-	  continue;
-	}
+        {
+          std::cerr << "Problem getting header from file " << filename << std::endl;
+          f->Close();
+          delete f;
+          continue;
+        }
+
       Header* headerLocal = new Header();
       headerLocal->SetBranchAddress(headerTree);
-      headerTree->GetEntry(0);
-      skimmedFile = skimmedFile || headerLocal->header->skimmedFile;
-      if (headerLocal->header->skimmedFile)
-	{nOriginalEvents += headerLocal->header->nOriginalEvents;}
-      else
-	{// unskimmed file which won't record the number of events in the header, so we inspect the Event Tree
-	  TTree* eventTree = dynamic_cast<TTree*>(f->Get("Event"));
-	  if (eventTree)
-	    {
-	      Long64_t nEntries = eventTree->GetEntries();
-	      nOriginalEvents += (unsigned long long int)nEntries;
-	    }
-	  else
-	    {std::cerr << "Problem getting Event tree in file " << filename << std::endl;}
-	}
+      Long64_t nEntriesHeader = headerTree->GetEntries();
+      headerTree->GetEntry(nEntriesHeader - 1); // get the last entry (2nd is more up to date if it exists)
+      // We also want to explicitly copy the skim variables that might only be known in the 2nd instance.
+      BDSOutputROOTEventHeader* h = headerLocal->header;
+      if (i == 0) // take only from the first file and assume the same for all
+        {distrFileLoopNTimes = h->distrFileLoopNTimes;}
+
+      nOriginalEvents += h->nOriginalEvents;
+      nEventsRequested += h->nEventsRequested;
+      nEventsInFile += h->nEventsInFile;
+      nEventsInFileSkipped += h->nEventsInFileSkipped;
+      skimmedFile = skimmedFile || h->skimmedFile;
+
+      unsigned long long int nEventsThisFile = 0;
+      TTree* eventTree = dynamic_cast<TTree*>(f->Get("Event"));
+      if (eventTree)
+        {nEventsThisFile = (unsigned long long int)eventTree->GetEntries();}
+      nEventsPerTree.push_back(nEventsThisFile);
+
       delete headerLocal;
       f->Close();
       delete f;
@@ -147,7 +158,7 @@ int main(int argc, char* argv[])
   while (!validFile)
     {// assume we have one valid file from check above
       if (i > (unsigned long int)inputFiles.size())
-	{return 1;}
+        {return 1;}
       input = new TFile(inputFiles[i].c_str(), "READ");
       validFile = RBDS::IsBDSIMOutputFile(input);
       i++;
@@ -162,10 +173,13 @@ int main(int argc, char* argv[])
   headerOut->SetFileType("BDSIM");
   headerOut->skimmedFile = skimmedFile;
   headerOut->nOriginalEvents = nOriginalEvents;
+  headerOut->nEventsRequested = nEventsRequested;
+  headerOut->nEventsInFile = nEventsInFile;
+  headerOut->nEventsInFileSkipped = nEventsInFileSkipped;
+  headerOut->distrFileLoopNTimes = distrFileLoopNTimes;
   TTree* headerTree = new TTree("Header", "BDSIM Header");
   headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
   headerTree->Fill();
-  output->Write(nullptr,TObject::kOverwrite);
 
   // go over all other trees and copy them (in the original order) from the first file to the output
   std::cout << "Merging rest of file contents" << std::endl;
@@ -174,15 +188,34 @@ int main(int argc, char* argv[])
     {
       TTree* original = dynamic_cast<TTree*>(input->Get(tn.c_str()));
       if (!original)
-	{
-	  std::cerr << "Failed to load Tree named " << tn << std::endl;
-	  delete output;
-	  delete input;
-	  return 1;
-	}
-      auto clone = original->CloneTree();
-      clone->AutoSave();
+        {
+          std::cerr << "Failed to load Tree named " << tn << std::endl;
+          delete output;
+          delete input;
+          return 1;
+        }
+      original->CloneTree();
     }
+
+  TTree* eventCombineInfoTree = new TTree("EventCombineInfo", "EventCombineInfo");
+  UInt_t originalID = 0;
+  eventCombineInfoTree->Branch("combinedFileIndex", &originalID);
+  for (int fileIndex = 0; fileIndex < (int)nEventsPerTree.size(); fileIndex++)
+    {
+      unsigned long long int v = nEventsPerTree[fileIndex];
+      for (unsigned long long int j = 0; j < v; j++)
+        {
+          originalID = (UInt_t)fileIndex;
+          eventCombineInfoTree->Fill();
+        }
+    }
+
+  TTree* eventTree = dynamic_cast<TTree*>(output->Get("Event"));
+  if (eventTree)
+    {eventTree->AddFriend(eventCombineInfoTree);}
+
+  // write only once!!
+  output->Write(nullptr, TObject::kOverwrite);
   
   output->Close();
   delete output;

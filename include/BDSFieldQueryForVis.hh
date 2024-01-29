@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -74,6 +74,7 @@ private:
   std::vector<std::array<G4double, 9>> values;
   G4double maxFieldB;
   G4double maxFieldE;
+  G4bool drawZeroValuePoints;
 };
 
 #endif

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -877,7 +877,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateLHCDipole(const G4String&    nam
     case YokeColour::kicker:
       {yokeColour = recipe->colour; break;}
     default:
-      {yokeColour = BDSColours::Instance()->GetColour("LHCyoke");}
+      {yokeColour = BDSColours::Instance()->GetColour("LHCyoke"); break;}
     }
   G4VisAttributes* yokeVis = new G4VisAttributes(*yokeColour);
   yokeVis->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);

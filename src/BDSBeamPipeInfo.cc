@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -28,16 +28,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Material.hh"
 
 
-BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
-				 G4double        aper1In,
-				 G4double        aper2In,
-				 G4double        aper3In,
-				 G4double        aper4In,
-				 G4Material*     vacuumMaterialIn,
-				 G4double        beamPipeThicknessIn,
-				 G4Material*     beamPipeMaterialIn,
-				 G4ThreeVector   inputFaceNormalIn,
-				 G4ThreeVector   outputFaceNormalIn):
+BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType      beamPipeTypeIn,
+                                 G4double             aper1In,
+                                 G4double             aper2In,
+                                 G4double             aper3In,
+                                 G4double             aper4In,
+                                 G4Material*          vacuumMaterialIn,
+                                 G4double             beamPipeThicknessIn,
+                                 G4Material*          beamPipeMaterialIn,
+                                 const G4ThreeVector& inputFaceNormalIn,
+                                 const G4ThreeVector& outputFaceNormalIn,
+                                 const G4String&      pointsFileNameIn,
+                                 const G4String&      pointsUnitIn):
   beamPipeType(beamPipeTypeIn),
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
   aperOffsetX(0), aperOffsetY(0),
@@ -45,56 +47,68 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
   beamPipeThickness(beamPipeThicknessIn),
   beamPipeMaterial(beamPipeMaterialIn),
   inputFaceNormal(inputFaceNormalIn),
-  outputFaceNormal(outputFaceNormalIn)
+  outputFaceNormal(outputFaceNormalIn),
+  pointsFileName(pointsFileNameIn),
+  pointsUnit(pointsUnitIn)
 {
   CheckApertureInfo();
 }
 
-BDSBeamPipeInfo::BDSBeamPipeInfo(G4String      beamPipeTypeIn,
-				 G4double      aper1In,
-				 G4double      aper2In,
-				 G4double      aper3In,
-				 G4double      aper4In,
-				 G4String      vacuumMaterialIn,
-				 G4double      beamPipeThicknessIn,
-				 G4String      beamPipeMaterialIn,
-				 G4ThreeVector inputFaceNormalIn,
-				 G4ThreeVector outputFaceNormalIn):
+BDSBeamPipeInfo::BDSBeamPipeInfo(const G4String&      beamPipeTypeIn,
+                                 G4double             aper1In,
+                                 G4double             aper2In,
+                                 G4double             aper3In,
+                                 G4double             aper4In,
+                                 const G4String&      vacuumMaterialIn,
+                                 G4double             beamPipeThicknessIn,
+                                 const G4String&      beamPipeMaterialIn,
+                                 const G4ThreeVector& inputFaceNormalIn,
+                                 const G4ThreeVector& outputFaceNormalIn):
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
   aperOffsetX(0), aperOffsetY(0),
   beamPipeThickness(beamPipeThicknessIn),
   inputFaceNormal(inputFaceNormalIn),
-  outputFaceNormal(outputFaceNormalIn)
+  outputFaceNormal(outputFaceNormalIn),
+  pointsFileName(""),
+  pointsUnit("mm")
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "vacuum material: " << vacuumMaterialIn << G4endl;
-#endif
   beamPipeType     = BDS::DetermineBeamPipeType(beamPipeTypeIn);
   vacuumMaterial   = BDSMaterials::Instance()->GetMaterial(vacuumMaterialIn);
   beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(beamPipeMaterialIn);
+  
+  if (beamPipeType == BDSBeamPipeType::pointsfile)
+    {CheckAndSetPointsInfo(beamPipeTypeIn);}
   CheckApertureInfo();
 }
   
-BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeInfo* defaultInfo,
-				 G4String         beamPipeTypeIn,
-				 G4double         aper1In,
-				 G4double         aper2In,
-				 G4double         aper3In,
-				 G4double         aper4In,
-				 G4String         vacuumMaterialIn,
-				 G4double         beamPipeThicknessIn,
-				 G4String         beamPipeMaterialIn,
-				 G4ThreeVector    inputFaceNormalIn,
-				 G4ThreeVector    outputFaceNormalIn):
+BDSBeamPipeInfo::BDSBeamPipeInfo(const BDSBeamPipeInfo* defaultInfo,
+                                 const G4String&      beamPipeTypeIn,
+                                 G4double             aper1In,
+                                 G4double             aper2In,
+                                 G4double             aper3In,
+                                 G4double             aper4In,
+                                 const G4String&      vacuumMaterialIn,
+                                 G4double             beamPipeThicknessIn,
+                                 const G4String&      beamPipeMaterialIn,
+                                 const G4ThreeVector& inputFaceNormalIn,
+                                 const G4ThreeVector& outputFaceNormalIn):
   aperOffsetX(0), aperOffsetY(0),
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn)
 {
-  if (beamPipeTypeIn == "")
-    {beamPipeType = defaultInfo->beamPipeType;}
+  if (beamPipeTypeIn.empty())
+    {
+      beamPipeType   = defaultInfo->beamPipeType;
+      pointsFileName = defaultInfo->pointsFileName; // copy even if empty
+      pointsUnit     = defaultInfo->pointsUnit;
+    }
   else 
-    {beamPipeType = BDS::DetermineBeamPipeType(beamPipeTypeIn);}
-
+    {
+      beamPipeType = BDS::DetermineBeamPipeType(beamPipeTypeIn);
+      if (beamPipeType == BDSBeamPipeType::pointsfile)
+        {CheckAndSetPointsInfo(beamPipeTypeIn);}
+    }
+  
   if (!BDS::IsFinite(aper1In))
     {aper1 = defaultInfo->aper1;}
   else
@@ -116,16 +130,33 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeInfo* defaultInfo,
   else
     {beamPipeThickness = beamPipeThicknessIn;}
   
-  if (vacuumMaterialIn == "")
+  if (vacuumMaterialIn.empty())
     {vacuumMaterial = defaultInfo->vacuumMaterial;}
   else
     {vacuumMaterial = BDSMaterials::Instance()->GetMaterial(vacuumMaterialIn);}
-  if (beamPipeMaterialIn == "")
+  if (beamPipeMaterialIn.empty())
     {beamPipeMaterial = defaultInfo->beamPipeMaterial;}
   else
     {beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(beamPipeMaterialIn);}
   
   CheckApertureInfo();
+}
+
+void BDSBeamPipeInfo::CheckAndSetPointsInfo(const G4String& beamPipeTypeIn)
+{
+  auto typeAndFileName = BDS::SplitOnColon(beamPipeTypeIn); // find first colon
+  G4String fname = typeAndFileName.second;
+  if (BDS::StrContains(fname, ":"))
+    {// optional second colon with units after it
+      auto fileNameAndUnit = BDS::SplitOnColon(fname);
+      pointsFileName = fileNameAndUnit.first;
+      pointsUnit = fileNameAndUnit.second;
+    }
+  else
+    {
+      pointsFileName = fname;
+      pointsUnit = "mm";
+    }
 }
   
 void BDSBeamPipeInfo::CheckApertureInfo()
@@ -150,8 +181,10 @@ void BDSBeamPipeInfo::CheckApertureInfo()
       {InfoOKForOctagonal();   break;}
     case BDSBeamPipeType::clicpcl:
       {InfoOKForClicPCL();     break;}
+    case BDSBeamPipeType::rhombus:
+      {InfoOKForRhombus();     break;}
     default:
-      InfoOKForCircular();
+      {InfoOKForCircular();    break;}
     }
 }
 
@@ -171,6 +204,7 @@ BDSExtent BDSBeamPipeInfo::ExtentInner() const
       case BDSBeamPipeType::elliptical:
       case BDSBeamPipeType::rectangular:
       case BDSBeamPipeType::octagonal:
+      case BDSBeamPipeType::rhombus:
         {
           extX = aper1;
           extY = aper2;
@@ -192,14 +226,14 @@ BDSExtent BDSBeamPipeInfo::ExtentInner() const
         }
     case BDSBeamPipeType::clicpcl:
       {// this one is asymmetric so done separately
-	G4double extentX     = aper1 + beamPipeThickness;
-	G4double extentYLow  = -(std::abs(aper3) + beamPipeThickness);
-	G4double extentYHigh = aper2 + aper4 + beamPipeThickness;
-	BDSExtent ext = BDSExtent(-extentX,     extentX,
-				  extentYLow,   extentYHigh,
-				  0,0);
-	return ext;
-	break;
+        G4double extentX     = aper1 + beamPipeThickness;
+        G4double extentYLow  = -(std::abs(aper3) + beamPipeThickness);
+        G4double extentYHigh = aper2 + aper4 + beamPipeThickness;
+        BDSExtent ext = BDSExtent(-extentX,     extentX,
+                                  extentYLow,   extentYHigh,
+                                  0,0);
+        return ext;
+        break;
       }
     default:break;
     }
@@ -230,40 +264,33 @@ G4double BDSBeamPipeInfo::IndicativeRadiusInner() const
 }
 
 void BDSBeamPipeInfo::CheckRequiredParametersSet(G4bool setAper1,
-						 G4bool setAper2,
-						 G4bool setAper3,
-						 G4bool setAper4)
+                                                 G4bool setAper2,
+                                                 G4bool setAper3,
+                                                 G4bool setAper4)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << "aper1: " << aper1 << " check it? " << setAper1 << G4endl;
-  G4cout << "aper2: " << aper2 << " check it? " << setAper2 << G4endl;
-  G4cout << "aper3: " << aper3 << " check it? " << setAper3 << G4endl;
-  G4cout << "aper4: " << aper4 << " check it? " << setAper4 << G4endl;
-#endif
   G4bool shouldExit = false;
   if (setAper1)
     {
       if (!BDS::IsFinite(aper1))
-	{G4cerr << "\"aper1\" not set, but required to be" << G4endl; shouldExit = true;}
+        {G4cerr << "\"aper1\" not set, but required to be" << G4endl; shouldExit = true;}
     }
 
   if (setAper2)
     {
       if (!BDS::IsFinite(aper2))
-	{G4cerr << "\"aper2\" not set, but required to be" << G4endl; shouldExit = true;}
+        {G4cerr << "\"aper2\" not set, but required to be" << G4endl; shouldExit = true;}
     }
 
   if (setAper3)
     {
       if (!BDS::IsFinite(aper3))
-	{G4cerr << "\"aper3\" not set, but required to be" << G4endl; shouldExit = true;}
+        {G4cerr << "\"aper3\" not set, but required to be" << G4endl; shouldExit = true;}
     }
 
   if (setAper4)
     {
       if (!BDS::IsFinite(aper4))
-	{G4cerr << "\"aper4\" not set, but required to be" << G4endl; shouldExit = true;}
+        {G4cerr << "\"aper4\" not set, but required to be" << G4endl; shouldExit = true;}
     }
 
   if (shouldExit)
@@ -326,4 +353,20 @@ void BDSBeamPipeInfo::InfoOKForOctagonal()
 void BDSBeamPipeInfo::InfoOKForClicPCL()
 {
   CheckRequiredParametersSet(true, true, true, false);
+}
+
+void BDSBeamPipeInfo::InfoOKForRhombus()
+{
+  CheckRequiredParametersSet(true, true, false, false);
+
+  if (aper1 <= 0)
+    {throw BDSException(__METHOD_NAME__, "aper1 is <= 0 - invalid for a rhombus aperture");}
+  if (aper2 <= 0)
+    {throw BDSException(__METHOD_NAME__, "aper2 is <= 0 - invalid for a rhombus aperture");}
+  if (aper3 < 0)
+    {throw BDSException(__METHOD_NAME__, "aper3 is < 0 - invalid for a rhombus aperture");}
+  if (aper3 > 1.1*aper1)
+    {throw BDSException(__METHOD_NAME__, "aper3 is > 1.1 x aper1 - invalid for a rhombus aperture");}
+  if (aper3 > 1.1*aper2)
+    {throw BDSException(__METHOD_NAME__, "aper3 is > 1.1 x aper2 - invalid for a rhombus aperture");}
 }

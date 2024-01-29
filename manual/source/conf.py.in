@@ -57,7 +57,7 @@ copyright = u'Beam Delivery Simulation (BDSIM) Copyright (c) Royal Holloway, Uni
 # built documents.
 #
 # The short X.Y version.
-version = '@BDSIM_MAJOR_VERSION@'
+version = '@BDSIM_VERSION@'
 # The full version, including alpha/beta/rc tags.
 release = '@BDSIM_VERSION@'
 
@@ -109,11 +109,17 @@ pygments_style = 'default'
 #html_theme = 'default'
 #html_theme = "sphinxdoc"
 html_theme = "sphinx_rtd_theme"
+#html_theme = "pydata_sphinx_theme"
+#html_theme = "sphinx_book_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #html_theme_options = {}
+html_theme_options = {
+    'analytics_id': 'G-JYMKZHVZJ2',  #  Provided by Google in your dashboard
+#    'analytics_anonymize_ip': False
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
@@ -123,11 +129,11 @@ html_theme = "sphinx_rtd_theme"
 #html_title = None
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+html_short_title = "BDSIM Manual"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+html_logo = 'source/figures/bdsim-logo-small.jpg'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -239,7 +245,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'bdsim', u'BDSIM Documentation',
-     [u'Beam Delivery Simulation (BDSIM) Copyright (c) Royal Holloway, University of London, 2001 - 2022'], 1)
+     [u'Beam Delivery Simulation (BDSIM) Copyright (c) Royal Holloway, University of London, 2001 - @CURRENT_YEAR@'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -340,4 +346,4 @@ epub_exclude_files = ['search.html']
 #epub_use_index = True
 
 # google analytics
-googleanalytics_id = 'UA-120612677-2'
+#googleanalytics_id = 'UA-120612677-2'

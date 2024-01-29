@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSModulatorInfo.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/element.h"
@@ -58,7 +59,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 					     G4double                outgoingFaceAngle,
 					     G4bool                  buildFringeFields,
 					     const GMAD::Element*    prevElement,
-					     const GMAD::Element*    nextElement)
+					     const GMAD::Element*    nextElement,
+					     BDSModulatorInfo*       fieldModulator)
 {
   const G4String             baseName = elementName;
   const G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
@@ -68,6 +70,10 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   G4double                       fint = element->fint;
   G4double                      fintx = element->fintx;
   G4double                       hgap = element->hgap * CLHEP::m;
+  G4double       synchronousT0AtStart = (*st)["synchronousT0"];
+  G4double         synchronousT0AtEnd = synchronousT0AtStart + (arcLength/CLHEP::c_light);
+  G4double      synchronousT0AtMiddle = synchronousT0AtStart + (0.5*arcLength/CLHEP::c_light);
+  (*st)["synchronousT0"] = synchronousT0AtMiddle; // update the value on the strength
 
   // Note for tilted dipoles, the geometry is tilted but the curvilinear world isn't,
   // therefore we tilt the field to match the geometry.
@@ -100,7 +106,19 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 	{buildFringeIncoming = true;}
       if (BDS::IsFinite(fintx) && BDS::IsFinite(hgap))
 	{buildFringeOutgoing = true;}      
-      
+
+    // don't build fringe elements if a non-matrix integrator set is used and
+    // only a pole face effect is specified. The angled pole face geometry is
+    // constructed so a thin integrated pole face kick shouldn't be applied as well
+    if (!integratorSet->IsMatrixIntegratorSet() && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry())
+      {
+        // no hgap check - finite hgap but 0 fint/x will not produce a fringe kick so fringes won't be built anyway
+        if (BDS::IsFinite(element->e1) && !BDS::IsFinite(fint))
+          {buildFringeIncoming = false;}
+        if (BDS::IsFinite(element->e2) && !BDS::IsFinite(fintx))
+          {buildFringeOutgoing = false;}
+      }
+
       // overriding checks - don't build fringe field if we're butt against another
       // sbend.
       if (prevElement)
@@ -162,6 +180,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 					 st,
 					 true,
 					 fieldTiltOffset);
+	  vacuumField->SetModulatorInfo(fieldModulator);
 	  outerField = BDSComponentFactory::PrepareMagnetOuterFieldInfo(st,
 									BDSFieldType::dipole,
 									bpInfo,
@@ -169,7 +188,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 									fieldTiltOffset,
 									integratorSet,
 									brho,
-									BDSComponentFactory::ScalingFieldOuter(element));
+									BDSComponentFactory::ScalingFieldOuter(element),
+									fieldModulator);
 	}
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 baseName,
@@ -254,6 +274,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 					 semiStrength,
 					 true,
 					 fieldTiltOffset);
+      semiVacuumField->SetModulatorInfo(fieldModulator);
       semiOuterField = BDSComponentFactory::PrepareMagnetOuterFieldInfo(semiStrength,
 									BDSFieldType::dipole,
 									bpInfo,
@@ -261,7 +282,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 									fieldTiltOffset,
 									integratorSet,
 									brho,
-									BDSComponentFactory::ScalingFieldOuter(element));
+									BDSComponentFactory::ScalingFieldOuter(element),
+                                                                        fieldModulator);
     }
   mgInfo->name = centralName;
   BDSMagnet* centralWedge = new BDSMagnet(BDSMagnetType::sectorbend,
@@ -303,14 +325,23 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   // build incoming fringe field if required
   if (buildFringeIncoming)
     {
+      G4double e1 = element->e1;
+      // if using a non-matrix integrator set, this code should only be reached if a finite fint is specified.
+      // As the angled face geometry is constructed, a thin pole face kick shouldn't also be applied, so set
+      // e1 to 0 in the magnet strength object so only fringe effects are applied
+      if (!integratorSet->IsMatrixIntegratorSet() && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry()
+            && BDS::IsFinite(fint))
+        {e1 = 0;}
+
       BDSMagnetStrength* fringeStIn = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
-                                                                   element->e1, element->e2, fintx, true);
+                                                                   e1, element->e2, fintx, true);
+      (*fringeStIn)["synchronousT0"] = synchronousT0AtStart;
       G4String segmentName           = baseName + "_e1_fringe";
       G4double fringeAngleIn         = 0.5*oneFringeAngle - incomingFaceAngle;
       G4double fringeAngleOut        = 0.5*oneFringeAngle + incomingFaceAngle;
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, fringeAngleIn, fringeAngleOut,
 						      segmentName, fringeStIn, brho,
-						      integratorSet, dipoleFieldType);
+						      integratorSet, dipoleFieldType, fieldModulator);
       sbendline->AddComponent(startfringe);
     }
   
@@ -402,8 +433,17 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   //Last element should be fringe if poleface specified
   if (buildFringeOutgoing)
     {
+      G4double e2 = element->e2;
+      // if using a non-matrix integrator set, this code should only be reached if a finite fintx is specified.
+      // As the angled face geometry is constructed, a thin pole face kick shouldn't also be applied, so set
+      // e2 to 0 in the magnet strength object so only fringe effects are applied
+      if (!integratorSet->IsMatrixIntegratorSet() && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry()
+          && BDS::IsFinite(fintx))
+        {e2 = 0;}
+
       BDSMagnetStrength* fringeStOut = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
-                                                                    element->e1, element->e2, fintx, false);
+                                                                    element->e1, e2, fintx, false);
+      (*fringeStOut)["synchronousT0"] = synchronousT0AtEnd;
       G4double fringeAngleIn          = 0.5*oneFringeAngle + outgoingFaceAngle;
       G4double fringeAngleOut         = 0.5*oneFringeAngle - outgoingFaceAngle;
       G4String segmentName            = baseName + "_e2_fringe";
@@ -468,7 +508,8 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 				 G4double                 brho,
 				 const BDSIntegratorSet*  integratorSet,
 				 G4bool                   yokeOnLeft,
-				 const BDSFieldInfo*      outerFieldIn)
+				 const BDSFieldInfo*      outerFieldIn,
+                                 BDSModulatorInfo*        fieldModulator)
 {
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   
@@ -493,6 +534,7 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 				     strengthCopy,
 				     true,
 				     fieldTiltOffset);
+      vacuumField->SetModulatorInfo(fieldModulator);
       outerField = new BDSFieldInfo(*outerFieldIn);
     }
   
@@ -517,7 +559,8 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 			     const BDSIntegratorSet* integratorSet,
 			     G4double                incomingFaceAngle,
 			     G4double                outgoingFaceAngle,
-			     G4bool                  buildFringeFields)
+			     G4bool                  buildFringeFields,
+                             BDSModulatorInfo*       fieldModulator)
 {
   const G4String name = elementName;
   BDSLine* rbendline  = new BDSLine(name); // line for resultant rbend
@@ -533,6 +576,11 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   // Angle here is in the 'strength' convention of +ve angle -> -ve x deflection
   const G4double       angle = (*st)["angle"];
   const G4double   arcLength = (*st)["length"];
+  
+  G4double       synchronousT0AtStart = (*st)["synchronousT0"];
+  G4double         synchronousT0AtEnd = synchronousT0AtStart + (arcLength/CLHEP::c_light);
+  G4double      synchronousT0AtMiddle = synchronousT0AtStart + (0.5*arcLength/CLHEP::c_light);
+  (*st)["synchronousT0"] = synchronousT0AtMiddle; // update the value on the strength
   
   G4bool zeroStrength = BDS::ZeroStrengthDipole(st);
   
@@ -668,16 +716,25 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   
   if (buildFringeIncoming)
     {
-      BDSMagnetStrength* fringeStIn = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
-                                                                   trackingPolefaceAngleIn, trackingPolefaceAngleOut,
+      G4double trackingPolefaceAngle = trackingPolefaceAngleIn;
+      // if using a non-matrix integrator set, this code should only be reached if a finite fint is specified.
+      // As the angled face geometry is constructed, a thin pole face kick shouldn't also be applied, so subtract
+      // e1 for in the magnet strength object so only the fringe & the natural rbend angled face effects are applied
+      if (!integratorSet->IsMatrixIntegratorSet() && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry()
+          && BDS::IsFinite(fint))
+        {trackingPolefaceAngle -= element->e1;}
+
+        BDSMagnetStrength* fringeStIn = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
+                                                                     trackingPolefaceAngle, trackingPolefaceAngleOut,
                                                                    fintx, true);
+      (*fringeStIn)["synchronousT0"] = synchronousT0AtStart;
       G4String fringeName = name + "_e1_fringe";
 
       // element used for beam pipe materials etc - not strength, angle or length.
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, angleIn, fringeInOutputAngle,
 						      fringeName,
 						      fringeStIn, brho,
-						      integratorSet, dipoleFieldType);
+						      integratorSet, dipoleFieldType, fieldModulator);
       rbendline->AddComponent(startfringe);
     }
   
@@ -699,6 +756,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 				     st,
 				     true,
 				     fieldTiltOffset);
+      vacuumField->SetModulatorInfo(fieldModulator);
       outerField = BDSComponentFactory::PrepareMagnetOuterFieldInfo(st,
 								    BDSFieldType::dipole,
 								    bpInfo,
@@ -706,7 +764,8 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 								    fieldTiltOffset,
 								    integratorSet,
 								    brho,
-								    BDSComponentFactory::ScalingFieldOuter(element));
+								    BDSComponentFactory::ScalingFieldOuter(element),
+                                                                    fieldModulator);
     }
   
   // Here we change from the strength angle convention of +ve angle corresponds to
@@ -726,9 +785,17 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   //Last element should be fringe if poleface specified
   if (buildFringeOutgoing)
     {
+      G4double trackingPolefaceAngle = trackingPolefaceAngleOut;
+      // if using a non-matrix integrator set, this code should only be reached if a finite fintx is specified.
+      // As the angled face geometry is constructed, a thin pole face kick shouldn't also be applied, so subtract
+      // e2 for in the magnet strength object so only the fringe & the natural rbend angled face effects are applied
+      if (!integratorSet->IsMatrixIntegratorSet() && BDSGlobalConstants::Instance()->BuildPoleFaceGeometry()
+          && BDS::IsFinite(fintx))
+        {trackingPolefaceAngle -= element->e2;}
       BDSMagnetStrength* fringeStOut = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
-                                                                    trackingPolefaceAngleIn, trackingPolefaceAngleOut,
+                                                                    trackingPolefaceAngleIn, trackingPolefaceAngle,
                                                                     fintx, false);
+      (*fringeStOut)["synchronousT0"] = synchronousT0AtEnd;
       G4String fringeName = name + "_e2_fringe";
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeOutInputAngle, angleOut,
@@ -748,7 +815,8 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 				  BDSMagnetStrength*       st,
 				  G4double                 brho,
 				  const BDSIntegratorSet*  integratorSet,
-				  BDSFieldType             dipoleFieldType)
+				  BDSFieldType             dipoleFieldType,
+                                  BDSModulatorInfo*        fieldModulator)
 {
   BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
@@ -767,6 +835,8 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 					       st,
 					       true,
 					       fieldTiltOffset);
+  vacuumField->SetModulatorInfo(fieldModulator);
+  vacuumField->SetFieldAsThin();
 
   return new BDSMagnet(BDSMagnetType::dipolefringe,
 		       name,

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -68,6 +68,11 @@ public:
   /// Append this trajectory to vector of primaries we keep to avoid sifting at the end of event.
   void RegisterPrimaryTrajectory(const BDSTrajectoryPrimary* trajectoryIn);
 
+  /// For updating the print modulo after construciton in the case this information
+  /// might come from the primary generator action later on after the even action
+  /// has already been constructed.
+  inline void SetPrintModulo(G4int printModuloIn) {printModulo = printModuloIn;}
+
 protected:
   /// Sift through all trajectories (if any) and mark for storage.
   BDSTrajectoriesToStore* IdentifyTrajectoriesForStorage(const G4Event* evt,
@@ -90,10 +95,12 @@ private:
   G4int  verboseEventStop;
   G4bool storeTrajectory;    ///< Cache of whether to store trajectories or not.
   G4bool storeTrajectoryAll; ///< Store all trajectories irrespective of filters.
+  G4bool storeTrajectorySecondary;
   G4int  printModulo;
 
   G4int samplerCollID_plane;      ///< Collection ID for plane sampler hits.
   G4int samplerCollID_cylin;      ///< Collection ID for cylindrical sampler hits.
+  G4int samplerCollID_sphere;     ///< Collection ID for spherical sampler hits.
   G4int eCounterID;               ///< Collection ID for general energy deposition hits.
   G4int eCounterFullID;           ///< Collection ID for general energy deposition full hits.
   G4int eCounterVacuumID;         ///< Collection ID for the vacuum energy deposition hits.
@@ -106,6 +113,8 @@ private:
   G4int thinThingCollID;          ///< Collection ID for the thin thing hits.
   std::map<G4String, G4int> scorerCollectionIDs; ///< Collection IDs for all scorers.
   std::map<G4String, G4int> extraSamplerCollectionIDs; ///< Collection IDs for extra samplers.
+  std::map<G4String, G4int> extraSamplerCylinderCollectionIDs; ///< Collection IDs for extra samplers.
+  std::map<G4String, G4int> extraSamplerSphereCollectionIDs; ///< Collection IDs for extra samplers.
 
   time_t startTime; ///< Time at the start of the event.
   time_t stopTime;  ///< Time at the end of the event.

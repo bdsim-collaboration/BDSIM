@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -43,6 +43,7 @@ typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
 class BDSTrajectory: public G4Trajectory
 {
 public:
+  BDSTrajectory() = delete;
   BDSTrajectory(const G4Track* aTrack,
 		G4bool         interactiveIn,
 		const BDS::TrajectoryOptions& storageOptionsIn);
@@ -130,9 +131,6 @@ protected:
   /// allocated and there's no need to make this dynamically allocated itself a la
   /// all Geant4 examples.
   BDSTrajectoryPointsContainer* fpBDSPointsContainer;
-
-private:
-  BDSTrajectory();
 };
 
 extern G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;

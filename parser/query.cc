@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -50,6 +50,11 @@ void Query::clear()
   
   overwriteExistingFiles = true;
   printTransform = true;
+  
+  drawArrows = true;
+  drawZeroValuePoints = true;
+  drawBoxes = true;
+  boxAlpha = 0.2;
 
   pointsFile = "";
 
@@ -96,6 +101,11 @@ void Query::PublishMembers()
   publish("overwriteExistingFiles", &Query::overwriteExistingFiles);
   publish("printTransform",         &Query::printTransform);
   
+  publish("drawArrows",             &Query::drawArrows);
+  publish("drawZeroValuePoints",    &Query::drawZeroValuePoints);
+  publish("drawBoxes",              &Query::drawBoxes);
+  publish("boxAlpha",               &Query::boxAlpha);
+  
   publish("pointsFile", &Query::pointsFile);
 
   publish("referenceElement", &Query::referenceElement);
@@ -135,6 +145,10 @@ void Query::print()const
 	    << "queryElectricField: "    << queryElectricField     << std::endl
 	    << "overwriteExistingFiles " << overwriteExistingFiles << std::endl
 	    << "printTransform "         << printTransform         << std::endl
+      << "drawArrows "             << drawArrows             << std::endl
+      << "drawZeroValuePoints "    << drawZeroValuePoints    << std::endl
+      << "drawBoxes "              << drawBoxes              << std::endl
+      << "boxAlpha "               << boxAlpha               << std::endl
 	    << "pointsFile "             << pointsFile             << std::endl
 	    << "referenceElement "       << referenceElement       << std::endl
 	    << "referenceElementNumber " << referenceElementNumber << std::endl

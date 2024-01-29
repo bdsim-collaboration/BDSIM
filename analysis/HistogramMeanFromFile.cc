@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -101,7 +101,7 @@ void HistogramMeanFromFile::Accumulate(BDSOutputROOTEventHistograms* hNew)
 
 void HistogramMeanFromFile::Terminate()
 {
-  // terminate each accumualtor
+  // terminate each accumulator
   // this returns a pointer to the result but no need to store
   for (auto& h : histograms1d)
     {h->Terminate();}

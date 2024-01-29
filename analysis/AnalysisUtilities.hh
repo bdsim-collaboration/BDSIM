@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -66,8 +66,23 @@ public:
 			       double stop,
 			       int    nBins,
 			       bool   includeLastPoint = true);
-  
+
+  /// Fill a vector of entries and weights into a TH1 histogram.
+  void FillTH1D(TH1D&h1d,
+		const std::vector<float>& values,
+		const std::vector<float>& weights);
+
   ClassDef(AnalysisUtilities,1);
 };
+
+namespace RBDS
+{
+  /// Provide a suggested default name based on an input file path. e.g.
+  /// /path/to/file.root -> file_suffix.root or
+  /// file.root -> file_suffix.root
+  std::string DefaultOutputName(const std::string& inputFilePath,
+                                const std::string& suffix);
+  
+}
 
 #endif

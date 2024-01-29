@@ -9,7 +9,11 @@ Model Control
 =============
 
 * :ref:`random-engine`
-* :ref:`beam-parameters`    
+* :ref:`beam-parameters`
+
+  - :ref:`beam-distributions`
+  - :ref:`beam-distributions-file-based`
+    
 * :ref:`physics-processes`
 
   - :ref:`physics-modular-physics-lists`
@@ -20,8 +24,11 @@ Model Control
 
   - :ref:`physics-bias-cross-section-biasing`
   - :ref:`physics-bias-importance-sampling`
+  - :ref:`physics-bias-muon-splitting`
     
 * :ref:`bdsim-options`
+  - including :ref:`beamline-offset`
+    
 * :ref:`sampler-output`
 
   - :ref:`sampler-syntax`
@@ -68,16 +75,20 @@ Examples are included in :code:`bdsim/examples/features/beam/random-engine*`.
 Beam Parameters
 ---------------
 
-BDSIM starts each event in one of two ways.
+BDSIM starts each event in one of the following ways:
 
-1) Particles coordinates for one particle
-   are generated from a chosen beam distribution, which is specified in the input GMAD file.
-   In most cases, the particle coordinates are randomly generated according
-   to a distribution.
+#) Particles coordinates for one particle are generated from a chosen beam distribution,
+   which is specified in the input GMAD file. In most cases, the particle coordinates
+   are randomly generated according to a distribution. But this also includes reading
+   from a **text file**.
 
-2) A primary vertex is loaded from an event generator file. This currently requires linking to
-   HepMC3 to load such files. In this case, each event may start with 1 or more particles. (see
-   `eventgeneratorfile`_).
+#) A primary vertex is loaded from an event generator file. This currently requires compiling
+   BDSIM with HepMC3 to load such files. In this case, each event may start with 1 or more particles.
+   (see `eventgeneratorfile`_).
+
+#) Hits are loaded from a sampler in BDSIM output file and launched at any location in the
+   simulation - not necessarily in the same position or same model as they were generated in.
+   See :ref:`beam-bdsimsampler`.
 
 To specify the input particle distribution, the :code:`beam` command is
 used. This also specifies the particle species and **reference total energy**, which is the
@@ -122,13 +133,14 @@ The beam particle may be specified by name
 as it is in Geant4 (exactly) or by its PDG ID. The follow are available by default:
 
 * `e-` or `e+`
-* `proton` or `antiproton`
+* `proton` or `anti_proton`
 * `gamma`
 * `neutron`
 * `mu-` or `mu+`
-* `pi-` or `pi+`
+* `pi-` or `pi+` or `pi0`
 * `photon` or `gamma`
-* `kaon-`, `kaon+` or `kaon0L`
+* `kaon-`, `kaon+`, `kaon0L`, `kaon0S`, `kaon0` (a `kaon0` immediately 'decay's into either `kaon0S` or `kaon0L` in Geant4)
+* `nu_e`, `nu_mu`, `nu_tau`, `anti_nu_e`, `anti_nu_mu`, `anti_nu_tau`
 
 In fact, the user may specify any particle that is available through the physics list
 used. If given by name, the particle must be given by the Geant4 name exactly (case sensitive).
@@ -150,7 +162,7 @@ The PDG IDs can be found at the PDG website; reviews and tables; Monte Carlo Num
 * `<https://pdg.lbl.gov/2020/reviews/rpp2020-rev-monte-carlo-numbering.pdf>`_
 
 Ion Beams
-^^^^^^^^^
+*********
 
 The user may also specify any ion with the following syntax::
 
@@ -188,8 +200,8 @@ Examples: ::
          energy=100*GeV,
 	 beamParticleName="e+";
 
-This specifies that the magnet field strengths are calculated with respect to a 100 GeV electron
-and the beam tracked is a 100 GeV positron beam (along with any other relevant distribution
+This (above) specifies that the magnet field strengths are calculated with respect to a 100 GeV electron
+but the beam fired into the model is a 100 GeV positron beam (along with any other relevant distribution
 parameters). ::
 
    beam, particle="e-",
@@ -197,14 +209,14 @@ parameters). ::
 	 beamParticleName="e+",
 	 E0=20*GeV;
 
-This specified that the magnet field strengths are calculated with respect to a 100 GeV electron
-and the beam tracked is a 20 GeV positron beam. ::
+This (above) specifies that the magnet field strengths are calculated with respect to a 100 GeV electron
+and the beam fired into the model is a 20 GeV positron beam. ::
 
   beam, particle="e-",
         momentum=20.3*GeV,
 	beamParticleName="proton";
 
-This defines a machine designed with respect to an electron beam with 20.3 GeV of momentum but
+This (above) defines a machine designed with respect to an electron beam with 20.3 GeV of momentum but
 uses a beam of protons with the exact same momentum (kinetic energy and total energy are calculated
 from this value given the proton's mass).
 
@@ -213,8 +225,8 @@ from this value given the proton's mass).
 * If no :code:`beamParticleName` is given but one of :code:`E0`, :code:`Ek0`, :code:`P0` are given,
   the same particle is assumed as :code:`particle` but with a different energy.
 
-Beam Energy From Command Line
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Beam Energy From the Command Line
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The energy of the beam can also be controlled using executable options to override what is provided
 in the input GMAD files. The following executable options can be used (with example value of 123.456 GeV):
@@ -242,6 +254,8 @@ with a large number of particles (for example, 10k to 100k in under one minute).
 
 BDSIM should be executed with the option :code:`--generatePrimariesOnly` as described in
 :ref:`executable-options`.
+
+This **does not** work for `eventgeneratorfile` and `bdsimsampler` distributions.
 
 * The exact coordinates generated will not be the same as those generated in a run, even
   with the same seed. This is because the physics models will also advanced the random
@@ -280,6 +294,79 @@ Event Tree, as described in :ref:`output-event-tree`.
 	     precision numbers are used so that the beam distribution is accurate. A float typically
 	     has seven significant figures and a double 15.
 
+
+.. _beam-bunches:
+
+Bunches and Time Offset
+^^^^^^^^^^^^^^^^^^^^^^^
+
+* This does not apply to :code:`eventgeneratorfile` and :code:`bdsimsampler` distributions.
+
+BDSIM offers the feature to simulate multiple bunches at a fixed frequency. This is done as
+a final step after generating the coordinates for a single particle from a bunch distribution.
+The user specifies how many particles to generate for one bunch before moving on to the next.
+For a given bunch, a global time offset is calculated that is added to the T coordinate of each
+particle. The 'bunches' all start in the same location. The time added can be expressed as:
+::
+
+   T = T0 + t*floor(EI / eventsPerBunch)
+
+
+where :code:`T0` is the offset specified in the beam distribution, :code:`t` is the
+period of the bunches, :code:`floor` is the mathematical floor function, :code:`EI` is the
+event index (zero counting) and `eventsPerBunch` is the beam parameter specified in the input.
+
+This does not affect the 'local' time of the coordinates (i.e. the lower case t in the
+Primary coordinates in the output), but it does affect the 'global' time (i.e. the upper
+case T in the PrimaryGlobal coordinates in the output), which is the one used to place
+the particle in the model at the start of an event.
+
+.. note:: For BDSIM-generated distributions, 1 event = 1 primary particle.
+
+
+Relevant beam parameters:
+
+
+.. tabularcolumns:: |p{5cm}|p{6cm}|p{2cm}|
+		      
++----------------------------------+-------------------------------------------------------+----------+
+| Option                           | Description                                           | Default  |
++==================================+=======================================================+==========+
+| `bunchFrequency`                 | Frequency in Hz of bunches                            | 0 \*     |
++----------------------------------+-------------------------------------------------------+----------+
+| `bunchPeriod`                    | Separation in time (s) of bunches                     | 0 \*     |
++----------------------------------+-------------------------------------------------------+----------+
+| `eventsPerBunch`                 | Number of events to simulate with each bunch index    | 0        |
++----------------------------------+-------------------------------------------------------+----------+
+
+* \* One and only one of :code:`bunchFrequency` and :code:`bunchPeriod` must be specified if
+  :code:`eventsPerBunch` is greater than 0 which implies we want bunches.
+
+Example:
+::
+
+   beam, particle="e-",
+         kineticEnergy=1*GeV,
+	 distrType="gauss",
+	 sigmaX=10*um,
+	 sigmaY=10*um,
+	 sigmaT=5*ps,
+	 bunchFrequency=357*MHz,
+	 eventsPerBunch=100;
+
+This will generate particles in a Gaussian distribution with a sigma in time of 5 picoseconds
+and therefore a correlated position in z (e.g. sigma z is around 1.5 mm at the speed of light).
+The first 100 particles will be centred on T0, which is 0 s by default. The next hundred will have
+a similar x,y,z but will have a time centred on 2.8 ns (1 period of 357 MHz). The local time with
+respect to the bunch (and therefore z) will still be randomly generated.
+
+An example can be found in :code:`bdsim/examples/features/beam/bunch-frequency.gmad`.
+
+.. note:: For :code:`--generatePrimariesOnly` the "event number" will be advanced even though
+	  no events are actually simulated and therefore the time coordinate will be consistent
+	  with a full run of BDSIM.
+
+
 Beam Tilt
 ^^^^^^^^^
 
@@ -312,22 +399,35 @@ Beam Distributions
 ^^^^^^^^^^^^^^^^^^
 The following beam distributions are available in BDSIM
 
-- `reference`_
+**No Variation**
+- `reference`_ (a 'pencil' beam)
+
+**Gaussian**
 - `gaussmatrix`_
 - `gauss`_
 - `gausstwiss`_
+
+**Uniform Type**
 - `circle`_
 - `square`_
 - `ring`_
 - `eshell`_
+- `sphere`_
+- `box`_
 - `halo`_
+- `halosigma`_
+
+**Composite**
 - `composite`_
 - `compositespacedirectionenergy`_
+
+**File-Based** (see :ref:`beam-distributions-file-based`)
+
 - `userfile`_
 - `ptc`_
 - `eventgeneratorfile`_
-- `sphere`_
-- `box`_
+- `bdsimsampler`_
+
 
 .. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the beam option `beam, offsetSampleMean=1`
 	  documented in :ref:`developer-options` can be used to pre-generate all particle coordinates and
@@ -581,7 +681,7 @@ Beam of randomly distributed particles with a uniform distribution within a circ
 dimension of phase space - `x` & `xp`; `y` & `yp`, `T` & `E` with each uncorrelated.
 Each parameter defines the maximum absolute extent in that dimension, i.e. the possible values
 `x` values range from `-envelopeR` to `envelopeR` for example. Total
-energy is also uniformly distributed between :math:`\pm` `envelopeE`.
+energy is also uniformly distributed between :math:`\pm` `envelopeE`. No distribution in `z`.
 
 * All parameters from `reference`_ distribution are used as centroids.
 
@@ -609,8 +709,7 @@ i.e. the possible values `x` values range from `-envelopeX` to `+envelopeX`. The
 energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 
 * All parameters from `reference`_ distribution are used as centroids.
-* `Z` is by default correlated with `T`. `T` is sampled, then `Z` calculated from :math:`c * t`.
-* To create an uncorrelated `Z` distribution, `envelopeZ` should be set explicitly.
+* All dimensions are uncorrelated.
 * Default values of envelopes are 0.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
@@ -633,6 +732,10 @@ energy is also uniformly distributed between :math:`\pm` `envelopeE`.
 | `envelopeZ`                      | (Optional) maximum position in Z [m]                  |
 +----------------------------------+-------------------------------------------------------+
 
+Since BDSIM v1.7.0, the behaviour changed so that `z` is uncorrelated with `t`. In the previous
+behaviour, `t` was sampled uniformly, then `z` calculated from :math:`c * t`. To restore this
+behaviour, the parameter `zFromT` can be used. e.g. :code:`beam, zFromT=1;`.
+
 Examples: ::
 
   beam, particle="e-",
@@ -644,26 +747,14 @@ Examples: ::
 	envelopeYp=1e-3,
 	envelopeT=10*ns;
 
-For a `square` distribution with no z offset but still an offset in time: ::
-
-  beam, particle="e-",
-        kineticEnergy=1*GeV,
-	distrType="square",
-	envelopeX=1*cm,
-	envelopeXp=1e-3,
-	envelopeY=1*cm,
-	envelopeYp=1e-3,
-	envelopeT=10*ns,
-	envelopeZ=0;
-
-We set `envelopeZ` which means the distribution will be uncorrelated in `Z` with `T`, but
-also to 0 so it has no variation in `Z`.
 
 ring
 ****
 
-The ring distribution randomly and uniformly fills a ring in `x` and `y` between two radii. For
+The ring distribution randomly and uniformly distributes particles around a circle in `x` and `y`. Then,
+for a given x,y the radius is randomly and uniformly in density distributed in that annulus. For
 all other parameters, the `reference`_ coordinates are used, i.e. `xp`, `yp` etc.
+
 
 * All parameters from `reference`_ distribution are used as centroids.
 
@@ -723,6 +814,63 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 * Note, 'relative' energy spread means normalised (e.g. :code:`sigmaE` = :math:`\sigma_{E}/E`)
 * Only one of :code:`sigmaE`, :code:`sigmaEk` or :code:`sigmaP` can be used.
 * No variation in `t`, `z`, `s`. Only central values.
+
+	
+sphere
+******
+
+The `sphere` distribution generates a distribution with a uniform random direction at one location.
+Points are randomly and uniformly generated on a sphere that are used in a unit vector for the
+momentum direction. This is implemented using `G4RandomDirection`, which in turn uses the
+Marsaglia (1972) method.
+
+* `Xp0`, `Yp0`, `Zp0` are ignored.
+* `X0`, `Y0`, `Z0`, `S0`, `T0` can be used for the position of the source.
+* No energy spread.
+
+If an energy spread is desired, please use a :ref:`beam-composite` distribution.
+
+An example can be found in `bdsim/examples/features/beam/sphere.gmad`. Below is an example: ::
+
+  beam, particle = "proton",
+        energy = 1.2*GeV,
+	distrType = "sphere",
+	X0 = 9*cm,
+	Z0 = 0.5*m;
+
+
+box
+***
+
+The `box` distribution generates a uniform random uncorrelated distribution in each variable.
+Ultimatley, the 3-vector making the direction `xp`, `yp`, and `zp` is normalised (i.e. unit 1).
+This results in an uneven distribution in these variables over the range (cube projected onto sphere).
+
+* The values will vary from -envelope to +envelope.
+* `Xp0`, `Yp0`, and `Zp0` are ignored from the reference distribution.
+
+.. tabularcolumns:: |p{5cm}|p{9cm}|
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| `envelopeX`                      | Maximum position in X [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeXp`                     | Maximum component in X of unit momentum vector        |
++----------------------------------+-------------------------------------------------------+
+| `envelopeY`                      | Maximum position in Y [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeYp`                     | Maximum component in Y of unit momentum vector        |
++----------------------------------+-------------------------------------------------------+
+| `envelopeZ`                      | Maximum position in Z [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeZp`                     | Maximum component in Z of unit momentum vector        |
++----------------------------------+-------------------------------------------------------+
+| `envelopeT`                      | Maximum time offset [s]                               |
++----------------------------------+-------------------------------------------------------+
+| `envelopeE`                      | Maximum energy offset [GeV]                           |
++----------------------------------+-------------------------------------------------------+
+
 
 .. _beam-halo-distribution:
 
@@ -790,9 +938,21 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloPSWeightParameter`          | Phase space weight function parameters []                                   |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `haloXCutInner`                  | X position cut in halo (multiples of sigma)                                 |
+| `haloXCutInner`                  | X position inner cut in halo (multiples of sigma)                           |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `haloYCutInner`                  | Y position cut in halo (multiples of sigma)                                 |
+| `haloYCutInner`                  | Y position inner cut in halo (multiples of sigma)                           |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloXCutOuter`                  | X position outer cut in halo (multiples of sigma)                           |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloYCutOuter`                  | Y position outer cut in halo (multiples of sigma)                           |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloXpCutInner`                 | X momentum inner cut in halo (multiples of sigma)                           |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloYpCutInner`                 | Y momentum inner cut in halo (multiples of sigma)                           |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloXpCutOuter`                 | X momentum outer cut in halo (multiples of sigma)                           |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloYpCutOuter`                 | Y momentum outer cut in halo (multiples of sigma)                           |
 +----------------------------------+-----------------------------------------------------------------------------+
 
 * \* Only one of :code:`emitx` or :code:`emitnx` (similarly in y) can be set.
@@ -816,6 +976,81 @@ Example::
         haloPSWeightParameter = 1,
         haloPSWeightFunction  = "oneoverr";
 
+
+halosigma
+*********
+
+Similar to type `halo` except instead of uniformly sampling :math:`J`, the single
+particle emittance (action), the particle's :math:`n\sigma` is sampled uniformly
+instead. The particle action :math:`J` is expressed in terms of the multiple of
+sigma, :math:`n`, the one-sigma transverse beam size :math:`\sigma` and the Twiss
+beta function :math:`\beta` using
+
+.. math::
+   J = (n \sigma)^2 / \beta.
+
+This randomly generated action variable, combined with the Twiss parameters
+:math:`\alpha` and :math:`\beta` define an ellipse in phase space.  A point is then
+randomly generated on this ellipse to get the position and momentum pair for the
+given transverse dimension.  This is useful for situations where beam halo intensity
+distributions are expressed in terms of :math:`\sigma`, allowing for easier
+re-weighting in post-processing.
+
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
++----------------------------------+-----------------------------------------------------------------------------+
+| Option                           | Description                                                                 |
++==================================+=============================================================================+
+| `emitx`                          | Horizontal beam core geometric emittance [m rad]                            |
+|                                  | :math:`\epsilon_{{\rm core},x}`                                             |
++----------------------------------+-----------------------------------------------------------------------------+
+| `emity`                          | Vertical beam core geometric emittance [m rad]                              |
+|                                  | :math:`\epsilon_{{\rm core},y}`                                             |
++----------------------------------+-----------------------------------------------------------------------------+
+| `emitnx`                         | Horizontal beam core geometric emittance [m rad] \*                         |
++----------------------------------+-----------------------------------------------------------------------------+
+| `emitny`                         | Vertical beam core geometric emittance [m rad] \*                           |
++----------------------------------+-----------------------------------------------------------------------------+
+| `betx`                           | Horizontal beta function [m]                                                |
++----------------------------------+-----------------------------------------------------------------------------+
+| `bety`                           | Vertical beta function [m]                                                  |
++----------------------------------+-----------------------------------------------------------------------------+
+| `alfx`                           | Horizontal alpha function                                                   |
++----------------------------------+-----------------------------------------------------------------------------+
+| `alfy`                           | Vertical alpha function                                                     |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloNSigmaXInner`               | Inner radius of halo in x (multiples of sigma)                              |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloNSigmaXOuter`               | Outer radius of halo in x (multiples of sigma)                              |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloNSigmaYInner`               | Inner radius of halo in y (multiples of sigma)                              |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloNSigmaYOuter`               | Outer radius of halo in y (multiples of sigma)                              |
++----------------------------------+-----------------------------------------------------------------------------+
+
+
+* (\*) :code:`emitx(y)` and :code:`emitnx(y)` are provided for the user's convenience and should not both be set.
+* No variation in `t`, total energy, `z` and `s`. Only central values.
+* Generating a beam in a dispersive region will result in incorrect optics.
+
+Example: ::
+
+  beam, particle              = "e-",
+	energy                = 1.0*GeV,
+	distrType             = "halosigma",
+	betx                  = 9.701136465,
+	bety                  = 46.95602673,
+	alfx                  = -0.5542165316,
+	alfy                  = 2.310858304,
+	emitx                 = 5e-9,
+	emity                 = 5e-9,
+	haloNSigmaXInner      = 1.0,
+	haloNSigmaXOuter      = 5.0,
+	haloNSigmaYInner      = 2.0,
+	haloNSigmaYOuter      = 3.0;
+
+
 .. _beam-composite:
 
 composite
@@ -828,7 +1063,7 @@ appropriate parameters need to be defined for each individual distribution.
 * All parameters from `reference`_ distribution are used as centroids.
 * The default for `xDistrType`, `yDistrType` and `zDistrType` are `reference`.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|p{4cm}|
+.. tabularcolumns:: |p{3cm}|p{4cm}|p{4cm}|
 
 +---------------+--------------------------------+------------------------+
 | **Variable**  | **Description**                | **Coordinates Used**   |
@@ -882,7 +1117,7 @@ one for directional, and one for energy & time.
 * All parameters from `reference`_ distribution are used as centroids.
 * The default for `spaceDistrType`, `directionDistrType` and `energyDistrType` are `reference`.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|p{4cm}|
+.. tabularcolumns:: |p{3cm}|p{4cm}|p{4cm}|
 
 +----------------------+--------------------------------+------------------------+
 | **Variable**         | **Description**                | **Coordinates Used**   |
@@ -910,7 +1145,123 @@ Examples: ::
 	envelopeY = 3*cm,
 	envelopeZ = 4*cm;
 
-	
+
+.. _beam-distributions-file-based:
+
+Beam Distributions - File-Based
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There are two classes of file-based distributions. Firstly, text file ones - `userfile`
+and `ptc` that load one line of coordinates per event. Secondly, there are more complex
+ones that can have multiple primaries per event - `eventgeneratorfile` and `bdsimsampler`.
+
+* :ref:`beam-userfile`
+* :ref:`beam-ptc`
+* :ref:`beam-eventgenerator`
+* :ref:`beam-bdsimsampler`
+
+The later two have a set of particle filters that can be used to load only certain particles.
+
+Behaviour
+*********
+
+The default behaviour since BDSIM V1.7 is to 'match' the file length - i.e. simulate the
+number of events as there would be in the file. The default is **not to loop** (i.e. repeat) the file.
+However, the user can explicitly request a certain number of events, or that the file is
+looped (knowingly introducing potential correlations).
+
+For all the file-based distributions, the following beam options apply.
+
++------------------------------+---------------+-----------------------------------------------+
+| **Option**                   |  **Default**  | **Description**                               |
++==============================+===============+===============================================+
+| `distrFileMatchLength`       | 1 (true)      | Whether to simulate the number of events      |
+|                              |               | that match the number of entries in the file  |
++------------------------------+---------------+-----------------------------------------------+
+| `distrFileLoop`              | 0 (false)     | Whether to loop back to the start of the file |
++------------------------------+---------------+-----------------------------------------------+
+| `distrFileLoopNTimes`        | 1             | Number of times to go through the             |
+|                              |               | distribution file in its entirety - a value   |
+|                              |               | greater than 1 is required to repeat the file |
++------------------------------+---------------+-----------------------------------------------+
+
+.. warning:: `option, ngenerate=N` in input GMAD text will be ignored when a distribution file
+             is used and the default file matching is turned on. The executable option `--ngenerate=N`
+             must therefore be used, or file length matching turned off.
+
+**Normal Behaviour - No Looping**
+
+::
+
+   beam, distrType="somedistributionhere...",
+         distrFile="somefile.dat";
+
+The number of events will be generate as matches number of entries in the file.
+
+**NGenerate**
+
+To simulate fewer events, we must specify ngenerate as an **executable** option. ::
+
+  bdsim --file=mymodel_w_generator.gmad --outfile=r1 --batch --ngenerate=3
+
+This will generate 3 events, no matter how many are in the file. But it will complain
+if the number requested is greater than the number in the file and looping is not turned
+on in the input GMAD beam definition.
+
+**Loop as Needed up to N Events**
+
+We must explicitly turn off file length matching and turn on looping. ::
+
+  beam, distrType="somedistributionhere...",
+        distrFile="somefile.dat",
+        distrFileMatchLength=0,
+        distrFileLoop=1;
+
+  beam, ngenerate=100;
+
+This will generate 100 events and if we assume `somefile.dat` has only say 20 events,
+it will be replayed (with different event seeds) 5x.
+
+.. warning:: Looping a file is fine if each event is simulated with a different seed,
+             which would be the default behaviour. However, if you only loop part of
+             a file, you may 'enhance' the statistics of one set of input coordinates
+             and may bias the final result.
+
+**Looping the Whole File N Times**
+
+We can repeat the same file `N` times. The random engine seed will continue to advance
+for the physics so even with the same initial particles or coordinates, a different
+outcome will happen according to the physics processes. Therefore, it is useful to
+sometimes repeat the same distribution multiple times. ::
+
+  beam, distrType="somedistributionhere...",
+        distrFile="somefile.dat",
+        distrFileLoopNTimes=3;
+
+This will match the file length and repeat the file 3 times. This is the number of times
+the file is 'played' through, so a value **greater than 1** is typically required to
+repeat the file.
+
+**Filtering**
+
+With the `eventgenerator` and `bdsimsampler` distributions, we can filter which particles
+we load. It is therefore possible to exclude all particles from an event or indeed a file.
+
+
+* If all particles from a file are excluded and looping is requested, the file will not loop.
+* The number of completely skipped events is recorded in the `Run.Summary.nEventsInFileSkipped`
+  in the output. See :ref:`output-structure-run-info`.
+* The number of events in total in the input file is written both to `Run.Summary.nEventsInFile`
+  and to `Header.nOriginalEvents`.
+* If :math:`nEventsInFileSkiipe > 0`, then the file will be marked as a "skimmed" file as the
+  number of output events is less than the number of input events. This is recorded in
+  `Header.skimmedFile`.
+* The header variables described here, will only be recorded in the second entry of the header tree.
+  The first entry is when the file is opened, and the second at the end of a run. ROOT prevents us
+  from overwriting the first entry.
+
+.. _beam-userfile:
+        
 userfile
 ********
 
@@ -933,6 +1284,9 @@ particle coordinates from the beginning. A warning will be printed out in this c
 .. note:: For gzip support, BDSIM must be compiled with GZIP. This is normally sourced
 	  from Geant4 and is on by default.
 
+* The lines counted by `nlinesIgnore` are truly ignored whether they are a comment or not.
+* `nlinesSkip` will skip a number of valid lines (excluding comments or empty lines).
+* When the file is looped, the `nlinesIgnore` and `nlinesSkip` are done again.
 * **tar + gz** will not work. The file must be a single file compressed through gzip only.
 * Coordinates not specified are taken from the default `reference`_ distribution parameters.
 * Lines starting with `#` or `!` will be ignored.
@@ -957,47 +1311,43 @@ particle coordinates from the beginning. A warning will be printed out in this c
 	     is a proxy to load their definitions. Note, without decay physics used, unstable
 	     particles will be tracked beyond their normal lifetime.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|
+.. tabularcolumns:: |p{3cm}|p{7cm}|p{3cm}|
 
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| `distrFile`                      | File path to ASCII data file                          |
-+----------------------------------+-------------------------------------------------------+
-| `distrFileFormat`                | A string that details the column names and units. A   |
-|                                  | list of token[unit] separated by white space where    |
-|                                  | unit is optional. See below for tokens and units.     |
-+----------------------------------+-------------------------------------------------------+
-| `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
-|                                  | input files                                           |
-+----------------------------------+-------------------------------------------------------+
-| `nlinesSkip`                     | Number of lines to skip into the file. This is for    |
-|                                  | number of coordinate lines to skip. This also counts  |
-|                                  | comment lines.                                        |
-+----------------------------------+-------------------------------------------------------+
-| `matchDistrFileLength`           | Option for certain distributions to simulate the same |
-|                                  | number of events as are in the file. Currently works  |
-|                                  | for the `userfile` and `ptc` distribution.            |
-+----------------------------------+-------------------------------------------------------+
++----------------------------------+-------------------------------------------------------+---------------+
+| Option                           | Description                                           | **Required**  |
++==================================+=======================================================+===============+
+| `distrFile`                      | File path to ASCII data file                          | Yes           |
++----------------------------------+-------------------------------------------------------+---------------+
+| `distrFileFormat`                | A string that details the column names and units. A   | Yes           |
+|                                  | list of token[unit] separated by white space where    |               |
+|                                  | unit is optional. See below for tokens and units.     |               |
++----------------------------------+-------------------------------------------------------+---------------+
+| `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     | No            |
+|                                  | input files (e.g. header lines)                       |               |
++----------------------------------+-------------------------------------------------------+---------------+
+| `nlinesSkip`                     | Number of lines to skip into the file. This is for    | No            |
+|                                  | number of coordinate lines to skip. This does not     |               |
+|                                  | comment or empty lines.                               |               |
++----------------------------------+-------------------------------------------------------+---------------+
 
 Skipping and Ignoring Lines:
 
 * `nlinesIgnore` is intended for header lines to ignore at the start of the file.
 * `nlinesSkip` is intended for the number of particle coordinate lines to skip after `nlinesIgnore`.
 * `nlinesSkip` is available as the executable option :code:`--distrFileNLinesSkip`.
-* The number of lines skipped from a file is `nlinesIgnore` + `nlinesSkip`. The user could use
-  only one of these, but only `nlinesSkip` is available through the executable option described above.
-* If more events are generated than are lines in the file, the file is read again including the skipped
-  lines.
+* If more events are generated than are lines in the file, the file is read again including the
+  ignored and skipped lines.
 
 Examples:
 
-1) `nlinesIgnore=1` and `nlinesSkip=3`. The first four lines are ignored always in the file.
+1) `nlinesIgnore=1` and `nlinesSkip=3`. The first line and then the next three non-blank or comment
+   lines are ignored always in the file.
 2) `nlinesIgnore=1` in the input gmad and `--distrFileNLinesSkip=3` is used as an executable option.
-   The first four lines are skipped. The user has the option of controlling the 3 though - perhaps
-   for another instance of BDSIM on a computer farm.
+   The first line and then the next three non-blank or comment lines are skipped.
 
 Acceptable tokens for the columns are:
+
+.. tabularcolumns:: |p{2cm}|p{4cm}|
 
 +------------+----------------------------------------+
 | **Token**  |  **Description**                       |
@@ -1053,6 +1403,16 @@ Examples: ::
         distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
 
 
+  beam, particle = "e-",
+        energy = 1*GeV,
+        distrType  = "userfile",
+        distrFile  = "Userbeamdata.dat",
+        distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]",
+        distrMatchFileLength = 0,
+        distrFileLoop = 1;
+  option, ngenerate=100;
+
+
 The corresponding `userbeamdata.dat` file looks like::
 
   0 1 2 1 0 1000
@@ -1066,21 +1426,29 @@ The corresponding `userbeamdata.dat` file looks like::
   0 0 0 2 0 1000
 
 
+.. _beam-ptc:
+
 ptc
 ***
 
 Output from MAD-X PTC used as input for BDSIM.
 
-.. tabularcolumns:: |p{5cm}|p{10cm}|
+.. tabularcolumns:: |p{2cm}|p{3cm}|
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
 | `distrFile`                      | PTC output file                                       |
 +----------------------------------+-------------------------------------------------------+
+| `nlinesSkip`                     | number of lines to skip into the file irrespective of |
+|                                  | their contents                                        |
++----------------------------------+-------------------------------------------------------+
 
 * Reference offsets specified in the gmad file such as `X0` are added to each coordinate.
+* The number of raw input lines (without interpretation) skipped is `nlinesIgnore` + `nlinesSkip`.
 
+
+.. _beam-eventgenerator:
 
 eventgeneratorfile
 ******************
@@ -1091,17 +1459,29 @@ compiled with respect to it.  See :ref:`installation-bdsim-config-options` for m
 When using an event generator file, the **design** particle and total energy must still be
 specified. These are used to calculate the magnetic field strengths.
 
-The following parameters are used to control the use of an event generator file.
+Per-event weights are not yet supported in BDSIM or rebdsim (the analysis tool) and are
+set to 1.0.
 
-.. tabularcolumns:: |p{3cm}|p{14cm}|
+The following parameters are used to control the use of an event generator file. These are
+implemented as :math:`>=` and :math:`<=` for `Min` and `Max` respectively. i.e.
+
+.. math::
+
+   [MinW, MaxW] \implies \{ W \in \mathbb{R} : MinW \leq W \leq MaxW \}
+
+where `W` is some coordinate.
+
+.. tabularcolumns:: |p{5cm}|p{9cm}|
 
 +----------------------------+-----------------------------------------------------------+
 | Option                     | Description                                               |
 +============================+===========================================================+
-| `distrType`                | This should be "eventgeneratorfile:format" where format   |
+| distrType                  | This should be "eventgeneratorfile:format" where format   |
 |                            | one of the acceptable formats listed below.               |
 +----------------------------+-----------------------------------------------------------+
-| `distrFile`                | The path to the input file desired.                       |
+| distrFile                  | The path to the input file desired                        |
++----------------------------+-----------------------------------------------------------+
+| eventGeneratorNEventsSkip  | Number of events to skip in the file                      |
 +----------------------------+-----------------------------------------------------------+
 | eventGeneratorMinX         | Minimum x coordinate accepted (m)                         |
 +----------------------------+-----------------------------------------------------------+
@@ -1115,25 +1495,25 @@ The following parameters are used to control the use of an event generator file.
 +----------------------------+-----------------------------------------------------------+
 | eventGeneratorMaxZ         | Maximum z coordinate accepted (m)                         |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMinXp        | Minimum xp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMinXp        | Minimum xp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxXp        | Maximum xp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMaxXp        | Maximum xp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMinYp        | Minimum yp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMinYp        | Minimum yp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxYp        | Maximum yp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMaxYp        | Maximum yp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMinZp        | Minimum zp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMinZp        | Minimum zp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxZp        | Maximum zp coordinate accepted (unit momentum -1 - 1)     |
+| eventGeneratorMaxZp        | Maximum zp coordinate accepted (unit momentum -1 : 1)     |
 +----------------------------+-----------------------------------------------------------+
 | eventGeneratorMinT         | Minimum T coordinate accepted (s)                         |
 +----------------------------+-----------------------------------------------------------+
 | eventGeneratorMaxT         | Maximum T coordinate accepted (s)                         |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMinEK        | Minimum kinetic energy accepted (GeV)                     |
+| eventGeneratorMinEk        | Minimum kinetic energy accepted (GeV)                     |
 +----------------------------+-----------------------------------------------------------+
-| eventGeneratorMaxEK        | Maximum kinetic energy accepted (GeV)                     |
+| eventGeneratorMaxEk        | Maximum kinetic energy accepted (GeV)                     |
 +----------------------------+-----------------------------------------------------------+
 | eventGeneratorParticles    | PDG IDs or names (as per Geant4 exactly) for accepted     |
 |                            | particles. White space delimited. If empty all particles  |
@@ -1145,6 +1525,13 @@ The following parameters are used to control the use of an event generator file.
 |                            | would eventually be killed by Geant4 when they decay but  |
 |                            | without producing any secondaries.                        |
 +----------------------------+-----------------------------------------------------------+
+
++-------------------------------------+------------------------------------------------------+
+| eventGeneratorWarnSkippedParticles  | 1 (true) by default. Print a small warning for each  |
+|                                     | event if any particles loaded were skipped or there  |
+|                                     | were none suitable at all and the event was skipped. |
++-------------------------------------+------------------------------------------------------+
+
 
 * The filters are applied **before** any offset is added from the reference distribution, i.e.
   in the original coordinates of the event generator file.
@@ -1204,58 +1591,65 @@ For only pions: ::
 	eventGeneratorParticles="111 211 -211";
   
 
-sphere
-******
+.. _beam-bdsimsampler:
+	
+bdsimsampler
+************
 
-The `sphere` distribution generates a distribution with a uniform random direction at one location.
-Points are randomly and uniformly generated on a sphere that are used in a unit vector for the
-momentum direction. This is implemented using `G4RandomDirection`, which in turn uses the
-Marsaglia (1972) method.
+Recorded hits in a sampler in a BDSIM ROOT output file can be loaded back into BDSIM
+and launched through a model. This does not have to be the same model and the starting
+position does not need to be the same.
 
-* `Xp0`, `Yp0`, `Zp0` are ignored.
-* `X0`, `Y0`, `Z0`, `S0`, `T0` can be used for the position of the source.
-* No energy spread.
+.. warning:: By default, the 'local' hits in the frame of the sampler are loaded and launched
+	     from wherever the beam central coordinates start (e.g. 0,0,0 with direction 0,0,1).
+	     If you want to continue hits from a sampler, you must include the `S` of that sampler
+	     in the original model as a beam offset.
 
-If an energy spread is desired, please use a :ref:`beam-composite` distribution.
++----------------------------+-----------------------------------------------------------+
+| Option                     | Description                                               |
++============================+===========================================================+
+| `distrType`                | This should be "bdsimsampler:samplername".                |
++----------------------------+-----------------------------------------------------------+
+| `distrFile`                | The path to the input file desired.                       |
++----------------------------+-----------------------------------------------------------+
+| `distrFileMatchLength`     | (1 or 0) Whether to run the number of events as is in the |
+|                            | file. On by default, but ignored if --ngenerate used      |
++----------------------------+-----------------------------------------------------------+
 
-An example can be found in `bdsim/examples/features/beam/sphere.gmad`. Below is an example: ::
+* Specify `S` in the beam command to offset the loaded data to the desired position in the beam
+  line. i.e. the sampler data is not played back globally where it was recorded.
+* **All** of the parameters of `eventgeneratorfile`_ apply - i.e. all of the cuts and filters
+  apply to this distribution as well, including **skipping**.
+* By default, the length of the file is matched. If some events contain no particles of
+  interest according to the cuts these events will be skipped. Therefore you might have
+  fewer events afterwards. Turn off `distrFileMatchLength` to allow looping on the file
+  to generate more.
+* Examples can be found in :code:`bdsim/examples/features/beam/bdsimsampler/*gmad`.
+* Remember, a design particle must still be specified in the beam command for the magnets.
 
-  beam, particle = "proton",
-        energy = 1.2*GeV,
-	distrType = "sphere",
-	X0 = 9*cm,
-	Z0 = 0.5*m;
+Examples: ::
+
+  beam, particle="proton",
+        kineticEnergy=10*GeV,
+	distrType="bdsimsampler:d1_1",
+	distrFile="../../data/sample1.root";
 
 
-box
-***
+  beam, particle="proton",
+        kineticEnergy=10*GeV,
+	distrType="bdsimsampler:d1_1",
+	distrFile="../../data/sample1.root",
+	eventGeneratorMinZp=0.9,
+	eventGeneratorMinEK=1.5*GeV,
+	eventGeneratorMaxEK=1*TeV,
+	eventGeneratorParticles="111 211 -211 12 -12 proton";
 
-The `box` distribution generates a uniform random uncorrelated distribution in each variable.
-Ultimatley, the 3-vector making the direction `xp`, `yp`, and `zp` is normalised (i.e. unit 1).
-This results in an uneven distribution in these variables over the range (cube projected onto sphere).
 
-* The values will vary from -envelope to +envelope.
-* `Xp0`, `Yp0`, and `Zp0` are ignored from the reference distribution.
-
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| `envelopeX`                      | Maximum position in X [m]                             |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeXp`                     | Maximum component in X of unit momentum vector        |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeY`                      | Maximum position in Y [m]                             |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeYp`                     | Maximum component in Y of unit momentum vector        |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeZ`                      | Maximum position in Z [m]                             |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeZp`                     | Maximum component in Z of unit momentum vector        |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeT`                      | Maximum time offset [s]                               |
-+----------------------------------+-------------------------------------------------------+
-| `envelopeE`                      | Maximum energy offset [GeV]                           |
-+----------------------------------+-------------------------------------------------------+
+.. warning:: The number of events may not match the number in the original file. Any events
+	     in the loaded file with 0 hits in that sampler will be skipped as we are not
+	     permitted (nor do we want to) simulate an empty event with no starting particles.
+	     Events are read until at least 1 particle is found in an event. If an event loaded
+	     has more than one particle, that event will also match 1:1 to the output event.
 
 
 .. _physics-processes:
@@ -1304,9 +1698,18 @@ and pattern 2) as Geant4 reference physics lists.
      option, physicsList = "completechannelling";
 
 
-For general high energy hadron physics we recommend::
+For general high energy hadron physics it is recommended to use::
 
-  option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
+  option, physicsList = "g4FTFP_BERT";
+
+For similar high-energy studies, but concerned with muons it is recommended to use a :ref:`physics-macro-file`
+with the following options: ::
+
+  /physics_lists/em/GammaToMuons true
+  /physics_lists/em/PositronToMuons true
+  /physics_lists/em/PositronToHadrons true
+  /physics_lists/em/MuonNuclear true
+  /physics_lists/em/GammaNuclear true
 
 
 Some physics lists are only available in later versions of Geant4. These are filtered at compile
@@ -1320,6 +1723,7 @@ See the Geant4 documentation for a more complete explanation of the physics list
 
 * `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/physicslistguide.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
+
 
 .. _physics-macro-file:
   
@@ -1337,7 +1741,6 @@ Inside this file, the following commands were used: ::
   /physics_lists/em/GammaToMuons true
   /physics_lists/em/PositronToMuons true
   /physics_lists/em/PositronToHadrons true
-  /physics_lists/em/NeutrinoActivation true
   /physics_lists/em/MuonNuclear true
   /physics_lists/em/GammaNuclear true
 
@@ -1388,6 +1791,8 @@ Examples: ::
 |                              | G4ShortLivedConstructor, G4MesonConstructor, G4BaryonConstructor and   |
 |                              | G4IonConstructor.                                                      |
 +------------------------------+------------------------------------------------------------------------+
+| annihi_to_mumu               | Only annihilation to a muon pair for positrons is registered.          |
++------------------------------+------------------------------------------------------------------------+
 | charge_exchange              | `G4ChargeExchangePhysics`                                              |
 +------------------------------+------------------------------------------------------------------------+
 | channelling                  | This constructs the `G4Channelling` and attaches it to all charged     |
@@ -1395,7 +1800,7 @@ Examples: ::
 |                              | alone will not give an accurate representation of the distribution     |
 |                              | after a crystal as EM physics is required. Multiple scattering should  |
 |                              | not be used in combination with this however to achieve the correct    |
-|                              | results.                                                               |
+|                              | results. Only available for Geant4 V10.4 onwards.                      |
 +------------------------------+------------------------------------------------------------------------+
 | cherenkov                    | Provides Cherenkov radiation for all charged particles. Issued by the  |
 |                              | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
@@ -1460,6 +1865,8 @@ Examples: ::
 | ftfp_bert_hp                 | Similar to `FTFP_BERT`, but with the high precision neutron package.   |
 |                              | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
 +------------------------------+------------------------------------------------------------------------+
+| gamma_to_mumu                | Only gamma to a muon pair for gammas is registered.                    |
++------------------------------+------------------------------------------------------------------------+
 | hadronic_elastic             | Elastic hadronic processes. This is provided by                        |
 |                              | `G4HadronElasticPhysics.`                                              |
 +------------------------------+------------------------------------------------------------------------+
@@ -1499,6 +1906,9 @@ Examples: ::
 |                              | production and Cherenkov light are all provided. Given by BDSIM        |
 |                              | physics builder (a la Geant4) `BDSPhysicsMuon`.                        |
 +------------------------------+------------------------------------------------------------------------+
+| muon_inelastic               | Only hadronic interactions for both muons. Incompatible with           |
+|                              | `em_extra` and `muon` physics lists.                                   |
++------------------------------+------------------------------------------------------------------------+
 | neutron_tracking_cut         | `G4NeutronTrackingCut` allows neutrons to be killed via their tracking |
 |                              | time (i.e. time of flight) and minimum kinetic energy. These options   |
 |                              | are set via the option command, `neutronTimeLimit` (s) and             |
@@ -1527,6 +1937,9 @@ Examples: ::
 | qgsp_bic_hp                  | Similar to `QGSP_BIC`, but with the high precision neutron package.    |
 |                              | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
 +------------------------------+------------------------------------------------------------------------+
+| radioactivation              | Use G4Radioactivation process. Atomic de-excitation disabled for now.  |
+|                              | Only available for Geant4 V10.4 onwards.                               |
++------------------------------+------------------------------------------------------------------------+
 | shielding                    | `G4HadronPhysicsShielding`. Inelastic hadron physics suitable for      |
 |                              | shielding applications.                                                |
 +------------------------------+------------------------------------------------------------------------+
@@ -1540,11 +1953,14 @@ Examples: ::
 |                              | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
 |                              | `G4SynchrotronRadiation`.                                              |
 +------------------------------+------------------------------------------------------------------------+
+| xray_reflection              | X-ray reflection for most materials. Available from Geant4.11.2        |
+|                              | onwards.                                                               |
++------------------------------+------------------------------------------------------------------------+
 
 The following are also accepted as aliases to current physics lists. These are typically previously
 used names.
 
-.. tabularcolumns:: |p{5cm}|p{5cm}|
+.. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +---------------------------+--------------------------+
 | **Physics List**          | **Alias To**             |
@@ -1579,12 +1995,17 @@ used names.
 	     `G4LENDDATA` set to the directory containing it.
 
 
+.. _physics-em-extra-notes:
+	     
 em_extra Physics Notes
 ^^^^^^^^^^^^^^^^^^^^^^
 
 The em_extra model is an interface to `G4EmExtraPhysics` that collects a variety of extra electromagnetic models
 together. Not all of these are activated by default. BDSIM provides options to turn these components on and off.
 See :ref:`physics-process-options` for more details on the specific options.
+
+
+.. tabularcolumns:: |p{4cm}|p{6cm}|p{2cm}|
 
 +------------------------+-----------------------------+--------------+
 | **Option**             | **Minimum Geant4 Version**  | **Default**  |
@@ -1741,6 +2162,8 @@ for crystal channelling physics. These all begin with "complete".
 
 These cannot be used in combination with any other physics processes.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
 +---------------------------+---------------------------------------------------------------------------+
 | **Physics List**          | **Description**                                                           |
 +===========================+===========================================================================+
@@ -1751,18 +2174,78 @@ These cannot be used in combination with any other physics processes.
 .. note:: The range cuts specified with BDSIM options to not apply and cannot be used with a 'complete'
 	  physics list.
 
+.. _physics-proton-diffraction:
+          
+Proton Diffraction
+^^^^^^^^^^^^^^^^^^
+
+Since Geant4.10.5, target and projectile diffractive outcomes from hadronic interactions have been turned
+off if one of the participants has A > 10. This has the effect that the spectra of high energy protons
+passing through targets of materials above Beryllium in the periodic table have a significantly different
+spectrum. This is particularly important for particle accelerator applications where diffractive protons
+may go some way through an accelerator due to their very small momentum deviation and cause large energy
+deposits far from the target.
+
+In the default Geant4, this is therefore quite wrong. Since v11.1 (inclusive) an option has been added
+to :code:`G4HadronicParameters::Instance()` in Geant4 that allows us to turn back on diffraction. BDSIM
+provides the option :code:`restoreFTPFDiffractionForAGreater10` to use this. In versions of Geant4 earlier
+than v11.1, this will have no effect and the original Geant4 code must be patched.
+
+Example syntax: ::
+
+  option, restoreFTPFDiffractionForAGreater10=1;
+
+
+This only has an effect when the FTFP hadronic model is used. i.e. with: ::
+
+  ! the complete reference physics list from Geant4 including em and decay etc.
+  option, physicsList="g4FTFP_BERT";
+
+  ! the modular hadronic only physics as turned on by BDSIM
+  option, physicsList="ftfp_bert";
+
+ 
+
+A comparison is shown below with this option on and off for a 7TeV proton incident on a 40cm
+target of carbon. This example can be found in :code:`bdsim/examples/features/processes/protonDiffraction`.
+
+.. figure:: figures/proton-diffraction-comparison.pdf
+            :width: 80%
+            :align: center
+
+            The relative change in the momentum of protons immmediately after the target.
+
+
+.. figure:: figures/proton-diffraction-comparison-zoom.pdf
+            :width: 80%
+            :align: center
+
+            The relative change in the momentum of protons immmediately after the target. For a
+            narrow range close to the nominal momentum (:math:`\Delta P / P = 0`).
+
+.. note:: Although, this is referred to proton diffraction this applies to all nucleons
+          and therefore will affect ion-ion collisions too.
+
+
 .. _physics-biasing:
 
 Physics Biasing
 ---------------
 
-BDSIM currently provides two ways to artificially interfere with the physics processes
-to make the desired outcome happen more often. In both cases, the goal is to simulate
+BDSIM currently provides a few ways to artificially interfere with the physics processes
+to make the desired outcome happen more often. In these cases, the goal is to simulate
 the correct physical outcome, but more efficiently in the parameters of interest,
 i.e. variance reduction.
 
-The two cases are :ref:`physics-bias-cross-section-biasing` and
-:ref:`physics-bias-importance-sampling`, each described below.
+.. note:: If any biasing schemes are used, the :code:`weight` variable in the output
+	  associated with the variable you are using (e.g. :code:`<sampler_name>.x` and
+	  :code:`<sampler_name>.weight`) must be used to regain the correct physical result.
+
+Schemes are:
+
+* :ref:`physics-bias-cross-section-biasing`
+* :ref:`physics-bias-importance-sampling`
+* :ref:`physics-bias-muon-splitting`
 
 .. _physics-bias-cross-section-biasing:
 
@@ -1789,6 +2272,8 @@ only one proton definition.
 1) Define a bias object with parameters in following table.
 2) Use :code:`bias`, :code:`biasMaterial` or :code:`biasVacuum` in an element definition naming the bias object.
 
+.. tabularcolumns:: |p{3cm}|p{10cm}|
+   
 +------------------+------------------------------------------------------+
 | **Parameter**    | **Description**                                      |
 +==================+======================================================+
@@ -1875,6 +2360,8 @@ importance world file should contain the volumes that will be the importance cel
 third text file must also be provided which contains a map of the physical volumes that form
 the importance cells and their corresponding importance volumes.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
 +------------------------------+-------------------------------------------------------------+
 | **Parameter**                | **Description**                                             |
 +==============================+=============================================================+
@@ -1920,7 +2407,236 @@ the energy deposition in the world volume itself (i.e. the air).
 * If a importance cell volume exists in the importance world geometry and is not listed
   in the ASCII map file with a importance value, BDSIM will exit.
 * The importance sampling world volume has an importance value of 1.
+
+
+.. _physics-bias-muon-splitting:
   
+Muon Splitting
+^^^^^^^^^^^^^^
+
+Muon splitting offers the possibility to understand muon distributions throughout a 3D model a
+little better. It works by wrapping several physics processes for several particles. If they
+produce a muon in their "post step change", the splitting is invoked. In this case, the following happens:
+
+#) Any original secondaries (excluding muons) are kept from the original physics process to one side.
+#) The original muon(s) is/are kept separately.
+#) The physics process is resampled and asked to do its action again. After each invocation,
+   any muons produced are kept and the other *new* secondaries discarded. This continues until
+   we have the desired number of muons minus 1.
+#) The original muon(s) plus the new ones are added to the final "post step change", each with
+   a weight of original weight / N muons.
+
+Schematically, this would look like:
+
+.. figure:: figures/muonsplitting.pdf
+            :width: 70%
+            :align: center
+
+            Schematic of a :math:`\pi^+` decay to a muon and a muon neutrino.
+
+   
+.. note:: This can safely be used in combination with BDSIM's cross-section biasing. The weights
+	  are compounded and no special action needs to be taken.
+
+This is controlled by the option: ::
+
+  option, muonSplittingFactor=N
+
+where N is a positive integer (1 = no splitting). This is the factor multiplying the number of
+muons normally produced.
+
+* :code:`muonSplittingFactor` can range from 1 to 206. The limit of 206 is imposed by the
+  compiled constant :code:`G4TrackFastVectorSize` in :code:`G4TrackFastVector.hh`, which
+  is Geant4's expected maximum number of secondary tracks per interaction, which is fair.
+  If more than this are generated, they will be dumped by Geant4 and not tracked. We have
+  a factor of 2, because theoretically AnnihiToMuPair could produce 2x muons per occurrence.
+
+The following full set of options control the splitting:
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
++----------------------------------+--------------------------------------------------------+
+| **Option**                       | **Description**                                        |
++==================================+========================================================+
+| muonSplittingFactor              | The multiplication factor of muons if split. Postive   |
+|                                  | integer between 1 and 206.                             |
++----------------------------------+--------------------------------------------------------+
+| muonSplittingThresholdParentEk   | The minimum kinetic energy of the parent particle to   |
+|                                  | qualify for splitting. Default 0 GeV.                  |
++----------------------------------+--------------------------------------------------------+
+| muonSplittingFactor2             | A second multiplication factor of muons if split for   |
+|                                  | a second higher energy band as defined by the next     |
+|                                  | option. Positive integer between 1 and 206, and should |
+|                                  | be greater or equal to `muonSplittingFactor`.          |
++----------------------------------+--------------------------------------------------------+
+| muonSplittingThresholdParentEk2  | The minimum kinetic energy of the parent particle for  |
+|                                  | the second splitting factor to take effect. Should be  |
+|                                  | greater or equal to `muonSplittingThresholdParentEk`.  |
++----------------------------------+--------------------------------------------------------+
+
+The splitting can be used with 1 or 2 factors. In the case of 1 factor, only the first one
+is used. In the case of `muonSplittingThresholdParentEk` is set, the 1 factor applies above
+this energy and the factor is 'faded-in' from 0.8 x this value. The factor is linearly
+interpolated as a function of kinetic energy and rounded to the nearest integer.
+
+In the case of a second splitting factor and therefore also `muonSplittingThresholdParentEk2`,
+a similar linear interpolation procedure is used along with rounding.
+
+.. figure:: figures/splittingfactor1.pdf
+	    :width: 70%
+	    :align: center
+
+	    Muon splitting factor as a function of kinetic energy with only 1 factor specified
+	    and no kinetic energy threshold used.
+
+
+.. figure:: figures/splittingfactor1b.pdf
+	    :width: 70%
+	    :align: center
+
+	    Muon splitting factor as a function of kinetic energy with only 1 factor specified
+	    and a kinetic energy threshold specified.
+
+
+.. figure:: figures/splittingfactor2.pdf
+	    :width: 70%
+	    :align: center
+
+	    Muon splitting factor as a function of kinetic energy with 2 factors specified as
+	    well as 2 kinetic energy thresholds.
+
+
+**Examples:**
+
+::
+
+   option, muonSplittingFactor=10;
+
+
+::
+   
+   option, muonSplittingFactor=10,
+           muonSplittingThresholdParentEk=50*GeV,
+
+
+::
+
+   option, muonSplittingFactor=10,
+           muonSplittingThresholdParentEk=50*GeV,
+	   muonSplittingFactor=30,
+	   muonSplittingThresholdParentEk=150*GeV;
+
+
+More examples can be found (including cross-section biasing) in :code:`bdsim/examples/features/processes/6_muon`.
+
+The following processes are wrapped for the following
+particles (Geant4 names).
+
++---------------+-----------------+
+| **Particle**  | **Process**     |
++===============+=================+
+| e+            | AnnihiToMuPair  |
++---------------+-----------------+
+| pi+           | Decay           |
++---------------+-----------------+
+| pi-           | Decay           |
++---------------+-----------------+
+| kaon+         | Decay           |
++---------------+-----------------+
+| kaon-         | Decay           |
++---------------+-----------------+
+| kaon0L        | Decay           |
++---------------+-----------------+
+
+**Motivation**
+
+We want to estimate the muon flux including spectra at a location, probably far from the original
+source of beam losses or particles on a target. Muons are comparatively rare, but the numbers
+present with real beams (e.g. :math:`10^9` particles in a bunch) may produce a non-negligible
+muon flux. We want to precisely estimate this through Monte Carlo, but practically, very few
+events produce muons. We can enhance muon numbers in our simulation by for example, biasing
+the cross-section of the decay process for pions and kaons (to balance hadronic inelastic
+interactions), but we still see too few muons.
+
+If we increase the decay cross-section too much, the decays happen over a short distance.
+While this produces a lot of muons, it means we only *sample* muons close spatially to the
+upstream part. The particles (e.g. pions, kaons, muons) may travel through material and
+magnetic fields before producing muons and ultimately contribute to a different *phase space*
+or distribution in the far away plane.
+
+Therefore, we choose splitting. When a given muon is produced at a location, we resample
+the process and repeat it. In the case of 2-body decay, the decay products are produced
+back-to-back in the frame of the parent and have a fixed momenta based on their relative
+masses. The direction of this back-to-back decay is random. Then, the decay products are
+boosted to the lab frame, which can give them different momenta and directions.
+
+Some muons may pass through different material and fields on their way to the point of
+interest. With more muons, we sample this better.
+
+We cannot use a factor of say, 1 million and only sample 1 event, because we would only
+sample 1 (e.g.) decay in 1 location. We must still sample many locations well to properly
+estimate the muon flux.
+
+.. figure:: figures/muon_splitting_comparison_with_divsym.png
+	    :width: 70%
+	    :align: center
+                    
+            Comparison of the muon spectrum for the same model with activated muon splitting
+            and without muon splitting [F. Metzger, `Examination of the RF separated beam
+            technique at CERN's M2 beam line`, PhD thesis (in progress)].
+
+
+**Notes:**
+
+* A factor of 1 means no splitting is done.
+* Examples in :code:`bdsim/examples/features/processes/6_muon`.
+* The biasing happens *everywhere* and is not attached to any particle shapes or volumes.
+* The biasing happens to all particles that are wrapped, irrespective of their energy or direction.
+* A factor of 5-30 is recommended.
+* The factor must be an **integer**.
+* If no suitable particles or processes are found, no action will be taken. Only the ones
+  available from the table above are wrapped.
+* Decay must be present in the physics list to occur and be wrapped.
+* The extra EM physics must be used for positron annihilation ("em_extra") or as part of a
+  Geant4 reference physics list (e.g. :code:`g4FTPF_BERT`).
+* A muon might not be produced every time in the final state of the wrapped process. The
+  wrapper will try up to 10 x muonSplittingFactor to generate the required number. Ultimately,
+  if it can't, it will continue with the number it has produced and normalise the weights accordingly.
+
+
+.. note::  For positron **AnnihiToMuPair** to work, "EmExtra" physics must be included in the physics
+	   list, but this process must also generally be turned on. This can be done in BDSIM with
+	   the option :code:`usePositronToMuMu` in the case of a BDSIM modular physics list, or with
+	   a Geant4 physics macro in the case of a Geant4 reference physics list. See
+	   :ref:`physics-em-extra-notes` for the former, and :ref:`physics-macro-file` for the later.
+	   The relevant command is :code:`/physics_lists/em/PositronToMuons true` for the Geant4 physics
+	   macro.
+
+
+**Pion Decay**
+
+.. math::
+
+   \pi^+ \to \mu^+ + \nu_{\mu}
+
+Here, the neutrino is kept as it would be originally, but the muon is 'split' into N muons. e.g. with a
+splitting factor of 100, there would be 100 muons and 1 neutrino. Each of the 100 muons would have a new
+weight of 1/100. The produces will be 1x neutrino, 100x muons.
+
+**Positron Annihilation**
+
+One possible outcome of a high energy positron hitting a solid target is:
+
+.. math::
+
+   e^+ + e^- \mathrm{(in~material)} \to \gamma \mathrm{ (virtual) } \to \mu^+ \mu^-
+
+With a splitting factor of 100, this would produce 100x the 2 muons, resulting in 100 :math:`\mu^+`
+and 100 :math:`\mu^-`, each with a weight of 1/100.
+
+
+
+   
 .. _bdsim-options:
 
 Options
@@ -2103,8 +2819,8 @@ For a description of recreating events, see :ref:`running-recreation`.
 |                                  | option with a path (e.g. "./" for cwd) to override    |
 |                                  | this behaviour.                                       |
 +----------------------------------+-------------------------------------------------------+
-| writeSeedState                   | Writes the seed state of the last event start in      |
-|                                  | ASCII                                                 |
+| writeSeedState                   | Writes the seed state of the last event start in a    |
+|                                  | text file                                             |
 +----------------------------------+-------------------------------------------------------+
 
 .. _options-geometry:
@@ -2219,7 +2935,7 @@ described in :ref:`tunnel-geometry`.
 |                                  | this behaviour.                                       |
 +----------------------------------+-------------------------------------------------------+
 | thinElementLength                | The length of all thinmultipoles and dipole           |
-|                                  | fringefields in a lattice (default 1e-6) [m]          |
+|                                  | fringefields in a lattice (default 1e-7) [m]          |
 +----------------------------------+-------------------------------------------------------+
 | tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
 |                                  | should be killed or not (default = false)             |
@@ -2378,6 +3094,11 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 | minimumRange                     | A particle that would not travel this range           |
 |                                  | (a distance) in the current material will be cut [m]  |
 +----------------------------------+-------------------------------------------------------+
+| particlesToExcludeFromCuts       | A white space separated string containing PDG IDs for |
+|                                  | particles to be excluded from `minimumKineticEnergy`, |
+|                                  | `minimumRange`, `maximumTrackingTime`, and            |
+|                                  | `maximumTrackLength`. e.g. `"13 -13"`.                |
++----------------------------------+-------------------------------------------------------+
 | ptcOneTurnMapFileName            | File name for a one turn map prepared in PTC that is  |
 |                                  | used in the teleporter to improve the accuracy of     |
 |                                  | circular tracking. See :ref:`one-turn-map`.           |
@@ -2400,131 +3121,150 @@ Physics Processes
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+----------------------------------+-------------------------------------------------------+
-| **Option**                       | **Function**                                          |
-+==================================+=======================================================+
-| biasForWorldVacuum               | In the case of externally provided world geometry and |
-|                                  | 'vacuum' volumes are named using the option           |
-|                                  | `worldVacuumVolumeNames`, name(s) of bias object(s)   |
-|                                  | can be given for these volumes.                       |
-+----------------------------------+-------------------------------------------------------+
-| biasForWorldVolume               | Name(s) of bias objects to be attached to the world   |
-|                                  | logical volume only (i.e. not the daughters). White   |
-|                                  | space separate list in a string.                      |
-+----------------------------------+-------------------------------------------------------+
-| biasForWorldContents             | Exclusively in the case of externally provided world  |
-|                                  | geometry, the daughter volumes in the loaded world    |
-|                                  | volume can be biased with this option. White space    |
-|                                  | separated list in a string. Does not apply to world   |
-|                                  | volume itself.                                        |
-+----------------------------------+-------------------------------------------------------+
-| defaultBiasVacuum                | Name of bias object(s) to be attached to vacuum       |
-|                                  | volumes by default. White space separate list in a    |
-|                                  | string, such as "bias1 bias2".                        |
-+----------------------------------+-------------------------------------------------------+
-| defaultBiasMaterial              | Name of bias object to be attached to general         |
-|                                  | material of components outside the vacuum by default  |
-+----------------------------------+-------------------------------------------------------+
-| defaultRangeCut                  | The default predicted range at which a particle is    |
-|                                  | cut. Overwrites other production cuts unless these    |
-|                                  | are explicitly set (default 1e-3) [m].                |
-+----------------------------------+-------------------------------------------------------+
-| geant4PhysicsMacroFileName       | The name of a text macro file with commands that are  |
-|                                  | suitable for the Geant4 interpreter that will be      |
-|                                  | executed after the physics list is constructed but    |
-|                                  | before a run.                                         |
-+----------------------------------+-------------------------------------------------------+
-| g4PhysicsUseBDSIMCutsAndLimits   | If on, the maximum step length will be limited to     |
-|                                  | 110% of the component length - this makes the         |
-|                                  | tracking more robust and is the default with a        |
-|                                  | regular BDSIM physics list. The minimum kinetic       |
-|                                  | option is also obeyed. Default off.                   |
-+----------------------------------+-------------------------------------------------------+
-| g4PhysicsUseBDSIMRangeCuts       | If on, this will apply the BDSIM range cut lengths    |
-|                                  | to the Geant4 physics list used. This is off by       |
-|                                  | default.                                              |
-+----------------------------------+-------------------------------------------------------+
-| minimumKineticEnergy             | A particle below this energy will be killed and the   |
-|                                  | energy deposition recorded at that location [GeV]     |
-+----------------------------------+-------------------------------------------------------+
-| minimumKineticEnergyTunnel       | A particle below this energy in any BDSIM-generated   |
-|                                  | tunnel sections will be killed and the energy         |
-|                                  | deposition recorded at that location [GeV]            |
-+----------------------------------+-------------------------------------------------------+
-| minimumRange                     | A particle that would not travel this range           |
-|                                  | (a distance) in the current material will be cut [m]  |
-+----------------------------------+-------------------------------------------------------+
-| neutronTimeLimit                 | Maximum allowed tracking time for a neutron when      |
-|                                  | using the `neutron_tracking_cut` physics list [s]     |
-+----------------------------------+-------------------------------------------------------+
-| neutronKineticEnergyLimit        | Minimum allowed energy for neutrons when using the    |
-|                                  | `neutron_tracking_cut` physics list [GeV]             |
-+----------------------------------+-------------------------------------------------------+
-| physicsEnergyLimitLow            | Optional lower energy level for all physics models.   |
-|                                  | This is usually 990 eV by default in Geant4. The user |
-|                                  | may change this if required. Warning, this must       |
-|                                  | be used only if the user understands how this will    |
-|                                  | affect the running of Geant4. [GeV]                   |
-+----------------------------------+-------------------------------------------------------+
-| physicsEnergyLimitHigh (\*)      | Optional upper energy level for all physics models.   |
-|                                  | This is usually 100 TeV by default in Geant4. The     |
-|                                  | user may change this if required. Warning, this must  |
-|                                  | be used only if the user understands how this will    |
-|                                  | affect the running of Geant4. [GeV]                   |
-+----------------------------------+-------------------------------------------------------+
-| physicsList                      | Which physics lists to use - default tracking only    |
-+----------------------------------+-------------------------------------------------------+
-| physicsVerbose                   | Prints out all processes linked to primary particle   |
-|                                  | and all physics processes registered in general       |
-+----------------------------------+-------------------------------------------------------+
-| physicsVerbosity                 | Set the physics verbosity for Geant4 (0,1,2).         |
-+----------------------------------+-------------------------------------------------------+
-| prodCutPhotons                   | Standard overall production cuts for photons          |
-|                                  | (default 1e-3) [m]                                    |
-+----------------------------------+-------------------------------------------------------+
-| prodCutElectrons                 | Standard overall production cuts for electrons        |
-|                                  | (default 1e-3) [m]                                    |
-+----------------------------------+-------------------------------------------------------+
-| prodCutPositrons                 | Standard overall production cuts for positrons        |
-|                                  | (default 1e-3) [m]                                    |
-+----------------------------------+-------------------------------------------------------+
-| prodCutProtons                   | Standard overall production cuts for protons          |
-|                                  | (default 1e-3) [m]                                    |
-+----------------------------------+-------------------------------------------------------+
-| stopSecondaries                  | Whether to stop secondaries or not (default = false)  |
-+----------------------------------+-------------------------------------------------------+
-| synchRadOn                       | Whether to use synchrotron radiation processes        |
-+----------------------------------+-------------------------------------------------------+
-| tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
-|                                  | should be killed or not (default = false)             |
-+----------------------------------+-------------------------------------------------------+
-| turnOnCerenkov                   | Whether to produce Cherenkov radiation                |
-+----------------------------------+-------------------------------------------------------+
-| useElectroNuclear                | Uses electro-nuclear processes when `em_extra` physics|
-|                                  | list is used. Default On. Requires Geant4.10.4 or     |
-|                                  | greater.                                              |
-+----------------------------------+-------------------------------------------------------+
-| useGammaToMuMu                   | Uses gamma to muon pair production process when using |
-|                                  | `em_extra` physics list is used. Default Off.         |
-|                                  | Requires Geant4.10.3 onwards.                         |
-+----------------------------------+-------------------------------------------------------+
-| useLENDGammaNuclear              | Uses the low-energy neutron data set, as provided by  |
-|                                  | the environmental variable `G4LENDDATA` when using    |
-|                                  | the `em_extra` physics list. Boolean. Available in    |
-|                                  | Geant4.10.4 onwards.                                  |
-+----------------------------------+-------------------------------------------------------+
-| useMuonNuclear                   | Uses muon-nuclear interaction processes when using    |
-|                                  | `em_extra` physics list. Default On. Requires         |
-|                                  | Geant4.10.2 onwards.                                  |
-+----------------------------------+-------------------------------------------------------+
-| usePositronToMuMu                | Uses muon pair production from positron annihilation  |
-|                                  | when using `em_extra` physics list. Default Off.      |
-|                                  | Requires Geant4.10.3 onwards.                         |
-+----------------------------------+-------------------------------------------------------+
-| usePositronToHadrons             | Uses hadron production from positron-electron         |
-|                                  | annihilation process when using `em_extra` physics    |
-|                                  | list. Default Off.  Requires Geant4.10.3 onwards.     |
-+----------------------------------+-------------------------------------------------------+
++-------------------------------------+-------------------------------------------------------+
+| **Option**                          | **Function**                                          |
++=====================================+=======================================================+
+| biasForWorldVacuum                  | In the case of externally provided world geometry and |
+|                                     | 'vacuum' volumes are named using the option           |
+|                                     | `worldVacuumVolumeNames`, name(s) of bias object(s)   |
+|                                     | can be given for these volumes.                       |
++-------------------------------------+-------------------------------------------------------+
+| biasForWorldVolume                  | Name(s) of bias objects to be attached to the world   |
+|                                     | logical volume only (i.e. not the daughters). White   |
+|                                     | space separate list in a string.                      |
++-------------------------------------+-------------------------------------------------------+
+| biasForWorldContents                | Exclusively in the case of externally provided world  |
+|                                     | geometry, the daughter volumes in the loaded world    |
+|                                     | volume can be biased with this option. White space    |
+|                                     | separated list in a string. Does not apply to world   |
+|                                     | volume itself.                                        |
++-------------------------------------+-------------------------------------------------------+
+| defaultBiasVacuum                   | Name of bias object(s) to be attached to vacuum       |
+|                                     | volumes by default. White space separate list in a    |
+|                                     | string, such as "bias1 bias2".                        |
++-------------------------------------+-------------------------------------------------------+
+| defaultBiasMaterial                 | Name of bias object to be attached to general         |
+|                                     | material of components outside the vacuum by default  |
++-------------------------------------+-------------------------------------------------------+
+| defaultRangeCut                     | The default predicted range at which a particle is    |
+|                                     | cut. Overwrites other production cuts unless these    |
+|                                     | are explicitly set (default 1e-3) [m].                |
++-------------------------------------+-------------------------------------------------------+
+| geant4PhysicsMacroFileName          | The name of a text macro file with commands that are  |
+|                                     | suitable for the Geant4 interpreter that will be      |
+|                                     | executed after the physics list is constructed but    |
+|                                     | before a run.                                         |
++-------------------------------------+-------------------------------------------------------+
+| g4PhysicsUseBDSIMCutsAndLimits      | If on, the maximum step length will be limited to     |
+|                                     | 110% of the component length - this makes the         |
+|                                     | tracking more robust and is the default with a        |
+|                                     | regular BDSIM physics list. The minimum kinetic       |
+|                                     | option is also obeyed. Default off.                   |
++-------------------------------------+-------------------------------------------------------+
+| g4PhysicsUseBDSIMRangeCuts          | If on, this will apply the BDSIM range cut lengths    |
+|                                     | to the Geant4 physics list used. This is off by       |
+|                                     | default.                                              |
++-------------------------------------+-------------------------------------------------------+
+| minimumKineticEnergy                | A particle below this energy will be killed and the   |
+|                                     | energy deposition recorded at that location. [GeV]    |
+|                                     | See also, `particlesToExcludeFromCuts`.               |
++-------------------------------------+-------------------------------------------------------+
+| minimumKineticEnergyTunnel          | A particle below this energy in any BDSIM-generated   |
+|                                     | tunnel sections will be killed and the energy         |
+|                                     | deposition recorded at that location [GeV]            |
++-------------------------------------+-------------------------------------------------------+
+| minimumRange                        | A particle that would not travel this range           |
+|                                     | (a distance) in the current material will be cut [m]  |
++-------------------------------------+-------------------------------------------------------+
+| muonSplittingFactor                 | An integer of 1 or greater. Number of muons to split  |
+|                                     | a muon into (biasing) for select processes. See       |
+|                                     | physics biasing for an explanation. 1 = no effect.    |
+|                                     | 1-206 (depends on Geant4) is acceptable.              |
++-------------------------------------+-------------------------------------------------------+
+| neutronTimeLimit                    | Maximum allowed tracking time for a neutron when      |
+|                                     | using the `neutron_tracking_cut` physics list [s]     |
++-------------------------------------+-------------------------------------------------------+
+| neutronKineticEnergyLimit           | Minimum allowed energy for neutrons when using the    |
+|                                     | `neutron_tracking_cut` physics list [GeV]             |
++-------------------------------------+-------------------------------------------------------+
+| particlesToExcludeFromCuts          | A white space separated string containing PDG IDs for |
+|                                     | particles to be excluded from `minimumKineticEnergy`, |
+|                                     | `minimumRange`, `maximumTrackingTime`, and            |
+|                                     | `maximumTrackLength`. e.g. `"13 -13"`.                |
++-------------------------------------+-------------------------------------------------------+
+| physicsEnergyLimitLow               | Optional lower energy level for all physics models.   |
+|                                     | This is usually 990 eV by default in Geant4. The user |
+|                                     | may change this if required. Warning, this must       |
+|                                     | be used only if the user understands how this will    |
+|                                     | affect the running of Geant4. [GeV]                   |
++-------------------------------------+-------------------------------------------------------+
+| physicsEnergyLimitHigh (\*)         | Optional upper energy level for all physics models.   |
+|                                     | This is usually 100 TeV by default in Geant4. The     |
+|                                     | user may change this if required. Warning, this must  |
+|                                     | be used only if the user understands how this will    |
+|                                     | affect the running of Geant4. [GeV]                   |
++-------------------------------------+-------------------------------------------------------+
+| physicsList                         | Which physics lists to use - default tracking only    |
++-------------------------------------+-------------------------------------------------------+
+| physicsVerbose                      | Prints out all processes linked to primary particle   |
+|                                     | and all physics processes registered in general       |
++-------------------------------------+-------------------------------------------------------+
+| physicsVerbosity                    | Set the physics verbosity for Geant4 (0,1,2).         |
++-------------------------------------+-------------------------------------------------------+
+| prodCutPhotons                      | Standard overall production cuts for photons          |
+|                                     | (default 1e-3) [m]                                    |
++-------------------------------------+-------------------------------------------------------+
+| prodCutElectrons                    | Standard overall production cuts for electrons        |
+|                                     | (default 1e-3) [m]                                    |
++-------------------------------------+-------------------------------------------------------+
+| prodCutPositrons                    | Standard overall production cuts for positrons        |
+|                                     | (default 1e-3) [m]                                    |
++-------------------------------------+-------------------------------------------------------+
+| prodCutProtons                      | Standard overall production cuts for protons          |
+|                                     | (default 1e-3) [m]                                    |
++-------------------------------------+-------------------------------------------------------+
+| restoreFTPFDiffractionForAGreater10 | Turn back on diffractive outcomes of hadronic         |
+|                                     | models. Default is **on**.                            |
++-------------------------------------+-------------------------------------------------------+
+| stopSecondaries                     | Whether to stop secondaries or not (default = false)  |
++-------------------------------------+-------------------------------------------------------+
+| synchRadOn                          | Whether to use synchrotron radiation processes        |
++-------------------------------------+-------------------------------------------------------+
+| tunnelIsInfiniteAbsorber            | Whether all particles entering the tunnel material    |
+|                                     | should be killed or not (default = false)             |
++-------------------------------------+-------------------------------------------------------+
+| turnOnCerenkov                      | Whether to produce Cherenkov radiation                |
++-------------------------------------+-------------------------------------------------------+
+| useElectroNuclear                   | Uses electro-nuclear processes when `em_extra` physics|
+|                                     | list is used. Default On. Requires Geant4.10.4 or     |
+|                                     | greater.                                              |
++-------------------------------------+-------------------------------------------------------+
+| useGammaToMuMu                      | Uses gamma to muon pair production process when using |
+|                                     | `em_extra` physics list is used. Default Off.         |
+|                                     | Requires Geant4.10.3 onwards.                         |
++-------------------------------------+-------------------------------------------------------+
+| useLENDGammaNuclear                 | Uses the low-energy neutron data set, as provided by  |
+|                                     | the environmental variable `G4LENDDATA` when using    |
+|                                     | the `em_extra` physics list. Boolean. Available in    |
+|                                     | Geant4.10.4 onwards.                                  |
++-------------------------------------+-------------------------------------------------------+
+| useMuonNuclear                      | Uses muon-nuclear interaction processes when using    |
+|                                     | `em_extra` physics list. Default On. Requires         |
+|                                     | Geant4.10.2 onwards.                                  |
++-------------------------------------+-------------------------------------------------------+
+| usePositronToMuMu                   | Uses muon pair production from positron annihilation  |
+|                                     | when using `em_extra` physics list. Default Off.      |
+|                                     | Requires Geant4.10.3 onwards.                         |
++-------------------------------------+-------------------------------------------------------+
+| usePositronToHadrons                | Uses hadron production from positron-electron         |
+|                                     | annihilation process when using `em_extra` physics    |
+|                                     | list. Default Off.  Requires Geant4.10.3 onwards.     |
++-------------------------------------+-------------------------------------------------------+
+| xrayAllSurfaceRoughness             | The length scale of roughness features for the X-ray  |
+|                                     | reflection model (from the `xray_reflection` physics  |
+|                                     | modular list). Default 0, units metres. A typical     |
+|                                     | value would be 5 nm. This applies to all surfaces.    |
++-------------------------------------+-------------------------------------------------------+
 
 * (\*) If using Geant4.10.7 or upwards, this will also set the high energy limit for the
   hadronic physics too. For previous versions of Geant4 it is required to edit the Geant4
@@ -2544,6 +3284,9 @@ Visualisation
 |                                  | visualiser. Note, this does not affect the accuracy   |
 |                                  | of the geometry - only the visualisation (default =   |
 |                                  | 50).                                                  |
++----------------------------------+-------------------------------------------------------+
+| visVerbosity                     | (0-5 inclusive) the verbosity level passed into the   |
+|                                  | Geant4 visualisation system. 0 is the default.        |
 +----------------------------------+-------------------------------------------------------+
 
 .. _bdsim-options-output:
@@ -2608,6 +3351,10 @@ with the following options.
 |                                    | If both this and `storeApertureImpacts` is off, no aperture        |
 |                                    | impact hits will be generated and will save memory during the run. |
 +------------------------------------+--------------------------------------------------------------------+
+| storeCavityInfo                    | With this option on, summary information in the Model Tree about   |
+|                                    | cavities is stored, including both field and geometry parameters.  |
+|                                    | Default on.                                                        |
++------------------------------------+--------------------------------------------------------------------+
 | storeCollimatorHits                | Store hits in per-collimator structures with hits for only primary |
 |                                    | particles. With only `storeCollimatorInfo` on, only the            |
 |                                    | `primaryInteracted` and `primaryStopped` Booleans are stored.      |
@@ -2665,9 +3412,16 @@ with the following options.
 |                                    | the case of using Geant4.10.3 or newer, the energy leaving the     |
 |                                    | world volume as well. Default off.                                 |
 +------------------------------------+--------------------------------------------------------------------+
+| storeElossWorldIntegral            | Store the total energy deposited in the world in the event summary |
+|                                    | for when the hits aren't wanted but the integral is. Default off.  |
++------------------------------------+--------------------------------------------------------------------+
 | storeElossWorldContents            | Whether to record energy deposition in the daughter volumes within |
 |                                    | the world volume when supplied as external world geometry.         |
 |                                    | Default off.                                                       |
++------------------------------------+--------------------------------------------------------------------+
+| storeElossWorldContentsIntegral    | Store the total energy deposited in the daughter volumes within    |
+|                                    | the world volume when supplied as external world geometry. For     |
+|                                    | when the hits aren't wanted but the integral is. Default off.      |
 +------------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                   | Global coordinates will be stored for each energy deposition hit   |
 |                                    | and for each trajectory point. Default off.                        |
@@ -2700,15 +3454,15 @@ with the following options.
 |                                    | as taken from the beginning of the step before it made it. Default |
 |                                    | off.                                                               |
 +------------------------------------+--------------------------------------------------------------------+
-| storeParticleData                  | Whether to store basic particle information for all particles used |
-|                                    | in the simulation under ParticleData in the output. This can be    |
-|                                    | relatively large when ions are used as there are many thousands    |
-|                                    | of ion definitions. Default on.                                    |
-+------------------------------------+--------------------------------------------------------------------+
 | storeMinimalData                   | When used, all optional parts of the data are turned off. Any bits |
 |                                    | specifically turned on with other options will be respected.       |
 +------------------------------------+--------------------------------------------------------------------+
 | storeModel                         | Whether to store the model information in the output. Default on.  |
++------------------------------------+--------------------------------------------------------------------+
+| storeParticleData                  | Whether to store basic particle information for all particles used |
+|                                    | in the simulation under ParticleData in the output. This can be    |
+|                                    | relatively large when ions are used as there are many thousands    |
+|                                    | of ion definitions. Default on.                                    |
 +------------------------------------+--------------------------------------------------------------------+
 | storePrimaries                     | Boolean, true by default. If false, don't fill the Primary branch  |
 |                                    | of the Event tree in the output. Useful to minimise file size.     |
@@ -2741,6 +3495,13 @@ with the following options.
 | samplersSplitLevel                 | The ROOT split-level of the branch. Default 0 (unsplit). Set to 1  |
 |                                    | or 2 to allow columnar access (e.g. with `uproot`).                |
 +------------------------------------+--------------------------------------------------------------------+
+| modelSplitLevel                    | The ROOT split-level of the branch. Default 1. Set to 2            |
+|                                    | to allow columnar access (e.g. with `uproot`).                     |
++------------------------------------+--------------------------------------------------------------------+
+| uprootCompatible                   | The ROOT split-level for the branches samplers and model.          |
+|                                    | Default 0. Set to 1 will set samplersSplitLevel = 1 and            |
+|                                    | ModelSplitLevel = 1.                                               |
++------------------------------------+--------------------------------------------------------------------+
 | storeTrajectory                    | Whether to store trajectories. If turned on, only the primary      |
 |                                    | particle(s) trajectory(ies) are stored by default. This is         |
 |                                    | required for the storage of any other trajectories at all. Note    |
@@ -2748,6 +3509,11 @@ with the following options.
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectories                  | An alias to `storeTrajectory`                                      |
 +------------------------------------+--------------------------------------------------------------------+
+| writeSeedState                     | Writes the seed state of the last event start in a text file       |
++------------------------------------+--------------------------------------------------------------------+
+
+.. note:: Using :code:`samplersSplitLevel` > 0 could lead to increasing simulation time in the case of many samplers
+          and, therefore the optics computation.
 
 .. _options-trajectory-filtering:
 
@@ -2783,6 +3549,8 @@ These options control, if :code:`storeTrajectory=1;`, which tracks trajectories 
 |                                    | Multiple particle IDs can be supplied with a space between them.   |
 |                                    | e.g. "11 12 22 13". Note, the anti-particles must be individually  |
 |                                    | specified.                                                         |
++------------------------------------+--------------------------------------------------------------------+
+| storeTrajectorySecondaryParticles  | Mark a trajectory for storage if it is not a primary particle.     |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectorySamplerID           | If a trajectory reaches the name of these samplers, store that     |
 |                                    | trajectory. This value supplied should be a whitespace separated   |
@@ -2849,12 +3617,13 @@ that has passed the filters above.
 | storeTrajectoryMomentumVector      | Store `PXPYPZ`, momentum (not unit) 3-vector in GeV for each step. |
 |                                    | Default False.                                                     |
 +------------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryProcesses           | Store `preProcessTyps`, `preProcessSubTypes`, `postProcessTypes`,  |
+| storeTrajectoryProcesses           | Store `preProcessTypes`, `preProcessSubTypes`, `postProcessTypes`, |
 |                                    | `postProcessSubTypes`, the Geant4 integer process IDs for pre and  |
 |                                    | post step points. Default False.                                   |
 +------------------------------------+--------------------------------------------------------------------+
 | storeTrajectoryStepPoints (\*)     | Integer number of step points to store for each trajectory that is |
-|                                    | chosen to be stored. Should be greater than or equal to 1. Storing |
+|                                    | chosen to be stored. Should be greater than or equal to 1. -1 can  |
+|                                    | be used to mean 'all' step points. Storing                         |
 |                                    | 1 will mean only the first creation point is stored. Caution, this |
 |                                    | will break any references to step index such as parentStepIndex in |
 |                                    | other trajectories. It is purely a last storage filtering step.    |
@@ -2898,7 +3667,7 @@ Recommendations:
 
 The options listed below are list roughly in terms of the simulation hierarchy.
 
-.. tabularcolumns:: |p{0.2\textwidth}|p{0.15\textwidth}|p{0.4\textwidth}|
+.. tabularcolumns:: |p{4.5cm}|p{2cm}|p{7.5cm}|
 
 +----------------------------------+----------+-------------------------------------------------------------------+
 | **Option**                       | **Type** | **Description**                                                   |
@@ -2955,6 +3724,10 @@ The options listed below are list roughly in terms of the simulation hierarchy.
 | verboseTrackingLevel             | integer  | (0-5) level of Geant4 tracking level print out. The same          |
 |                                  |          | as `-\\-verbose_G4tracking=X` executable option.                  |
 +----------------------------------+----------+-------------------------------------------------------------------+
+| verboseSensitivity               | Boolean  | If true, print out the name of the sensitivte detector attached   |
+|                                  |          | to every single volume in the model once fully constructed.       |
++----------------------------------+----------+-------------------------------------------------------------------+
+
 
 Examples: ::
 
@@ -2987,6 +3760,10 @@ Offset for Main Beam Line
 
 The following options may be used to offset the main beam line with respect to the world
 volume, which is the outermost coordinate system.
+
+.. warning:: The beam definition moves with the beamline. It is 'attached' or relative
+             to the start of the beamline. Consider introducing a `transform3d` element
+             at the start if you want to offset the beamline but not the beam.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -3058,6 +3835,7 @@ An example can be found in :code:`bdsim/examples/features/io/1_rootevent/sc_scor
 	  length in the way a typical Geant4 scoring map would. This only histograms energy
 	  deposition data.
 
+.. tabularcolumns:: |p{3cm}|p{2cm}|p{7cm}|
 
 +----------------+-----------------+-------------------------------------------------------+
 | **Option**     | **Default**     | **Function**                                          |
@@ -3117,6 +3895,10 @@ should only be used with understanding.
 +-----------------------------------+--------------------------------------------------------------------+
 | minimumEpsilonStep                | Minimum relative error acceptable in stepping                      |
 +-----------------------------------+--------------------------------------------------------------------+
+| maximumEpsilonStepThin            | Similar to maximumEpsilonStep but for thin objects                 |
++-----------------------------------+--------------------------------------------------------------------+
+| minimumEpsilonStepThin            | Similar to minimumEpsilonStep but for thin objects                 |
++-----------------------------------+--------------------------------------------------------------------+
 | sampleElementsWithPoleface        | Default false. Samplers are not to be attached to elements with    |
 |                                   | poleface rotations, as the sampler will overlap with the mass world|
 |                                   | geometry, resulting in incorrect tracking. This only occurs in     |
@@ -3140,26 +3922,87 @@ should only be used with understanding.
 |                                   | an option, but part of the beam command. This cannot be used with  |
 |                                   | the visualiser.                                                    |
 +-----------------------------------+--------------------------------------------------------------------+
-
+| backupStepperMomLimit             | Default = 0.1. Fractional unit momentum limit beyond which the     |
+|                                   | matrix integrator reverts back to a backup stepper, generally RK4. |
+|                                   | Every bdsim integrator that applies matrix-style stepping will     |
+|                                   | check Zp < (1-limit), and often (Xp > limit) & (Yp > limit).       |
+|                                   | Changing this limit will affect tracking of large angle particles. |
++-----------------------------------+--------------------------------------------------------------------+
+| buildPoleFaceGeometry             | Default = true. Build bending magnet pole face geometry when using |
+|                                   | the geant4 integrator sets. This option doesn't affect the         |
+|                                   | behaviour of matrix integrator sets where angled face geometry is  |
+|                                   | never constructed.                                                 |
++-----------------------------------+--------------------------------------------------------------------+
 
 .. _sampler-output:
 
-Output at a Plane - Samplers
-----------------------------
+Output at a Surface - Samplers
+------------------------------
 
-BDSIM provides a 'sampler' as a means to observe the particle distribution at a
-point in the lattice. A sampler is 'attached' to an already defined element
-and records all the particles passing through a plane at the **exit** face of
-that element.
+BDSIM provides a 'sampler' as a means to record the particle distribution at a
+point in the model as defined by a plane, the surface of a cylinder, or the
+surface of a sphere.
 
-A sampler will record any particles passing through that plane in any direction.
-It is defined in reality by a box 5 x 5 m that is 1 nm thick. The user
-may consider it an infinitely thin plane.
+* A **sampler** records the kinematic variables of a single particle passing through a surface
+* **Scoring** refers to the accumulation of a quantity (e.g. dose) for a volume (see :ref:`scoring`)
+
+Samplers may have the following forms:
+
+#) a **plane**
+#) a **cylinder**
+#) a **sphere**.
+
+The plane is the most commonly used and can be 'attached' to an already defined beam line
+element and records all the particles passing through a plane at the **exit** face of
+that element. The cylinder can be attached to a beam line element also. A spherer sampler
+can only be placed through a samplerplacement.
+
+A sampler will record **any particles** passing through that plane in **any direction**.
+The plane sampler is practically defined in the Geant4 model built by BDSIM as a box
+5 x 5 m that is 1 nm thick. The user may consider it an infinitely thin plane.
+
+Samplers are built in a parallel world and are normally invisible. They can 'overlap'
+existing geometry but we should avoid having faces of shapes coincident as this may
+affect tracking ('coplanar' faces).
+
+.. _sampler-coordinate-systems:
+
+Sampler Coordinate Systems
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**plane**
+
+* `x`, `y`, `z`
+
+
+**cylindrical**
+
+* `z`, `r`, :math:`\phi`
+* :math:`\phi` : :math:`[0 \to 2\pi]`
+
+
+**spherical**
+
+* `r`, :math:`\theta`, :math:`\phi`
+* :math:`\theta` : polar angle :math:`[0 \to \pi]`
+* :math:`\phi` : azimuthal angle :math:`[0 \to 2\pi]`
+
+
+Generally:
+
+* In cylindrical coordinates `z` and `phi` are recorded as well as `rp`, `zp` and `phip`.
+* `r` is not recorded for either cylindrical or spherical coordinates because it is the
+  same for every hit. This information is recorded in the Model part of the output with
+  the sampler name as it is a constant.
+* Positive `z` is along the direction of the beam by default.
+* For cylindrical coordinates, `phi` = 0 corresponds to a point at positive
+  :math:`x = r, y = 0` and increases clockwise looking along the direction of the beam.
+
 
 .. _sampler-syntax:
 
-Attaching a Sampler to a Beamline Element
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Attaching a Plane Sampler to a Beamline Element
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 They are defined using the following syntax::
 
@@ -3169,13 +4012,13 @@ where `element_name` is the name of the element you wish to sample. Depending on
 output format chosen, the element name may be recorded in the output ('rootevent' output only).
 
 .. note:: Samplers **can only** be defined **after** the main sequence has been defined
-	  using the `use` command (see :ref:`the-use-command`). Failure to do
+	  using the **use** command (see :ref:`the-use-command`). Failure to do
 	  so will result in an error and BDSIM will exit.
 
 .. note:: Samplers record **all** particles impinging on them (i.e. both forwards and
 	  backwards). Even secondary particles that may originate from further along the
-	  lattice are recorded. They have no material so they do not absorb or affect particles, only
-	  witness them.
+	  lattice are recorded. They have no material so they do not absorb or affect
+	  particles, only witness them.
 
 To place a sampler before an item, attach it to the previous item. If however,
 you wish to record the coordinates with another name rather than the name of the
@@ -3189,6 +4032,10 @@ a sampler that uses that marker::
   use,period=l1;
 
   sample, range = interestingplane;
+
+.. note:: If an element with an attached sampler is followed by a marker with an attached sampler,
+      the BDSIM output will not contain sampler data for the element as it would be identical to
+      that of the marker.
 
 When an element is defined multiple times in the line (such as "d1" in the above example),
 samplers will be attached to all instances. If you wish to sample only one specific
@@ -3219,6 +4066,55 @@ e.g. ::
 	     resemble a sampler but it is just a record of the initial coordinates. It is
 	     not a sampler and cannot record other secondary particles.
 
+
+.. _sampler-dimensions:
+	  
+Plane Sampler Dimensions
+************************
+
+The sampler is represented by a box solid that is 1 nm thick along z and 5m wide
+transversely in x and y. If a smaller or larger capture area for the samplers is required,
+the option *samplerDiameter* may be specified in the input gmad. ::
+
+  option, samplerDiameter=3*m;
+
+This affects all plane samplers.
+
+.. note:: For a very low energy lattice with large angle bends, the default samplerDiameter
+	  may cause geometrical overlap warnings from Geant4. This situation is difficult to
+	  avoid automatically, but easy to remedy by setting the samplerDiameter to a lower
+	  value. We recommend reducing :code:`samplerDiameter` for low energy or strongly
+	  curving accelerators.
+
+Attaching a Cylindrical Sampler to a Beamline Element
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A cylindrical sampler places a thin cylinder around a beamline element that records hits
+in a cylindrical coordinate system about the z axis of that component. The syntax is the
+same as a plane sampler except for the command :code:`csample`. ::
+
+  csample, range=<element_name>[index];
+
+e.g. ::
+
+  d1: drift, l=1*m;
+  l1: line=(d1);
+  use, l1;
+
+  csample, range=d1;
+
+Details:
+
+* The radius of the sampler is set automatically to fit the component and **cannot**
+  be controlled. If control is required, it is better to use a `samplerplacement` and
+  make it with respect to the beamline element.
+* A cylindrical sampler does not match pole-face rotations of magnets.
+* Particle filters can similarly be used as with a plane sampler.
+* The output sampler structure uses cylindrical coordinates.
+
+See :ref:`sampler-coordinate-systems` for details about the coordinates.
+  
+	     
 .. _sampler-filtering:
 
 Filtering Particles To Record
@@ -3229,14 +4125,16 @@ Particle Data Group ("PDG") integer ID number. PDG IDs are discussed here :ref:`
 example is: ::
 
   sample, range=<element_name>, partID={11,12,13,14};
+  csample, range=<element_name>, partID={11,12,13,14};
 
 Anti-particles must be explicitly specified: ::
 
   sample, range=<element_name>, partID={11,-11};
 
-This can be applied to all samplers as well. ::
+This can be applied to all samplers as well (csample alternative shown). ::
 
   sample, all, partID={13,-13};
+  csample, all, partID={13,-13};
 
 Any sampler specified after this will be overwritten. ::
 
@@ -3247,24 +4145,6 @@ Here, all samplers apart from the one attached to "d1" would record only particl
 with PDG ID 13 and -13. The sampler attached to "d1" would record only 11 and -11 PDG ID
 particles.
 
-.. _sampler-dimensions:
-	  
-Sampler Dimensions
-^^^^^^^^^^^^^^^^^^
-
-The sampler is represented by a box solid that is 1 nm thick along z and 5m wide
-transversely in x and y. If a smaller or larger capture area for the samplers is required,
-the option *samplerDiameter* may be specified in the input gmad. ::
-
-  option, samplerDiameter=3*m;
-
-This affects all samplers.
-
-.. note:: For a very low energy lattice with large angle bends, the default samplerDiameter
-	  may cause geometrical overlap warnings from Geant4. This situation is difficult to
-	  avoid automatically, but easy to remedy by setting the samplerDiameter to a lower
-	  value. We recommend reducing :code:`samplerDiameter` for low energy or strongly
-	  curving accelerators.
 
 .. _sampler-visualisation:
 	  
@@ -3285,11 +4165,16 @@ Output at an Arbitrary Plane - User Placed Sampler
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The user may place a sampler anywhere in the model with any orientation. This is called a
-`samplerplacement`. The sampler may have either a circular or rectangular (including
-square) shape and be placed with any orientation. A `samplerplacement` will record all
-particles travelling in **any direction** through it. A branch in the Event output will be
-create with the name of the `samplerplacement`. The user may define an arbitrary number of
-`samplerplacement` s.  A `samplerplacement` is defined with the following syntax::
+`samplerplacement`. The sampler may have the following forms:
+
+* A **plane** sampler (circular or rectangular shape)
+* A **cylinder** sampler
+* A **sphere** sampler
+
+A `samplerplacement` will record all particles travelling in **any direction** through it.
+A branch in the Event output will be created with the name of the `samplerplacement`. The
+user may define an arbitrary number of `samplerplacement` s.  A `samplerplacement` is defined
+with the following syntax::
 
   s1: samplerplacement, referenceElement="d1",
                         referenceElementNumber=1,
@@ -3297,21 +4182,62 @@ create with the name of the `samplerplacement`. The user may define an arbitrary
 			axisAngle=1, axisY=1, angle=pi/4,
 			aper1=10*cm;
 
-This defines a circular (by default) sampler with radius 10 cm positioned with respect to
+This defines a circular (by default) plane sampler with radius 10 cm positioned with respect to
 the 2nd instance of the d1 element (zero counting) in the main beam line with a rotation
 about the unit Y axis of :math:`\pi / 4`.
 
 .. note:: samplerplacements have no S coordinate, so the S variable will always be -1 m in
-	  the output (the default unphysical value for easy filtering).
+	  the output (the default un-physical value for easy filtering).
 
-Shape
-*****
+.. _sampler-types-and-shapes:
+	  
+Types and Shapes
+****************
+
+* The default is a plane sampler.
+
+The following types (exact name to be used in the :code:`type` parameter) of sampler can be used:
+
++--------------------+------------------------------------------------------------------+
+| **samplerType**    | **Description**                                                  |
++====================+==================================================================+
+| plane              | A flat plane (circular[default] or rectangular) for recording    |
+|                    | in local Cartesian coordinates.                                  |
++--------------------+------------------------------------------------------------------+
+| cylinder           | A thin cylinder for recording in cylindrical coordinates the     |
+|                    | same as a csampler.                                              |
++--------------------+------------------------------------------------------------------+
+| cylinderforward    | Similar to a cylinder but rotated so `z` is by default aligned   |
+|                    | with Cartesian `y` and `phi` = 0  is aligned with Cartesian `z`. |
+|                    | It only responds to `sweepAnglePhi`.                             |
++--------------------+------------------------------------------------------------------+
+| sphere             | A thin sphere for recording in spherical coordinates.            |
++--------------------+------------------------------------------------------------------+
+| sphereforward      | Similar to sphere but rotated so that `theta`, `phi` = 0         |
+|                    | corresponds to `z` in Cartesian coordinates. It only responds    |
+|                    | to `sweepAnglePhi` and `sweepAngleTheta`.                        |
++--------------------+------------------------------------------------------------------+
+
+* `cylinderforward`: is also a full cylinder by default, but in the case of control over
+  the range in angle of the cylinder, only the sweep angle is specified and it is expanded
+  symmetrically about the forward point.
+* `sphereforward`: is also a full sphere by default, but in the case of control over
+  the range in angles of the sphere, only the sweep angles are specified and they are expanded
+  symmetrically about the forward point.
+
+
+
+Plane Shape
+***********
 
 * Default `circular`. Control the radius with :code:`aper1`.
 
-To control the sampler shape, the variable :code:`shape` should be specified. Currently,
+To control the plane sampler shape, the variable :code:`shape` should be specified. Currently,
 either `circular` or `rectangular` are accepted. The parameters `aper1` and `aper2` can
 be used to control the shape with the same meaning as beam pipe apertures.
+
+* :code:`aper1` and :code:`aper2` are the **half** dimensions of a rectangle - horizontal
+  and vertical respectively.
 
 Example: ::
 
@@ -3321,6 +4247,98 @@ Example: ::
 
 .. warning:: In the case of `rectangular` **both** `aper1` and `aper2` must be specified.
 
+Cylinder Shape
+**************
+
+There are two types of cylindrical sampler: a `cylinder` and `cylinderforward`. The later
+is orientated more conveniently so `z` is by default aligned with Cartesian `y` and `phi` = 0
+is aligned with Cartesian `z`. In both cases, the default is to make a complete cylinder of
+:math:`2\pi`. Optionally, parameters can be specified to reduce this to a fraction of that.
+
+Geometry parameters for :code:`samplerType="cylinder"`:
+
++-----------------+-----------------------------------------------+
+| **Parameter**   | **Description**                               |
++=================+===============================================+
+| `aper1`         | radius of the cylinder (m)                    |
++-----------------+-----------------------------------------------+
+| `aper2`         | half length in z of the cylinder (m)          |
++-----------------+-----------------------------------------------+
+| `startAnglePhi` | Optional start angle for cylinder shape (rad) |
++-----------------+-----------------------------------------------+
+| `sweepAnglePhi` | Optional sweep angle for cylinder shape (rad) |
++-----------------+-----------------------------------------------+
+
+Geometry parameters for :code:`samplerType="cylinderforward"`:
+
++-----------------+-----------------------------------------------+
+| **Parameter**   | **Description**                               |
++=================+===============================================+
+| `aper1`         | radius of the cylinder (m)                    |
++-----------------+-----------------------------------------------+
+| `aper2`         | half length in z of the cylinder (m)          |
++-----------------+-----------------------------------------------+
+| `sweepAnglePhi` | Optional sweep angle for cylinder shape (rad) |
++-----------------+-----------------------------------------------+
+
+This only responds to `sweepAnglePhi` and it spread out symmetrically from the forward direction.
+
+Examples: ::
+
+  s3: samplerplacement, samplerType="cylinder", aper1=20*cm, aper2=2*m;
+  s4: samplerplacement, samplerType="cylinder", aper1=20*cm, aper2=2*m, startAnglePhi=-pi/6, sweepAnglePhi=pi/3;
+  s5: samplerplacement, samplerType="cylinderforward", aper1=20*cm, aper2=2*m, sweepAnglePhi=pi/3;
+
+* More examples can be found in :code:`bdsim/examples/features/sampler/*gmad`.
+
+Sphere Shape
+************
+
+There are two types of spherical sampler: a `sphere` and `sphereforward`. The later
+is orientated more conveniently so Cartesian `z` is by default aligned with `phi` = 0
+and `theta` = 0. In both cases, the default is to make a complete sphere. Optionally,
+parameters can be specified to reduce this to a fraction of that.
+
+Geometry parameters for :code:`samplerType="sphere"`:
+
++-------------------+---------------------------------------------------------+
+| **Parameter**     | **Description**                                         |
++===================+=========================================================+
+| `aper1`           | radius of the sphere (m)                                |
++-------------------+---------------------------------------------------------+
+| `startAngleTheta` | Optional polar start angle for sphere shape (rad)       |
++-------------------+---------------------------------------------------------+
+| `sweepAngleTheta` | Optional polar sweep angel for sphere shape (rad)       |
++-------------------+---------------------------------------------------------+
+| `startAnglePhi`   | Optional azimuthal start angle for cylinder shape (rad) |
++-------------------+---------------------------------------------------------+
+| `sweepAnglePhi`   | Optional azimuthal sweep angle for cylinder shape (rad) |
++-------------------+---------------------------------------------------------+
+
+Geometry parameters for :code:`samplerType="sphereforward"`:
+
++-------------------+---------------------------------------------------------+
+| **Parameter**     | **Description**                                         |
++===================+=========================================================+
+| `aper1`           | radius of the sphere (m)                                |
++-------------------+---------------------------------------------------------+
+| `sweepAngleTheta` | Optional polar sweep angel for sphere shape (rad)       |
++-------------------+---------------------------------------------------------+
+| `sweepAnglePhi`   | Optional azimuthal sweep angle for cylinder shape (rad) |
++-------------------+---------------------------------------------------------+
+
+This only responds to `sweepAnglePhi` and it spread out symmetrically from the forward direction.
+
+Examples: ::
+
+  s6: samplerplacement, samplerType="sphere", aper1=20*cm, aper2=2*m;
+  s7: samplerplacement, samplerType="sphere", aper1=20*cm, aper2=2*m,
+                        startAnglePhi=-pi/6, sweepAnglePhi=pi/3,
+			startAngleTheta=pi/2-pi/6, sweepAngleTheta=pi/3;
+  s8: samplerplacement, samplerType="sphereforward", aper1=20*cm, aper2=2*m,
+                        sweepAnglePhi=pi/3, sweepAngleTheta=pi/6;
+
+* More examples can be found in :code:`bdsim/examples/features/sampler/*gmad`.
 
 Placement
 *********
@@ -3343,18 +4361,6 @@ parameters is described below, but the required ones for each scenario are descr
 	     to help avoid this problem.
 
 
-Shape
-*****
-
-The sampler will be 1 nm thick in reality but may be treated by the user an
-infinitely thin plane. It is composed of vacuum and should not interfere with the ongoing
-physics of the simulation. The user may select the shape of the sampler from either
-circular or rectangular (including square). The parameter :code:`apertureType` should
-be specified as either :code:`"circular"` or :code:`"rectangular"`. The aperture parameters
-typically used in BDSIM should also be used - these are :code:`aper1` and :code:`aper2`.
-The meaning of these parameters is described in :ref:`aperture-parameters`.
-
-
 Parameters
 **********
 			
@@ -3362,8 +4368,13 @@ The `samplerplacement` object accepts a number of parameters similar to other pa
 These include a subset of the aperture parameters (see :ref:`aperture-parameters`) and the position
 information from the `placements`. The full list of accepted parameters is given below.
 
+.. tabularcolumns:: |p{4cm}|p{10cm}|
+
 +-------------------------+--------------------------------------------------------------------+
 | **Parameter**           |  **Description**                                                   |
++=========================+====================================================================+
+| samplerType             | One of 'plane' (default), 'cylinder', 'cylinderforward', 'sphere', |
+|                         | 'sphereforward' (see :ref:`sampler-types-and-shapes`)              |
 +-------------------------+--------------------------------------------------------------------+
 | x                       | Offset in global x                                                 |
 +-------------------------+--------------------------------------------------------------------+
@@ -3396,11 +4407,11 @@ information from the `placements`. The full list of accepted parameters is given
 | referenceElementNumber  | Occurrence of `referenceElement` to place with respect to if it    |
 |                         | is used more than once in the sequence. Zero counting.             |
 +-------------------------+--------------------------------------------------------------------+
-| apertureType            | The shape of the sampler desired as described using the aperture   |
-|                         | syntax of BDSIM. Currently, only `circular` and `rectangular` are  |
-|                         | supported. `circular` is the default.                              |
+| apertureType            | The shape for a plane sampler desired as described using the       |
+|                         | aperture syntax of BDSIM. Currently, only `circular` and           |
+|                         | `rectangular` are supported. `circular` is the default.            |
 +-------------------------+--------------------------------------------------------------------+
-| shape                   | An intuitive alias to `apertureType`.                              |
+| shape                   | An intuitive alias to `apertureType` for plane sampler shape.      |
 +-------------------------+--------------------------------------------------------------------+
 | aper1                   | Aperture parameter #1.                                             |
 +-------------------------+--------------------------------------------------------------------+
@@ -3409,6 +4420,18 @@ information from the `placements`. The full list of accepted parameters is given
 | aper3                   | Aperture parameter #3.                                             |
 +-------------------------+--------------------------------------------------------------------+
 | aper4                   | Aperture parameter #4.                                             |
++-------------------------+--------------------------------------------------------------------+
+| startAnglePhi           | The starting angle in :math:`\phi` for the cylinder or sphere      |
+|                         | surface. Can range from :math:`[-2\pi \to 2\pi]`.                  |
++-------------------------+--------------------------------------------------------------------+
+| sweepAnglePhi           | The distance in :math:`\phi` to go from the start point. Can range |
+|                         | from :math:`(0 \to 2\pi]`.                                         |
++-------------------------+--------------------------------------------------------------------+
+| startAngleTheta         | The starting angle in :math:`\theta` for the sphere surface. Can   |
+|                         | range from :math:`[0 \to \pi]`.                                    |
++-------------------------+--------------------------------------------------------------------+
+| sweepAngleTheta         | The distance in :math:`\theta` to go from the start point. Can     |
+|                         | range from :math:`(0 \to \pi]`.                                    |
 +-------------------------+--------------------------------------------------------------------+
 | partID                  | List of integers for PDG IDs for which particles to record only.   |
 +-------------------------+--------------------------------------------------------------------+
@@ -3481,8 +4504,16 @@ scoring mesh in a parallel world.
 
 Conceptually creating a scoring mesh is split into two key definitions in the input:
 
-1) A :ref:`scoring-mesh` to define the 3D grid and histogram where information is recorded.
-2) A :ref:`scorer` to define what information is recorded
+#) A :ref:`scorer` to define what information is recorded
+#) A :ref:`scoring-mesh` to define the 3D grid and histogram where information is recorded.
+
+e.g. ::
+
+  allParticleDose: scorer, type="depositeddose";
+  collimatorDose: scorermesh, scoreQuantity="allParticleDose",
+                  nx=10, ny=10, nz=5, xsize=50*cm, ysize=50*cm, zsize=2*m,
+		  referenceElement="col1";
+
 
 * The mesh does not affect the physics of the simulation but is used to record or
   'score' one or more quantities.
@@ -3497,6 +4528,148 @@ Conceptually creating a scoring mesh is split into two key definitions in the in
   is one proton fired per-event, then the quantity for deposited dose is J / kg / proton.
 * Examples can be found in :code:`bdsim/examples/features/scoring`.
 
+.. _scorer:
+  
+Scorer
+^^^^^^
+
+A `scorer` defines a quantity to be recorded. The syntax is: ::
+
+  name: scorer, parameter=value, parameter2=value;
+
+
+.. tabularcolumns:: |p{4cm}|p{2cm}|p{7cm}|
+		    
++-------------------------+---------------+------------------------------------------------+
+| **Parameter**           | **Required**  | **Description**                                |
++=========================+===============+================================================+
+| type                    | Yes           | Which quantity to score - see below            |
++-------------------------+---------------+------------------------------------------------+
+| particleName            | No            | Name of particle in Geant4 to only apply       |
+|                         |               | scoring to (only one)                          |
++-------------------------+---------------+------------------------------------------------+
+| particlePDGID           | No            | PDG ID of particle to only apply scoring to    |
+|                         |               | (only one)                                     |
++-------------------------+---------------+------------------------------------------------+
+| minimumKineticEnergy    | No            | Minimum kinetic energy of particles to be      |
+|                         |               | included in scoring (GeV)                      |
++-------------------------+---------------+------------------------------------------------+
+| maximumKineticEnergy    | No            | Maximum kinetic energy of particles to be      |
+|                         |               | included in scoring (GeV)                      |
++-------------------------+---------------+------------------------------------------------+
+| minimumTime             | No            | Minimum time coordinate of particles to be     |
+|                         |               | included in scoring (s)                        |
++-------------------------+---------------+------------------------------------------------+
+| maximumTime             | No            | Maximum time coordinate of particles to be     |
+|                         |               | included in scoring (s)                        |
++-------------------------+---------------+------------------------------------------------+
+| conversionFactorFile    | No            | File name of conversion factor file to be used |
+|                         |               | in calculation                                 |
++-------------------------+---------------+------------------------------------------------+
+| conversionFactorPath    | No            | Path to set of files per particle to be used   |
+|                         |               | in calculation                                 |
++-------------------------+---------------+------------------------------------------------+
+| materialToInclude       | No            | A space separated list of materials to be      |
+|                         |               | scored. Any materials not matching this will   |
+|                         |               | be ignored. (string, case sensitive).          |
++-------------------------+---------------+------------------------------------------------+
+| materialToExclude       | No            | A space separated list of materials to be      |
+|                         |               | excluded from scoring. (string, case           |
+|                         |               | sensitive).                                    |
++-------------------------+---------------+------------------------------------------------+
+| scoreWorldVolumeOnly    | No            | Whether to only record information from the    |
+|                         |               | world volume only. This means that a mesh can  |
+|                         |               | overlap a piece of geometry but not score from |
+|                         |               | that specific geometry allowing tight fitting  |
+|                         |               | scoring.                                       |
++-------------------------+---------------+------------------------------------------------+
+| scorePrimariesOnly      | No            | If true, only score the quantity for the       |
+|                         |               | the primary particle(s) with Parent ID == 0.   |
++-------------------------+---------------+------------------------------------------------+
+
+.. _scorer-types:
+
+Scorer Types
+************
+
+The following are accepted scorer types.
+
+* As the histogram is per-event, the quantity stored is per-event also. So, if there
+  is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
+
+
+.. tabularcolumns:: |p{4cm}|p{2cm}|p{7cm}|
+
++---------------------------+-----------------+--------------------------------------------------+
+| **Scorer Type**           | **Units**       | **Description**                                  |
++===========================+=================+==================================================+
+| cellcharge                | e-              |The charge deposited in the cell                  |
++---------------------------+-----------------+--------------------------------------------------+
+| cellflux(*)               | :math:`cm^{-2}` | The flux (step length / cell volume)             |
++---------------------------+-----------------+--------------------------------------------------+
+| cellfluxscaled            | :math:`cm^{-2}` | The flux (step length / cell volume) multiplied  |
+|                           |                 | a factor as a function of kinetic energy as      |
+|                           |                 | specified in the :code:`conversionFactorFile`.   |
+|                           |                 | Default factor is 1.0.                           |
++---------------------------+-----------------+--------------------------------------------------+
+| cellfluxscaledperparticle | :math:`cm^{-2}` | Similar to `cellfluxscaled` but per particle     |
+|                           |                 | species. Specify :code:`conversionFilePath` to   |
+|                           |                 | files (see below). Default factor is 0 for all   |
+|                           |                 | particles and energies.                          |
++---------------------------+-----------------+--------------------------------------------------+
+| depositeddose             | Gray (J/kg)     |The dose (energy deposited per unit mass)         |
++---------------------------+-----------------+--------------------------------------------------+
+| depositedenergy           | GeV             |The deposited energy in the cell                  |
++---------------------------+-----------------+--------------------------------------------------+
+| population                | NA              |The number of particles passing through the cell  |
++---------------------------+-----------------+--------------------------------------------------+
+
+.. note:: (\*) It is possible to score the differential flux by using the scorer type cellflux4D which adds a binning along the energy axis.
+.. note:: (\*) To score quantities such as the ambient dose equivalent, the scorer type `cellfluxscaledperparticle`
+               should be used, however conversion factors must be supplied (see :ref:`scorer-conversion-factor-file`)
+               to ensure the ambient dose is calculated correctly and in the correct units.
+
+
+.. _scorer-conversion-factor-file:
+
+Conversion Factor File
+**********************
+
+The conversion factor file is a text file (optionally compressed with gzip, but not tar)
+that contains two columns separated by white space. Currently, linear interpolation is
+used between points in kinetic energy using the Geant4 `G4PhysicsOrderedFreeVector` class.
+
+Columns are:
+
+1) Kinetic energy in **MeV**
+2) Numerical factor
+
+Below is an example contents: ::
+
+  5.0e-02	2.97e-09
+  1.0e-01	1.52e-09
+  2.0e-01	9.99e-10
+  5.0e-01	7.86e-10
+  1.0e+00	6.41e-10
+  5.0e+00	7.65e-10
+  1.0e+01	8.39e-10
+  1.0e+02	8.22e-10
+  1.0e+03	9.96e-10
+  1.0e+04	1.20e-09
+
+Here, a quantity in the scorer will be multiplied by 2.97e-9 for a particle with an energy
+of 0.05 MeV.
+
+Conversion factor files for :code:`cellfluxscaledperparticle` can be one of:
+
+* :code:`protons.dat`
+* :code:`neutrons.dat`
+* :code:`photons.dat`
+* :code:`electrons.dat`
+* :code:`positrons.dat`
+
+At least 1 must be specified.  Any particles without a conversion factor are scored as 0.
+
 .. _scoring-mesh:
   
 Scorer Mesh
@@ -3504,12 +4677,12 @@ Scorer Mesh
   
 For :code:`scorermesh`, the syntax is: ::
 
-  name: scorermesh, parameter=value, parameter2=value;
+  name: scorermesh, parameter=value, ... ; 
 
 Where :code:`name` is the name of the mesh desired and :code:`parameter` and :code:`value` are
 example parameter and value pairs. The following parameters may be specified.
 
-.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
+.. tabularcolumns:: |p{4cm}|p{2cm}|p{7cm}|
 
 +-------------------------+---------------+------------------------------------------------+
 | **Parameter**           | **Required**  | **Description**                                |
@@ -3596,146 +4769,6 @@ see :ref:`placements` for the 3 possible ways to make placements easily in BDSIM
 
 * Multiple quantities may be specified in `scoreQuantity` if the names are separated by a space
   inside the string.
-
-.. _scorer:
-  
-Scorer
-^^^^^^
-
-A `scorer` defines a quantity to be recorded. The syntax is: ::
-
-  name: scorer, parameter=value, parameter2=value;
-
-.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
-		    
-+-------------------------+---------------+------------------------------------------------+
-| **Parameter**           | **Required**  | **Description**                                |
-+=========================+===============+================================================+
-| type                    | Yes           | Which quantity to score - see below            |
-+-------------------------+---------------+------------------------------------------------+
-| particleName            | No            | Name of particle in Geant4 to only apply       |
-|                         |               | scoring to (only one)                          |
-+-------------------------+---------------+------------------------------------------------+
-| particlePDGID           | No            | PDG ID of particle to only apply scoring to    |
-|                         |               | (only one)                                     |
-+-------------------------+---------------+------------------------------------------------+
-| minimumKineticEnergy    | No            | Minimum kinetic energy of particles to be      |
-|                         |               | included in scoring (GeV)                      |
-+-------------------------+---------------+------------------------------------------------+
-| maximumKineticEnergy    | No            | Maximum kinetic energy of particles to be      |
-|                         |               | included in scoring (GeV)                      |
-+-------------------------+---------------+------------------------------------------------+
-| minimumTime             | No            | Minimum time coordinate of particles to be     |
-|                         |               | included in scoring (s)                        |
-+-------------------------+---------------+------------------------------------------------+
-| maximumTime             | No            | Maximum time coordinate of particles to be     |
-|                         |               | included in scoring (s)                        |
-+-------------------------+---------------+------------------------------------------------+
-| conversionFactorFile    | No            | File name of conversion factor file to be used |
-|                         |               | in calculation                                 |
-+-------------------------+---------------+------------------------------------------------+
-| conversionFactorPath    | No            | Path to set of files per particle to be used   |
-|                         |               | in calculation                                 |
-+-------------------------+---------------+------------------------------------------------+
-| materialToInclude       | No            | A space separated list of materials to be      |
-|                         |               | scored. Any materials not matching this will   |
-|                         |               | be ignored. (string, case sensitive).          |
-+-------------------------+---------------+------------------------------------------------+
-| materialToExclude       | No            | A space separated list of materials to be      |
-|                         |               | excluded from scoring. (string, case           |
-|                         |               | sensitive).                                    |
-+-------------------------+---------------+------------------------------------------------+
-| scoreWorldVolumeOnly    | No            | Whether to only record information from the    |
-|                         |               | world volume only. This means that a mesh can  |
-|                         |               | overlap a piece of geometry but not score from |
-|                         |               | that specific geometry allowing tight fitting  |
-|                         |               | scoring.                                       |
-+-------------------------+---------------+------------------------------------------------+
-| scorePrimariesOnly      | No            | If true, only score the quantity for the       |
-|                         |               | the primary particle(s) with Parent ID == 0.   |
-+-------------------------+---------------+------------------------------------------------+
-
-.. _scorer-types:
-
-Scorer Types
-^^^^^^^^^^^^
-
-The following are accepted scorer types.
-
-* As the histogram is per-event, the quantity stored is per-event also. So, if there
-  is one proton fired per-event, then the quantity for depositeddose is J / kg / proton.
-
-.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
-
-+---------------------------+-----------------+--------------------------------------------------+
-| **Scorer Type**           | **Units**       | **Description**                                  |
-+===========================+=================+==================================================+
-| cellcharge                | e-              |The charge deposited in the cell                  |
-+---------------------------+-----------------+--------------------------------------------------+
-| cellflux(*)               | :math:`cm^{-2}` | The flux (step length / cell volume)             |
-+---------------------------+-----------------+--------------------------------------------------+
-| cellfluxscaled            | :math:`cm^{-2}` | The flux (step length / cell volume) multiplied  |
-|                           |                 | a factor as a function of kinetic energy as      |
-|                           |                 | specified in the :code:`conversionFactorFile`.   |
-|                           |                 | Default factor is 1.0.                           |
-+---------------------------+-----------------+--------------------------------------------------+
-| cellfluxscaledperparticle | :math:`cm^{-2}` | Similar to `cellfluxscaled` but per particle     |
-|                           |                 | species. Specify :code:`conversionFilePath` to   |
-|                           |                 | files (see below). Default factor is 0 for all   |
-|                           |                 | particles and energies.                          |
-+---------------------------+-----------------+--------------------------------------------------+
-| depositeddose             | Gray (J/kg)     |The dose (energy deposited per unit mass)         |
-+---------------------------+-----------------+--------------------------------------------------+
-| depositedenergy           | GeV             |The deposited energy in the cell                  |
-+---------------------------+-----------------+--------------------------------------------------+
-| population                | NA              |The number of particles passing through the cell  |
-+---------------------------+-----------------+--------------------------------------------------+
-
-.. note:: (\*) It is possible to score the differential flux by using the scorer type cellflux4D which adds a binning along the energy axis.
-.. note:: (\*) To score quantities such as the ambient dose equivalent, the scorer type `cellfluxscaledperparticle`
-               should be used, however conversion factors must be supplied (see :ref:`scorer-conversion-factor-file`)
-               to ensure the ambient dose is calculated correctly and in the correct units.
-
-
-.. _scorer-conversion-factor-file:
-
-Conversion Factor File
-^^^^^^^^^^^^^^^^^^^^^^
-
-The conversion factor file is a text file (optionally compressed with gzip, but not tar)
-that contains two columns separated by white space. Currently, linear interpolation is
-used between points in kinetic energy using the Geant4 `G4PhysicsOrderedFreeVector` class.
-
-Columns are:
-
-1) Kinetic energy in **MeV**
-2) Numerical factor
-
-Below is an example contents: ::
-
-  5.0e-02	2.97e-09
-  1.0e-01	1.52e-09
-  2.0e-01	9.99e-10
-  5.0e-01	7.86e-10
-  1.0e+00	6.41e-10
-  5.0e+00	7.65e-10
-  1.0e+01	8.39e-10
-  1.0e+02	8.22e-10
-  1.0e+03	9.96e-10
-  1.0e+04	1.20e-09
-
-Here, a quantity in the scorer will be multiplied by 2.97e-9 for a particle with an energy
-of 0.05 MeV.
-
-Conversion factor files for :code:`cellfluxscaledperparticle` can be one of:
-
-* :code:`protons.dat`
-* :code:`neutrons.dat`
-* :code:`photons.dat`
-* :code:`electrons.dat`
-* :code:`positrons.dat`
-
-At least 1 must be specified.  Any particles without a conversion factor are scored as 0.
 
 Scoring Examples
 ^^^^^^^^^^^^^^^^
@@ -3903,6 +4936,21 @@ particles are tracked to zero energy (allowing for the above range cuts). ::
 
 .. warning:: This will affect the location of energy deposition - i.e. the curve of
 	     energy deposition of a particle showering in a material will be different.
+
+
+Certain particles can be excluded from this using :code:`option, particlesToExcludeFromCuts="1 2 3";`
+where 1, 2, 3 are the PDG IDs of the particles to be excluded separated by white space in a string.
+For example: ::
+
+  option, minimumKineticEnergy=1*GeV,
+          particlesToExcludeFromCuts="13 -13";
+
+This will remove all particles below 1 GeV kinetic energy apart from muons (both charges) which will
+be tracked down to zero energy.
+
+.. note:: The option `particlesToExcludeFromCuts` applies to the options `minimumKineticEnergy`,
+	  `minimumRange`, `maximumTrackingTime`, and `maximumTrackLength`.
+
 
 Minimum Range
 ^^^^^^^^^^^^^

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -58,10 +58,10 @@ public:
   virtual BDSFieldValue Apply(BDSFieldValue v,
                               G4int xInd,
                               G4int yInd = 0,
-                              G4int zInd = 0,
-                              G4int tInd = 0) const
+                              G4int /*zInd*/ = 0,
+                              G4int /*tInd*/ = 0) const
   {
-    xInd = 1; zInd = 3; tInd = 4;// to retain default values and prevent compiler warnings
+    (void)xInd; // enough to prevent a compiler warning
     // only for lower y-half, we flip the x-component
     if (yInd < 0)
       {v[0] *= -1.0;}

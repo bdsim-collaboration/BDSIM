@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -49,6 +49,7 @@ public:
                                         const BDSArrayInfo& arrayInfo):
     BDSArrayOperatorIndexReflect()
   {
+    operatesOn = xyztIn;
     xyzt = xyztIn;
     G4String newName = "Reflect(";
     for (const auto& v : xyzt)

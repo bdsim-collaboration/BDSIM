@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -34,6 +34,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 #include "BDSWarning.hh"
 
+#include "parser/options.h"
+
 #include "globals.hh"
 #include "G4Colour.hh"
 #include "G4RotationMatrix.hh"
@@ -58,7 +60,12 @@ BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if (!instance)
-    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
+    {
+      if (BDSParser::IsInitialised())
+        {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
+      else
+        {instance = new BDSGlobalConstants(GMAD::Options());}
+    }
   return instance;
 }
 
@@ -123,6 +130,9 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   integratorSet = BDS::DetermineIntegratorSetType(options.integratorSet);
 
   InitialiseBeamlineTransform();
+  
+  if (options.lengthSafetyLarge <= options.lengthSafety)
+    {throw BDSException(__METHOD_NAME__, "\"lengthSafetyLarge\" must be > \"lengthSafety\"");}
 
   BDSSamplerPlane::chordLength  = 10*LengthSafety();
   BDSSamplerCustom::chordLength = 10*BDSSamplerPlane::chordLength;
@@ -138,6 +148,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   trajectoryFiltersSet[BDSTrajectoryFilter::elossSRange]     = options.HasBeenSet("storeTrajectoryElossSRange");
   trajectoryFiltersSet[BDSTrajectoryFilter::minimumZ]        = options.HasBeenSet("trajCutGTZ");
   trajectoryFiltersSet[BDSTrajectoryFilter::maximumR]        = options.HasBeenSet("trajCutLTR");
+  trajectoryFiltersSet[BDSTrajectoryFilter::secondary]       = options.HasBeenSet("storeTrajectorySecondaryParticles");
 
   if (StoreMinimalData())
     {
@@ -182,6 +193,19 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 	    {*no.second = false;}
 	}
     }
+  
+  // TBC
+  if (options.HasBeenSet("fieldModulator"))
+    {throw BDSException(__METHOD_NAME__, "the option \"fieldModulator\" cannot be used currently - in development");}
+  
+
+  // uproot
+  if (options.uprootCompatible == 1)
+    {
+      options.samplersSplitLevel = 1;
+      options.modelSplitLevel = 2;
+    }
+
 #if G4VERSION_NUMBER > 1079
   if (options.HasBeenSet("scintYieldFactor"))
     {BDS::Warning("The option \"scintYieldFactor\" has no effect with Geant4 11.0 onwards");}
@@ -231,6 +255,23 @@ void BDSGlobalConstants::InitVisAttributes()
 
 void BDSGlobalConstants::InitDefaultUserLimits()
 {
+  auto pteAsVector = BDS::SplitOnWhiteSpace(ParticlesToExcludeFromCuts());
+  // construct the set of PDG IDs
+  for (G4int i = 0; i < (G4int)pteAsVector.size(); i++)
+    {
+      try
+        {
+          G4int pdgID = std::stoi(pteAsVector[i]);
+          particlesToExcludeFromCutsAsSet.insert(pdgID);
+        }
+      catch (std::logic_error& e)
+        {
+          G4String msg = "Particle ID " + pteAsVector[i] + " at index " + std::to_string(i);
+          msg += " in the option particlesToExcludeFromCutsAsSet cannot be converted to an integer";
+          throw BDSException(__METHOD_NAME__, msg);
+        }
+    }
+  
   defaultUserLimits = new G4UserLimits("default_cuts");
   const G4double maxTime = MaxTime();
   if (maxTime > 0)
@@ -240,9 +281,16 @@ void BDSGlobalConstants::InitDefaultUserLimits()
     }
   defaultUserLimits->SetMaxAllowedStep(MaxStepLength());
   defaultUserLimits->SetUserMaxTrackLength(MaxTrackLength());
-  defaultUserLimits->SetUserMinEkine(MinimumKineticEnergy());
-  defaultUserLimits->SetUserMinRange(MinimumRange());
+  G4double minEK = MinimumKineticEnergy();
+  defaultUserLimits->SetUserMinEkine(minEK);
+  if (minEK > 0)
+    {G4cout << __METHOD_NAME__ << "Default minimum kinetic energy for model: " << minEK/CLHEP::GeV << " GeV" << G4endl;}
+  G4double minR = MinimumRange();
+  defaultUserLimits->SetUserMinRange(minR);
+  if (minR > 0)
+    {G4cout << __METHOD_NAME__ << "Default minimum range for user limits: " << minR/CLHEP::mm << " mm" << G4endl;} 
 
+  
   BDSFieldInfo::defaultUL = defaultUserLimits; // update static member for field definitions
 
   defaultUserLimitsTunnel = new G4UserLimits(*defaultUserLimits);

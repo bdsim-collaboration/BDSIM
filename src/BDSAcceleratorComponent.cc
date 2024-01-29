@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -63,14 +63,11 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(const G4String&      nameIn,
   endPieceBefore(nullptr),
   endPieceAfter(nullptr),
   userLimits(nullptr),
+  fieldInfo(fieldInfoIn),
   copyNumber(-1), // -1 initialisation since it will be incremented when placed
   inputFaceNormal(inputFaceNormalIn),
-  outputFaceNormal(outputFaceNormalIn),
-  fieldInfo(fieldInfoIn)
+  outputFaceNormal(outputFaceNormalIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
-#endif
   // initialise static members
   if (!emptyMaterial)
     {
@@ -117,9 +114,7 @@ void BDSAcceleratorComponent::Initialise()
 {
   if (initialised)
     {return;} // protect against duplicated initialisation and memory leaks
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+
   Build();
 
   // field construction must be done after all the geometry is constructed if the

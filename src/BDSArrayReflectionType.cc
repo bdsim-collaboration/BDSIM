@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -44,6 +44,7 @@ std::map<BDSArrayReflectionType, std::string>* BDSArrayReflectionType::dictionar
       {BDSArrayReflectionType::reflectxydipole,     "reflectxydipole"},
       {BDSArrayReflectionType::reflectxzdipole,     "reflectxzdipole"},
       {BDSArrayReflectionType::reflectyzdipole,     "reflectyzdipole"},
+      {BDSArrayReflectionType::reflectzsolenoid,    "reflectzsolenoid"},
       {BDSArrayReflectionType::reflectxyquadrupole, "reflectxyquadrupole"}
 });
 
@@ -61,9 +62,10 @@ BDSArrayReflectionType BDS::DetermineArrayReflectionType(G4String arrayReflectio
   types["reflectxydipole"]     = BDSArrayReflectionType::reflectxydipole;
   types["reflectxzdipole"]     = BDSArrayReflectionType::reflectxzdipole;
   types["reflectyzdipole"]     = BDSArrayReflectionType::reflectyzdipole;
+  types["reflectzsolenoid"]    = BDSArrayReflectionType::reflectzsolenoid;
   types["reflectxyquadrupole"] = BDSArrayReflectionType::reflectxyquadrupole;
-  
-  arrayReflectionType.toLower();
+
+  arrayReflectionType = BDS::LowerCase(arrayReflectionType);
 
   auto result = types.find(arrayReflectionType);
   if (result == types.end())
@@ -108,6 +110,7 @@ G4bool BDS::ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSe
     {BDSArrayReflectionType::reflectxydipole, BDSArrayReflectionType::reflectadvanced},
     {BDSArrayReflectionType::reflectxzdipole, BDSArrayReflectionType::reflectadvanced},
     {BDSArrayReflectionType::reflectyzdipole, BDSArrayReflectionType::reflectadvanced},
+    {BDSArrayReflectionType::reflectzsolenoid, BDSArrayReflectionType::reflectadvanced},
     {BDSArrayReflectionType::reflectxyquadrupole, BDSArrayReflectionType::reflectadvanced}
   };
   
@@ -132,7 +135,6 @@ G4bool BDS::ProblemWithArrayReflectionCombination(const BDSArrayReflectionTypeSe
     }
   else
     {return false;}
-  return false;
 }
 
 std::ostream& operator<< (std::ostream &out, BDSArrayReflectionTypeSet const& t)

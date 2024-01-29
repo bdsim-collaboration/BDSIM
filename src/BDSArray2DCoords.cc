@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSArray2DCoords.hh"
 #include "BDSExtent.hh"
 
+#include <array>
 #include <cmath>
 #include <limits>
 #include <ostream>
@@ -45,12 +46,14 @@ BDSArray2DCoords::BDSArray2DCoords(G4int nXIn, G4int nYIn,
                                         BDSDimensionType::t};
   allDims.erase(xDimensionIn);
   allDims.erase(yDimensionIn);
-  BDSDimensionType* vars[2] = {&zDimension,
-                               &tDimension};
+  std::array<BDSDimensionType*, 2> vars = {&zDimension, &tDimension};
   std::vector<BDSDimensionType> unusedDims(allDims.begin(), allDims.end());
   for (G4int i = 0; i < 2; i++)
     {*(vars[i]) = unusedDims[i];}
   BuildDimensionIndex();
+  
+  BDSDimensionType tt = BDSDimensionType::t;
+  timeVarying = xDimensionIn == tt || yDimensionIn == tt;
 }
 
 void BDSArray2DCoords::ExtractSection2x2(G4double x,

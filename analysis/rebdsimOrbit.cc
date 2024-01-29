@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -44,24 +44,27 @@ void usage()
 int main(int argc, char* argv[])
 {
   if (argc < 3 || argc >= 5)
-    {usage(); exit(1);}
+    {
+      usage();
+      return 1;
+    }
 
   std::string inputFileName  = std::string(argv[1]);
   std::string outputFileName = std::string(argv[2]);
   int index = 0;
-  if (argc == 4)
-    {index = std::stoi(argv[3]);}
-
   try
     {
+      if (argc == 4)
+        {index = std::stoi(argv[3]);}
+      
       DataLoader dl = DataLoader(inputFileName, false, true, true);
       EventAnalysisOrbit* evtAnalysis = new EventAnalysisOrbit(dl.GetEvent(),
-							       dl.GetEventTree(),
-							       true, true);
+                                                               dl.GetEventTree(),
+                                                               true, true);
       evtAnalysis->ExtractOrbit(index);
       
       TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
-
+      
       // add header for file type and version details
       outputFile->cd();
       BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
@@ -79,9 +82,9 @@ int main(int argc, char* argv[])
       delete evtAnalysis;
     }
   catch (const RBDSException& error)
-    {std::cerr << error.what(); exit(1);}
+    {std::cerr << error.what() << std::endl; return 1;}
   catch (const std::exception& error)
-    {std::cerr << error.what(); exit(1);}
+    {std::cerr << error.what() << std::endl; return 1;}
       
   return 0;
 }

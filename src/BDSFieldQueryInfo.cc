@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -31,7 +31,11 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
                                      G4bool overwriteExistingFilesIn,
                                      const G4String& fieldObjectIn,
                                      G4bool printTransformIn,
-                                     G4bool checkParametersIn):
+                                     G4bool checkParametersIn,
+                                     G4bool drawArrowsIn,
+                                     G4bool drawZeroValuePointsIn,
+                                     G4bool drawBoxesIn,
+                                     G4double boxAlphaIn):
   name(nameIn),
   outfileMagnetic(outfileMagneticIn),
   outfileElectric(outfileElectricIn),
@@ -45,7 +49,11 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
   overwriteExistingFiles(overwriteExistingFilesIn),
   printTransform(printTransformIn),
   fieldObject(fieldObjectIn),
-  checkParameters(checkParametersIn)
+  checkParameters(checkParametersIn),
+  drawArrows(drawArrowsIn),
+  drawZeroValuePoints(drawZeroValuePointsIn),
+  drawBoxes(drawBoxesIn),
+  boxAlpha(boxAlphaIn)
 {;}
 
 BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
@@ -57,7 +65,11 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
                                      const std::vector<G4String>& pointsColumnNamesIn,
                                      G4bool overwriteExistingFilesIn,
                                      const G4String& fieldObjectIn,
-                                     G4bool checkParametersIn):
+                                     G4bool checkParametersIn,
+                                     G4bool drawArrowsIn,
+                                     G4bool drawZeroValuePointsIn,
+                                     G4bool drawBoxesIn,
+                                     G4double boxAlphaIn):
   name(nameIn),
   outfileMagnetic(outfileMagneticIn),
   outfileElectric(outfileElectricIn),
@@ -68,7 +80,11 @@ BDSFieldQueryInfo::BDSFieldQueryInfo(const G4String& nameIn,
   overwriteExistingFiles(overwriteExistingFilesIn),
   printTransform(false),
   fieldObject(fieldObjectIn),
-  checkParameters(checkParametersIn)
+  checkParameters(checkParametersIn),
+  drawArrows(drawArrowsIn),
+  drawZeroValuePoints(drawZeroValuePointsIn),
+  drawBoxes(drawBoxesIn),
+  boxAlpha(boxAlphaIn)
 {;}
 
 BDSFieldQueryInfo::~BDSFieldQueryInfo()

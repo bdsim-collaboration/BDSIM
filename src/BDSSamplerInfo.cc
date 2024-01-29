@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -23,7 +23,9 @@ BDSSamplerInfo::BDSSamplerInfo(const G4String& nameIn,
 			       G4int           pdgSetIDIn):
   name(nameIn),
   samplerType(samplerTypeIn),
-  pdgSetID(pdgSetIDIn)
+  pdgSetID(pdgSetIDIn),
+  startElement(nullptr),
+  finishElement(nullptr)
 {;}
 
 BDSSamplerInfo::~BDSSamplerInfo()

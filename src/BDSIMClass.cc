@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -22,9 +22,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh" //  global parameters
 
 #include <algorithm>
+#include <csignal>
 #include <cstdlib>
 #include <cstdio>
-#include <signal.h>
 
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4GenericBiasingPhysics.hh"
@@ -38,7 +38,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Version.hh"
 #include "G4VModularPhysicsList.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include "BDSAcceleratorModel.hh"
+#include "BDSAperturePointsLoader.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBunch.hh"
 #include "BDSBunchFactory.hh"
@@ -46,7 +49,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSColours.hh"
 #include "BDSComponentFactoryUser.hh"
 #include "BDSDebug.hh"
-#include "BDSDetectorConstruction.hh"   
+#include "BDSDetectorConstruction.hh"
 #include "BDSEventAction.hh"
 #include "BDSException.hh"
 #include "BDSFieldFactory.hh"
@@ -56,7 +59,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryWriter.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSMaterials.hh"
-#include "BDSOutput.hh" 
+#include "BDSOutput.hh"
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
@@ -127,7 +130,7 @@ int BDSIM::Initialise()
     {execOptions->Print();}
   ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
 
-  execOptions->PrintCopyright();  
+  execOptions->PrintCopyright();
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "DEBUG mode is on." << G4endl;
 #endif
@@ -144,20 +147,20 @@ int BDSIM::Initialise()
   BDSMaterials::Instance()->PrepareRequiredMaterials(execOptions->Options().verbose);
 
   /// No longer needed. Everything can safely use BDSGlobalConstants from now on.
-  delete execOptions; 
+  delete execOptions;
 
   /// Force construction of global constants after parser has been initialised (requires
   /// materials first). This uses the options and beam from BDSParser.
   /// Non-const as we'll update the particle definition.
-  BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
 
   /// Initialize random number generator
-  BDSRandom::CreateRandomNumberGenerator(globalConstants->RandomEngine());
+  BDSRandom::CreateRandomNumberGenerator(globals->RandomEngine());
   BDSRandom::SetSeed(); // set the seed from options
 
   /// Construct output
-  bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
-					     globalConstants->OutputFileName());
+  bdsOutput = BDSOutputFactory::CreateOutput(globals->OutputFormat(),
+                                             globals->OutputFileName());
 
   /// Check geant4 exists in the current environment
   if (!BDS::Geant4EnvironmentIsSet())
@@ -178,7 +181,7 @@ int BDSIM::Initialise()
   auto parallelWorldsRequiringPhysics = BDS::ConstructAndRegisterParallelWorlds(realWorld,
                                                                                 realWorld->BuildSamplerWorld(),
                                                                                 realWorld->BuildPlacementFieldsWorld());
-  runManager->SetUserInitialization(realWorld);  
+  runManager->SetUserInitialization(realWorld);
 
   /// For geometry sampling, phys list must be initialized before detector.
   /// BUT for samplers we use a parallel world and this HAS to be before the physics
@@ -201,7 +204,7 @@ int BDSIM::Initialise()
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto parallelWorldPhysics = BDS::ConstructParallelWorldPhysics(parallelWorldsRequiringPhysics);
-  G4int physicsVerbosity = BDSGlobalConstants::Instance()->PhysicsVerbosity();
+  G4int physicsVerbosity = globals->PhysicsVerbosity();
   G4VModularPhysicsList* physList;
   if (userPhysicsList)
     {
@@ -224,24 +227,27 @@ int BDSIM::Initialise()
   BDSParticleDefinition* beamParticle = nullptr;
   G4bool beamDifferentFromDesignParticle = false;
   BDS::ConstructDesignAndBeamParticle(BDSParser::Instance()->GetBeam(),
-				      globalConstants->FFact(),
-				      designParticle,
-				      beamParticle,
-				      beamDifferentFromDesignParticle);
-  G4double minEK = BDSGlobalConstants::Instance()->MinimumKineticEnergy();
+                                      globals->FFact(),
+                                      designParticle,
+                                      beamParticle,
+                                      beamDifferentFromDesignParticle);
+  G4double minEK = globals->MinimumKineticEnergy();
   if (beamParticle->KineticEnergy() < minEK && BDS::IsFinite(minEK))
     {throw BDSException("option, minimumKineticEnergy is higher than kinetic energy of the beam - all primary particles wil be killed!");}
   if (usualPrintOut)
     {
       G4cout << "Design particle properties: " << G4endl << *designParticle;
       if (beamDifferentFromDesignParticle)
-	{G4cout << "Beam particle properties: " << G4endl << *beamParticle;}
+        {G4cout << "Beam particle properties: " << G4endl << *beamParticle;}
     }
   // update rigidity where needed
   realWorld->SetDesignParticle(designParticle);
   BDSFieldFactory::SetDesignParticle(designParticle);
   BDSGeometryFactorySQL::SetDefaultRigidity(designParticle->BRho()); // used for sql field loading
-
+  
+  // Muon splitting - optional - should be done *after* biasing to work with it - TBC it's before...
+  BDS::BuildMuonBiasing(physList);
+  
   BDS::RegisterSamplerPhysics(parallelWorldPhysics, physList);
   auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
   if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
@@ -250,11 +256,11 @@ int BDSIM::Initialise()
 
   /// Instantiate the specific type of bunch distribution.
   bdsBunch = BDSBunchFactory::CreateBunch(beamParticle,
-					  parser->GetBeam(),
-					  globalConstants->BeamlineTransform(),
-					  globalConstants->BeamlineS(),
-					  globalConstants->GeneratePrimariesOnly());
-  G4cout << "Bunch distribution: " << bdsBunch->Name() << G4endl;
+                                          parser->GetBeam(),
+                                          globals->BeamlineTransform(),
+                                          globals->BeamlineS(),
+                                          globals->GeneratePrimariesOnly());
+  G4cout << "Bunch distribution: \"" << bdsBunch->Name() << "\"" << G4endl;
   /// We no longer need beamParticle so delete it to avoid confusion. The definition is
   /// held inside bdsBunch (can be updated dynamically).
   delete beamParticle;
@@ -265,34 +271,10 @@ int BDSIM::Initialise()
   /// Optionally generate primaries only and exit
   /// Unfortunately, this has to be here as we can't query the geant4 particle table
   /// until after the physics list has been constructed and attached a run manager.
-  if (globalConstants->GeneratePrimariesOnly())
-    {      
-      // output creation is duplicated below but with this if loop, we exit so ok.
-      bdsOutput->NewFile();
-      const G4int nToGenerate = globalConstants->NGenerate();
-      const G4int printModulo = globalConstants->PrintModuloEvents();
-      bdsBunch->BeginOfRunAction(nToGenerate);
-      auto flagsCache(G4cout.flags());
-      for (G4int i = 0; i < nToGenerate; i++)
-	{
-	  if (i%printModulo == 0)
-	    {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
-	  BDSParticleCoordsFullGlobal coords = bdsBunch->GetNextParticleValid();
-	  // always pull particle definition in case it's updated
-	  const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
-	  bdsOutput->FillEventPrimaryOnly(coords, pDef);
-	}
-      G4cout.flags(flagsCache); // restore cout flags
-      // Write options now the file is open
-      const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
-      bdsOutput->FillOptions(ob);
-      
-      // Write beam
-      const GMAD::BeamBase* bb = BDSParser::Instance()->GetBeamBase();
-      bdsOutput->FillBeam(bb);
-
-      bdsOutput->CloseFile();
-      return 2;
+  if (globals->GeneratePrimariesOnly())
+    {
+      GeneratePrimariesOnly(globals);
+      return 0;
     }
   
   /// Print the geometry tolerance
@@ -304,57 +286,43 @@ int BDSIM::Initialise()
       G4cout << __METHOD_NAME__ << std::setw(12) << "Angular: " << std::setw(7) << theGeometryTolerance->GetAngularTolerance() << " rad"  << G4endl;
       G4cout << __METHOD_NAME__ << std::setw(12) << "Radial: "  << std::setw(7) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
     }
+  
   /// Set user action classes
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Event Action" << G4endl;
-#endif
   BDSEventAction* eventAction = new BDSEventAction(bdsOutput);
   runManager->SetUserAction(eventAction);
-
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Run Action"<<G4endl;
-#endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput,
-					     bdsBunch,
-					     bdsBunch->ParticleDefinition()->IsAnIon(),
-					     eventAction,
-					     globalConstants->StoreTrajectorySamplerID()));
-
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Stepping Action"<<G4endl;
-#endif
-  // Only add steppingaction if it is actually used, so do check here (for performance reasons)
-  G4int verboseSteppingEventStart = globalConstants->VerboseSteppingEventStart();
+  
+  BDSRunAction* runAction = new BDSRunAction(bdsOutput,
+                                             bdsBunch,
+                                             bdsBunch->ParticleDefinition()->IsAnIon(),
+                                             eventAction,
+                                             globals->StoreTrajectorySamplerID());
+  runManager->SetUserAction(runAction);
+  
+  // Only add stepping action if it is actually used, so do check here (for performance reasons)
+  G4int verboseSteppingEventStart = globals->VerboseSteppingEventStart();
   G4int verboseSteppingEventStop  = BDS::VerboseEventStop(verboseSteppingEventStart,
-							  globalConstants->VerboseSteppingEventContinueFor());
-  if (globalConstants->VerboseSteppingBDSIM())
+                                                          globals->VerboseSteppingEventContinueFor());
+  if (globals->VerboseSteppingBDSIM())
     {
       runManager->SetUserAction(new BDSSteppingAction(true,
-						      verboseSteppingEventStart,
-						      verboseSteppingEventStop));
+                                                      verboseSteppingEventStart,
+                                                      verboseSteppingEventStop));
     }
   
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Tracking Action"<<G4endl;
-#endif
-  runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch(),
-						  globalConstants->StoreTrajectory(),
-						  globalConstants->StoreTrajectoryOptions(),
-						  eventAction,
-						  verboseSteppingEventStart,
-						  verboseSteppingEventStop,
-						  globalConstants->VerboseSteppingPrimaryOnly(),
-						  globalConstants->VerboseSteppingLevel()));
+  runManager->SetUserAction(new BDSTrackingAction(globals->Batch(),
+                                                  globals->StoreTrajectory(),
+                                                  globals->StoreTrajectoryOptions(),
+                                                  eventAction,
+                                                  verboseSteppingEventStart,
+                                                  verboseSteppingEventStop,
+                                                  globals->VerboseSteppingPrimaryOnly(),
+                                                  globals->VerboseSteppingLevel()));
 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Stacking Action"<<G4endl;
-#endif
-  runManager->SetUserAction(new BDSStackingAction(globalConstants));
-
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "Registering user action - Primary Generator"<<G4endl;
-#endif
-  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam());
+  runManager->SetUserAction(new BDSStackingAction(globals));
+  
+  auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam(), globals->Batch());
+  // possibly updated after the primary generator as loaded a beam file
+  eventAction->SetPrintModulo(BDSGlobalConstants::Instance()->PrintModuloEvents());
   runManager->SetUserAction(primaryGeneratorAction);
   BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 
@@ -362,13 +330,13 @@ int BDSIM::Initialise()
   runManager->Initialize();
 
   /// Create importance store for parallel importance world
-  if (BDSGlobalConstants::Instance()->UseImportanceSampling())
+  if (globals->UseImportanceSampling())
     {BDS::AddIStore(parallelWorldsRequiringPhysics);}
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();
 
-  if (usualPrintOut && BDSGlobalConstants::Instance()->PhysicsVerbose())
+  if (usualPrintOut && globals->PhysicsVerbose())
     {
       BDS::PrintPrimaryParticleProcesses(bdsBunch->ParticleDefinition()->Name());
       BDS::PrintDefinedParticles();
@@ -377,23 +345,23 @@ int BDSIM::Initialise()
   /// Set verbosity levels at run and G4 event level. Per event and stepping are controlled
   /// in event, tracking and stepping action. These have to be done here due to the order
   /// of construction in Geant4.
-  runManager->SetVerboseLevel(std::min(globalConstants->VerboseRunLevel(), globalConstants->PhysicsVerbosity()));
-  G4EventManager::GetEventManager()->SetVerboseLevel(globalConstants->VerboseEventLevel());
-  G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(globalConstants->VerboseTrackingLevel());
+  runManager->SetVerboseLevel(std::min(globals->VerboseRunLevel(), globals->PhysicsVerbosity()));
+  G4EventManager::GetEventManager()->SetVerboseLevel(globals->VerboseEventLevel());
+  G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(globals->VerboseTrackingLevel());
   
   /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
   if (!bCloseGeometry)
-    { 
+    {
       G4cerr << __METHOD_NAME__ << "error - geometry not closed." << G4endl;
       return 1;
     }
 
-  if (globalConstants->ExportGeometry())
+  if (globals->ExportGeometry())
     {
       BDSGeometryWriter geometrywriter;
-      geometrywriter.ExportGeometry(globalConstants->ExportType(),
-				    globalConstants->ExportFileName());
+      geometrywriter.ExportGeometry(globals->ExportType(),
+                                    globals->ExportFileName());
     }
 
   initialised = true;
@@ -421,33 +389,34 @@ void BDSIM::BeamOn(int nGenerate)
   try
     {
       if (!BDSGlobalConstants::Instance()->Batch())   // Interactive mode
-	{
-	  BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
-						   BDSGlobalConstants::Instance()->Geant4MacroFileName(),
-						   realWorld);
-	  visManager.StartSession(argcCache, argvCache);
-	}
+        {
+          BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
+                                                   BDSGlobalConstants::Instance()->Geant4MacroFileName(),
+                                                   realWorld,
+                                                   BDSGlobalConstants::Instance()->VisVerbosity());
+          visManager.StartSession(argcCache, argvCache);
+        }
       else
-	{// batch mode
-	  if (nGenerate < 0)
-	    {runManager->BeamOn(BDSGlobalConstants::Instance()->NGenerate());}
-	  else
-	    {runManager->BeamOn(nGenerate);}
-	}
+        {// batch mode
+          if (nGenerate < 0)
+            {runManager->BeamOn(BDSGlobalConstants::Instance()->NGenerate());}
+          else
+            {runManager->BeamOn(nGenerate);}
+        }
     }
   catch (const BDSException& exception)
     {
       // don't do this for now in case it's dangerous and we try tracking with open geometry
       //G4GeometryManager::GetInstance()->OpenGeometry();
       throw exception;
-    } 
+    }
 }
 
 BDSIM::~BDSIM()
 {
   /// Termination & clean up.
   G4GeometryManager::GetInstance()->OpenGeometry();
-    
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "deleting..." << G4endl;
 #endif
@@ -456,7 +425,7 @@ BDSIM::~BDSIM()
   try
     {
       // order important here because of singletons relying on each other
-	  delete BDSSDManager::Instance();
+      delete BDSSDManager::Instance();
       delete BDSBeamPipeFactory::Instance();
       delete BDSCavityFactory::Instance();
       delete BDSGeometryFactory::Instance();
@@ -468,15 +437,16 @@ BDSIM::~BDSIM()
       
       // instances not used in this file, but no other good location for deletion
       if (initialisationResult < 2)
-	{
-	  delete BDSColours::Instance();
-	  delete BDSFieldLoader::Instance();
-	  delete BDSSamplerRegistry::Instance();
-	}
+        {
+          delete BDSColours::Instance();
+          delete BDSFieldLoader::Instance();
+          delete BDSSamplerRegistry::Instance();
+          BDSAperturePointsCache::Instance()->ClearCachedFiles();
+        }
     }
   catch (...)
     {;} // ignore any exception as this is a destructor
-      
+  
   delete runManager;
   delete bdsBunch;
   delete parser;
@@ -486,7 +456,7 @@ BDSIM::~BDSIM()
 }
 
 void BDSIM::RegisterUserComponent(const G4String& componentTypeName,
-				  BDSComponentConstructor* componentConstructor)
+                                  BDSComponentConstructor* componentConstructor)
 {
   if (initialised)
     {BDS::Warning(__METHOD_NAME__, "BDSIM kernel already initialised - this component will not be available");}
@@ -494,5 +464,34 @@ void BDSIM::RegisterUserComponent(const G4String& componentTypeName,
     {userComponentFactory = new BDSComponentFactoryUser();}
 
   userComponentFactory->RegisterComponent(componentTypeName,
-					  componentConstructor);
+                                          componentConstructor);
+}
+
+void BDSIM::GeneratePrimariesOnly(const BDSGlobalConstants* globals)
+{
+  // output creation is duplicated below but with this if loop, we exit so ok.
+  bdsOutput->NewFile();
+  const G4int nToGenerate = globals->NGenerate();
+  const G4int printModulo = globals->PrintModuloEvents();
+  bdsBunch->BeginOfRunAction(nToGenerate, globals->Batch());
+  auto flagsCache(G4cout.flags());
+  for (G4int i = 0; i < nToGenerate; i++)
+    {
+      if (i%printModulo == 0)
+        {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
+      BDSParticleCoordsFullGlobal coords = bdsBunch->GetNextParticleValid();
+      // always pull particle definition in case it's updated
+      const BDSParticleDefinition* pDef = bdsBunch->ParticleDefinition();
+      bdsOutput->FillEventPrimaryOnly(coords, pDef);
+    }
+  G4cout.flags(flagsCache); // restore cout flags
+  // Write options now the file is open
+  const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
+  bdsOutput->FillOptions(ob);
+  
+  // Write beam
+  const GMAD::BeamBase* bb = BDSParser::Instance()->GetBeamBase();
+  bdsOutput->FillBeam(bb);
+  
+  bdsOutput->CloseFile();
 }

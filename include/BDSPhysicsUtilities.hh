@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -67,7 +67,8 @@ namespace BDS
   void ConflictingParametersSet(const GMAD::Beam&            beamDefinition,
                                 const std::set<std::string>& keys,
                                 G4int                        nSet,
-                                G4bool                       warnZeroParamsSet = true);
+                                G4bool                       warnZeroParamsSet = true,
+                                const G4String&              unitString = "");
 
   /// Construct the design and beam particle definitions. Even if these are the same, unique
   /// objects are created for and must be deleted elsewhere. Two pointers are passed by
@@ -90,7 +91,8 @@ namespace BDS
                                                      G4double momentumIn,
 						     G4double ffact = 1);
 
-  /// Ensure required beam particle has been constructed for Geant4 purposes.
+  /// Ensure required beam particle has been constructed for Geant4 purposes. Expects
+  /// lowercase letters, not the Geant4 exact string.
   void ConstructBeamParticleG4(const G4String& name);
   
   /// Construct the minimum particle set required (gamma, electron, positron,
@@ -110,6 +112,9 @@ namespace BDS
   void PrintDefinedParticles();
   
   G4GenericBiasingPhysics* BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
+
+  /// Build muon splitting biasing and wrap the various processes in the physics list.
+  void BuildMuonBiasing(G4VModularPhysicsList* physicsList);
 
 #if G4VERSION_NUMBER > 1039
   /// Build the physics required for channelling to work correctly.

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4String.hh"
 #include "G4Types.hh"
+
+class BDSBeamlineElement;
 
 /**
  * @brief All info required to build a sampler but not place it.
@@ -46,6 +48,8 @@ public:
   G4String       name;
   BDSSamplerType samplerType;
   G4int          pdgSetID;
+  const BDSBeamlineElement* startElement;
+  const BDSBeamlineElement* finishElement;
 };
 
 #endif

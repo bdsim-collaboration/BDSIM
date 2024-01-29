@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -107,6 +107,7 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete placementTransform;
   delete placementTransformCL;
   delete samplerPlacementTransform;
+  delete samplerInfo;
 }
 
 std::set<G4VPhysicalVolume*> BDSBeamlineElement::GetPVsFromAssembly(G4AssemblyVolume* av)
@@ -188,6 +189,12 @@ G4ThreeVector BDSBeamlineElement::OutputFaceNormal() const
       G4ThreeVector outputFNGlobal = outputFNLocal.rotateZ(-tiltOffset->GetTilt());
       return outputFNGlobal;
     }
+}
+
+void BDSBeamlineElement::UpdateSamplerPlacementTransform(const G4Transform3D& tranfsormIn)
+{
+  delete samplerPlacementTransform;
+  samplerPlacementTransform = new G4Transform3D(tranfsormIn);
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)

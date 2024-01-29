@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"           // geant4 globals / types
 
 class BDSBeamPipe;
+class BDSFieldInfo;
 class BDSMagnetOuterFactoryBase;
 class BDSMagnetOuterInfo;
 class G4Material;
@@ -97,6 +98,7 @@ private:
   BDSMagnetOuterFactoryBase* lhcright;
   BDSMagnetOuterFactoryBase* lhcleft;
   /// @}
+  G4bool sensitiveOuter; ///< Cache of global option.
 };
 
 

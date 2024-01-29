@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VModularPhysicsList.hh"
 
 #include "BDSAcceleratorModel.hh"
+#include "BDSAperturePointsLoader.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBunch.hh"
 #include "BDSBunchFactory.hh"
@@ -422,6 +423,7 @@ BDSIMLink::~BDSIMLink()
 	  delete BDSFieldLoader::Instance();
 	  //delete BDSSDManager::Instance();
 	  delete BDSSamplerRegistry::Instance();
+    BDSAperturePointsCache::Instance()->ClearCachedFiles();
 	}
     }
   catch (...)
@@ -509,6 +511,8 @@ int BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
 				     double rotation,
 				     double xOffset,
 				     double yOffset,
+                     double jawTiltLeft,
+                     double jawTiltRight,
 				     bool   buildLeftJaw,
 				     bool   buildRightJaw,
 				     bool   isACrystal,
@@ -527,6 +531,8 @@ int BDSIMLink::AddLinkCollimatorJaw(const std::string& collimatorName,
 				     rotation,
 				     xOffset,
 				     yOffset,
+                     jawTiltLeft,
+                     jawTiltRight,
 				     buildLeftJaw,
 				     buildRightJaw,
 				     isACrystal,

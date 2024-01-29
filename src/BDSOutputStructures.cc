@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -37,6 +37,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSOutputROOTEventSamplerC.hh"
+#include "BDSOutputROOTEventSamplerS.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTParticleData.hh"
 #include "BDSHitSampler.hh"
@@ -57,10 +59,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   nCollimators(0),
+  nCavities(0),
   localSamplersInitialised(false),
   localCollimatorsInitialised(false)
 {
   G4bool storeCollimatorInfo = globals->StoreCollimatorInfo();
+  G4bool storeCavityInfo = globals->StoreCavityInfo();
   G4bool storeTurn       = globals->StoreELossTurn();
   G4bool storeLinks      = globals->StoreELossLinks();
   G4bool storeLocal      = globals->StoreELossLocal();
@@ -77,7 +81,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   headerOutput  = new BDSOutputROOTEventHeader();
   beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();
-  modelOutput   = new BDSOutputROOTEventModel(storeCollimatorInfo);
+  modelOutput   = new BDSOutputROOTEventModel(storeCollimatorInfo, storeCavityInfo);
 
   eLoss       = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					   storeGlobal, storeTime, storeStepLength,
@@ -134,6 +138,10 @@ BDSOutputStructures::~BDSOutputStructures()
   delete runHistos;
   delete runInfo;
   for (auto sampler : samplerTrees)
+    {delete sampler;}
+  for (auto sampler : samplerCTrees)
+    {delete sampler;}
+  for (auto sampler : samplerSTrees)
     {delete sampler;}
   for (auto collimator : collimators)
     {delete collimator;}
@@ -201,6 +209,8 @@ void BDSOutputStructures::InitialiseSamplers()
 {
   if (!localSamplersInitialised)
     {
+      auto samplerRegistry = BDSSamplerRegistry::Instance();
+      const auto sNames = samplerRegistry->GetUniqueNamesPlane();
 #ifdef USE_SIXTRACKLINK
       // TODO hardcoded because of sixtrack dynamic buildup
       // Sixtrack does lazy initialisation for collimators in link to Geant4 so we don't know
@@ -211,10 +221,12 @@ void BDSOutputStructures::InitialiseSamplers()
       // the sixtrack interface should be rewritten so we know at construction time how many will
       // be built.
       samplerTrees.reserve(300);
+#else
+      samplerTrees.reserve(sNames.size());
 #endif
       localSamplersInitialised = true;
-      for (const auto& samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
-        {// create sampler structure
+      for (const auto& samplerName : sNames)
+        {
 #ifndef __ROOTDOUBLE__
 	  BDSOutputROOTEventSampler<float>*  res = new BDSOutputROOTEventSampler<float>(samplerName);
 #else
@@ -223,6 +235,36 @@ void BDSOutputStructures::InitialiseSamplers()
 	  samplerTrees.push_back(res);
 	  samplerNames.push_back(samplerName);
         }
+      const auto planeIDs = samplerRegistry->GetSamplerIDsPlane();
+      G4int i = 0;
+      for (const auto& ID : planeIDs)
+	{samplerIDToIndexPlane[ID] = i; i++;}
+      
+      // cylindrical samplers
+      const auto scNames = samplerRegistry->GetUniqueNamesCylinder();
+      samplerCTrees.reserve(scNames.size());
+      for (const auto& samplerName : scNames)
+        {
+	  samplerCTrees.emplace_back(new BDSOutputROOTEventSamplerC(samplerName));
+	  samplerCNames.emplace_back(samplerName);
+        }
+      const auto cylinderIDs = samplerRegistry->GetSamplerIDsCylinder();
+      i = 0;
+      for (const auto& ID : cylinderIDs)
+	{samplerIDToIndexCylinder[ID] = i; i++;}
+      
+      // spherical samplers
+      const auto ssNames = samplerRegistry->GetUniqueNamesSphere();
+      samplerSTrees.reserve(ssNames.size());
+      for (const auto& samplerName : ssNames)
+        {
+	  samplerSTrees.emplace_back(new BDSOutputROOTEventSamplerS(samplerName));
+	  samplerSNames.emplace_back(samplerName);
+        }
+      const auto sphereIDs = samplerRegistry->GetSamplerIDsSphere();
+      i = 0;
+      for (const auto& ID : sphereIDs)
+	{samplerIDToIndexSphere[ID] = i; i++;}
     }
 }
 
@@ -233,36 +275,45 @@ void BDSOutputStructures::InitialiseMaterialMap()
   
   const auto materialTable = G4Material::GetMaterialTable(); // should be an std::vector<G4Material*>*
   
-  // It's totally permitted to use degenerate material names as the geometry is done by pointer
-  // We need a way to sort the materials for a given input irrespective of pointer or memory
+  // It's completely permitted to use degenerate material names as the geometry is constructed by
+  // pointer. We need a way to sort the materials for a given input irrespective of pointer or memory
   // location so the result is the same for multiple runs of bdsim.
+
   // Use a pair of <name, density>. A c++ map will be internally sorted by keys and the various
-  // comparison operators are defined by pairs in <utility>.
-  // Once sorted, by a map, we then loop over that map and generate integer IDs for each
-  // material
-  // This is a little overkill really as we ensure in BDSMaterials we don't make materials
-  // with degenerate names and ultimately, we can't define degenerate materials in GMAD so
-  // this shouldn't happen. Perhaps it could from GDML.
+  // comparison operators are defined by pairs in <utility>. Once sorted, by a map, we then loop
+  // over that map and generate integer IDs for each material.
+  
+  // This may seem overkill as we ensure in BDSMaterials we don't make materials with
+  // degenerate names and ultimately, we can't define degenerate materials in GMAD so
+  // this shouldn't happen. But, if someone turns off preprocessGDML and they have degenerate
+  // material names in multiple GDML files or a repeated definition of the same material
+  // in multiple GDML files, we will end up with different G4Material instances but still
+  // need a way to distinguish them withouth using the pointer.
+  
   std::map<std::pair<G4String, G4double>, G4Material*> sortingMap;
   std::map<G4String, int> nameCount;
   std::map<G4Material*, G4String> matToUniqueName;
+  
   for (const auto& mat : *materialTable)
     {
       G4String matName = mat->GetName();
-      sortingMap[std::make_pair(matName, mat->GetDensity())] = mat;
+      G4String matNameUnique = matName;
       
       auto search = nameCount.find(matName);
       if (search != nameCount.end())
 	{
 	  search->second += 1;
-	  matToUniqueName[mat] = matName + std::to_string(search->second);
+	  matNameUnique = matName + std::to_string(search->second);
+	  matToUniqueName[mat] = matNameUnique;
 	}
       else
 	{
 	  nameCount[matName] = 0;
 	  matToUniqueName[mat] = matName;
 	}
+      sortingMap[std::make_pair(matNameUnique, mat->GetDensity())] = mat;
     }
+  
   short int i = 0;
   for (const auto& kv : sortingMap)
     {
@@ -289,6 +340,7 @@ G4int BDSOutputStructures::UpdateSamplerStructures()
 	  samplerNames.push_back(samplerName);
 	}
     }
+  /// TBC - does not do cylinder or spheres
   return result;
 }
 
@@ -296,7 +348,8 @@ void BDSOutputStructures::PrepareCollimatorInformation()
 {
   const G4String collimatorPrefix = "COLL_";
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
-  collimatorIndices = flatBeamline->GetIndicesOfCollimators();
+  if (flatBeamline)
+    {collimatorIndices = flatBeamline->GetIndicesOfCollimators();}
   nCollimators = (G4int)collimatorIndices.size();
   
   for (auto index : collimatorIndices)
@@ -318,6 +371,36 @@ void BDSOutputStructures::PrepareCollimatorInformation()
       G4double xDiff = info.xSizeOut - info.xSizeIn;
       G4double yDiff = info.ySizeOut - info.ySizeIn;
       collimatorDifferences.emplace_back(xDiff, yDiff); // construct in place
+    }
+}
+
+void BDSOutputStructures::PrepareCavityInformation()
+{
+    const G4String cavityPrefix = "CAV_";
+    const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
+    if (flatBeamline)
+      {
+        std::vector<G4int> pillboxIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_pillbox");
+        std::vector<G4int> rectIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_rectangular");
+        std::vector<G4int> ellipticalIndices = flatBeamline->GetIndicesOfElementsOfType("cavity_elliptical");
+        cavityIndices = pillboxIndices;
+        cavityIndices.insert(std::end(cavityIndices), std::begin(rectIndices), std::end(rectIndices));
+        cavityIndices.insert(std::end(cavityIndices), std::begin(ellipticalIndices), std::end(ellipticalIndices));
+        nCavities = (G4int) cavityIndices.size();
+      }
+    for (auto index : cavityIndices)
+    {
+      // prepare output structure name
+      const BDSBeamlineElement* el = flatBeamline->at(index);
+      // use the 'placement' name for a unique name (with copy number included)
+      G4String cavityName = cavityPrefix + el->GetPlacementName();
+      cavityNames.push_back(cavityName);
+      cavityIndicesByName[el->GetName()]          = index;
+      cavityIndicesByName[el->GetPlacementName()] = index;
+
+      BDSOutputROOTEventCavityInfo info;
+      info.Fill(el);
+      cavityInfo.push_back(info);
     }
 }
 
@@ -360,6 +443,10 @@ void BDSOutputStructures::ClearStructuresEventLevel()
 {
   primary->Flush();
   for (auto sampler : samplerTrees)
+    {sampler->Flush();}
+  for (auto sampler : samplerCTrees)
+    {sampler->Flush();}
+  for (auto sampler : samplerSTrees)
     {sampler->Flush();}
   for (auto collimator : collimators)
     {collimator->Flush();}

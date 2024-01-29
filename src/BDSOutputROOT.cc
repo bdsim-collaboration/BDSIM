@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -33,6 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSOutputROOTEventSamplerC.hh"
+#include "BDSOutputROOTEventSamplerS.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTParticleData.hh"
 
@@ -65,7 +67,8 @@ BDSOutputROOT::~BDSOutputROOT()
 void BDSOutputROOT::NewFile() 
 {
   G4String newFileName = GetNextFileName();
-  
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+
   theRootOutputFile = new TFile(newFileName,"RECREATE", "BDS output file");
   if (theRootOutputFile->IsZombie())
     {throw BDSException(__METHOD_NAME__, "Unable to open output file: \"" + newFileName +"\"");}
@@ -91,7 +94,7 @@ void BDSOutputROOT::NewFile()
   theParticleDataTree->Branch("ParticleData.", "BDSOutputROOTParticleData",   particleDataOutput,32000, 1);
   theBeamOutputTree->Branch("Beam.",           "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
   theOptionsOutputTree->Branch("Options.",     "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
-  theModelOutputTree->Branch("Model.",         "BDSOutputROOTEventModel",     modelOutput,      32000, 1);
+  theModelOutputTree->Branch("Model.",         "BDSOutputROOTEventModel",     modelOutput,      32000, globals->ModelSplitLevel());
   theRunOutputTree->Branch("Histos.",          "BDSOutputROOTEventHistograms",runHistos,        32000, 1);
   theRunOutputTree->Branch("Summary.",         "BDSOutputROOTEventRunInfo",   runInfo,          32000, 1);
 
@@ -133,17 +136,31 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree->Branch("Histos.",     "BDSOutputROOTEventHistograms", evtHistos, 32000, 1);
 
   // build sampler structures
-  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   for (G4int i = 0; i < (G4int)samplerTrees.size(); ++i)
     {
       auto samplerTreeLocal = samplerTrees.at(i);
       auto samplerName      = samplerNames.at(i);
-      // set tree branches
       theEventOutputTree->Branch((samplerName+".").c_str(),
                                  "BDSOutputROOTEventSampler",
-                                 samplerTreeLocal,32000, globals->SamplersSplitLevel());
+                                 samplerTreeLocal, 32000, globals->SamplersSplitLevel());
     }
-
+  for (G4int i = 0; i < (G4int)samplerCTrees.size(); ++i)
+    {
+      auto samplerTreeLocal = samplerCTrees.at(i);
+      auto samplerName      = samplerCNames.at(i);
+      theEventOutputTree->Branch((samplerName+".").c_str(),
+				 "BDSOutputROOTEventSamplerC",
+				 samplerTreeLocal, 32000, globals->SamplersSplitLevel());
+    }
+  for (G4int i = 0; i < (G4int)samplerSTrees.size(); ++i)
+    {
+      auto samplerTreeLocal = samplerSTrees.at(i);
+      auto samplerName      = samplerSNames.at(i);
+      theEventOutputTree->Branch((samplerName+".").c_str(),
+				 "BDSOutputROOTEventSamplerS",
+				 samplerTreeLocal, 32000, globals->SamplersSplitLevel());
+    }
+  
   // build collimator structures
   if (CreateCollimatorOutputStructures())
     {
@@ -163,6 +180,12 @@ void BDSOutputROOT::NewFile()
 
 void BDSOutputROOT::WriteHeader()
 {
+  theHeaderOutputTree->Fill();
+}
+
+void BDSOutputROOT::WriteHeaderEndOfFile()
+{
+  // there's no way to overwrite an entry in a ttree so we just add another entry with updated information
   theHeaderOutputTree->Fill();
 }
 

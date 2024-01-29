@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -18,8 +18,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "AnalysisUtilities.hh"
 #include "BinGeneration.hh"
+#include "RBDSException.hh"
 
 #include "Rtypes.h" // for classdef
+
+#include "TH1D.h"
+
+#include <algorithm>
+#include <string>
+#include <vector>
+#include <iostream>
 
 ClassImp(AnalysisUtilities)
 
@@ -44,4 +52,31 @@ std::vector<double> AnalysisUtilities::LinSpace(double start,
 						bool   includeLastPoint)
 {
   return RBDS::LinSpace(start, stop, nBins, includeLastPoint);
+}
+
+void AnalysisUtilities::FillTH1D(TH1D& h1d,
+				 const std::vector<float>& values,
+				 const std::vector<float>& weights)
+{
+  for (int i=0; i < (int)values.size(); i++)
+    {h1d.Fill(values[i],weights[i]);}
+}
+
+std::string RBDS::DefaultOutputName(const std::string& inputFilePath,
+                                    const std::string& suffix)
+{
+  std::string result = inputFilePath;
+  // protect against globbing
+  std::replace(result.begin(), result.end(), '*', '_');
+  // get only the filename - ie just write the file to the cwd
+  auto foundSlash = result.rfind('/'); // find the last '/'
+  if (foundSlash != std::string::npos)
+    {result = result.substr(foundSlash + 1);} // the rest
+  std::string key = ".root";
+  auto found = result.rfind(key);
+  if (found != std::string::npos)
+    {result.replace(found, key.length(), suffix + ".root");}
+  else
+    {result += ".root";}
+  return result;
 }

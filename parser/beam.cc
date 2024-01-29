@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -167,12 +167,19 @@ void Beam::PublishMembers()
   publish("distrFile",            &Beam::distrFile);
   publish("distrFileFormat",      &Beam::distrFileFormat);
   publish("distrFileFromExecOptions", &Beam::distrFileFromExecOptions);
-  publish("matchDistrFileLength", &Beam::matchDistrFileLength);
+  publish("matchDistrFileLength", &Beam::distrFileMatchLength);  // for backwards compatibility
+  publish("distrFileMatchLength", &Beam::distrFileMatchLength);
+  publish("distrFileLoop",        &Beam::distrFileLoop);
+  publish("distrFileLoopNTimes",  &Beam::distrFileLoopNTimes);
   publish("removeUnstableWithoutDecay", &Beam::removeUnstableWithoutDecay);
   publish("nlinesIgnore",         &Beam::nlinesIgnore);
   publish("nLinesIgnore",         &Beam::nlinesIgnore); // for consistency
   publish("nlinesSkip",           &Beam::nlinesSkip);
   publish("nLinesSkip",           &Beam::nlinesSkip);   // for consistency
+  
+  publish("bunchFrequency",       &Beam::bunchFrequency);
+  publish("bunchPeriod",          &Beam::bunchPeriod);
+  publish("eventsPerBunch",       &Beam::eventsPerBunch);
 
   // aliases
   publish("distribution",         &Beam::distrType);
@@ -245,6 +252,7 @@ void Beam::PublishMembers()
   publish("envelopeE", &Beam::envelopeE);
   publish("envelopeR", &Beam::envelopeR);
   publish("envelopeRp",&Beam::envelopeRp);
+  publish("zFromT",    &Beam::zFromT);
 
   // options for beam distrType="gaussmatrix"
   publish("sigma11",&Beam::sigma11);
@@ -290,11 +298,18 @@ void Beam::PublishMembers()
   publish("haloNSigmaYOuter",      &Beam::haloNSigmaYOuter);
   publish("haloXCutInner",         &Beam::haloXCutInner);
   publish("haloYCutInner",         &Beam::haloYCutInner);
+  publish("haloXCutOuter",         &Beam::haloXCutOuter);
+  publish("haloYCutOuter",         &Beam::haloYCutOuter);
+  publish("haloXpCutInner",        &Beam::haloXpCutInner);
+  publish("haloYpCutInner",        &Beam::haloYpCutInner);
+  publish("haloXpCutOuter",        &Beam::haloXpCutOuter);
+  publish("haloYpCutOuter",        &Beam::haloYpCutOuter);
   publish("haloPSWeightParameter", &Beam::haloPSWeightParameter);
   publish("haloPSWeightFunction",  &Beam::haloPSWeightFunction);
 
   publish("offsetSampleMean",      &Beam::offsetSampleMean);
 
+  publish("eventGeneratorNEventsSkip", &Beam::eventGeneratorNEventsSkip);
   publish("eventGeneratorMinX",      &Beam::eventGeneratorMinX);
   publish("eventGeneratorMaxX",      &Beam::eventGeneratorMaxX);
   publish("eventGeneratorMinY",      &Beam::eventGeneratorMinY);
@@ -311,8 +326,10 @@ void Beam::PublishMembers()
   publish("eventGeneratorMaxRp",     &Beam::eventGeneratorMaxRp);
   publish("eventGeneratorMinT",      &Beam::eventGeneratorMinT);
   publish("eventGeneratorMaxT",      &Beam::eventGeneratorMinT);
-  publish("eventGeneratorMinEK",     &Beam::eventGeneratorMinEK);
-  publish("eventGeneratorMaxEK",     &Beam::eventGeneratorMaxEK);
+  publish("eventGeneratorMinEk",     &Beam::eventGeneratorMinEK);
+  publish("eventGeneratorMinEK",     &Beam::eventGeneratorMinEK); // alias
+  publish("eventGeneratorMaxEk",     &Beam::eventGeneratorMaxEK);
+  publish("eventGeneratorMaxEK",     &Beam::eventGeneratorMaxEK); // alias
   publish("eventGeneratorParticles", &Beam::eventGeneratorParticles);
   publish("eventGeneratorWarnSkippedParticles", &Beam::eventGeneratorWarnSkippedParticles);
 }

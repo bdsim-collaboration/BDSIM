@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactoryLHC.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSExtent.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
@@ -38,7 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSBeamPipeFactoryLHC::BDSBeamPipeFactoryLHC()
 {;}
 
-BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,
+BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(const G4String& nameIn,
 						   G4double    lengthIn,
 						   G4double    aper1In,
 						   G4double    aper2In,
@@ -46,7 +47,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,
 						   G4double    /*aper4In*/,
 						   G4Material* vacuumMaterialIn,
 						   G4double    beamPipeThicknessIn,
-						   G4Material* beamPipeMaterialIn)
+						   G4Material* beamPipeMaterialIn,
+						   const G4String& /*pointsFileIn*/,
+						   const G4String& /*pointsUnitIn*/)
 {
   // clean up after last usage
   CleanUp();
@@ -144,17 +147,19 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, width, height);
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String      nameIn,
-						   G4double      lengthIn,
-						   G4ThreeVector inputFaceNormalIn,
-						   G4ThreeVector outputFaceNormalIn,
+BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(const G4String&      nameIn,
+						   G4double             lengthIn,
+						   const G4ThreeVector& inputFaceNormalIn,
+						   const G4ThreeVector& outputFaceNormalIn,
 						   G4double      aper1In,
 						   G4double      aper2In,
 						   G4double      aper3In,
 						   G4double      /*aper4In*/,
 						   G4Material*   vacuumMaterialIn,
 						   G4double      beamPipeThicknessIn,
-						   G4Material*   beamPipeMaterialIn)
+						   G4Material*   beamPipeMaterialIn,
+						   const G4String& /*pointsFileIn*/,
+						   const G4String& /*pointsUnitIn*/)
 {
   // clean up after last usage
   CleanUp();
@@ -174,7 +179,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String      nameIn,
 				 lengthIn, width, height);
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(G4String    nameIn,
+BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(const G4String& nameIn,
 							    G4Material* vacuumMaterialIn,
 							    G4Material* beamPipeMaterialIn,
 							    G4double    lengthIn,
@@ -194,15 +199,18 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(G4String    nameIn,
 
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication
 /// by grouping common construction tasks
-void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(G4String      nameIn,
-						      G4double      lengthIn,
-						      G4double      aper1In,
-						      G4double      aper2In,
-						      G4double      aper3In,
-						      G4double      beamPipeThicknessIn,
-						      G4ThreeVector inputfaceIn,
-						      G4ThreeVector outputfaceIn)
+void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(const G4String&      nameIn,
+						      G4double             lengthIn,
+						      G4double             aper1In,
+						      G4double             aper2In,
+						      G4double             aper3In,
+						      G4double             beamPipeThicknessIn,
+						      const G4ThreeVector& inputfaceIn,
+						      const G4ThreeVector& outputfaceIn)
 {
+  // long length for unambiguous boolean - ensure no gaps in beam pipe geometry
+  G4double angledVolumeLength = BDS::CalculateSafeAngledVolumeLength(inputfaceIn, outputfaceIn, lengthIn, aper1In);
+
   // build the solids
   //vacuum cylindrical solid (circular cross-section)
   G4VSolid* vacCylSolid = new G4CutTubs(nameIn + "_vacuum_cylinder", // name
@@ -217,7 +225,7 @@ void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(G4String      nameIn,
   G4VSolid* vacRectSolid = new G4Box(nameIn + "_vacuum_box", // name
 				     aper1In,                // x half width
 				     aper2In,                // y half width
-				     lengthIn); // z full width (long for unambiguous intersection)
+                                     angledVolumeLength); // z full width (long for unambiguous intersection)
   allSolids.insert(vacCylSolid);
   allSolids.insert(vacRectSolid);
   //intersection of both of these gives the desired shape
@@ -240,7 +248,7 @@ void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(G4String      nameIn,
   G4VSolid* bpInnerRectSolid = new G4Box(nameIn + "_pipe_inner_box", // name
 					 aper1In + lengthSafetyLarge,// x half width
 					 aper2In + lengthSafetyLarge,// y half width
-					 1.7*lengthIn); // z long for unambiguous intersection
+                                         angledVolumeLength); // z long for unambiguous intersection
   //beampipe inner intersection - 1.5*length long which is > half length for unambiguous subtraction later
   G4VSolid* bpInnerSolid = new G4IntersectionSolid(nameIn + "_pipe_inner_solid", // name
 						   bpInnerCylSolid,              // solid 1
@@ -261,7 +269,7 @@ void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(G4String      nameIn,
   G4VSolid* bpOuterRectSolid = new G4Box(nameIn + "_pipe_inner_box",    // name
 					 aper1In + beamPipeThicknessIn, // x half width
 					 aper2In + beamPipeThicknessIn, // y half width
-					 lengthIn); // z full width (long for unambiguous intersection)
+                                         angledVolumeLength); // z full width (long for unambiguous intersection)
   G4VSolid* bpOuterSolid = new G4IntersectionSolid(nameIn + "_pipe_inner_solid", // name
 						   bpOuterCylSolid,              // solid 1
 						   bpOuterRectSolid);            // solid 2
@@ -291,7 +299,7 @@ void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(G4String      nameIn,
   G4VSolid* contRectSolid = new G4Box(nameIn + "_vacuum_box", // name
 				      aper1In + beamPipeThicknessIn + lengthSafety, // x half width
 				      aper2In + beamPipeThicknessIn + lengthSafety, // y half width
-				      lengthIn); // z full width (long for unambiguous intersection)
+                                      angledVolumeLength); // z full width (long for unambiguous intersection)
 
   allSolids.insert(contCylSolid);
   allSolids.insert(contRectSolid);
@@ -301,7 +309,7 @@ void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(G4String      nameIn,
 					   contRectSolid);            // solid 2
 }
 
-void BDSBeamPipeFactoryLHC::CreateContainerSubtractionSolid(G4String& nameIn,
+void BDSBeamPipeFactoryLHC::CreateContainerSubtractionSolid(const G4String& nameIn,
 							    G4double& lengthIn,
 							    G4double& beamPipeThicknessIn,
 							    G4double& aper1In,

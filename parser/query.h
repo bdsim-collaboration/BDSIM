@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -59,6 +59,11 @@ namespace GMAD
     bool overwriteExistingFiles;
     bool printTransform;
     
+    bool   drawArrows;
+    bool   drawZeroValuePoints;
+    bool   drawBoxes;
+    double boxAlpha;
+    
     std::string pointsFile; ///< File with 3D points to use
 
     // For 3d query in a real model - all the possible transform information required
@@ -101,19 +106,19 @@ namespace GMAD
   };
   
   template <typename T>
-    void Query::set_value(std::string property, T value)
+  void Query::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
       std::cout << "query> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
-      try {
-	set(this,property,value);
-      }
-      catch(const std::runtime_error&) {
-	std::cerr << "Error: query> unknown option \"" << property << "\" with value " << value  << std::endl;
-	exit(1);
-      }
+      try
+	{set(this,property,value);}
+      catch (const std::runtime_error&)
+	{
+	  std::cerr << "Error: query> unknown option \"" << property << "\" with value \"" << value << "\"" << std::endl;
+	  exit(1);
+	}
     }
 }
 

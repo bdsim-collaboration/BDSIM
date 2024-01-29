@@ -1,5 +1,6 @@
 # high precision tests take a while to load neutron data, so labelled long
-simple_testing(phsyics-all-particles          "--file=all_particles.gmad"          ${OVERLAP_CHECK})
+simple_testing(physics-all-particles          "--file=all_particles.gmad"          ${OVERLAP_CHECK})
+simple_testing(physics-annihi-to-mumu         "--file=annihi_to_mumu.gmad"         ${OVERLAP_CHECK})
 simple_testing(physics-charge-exchange        "--file=charge_exchange.gmad"        ${OVERLAP_CHECK})
 simple_testing(physics-decay                  "--file=decay.gmad"                  ${OVERLAP_CHECK})
 simple_testing(physics-decay-radioactive      "--file=decay_radioactive.gmad"      ${OVERLAP_CHECK})
@@ -20,6 +21,7 @@ simple_testing(physics-ftfp-bert              "--file=ftfp_bert.gmad"           
 simple_testing_long(physics-ftfpberthp        "--file=ftfp_bert_hp.gmad"           ${OVERLAP_CHECK})
 simple_testing(physics-g4-ftfp-bert           "--file=g4FTFP_BERT.gmad"            ${OVERLAP_CHECK})
 simple_testing(physics-g4-qbbc                "--file=g4QBBC.gmad"                 ${OVERLAP_CHECK})
+simple_testing(physics-gamma-to-mumu          "--file=gamma_to_mumu.gmad"          ${OVERLAP_CHECK})
 simple_testing(physics-hadronic-elastic       "--file=hadronic_elastic.gmad"       ${OVERLAP_CHECK})
 simple_testing(physics-hadronic-elastic-d     "--file=hadronic_elastic_d.gmad"     ${OVERLAP_CHECK})
 simple_testing(physics-hadronic-elastic-h     "--file=hadronic_elastic_h.gmad"     ${OVERLAP_CHECK})
@@ -30,6 +32,7 @@ simple_testing(physics-ion-elastic            "--file=ion_elastic.gmad"         
 simple_testing(physics-ion-elastic-qmd        "--file=ion_elastic_qmd.gmad"        ${OVERLAP_CHECK})
 simple_testing(physics-ion-em-dissociation    "--file=ion_em_dissociation.gmad"    ${OVERLAP_CHECK})
 simple_testing(physics-muon                   "--file=muon.gmad"                   ${OVERLAP_CHECK})
+simple_testing(physics-muon-inelastic         "--file=muon_inelastic.gmad"         ${OVERLAP_CHECK})
 simple_testing(physics-neutron-tracking-cut   "--file=neutron_tracking_cut.gmad"   ${OVERLAP_CHECK})
 simple_testing(physics-optical                "--file=optical.gmad"                ${OVERLAP_CHECK})
 simple_testing(physics-qgsp-bert              "--file=qgsp_bert.gmad"              ${OVERLAP_CHECK})
@@ -65,6 +68,7 @@ if (G4_MINOR_VERSION GREATER 3)
   simple_testing(physics-dna-5             "--file=dna_5.gmad"              ${OVERLAP_CHECK})
   simple_testing(physics-dna-6             "--file=dna_6.gmad"              ${OVERLAP_CHECK})
   simple_testing(physics-dna-7             "--file=dna_7.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-radioactivation        "--file=radioactivation.gmad"        ${OVERLAP_CHECK})
 endif()
 
 # test invalid physics list
@@ -106,6 +110,10 @@ else()
     simple_fail(physics-em-extra-lend-no-lend   "--file=em_extra_lend.gmad"         ${OVERLAP_CHECK})
     simple_fail(physics-shielding-lend-no-lend  "--file=shielding_lend.gmad"        ${OVERLAP_CHECK})
   endif()
+endif()
+
+if (G4_MINOR_VERSION GREATER 1 AND G4_MAJOR_VERSION GREATER 10)
+  simple_testing(physics-xray-reflection  "--file=xray_reflection.gmad"   ${OVERLAP_CHECK})
 endif()
 
 #aliases

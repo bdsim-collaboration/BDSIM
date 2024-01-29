@@ -132,3 +132,19 @@ How to run::
 
 .. figure:: 10_clicpcl.png
 	    :width: 40%
+
+12_pointsfile.gmad
+------------------
+
+A custom beam pipe defined by :code:`12_points.dat`.
+
+.. figure:: 12_pointsfile.png
+	    :width: 50%
+
+16_rhombus.gmad
+---------------
+
+A few diffrent rhombus shapes.
+
+.. figure:: 16_rhombus.png
+            :width: 40%

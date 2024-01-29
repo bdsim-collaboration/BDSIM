@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -92,8 +92,8 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   G4double zp  = localMomUnit.z();
 
   // only proceed with thick matrix if particle is paraxial
-  // judged by forward momentum > 0.9 and |transverse| < 0.1
-  if (zp < 0.9 || std::abs(xp) > 0.1 || std::abs(yp) > 0.1)
+  // judged by forward momentum > 1-limit and |transverse| < limit (default limit=0.1)
+  if (zp < (1.0-backupStepperMomLimit) || std::abs(xp) > backupStepperMomLimit || std::abs(yp) > backupStepperMomLimit)
     {
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
       SetDistChord(backupStepper->DistChord());
@@ -116,7 +116,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   if (BDS::IsFiniteStrength(localAMag))
     {radiusOfCurvature = 1./localAMag;} // avoid division by 0
 
-  // if we have a low enery particle that makes it into the paraxial cuts
+  // if we have a low energy particle that makes it into the paraxial cuts
   // it could cause problems later in paraxial algorithm so use backup integrator
   if (std::abs(radiusOfCurvature) < minimumRadiusOfCurvature)
     {
@@ -125,11 +125,11 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
       return;
     }
 
-  G4double h2  = h*h; // safer than pow
+  G4double h2  = h*h;
   // initialise output variables with input position as default
   G4double x1  = x0;
   G4double y1  = y0;
-  G4double z1  = z0 + h; // new z position will be along z by step length h
+  // z1 calculated below
   G4double xp1 = xp;
   G4double yp1 = yp;
   G4double zp1 = zp;
@@ -183,7 +183,10 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   zp1 = std::sqrt(1 - xp1*xp1 - yp1*yp1);
   if (std::isnan(zp1))
     {zp1 = zp;} // ensure not nan
-  
+
+  // new z position will be projection of h onto the z axis
+  G4double z1 = z0 + std::sqrt(h2 - std::pow(x1-x0,2) - std::pow(y1-y0,2));
+
   localPos.setX(x1);
   localPos.setY(y1);
   localPos.setZ(z1);

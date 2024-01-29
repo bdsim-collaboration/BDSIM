@@ -51,6 +51,8 @@ be used literally.  The following command may be used to display all options::
 |                                       | added to :code:`nlinesIgnore`. This is applied |
 |                                       | again if the file loops.                       |
 +---------------------------------------+------------------------------------------------+
+|  -\-distrFileLoopNTimes=N             | Repeat the distribution file entirely N times. |
++---------------------------------------+------------------------------------------------+
 |  -\-exportGeometryTo=<file>           | Exports the geometry to a file                 |
 |                                       | extension, which determines the format         |
 |                                       | where possible extensions are ("gdml")         |
@@ -194,6 +196,8 @@ To execute BDSIM in interactive mode, the user must simply not use the :code:`--
 The user can also specify a macro file using the :code:`--vis_mac` option above. By default,
 BDSIM will use its own macro that uses Qt and displays the model with a white background. This
 can be found in :code:`bdsim/vis/bdsim_default_vis.mac`.
+
+.. note:: If using the visualiser over X-Windows on a Mac, see :ref:`mac-xwindows`.
 
 Example::
 

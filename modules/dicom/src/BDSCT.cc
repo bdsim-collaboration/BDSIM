@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -35,6 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Tubs.hh"
 #include "G4Types.hh"
 #include "G4UserLimits.hh"
+#include "G4Version.hh"
 #include "G4VisAttributes.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -101,7 +102,11 @@ void BDSCT::BuildPhantom()
   param->SetVoxelDimensions(fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ);
   
   //----- Set number of voxels
+#if G4VERSION_NUMBER < 1100
   param->SetNoVoxel(fNVoxelX, fNVoxelY, fNVoxelZ);
+#else
+  param->SetNoVoxels(fNVoxelX, fNVoxelY, fNVoxelZ);
+#endif
 
   //----- Set list of materials
   param->SetMaterials(fMaterials);

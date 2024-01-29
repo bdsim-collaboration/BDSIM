@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -182,7 +182,7 @@ void BDSCollimator::Build()
   G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
 
   // only do subtraction if aperture actually set
-  if(buildVacuumAndAperture)
+  if (buildVacuumAndAperture)
     {
       BuildInnerCollimator();
 

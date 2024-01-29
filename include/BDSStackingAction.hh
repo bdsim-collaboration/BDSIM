@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4ClassificationOfNewTrack.hh"
 #include "G4UserStackingAction.hh"
+
+#include <set>
 
 class BDSGlobalConstants;
 class G4Track;
@@ -52,6 +54,8 @@ private:
   G4bool killNeutrinos;     ///< Local copy of whether to kill neutrinos for tracking efficiency.
   G4bool stopSecondaries;   ///< Whether particles with parentID > 0 will be killed.
   G4long maxTracksPerEvent; ///< Maximum number of tracks before start killing.
+  G4double minimumEK;
+  std::set<G4int> particlesToExcludeFromCuts;
  };
 
 #endif

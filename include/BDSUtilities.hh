@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2022.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -63,6 +63,19 @@ namespace BDS
 
   /// Utility function to simplify lots of syntax changes for pedantic g4 changes.
   G4String LowerCase(const G4String& str);
+
+  /// Because Geant4 is removing this we need to maintain it to have backwards compatibility,
+  /// sadly polluting BDSIM.
+  enum class StringStripType
+  {
+    leading,
+    trailing,
+    both
+  };
+  /// Utility function to simplify lots of syntax changes for pedantic g4 changes.
+  G4String StrStrip(const G4String& str,
+                    char ch,
+                    StringStripType stripType = StringStripType::both);
 
   /// Remove white space and special characters in the name
   G4String PrepareSafeName(G4String name);
@@ -258,6 +271,23 @@ namespace BDS
   inline G4bool EndsWith(const std::string& expression,
 			 const std::string& suffix) {return expression.size() >= suffix.size() &&
       expression.compare(expression.size() - suffix.size(), suffix.size(), suffix) == 0;}
+
+  /// Calculate safe length of an angled volume so it fills the length of its container.
+  G4double CalculateSafeAngledVolumeLength(G4double angleIn,
+                                           G4double angleOut,
+                                           G4double length,
+                                           G4double containerWidth,
+                                           G4double containerHeight=0);
+
+  /// Overloaded method to process G4ThreeVectors instead of angles.
+  G4double CalculateSafeAngledVolumeLength(G4ThreeVector inputfaceIn,
+                                           G4ThreeVector outputfaceIn,
+                                           G4double length,
+                                           G4double containerWidth,
+                                           G4double containerHeight=0);
+
+  /// Calculate the arc length from the chord length for a given angle.
+  G4double ArcLengthFromChordLength(G4double chordLength, G4double angle);
 }
 
 #endif
