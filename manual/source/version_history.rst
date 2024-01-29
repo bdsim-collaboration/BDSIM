@@ -4,13 +4,13 @@ Planned Development
 Below is a brief list of planned developments for the next version. Please get in touch
 if you'd like to give us feedback or help in the development.  See :ref:`support-section`.
 
+* Multiple beam line tracking.
+* Restructure code into proper C++ libraries rather than just analysis and 'bdsim'.
 * Change run histograms to be per-event averages rather than simple histograms.
 * Interpolated aperture shapes between any two shapes.
 * Tapered aperture for all elements.
 * Beam pipe sections to fill gaps between changes in aperture.
 * Any aperture shape can be used for both the inside and the outside of a collimator.
-* Restructure code into proper C++ libraries rather than just analysis and 'bdsim'.
-* Multiple beam line tracking.
 
 
 
@@ -66,7 +66,7 @@ Bug Fixes
 ---------
   
 Hot-fix for issue #377. A tracking issue appeared in thin elements due to a too small maximum value for the
-relative error, epsilonStep, resulting in incorrect kicks being applied. This occured only when BDSIM is compiled
+relative error, epsilonStep, resulting in incorrect kicks being applied. This occurred only when BDSIM is compiled
 against versions of Geant4 11.0 onwards. The maximum value is now set separately for thick and thin volumes.
 
 * Fix for C++20 compilation for ROOT installations that now have C++20 on LCG.
@@ -79,7 +79,7 @@ In the parser, it is possible to do some simple calculations and use these varia
 as input to parameters. For example, calculating the number of bins in a mesh. When
 the parameter type was an integer, but a floating point number was given (perhaps from
 the calculation or from writing a ".0" after a number), the floating point double would
-be put into an integer and you may get rounding errors. e.g. 29.999999999997 becomes 29
+be put into an integer and you may get unexpected rounding errors. e.g. 29.999999999997 becomes 29
 instead of the 30 that was expected. This has been fixed by rounding to the nearest integer
 only when using a double into a integer parameter.
 
