@@ -1702,7 +1702,7 @@ For general high energy hadron physics it is recommended to use::
 
   option, physicsList = "g4FTFP_BERT";
 
-For similar high-energy studies, but concerned with muons it is recommended to use a :ref:`physics-marco-file`
+For similar high-energy studies, but concerned with muons it is recommended to use a :ref:`physics-macro-file`
 with the following options: ::
 
   /physics_lists/em/GammaToMuons true
@@ -1723,6 +1723,7 @@ See the Geant4 documentation for a more complete explanation of the physics list
 
 * `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/physicslistguide.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
+
 
 .. _physics-macro-file:
   
