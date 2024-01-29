@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -38,7 +38,7 @@ HistogramAccumulatorSum::HistogramAccumulatorSum(TH1*               baseHistogra
   result->Sumw2();
 }
 
-void HistogramAccumulatorSum::Accumulate(TH1* newValue, bool /*warnAboutZeroEntries*/)
+void HistogramAccumulatorSum::Accumulate(TH1* newValue)
 {
   result->Add(newValue);
 }

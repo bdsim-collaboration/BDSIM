@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
 
               if (!h)
                 {RBDS::WarningMissingHistogram(histPath, file); continue;}
-              hist.accumulator->Accumulate(h, true);
+              hist.accumulator->Accumulate(h);
             }
           
           Header* h = new Header();

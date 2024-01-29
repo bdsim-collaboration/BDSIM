@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -67,6 +67,11 @@ public:
   
   /// Append this trajectory to vector of primaries we keep to avoid sifting at the end of event.
   void RegisterPrimaryTrajectory(const BDSTrajectoryPrimary* trajectoryIn);
+
+  /// For updating the print modulo after construciton in the case this information
+  /// might come from the primary generator action later on after the even action
+  /// has already been constructed.
+  inline void SetPrintModulo(G4int printModuloIn) {printModulo = printModuloIn;}
 
 protected:
   /// Sift through all trajectories (if any) and mark for storage.

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -321,6 +321,8 @@ int BDSIM::Initialise()
   runManager->SetUserAction(new BDSStackingAction(globals));
   
   auto primaryGeneratorAction = new BDSPrimaryGeneratorAction(bdsBunch, parser->GetBeam(), globals->Batch());
+  // possibly updated after the primary generator as loaded a beam file
+  eventAction->SetPrintModulo(BDSGlobalConstants::Instance()->PrintModuloEvents());
   runManager->SetUserAction(primaryGeneratorAction);
   BDSFieldFactory::SetPrimaryGeneratorAction(primaryGeneratorAction);
 
@@ -390,7 +392,8 @@ void BDSIM::BeamOn(int nGenerate)
         {
           BDSVisManager visManager = BDSVisManager(BDSGlobalConstants::Instance()->VisMacroFileName(),
                                                    BDSGlobalConstants::Instance()->Geant4MacroFileName(),
-                                                   realWorld);
+                                                   realWorld,
+                                                   BDSGlobalConstants::Instance()->VisVerbosity());
           visManager.StartSession(argcCache, argvCache);
         }
       else

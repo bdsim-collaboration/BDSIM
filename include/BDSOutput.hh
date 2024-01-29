@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -305,6 +305,7 @@ private:
 
   /// The maximum s in mm such that there is an integer number of
   /// elossHistoBinWidths along the line. Used for histogramming purposes.
+  G4double sMinHistograms;
   G4double sMaxHistograms;
 
   /// Number of bins for each histogram required.
