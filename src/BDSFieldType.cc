@@ -51,6 +51,7 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::mokka,            	           "mokka"},
       {BDSFieldType::solenoid,         	           "solenoid"},
       {BDSFieldType::solenoidsheet,                "solenoidsheet"},
+      {BDSFieldType::gaborlens,                    "gaborlens"},
       {BDSFieldType::dipole,           	           "dipole"},
       {BDSFieldType::quadrupole,       	           "quadrupole"},
       {BDSFieldType::dipolequadrupole,             "dipolequadrupole"},
