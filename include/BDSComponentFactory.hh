@@ -286,7 +286,7 @@ private:
 					      const G4String&          name,
 					      G4double                 irisRadius,
 					      BDSModulatorInfo*        fieldModulator = nullptr);
-
+  BDSAcceleratorComponent* CreateGaborLens();
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateAwakeSpectrometer();

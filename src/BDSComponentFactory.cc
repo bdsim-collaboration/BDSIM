@@ -38,6 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDrift.hh"
 #include "BDSDump.hh"
 #include "BDSElement.hh"
+#include "BDSGaborLens.hh"
 #include "BDSLaserWire.hh"
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
@@ -395,6 +396,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       }
     case ElementType::_DUMP:
       {component = CreateDump(); break;}
+    case ElementType::_GABORLENS:
+      {component = CreateGaborLens(); break;}
     case ElementType::_CT:
 #ifdef USE_DICOM
       {component = CreateCT(); break;}
@@ -2002,6 +2005,39 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCavityFringe(G4double       
   return cavityFringe;
 }
 
+BDSAcceleratorComponent* BDSComponentFactory::CreateGaborLens()
+{
+  if (!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+
+  const BDSFieldType gaborLensField = BDSFieldType::gaborlens;
+  BDSIntegratorType intType = integratorSet->Integrator(gaborLensField);
+  G4Transform3D fieldTrans  = CreateFieldTransform(element);
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
+  AddSynchronousTimeInformation(st, element->l * CLHEP::m);
+  (*st)["length"] = element->l * CLHEP::m;
+  (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
+
+  BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(gaborLensField,
+                                                   brho,
+                                                   intType,
+                                                   st,
+                                                   true,
+                                                   fieldTrans);
+
+  vacuumFieldInfo->SetModulatorInfo(ModulatorDefinition(element, true));
+
+  auto gaborlens = new BDSGaborLens(elementName,
+                                    element->l*CLHEP::m,
+                                    PrepareHorizontalWidth(element),
+                                    PrepareColour(element),
+                                    bpInfo,
+                                    vacuumFieldInfo);
+   return gaborlens;
+}
 BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					     BDSMagnetStrength*   st,
 					     BDSFieldType         fieldType,
