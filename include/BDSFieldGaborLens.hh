@@ -49,8 +49,20 @@ private:
   /// Private constructor to force use of provided one.
   BDSFieldGaborLens();
 
-  ///
+  /// speed of light.
+  static const G4double c;
+
+  /// proton mass.
+  static const G4double pmass;
+
+  /// plasma e-field strength
+  G4double plasmaEfield;
+
+  /// solenoid-equivalent field strength
   G4double bfieldMag;
+
+  /// anode radius
+  G4double anodeRadius;
 
 
 };
