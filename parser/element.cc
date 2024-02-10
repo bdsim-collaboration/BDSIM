@@ -214,6 +214,14 @@ void Element::PublishMembers()
   publish("undulatorGap",          &Element::undulatorGap);
   publish("undulatorMagnetHeight", &Element::undulatorMagnetHeight);
 
+  // for gabor lens
+  publish("anodeRadius",         &Element::anodeRadius);
+  publish("anodeLength",         &Element::anodeLength);
+  publish("anodeThickness",      &Element::anodeThickness);
+  publish("electrodeRadius",     &Element::electrodeRadius);
+  publish("electrodeLength",     &Element::electrodeLength);
+  publish("electrodeThickness",  &Element::electrodeThickness);
+
   // bias
   publish("bias",                &Element::bias);
   publish("biasMaterial",        &Element::biasMaterial);
@@ -579,6 +587,14 @@ void Element::flush()
   undulatorPeriod = 1;
   undulatorGap = 0;
   undulatorMagnetHeight = 0;
+
+  // gabor lens
+  anodeLength = 0;
+  anodeRadius = 0;
+  anodeThickness = 0;
+  electrodeLength = 0;
+  electrodeRadius = 0;
+  electrodeThickness = 0;
 
   // bias
   bias         = "";

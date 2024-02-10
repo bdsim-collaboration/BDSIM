@@ -162,6 +162,13 @@ Parameters::Parameters()
   setMap["undulatorGap"]          = false;
   setMap["undulatorMagnetHeight"] = false;
 
+  setMap["anodeLength"]          = false;
+  setMap["anodeRadius"]          = false;
+  setMap["anodeThickness"]       = false;
+  setMap["electrodeLength"]      = false;
+  setMap["electrodeRadius"]      = false;
+  setMap["electrodeThickness"]   = false;
+
   setMap["bias"]                 = false;
   setMap["biasMaterial"]         = false;
   setMap["biasVacuum"]           = false;

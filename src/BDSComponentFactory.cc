@@ -2020,6 +2020,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateGaborLens()
   AddSynchronousTimeInformation(st, element->l * CLHEP::m);
   (*st)["length"] = element->l * CLHEP::m;
   (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
+  (*st)["equatorradius"] = element->anodeRadius*CLHEP::m;
 
   BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(gaborLensField,
                                                    brho,
@@ -2033,11 +2034,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateGaborLens()
   auto gaborlens = new BDSGaborLens(elementName,
                                     element->l*CLHEP::m,
                                     PrepareHorizontalWidth(element),
+                                    element->anodeLength*CLHEP::m,
+                                    PrepareMaterial(element),
+                                    element->anodeRadius*CLHEP::m,
+                                    element->anodeThickness*CLHEP::m,
+                                    element->electrodeLength*CLHEP::m,
+                                    PrepareMaterial(element),
+                                    element->electrodeRadius*CLHEP::m,
+                                    element->electrodeThickness*CLHEP::m,
                                     PrepareColour(element),
                                     bpInfo,
                                     vacuumFieldInfo);
-   return gaborlens;
+  return gaborlens;
 }
+
 BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					     BDSMagnetStrength*   st,
 					     BDSFieldType         fieldType,

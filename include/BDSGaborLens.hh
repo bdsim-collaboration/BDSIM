@@ -26,7 +26,7 @@ class G4Colour;
 class G4Material;
 
 /**
- * @brief Gabor lens based on prototype design for LhARA
+ * @brief Gabor lens based on prototype design at Imperial College (https://doi.org/10.3390/app11104357)
  * 
  * @author Will Shields
  */
@@ -35,9 +35,17 @@ class BDSGaborLens: public BDSAcceleratorComponent
 {
 public:
     BDSGaborLens(const G4String& nameIn,
-	      G4double lengthIn,
-	      G4double horizontalWidthIn,
-	      G4Colour* colourIn,
+          G4double lengthIn,
+          G4double horizontalWidthIn,
+          G4double anodeLengthIn,
+          G4Material* anodeMaterialIn,
+          G4double anodeRadiusIn,
+          G4double anodeThicknessIn,
+          G4double electrodeLengthIn,
+          G4Material* electrodeMaterialIn,
+          G4double electrodeRadiusIn,
+          G4double electrodeThicknessIn,
+          G4Colour* colourIn,
           BDSBeamPipeInfo* beamPipeInfoIn = nullptr,
           BDSFieldInfo* vacuumFieldInfoIn = nullptr);
     virtual ~BDSGaborLens();
@@ -48,8 +56,18 @@ protected:
   virtual void BuildContainerLogicalVolume();
 
   G4double      horizontalWidth;
+  G4double      anodeRadius;
+  G4double      anodeLength;
+  G4Material*   anodeMaterial;
+  G4double      anodeThickness;
+  G4double      electrodeRadius;
+  G4double      electrodeLength;
+  G4Material*   electrodeMaterial;
+  G4double      electrodeThickness;
   G4Colour*     colour;
   BDSFieldInfo* vacuumFieldInfo;
+  G4double      vacuumLength;
+  G4double      endcapLength;
 
 private:
   /// Private default constructor to force the use of the supplied one.

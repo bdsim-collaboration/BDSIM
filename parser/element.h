@@ -184,7 +184,16 @@ namespace GMAD
     double undulatorGap;
     double undulatorMagnetHeight;
     ///@}
-  
+
+    ///@{ for gabor lens
+    double anodeLength;
+    double anodeRadius;
+    double anodeThickness;
+    double electrodeLength;
+    double electrodeRadius;
+    double electrodeThickness;
+    ///@}
+
     ///@{ temporary string for bias setting
     std::string bias;
     std::string biasMaterial;
