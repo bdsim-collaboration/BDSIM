@@ -820,3 +820,8 @@ bool Config::RegisterHistogramName(const std::string& newHistName)
       return false;
     }
 }
+
+void Config::FixCylindricalAndSphericalSamplerVariables(const std::set<std::string>& allCandSNames)
+{
+
+}

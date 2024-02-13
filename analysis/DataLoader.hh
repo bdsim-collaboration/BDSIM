@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "RebdsimTypes.hh"
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -82,6 +83,8 @@ public:
   std::vector<std::string>   GetTreeNames()      {return treeNames;};
   std::vector<std::string>   GetBranchNames()    {return branchNames;}
   std::vector<std::string>   GetSamplerNames()   {return samplerNames;}
+  std::vector<std::string>   GetSamplerCNames()  {return samplerCNames;}
+  std::vector<std::string>   GetSamplerSNames()  {return samplerSNames;}
   std::vector<std::string>   GetCollimatorNames(){return collimatorNames;}
   Header*                    GetHeader()         {return hea;}
   ParticleData*              GetParticleData()   {return par;}
@@ -98,6 +101,11 @@ public:
   TChain*                    GetEventTree()      {return evtChain;}
   TChain*                    GetRunTree()        {return runChain;}
   /// @}
+
+  const std::set<std::string>& GetAllCylindricalAndSphericalSamplerNames() const {return allSamplerCAndSNames;}
+
+  /// Return whether a given name is for a cylindrical or spherical sampler.
+  bool IsACylindricalOrSphericalSampler(const std::string& name) const;
 
 private:
   bool debug;
@@ -124,6 +132,10 @@ private:
   std::vector<std::string> allCSamplerNames;
   std::vector<std::string> allSSamplerNames;
   std::vector<std::string> collimatorNames;
+
+  /// We need to know if a sampler is a C or S type sampler
+  /// for different variable names. Build a set of them together.
+  std::set<std::string> allSamplerCAndSNames;
 
   TChain* heaChain;
   TChain* parChain;

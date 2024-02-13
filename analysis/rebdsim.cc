@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
                                       allBranches,
                                       branchesToActivate,
                                       config->GetOptionBool("backwardscompatible"));
-      
+      config->FixCylindricalAndSphericalSamplerVariables(dl->GetAllCylindricalAndSphericalSamplerNames());
       auto filenames = dl->GetFileNames();
       HeaderAnalysis* ha = new HeaderAnalysis(filenames,
                                               dl->GetHeader(),

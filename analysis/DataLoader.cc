@@ -224,6 +224,8 @@ void DataLoader::BuildEventBranchNameList()
   allSamplerNames = modTemporary->SamplerNames();
   allCSamplerNames = modTemporary->SamplerCNames();
   allSSamplerNames = modTemporary->SamplerSNames();
+  allSamplerCAndSNames.insert(allCSamplerNames.begin(), allCSamplerNames.end());
+  allSamplerCAndSNames.insert(allSSamplerNames.begin(), allSSamplerNames.end());
   if (processSamplers)
     { // copy sampler names out
       samplerNames = allSamplerNames;
@@ -307,4 +309,9 @@ void DataLoader::SetBranchAddress(bool allOn,
         {runBranches = &(*bToTurnOn).at("Run.");}
     }
   run->SetBranchAddress(runChain, allOn, runBranches);
+}
+
+bool DataLoader::IsACylindricalOrSphericalSampler(const std::string& name) const
+{
+  return allSamplerCAndSNames.count(name) > 0;
 }

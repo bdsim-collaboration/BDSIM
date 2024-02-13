@@ -243,6 +243,8 @@ public:
   /// function returns true, else false for successful registration.
   bool RegisterHistogramName(const std::string& newHistName);
 
+  void FixCylindricalAndSphericalSamplerVariables(const std::set<std::string>& allCandSNames);
+
   static Config* instance;
 
   /// Vector of permitted tree names.
