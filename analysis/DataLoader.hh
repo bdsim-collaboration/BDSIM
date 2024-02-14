@@ -103,9 +103,8 @@ public:
   /// @}
 
   const std::set<std::string>& GetAllCylindricalAndSphericalSamplerNames() const {return allSamplerCAndSNames;}
-
-  /// Return whether a given name is for a cylindrical or spherical sampler.
-  bool IsACylindricalOrSphericalSampler(const std::string& name) const;
+  const std::set<std::string>& GetAllCylindricalSamplerNames() const {return allSamplerCNamesSet;}
+  const std::set<std::string>& GetAllSphericalSamplerNames() const {return allSamplerSNamesSet;}
 
 private:
   bool debug;
@@ -136,6 +135,8 @@ private:
   /// We need to know if a sampler is a C or S type sampler
   /// for different variable names. Build a set of them together.
   std::set<std::string> allSamplerCAndSNames;
+  std::set<std::string> allSamplerCNamesSet;
+  std::set<std::string> allSamplerSNamesSet;
 
   TChain* heaChain;
   TChain* parChain;
