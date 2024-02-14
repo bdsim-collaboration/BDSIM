@@ -95,6 +95,8 @@ V1.7.8 - 2024 / 01 / 14
 
 * Fix rebdsim's Spectra command preparing the wrong variables when used on a cylindrical
   or spherical sampler where the variable is "totalEnergy" and not "energy".
+* Fix a bug where rebdsim would crash if a Spectra command was used on a cylindrical or
+  spherical sampler. This was caused by loading the data into the wrong class.
 
 
   
