@@ -48,16 +48,16 @@ public:
   
   /// Constructor intended for use to construct an event analysis object.
   EventAnalysis(Event*   eventIn,
-		TChain*  chain,
-		bool     perEntryAnalysis    = true,
-		bool     processSamplersIn   = true,
-		bool     debugIn             = false,
-    bool     printOutIn          = true,
-		double   printModuloFraction = 0.01,
-		bool     emittanceOnTheFlyIn = false,
-		long int eventStartIn        = 0,
-		long int eventEndIn          = -1,
-		const std::string& primaryParticleName = "");
+                TChain*  chain,
+                bool     perEntryAnalysis    = true,
+                bool     processSamplersIn   = true,
+                bool     debugIn             = false,
+                bool     printOutIn          = true,
+                double   printModuloFraction = 0.01,
+                bool     emittanceOnTheFlyIn = false,
+                long int eventStartIn        = 0,
+                long int eventEndIn          = -1,
+                const std::string& primaryParticleName = "");
 
   virtual ~EventAnalysis() noexcept;
 

@@ -118,8 +118,8 @@ void PerEntryHistogramSet::AccumulateCurrentEntry(long int entryNumber)
       // use vector because set cannot be appended to for set_difference
       std::vector<long long int> missing;
       std::set_difference(pdgIDSet.begin(), pdgIDSet.end(),
-          allPDGIDs.begin(), allPDGIDs.end(),
-          std::back_inserter(missing));
+                          allPDGIDs.begin(), allPDGIDs.end(),
+                          std::back_inserter(missing));
       if (!missing.empty())
         {
           for (auto pdgID : missing)
