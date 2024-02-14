@@ -90,7 +90,14 @@ of writing, the corresponding versions of each utility are:
 * pytransport v2.0.1
 
 
+V1.7.8 - 2024 / 01 / 14
+=======================
 
+* Fix rebdsim's Spectra command preparing the wrong variables when used on a cylindrical
+  or spherical sampler where the variable is "totalEnergy" and not "energy".
+
+
+  
 V1.7.7 - 2024 / 01 / 29
 =======================
 

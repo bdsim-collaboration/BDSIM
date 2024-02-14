@@ -146,6 +146,14 @@ public:
   /// Print out the per event and simple histogram set definitions as these
   /// are (assumed to be) spectra definitions that people might want to see expanded.
   void PrintHistogramSetDefinitions() const;
+
+  /// Update the "energy" variable of any spectra histograms to "totalEnergy" for
+  /// cylindrical and spherical samplers only as they have different variable names.
+  /// This can only be done after loading data and knowing which samplers are of these types.
+  /// Also, provide both sets of names so we can categorise each as plane, cylindrical or
+  /// spherical sampler. This is done on sets of histograms which is uniquely for spectra.
+  void FixCylindricalAndSphericalSamplerVariablesInSets(const std::set<std::string>& allCNames,
+                                                        const std::set<std::string>& allSNames);
   
  protected:
   /// Private constructor for singleton pattern.
@@ -242,8 +250,6 @@ public:
   /// Register a histogram name for future checking against. If it already exists, the
   /// function returns true, else false for successful registration.
   bool RegisterHistogramName(const std::string& newHistName);
-
-  void FixCylindricalAndSphericalSamplerVariables(const std::set<std::string>& allCandSNames);
 
   static Config* instance;
 

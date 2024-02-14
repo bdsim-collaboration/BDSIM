@@ -563,6 +563,29 @@ void Config::PrintHistogramSetDefinitions() const
     {std::cout << *def << std::endl;}
 }
 
+
+void Config::FixCylindricalAndSphericalSamplerVariablesInSets(const std::set<std::string>& allCNames,
+                                                              const std::set<std::string>& allSNames)
+{
+  for (auto* hsetset : {&eventHistoDefSetsPerEntry, &eventHistoDefSetsSimple})
+    {
+      for (auto *hset: *hsetset)
+        {
+          std::string tempName = hset->branchName + ".";
+          if (allCNames.count(tempName) > 0)
+            {
+              hset->ReplaceStringInVariable("energy", "totalEnergy");
+              hset->SetSamplerType(HistogramDefSet::samplertype::cylindrical);
+            }
+          else if (allSNames.count(tempName) > 0)
+           {
+             hset->ReplaceStringInVariable("energy", "totalEnergy");
+             hset->SetSamplerType(HistogramDefSet::samplertype::spherical);
+           }
+        }
+    }
+}
+
 void Config::CheckValidTreeName(std::string& treeName) const
 {
   // check it has a point at the end (simple mistake)
@@ -819,9 +842,4 @@ bool Config::RegisterHistogramName(const std::string& newHistName)
       histogramNames.insert(newHistName);
       return false;
     }
-}
-
-void Config::FixCylindricalAndSphericalSamplerVariables(const std::set<std::string>& allCandSNames)
-{
-
 }
