@@ -59,6 +59,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k10", "k10s",
   "k11", "k11s",
   "k12", "k12s",
+  "kg",              // solenoid strength
   "frequency",       // frequency for time varying field (presumably em)
   "tOffset",         // tOffset resulting in a phase for time varying field
   "phase",           // phase for time varying field

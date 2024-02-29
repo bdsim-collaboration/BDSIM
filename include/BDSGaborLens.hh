@@ -45,6 +45,7 @@ public:
           G4Material* electrodeMaterialIn,
           G4double electrodeRadiusIn,
           G4double electrodeThicknessIn,
+          G4Material* outerMaterialIn,
           G4Colour* colourIn,
           BDSBeamPipeInfo* beamPipeInfoIn = nullptr,
           BDSFieldInfo* vacuumFieldInfoIn = nullptr);
@@ -64,10 +65,11 @@ protected:
   G4double      electrodeLength;
   G4Material*   electrodeMaterial;
   G4double      electrodeThickness;
+  G4Material*   outerMaterial;
   G4Colour*     colour;
   BDSFieldInfo* vacuumFieldInfo;
   G4double      vacuumLength;
-  G4double      endcapLength;
+  G4double      endcapsLength;   /// total length of both end caps
 
 private:
   /// Private default constructor to force the use of the supplied one.

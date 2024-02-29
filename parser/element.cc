@@ -85,6 +85,7 @@ void Element::PublishMembers()
   publish("phase",     &Element::phase);
   publish("tOffset",   &Element::tOffset);
   publish("fieldModulator", &Element::fieldModulator);
+  publish("kg",        &Element::kg);
 
   // rmatrix elements, only 4x4
   publish("kick1",     &Element::kick1);
@@ -404,6 +405,12 @@ void Element::print(int ident) const
                   << "psi=   " << psi   << "rad" << std::endl;
         break;
       }
+    case ElementType::_GABORLENS:
+      {
+        std::cout << "b=  " << B  << "T" << std::endl
+                  << "kg=  " << kg  << std::endl;
+        break;
+      }
     default:
       {break;}
     }
@@ -480,6 +487,7 @@ void Element::flush()
   phase     = 0;
   tOffset   = 0;
   fieldModulator = "";
+  kg = 0;
 
   // rmatrix
   kick1 = 0;

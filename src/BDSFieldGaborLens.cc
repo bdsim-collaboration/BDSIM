@@ -37,6 +37,7 @@ const G4double BDSFieldGaborLens::pmass = CLHEP::proton_mass_c2;
 
 BDSFieldGaborLens::BDSFieldGaborLens(BDSMagnetStrength const* strength):
 bfieldMag((*strength)["field"]),
+kg((*strength)["kg"]),
 anodeRadius((*strength)["equatorradius"])
 {
   plasmaEfield = -1.0 * std::pow(bfieldMag,2.0) * std::pow(c,2) / (4*pmass);

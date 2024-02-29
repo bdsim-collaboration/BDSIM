@@ -58,6 +58,7 @@ BDSGaborLens::BDSGaborLens(const G4String& nameIn,
                            G4Material* electrodeMaterialIn,
                            G4double electrodeRadiusIn,
                            G4double electrodeThicknessIn,
+                           G4Material* outerMaterialIn,
                            G4Colour* colourIn,
                            BDSBeamPipeInfo* beamPipeInfoIn,
                            BDSFieldInfo* vacuumFieldInfoIn):
@@ -71,18 +72,23 @@ BDSGaborLens::BDSGaborLens(const G4String& nameIn,
   electrodeLength(electrodeLengthIn),
   electrodeMaterial(electrodeMaterialIn),
   electrodeThickness(electrodeThicknessIn),
+  outerMaterial(outerMaterialIn),
   colour(colourIn),
   vacuumFieldInfo(vacuumFieldInfoIn)
 {
   if (vacuumFieldInfo)
     {vacuumFieldInfo->SetBeamPipeRadius(beamPipeInfoIn->IndicativeRadius());}
 
+  endcapsLength = 10;
+
+  if (chordLength <= endcapsLength)
+    {throw BDSException(__METHOD_NAME__,"the element length must be greater than 20 mm for element \"" + name + "\"");}
+
+  vacuumLength = chordLength - 2*endcapsLength;
+
   // Input Checks
   if (horizontalWidth <= 0)
     {throw BDSException(__METHOD_NAME__,"option \"horizontalWidth\" is not defined or must be greater than 0 for element \"" + name + "\"");}
-
-  if (chordLength <= 20)
-    {throw BDSException(__METHOD_NAME__,"option \"chordLength\" must be greater than 20 mm for element \"" + name + "\"");}
 
   if (anodeLength <= 0)
     {throw BDSException(__METHOD_NAME__,"option \"anodeLength\" is not defined or must be greater than 0 for element \"" + name + "\"");}
@@ -102,7 +108,7 @@ BDSGaborLens::BDSGaborLens(const G4String& nameIn,
   if (electrodeThickness <= 0)
     {throw BDSException(__METHOD_NAME__,"option \"electrodeThickness\" is not defined or must be greater than 0 for element \"" + name + "\"");}
 
-  if (anodeRadius > beamPipeInfo->ExtentInner().MinimumAbsTransverse())
+  if ((anodeRadius + anodeThickness) > beamPipeInfo->ExtentInner().MinimumAbsTransverse())
     {throw BDSException(__METHOD_NAME__,"\"anodeRadius\" must be smaller than the beam pipe aperture for element \"" + name + "\"");}
 
   if (anodeLength > vacuumLength)
@@ -114,8 +120,6 @@ BDSGaborLens::BDSGaborLens(const G4String& nameIn,
   if (electrodeLength > 0.5*vacuumLength)
     {throw BDSException(__METHOD_NAME__,"\"electrodeLength\" must be smaller than half element length minus 20mm for element \"" + name + "\"");}
 
-  endcapLength = 20;
-  vacuumLength = chordLength - 2*endcapLength;
 }
 
 BDSGaborLens::~BDSGaborLens()
@@ -149,7 +153,7 @@ void BDSGaborLens::BuildOuter()
   G4Tubs* coils = new G4Tubs(name + "_coils_solid",  // name
                              bpMaxExtent + lengthSafetyLarge*2,          // inner radius
                              coilOuterRadius,        // outer radius
-                             vacuumLength*0.5,       // half length
+                             0.5*(vacuumLength- lengthSafetyLarge*10),   // half length
                              0, CLHEP::twopi);       // start and finish angle
   RegisterSolid(coils);
   G4Material* coilMaterial = BDSMaterials::Instance()->GetMaterial("copper");
@@ -180,7 +184,6 @@ void BDSGaborLens::BuildOuter()
                              vacuumLength*0.5,                        // half length
                              0, CLHEP::twopi);                        // start and finish angle
   RegisterSolid(outer);
-  G4Material* outerMaterial = BDSMaterials::Instance()->GetMaterial("stainlesssteel");
   G4LogicalVolume* outerLV = new G4LogicalVolume(outer,                // solid
                                                  outerMaterial,        // material
                                                  name + "_outer_lv");  // name
@@ -205,7 +208,7 @@ void BDSGaborLens::BuildOuter()
   G4Tubs* endcap = new G4Tubs(name + "_endcap_solid",              // name
                               electrodeRadius,                     // inner radius
                               horizontalWidth*0.5 - lengthSafety,  // outer radius
-                              endcapLength*0.5 - lengthSafetyLarge, // half length
+                              endcapsLength*0.5 - lengthSafetyLarge, // half length
                               0, CLHEP::twopi);                    // start and finish angle
   RegisterSolid(endcap);
   G4Material* endcapMaterial = BDSMaterials::Instance()->GetMaterial("stainlesssteel");
@@ -220,7 +223,7 @@ void BDSGaborLens::BuildOuter()
   RegisterLogicalVolume(endcapLV);
 
   // end cap placement
-  G4double endcapZ = (chordLength-endcapLength)*0.5;
+  G4double endcapZ = (chordLength-endcapsLength)*0.5;
   G4PVPlacement* endcapInPV = new G4PVPlacement(nullptr,                     // rotation
                                                 G4ThreeVector(0,0,-endcapZ), // position
                                                 endcapLV,                    // its logical volume
@@ -302,7 +305,7 @@ void BDSGaborLens::BuildBeamPipe()
   G4Tubs* electrode = new G4Tubs(name + "_electrode_solid",  // name
                                  electrodeRadius,            // inner radius
                                  electrodeRadius + electrodeThickness,      // outer radius
-                                 electrodeLength*0.5,        // half length
+                                 electrodeLength*0.5 - lengthSafetyLarge,   // half length
                                  0, CLHEP::twopi);           // start and finish angle
   RegisterSolid(electrode);
 
@@ -315,8 +318,8 @@ void BDSGaborLens::BuildBeamPipe()
   electrodeLV->SetVisAttributes(electrodeVisAttr);
   RegisterLogicalVolume(electrodeLV);
 
-  G4double elecZ = chordLength*0.5 - endcapLength - electrodeLength*0.5 - lengthSafety;  // abs(z) electrode position
-  
+  G4double elecZ = chordLength*0.5 - endcapsLength - electrodeLength*0.5 - lengthSafety;  // abs(z) electrode position
+
   // electrode placement
   G4PVPlacement* electrodeInPV = new G4PVPlacement(nullptr,                    // rotation
                                                    G4ThreeVector(0,0,-elecZ),  // position

@@ -77,6 +77,7 @@ namespace GMAD
     double phase;     ///< phase of rf cavity (rad)
     double tOffset;   ///< time offset used for phase calculation (ns)
     std::string fieldModulator;
+    double kg; ///< gabor lens
 
     ///@{ rmatrix elements, only 4x4
     double kick1;

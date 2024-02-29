@@ -61,6 +61,9 @@ private:
   /// solenoid-equivalent field strength
   G4double bfieldMag;
 
+  /// gabor lens kg strength
+  G4double kg;
+
   /// anode radius
   G4double anodeRadius;
 
