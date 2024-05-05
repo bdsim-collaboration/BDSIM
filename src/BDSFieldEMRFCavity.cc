@@ -38,19 +38,21 @@ const G4double BDSFieldEMRFCavity::Z0 = CLHEP::mu0 * CLHEP::c_light;
 
 BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSMagnetStrength const* strength):
   BDSFieldEMRFCavity((*strength)["efield"],
-		     (*strength)["frequency"],
-		     (*strength)["phase"],
-		     (*strength)["equatorradius"])
+                     (*strength)["frequency"],
+                     (*strength)["phase"],
+                     (*strength)["equatorradius"],
+                     (*strength)["synchronousT0"])
 {;}
 
 BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldAmplitude,
-				       G4double frequencyIn,
-				       G4double phaseOffset,
-				       G4double cavityRadiusIn):
+                                       G4double frequencyIn,
+                                       G4double phaseOffset,
+                                       G4double cavityRadiusIn,
+                                       G4double synchronousTIn):
   eFieldMax(eFieldAmplitude),
   phase(phaseOffset),
   cavityRadius(cavityRadiusIn),
-  wavelength(CLHEP::c_light / frequencyIn),
+  synchronousT(synchronousTIn),
   normalisedCavityRadius(j0FirstZero/cavityRadius),
   angularFrequency(CLHEP::twopi * frequencyIn)
 {

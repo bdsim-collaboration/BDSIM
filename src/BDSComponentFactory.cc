@@ -2772,17 +2772,6 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   // if frequency is 0, don't update phase with offset. Fringes should have the same phase.
   if (!BDS::IsFinite(frequency))
     {return st;}
-
-  // for finite frequency, construct it so that phase is w.r.t. the centre of the cavity
-  // and that it's 0 by default
-  G4double tOffset = 0;
-  if (BDS::IsFinite(el->tOffset)) // use the one specified
-    {tOffset = el->tOffset * CLHEP::s;}
-  else // this gives 0 phase at the middle of cavity assuming relativistic particle with v = c
-    {tOffset = synchronousTAtMiddleOfThisComponent;}
-  
-  G4double phaseOffset = BDSFieldFactory::CalculateGlobalPhase(frequency, tOffset);
-  (*st)["phase"] -= phaseOffset;
   
   return st;
 }
