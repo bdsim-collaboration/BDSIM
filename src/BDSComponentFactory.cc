@@ -639,7 +639,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
       G4double limit = std::min((*st)["length"], integralUpToThisComponent->designParticle.Velocity()*period) * stepFraction;
       auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
       if (ul != defaultUL)
-	{vacuumField->SetUserLimits(ul);}
+        {vacuumField->SetUserLimits(ul);}
     }
   
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
@@ -658,10 +658,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(RFFieldDirection directio
       delete stIn;
       delete stOut;
       return new BDSCavityElement(elementName,
-				  cavityLength,
-				  vacuumMaterial,
-				  vacuumField,
-				  cavityInfo);
+                                  cavityLength,
+                                  vacuumMaterial,
+                                  vacuumField,
+                                  cavityInfo);
     }
   
   BDSLine* cavityLine = new BDSLine(elementName);
@@ -2729,7 +2729,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   G4double chordLength   = cavityLength; // length may be reduced for fringe placement.
-  (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
+  (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later in createRF
   (*st)["length"]        = chordLength;
   (*st)["synchronousT0"] = synchronousTAtMiddleOfThisComponent;
   
