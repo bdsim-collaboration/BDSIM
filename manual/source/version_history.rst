@@ -56,8 +56,18 @@ General Updates
 Bug Fixes
 ---------
 
+* The pill-box field was fixed where it should have no `z` dependence whereas it did previously.
+
+
 Output Changes
 --------------
+
+* The synchronous time at the middle of an element (:code:`midT`); the momentum at the
+  beginning of an element (:code:`staP`); and the kinetic energy at the beginning of
+  an element (:code:`staEk`) have all been added ot the model tree in the output as
+  calcualted by BDSIM as it now integrates the time and acceleration / decceleration
+  along the beamline.
+
 
 Output Class Versions
 ---------------------
@@ -89,7 +99,7 @@ Output Class Versions
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
 +-----------------------------------+-------------+-----------------+-----------------+
-| BDSOutputROOTEventModel           | N           | 6               | 6               |
+| BDSOutputROOTEventModel           | Y           | 6               | 7               |
 +-----------------------------------+-------------+-----------------+-----------------+
 | BDSOutputROOTEventOptions         | N           | 8               | 8               |
 +-----------------------------------+-------------+-----------------+-----------------+

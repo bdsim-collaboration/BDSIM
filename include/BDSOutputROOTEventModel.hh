@@ -200,7 +200,7 @@ public:
   std::map<std::string, double> samplerCRadius;
   std::map<std::string, double> samplerSRadius;
 
-  ClassDef(BDSOutputROOTEventModel, 6);
+  ClassDef(BDSOutputROOTEventModel, 7);
 };
 
 #endif
