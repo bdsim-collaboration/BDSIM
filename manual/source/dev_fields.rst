@@ -656,7 +656,7 @@ Solenoid Sheet or Cylinder
 For the outside of a solenoid, we have a solenoid "sheet" or "cylinder" model. This is
 modelled on the magnetic field due to symmetric cylinder of current of full length
 :math:`2 b` and of radius :math:`a`. The field is calculated in cylindrical coordinates
-and translted into Cartesian. The normalisation is to some nominal field :math:`B_0`.
+and translated into Cartesian. The normalisation is to some nominal field :math:`B_0`.
 
 This follows the parameterisation and uses the algorithm for the generalised complete
 elliptical integral as described in:
@@ -803,17 +803,19 @@ The electric field is calculated as:
 
 .. math::
 
-   E_z(r_n, z ,t) & = E \, J_{0}(r_n) \cos(2\,\pi\,f\,t + \psi)\,\cos(\frac{2\,\pi\,f\,z}{c})\\
+   E_z(r_n, z ,t) & = E \, J_{0}(r_n) \cos(2\,\pi\,f\,(t - T_{0}) + \psi)\\
 
 The radial B-field amplitude is calculated from the E-field amplitude.
 
 .. math::
 
-   H_{\phi}(r_n, z, t) & = \frac{E}{Z_{0}} \, J_{1}(r_n) \sin(2\,\pi\,f\,t + \psi)\,\cos(\frac{2\,\pi\,f\,z}{c})\\
+   H_{\phi}(r_n, z, t) & = \frac{E}{Z_{0}} \, J_{1}(r_n) \sin(2\,\pi\,f\,(t - T_{0}) + \psi)\\
    B_{\phi}(r_n, z, t) & = \mu_{0} H_{\phi}
 
-where :math:`Z_{0}` is the impedance of free space. To calculate B, a vacuum is assumed
-and therefore only the vacuum permeability is used to calculate B from H.
+where :math:`Z_{0}` is the impedance of free space, and :math:`T_0` is the global offset in
+time to the centre of the object the field is attached to (i.e. the synchronous time). To
+calculate B, a vacuum is assumed and therefore only the vacuum permeability is used to
+calculate B from H.
 
 The 3D Cartesian field vectors are therefore:
 
