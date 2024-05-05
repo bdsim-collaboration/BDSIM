@@ -396,7 +396,7 @@ void BDSFieldFactory::PrepareModulatorDefinitions(const std::vector<GMAD::Modula
       if (BDS::IsFinite(definition.tOffset))
         {
           if (BDS::IsFinite(definition.tOffset))
-            {throw BDSException(__METHOD_NAME__, "definition: " + definition.name + "has both tOffset and phase specified.");}
+            {throw BDSException(__METHOD_NAME__, "definition: " + definition.name + " has both tOffset and phase specified - only one can be used.");}
           phase = definition.tOffset*CLHEP::s * frequency * CLHEP::twopi;
         }
       
