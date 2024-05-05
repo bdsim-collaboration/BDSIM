@@ -494,7 +494,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
             {forceNoSamplerOnThisElement = true;}
           BDSSamplerInfo* samplerInfo = forceNoSamplerOnThisElement ? nullptr : BuildSamplerInfo(&(*elementIt));
           BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(&(*elementIt));
-          massWorld->AddComponent(temp, tiltOffset, samplerInfo);
+          massWorld->AddComponent(temp, tiltOffset, samplerInfo, integral);
         }
     }
 

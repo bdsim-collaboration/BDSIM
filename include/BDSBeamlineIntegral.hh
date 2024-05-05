@@ -60,6 +60,9 @@ public:
   /// Provide the next synchronous T at the middle if we were to add on this new
   /// element. Similar to above function.
   G4double ProvideSynchronousTAtEndOfNextElement(const GMAD::Element* el) const;
+
+  G4double MomentumAtStartOfLastElement() const {return designParticle.Momentum();}
+  G4double KineticEnergyAtStartOfLastElement() const {return designParticle.KineticEnergy();}
   
   G4bool   integrateKineticEnergy; ///< On by default, but allow control to not integrate it for old behaviour.
   G4double synchronousTAtEnd;

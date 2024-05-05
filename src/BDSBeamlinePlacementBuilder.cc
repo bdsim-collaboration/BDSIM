@@ -168,7 +168,7 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
                                                       new G4RotationMatrix(*rm),
                                                       new G4RotationMatrix(*rm),
                                                       new G4RotationMatrix(*rm),
-                                                      -1,-1,-1);
+                                                      -1,-1,-1, 0);
 
       placementBL->AddBeamlineElement(el);
   
