@@ -3123,7 +3123,7 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 +=====================================+=======================================================+
 | integrateKineticEnergyAlongBeamline | Integrate changes to the nominal beam energy along    |
 |                                     | the beamline such as from accelerator and adjust      |
-|                                     | the design rigitidy for normalised fields             |
+|                                     | the design rigidity for normalised fields             |
 |                                     | accordingly.                                          |
 +-------------------------------------+-------------------------------------------------------+
 

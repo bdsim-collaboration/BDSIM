@@ -25,7 +25,7 @@ New Features
 **Fields**
 
 * The `rf` beamline element now has the parameter :code:`cavityFieldType` to specify which
-  field model to use rather than specifying :code:`fieldVacuum` and a corresonding field
+  field model to use rather than specifying :code:`fieldVacuum` and a corresponding field
   definition.
 * The option :code:`cavityFieldType` may be used to set the default field model for all `rf`
   elements.
@@ -46,12 +46,20 @@ New Options
 +-------------------------------------+-------------------------------------------------------+
 | integrateKineticEnergyAlongBeamline | Integrate changes to the nominal beam energy along    |
 |                                     | the beamline such as from accelerator and adjust      |
-|                                     | the design rigitidy for normalised fields             |
+|                                     | the design rigidity for normalised fields             |
 |                                     | accordingly.                                          |
 +-------------------------------------+-------------------------------------------------------+
 
 General Updates
 ---------------
+
+* The interface for custom components has changed due to the new beamline integral class and object.
+  The example has been updated accordingly.
+* Internally, beamline elements are now cached based on both their name (basic reuse of components)
+  but also the nominal rigidity at that point in the beamline. This is because if, say, a quadrupole
+  is used later in the beamline after acceleration with the same `k1`, the actual field gradient
+  is different and so the component must be uniquely constructed to have a different field.
+  
 
 Bug Fixes
 ---------
@@ -64,8 +72,8 @@ Output Changes
 
 * The synchronous time at the middle of an element (:code:`midT`); the momentum at the
   beginning of an element (:code:`staP`); and the kinetic energy at the beginning of
-  an element (:code:`staEk`) have all been added ot the model tree in the output as
-  calcualted by BDSIM as it now integrates the time and acceleration / decceleration
+  an element (:code:`staEk`) have all been added to the model tree in the output as
+  calculated by BDSIM as it now integrates the time and acceleration / decceleration
   along the beamline.
 
 

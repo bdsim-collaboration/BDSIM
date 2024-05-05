@@ -1030,8 +1030,9 @@ it is best to be explicit in units or none at all and assume the default ones.
 
 * The field is such that a positive E-field results in acceleration of the primary particle
   (depending on the primary particle charge).
-* The global phase (timing) is calculated automatically such that zero phase results in the
-  peak E-field at the centre of the component for its position in the lattice.
+* The global synchronous time at the centre of the element is calculated automatically
+  such that zero phase results in the peak E-field at the centre of the component
+  for its position in the lattice.
 * Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
 * If `phase` is specified, this is added to the calculated synchronous (global) phase from
   either the lattice position or `tOffset`.
