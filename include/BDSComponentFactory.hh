@@ -205,6 +205,17 @@ public:
                                     BDSFieldType fieldType,
                                     G4double cavityLength,
                                     const BDSParticleDefinition& incomingParticle);
+
+  /// Calculate the field and angle of an rbend from information in the element noting the
+  /// 'l' in an element is the chord length of an rbend. Variables passed by reference and
+  /// are updated as output. Note, this uses the MADX convention of +ve angle -> deflection
+  /// in -ve x.
+  static void CalculateAngleAndFieldRBend(const GMAD::Element* el,
+                                          G4double brhoIn,
+                                          G4double& arcLength,
+                                          G4double& chordLength,
+                                          G4double& field,
+                                          G4double& angle);
   
   /// Utility function to prepare crystal recipe for an element. Produces a unique object
   /// this class doesn't own.
@@ -384,16 +395,6 @@ private:
   void CalculateAngleAndFieldSBend(GMAD::Element const* el,
 				   G4double&            angle,
 				   G4double&            field) const;
-
-  /// Calculate the field and angle of an rbend from information in the element noting the
-  /// 'l' in an element is the chord length of an rbend. Variables passed by reference and
-  /// are updated as output. Note, this uses the MADX convention of +ve angle -> deflection
-  /// in -ve x.
-  void CalculateAngleAndFieldRBend(const GMAD::Element* el,
-				   G4double& arcLength,
-				   G4double& chordLength,
-				   G4double& field,
-				   G4double& angle) const;
 
   /// Calculate the angle of a bend whether it's an rbend or an sbend.
   G4double BendAngle(const GMAD::Element* el) const;

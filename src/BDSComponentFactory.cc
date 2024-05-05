@@ -767,7 +767,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   G4double arcLength = 0, chordLength = 0, field = 0, angle = 0;
-  CalculateAngleAndFieldRBend(element, arcLength, chordLength, field, angle);
+  CalculateAngleAndFieldRBend(element, BRho(), arcLength, chordLength, field, angle);
   
   (*st)["angle"]  = angle;
   (*st)["field"]  = field * element->scaling;
@@ -2661,6 +2661,65 @@ G4double BDSComponentFactory::EFieldFromElement(Element const* el,
   return eField;
 }
 
+void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* el,
+                                                      G4double brhoIn,
+                                                      G4double& arcLength,
+                                                      G4double& chordLength,
+                                                      G4double& field,
+                                                      G4double& angle)
+{
+  // 'l' in the element represents the chord length for an rbend - must calculate arc length
+  // for the field calculation and the accelerator component.
+  chordLength = el->l * CLHEP::m;
+  G4double arcLengthLocal = chordLength; // default for no angle
+
+  if (BDS::IsFinite(el->B) && el->angleSet)
+    {// both are specified and should be used - under or overpowered dipole by design
+      // the angle and the length are set, so we ignore the beam definition and its bending radius
+      field = el->B * CLHEP::tesla;
+      angle = el->angle * CLHEP::rad;
+      // protect against bad calculation from 0 angle and finite field
+      if (BDS::IsFinite(angle))
+        {
+          G4double radiusOfCurvatureOfDipole = 0.5 * chordLength / std::sin(0.5 * angle);
+          arcLengthLocal = radiusOfCurvatureOfDipole * angle;
+        }
+    else
+      {arcLengthLocal = chordLength;}
+    }
+  else if (BDS::IsFinite(el->B))
+    {// only B field - calculate angle
+      field = el->B * CLHEP::tesla;
+      G4double bendingRadius = brhoIn / field; // in mm as brho already in g4 units
+      angle = 2.0*std::asin(chordLength*0.5 / bendingRadius);
+      if (std::isnan(angle))
+        {throw BDSException("Field too strong for element " + el->name + ", magnet bending angle will be greater than pi.");}
+
+      arcLengthLocal = bendingRadius * angle;
+    }
+  else
+    {// (assume) only angle - calculate B field
+      angle = el->angle * CLHEP::rad;
+      if (BDS::IsFinite(angle))
+        {
+        // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
+        // this is the inverse equation of that in BDSAcceleratorComponent to calculate
+        // the chord length from the arclength and angle.
+        G4double bendingRadius = chordLength * 0.5 / std::sin(std::abs(angle) * 0.5);
+        arcLengthLocal = bendingRadius * angle;
+        field = brhoIn * angle / std::abs(arcLengthLocal);
+      }
+    else
+      {field = 0;} // 0 angle -> chord length and arc length the same; field 0
+  }
+
+  // Ensure positive length despite sign of angle.
+  arcLength = std::abs(arcLengthLocal);
+
+  if (std::abs(angle) > CLHEP::pi/2.0)
+    {throw BDSException("Error: the rbend " + el->name + " cannot be constructed as its bending angle is defined to be greater than pi/2.");}
+}
+
 BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*      el,
 							      BDSFieldType        fieldType,
 							      G4double            cavityLength,
@@ -2934,71 +2993,13 @@ void BDSComponentFactory::CalculateAngleAndFieldSBend(Element const* el,
     {throw BDSException("Error: the sbend "+ el->name +" cannot be constructed as its bending angle is defined to be greater than 2 pi.");}
 }
 
-void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* el,
-                                                      G4double& arcLength,
-                                                      G4double& chordLength,
-                                                      G4double& field,
-                                                      G4double& angle) const
-{
-  // 'l' in the element represents the chord length for an rbend - must calculate arc length
-  // for the field calculation and the accelerator component.
-  chordLength = el->l * CLHEP::m;
-  G4double arcLengthLocal = chordLength; // default for no angle
-  
-  if (BDS::IsFinite(el->B) && el->angleSet)
-    {// both are specified and should be used - under or overpowered dipole by design
-      // the angle and the length are set, so we ignore the beam definition and its bending radius
-      field = el->B * CLHEP::tesla;
-      angle = el->angle * CLHEP::rad;
-      // protect against bad calculation from 0 angle and finite field
-      if (BDS::IsFinite(angle))
-        {
-          G4double radiusOfCurvatureOfDipole = 0.5 * chordLength / std::sin(0.5 * angle);
-          arcLengthLocal = radiusOfCurvatureOfDipole * angle;
-        }
-      else
-        {arcLengthLocal = chordLength;}
-    }
-  else if (BDS::IsFinite(el->B))
-    {// only B field - calculate angle
-      field = el->B * CLHEP::tesla;
-      G4double bendingRadius = BRho() / field; // in mm as brho already in g4 units
-      angle = 2.0*std::asin(chordLength*0.5 / bendingRadius);
-      if (std::isnan(angle))
-        {throw BDSException("Field too strong for element " + el->name + ", magnet bending angle will be greater than pi.");}
-
-      arcLengthLocal = bendingRadius * angle;
-    }
-  else
-    {// (assume) only angle - calculate B field
-      angle = el->angle * CLHEP::rad;
-      if (BDS::IsFinite(angle))
-        {
-          // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
-          // this is the inverse equation of that in BDSAcceleratorComponent to calculate
-          // the chord length from the arclength and angle.
-          G4double bendingRadius = chordLength * 0.5 / std::sin(std::abs(angle) * 0.5);
-          arcLengthLocal = bendingRadius * angle;
-          field = BRho() * angle / std::abs(arcLengthLocal);
-        }
-      else
-        {field = 0;} // 0 angle -> chord length and arc length the same; field 0
-    }
-
-  // Ensure positive length despite sign of angle.
-  arcLength = std::abs(arcLengthLocal);
-
-  if (std::abs(angle) > CLHEP::pi/2.0)
-    {throw BDSException("Error: the rbend " + el->name + " cannot be constucted as its bending angle is defined to be greater than pi/2.");}
-}
-
 G4double BDSComponentFactory::BendAngle(const Element* el) const
 {
   G4double bendAngle = 0;
   if (el->type == ElementType::_RBEND)
     {
       G4double arcLength = 0, chordLength = 0, field = 0;
-      CalculateAngleAndFieldRBend(el, arcLength, chordLength, field, bendAngle);
+      CalculateAngleAndFieldRBend(el, BRho(), arcLength, chordLength, field, bendAngle);
     }
   else if (el->type == ElementType::_SBEND)
     {

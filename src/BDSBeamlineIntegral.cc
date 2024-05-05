@@ -56,6 +56,18 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
 {
   // length
   G4double thisComponentArcLength = componentAsDefined.l*CLHEP::m;
+  if (componentAsDefined.type == GMAD::ElementType::_RBEND)
+    {// reuse component factor code to work out angle / field and true arc length
+      G4double componentChordLength;
+      G4double field;
+      G4double angle;
+      BDSComponentFactory::CalculateAngleAndFieldRBend(&componentAsDefined,
+                                                       designParticle.BRho(),
+                                                       thisComponentArcLength,
+                                                       componentChordLength,
+                                                       field,
+                                                       angle);
+    }
   arcLength += thisComponentArcLength;
   
   G4double v0 = designParticle.Velocity(); // current velocity at the entrance of element
