@@ -2760,6 +2760,12 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
 
   // set the phase from the element even if zero frequency, field should be cos(0 + phi) = constant.
   G4double phase = el->phase * CLHEP::rad;
+  if (BDS::IsFinite(el->tOffset))
+    {
+      if (BDS::IsFinite(el->phase))
+        {throw BDSException(__METHOD_NAME__, "component: " + el->name + " has both tOffset and phase specified - only one can be used.");}
+      phase = el->tOffset*CLHEP::s * frequency * CLHEP::twopi;
+    }
   (*st)["phase"] = phase;
 
   // fringe strengths
