@@ -390,13 +390,21 @@ void BDSFieldFactory::PrepareModulatorDefinitions(const std::vector<GMAD::Modula
           throw BDSException(__METHOD_NAME__, msg);
         }
       BDSModulatorType modulatorType = BDS::DetermineModulatorType(definition.type);
+
+      G4double frequency = definition.frequency * CLHEP::hertz;
+      G4double phase = definition.phase * CLHEP::rad;
+      if (BDS::IsFinite(definition.tOffset))
+        {
+          if (BDS::IsFinite(definition.tOffset))
+            {throw BDSException(__METHOD_NAME__, "definition: " + definition.name + "has both tOffset and phase specified.");}
+          phase = definition.tOffset*CLHEP::s * frequency * CLHEP::twopi;
+        }
       
       // We can't calculate any global phase here because this one modulator info may
       // be used by multiple beam line elements at different locations
       BDSModulatorInfo* info = new BDSModulatorInfo(modulatorType,
-                                                    definition.frequency * CLHEP::hertz,
-                                                    definition.phase * CLHEP::rad,
-                                                    definition.tOffset * CLHEP::s,
+                                                    frequency,
+                                                    phase,
                                                     definition.amplitudeScale,
                                                     definition.amplitudeOffset,
                                                     definition.T0,
@@ -1319,19 +1327,18 @@ BDSModulator* BDSFieldFactory::CreateModulator(const BDSModulatorInfo* modulator
         {
         case BDSModulatorType::sint:
           {
-            G4double globalPhase = CalculateGlobalPhase(*modulatorRecipe, info);
             result = new BDSModulatorSinT(modulatorRecipe->frequency,
-                                          globalPhase,
+                                          modulatorRecipe->phase,
+                                          info.SynchronousT(),
                                           modulatorRecipe->amplitudeOffset,
                                           modulatorRecipe->scale);
             break;
           }
         case BDSModulatorType::singlobalt:
           {
-            // calculate phase with no synchronous offset
-            G4double globalPhase = BDS::IsFinite(modulatorRecipe->phase) ? modulatorRecipe->phase : CalculateGlobalPhase(modulatorRecipe->frequency, modulatorRecipe->tOffset);;
             result = new BDSModulatorSinT(modulatorRecipe->frequency,
-                                          globalPhase,
+                                          modulatorRecipe->phase,
+                                          0.0,
                                           modulatorRecipe->amplitudeOffset,
                                           modulatorRecipe->scale);
             break;
