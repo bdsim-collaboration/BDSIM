@@ -74,9 +74,6 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   if (rNormalised > j0FirstZero)
     {rNormalised = j0FirstZero - 1e-6;}
 
-  // Source for calculating the TM010 mode: Gerigk, Frank.
-  // "Cavity types." arXiv preprint arXiv:1111.4897 (2011).
-
   G4double J0r = TMath::BesselJ0(rNormalised);
   G4double J1r = TMath::BesselJ1(rNormalised);
 
@@ -85,9 +82,9 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   G4double Bmax = hMax * CLHEP::mu0;
 
   // Calculating field components.
-  G4double zFactor = std::cos(CLHEP::twopi*position.z() / wavelength);
-  G4double Ez   = eFieldMax * J0r * std::cos(angularFrequency*t + phase) * zFactor;
-  G4double Bphi = Bmax * J1r * std::sin(angularFrequency*t + phase) * zFactor;
+  G4double arg = angularFrequency*(t - synchronousT) + phase;
+  G4double Ez   = eFieldMax * J0r * std::cos(arg);
+  G4double Bphi = Bmax * J1r * std::sin(arg);
 
   // Converting Bphi into cartesian coordinates:
   G4TwoVector bxby(0,Bphi); // this is equivalent to a pi/2 rotation of (1,0)
