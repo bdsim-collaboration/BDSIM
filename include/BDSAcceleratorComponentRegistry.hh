@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 globals / types
 
-#include <functional>  // for all teh std::hash business
+#include <functional>  // for all the std::hash business
 #include <iterator>
 #include <map>
 #include <set>

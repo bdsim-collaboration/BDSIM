@@ -58,7 +58,7 @@ void BDSBeamlineIntegral::Integrate(const GMAD::Element& componentAsDefined)
   G4double thisComponentArcLength = componentAsDefined.l*CLHEP::m;
   arcLength += thisComponentArcLength;
   
-  G4double v0 = designParticle.Velocity(); // velocity at entrance of element
+  G4double v0 = designParticle.Velocity(); // current velocity at the entrance of element
 
   // calculate change in velocity and kinetic energy
   G4double dEk = 0;

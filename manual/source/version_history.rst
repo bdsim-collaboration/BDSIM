@@ -12,7 +12,7 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Beam pipe sections to fill gaps between changes in aperture.
 * Any aperture shape can be used for both the inside and the outside of a collimator.
 
-v1.8.0 - 2023 / XX / XX
+v1.8.0 - 2024 / XX / XX
 =======================
 
 * For models with acceleration, the rigidity and synchronous time are now calculated
@@ -25,10 +25,10 @@ New Features
 **Fields**
 
 * The `rf` beamline element now has the parameter :code:`cavityFieldType` to specify which
-field model to use rather than specifying :code:`fieldVacuum` and a corresonding field
-definition.
+  field model to use rather than specifying :code:`fieldVacuum` and a corresonding field
+  definition.
 * The option :code:`cavityFieldType` may be used to set the default field model for all `rf`
-elements.
+  elements.
 * The "rfcavity" field is now "rfpillbox".
 
 

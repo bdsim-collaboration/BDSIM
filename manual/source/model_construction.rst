@@ -131,6 +131,7 @@ Magnet Strength Polarity
 	     purpose. This may be revised in future releases depending on changes
 	     to MAD-X.
 
+
 .. _synchronous-time-and-phase:
 	     
 Synchronous Time and Phase
@@ -144,12 +145,6 @@ and deceleration. See :ref:`fields-beamline-integration`.
 
 If the element is reused several times in a machine, it is constructed uniquely for
 each instance so that the fields are unique with their own synchronous time or phase.
-
-.. warning:: This currently does not calculate the time based on the true velocity of
-	     the particle that may vary (with acceleration) throughout the accelerator.
-	     The speed of light in vacuum is used to calculate this time and the user
-	     should calculate an appropriate global `tOffset` for the component if
-	     the beam is sub-relativistic. This may be improved upon in future.
 
 
 .. _acceleration:
