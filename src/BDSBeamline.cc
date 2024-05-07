@@ -505,9 +505,15 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   if (tiltOffset)
     {tiltOffsetToStore = new BDSTiltOffset(*tiltOffset);} // copy as can be used multiple times
 
-    G4double midT = beamlineIntegral->synchronousTAtMiddleOfLastElement;
-    G4double staP = beamlineIntegral->MomentumAtStartOfLastElement();
-    G4double staEk = beamlineIntegral->KineticEnergyAtStartOfLastElement();
+  G4double midT = 0;
+  G4double staP = 0;
+  G4double staEk = 0;
+  if (beamlineIntegral)
+    {
+      midT = beamlineIntegral->synchronousTAtMiddleOfLastElement;
+      staP = beamlineIntegral->MomentumAtStartOfLastElement();
+      staEk = beamlineIntegral->KineticEnergyAtStartOfLastElement();
+    }
 
   BDSBeamlineElement* element;
   element = new BDSBeamlineElement(component,

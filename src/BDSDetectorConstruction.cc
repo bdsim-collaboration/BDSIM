@@ -530,7 +530,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       if (terminator)
         {
           terminator->Initialise();
-          massWorld->AddComponent(terminator);
+          massWorld->AddComponent(terminator, nullptr, nullptr, integral);
         }
       
       BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
@@ -539,7 +539,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       if (teleporter)
 	{
 	  teleporter->Initialise();
-	  massWorld->AddComponent(teleporter);
+	  massWorld->AddComponent(teleporter, nullptr, nullptr, integral);
 	}
     }
   
