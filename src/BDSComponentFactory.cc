@@ -2009,8 +2009,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateGaborLens()
 {
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
-
-  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+  // force circular vacuum volume
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
+  BDSBeamPipeInfo* bpInfo = new BDSBeamPipeInfo(defaultModel,
+                                                "circular",
+                                                element->aper1 * CLHEP::m,
+                                                0,0,0,
+                                                element->vacuumMaterial,
+                                                element->beampipeThickness * CLHEP::m,
+                                                element->beampipeMaterial,
+                                                G4ThreeVector(0,0,-1),
+                                                G4ThreeVector(0,0,1));
 
   const BDSFieldType gaborLensField = BDSFieldType::gaborlens;
   BDSIntegratorType intType = integratorSet->Integrator(gaborLensField);
