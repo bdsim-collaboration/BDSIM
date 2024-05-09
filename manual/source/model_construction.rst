@@ -1748,7 +1748,7 @@ gaborlens
 	    :width: 60%
 	    :align: center
 
-`gaborlens` defines a gabor lens that provides a radially focusing electric field from a confined electron plasma in
+`gaborlens` defines a Gabor lens that provides a radially focusing electric field from a confined electron plasma in
 a Penning-Malmberg trap configuration. The lens' radial electric field along the element has field components:
 
 .. math::
@@ -1791,7 +1791,7 @@ are:
 .. note:: The transverse extent of the electric field from the plasma is limited to the radius of the
   cylindrical anode.
 
-.. note:: The gabor lens element contains 2 end caps that are crucial for grounding and vacuum in such
+.. note:: The Gabor lens element contains 2 end caps that are crucial for grounding and vacuum in such
   physical devices. In the BDSIM Gabor lenses, both of these are 1cm long. The plasma field does NOT extend
   to within these volumes, and is limited to the length of the vacuum volume. The field length in Z is therefore
   the total element length minus 2cm. This should be accounted for by the user when defining the

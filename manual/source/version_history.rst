@@ -12,11 +12,14 @@ if you'd like to give us feedback or help in the development.  See :ref:`support
 * Beam pipe sections to fill gaps between changes in aperture.
 * Any aperture shape can be used for both the inside and the outside of a collimator.
 
-v1.8.X - 2023 / XX / XX
+v1.8.X - 2024 / XX / XX
 =======================
 
 New Features
 ------------
+* New Gabor lens beam line component. Constructed with a radial electric field that would be generated
+  with a confined plasma in a Penning-Malmberg trap configuration. The electric and magnetic confinement
+  fields are not constructed.
 
 
 General Updates
