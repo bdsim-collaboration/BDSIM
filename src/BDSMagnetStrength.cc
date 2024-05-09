@@ -59,7 +59,8 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k10", "k10s",
   "k11", "k11s",
   "k12", "k12s",
-  "kg",              // solenoid strength
+  "kg",              // gabor lens focusing strength
+  "plasmaEfield",    // magnitude of electric strength of confined Gabor lens plasma
   "frequency",       // frequency for time varying field (presumably em)
   "tOffset",         // tOffset resulting in a phase for time varying field
   "phase",           // phase for time varying field
@@ -144,6 +145,8 @@ const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::uni
     {"phase"         , {"rad", CLHEP::rad}},
     {"synchronousT0" , {"s",   CLHEP::s}},
     {"equatorradius" , {"m",   CLHEP::m}},
+    {"kg"            , {"",    1.0}},
+    {"plasmaEfield"  , {"",    1.0}},
     {"nominalenergy" , {"GeV", CLHEP::GeV}},
     {"scaling"       , {"",    1.0}},
     {"scalingOuter"  , {"",    1.0}},

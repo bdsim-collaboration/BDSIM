@@ -427,6 +427,9 @@ private:
 		    G4double& vkick,
 		    const KickerType type) const;
 
+  /// Calculate the electric field strength of the confined plasma in a Gabor lens.
+  void CalculateGaborLensStrength(BDSMagnetStrength* st) const;
+
   /// Registry of modified elements stored by original name and number of times
   /// modified - 0 counting. This is so when we modify elements beyond their definition
   /// they get a unique name as they're literally not the same object as the unmodified

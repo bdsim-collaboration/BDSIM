@@ -2019,9 +2019,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateGaborLens()
   SetBeta0(st);
   AddSynchronousTimeInformation(st, element->l * CLHEP::m);
   (*st)["length"] = element->l * CLHEP::m;
-  (*st)["kg"] = element->kg;
-  (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-  (*st)["equatorradius"] = element->anodeRadius*CLHEP::m;
+  (*st)["ks"] = element->ks;
+  CalculateGaborLensStrength(st);
 
   BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(gaborLensField,
                                                    brho,
@@ -3122,4 +3121,40 @@ void BDSComponentFactory::INDEVELOPMENTERROR() const
 {
   if (!element->fieldModulator.empty())
     {throw BDSException(__METHOD_NAME__, "fieldModulator is currently in development for element \"" + elementName + "\"");}
+}
+
+void BDSComponentFactory::CalculateGaborLensStrength(BDSMagnetStrength* st) const
+{
+  (*st)["kg"] = element->scaling * element->kg;
+  (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
+  (*st)["equatorradius"] = element->anodeRadius*CLHEP::m;
+
+  if ((*st)["kg"] < 0)
+    {throw BDSException(__METHOD_NAME__, "kg strength cannot be negative for element \"" + elementName + "\"");}
+  if (!BDS::IsFinite((*st)["kg"]) && ((*st)["kg"] < 0))
+    {throw BDSException(__METHOD_NAME__, "B field cannot be negative for element \"" + elementName + "\"");}
+
+  const G4double c = CLHEP::c_light;
+  const G4double gamma = designParticle->Gamma();
+  const G4double momentum = designParticle->Momentum();   //  in MeV
+  const G4double mass = designParticle->Mass();   // in MeV
+
+  G4double convFactor = 1e6 * gamma * std::pow(c,2) / (4*std::pow(momentum,2));
+
+  G4double b2 = 0;
+  if (BDS::IsFinite((*st)["kg"]))
+    {
+      b2 = (*st)["kg"] / convFactor;
+      (*st)["field"] = std::sqrt(b2);
+    }
+  else
+    {
+      b2 = std::pow((*st)["field"],2);
+      (*st)["kg"] = b2 * convFactor;
+    }
+
+  // set plasma field as its own magnetStrength key - efield key will be used later for confinement field strength
+  (*st)["plasmaEfield"] = -1.0 * b2 * std::pow(c,2) / (4*mass);
+
+  // TODO: set "efield" and "field" to be electric and magentic confinement field strengths
 }

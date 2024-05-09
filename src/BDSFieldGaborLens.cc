@@ -31,18 +31,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <utility>
 
-const G4double BDSFieldGaborLens::c = CLHEP::c_light;
-
-const G4double BDSFieldGaborLens::pmass = CLHEP::proton_mass_c2;
 
 BDSFieldGaborLens::BDSFieldGaborLens(BDSMagnetStrength const* strength):
-bfieldMag((*strength)["field"]),
-kg((*strength)["kg"]),
+plasmaEfield((*strength)["plasmaEfield"]),
 anodeRadius((*strength)["equatorradius"])
-{
-  plasmaEfield = -1.0 * std::pow(bfieldMag,2.0) * std::pow(c,2) / (4*pmass);
-  //TODO: some checks
-}
+{}
 
 std::pair<G4ThreeVector, G4ThreeVector> BDSFieldGaborLens::GetField(const G4ThreeVector& position,
                                                                     const G4double       /*t*/) const
@@ -56,7 +49,7 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldGaborLens::GetField(const G4Thre
   if (transPos.mag() < anodeRadius)       // no plasma field outside of anode radius
     {plasmaE = G4ThreeVector(Ex, Ey, 0);}
 
-  // Final local B and E fields:
+  // TODO: Add local B and E plasma confinement fields:
   G4ThreeVector LocalB = G4ThreeVector(0, 0, 0);
   G4ThreeVector LocalE = G4ThreeVector(0, 0, 0);
 
