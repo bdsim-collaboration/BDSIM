@@ -1797,6 +1797,9 @@ are:
   the total element length minus 2cm. This should be accounted for by the user when defining the
   total element length.
 
+.. note:: The end cap aperture is set equal to the electrode radius as both the anode and electrode must be within
+  the beam pipe aperture.
+
 =======================  ================================  ==========  ===========
 Parameter                Description                       Default     Required
 `l`                      Length [m]                        0           Yes
