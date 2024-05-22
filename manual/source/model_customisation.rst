@@ -941,7 +941,7 @@ The following parameters can be used in a query object:
 | fieldObject             | Name of the field object in the input to query |
 +-------------------------+------------------------------------------------+
 | queryMagneticField      | (1 or 0) whether to query the magnetic field   |
-|                         | - default is True (1)                          |
+|                         | - default is False (0)                         |
 +-------------------------+------------------------------------------------+
 | queryElectricField      | (1 or 0) whether to query the electric field   |
 |                         | - default is False (0)                         |
@@ -1010,6 +1010,8 @@ The following parameters can be used in a query object:
 	  combination of parameters for the 3 ways of specifying a transform. 
 
 * The default is to query the magnetic field only and **to overwrite** files.
+* The magnetic field will be queried if neither `queryMagneticField` or
+  `queryElectricField` are set to 1 (on), but only if neither are specified.
 * The ranges defined will be queried in the global frame if no transform is specified,
   otherwise they will be about the point / frame of the transform.
 * In the case where a reference element is used, the frame includes the offset of that
