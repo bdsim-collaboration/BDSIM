@@ -2046,13 +2046,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateGaborLens()
   BDSIntegratorType intType = integratorSet->Integrator(gaborLensField);
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
   BDSMagnetStrength* st = new BDSMagnetStrength();
+  (*st)["synchronousT0"] = synchronousTAtMiddleOfThisComponent;
   SetBeta0(st);
-  AddSynchronousTimeInformation(st, element->l * CLHEP::m);
   (*st)["length"] = element->l * CLHEP::m;
   CalculateGaborLensStrength(st);
 
   BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(gaborLensField,
-                                                   brho,
+                                                   BRho(),
                                                    intType,
                                                    st,
                                                    true,
@@ -3194,9 +3194,10 @@ void BDSComponentFactory::CalculateGaborLensStrength(BDSMagnetStrength* st) cons
     {throw BDSException(__METHOD_NAME__, "B field cannot be negative for element \"" + elementName + "\"");}
 
   const G4double c = CLHEP::c_light;
-  const G4double gamma = designParticle->Gamma();
-  const G4double momentum = designParticle->Momentum();   //  in MeV
-  const G4double mass = designParticle->Mass();   // in MeV
+  const BDSParticleDefinition& designParticle = integralUpToThisComponent->designParticle;
+  const G4double gamma = designParticle.Gamma();
+  const G4double momentum = designParticle.Momentum();   //  in MeV
+  const G4double mass = designParticle.Mass();   // in MeV
 
   G4double convFactor = gamma * std::pow(c,2) / (4*std::pow(momentum,2));
 
