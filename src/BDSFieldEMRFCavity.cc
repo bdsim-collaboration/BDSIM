@@ -54,7 +54,7 @@ BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldAmplitude,
   phase(phaseOffset),
   cavityRadius(cavityRadiusIn),
   wavelength(CLHEP::c_light / frequencyIn),
-  normalisedCavityRadius(j0FirstZero/cavityRadius),
+  normalisedCavityRadius(j0FirstZero/(2.405*CLHEP::c_light/(CLHEP::twopi * frequencyIn))),
   angularFrequency(CLHEP::twopi * frequencyIn)
 {
   // this would cause NANs to be propagated into tracking which is really bad
@@ -82,11 +82,11 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   G4double J1r = TMath::BesselJ1(rNormalised);
 
   // Calculating free-space impedance and scale factor for Bphi:
-  G4double hMax = -eFieldMax/Z0;
+  G4double hMax = - 2 * eFieldMax/Z0;
   G4double Bmax = hMax * CLHEP::mu0;
 
   // Calculating field components.
-  G4double zFactor = std::cos(CLHEP::twopi*position.z() / wavelength);
+  G4double zFactor = 1.0;
   G4double Ez   = eFieldMax * J0r * std::cos(angularFrequency*t + phase) * zFactor;
   G4double Bphi = Bmax * J1r * std::sin(angularFrequency*t + phase) * zFactor;
 
