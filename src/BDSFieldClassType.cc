@@ -87,6 +87,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::ebmap3d:
     case BDSFieldType::ebmap4d:
     case BDSFieldType::rfpillbox:
+    case BDSFieldType::transversemagnetic:
       {return BDSFieldClassType::electromagnetic;}
     case BDSFieldType::teleporter:
     case BDSFieldType::rmatrix:
