@@ -186,6 +186,7 @@ private:
   void IonElasticQMD();
   void IonEMDissociation();
   void IonINCLXX();
+  void Ionisation();
   void LaserWire();
   void Muon();
   void MuonInelastic();
