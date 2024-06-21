@@ -53,6 +53,8 @@ void BDSPhysicsIonisation::ConstructParticle()
   G4MuonPlus::MuonPlus();
   G4Proton::Proton();
   G4AntiProton::AntiProton();
+  G4PionMinus::PionMinus();
+  G4PionPlus::PionPlus();
   G4KaonMinus::KaonMinus();
   G4KaonPlus::KaonPlus();
   G4GenericIon::GenericIon();
