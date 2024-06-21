@@ -31,6 +31,11 @@ New Features
   elements.
 * The "rfcavity" field is now "rfpillbox".
 
+**Physics**
+
+* New :code:`ionisation` modular physics list for only the ionisation process for the most
+  common particles.
+
 
 
 New Options

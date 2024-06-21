@@ -1895,6 +1895,8 @@ Examples: ::
 +------------------------------+------------------------------------------------------------------------+
 | ion_php (`*`)                | `G4IonPhysicsPHP`. Available from Geant4.10.3 onwards.                 |
 +------------------------------+------------------------------------------------------------------------+
+| ionisation                   | Only ionisation for e+-, p, pbar, pi+-, K+-, mu+-, generic ion.        |
++------------------------------+------------------------------------------------------------------------+
 | lw                           | Laserwire photon producing process as if the laserwire had scattered   |
 |                              | photons from the beam. Not actively developed, but will register       |
 |                              | process.                                                               |
