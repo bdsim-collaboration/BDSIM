@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4VPhysicsConstructor.hh"
 
+class G4VEnergyLossProcess;
+
 /**
  * @brief Only ionisation from G4EmStandardPhysics.
  *
@@ -43,5 +45,8 @@ public:
 
   /// Construct and attach the processes to the relevant particles.
   virtual void ConstructProcess();
+
+private:
+  //void TurnAngularOffInIonisation(G4VEnergyLossProcess* process) const;
 };
 #endif

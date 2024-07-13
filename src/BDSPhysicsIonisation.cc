@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4AutoDelete.hh"
 #include "G4eIonisation.hh"
 #include "G4Electron.hh"
+#include "G4EmParameters.hh"
 #include "G4GenericIon.hh"
 #include "G4hIonisation.hh"
 #include "G4ionIonisation.hh"
@@ -36,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PionPlus.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
+#include "G4VEnergyLossProcess.hh"
 
 
 BDSPhysicsIonisation::BDSPhysicsIonisation():
@@ -67,20 +69,28 @@ void BDSPhysicsIonisation::ConstructProcess()
 
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
 
+  //G4EmParameters::Instance()->ActivateAngularGeneratorForIonisation(false);
+
   // e+-
   auto eIonisation = new G4eIonisation();
+  //G4cout << eIonisation << G4endl;
+  //TurnAngularOffInIonisation(eIonisation);
   G4AutoDelete::Register(eIonisation);
   ph->RegisterProcess(eIonisation, G4Electron::Electron());
   ph->RegisterProcess(eIonisation, G4Positron::Positron());
 
   // mu+-
   auto muIonisation = new G4MuIonisation();
+  //G4cout << muIonisation << G4endl;
+  //TurnAngularOffInIonisation(muIonisation);
   G4AutoDelete::Register(muIonisation);
   ph->RegisterProcess(muIonisation, G4MuonPlus::MuonPlus());
   ph->RegisterProcess(muIonisation, G4MuonMinus::MuonMinus());
 
   // p pbar, pi+-, k+-
   auto hIonisation = new G4hIonisation();
+  //G4cout << hIonisation << G4endl;
+  //TurnAngularOffInIonisation(hIonisation);
   G4AutoDelete::Register(hIonisation);
   ph->RegisterProcess(hIonisation, G4Proton::Proton());
   ph->RegisterProcess(hIonisation, G4AntiProton::AntiProton());
@@ -92,8 +102,21 @@ void BDSPhysicsIonisation::ConstructProcess()
   // ions
   G4GenericIon::GenericIon();
   auto ionIonisation = new G4ionIonisation();
+  //G4cout << ionIonisation << G4endl;
+  //TurnAngularOffInIonisation(ionIonisation);
   G4AutoDelete::Register(ionIonisation);
   ph->RegisterProcess(ionIonisation, G4GenericIon::GenericIon());
 
   SetActivated();
 }
+
+/*
+void BDSPhysicsIonisation::TurnAngularOffInIonisation(G4VEnergyLossProcess* process) const
+{
+  for (size_t index = 0; index < process->NumberOfModels(); index++)
+    {
+      auto model = process->GetModelByIndex(index);
+      model->SetAngularGeneratorFlag(false);
+    }
+}
+*/
