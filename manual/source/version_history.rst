@@ -22,6 +22,9 @@ New Features
 General Updates
 ---------------
 
+* The time coordinate is now loaded and applied to each particle when loading a bdsim output
+  sampler as a distribution.
+
 Bug Fixes
 ---------
 
