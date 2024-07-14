@@ -1895,6 +1895,8 @@ Examples: ::
 +------------------------------+------------------------------------------------------------------------+
 | ion_php (`*`)                | `G4IonPhysicsPHP`. Available from Geant4.10.3 onwards.                 |
 +------------------------------+------------------------------------------------------------------------+
+| ionisation                   | Only ionisation for e+-, p, pbar, pi+-, K+-, mu+-, generic ion.        |
++------------------------------+------------------------------------------------------------------------+
 | lw                           | Laserwire photon producing process as if the laserwire had scattered   |
 |                              | photons from the beam. Not actively developed, but will register       |
 |                              | process.                                                               |
@@ -3028,6 +3030,9 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | of the beam pipe are killed and the energy recorded as|
 |                                  | being deposited there.                                |
 +----------------------------------+-------------------------------------------------------+
+| cavityFieldType                  | Default cavity field type ('constantinz', 'pillbox')  |
+|                                  | to use for all rf elements unless otherwise specified.|
++----------------------------------+-------------------------------------------------------+
 | collimatorsAreInfiniteAbsorbers  | When turned on, all particles that enter the material |
 |                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
 |                                  | killed and the energy recorded as deposited there.    |
@@ -3113,6 +3118,16 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 | tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
 |                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
+
+
++-------------------------------------+-------------------------------------------------------+
+| **Option**                          | **Function**                                          |
++=====================================+=======================================================+
+| integrateKineticEnergyAlongBeamline | Integrate changes to the nominal beam energy along    |
+|                                     | the beamline such as from accelerator and adjust      |
+|                                     | the design rigidity for normalised fields             |
+|                                     | accordingly.                                          |
++-------------------------------------+-------------------------------------------------------+
 
 .. _physics-process-options:
 
