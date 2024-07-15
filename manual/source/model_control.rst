@@ -3956,7 +3956,7 @@ Output at a Surface - Samplers
 
 BDSIM provides a 'sampler' as a means to record the particle distribution at a
 point in the model as defined by a plane, the surface of a cylinder, or the
-surface of a sphere.
+surface of a sphere. Data is recorded in the frame of the sampler.
 
 * A **sampler** records the kinematic variables of a single particle passing through a surface
 * **Scoring** refers to the accumulation of a quantity (e.g. dose) for a volume (see :ref:`scoring`)
@@ -3979,40 +3979,7 @@ The plane sampler is practically defined in the Geant4 model built by BDSIM as a
 
 Samplers are built in a parallel world and are normally invisible. They can 'overlap'
 existing geometry but we should avoid having faces of shapes coincident as this may
-affect tracking ('coplanar' faces).
-
-.. _sampler-coordinate-systems:
-
-Sampler Coordinate Systems
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**plane**
-
-* `x`, `y`, `z`
-
-
-**cylindrical**
-
-* `z`, `r`, :math:`\phi`
-* :math:`\phi` : :math:`[0 \to 2\pi]`
-
-
-**spherical**
-
-* `r`, :math:`\theta`, :math:`\phi`
-* :math:`\theta` : polar angle :math:`[0 \to \pi]`
-* :math:`\phi` : azimuthal angle :math:`[0 \to 2\pi]`
-
-
-Generally:
-
-* In cylindrical coordinates `z` and `phi` are recorded as well as `rp`, `zp` and `phip`.
-* `r` is not recorded for either cylindrical or spherical coordinates because it is the
-  same for every hit. This information is recorded in the Model part of the output with
-  the sampler name as it is a constant.
-* Positive `z` is along the direction of the beam by default.
-* For cylindrical coordinates, `phi` = 0 corresponds to a point at positive
-  :math:`x = r, y = 0` and increases clockwise looking along the direction of the beam.
+affect tracking ('co-planar' faces).
 
 
 .. _sampler-syntax:
@@ -4174,6 +4141,7 @@ visualise them, the following command should be used in the visualiser::
 
 The samplers will appear in semi-transparent green, as well as the curvilinear geometry used
 for coordinate transforms (cylinders).
+
 
 .. _user-sampler-placement:
 
@@ -4544,6 +4512,45 @@ e.g. ::
   is one proton fired per-event, then the quantity for deposited dose is J / kg / proton.
 * Examples can be found in :code:`bdsim/examples/features/scoring`.
 
+
+.. _sampler-coordinate-systems:
+
+Sampler Coordinate Systems
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Each sampler type records different variables depending on its geometry. The hits recorded
+are always in the frame of that sampler object. The coordinates for each shape are as follows:
+
+**plane**
+
+* `x`, `y`, `z`
+
+
+**cylindrical**
+
+* `z`, `r`, :math:`\phi`
+* :math:`\phi` : :math:`[0 \to 2\pi]`
+
+
+**spherical**
+
+* `r`, :math:`\theta`, :math:`\phi`
+* :math:`\theta` : polar angle :math:`[0 \to \pi]`
+* :math:`\phi` : azimuthal angle :math:`[0 \to 2\pi]`
+
+
+Generally:
+
+* In cylindrical coordinates `z` and `phi` are recorded as well as `rp`, `zp` and `phip`.
+* `r` is not recorded for either cylindrical or spherical coordinates because it is the
+  same for every hit. This information is recorded in the Model part of the output with
+  the sampler name as it is a constant.
+* Positive `z` is along the direction of the beam by default.
+* For cylindrical coordinates, `phi` = 0 corresponds to a point at positive
+  :math:`x = r, y = 0` and increases clockwise looking along the direction of the beam.
+
+
+  
 .. _scorer:
   
 Scorer
