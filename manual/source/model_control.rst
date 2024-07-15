@@ -3969,8 +3969,9 @@ Samplers may have the following forms:
 
 The plane is the most commonly used and can be 'attached' to an already defined beam line
 element and records all the particles passing through a plane at the **exit** face of
-that element. The cylinder can be attached to a beam line element also. A spherer sampler
-can only be placed through a samplerplacement.
+that element. The cylinder can be attached to a beam line element also.
+
+A spherical sampler can only be placed through a samplerplacement.
 
 A sampler will record **any particles** passing through that plane in **any direction**.
 The plane sampler is practically defined in the Geant4 model built by BDSIM as a box
@@ -4211,7 +4212,7 @@ Types and Shapes
 
 * The default is a plane sampler.
 
-The following types (exact name to be used in the :code:`type` parameter) of sampler can be used:
+The following types (exact name to be used in the :code:`samplerType` parameter) of sampler can be used:
 
 +--------------------+------------------------------------------------------------------+
 | **samplerType**    | **Description**                                                  |
@@ -4501,7 +4502,7 @@ geometry in the model. Although in a parallel world, the steps of a particle thr
 are limited by the boundary of the mesh. This means that no step covers more than one cell or
 bin in the mesh and therefore there's no ambiguity over proportioning some quantity (like
 energy deposition) in one step or another. The figure below shows the regular "mass world"
-view of a quadrupole, and also a wireframe view of the same quadrupole with the normally invisible
+view of a quadrupole, and also a wire-frame view of the same quadrupole with the normally invisible
 scoring mesh in a parallel world.
 
 .. figure:: figures/scoring-mass-world.png
@@ -4515,7 +4516,7 @@ scoring mesh in a parallel world.
 	    :width: 50%
 	    :align: center
 
-	    Wireframe view of the same quadrupole but with a scoring mesh visualised (grey).
+	    Wire-frame view of the same quadrupole but with a scoring mesh visualised (grey).
 
 Conceptually creating a scoring mesh is split into two key definitions in the input:
 
