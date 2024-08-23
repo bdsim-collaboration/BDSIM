@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimatorJaw.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSColours.hh"
+#include "BDSColourFromMaterial.hh"
 #include "BDSComponentFactoryUser.hh"
 #ifdef USE_DICOM
 #include "BDSCT.hh"
@@ -1438,16 +1439,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
   G4String apertureType = G4String(element->apertureType);
   if (apertureType == "circular")
     {circularOuter = true;}
+  auto material = PrepareMaterial(element);
   return new BDSCollimatorRectangular(elementName,
 				      element->l*CLHEP::m,
 				      PrepareHorizontalWidth(element),
-				      PrepareMaterial(element),
+				      material,
 				      PrepareVacuumMaterial(element),
 				      element->xsize*CLHEP::m,
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
 				      element->ysizeOut*CLHEP::m,
-				      PrepareColour(element),
+				      PrepareColour(element, material),
 				      circularOuter);
 }
 
@@ -1459,11 +1461,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTarget()
   G4String apertureType = G4String(element->apertureType);
   if (apertureType == "circular")
     {circularOuter = true;}
+  auto material = PrepareMaterial(element);
   return new BDSTarget(elementName,
 		       element->l*CLHEP::m,
 		       PrepareHorizontalWidth(element),
-		       PrepareMaterial(element),
-		       PrepareColour(element),
+		       material,
+		       PrepareColour(element, material),
 		       circularOuter);
 }
 
@@ -1476,16 +1479,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
   G4String apertureType = G4String(element->apertureType);
   if (apertureType == "circular")
     {circularOuter = true;}
+  auto material = PrepareMaterial(element);
   return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
 				     PrepareHorizontalWidth(element),
-				     PrepareMaterial(element),
+				     material,
 				     PrepareVacuumMaterial(element),
 				     element->xsize*CLHEP::m,
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
 				     element->ysizeOut*CLHEP::m,
-				     PrepareColour(element),
+				     PrepareColour(element, material),
 				     circularOuter);
 }
 
@@ -1493,7 +1497,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
 {
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
-  
+  auto material = PrepareMaterial(element);
   return new BDSCollimatorJaw(elementName,
 			      element->l*CLHEP::m,
 			      PrepareHorizontalWidth(element),
@@ -1505,9 +1509,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
                               element->jawTiltRight*CLHEP::rad,
 			      true,
 			      true,
-			      PrepareMaterial(element),
+			      material,
 			      PrepareVacuumMaterial(element),
-			      PrepareColour(element));
+			      PrepareColour(element, material));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
@@ -1601,7 +1605,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
   auto bpi = PrepareBeamPipeInfo(element);
   G4double baseWidth = bpi->aper1;
   delete bpi;
-
+  auto material = PrepareMaterial(element);
   return (new BDSDegrader(elementName,
 			  element->l*CLHEP::m,
 			  PrepareHorizontalWidth(element),
@@ -1610,9 +1614,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
 			  baseWidth,
-			  PrepareMaterial(element),
+			  material,
 			  PrepareVacuumMaterial(element),
-			  PrepareColour(element)));
+			  PrepareColour(element, material)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
@@ -2782,10 +2786,12 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const*    
   return st;
 }
 
-G4Colour* BDSComponentFactory::PrepareColour(Element const* el)
+G4Colour* BDSComponentFactory::PrepareColour(Element const* el, const G4Material* material)
 {
   G4String colour = el->colour;
-  if (colour.empty())
+  if (material && el->autoColour)
+    {return BDSColourFromMaterial::Instance()->GetColour(material);}
+  else if (colour.empty())
     {return BDSColours::Instance()->GetColour(GMAD::typestr(el->type));}
   else
     {return BDSColours::Instance()->GetColour(colour);}

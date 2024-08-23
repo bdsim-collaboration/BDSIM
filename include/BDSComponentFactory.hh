@@ -177,7 +177,9 @@ public:
 						    G4double       defaultCoilHeightFraction = -1);
 
   /// Checks if colour is specified for element, else uses the default for that element type.
-  static G4Colour* PrepareColour(GMAD::Element const* element);
+  /// If the optional material is given and also element->autoColour is true then the material
+  /// colouring is used.
+  static G4Colour* PrepareColour(GMAD::Element const* element, const G4Material* material = nullptr);
 
   /// Checks if a material is named in Element::material, else uses the supplied default.
   static G4Material* PrepareMaterial(GMAD::Element const* element,
