@@ -31,6 +31,12 @@ New Features
   elements.
 * The "rfcavity" field is now "rfpillbox".
 
+
+**General**
+
+* :code:`autoColour=1` now works for all collimators and target elements. If turned on, the
+  colour of the element in the visualiser will be given by the material.
+
 **Physics**
 
 * New :code:`ionisation` modular physics list for only the ionisation process for the most
