@@ -1,18 +1,25 @@
-c1: rcol, l=3*m, material="water";
+c1: rcol, l=1*m, material="water", horizontalWidth=1*m, autoColour=1;
 l1: line=(c1);
 use, l1;
 
 beam, particle="proton",
-      kineticEnergy=10*GeV,
-      distrType="userfile",
-      distrFileFormat="pdgid",
-      distrFile="particles.dat";
+      kineticEnergy=500*MeV,
+      distrType="sphere",
+      Z0=0.5*m;
 
 option, physicsList="g4FTFP_BERT",
-	minimumKineticEnergy=0.1*GeV,
 	worldMaterial="vacuum";
 
-option, seed=123;
+option, defaultRangeCut=1*cm;
+!	minimumKineticEnergy=1*MeV,
+
+option, seed=123,
+        ngenerate=100;
 
 option, storeSamplerKineticEnergy=1;
 option, storeMinimalData=1;
+
+
+csample, range=c1;
+
+s1: samplerplacement, samplerType="sphereforward", aper1=20*cm, referenceElement="c1";
