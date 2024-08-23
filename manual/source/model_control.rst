@@ -4315,11 +4315,11 @@ This only responds to `sweepAnglePhi` and it spread out symmetrically from the f
 
 Examples: ::
 
-  s6: samplerplacement, samplerType="sphere", aper1=20*cm, aper2=2*m;
-  s7: samplerplacement, samplerType="sphere", aper1=20*cm, aper2=2*m,
+  s6: samplerplacement, samplerType="sphere", aper1=20*cm;
+  s7: samplerplacement, samplerType="sphere", aper1=20*cm,
                         startAnglePhi=-pi/6, sweepAnglePhi=pi/3,
-			startAngleTheta=pi/2-pi/6, sweepAngleTheta=pi/3;
-  s8: samplerplacement, samplerType="sphereforward", aper1=20*cm, aper2=2*m,
+			            startAngleTheta=pi/2-pi/6, sweepAngleTheta=pi/3;
+  s8: samplerplacement, samplerType="sphereforward", aper1=20*cm,
                         sweepAnglePhi=pi/3, sweepAngleTheta=pi/6;
 
 * More examples can be found in :code:`bdsim/examples/features/sampler/*gmad`.
