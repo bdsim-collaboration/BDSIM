@@ -128,8 +128,8 @@ void DataLoader::BuildInputFileList(std::string inputPath)
   if (inputPath.find('*') != std::string::npos)
     {
       glob_t glob_result;
-      glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
-      for(unsigned int i=0;i<glob_result.gl_pathc;++i)
+      glob(inputPath.c_str(), GLOB_TILDE, nullptr, &glob_result);
+      for(unsigned int i = 0; i < glob_result.gl_pathc; ++i)
         {fileNamesTemp.emplace_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
     }
@@ -143,8 +143,8 @@ void DataLoader::BuildInputFileList(std::string inputPath)
       inputPath.append("/*.root");
       
       glob_t glob_result;
-      glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
-      for (unsigned int i=0; i<glob_result.gl_pathc; ++i)
+      glob(inputPath.c_str(), GLOB_TILDE, nullptr, &glob_result);
+      for (unsigned int i = 0; i < glob_result.gl_pathc; ++i)
         {fileNamesTemp.emplace_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
     }
@@ -190,7 +190,7 @@ void DataLoader::BuildTreeNameList()
   f->Close();
   delete f;
 
-  if(debug)
+  if (debug)
     {
       for (const auto& tr : treeNames)
         {std::cout << "DataLoader::BuildTreeNameList> " <<  tr << std::endl;}
@@ -201,7 +201,7 @@ void DataLoader::BuildEventBranchNameList()
 {
   TFile* f = new TFile(fileNames[0].c_str());
   if (f->IsZombie())
-    {throw RBDSException(__METHOD_NAME__,"No such file \"" + fileNames[0] + "\"");}
+    {throw RBDSException(__METHOD_NAME__, "No such file \"" + fileNames[0] + "\"");}
   
   TTree* mt = (TTree*)f->Get("Model");
   if (!mt)
