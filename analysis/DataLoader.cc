@@ -212,35 +212,60 @@ void DataLoader::BuildEventBranchNameList()
     }
   
   if (mt->GetEntries() == 0)
-    {
+    {// no model tree was stored, so we don't know which branches are which type of smaplers
+      // alternatively, inspect the branches of the event tree and get their class names.
+      TTree* et = (TTree*)f->Get("Event");
+      if (!et)
+        {
+          f->Close();
+          delete f;
+          throw RBDSException(__METHOD_NAME__, "No Event tree in file - likely a corrupted file.");
+        }
+      const std::set<std::string> samplerClasses = {"BDSOutputROOTEventSampler", "BDSOutputROOTEventSamplerC", "BDSOutputROOTEventSamplerS"};
+      std::map<std::string, std::vector<std::string>*> vectors = {
+        {"BDSOutputROOTEventSampler", &allSamplerNames},
+        {"BDSOutputROOTEventSamplerC", &allCSamplerNames},
+        {"BDSOutputROOTEventSamplerS", &allSSamplerNames},
+      };
+      TObjArray* branches = et->GetListOfBranches();
+      for (auto branch : *branches)
+        {
+          TBranch* b = (TBranch*)branch;
+          std::string branchClassName = std::string(b->GetClassName());
+          if (samplerClasses.count(branchClassName) != 0)
+            {vectors[branchClassName]->push_back(std::string(b->GetName()));}
+          else if (branchClassName == "BDSOutputROOTEventCollimator")
+            {collimatorNames.push_back(std::string(b->GetName()));}
+        }
       f->Close();
       delete f;
-      return;
+    }
+  else
+    {
+      Model* modTemporary = new Model(false, dataVersion);
+      modTemporary->SetBranchAddress(mt);
+      mt->GetEntry(0);
+      allSamplerNames = modTemporary->SamplerNames();
+      allCSamplerNames = modTemporary->SamplerCNames();
+      allSSamplerNames = modTemporary->SamplerSNames();
+      // collimator names was only added in data version 4 - can leave as empty vector
+      if (dataVersion > 3)
+        {collimatorNames = modTemporary->CollimatorNames();}
+      f->Close();
+      delete f;
+      delete modTemporary;
     }
 
-  Model* modTemporary = new Model(false, dataVersion);
-  modTemporary->SetBranchAddress(mt);
-  mt->GetEntry(0);
-  allSamplerNames = modTemporary->SamplerNames();
-  allCSamplerNames = modTemporary->SamplerCNames();
-  allSSamplerNames = modTemporary->SamplerSNames();
   allSamplerCNamesSet.insert(allCSamplerNames.begin(), allCSamplerNames.end());
   allSamplerCAndSNames.insert(allCSamplerNames.begin(), allCSamplerNames.end());
   allSamplerSNamesSet.insert(allSSamplerNames.begin(), allSSamplerNames.end());
   allSamplerCAndSNames.insert(allSSamplerNames.begin(), allSSamplerNames.end());
   if (processSamplers)
-    { // copy sampler names out
+    { // copy all sampler names to vector of samplers to analyse specifically
       samplerNames = allSamplerNames;
       samplerCNames = allCSamplerNames;
       samplerSNames = allSSamplerNames;
     }
-  // collimator names was only added in data version 4 - can leave as empty vector
-  if (dataVersion > 3)
-    {collimatorNames = modTemporary->CollimatorNames();}
-  
-  f->Close();
-  delete f;
-  delete modTemporary;
 
   if (debug)
     {
