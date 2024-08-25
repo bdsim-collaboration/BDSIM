@@ -10,7 +10,7 @@ beam, particle="proton",
 option, physicsList="g4FTFP_BERT",
 	worldMaterial="vacuum";
 
-option, defaultRangeCut=1*cm;
+option, defaultRangeCut=0.5*cm;
 !	minimumKineticEnergy=1*MeV,
 
 option, seed=123,
