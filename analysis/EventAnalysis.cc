@@ -387,11 +387,11 @@ void EventAnalysis::PreparePerEntryHistogramSets()
     {
       auto setDefinitions  = c->EventHistogramSetDefinitionsPerEntry();
       for (const auto& def : setDefinitions)
-        {perEntryHistogramSets.push_back(_ConstructPerEntryHistogramSet(def, event, chain));}
+        {perEntryHistogramSets.push_back(ConstructPerEntryHistogramSet(def, event, chain));}
     }
 }
 
-PerEntryHistogramSet* EventAnalysis::_ConstructPerEntryHistogramSet(const HistogramDefSet* definitionIn,
+PerEntryHistogramSet* EventAnalysis::ConstructPerEntryHistogramSet(const HistogramDefSet* definitionIn,
                                                                    Event*                 eventIn,
                                                                    TChain*                chainIn) const
 {

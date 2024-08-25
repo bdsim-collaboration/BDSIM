@@ -101,11 +101,11 @@ private:
   void ProcessSamplers(bool firstTime = false);
 
   /// The data is different for different sampler types and therefore we must
-  /// specialise the PerEnetryHistogramSet. This delagator function constructs
+  /// specialise the PerEntryHistogramSet. This delegator function constructs
   /// the right one.
-  PerEntryHistogramSet* _ConstructPerEntryHistogramSet(const HistogramDefSet* definitionIn,
-                                                       Event*                 eventIn,
-                                                       TChain*                chainIn) const;
+  PerEntryHistogramSet* ConstructPerEntryHistogramSet(const HistogramDefSet* definitionIn,
+                                                      Event*                 eventIn,
+                                                      TChain*                chainIn) const;
 
   bool printOut;          ///< Whether to print out at all per-event.
   int  printModulo;       ///< Cache of print modulo fraction
