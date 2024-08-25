@@ -117,10 +117,6 @@ public:
   /// Access the map of all branches to be activated per tree.
   inline const RBDS::BranchMap& BranchesToBeActivated() const {return branches;}
 
-  /// Boolean whether all branches should be turned on irrespective of map of
-  /// individual branches to turn on.
-  inline bool AllBranchesToBeActivated() const {return allBranchesActivated;}
-
   /// Set a branch to be activated if not already.
   void SetBranchToBeActivated(const std::string& treeName, const std::string& branchName);
 
@@ -128,6 +124,7 @@ public:
   inline std::string InputFilePath() const             {return optionsString.at("inputfilepath");}
   inline std::string OutputFileName() const            {return optionsString.at("outputfilename");}
   inline std::string CalculateOpticalFunctionsFileName() const {return optionsString.at("opticslfilename");}
+  inline bool   AllBranchesToBeActivated() const  {return optionsBool.at("allbranchesactivated");}
   inline bool   Debug() const                     {return optionsBool.at("debug");}
   inline bool   CalculateOpticalFunctions() const {return optionsBool.at("calculateoptics");}
   inline bool   EmittanceOnTheFly() const         {return optionsBool.at("emittanceonthefly");}
@@ -261,9 +258,6 @@ public:
 
   /// Cache of which branches need to be activated for this analysis.
   RBDS::BranchMap branches;
-
-  /// Whether all branches will be activated - ie for optics.
-  bool allBranchesActivated;
 
   /// Cache of all spectra names declared to permit unique naming of histograms
   /// when there's more than one spectra per branch used.

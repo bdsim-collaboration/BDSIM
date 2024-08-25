@@ -49,8 +49,7 @@ std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Ru
 
 Config::Config(const std::string& inputFilePathIn,
                const std::string& outputFileNameIn,
-               const std::string& defaultOutputFileSuffix):
-  allBranchesActivated(false)
+               const std::string& defaultOutputFileSuffix)
 {
   InitialiseOptions("");
   
@@ -75,8 +74,7 @@ Config::Config(const std::string& inputFilePathIn,
 Config::Config(const std::string& fileNameIn,
                const std::string& inputFilePathIn,
                const std::string& outputFileNameIn,
-               const std::string& defaultOutputFileSuffix):
-  allBranchesActivated(false)
+               const std::string& defaultOutputFileSuffix)
 {
   InitialiseOptions(fileNameIn);
   ParseInputFile();
@@ -118,7 +116,8 @@ void Config::InitialiseOptions(const std::string& analysisFile)
   // for backwards compatibility / verbose names
   alternateKeys["calculateopticalfunctions"]         = "calculateoptics";
   alternateKeys["calculateopticalfunctionsfilename"] = "opticsfilename";
-  
+
+  optionsBool["allbranchesactivated"] = false;
   optionsBool["debug"]             = false;
   optionsBool["calculateoptics"]   = false;
   optionsBool["emittanceonthefly"] = false;
@@ -226,7 +225,7 @@ void Config::ParseInputFile()
   // set flags etc based on what options have been set
   if (optionsBool.at("calculateoptics"))
     {
-      allBranchesActivated = true;
+      optionsBool["allbranchesactivated"] = true;
       optionsBool["processsamplers"] = true;
       optionsBool["perentryevent"]   = true;
     }
