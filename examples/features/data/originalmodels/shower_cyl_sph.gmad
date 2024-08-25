@@ -16,8 +16,9 @@ option, defaultRangeCut=0.5*cm;
 option, seed=123,
         ngenerate=100;
 
-option, storeSamplerKineticEnergy=1;
-option, storeMinimalData=1;
+option, storeSamplerKineticEnergy=1,
+        storeSamplerRigidity=1,
+        storeMinimalData=1;
 
 
 csample, range=c1;
