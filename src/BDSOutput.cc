@@ -589,44 +589,49 @@ void BDSOutput::CreateHistograms()
       for (const auto& nameDef : scorerHistogramDefs)
         {
           const auto def = nameDef.second;
-
-      // use safe output name without any slashes in the name
-      G4int histID = -1;
+          // use safe output name without any slashes in the name
+          G4int histID = -1;
 
           if (def.nBinsE <=1)
             {
-
-          if (def.geometryType == "box"){
-              histID = Create3DHistogram(def.outputName, def.outputName,
-                                         def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
-                                         def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
-                                         def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);}
-          else if (def.geometryType == "cylindrical"){
-              histID = Create3DHistogram(def.outputName, def.outputName,
-                                         def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
-                                         def.nBinsPhi, 0, 2*M_PI,
-                                         def.nBinsR, def.rLow/CLHEP::m, def.rHigh/CLHEP::m);}
-
+              if (def.geometryType == "box")
+                {
+                  histID = Create3DHistogram(def.outputName, def.outputName,
+                                             def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
+                                             def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
+                                             def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);
+                }
+              else if (def.geometryType == "cylindrical")
+                {
+                  histID = Create3DHistogram(def.outputName, def.outputName,
+                                             def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
+                                             def.nBinsPhi, 0, CLHEP::twopi,
+                                             def.nBinsR, def.rLow/CLHEP::m, def.rHigh/CLHEP::m);
+                }
+              
               histIndices3D[def.uniqueName] = histID;
               histIndexToUnits3D[histID] = def.primitiveScorerUnitValue;
               // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
             }
           else
             {
-
-          if (def.geometryType == "box"){
-                histID = Create4DHistogram(def.outputName+"-"+def.eScale,def.outputName,def.eScale,def.eBinsEdges,
-                                           def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
-                                           def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
-                                           def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
-                                           def.nBinsE, def.eLow/CLHEP::GeV, def.eHigh/CLHEP::GeV);}
-          else if (def.geometryType == "cylindrical"){
-                histID = Create4DHistogram(def.outputName+"-"+def.eScale, def.outputName, def.eScale,def.eBinsEdges,
-                                           def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
-                                           def.nBinsPhi, 0, 2*M_PI,
-                                           def.nBinsR, def.rLow/CLHEP::m, def.rHigh/CLHEP::m,
-                                           def.nBinsE, def.eLow/CLHEP::GeV, def.eHigh/CLHEP::GeV);}
-
+              if (def.geometryType == "box")
+                {
+                  histID = Create4DHistogram(def.outputName+"-"+def.eScale,def.outputName,def.eScale,def.eBinsEdges,
+                                             def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
+                                             def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
+                                             def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
+                                             def.nBinsE, def.eLow/CLHEP::GeV, def.eHigh/CLHEP::GeV);
+                }
+              else if (def.geometryType == "cylindrical")
+                {
+                  histID = Create4DHistogram(def.outputName+"-"+def.eScale, def.outputName, def.eScale,def.eBinsEdges,
+                                             def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
+                                             def.nBinsPhi, 0, CLHEP::twopi,
+                                             def.nBinsR, def.rLow/CLHEP::m, def.rHigh/CLHEP::m,
+                                             def.nBinsE, def.eLow/CLHEP::GeV, def.eHigh/CLHEP::GeV);
+                }
+              
               histIndices4D[def.uniqueName] = histID;
               histIndexToUnits4D[histID] = def.primitiveScorerUnitValue;
             }
