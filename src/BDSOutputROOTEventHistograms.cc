@@ -104,17 +104,11 @@ G4int BDSOutputROOTEventHistograms::Create1DHistogram(G4String name, G4String ti
   return (G4int)histograms1D.size() - 1;
 }
 
-G4int BDSOutputROOTEventHistograms::Create1DHistogram(G4String name, G4String title,
+G4int BDSOutputROOTEventHistograms::Create1DHistogram(G4String name,
+                                                      G4String title,
                                                       std::vector<double>& edges)
 {
-
-  Double_t* edgesD = new Double_t[edges.size()];
-  for (int i=0;i<(int)edges.size();++i)
-    {edgesD[i] = edges[i];}
-  
-  histograms1D.push_back(new TH1D(name,title,(Int_t)edges.size()-1,edgesD));
-  delete[] edgesD;
-
+  histograms1D.push_back(new TH1D(name, title, (Int_t)edges.size()-1, edges.data()));
   return (G4int)histograms1D.size() - 1;
 }
 
@@ -130,18 +124,9 @@ G4int BDSOutputROOTEventHistograms::Create2DHistogram(G4String name, G4String ti
                                                       std::vector<double>& xedges,
                                                       std::vector<double>& yedges)
 {
-  Double_t* xedgesD = new Double_t[xedges.size()];
-  for (int i=0;i<(int)xedges.size();++i)
-    {xedgesD[i] = xedges[i];}
-
-  Double_t* yedgesD = new Double_t[yedges.size()];
-  for (int i=0;i<(int)yedges.size();++i)
-    {yedgesD[i] = yedges[i];}
-
-  histograms2D.push_back(new TH2D(name.data(),title.data(), (Int_t)xedges.size()-1, xedgesD, (Int_t)yedges.size()-1, yedgesD));
-  delete[] xedgesD;
-  delete[] yedgesD;
-
+  histograms2D.push_back(new TH2D(name.data(),title.data(),
+                                  (Int_t)xedges.size()-1, xedges.data(),
+                                  (Int_t)yedges.size()-1, yedges.data()));
   return (G4int)histograms2D.size() - 1;
 }
 
@@ -162,22 +147,10 @@ G4int BDSOutputROOTEventHistograms::Create3DHistogram(G4String name, G4String ti
                                                       std::vector<double>& yedges,
                                                       std::vector<double>& zedges)
 {
-  Double_t* xedgesD = new Double_t[xedges.size()];
-  for (int i=0;i<(int)xedges.size();++i)
-    {xedgesD[i] = xedges[i];}
-
-  Double_t* yedgesD = new Double_t[yedges.size()];
-  for (int i=0;i<(int)yedges.size();++i)
-    {yedgesD[i] = yedges[i];}
-
-  Double_t* zedgesD = new Double_t[zedges.size()];
-  for (int i=0;i<(int)zedges.size();++i)
-    {zedgesD[i] = zedges[i];}
-  
   histograms3D.push_back(new TH3D(name.data(),title.data(),
-                                  (Int_t)xedges.size()-1, xedgesD,
-                                  (Int_t)yedges.size()-1, yedgesD,
-                                  (Int_t)zedges.size()-1, zedgesD));
+                                  (Int_t)xedges.size()-1, xedges.data(),
+                                  (Int_t)yedges.size()-1, yedges.data(),
+                                  (Int_t)zedges.size()-1, zedges.data()));
   return (G4int)histograms3D.size() - 1;
 }
 
