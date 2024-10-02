@@ -4,13 +4,406 @@ Planned Development
 Below is a brief list of planned developments for the next version. Please get in touch
 if you'd like to give us feedback or help in the development.  See :ref:`support-section`.
 
+* Multiple beam line tracking.
+* Restructure code into proper C++ libraries rather than just analysis and 'bdsim'.
 * Change run histograms to be per-event averages rather than simple histograms.
 * Interpolated aperture shapes between any two shapes.
 * Tapered aperture for all elements.
 * Beam pipe sections to fill gaps between changes in aperture.
 * Any aperture shape can be used for both the inside and the outside of a collimator.
-* Restructure code into proper C++ libraries rather than just analysis and 'bdsim'.
-* Multiple beam line tracking.
+
+v1.8.0 - 2024 / XX / XX
+=======================
+
+* For models with acceleration, the rigidity and synchronous time are now calculated
+  along the beamline and pre-calculated **scaling factors are no longer needed**.
+
+
+New Features
+------------
+
+**Fields**
+
+* The `rf` beamline element now has the parameter :code:`cavityFieldType` to specify which
+  field model to use rather than specifying :code:`fieldVacuum` and a corresponding field
+  definition.
+* The option :code:`cavityFieldType` may be used to set the default field model for all `rf`
+  elements.
+* The "rfcavity" field is now "rfpillbox".
+
+
+**General**
+
+* :code:`autoColour=1` now works for all collimators and target elements. If turned on, the
+  colour of the element in the visualiser will be given by the material.
+
+**Physics**
+
+* New :code:`ionisation` modular physics list for only the ionisation process for the most
+  common particles.
+
+
+
+New Options
+-----------
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+
++-------------------------------------+-------------------------------------------------------+
+| **Option**                          | **Function**                                          |
++=====================================+=======================================================+
+| cavityFieldType                     | Default cavity field type ('constantinz', 'pillbox')  |
+|                                     | to use for all rf elements unless otherwise specified.|
++-------------------------------------+-------------------------------------------------------+
+| integrateKineticEnergyAlongBeamline | Integrate changes to the nominal beam energy along    |
+|                                     | the beamline such as from accelerator and adjust      |
+|                                     | the design rigidity for normalised fields             |
+|                                     | accordingly.                                          |
++-------------------------------------+-------------------------------------------------------+
+
+General Updates
+---------------
+
+* The interface for custom components has changed due to the new beamline integral class and object.
+  The example has been updated accordingly.
+* Internally, beamline elements are now cached based on both their name (basic reuse of components)
+  but also the nominal rigidity at that point in the beamline. This is because if, say, a quadrupole
+  is used later in the beamline after acceleration with the same `k1`, the actual field gradient
+  is different and so the component must be uniquely constructed to have a different field.
+* The time coordinate is now loaded and applied to each particle when loading a bdsim output
+  sampler as a distribution.
+
+Bug Fixes
+---------
+
+* Fix rebdsim's Spectra command preparing the wrong variables when used on a cylindrical
+  or spherical sampler where the variable is "totalEnergy" and not "energy".
+* Fix a bug where rebdsim would crash if a Spectra command was used on a cylindrical or
+  spherical sampler. This was caused by loading the data into the wrong class.
+* The pill-box field was fixed where it should have no `z` dependence whereas it did previously.
+
+
+Output Changes
+--------------
+
+* The synchronous time at the middle of an element (:code:`midT`); the momentum at the
+  beginning of an element (:code:`staP`); and the kinetic energy at the beginning of
+  an element (:code:`staEk`) have all been added to the model tree in the output as
+  calculated by BDSIM as it now integrates the time and acceleration / decceleration
+  along the beamline.
+
+
+Output Class Versions
+---------------------
+
+* Data Version 10.
+
++-----------------------------------+-------------+-----------------+-----------------+
+| **Class**                         | **Changed** | **Old Version** | **New Version** |
++===================================+=============+=================+=================+
+| BDSOutputROOTEventAperture        | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventBeam            | N           | 6               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCavityInfo      | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimator      | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimatorInfo  | N           | 2               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCoords          | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHeader          | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHistograms      | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventInfo            | N           | 7               | 7               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLoss            | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventModel           | Y           | 6               | 7               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventOptions         | N           | 8               | 8               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventRunInfo         | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSampler         | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSamplerC        | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSamplerS        | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectory      | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectoryPoint | N           | 6               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTParticleData         | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+
+
+Utilities
+---------
+
+These are no longer included directly with BDSIM but are available through pip. At the time
+of writing, the corresponding versions of each utility are:
+
+* pybdsim v3.3.2
+* pymadx v2.0.1
+* pymad8 v2.0.1
+* pytransport v2.0.1
+
+  
+V1.7.7 - 2024 / 01 / 29
+=======================
+
+Reminder: the Python utilities (pybdsim, pymadx, pymad8, pytransport) are published and
+updated through pip and are not distributioned with BDSIM itself.
+
+New Features
+------------
+
+* Introduced X-ray reflection from Geant4 11.2 onwards.
+
+**New beam command options:**
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+
++-------------------------------------+------------------------------------------------------+
+| **Option**                          | **Function**                                         |
++=====================================+======================================================+
+| eventGeneratorWarnSkippedParticles  | 1 (true) by default. Print a small warning for each  |
+|                                     | event if any particles loaded were skipped or there  |
+|                                     | were none suitable at all and the event was skipped. |
++-------------------------------------+------------------------------------------------------+
+
+**New options:**
+
+.. tabularcolumns:: |p{0.30\textwidth}|p{0.70\textwidth}|
+
++-------------------------------------+-------------------------------------------------------+
+| **Option**                          | **Function**                                          |
++=====================================+=======================================================+
+| visVerbosity                        | (0-5 inclusive) the verbosity level passed into the   |
+|                                     | Geant4 visualisation system. 0 is the default.        |
++-------------------------------------+-------------------------------------------------------+
+| xrayAllSurfaceRoughness             | The length scale of roughness features for the X-ray  |
+|                                     | reflection model (from the `xray_reflection` physics  |
+|                                     | modular list). Default 0, units metres. A typical     |
+|                                     | value would be 5 nm. This applies to all surfaces.    |
++-------------------------------------+-------------------------------------------------------+
+
+
+General Updates
+---------------
+
+* Update copyright year throughout code.
+* Updated format for :code:`makematerialfile` program for exporting NIST information to pyg4ometry.
+* Improved error messages for bad scorer mesh definition.
+* Improved description in manual of physics list recommendation.
+* Reduced printout for the visualisation.
+  
+  
+Bug Fixes
+---------
+  
+Hot-fix for issue #377. A tracking issue appeared in thin elements due to a too small maximum value for the
+relative error, epsilonStep, resulting in incorrect kicks being applied. This occurred only when BDSIM is compiled
+against versions of Geant4 11.0 onwards. The maximum value is now set separately for thick and thin volumes.
+
+* Fix for C++20 compilation for ROOT installations that now have C++20 on LCG.
+* Fix for parser rounding of double values put into integer parameters.
+* Fix overwriting of ROOT_INCLUDE_PATH environmental variable if it already existed in :code:`bdsim.sh`.
+* Fix obeying the Geant4 default visualiser for 11.2 onwards.
+
+
+In the parser, it is possible to do some simple calculations and use these variables
+as input to parameters. For example, calculating the number of bins in a mesh. When
+the parameter type was an integer, but a floating point number was given (perhaps from
+the calculation or from writing a ".0" after a number), the floating point double would
+be put into an integer and you may get unexpected rounding errors. e.g. 29.999999999997 becomes 29
+instead of the 30 that was expected. This has been fixed by rounding to the nearest integer
+only when using a double into a integer parameter.
+
+
+Output Changes
+--------------
+
+Only the options have changed which are stored to file also. These are backwards compatible
+and no issues are expected with loading older data.
+
+
+Output Class Versions
+---------------------
+
+* Data Version 9.
+
++-----------------------------------+-------------+-----------------+-----------------+
+| **Class**                         | **Changed** | **Old Version** | **New Version** |
++===================================+=============+=================+=================+
+| BDSOutputROOTEventAperture        | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventBeam            | N           | 6               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCavityInfo      | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimator      | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCollimatorInfo  | N           | 2               | 2               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventCoords          | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHeader          | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventHistograms      | N           | 4               | 4               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventInfo            | N           | 7               | 7               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLoss            | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventLossWorld       | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventModel           | N           | 6               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventOptions         | Y           | 8               | 7               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventRunInfo         | N           | 3               | 3               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSampler         | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSamplerC        | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventSamplerS        | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectory      | N           | 5               | 5               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTEventTrajectoryPoint | N           | 6               | 6               |
++-----------------------------------+-------------+-----------------+-----------------+
+| BDSOutputROOTParticleData         | N           | 1               | 1               |
++-----------------------------------+-------------+-----------------+-----------------+
+
+
+
+V1.7.6 - 2023 / 10 / 18
+=======================
+
+Hot-fix for muon splitting. When muon splitting occurred it turned on a flag in the G4VParticleChange
+object belonging to the physics process in Geant4 as required to give each particle unique weights
+(as non-muon secondaries are not split). However, most processes in Geant4 reuse the same object and
+do not reset this with each initialisation of a track so it remains in place. Also, the same G4Decay
+process object is registered to different particle definitions. When decay happens for another particle
+after this (for a particle that is not in the muon splitting), the flag results in the weights not being
+transferred to the new secondaries.
+
+In short, particles that were not in the list (pi+, pi-, e+, kaon+, kaon-, kaon0L) that had an incoming
+weight from other biasing would have their weights reset to 1, only after splitting had occurred once
+in that run. And for every subsequent event.
+
+* It is not required to set :code:`beam, distrFileLoop=1` if :code:`beam, distrFileLoopNTimes` is set
+  to a value greater than 1 for any file-based input distributions.
+
+  
+v1.7.5 - 2023 / 10 / 03
+=======================
+
+General Updates
+---------------
+
+* The ability to purposively override the (good) default maximum step length in a
+  field map is provided in a field definition. Normally, the maximum step length is
+  limited to 1x the minimum grid spacing of a field map in any dimension. Larger
+  steps result in the field only being evaluated on that length scale and therefore
+  giving a possibly wrong numerical integration of the field. However, in specific
+  high-energy cases, it is a useful optimisation to increase this length. This must
+  be used with knowledge and caution though.
+
+Bug Fixes
+---------
+
+* Weights for primaries were not loaded from file when using a :code:`bdsimsampler` distribution.
+  Previously, they were all weight 1 by default. This affects any second stage simulation where
+  biasing was used in the first stage.
+* CMake fix for HepMC3 for versions greater than 3.1.1.
+* Fix :code:`geant4Version` in the header output as it didn't contain the patch number
+  as Geant4's string for this is a little inconsistent.
+* :code:`BDSOutputROOTEventTrajectory` copy constructor did not copy the `mass` variable.
+
+  
+
+V1.7.4 - 2023 / 08 / 25
+=======================
+
+New Features
+------------
+
+* Spectra by momentum: :code:`SpectraMomentum` in rebdsim.
+
+
+General Updates
+---------------
+
+* Fix manual description of 3D histograms in rebdsim. Should be :code:`z:y:x` for 3D histogram
+  variables. :code:`y:x` for 2D, and :code:`x` for 1D histograms.
+
+
+Bug Fixes
+---------
+
+* Fix S coordinate of primaries in the output if a negative :code:`option, beamlineS`
+  was used. It would previously always be 0.
+* Fix print out in terminal of how many events have been completed when using a file-based
+  beam distribution. It would always be each event instead of the usual 10%, which may have
+  slowed down simulations or inflated log files.
+
+
+V1.7.3 - 2023 / 08 / 11
+=======================
+
+* Hotfix - undo recent optimisation for histograms as it accidentally affected the mean
+  in non-simple (i.e. per-entry average) histograms.
+  
+
+V1.7.2 - 2023 / 08 / 11
+=======================
+
+General Updates
+---------------
+
+* Determine extents of any container solid loaded from an external geometry file.
+
+Bug Fixes
+---------
+
+**Installation**
+
+* Fix compilation when BDSIM is compiled with GDML on but the Geant4 used does not
+  have GDML compiled into it. This would result in a compilation error rather than
+  a CMake error at configuration time.
+
+**Geometry**
+
+* A placement where the outermost solid was an extruded solid would cause the extents
+  not to be determined properly and therefore the maximum step size to be set to 1 micron,
+  which would result in very slow running events. Fixed by automatically determining the
+  size of any potential solid given from externally loaded geometry.
+* Generic BLM shapes now have consistent user limits for tracking applied as other volumes.
+* Do not allocate a G4UserLimits object for every placement that wasn't used.
+
+**Visualisation**
+
+* `shield` component now obeys `colour` property correctly.
+
+  
+V1.7.1 - 2023 / 07 / 20
+=======================
+
+* Fix NANs appearing in merged histograms from rebdsimCombine where histograms were empty.
+* Fix wrong number of entries in per-entry histograms (e.g. per-event histograms)
+  from rebdsim.
+* Fix crash from Geant4 GDML writer when exporting GDML geometry from BDSIM where
+  a directory is included in the destination file path but it does not exist.
+
 
 V1.7.0 - 2023 / 07 / 11
 =======================
@@ -191,7 +584,7 @@ New Features
   world contents (in case of an externally provided world volume) without storing all the individual
   hits that would use a lot of disk space.
 * :code:`storeSamplerKineticEnergy` is now on by default.
-
+  
 
 General Updates
 ---------------
@@ -437,9 +830,6 @@ Bug Fixes
   would pass through and become a proton despite its name.
 * Fix runtime exception with Geant4 V11.1.0 for default options applied in BDSIM from all
   previous versions of Geant4 for epsilon max / min in all fields.
-
-
-
 
 Output Changes
 --------------

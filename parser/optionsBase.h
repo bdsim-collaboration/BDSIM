@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -43,6 +43,7 @@ namespace GMAD
     std::string geant4PhysicsMacroFileName; ///< Geant4 physics macro
     bool        geant4PhysicsMacroFileNameFromExecOptions;
     bool        visDebug;            ///< Flag for visualisation debug.
+    int         visVerbosity;        ///< Geant4 vis system verbosity.
   
     ///@{ Parameter for output format
     std::string outputFileName;
@@ -173,6 +174,9 @@ namespace GMAD
     bool      yokeFieldsMatchLHCGeometry;
     bool      useOldMultipoleOuterFields;
     double    scalingFieldOuter;
+    bool      integrateKineticEnergyAlongBeamline;
+    
+    std::string cavityFieldType;
 
     bool        includeFringeFields;
     bool        includeFringeFieldsCavities;
@@ -265,6 +269,7 @@ namespace GMAD
     double   muonSplittingThresholdParentEk2;
     bool     muonSplittingExcludeWeight1Particles;
     double   muonSplittingExclusionWeight;
+    double   xrayAllSurfaceRoughness;
     ///@}
 
     // biasing options
@@ -288,6 +293,8 @@ namespace GMAD
     double   deltaIntersection;
     double   minimumEpsilonStep;
     double   maximumEpsilonStep;
+    double   minimumEpsilonStepThin;
+    double   maximumEpsilonStepThin;
     double   deltaOneStep;
     bool     stopSecondaries;
     bool     killNeutrinos;

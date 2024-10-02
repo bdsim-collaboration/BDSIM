@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -150,6 +150,9 @@ public:
   std::vector<float>       fintxk2;
   std::vector<std::vector<std::string>> pvName;
   std::vector<std::vector<std::string>> pvNameWPointer;
+  std::vector<float>       midT;
+  std::vector<float>       staP;
+  std::vector<float>       staEk;
 
   /// Whether optional collimator information was stored.
   bool storeCollimatorInfo;
@@ -197,7 +200,7 @@ public:
   std::map<std::string, double> samplerCRadius;
   std::map<std::string, double> samplerSRadius;
 
-  ClassDef(BDSOutputROOTEventModel, 6);
+  ClassDef(BDSOutputROOTEventModel, 7);
 };
 
 #endif

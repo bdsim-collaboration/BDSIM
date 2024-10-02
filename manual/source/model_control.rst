@@ -983,7 +983,7 @@ halosigma
 Similar to type `halo` except instead of uniformly sampling :math:`J`, the single
 particle emittance (action), the particle's :math:`n\sigma` is sampled uniformly
 instead. The particle action :math:`J` is expressed in terms of the multiple of
-sigma, :math:`n`, the one-sigma transverse beamsize :math:`\sigma` and the Twiss
+sigma, :math:`n`, the one-sigma transverse beam size :math:`\sigma` and the Twiss
 beta function :math:`\beta` using
 
 .. math::
@@ -994,7 +994,7 @@ This randomly generated action variable, combined with the Twiss parameters
 randomly generated on this ellipse to get the position and momentum pair for the
 given transverse dimension.  This is useful for situations where beam halo intensity
 distributions are expressed in terms of :math:`\sigma`, allowing for easier
-reweighting in post-processing.
+re-weighting in post-processing.
 
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
@@ -1168,7 +1168,7 @@ Behaviour
 The default behaviour since BDSIM V1.7 is to 'match' the file length - i.e. simulate the
 number of events as there would be in the file. The default is **not to loop** (i.e. repeat) the file.
 However, the user can explicitly request a certain number of events, or that the file is
-looped (knowing that certain primaries might be repeated introducing correlations).
+looped (knowingly introducing potential correlations).
 
 For all the file-based distributions, the following beam options apply.
 
@@ -1180,8 +1180,9 @@ For all the file-based distributions, the following beam options apply.
 +------------------------------+---------------+-----------------------------------------------+
 | `distrFileLoop`              | 0 (false)     | Whether to loop back to the start of the file |
 +------------------------------+---------------+-----------------------------------------------+
-| `distrFileLoopNTimes`        | 1             | Number of times to repeat the distribution    |
-|                              |               | file in its entirety                          |
+| `distrFileLoopNTimes`        | 1             | Number of times to go through the             |
+|                              |               | distribution file in its entirety - a value   |
+|                              |               | greater than 1 is required to repeat the file |
 +------------------------------+---------------+-----------------------------------------------+
 
 .. warning:: `option, ngenerate=N` in input GMAD text will be ignored when a distribution file
@@ -1203,9 +1204,11 @@ To simulate fewer events, we must specify ngenerate as an **executable** option.
 
   bdsim --file=mymodel_w_generator.gmad --outfile=r1 --batch --ngenerate=3
 
-This will generate 3 events, no matter how many are in the file.
+This will generate 3 events, no matter how many are in the file. But it will complain
+if the number requested is greater than the number in the file and looping is not turned
+on in the input GMAD beam definition.
 
-**Looping**
+**Loop as Needed up to N Events**
 
 We must explicitly turn off file length matching and turn on looping. ::
 
@@ -1224,7 +1227,7 @@ it will be replayed (with different event seeds) 5x.
              a file, you may 'enhance' the statistics of one set of input coordinates
              and may bias the final result.
 
-**Looping N Times**
+**Looping the Whole File N Times**
 
 We can repeat the same file `N` times. The random engine seed will continue to advance
 for the physics so even with the same initial particles or coordinates, a different
@@ -1233,10 +1236,11 @@ sometimes repeat the same distribution multiple times. ::
 
   beam, distrType="somedistributionhere...",
         distrFile="somefile.dat",
-        distrFileLoop=1,
         distrFileLoopNTimes=3;
 
-This will match the file length and repeat the file 3 times.
+This will match the file length and repeat the file 3 times. This is the number of times
+the file is 'played' through, so a value **greater than 1** is typically required to
+repeat the file.
 
 **Filtering**
 
@@ -1455,6 +1459,9 @@ compiled with respect to it.  See :ref:`installation-bdsim-config-options` for m
 When using an event generator file, the **design** particle and total energy must still be
 specified. These are used to calculate the magnetic field strengths.
 
+Per-event weights are not yet supported in BDSIM or rebdsim (the analysis tool) and are
+set to 1.0.
+
 The following parameters are used to control the use of an event generator file. These are
 implemented as :math:`>=` and :math:`<=` for `Min` and `Max` respectively. i.e.
 
@@ -1518,6 +1525,13 @@ where `W` is some coordinate.
 |                            | would eventually be killed by Geant4 when they decay but  |
 |                            | without producing any secondaries.                        |
 +----------------------------+-----------------------------------------------------------+
+
++-------------------------------------+------------------------------------------------------+
+| eventGeneratorWarnSkippedParticles  | 1 (true) by default. Print a small warning for each  |
+|                                     | event if any particles loaded were skipped or there  |
+|                                     | were none suitable at all and the event was skipped. |
++-------------------------------------+------------------------------------------------------+
+
 
 * The filters are applied **before** any offset is added from the reference distribution, i.e.
   in the original coordinates of the event generator file.
@@ -1684,9 +1698,18 @@ and pattern 2) as Geant4 reference physics lists.
      option, physicsList = "completechannelling";
 
 
-For general high energy hadron physics we recommend::
+For general high energy hadron physics it is recommended to use::
 
-  option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
+  option, physicsList = "g4FTFP_BERT";
+
+For similar high-energy studies, but concerned with muons it is recommended to use a :ref:`physics-macro-file`
+with the following options: ::
+
+  /physics_lists/em/GammaToMuons true
+  /physics_lists/em/PositronToMuons true
+  /physics_lists/em/PositronToHadrons true
+  /physics_lists/em/MuonNuclear true
+  /physics_lists/em/GammaNuclear true
 
 
 Some physics lists are only available in later versions of Geant4. These are filtered at compile
@@ -1700,6 +1723,7 @@ See the Geant4 documentation for a more complete explanation of the physics list
 
 * `Physics List Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/physicslistguide.html>`_
 * `User Case Guide <http://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/PhysicsListGuide/html/reference_PL/index.html>`_
+
 
 .. _physics-macro-file:
   
@@ -1717,7 +1741,6 @@ Inside this file, the following commands were used: ::
   /physics_lists/em/GammaToMuons true
   /physics_lists/em/PositronToMuons true
   /physics_lists/em/PositronToHadrons true
-  /physics_lists/em/NeutrinoActivation true
   /physics_lists/em/MuonNuclear true
   /physics_lists/em/GammaNuclear true
 
@@ -1872,6 +1895,8 @@ Examples: ::
 +------------------------------+------------------------------------------------------------------------+
 | ion_php (`*`)                | `G4IonPhysicsPHP`. Available from Geant4.10.3 onwards.                 |
 +------------------------------+------------------------------------------------------------------------+
+| ionisation                   | Only ionisation for e+-, p, pbar, pi+-, K+-, mu+-, generic ion.        |
++------------------------------+------------------------------------------------------------------------+
 | lw                           | Laserwire photon producing process as if the laserwire had scattered   |
 |                              | photons from the beam. Not actively developed, but will register       |
 |                              | process.                                                               |
@@ -1929,6 +1954,9 @@ Examples: ::
 | synch_rad                    | Provides synchrotron radiation for all charged particles. Provided by  |
 |                              | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
 |                              | `G4SynchrotronRadiation`.                                              |
++------------------------------+------------------------------------------------------------------------+
+| xray_reflection              | X-ray reflection for most materials. Available from Geant4.11.2        |
+|                              | onwards.                                                               |
 +------------------------------+------------------------------------------------------------------------+
 
 The following are also accepted as aliases to current physics lists. These are typically previously
@@ -2551,6 +2579,15 @@ We cannot use a factor of say, 1 million and only sample 1 event, because we wou
 sample 1 (e.g.) decay in 1 location. We must still sample many locations well to properly
 estimate the muon flux.
 
+.. figure:: figures/muon_splitting_comparison_with_divsym.png
+	    :width: 70%
+	    :align: center
+                    
+            Comparison of the muon spectrum for the same model with activated muon splitting
+            and without muon splitting [F. Metzger, `Examination of the RF separated beam
+            technique at CERN's M2 beam line`, PhD thesis (in progress)].
+
+
 **Notes:**
 
 * A factor of 1 means no splitting is done.
@@ -2993,6 +3030,9 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 |                                  | of the beam pipe are killed and the energy recorded as|
 |                                  | being deposited there.                                |
 +----------------------------------+-------------------------------------------------------+
+| cavityFieldType                  | Default cavity field type ('constantinz', 'pillbox')  |
+|                                  | to use for all rf elements unless otherwise specified.|
++----------------------------------+-------------------------------------------------------+
 | collimatorsAreInfiniteAbsorbers  | When turned on, all particles that enter the material |
 |                                  | of a collimator (`rcol`, `ecol` and `jcol`) are       |
 |                                  | killed and the energy recorded as deposited there.    |
@@ -3078,6 +3118,16 @@ Tracking integrator sets are described in detail in :ref:`integrator-sets` and
 | tunnelIsInfiniteAbsorber         | Whether all particles entering the tunnel material    |
 |                                  | should be killed or not (default = false)             |
 +----------------------------------+-------------------------------------------------------+
+
+
++-------------------------------------+-------------------------------------------------------+
+| **Option**                          | **Function**                                          |
++=====================================+=======================================================+
+| integrateKineticEnergyAlongBeamline | Integrate changes to the nominal beam energy along    |
+|                                     | the beamline such as from accelerator and adjust      |
+|                                     | the design rigidity for normalised fields             |
+|                                     | accordingly.                                          |
++-------------------------------------+-------------------------------------------------------+
 
 .. _physics-process-options:
 
@@ -3225,6 +3275,11 @@ Physics Processes
 |                                     | annihilation process when using `em_extra` physics    |
 |                                     | list. Default Off.  Requires Geant4.10.3 onwards.     |
 +-------------------------------------+-------------------------------------------------------+
+| xrayAllSurfaceRoughness             | The length scale of roughness features for the X-ray  |
+|                                     | reflection model (from the `xray_reflection` physics  |
+|                                     | modular list). Default 0, units metres. A typical     |
+|                                     | value would be 5 nm. This applies to all surfaces.    |
++-------------------------------------+-------------------------------------------------------+
 
 * (\*) If using Geant4.10.7 or upwards, this will also set the high energy limit for the
   hadronic physics too. For previous versions of Geant4 it is required to edit the Geant4
@@ -3244,6 +3299,9 @@ Visualisation
 |                                  | visualiser. Note, this does not affect the accuracy   |
 |                                  | of the geometry - only the visualisation (default =   |
 |                                  | 50).                                                  |
++----------------------------------+-------------------------------------------------------+
+| visVerbosity                     | (0-5 inclusive) the verbosity level passed into the   |
+|                                  | Geant4 visualisation system. 0 is the default.        |
 +----------------------------------+-------------------------------------------------------+
 
 .. _bdsim-options-output:
@@ -3685,6 +3743,7 @@ The options listed below are list roughly in terms of the simulation hierarchy.
 |                                  |          | to every single volume in the model once fully constructed.       |
 +----------------------------------+----------+-------------------------------------------------------------------+
 
+
 Examples: ::
 
   option, verboseEventStart=3,
@@ -3716,6 +3775,10 @@ Offset for Main Beam Line
 
 The following options may be used to offset the main beam line with respect to the world
 volume, which is the outermost coordinate system.
+
+.. warning:: The beam definition moves with the beamline. It is 'attached' or relative
+             to the start of the beamline. Consider introducing a `transform3d` element
+             at the start if you want to offset the beamline but not the beam.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -3847,6 +3910,10 @@ should only be used with understanding.
 +-----------------------------------+--------------------------------------------------------------------+
 | minimumEpsilonStep                | Minimum relative error acceptable in stepping                      |
 +-----------------------------------+--------------------------------------------------------------------+
+| maximumEpsilonStepThin            | Similar to maximumEpsilonStep but for thin objects                 |
++-----------------------------------+--------------------------------------------------------------------+
+| minimumEpsilonStepThin            | Similar to minimumEpsilonStep but for thin objects                 |
++-----------------------------------+--------------------------------------------------------------------+
 | sampleElementsWithPoleface        | Default false. Samplers are not to be attached to elements with    |
 |                                   | poleface rotations, as the sampler will overlap with the mass world|
 |                                   | geometry, resulting in incorrect tracking. This only occurs in     |
@@ -3889,7 +3956,7 @@ Output at a Surface - Samplers
 
 BDSIM provides a 'sampler' as a means to record the particle distribution at a
 point in the model as defined by a plane, the surface of a cylinder, or the
-surface of a sphere.
+surface of a sphere. Data is recorded in the frame of the sampler.
 
 * A **sampler** records the kinematic variables of a single particle passing through a surface
 * **Scoring** refers to the accumulation of a quantity (e.g. dose) for a volume (see :ref:`scoring`)
@@ -3902,8 +3969,9 @@ Samplers may have the following forms:
 
 The plane is the most commonly used and can be 'attached' to an already defined beam line
 element and records all the particles passing through a plane at the **exit** face of
-that element. The cylinder can be attached to a beam line element also. A spherer sampler
-can only be placed through a samplerplacement.
+that element. The cylinder can be attached to a beam line element also.
+
+A spherical sampler can only be placed through a samplerplacement.
 
 A sampler will record **any particles** passing through that plane in **any direction**.
 The plane sampler is practically defined in the Geant4 model built by BDSIM as a box
@@ -3911,40 +3979,7 @@ The plane sampler is practically defined in the Geant4 model built by BDSIM as a
 
 Samplers are built in a parallel world and are normally invisible. They can 'overlap'
 existing geometry but we should avoid having faces of shapes coincident as this may
-affect tracking ('coplanar' faces).
-
-.. _sampler-coordinate-systems:
-
-Sampler Coordinate Systems
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**plane**
-
-* `x`, `y`, `z`
-
-
-**cylindrical**
-
-* `z`, `r`, :math:`\phi`
-* :math:`\phi` : :math:`[0 \to 2\pi]`
-
-
-**spherical**
-
-* `r`, :math:`\theta`, :math:`\phi`
-* :math:`\theta` : polar angle :math:`[0 \to \pi]`
-* :math:`\phi` : azimuthal angle :math:`[0 \to 2\pi]`
-
-
-Generally:
-
-* In cylindrical coordinates `z` and `phi` are recorded as well as `rp`, `zp` and `phip`.
-* `r` is not recorded for either cylindrical or spherical coordinates because it is the
-  same for every hit. This information is recorded in the Model part of the output with
-  the sampler name as it is a constant.
-* Positive `z` is along the direction of the beam by default.
-* For cylindrical coordinates, `phi` = 0 corresponds to a point at positive
-  :math:`x = r, y = 0` and increases clockwise looking along the direction of the beam.
+affect tracking ('co-planar' faces).
 
 
 .. _sampler-syntax:
@@ -4107,6 +4142,7 @@ visualise them, the following command should be used in the visualiser::
 The samplers will appear in semi-transparent green, as well as the curvilinear geometry used
 for coordinate transforms (cylinders).
 
+
 .. _user-sampler-placement:
 
 Output at an Arbitrary Plane - User Placed Sampler
@@ -4144,7 +4180,7 @@ Types and Shapes
 
 * The default is a plane sampler.
 
-The following types (exact name to be used in the :code:`type` parameter) of sampler can be used:
+The following types (exact name to be used in the :code:`samplerType` parameter) of sampler can be used:
 
 +--------------------+------------------------------------------------------------------+
 | **samplerType**    | **Description**                                                  |
@@ -4279,11 +4315,11 @@ This only responds to `sweepAnglePhi` and it spread out symmetrically from the f
 
 Examples: ::
 
-  s6: samplerplacement, samplerType="sphere", aper1=20*cm, aper2=2*m;
-  s7: samplerplacement, samplerType="sphere", aper1=20*cm, aper2=2*m,
+  s6: samplerplacement, samplerType="sphere", aper1=20*cm;
+  s7: samplerplacement, samplerType="sphere", aper1=20*cm,
                         startAnglePhi=-pi/6, sweepAnglePhi=pi/3,
-			startAngleTheta=pi/2-pi/6, sweepAngleTheta=pi/3;
-  s8: samplerplacement, samplerType="sphereforward", aper1=20*cm, aper2=2*m,
+			            startAngleTheta=pi/2-pi/6, sweepAngleTheta=pi/3;
+  s8: samplerplacement, samplerType="sphereforward", aper1=20*cm,
                         sweepAnglePhi=pi/3, sweepAngleTheta=pi/6;
 
 * More examples can be found in :code:`bdsim/examples/features/sampler/*gmad`.
@@ -4434,7 +4470,7 @@ geometry in the model. Although in a parallel world, the steps of a particle thr
 are limited by the boundary of the mesh. This means that no step covers more than one cell or
 bin in the mesh and therefore there's no ambiguity over proportioning some quantity (like
 energy deposition) in one step or another. The figure below shows the regular "mass world"
-view of a quadrupole, and also a wireframe view of the same quadrupole with the normally invisible
+view of a quadrupole, and also a wire-frame view of the same quadrupole with the normally invisible
 scoring mesh in a parallel world.
 
 .. figure:: figures/scoring-mass-world.png
@@ -4448,7 +4484,7 @@ scoring mesh in a parallel world.
 	    :width: 50%
 	    :align: center
 
-	    Wireframe view of the same quadrupole but with a scoring mesh visualised (grey).
+	    Wire-frame view of the same quadrupole but with a scoring mesh visualised (grey).
 
 Conceptually creating a scoring mesh is split into two key definitions in the input:
 
@@ -4476,6 +4512,45 @@ e.g. ::
   is one proton fired per-event, then the quantity for deposited dose is J / kg / proton.
 * Examples can be found in :code:`bdsim/examples/features/scoring`.
 
+
+.. _sampler-coordinate-systems:
+
+Sampler Coordinate Systems
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Each sampler type records different variables depending on its geometry. The hits recorded
+are always in the frame of that sampler object. The coordinates for each shape are as follows:
+
+**plane**
+
+* `x`, `y`, `z`
+
+
+**cylindrical**
+
+* `z`, `r`, :math:`\phi`
+* :math:`\phi` : :math:`[0 \to 2\pi]`
+
+
+**spherical**
+
+* `r`, :math:`\theta`, :math:`\phi`
+* :math:`\theta` : polar angle :math:`[0 \to \pi]`
+* :math:`\phi` : azimuthal angle :math:`[0 \to 2\pi]`
+
+
+Generally:
+
+* In cylindrical coordinates `z` and `phi` are recorded as well as `rp`, `zp` and `phip`.
+* `r` is not recorded for either cylindrical or spherical coordinates because it is the
+  same for every hit. This information is recorded in the Model part of the output with
+  the sampler name as it is a constant.
+* Positive `z` is along the direction of the beam by default.
+* For cylindrical coordinates, `phi` = 0 corresponds to a point at positive
+  :math:`x = r, y = 0` and increases clockwise looking along the direction of the beam.
+
+
+  
 .. _scorer:
   
 Scorer

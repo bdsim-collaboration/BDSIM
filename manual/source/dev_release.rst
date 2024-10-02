@@ -40,9 +40,10 @@ Things to update immediately before a release  (i.e. from a release candidate br
 
 #. If BDSColours has changed, run BDSIM with DEBUGOUTPUT build and copy print out of
    colours to manual (already in correct format) - model_customisation.rst : Colours.
-#. Check that the build (in ccmake) has USE_SPHINX_GOOGLE set to on. Note, this will update the git version
-   in the data classes but this is OK as we won't generate any data for the release now.
-#. Regenerate BDSIM manual (pdf and html) and commit the new pdf version. Upload html version to website.
+#. Regenerate BDSIM manual (pdf and html) and check the version number then commit the new
+   pdf version. Upload html version to website. May have to re-run cmake to update version number.
+   If the manual won't copy to the build directory it's because there is a temporary file starting
+   with a `#` is present in the source directory.
 #. Merge release candidate branch back into develop.
 #. In develop, put back README, CMakeLists.txt to new version.develop.
 #. Merge release candidate branch into master then delete. (:code:`git checkout master; git merge --no-ff v1.X.0-rc`)

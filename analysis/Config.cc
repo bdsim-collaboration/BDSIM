@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -49,8 +49,7 @@ std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Ru
 
 Config::Config(const std::string& inputFilePathIn,
                const std::string& outputFileNameIn,
-               const std::string& defaultOutputFileSuffix):
-  allBranchesActivated(false)
+               const std::string& defaultOutputFileSuffix)
 {
   InitialiseOptions("");
   
@@ -75,8 +74,7 @@ Config::Config(const std::string& inputFilePathIn,
 Config::Config(const std::string& fileNameIn,
                const std::string& inputFilePathIn,
                const std::string& outputFileNameIn,
-               const std::string& defaultOutputFileSuffix):
-  allBranchesActivated(false)
+               const std::string& defaultOutputFileSuffix)
 {
   InitialiseOptions(fileNameIn);
   ParseInputFile();
@@ -118,7 +116,8 @@ void Config::InitialiseOptions(const std::string& analysisFile)
   // for backwards compatibility / verbose names
   alternateKeys["calculateopticalfunctions"]         = "calculateoptics";
   alternateKeys["calculateopticalfunctionsfilename"] = "opticsfilename";
-  
+
+  optionsBool["allbranchesactivated"] = false;
   optionsBool["debug"]             = false;
   optionsBool["calculateoptics"]   = false;
   optionsBool["emittanceonthefly"] = false;
@@ -190,7 +189,7 @@ void Config::ParseInputFile()
   // match a line starting with 'histogram', ignoring case
   std::regex histogram("(?:simple)*histogram.*", std::regex_constants::icase);
   // match a line starting with 'spectra', ignoring case - quite exact to avoid mismatching 'spectra' in file name in options
-  std::regex spectra("(?:simple)*spectra(?:TE|rigidity)*(?:log)*(?:\\s+)", std::regex_constants::icase);
+  std::regex spectra("(?:simple)*spectra(?:TE|rigidity|momentum)*(?:log)*(?:\\s+)", std::regex_constants::icase);
   // match particleset ignoring case
   std::regex particleSet("(?:simple)*particleset", std::regex_constants::icase);
 
@@ -226,7 +225,7 @@ void Config::ParseInputFile()
   // set flags etc based on what options have been set
   if (optionsBool.at("calculateoptics"))
     {
-      allBranchesActivated = true;
+      optionsBool["allbranchesactivated"] = true;
       optionsBool["processsamplers"] = true;
       optionsBool["perentryevent"]   = true;
     }
@@ -411,6 +410,8 @@ void Config::ParseSpectraLine(const std::string& line)
     {variable = ".energy";}
   else if (ContainsWordCI(results[0], "Rigidity"))
     {variable = ".rigidity";}
+  else if (ContainsWordCI(results[0], "Momentum"))
+    {variable = ".p";}
     
   std::string samplerName = results[1];
   // because we can have multiple spectra on a branch and there are no user-specified names for this
@@ -455,7 +456,8 @@ void Config::ParseSpectraLine(const std::string& line)
   HistogramDefSet* result = new HistogramDefSet(samplerName,
                                                 def,
                                                 particles,
-                                                results[4]);
+                                                results[4],
+                                                line);
   delete def; // no longer needed
   
   if (perEntry)
@@ -558,6 +560,29 @@ void Config::PrintHistogramSetDefinitions() const
   std::cout << "PerEntry histogram set definitions for Event tree:" << std::endl;
   for (const auto* def : eventHistoDefSetsPerEntry)
     {std::cout << *def << std::endl;}
+}
+
+
+void Config::FixCylindricalAndSphericalSamplerVariablesInSets(const std::set<std::string>& allCNames,
+                                                              const std::set<std::string>& allSNames)
+{
+  for (auto* hsetset : {&eventHistoDefSetsPerEntry, &eventHistoDefSetsSimple})
+    {
+      for (auto *hset: *hsetset)
+        {
+          std::string tempName = hset->branchName + ".";
+          if (allCNames.count(tempName) > 0)
+            {
+              hset->ReplaceStringInVariable("energy", "totalEnergy");
+              hset->SetSamplerType(HistogramDefSet::samplertype::cylindrical);
+            }
+          else if (allSNames.count(tempName) > 0)
+           {
+             hset->ReplaceStringInVariable("energy", "totalEnergy");
+             hset->SetSamplerType(HistogramDefSet::samplertype::spherical);
+           }
+        }
+    }
 }
 
 void Config::CheckValidTreeName(std::string& treeName) const

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -39,7 +39,7 @@ void BDSBunchFileBased::SetOptions(const BDSParticleDefinition* beamParticle,
                                    const G4double beamlineSIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
-  distrFileLoop = beam.distrFileLoop;
+  distrFileLoop = beam.distrFileLoop || beam.distrFileLoopNTimes > 1;
   distrFileLoopNTimes = beam.distrFileLoopNTimes;
 }
 

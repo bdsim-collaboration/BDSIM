@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -127,7 +127,11 @@ public:
   inline const BDSArrayReflectionTypeSet& MagneticArrayReflectionType() const {return magneticArrayReflectionTypeSet;}
   inline const BDSArrayReflectionTypeSet& ElectricArrayReflectionType() const {return electricArrayReflectionTypeSet;}
   inline BDSModulatorInfo*   ModulatorInfo()            const {return modulatorInfo;}
+  inline G4bool IgnoreUpdateOfMaximumStepSize() const {return ignoreUpdateOfMaximumStepSize;}
+  inline G4bool              IsThin()                   const {return isThin;}
   /// @}
+
+  G4double SynchronousT() const;
   
   G4Transform3D Transform() const;         ///< Transform for the field definition only.
   G4Transform3D TransformBeamline() const; ///< Transform from the curvilinear coordinates to the beam line component.
@@ -150,6 +154,7 @@ public:
   inline void SetElectricSubField(const G4String& efnIn) {electricSubFieldName = efnIn;}
   inline void SetUsePlacementWorldTransform(G4bool use) {usePlacementWorldTransform = use;}
   inline void SetModulatorInfo(BDSModulatorInfo* modulatorInfoIn) {modulatorInfo = modulatorInfoIn;}
+  inline void SetIgnoreUpdateOfMaximumStepSize(G4bool ignoreUpdateOfMaximumStepSizeIn) {ignoreUpdateOfMaximumStepSize = ignoreUpdateOfMaximumStepSizeIn;}
 
   /// *= for BScaling.
   inline void CompoundBScaling(G4double extraBScalingIn) {bScaling *= extraBScalingIn;}
@@ -180,7 +185,10 @@ public:
   friend std::ostream& operator<< (std::ostream &out, BDSFieldInfo const &info);
 
   static G4UserLimits* defaultUL; ///< Cache of default user limits
-  
+
+  /// Set thin to allow geant tracking error controls to be set seperately for thin elements
+  void SetFieldAsThin();
+
 private: 
   BDSFieldType             fieldType;
   G4double                 brho;
@@ -211,7 +219,9 @@ private:
   G4String                 electricSubFieldName;
   G4bool                   usePlacementWorldTransform;
   BDSModulatorInfo*        modulatorInfo;
-  
+  G4bool                   ignoreUpdateOfMaximumStepSize; ///< To be used when enforcing a larger maximum step size value.
+  G4bool                   isThin;
+
   /// Transform from curvilinear frame to this field - ie beam line bit only.
   G4Transform3D*           transformBeamline;
 

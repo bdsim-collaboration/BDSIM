@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -25,6 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "EventAnalysis.hh"
 #include "HistogramMeanFromFile.hh"
 #include "PerEntryHistogramSet.hh"
+#include "PerEntryHistogramSetPlane.hh"
+#include "PerEntryHistogramSetC.hh"
+#include "PerEntryHistogramSetS.hh"
 #include "RBDSException.hh"
 #include "SamplerAnalysis.hh"
 #include "rebdsim.hh"
@@ -152,7 +155,7 @@ void EventAnalysis::Process()
 {
   Initialise();
 
-  if(debug)
+  if (debug)
     {std::cout << __METHOD_NAME__ << "Entries: " << chain->GetEntries() << " " << std::endl;}
 
   // loop over events
@@ -167,10 +170,13 @@ void EventAnalysis::Process()
   bool firstLoop = true;
   for (auto i = (Long64_t)eventStart; i < (Long64_t)eventEnd; ++i)
     {
-    if (firstLoop) // ensure samplers setup for spectra before we load data
-      {CheckSpectraBranches();}
+      if (firstLoop) // ensure samplers setup for spectra before we load data
+        {CheckSpectraBranches();}
 
-      chain->GetEntry(i);
+      event->Flush();
+      Int_t bytesLoaded = chain->GetEntry(i);
+      if (debug)
+        {std::cout << __METHOD_NAME__ << i << ": " << bytesLoaded << " bytes loaded" << std::endl;}
       // event analysis feedback
       if (i % printModulo == 0 && printOut)
         {
@@ -182,7 +188,7 @@ void EventAnalysis::Process()
         }
 
       // merge histograms stored per event in the output
-      if(firstLoop)
+      if (firstLoop)
         {histoSum = new HistogramMeanFromFile(event->Histos);}
       else
         {histoSum->Accumulate(event->Histos);}
@@ -193,19 +199,15 @@ void EventAnalysis::Process()
 
       UserProcess();
 
-      if(debug)
+      if (debug && processSamplers)
         {
-          std::cout << __METHOD_NAME__ << i << std::endl;
-          if (processSamplers)
-            {
-              std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
-              std::cout << __METHOD_NAME__ << "primaries=" << event->Primary->n << std::endl;
-              std::cout << __METHOD_NAME__ << "eloss="     << event->Eloss->n << std::endl;
-              std::cout << __METHOD_NAME__ << "nprimary="  << event->PrimaryFirstHit->n << std::endl;
-              std::cout << __METHOD_NAME__ << "nlast="     << event->PrimaryLastHit->n << std::endl;
-              std::cout << __METHOD_NAME__ << "ntunnel="   << event->TunnelHit->n << std::endl;
-              std::cout << __METHOD_NAME__ << "ntrajectory=" << event->Trajectory->n << std::endl;
-            }
+          std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
+          std::cout << __METHOD_NAME__ << "primaries=" << event->Primary->n << std::endl;
+          std::cout << __METHOD_NAME__ << "eloss="     << event->Eloss->n << std::endl;
+          std::cout << __METHOD_NAME__ << "nprimary="  << event->PrimaryFirstHit->n << std::endl;
+          std::cout << __METHOD_NAME__ << "nlast="     << event->PrimaryLastHit->n << std::endl;
+          std::cout << __METHOD_NAME__ << "ntunnel="   << event->TunnelHit->n << std::endl;
+          std::cout << __METHOD_NAME__ << "ntrajectory=" << event->Trajectory->n << std::endl;
         }
       
       if (processSamplers)
@@ -385,8 +387,30 @@ void EventAnalysis::PreparePerEntryHistogramSets()
     {
       auto setDefinitions  = c->EventHistogramSetDefinitionsPerEntry();
       for (const auto& def : setDefinitions)
-        {perEntryHistogramSets.push_back(new PerEntryHistogramSet(def, event, chain));}
+        {perEntryHistogramSets.push_back(ConstructPerEntryHistogramSet(def, event, chain));}
     }
+}
+
+PerEntryHistogramSet* EventAnalysis::ConstructPerEntryHistogramSet(const HistogramDefSet* definitionIn,
+                                                                   Event*                 eventIn,
+                                                                   TChain*                chainIn) const
+{
+  if (!definitionIn)
+    {return nullptr;}
+
+  PerEntryHistogramSet* result = nullptr;
+  switch (definitionIn->samplerType)
+  {
+    case HistogramDefSet::samplertype::plane:
+      {result = new PerEntryHistogramSetPlane(definitionIn, eventIn, chainIn); break;}
+    case HistogramDefSet::samplertype::cylindrical:
+      {result = new PerEntryHistogramSetC(definitionIn, eventIn, chainIn); break;}
+    case HistogramDefSet::samplertype::spherical:
+      {result = new PerEntryHistogramSetS(definitionIn, eventIn, chainIn); break;}
+    default:
+      {break;}
+  }
+  return result;
 }
 
 void EventAnalysis::AccumulatePerEntryHistogramSets(long int entryNumber)

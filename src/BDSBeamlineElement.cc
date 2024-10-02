@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -54,6 +54,9 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4double                 sPositionStartIn,
 				       G4double                 sPositionMiddleIn,
 				       G4double                 sPositionEndIn,
+               G4double                 synchronousTMiddleIn,
+               G4double                 startMomentumIn,
+               G4double                 startKineticEnergyIn,
 				       BDSTiltOffset*           tiltOffsetIn,
 				       BDSSamplerInfo*          samplerInfoIn,
 				       G4int                    indexIn):
@@ -67,6 +70,9 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   referenceRotationMiddle(referenceRotationMiddleIn),
   referenceRotationEnd(referenceRotationEndIn),
   sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn),
+  synchronousTMiddle(synchronousTMiddleIn),
+  startMomentum(startMomentumIn),
+  startKineticEnergy(startKineticEnergyIn),
   tiltOffset(tiltOffsetIn),
   samplerInfo(samplerInfoIn),
   samplerPlacementTransform(nullptr),

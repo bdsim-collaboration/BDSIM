@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -47,7 +47,7 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
 
-  if ((*strengthIn)["isentrance"])
+  if (G4bool((*strengthIn)["isentrance"]))
     {
       polefaceAngle = (*strengthIn)["e1"];
       polefaceCurvature = (*strengthIn)["h1"];
@@ -264,7 +264,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
     {
 	  yTempOut[i]     = pos[i];
 	  yTempOut[i + 3] = globalMom[i];
-      yErr[i]         = globalMomU[i];
+      yErr[i]         = globalMomU[i]*1e-10;
       yErr[i + 3]     = 1e-40;
     }
 

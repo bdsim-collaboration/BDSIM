@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -98,6 +98,7 @@ public:
   inline G4String Geant4PhysicsMacroFileName()    const {return G4String(options.geant4PhysicsMacroFileName);}
   inline G4bool   Geant4PhysicsMacroFileNameFromExecOptions() const {return G4bool(options.geant4PhysicsMacroFileNameFromExecOptions);}
   inline G4bool   VisDebug()               const {return G4bool  (options.visDebug);}
+  inline G4int    VisVerbosity()           const {return G4int   (options.visVerbosity);}
   inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
   inline G4bool   OutputFileNameSet()      const {return G4bool  (options.HasBeenSet("outputFileName"));}
   inline BDSOutputType OutputFormat()      const {return outputType;}
@@ -194,6 +195,7 @@ public:
   inline G4double MuonSplittingThresholdParentEk2() const {return G4double(options.muonSplittingThresholdParentEk2) * CLHEP::GeV;}
   inline G4bool   MuonSplittingExcludeWeight1Particles() const {return G4bool(options.muonSplittingExcludeWeight1Particles);}
   inline G4double MuonSplittingExclusionWeight() const {return G4double(options.muonSplittingExclusionWeight);}
+  inline G4double XrayAllSurfaceRoughness()  const {return G4double(options.xrayAllSurfaceRoughness*CLHEP::m);}
   inline G4String BiasForWorldVolume()       const {return G4String(options.biasForWorldVolume);}
   inline G4String BiasForWorldContents()     const {return G4String(options.biasForWorldContents);}
   inline G4String BiasForWorldVacuum()       const {return G4String(options.biasForWorldVacuum);}
@@ -204,6 +206,8 @@ public:
   inline G4double DeltaOneStep()             const {return G4double(options.deltaOneStep)*CLHEP::m;}
   inline G4double MinimumEpsilonStep()       const {return G4double(options.minimumEpsilonStep);}
   inline G4double MaximumEpsilonStep()       const {return G4double(options.maximumEpsilonStep);}
+  inline G4double MinimumEpsilonStepThin()   const {return G4double(options.minimumEpsilonStepThin);}
+  inline G4double MaximumEpsilonStepThin()   const {return G4double(options.maximumEpsilonStepThin);}
   inline G4String FieldModulator()           const {return G4String(options.fieldModulator);}
   inline G4double MaxTime()                  const {return G4double(options.maximumTrackingTime)*CLHEP::s;}
   inline G4double MaxStepLength()            const {return G4double(options.maximumStepLength)*CLHEP::m;}
@@ -317,6 +321,8 @@ public:
   inline G4bool   YokeFieldsMatchLHCGeometry()const{return G4bool  (options.yokeFieldsMatchLHCGeometry);}
   inline G4bool   UseOldMultipoleOuterFields()const{return G4bool  (options.useOldMultipoleOuterFields);}
   inline G4double ScalingFieldOuter()        const {return G4double(options.scalingFieldOuter);}
+  inline G4bool   IntegrateKineticEnergyAlongBeamline()const {return G4bool  (options.integrateKineticEnergyAlongBeamline);}
+  inline G4String CavityFieldType()          const {return G4String(options.cavityFieldType);}
   inline G4bool   TurnOnOpticalAbsorption()  const {return G4bool  (options.turnOnOpticalAbsorption);}
   inline G4bool   TurnOnRayleighScattering() const {return G4bool  (options.turnOnRayleighScattering);}
   inline G4bool   TurnOnMieScattering()      const {return G4bool  (options.turnOnMieScattering);}

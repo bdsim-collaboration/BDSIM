@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -268,6 +268,8 @@ void BDSParticleDefinition::CalculateLorentzFactors()
 
 void BDSParticleDefinition::ApplyChangeInKineticEnergy(G4double dEk)
 {
+  if (!BDS::IsFinite(dEk))
+    {return;}
   G4double newEk = kineticEnergy + dEk;
   if (newEk < 0)
     {

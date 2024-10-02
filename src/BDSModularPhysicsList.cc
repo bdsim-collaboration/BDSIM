@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicsCutsAndLimits.hh"
 #include "BDSPhysicsEMDissociation.hh"
 #include "BDSPhysicsGammaToMuMu.hh"
+#include "BDSPhysicsIonisation.hh"
 #include "BDSPhysicsLaserWire.hh"
 #include "BDSPhysicsMuon.hh"
 #include "BDSPhysicsMuonInelastic.hh"
@@ -127,6 +128,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4OpticalParameters.hh"
 #endif
 
+#if G4VERSION_NUMBER > 1119
+#include "BDSPhysicsXrayReflection.hh"
+#endif
+
 // particles
 #include "G4AntiNeutrinoE.hh"
 #include "G4AntiNeutron.hh"
@@ -154,6 +159,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
+  constructedAllLeptons(false),
+  constructedAllShortLived(false),
+  constructedAllMesons(false),
+  constructedAllBaryons(false),
+  constructedAllIons(false),
   temporaryName(""),
   opticalPhysics(nullptr),
   emWillBeUsed(false),
@@ -197,6 +207,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   physicsConstructors.insert(std::make_pair("ion_elastic_qmd",        &BDSModularPhysicsList::IonElasticQMD));
   physicsConstructors.insert(std::make_pair("ion_em_dissociation",    &BDSModularPhysicsList::IonEMDissociation));
   physicsConstructors.insert(std::make_pair("ion_inclxx",             &BDSModularPhysicsList::IonINCLXX));
+  physicsConstructors.insert(std::make_pair("ionisation",             &BDSModularPhysicsList::Ionisation));
   physicsConstructors.insert(std::make_pair("lw",                     &BDSModularPhysicsList::LaserWire));
   physicsConstructors.insert(std::make_pair("muon",                   &BDSModularPhysicsList::Muon));
   physicsConstructors.insert(std::make_pair("muon_inelastic",         &BDSModularPhysicsList::MuonInelastic));
@@ -233,6 +244,9 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   physicsConstructors.insert(std::make_pair("dna_7",                  &BDSModularPhysicsList::DNA));
   physicsConstructors.insert(std::make_pair("radioactivation",        &BDSModularPhysicsList::Radioactivation));
   physicsConstructors.insert(std::make_pair("shielding_lend",         &BDSModularPhysicsList::ShieldingLEND));
+#endif
+#if G4VERSION_NUMBER > 1119
+  physicsConstructors.insert(std::make_pair("xray_reflection",        &BDSModularPhysicsList::XrayReflection));
 #endif
 
   // old names and aliases
@@ -283,6 +297,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
   incompatible["hadronic_elastic_lend"] = {"hadronic_elastic",   "hadronic_elastic_d", "hadronic_elastic_h",  "hadronic_elastic_hp",   "hadronic_elastic_xs"};
   incompatible["hadronic_elastic_xs"]   = {"hadronic_elastic",   "hadronic_elastic_d", "hadronic_elastic_h",  "hadronic_elastic_hp",   "hadronic_elastic_lend"};
   incompatible["ion_elastic"] = {"ion_elastic_qmd"};
+  incompatible["ionisation"] = {"em", "em_ss", "em_1", "em_2", "em_3", "em_4", "em_livermore"};
   incompatible["qgsp_bert"]    = {"ftfp_bert", "ftfp_bert_hp", "qgsp_bert_hp", "qgsp_bic",     "qgsp_bic_hp"};
   incompatible["qgsp_bert_hp"] = {"ftfp_bert", "ftfp_bert_hp", "qgsp_bert",    "qgsp_bic",     "qgsp_bic_hp"};
   incompatible["qgsp_bic"]     = {"ftfp_bert", "ftfp_bert_hp", "qgsp_bert",    "qgsp_bert_hp", "qgsp_bic_hp"};
@@ -290,15 +305,15 @@ BDSModularPhysicsList::BDSModularPhysicsList(const G4String& physicsList):
 
 #if G4VERSION_NUMBER > 1019
   for (const auto& name : {"em", "em_ss", "em_wvi", "em_1", "em_2", "em_3", "em_4"})
-    {incompatible[name].push_back("em_gs");}
+    {incompatible[name].emplace_back("em_gs");}
   incompatible["em_gs"] = {"em", "em_ss", "em_wvi", "em_1", "em_2", "em_3", "em_4"};
 #endif
 #if G4VERSION_NUMBER > 1020
-  incompatible["decay"].push_back("decay_spin"); // append for safety in future
+  incompatible["decay"].emplace_back("decay_spin"); // append for safety in future
   incompatible["decay_spin"] = {"decay"};
 #endif
 #if G4VERSION_NUMBER > 1039
-  incompatible["shielding"].push_back("shielding_lend");
+  incompatible["shielding"].emplace_back("shielding_lend");
   incompatible["shielding_lend"] = {"shielding"};
 #endif
   
@@ -401,29 +416,44 @@ void BDSModularPhysicsList::ParsePhysicsList(const G4String& physListName)
 
 void BDSModularPhysicsList::ConstructAllLeptons()
 {
+  if (constructedAllLeptons)
+    {return;}
   G4LeptonConstructor::ConstructParticle();
+  constructedAllLeptons = true;
 }
 
 void BDSModularPhysicsList::ConstructAllShortLived()
 {
+  if (constructedAllShortLived)
+    {return;}
   G4ShortLivedConstructor::ConstructParticle();
+  constructedAllShortLived = true;
 }
 
 void BDSModularPhysicsList::ConstructAllMesons()
 {
+  if (constructedAllMesons)
+    {return;}
   G4MesonConstructor::ConstructParticle();
+  constructedAllMesons = true;
 }
 
 void BDSModularPhysicsList::ConstructAllBaryons()
 {
+  if (constructedAllBaryons)
+    {return;}
   G4BaryonConstructor::ConstructParticle();
+  constructedAllBaryons = true;
 }
 
 void BDSModularPhysicsList::ConstructAllIons()
 {
+  if (constructedAllIons)
+    {return;}
   usingIons = true; // all physics lists that use ions call this function so put this here
   G4GenericIon::GenericIonDefinition();
   G4IonConstructor::ConstructParticle();
+  constructedAllIons = true;
 }
 
 void BDSModularPhysicsList::ConfigurePhysics()
@@ -888,6 +918,15 @@ void BDSModularPhysicsList::IonINCLXX()
     }
 }
 
+void BDSModularPhysicsList::Ionisation()
+{
+  if (!physicsActivated["ionisation"])
+    {
+      constructors.push_back(new BDSPhysicsIonisation());
+      physicsActivated["ionisation"] = true;
+    }
+}
+
 void BDSModularPhysicsList::LaserWire()
 {
   if (!physicsActivated["lw"])
@@ -1128,6 +1167,18 @@ void BDSModularPhysicsList::ShieldingLEND()
     {
       constructors.push_back(new G4HadronPhysicsShieldingLEND());
       physicsActivated["shielding_lend"] = true;
+    }
+}
+#endif
+
+#if G4VERSION_NUMBER > 1119
+void BDSModularPhysicsList::XrayReflection()
+{
+  if (!physicsActivated["xray_relfection"])
+    {
+      G4double sr = BDSGlobalConstants::Instance()->XrayAllSurfaceRoughness();
+      constructors.push_back(new BDSPhysicsXrayReflection(sr));
+      physicsActivated["xray_relfection"] = true;
     }
 }
 #endif

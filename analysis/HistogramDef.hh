@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -56,6 +56,10 @@ public:
 
   /// Get the first string that defines the histogram in rebdsim for feedback.
   virtual std::string GetHistogramString() const = 0;
+
+  /// Little utility function.
+  void ReplaceStringInVariable(const std::string& match,
+                               const std::string& replacement);
   
   std::string treeName;
   std::string histName;

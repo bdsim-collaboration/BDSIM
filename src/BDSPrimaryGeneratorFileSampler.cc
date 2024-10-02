@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -133,9 +133,12 @@ void BDSPrimaryGeneratorFileSampler::ReadPrimaryParticlesFloat(G4long index)
       G4ThreeVector momentum = G4ThreeVector(xp,yp,zp) * p * CLHEP::GeV;
       G4double x = (G4double)sampler->x[i] * CLHEP::m;
       G4double y = (G4double)sampler->y[i] * CLHEP::m;
+      G4double T = (G4double)sampler->T[i] * CLHEP::s;
       G4ThreeVector localPosition(x,y,0);
+      G4double weight = (G4double)sampler->weight[i];
       auto g4prim = new G4PrimaryParticle(pdgID, momentum.x(), momentum.y(), momentum.z());
-      vertices.emplace_back(DisplacedVertex{localPosition, g4prim});
+      g4prim->SetWeight(weight);
+      vertices.emplace_back(DisplacedVertex{localPosition, T, g4prim});
     }
 }
 
@@ -155,9 +158,12 @@ void BDSPrimaryGeneratorFileSampler::ReadPrimaryParticlesDouble(G4long index)
       G4ThreeVector momentum = G4ThreeVector(xp,yp,zp) * p;
       G4double x = (G4double)sampler->x[i] * CLHEP::m;
       G4double y = (G4double)sampler->y[i] * CLHEP::m;
+      G4double T = (G4double)sampler->T[i] * CLHEP::s;
       G4ThreeVector localPosition(x,y,0);
+      G4double weight = (G4double)sampler->weight[i];
       auto g4prim = new G4PrimaryParticle(pdgID, momentum.x(), momentum.y(), momentum.z());
-      vertices.emplace_back(DisplacedVertex{localPosition, g4prim});
+      g4prim->SetWeight(weight);
+      vertices.emplace_back(DisplacedVertex{localPosition, T, g4prim});
     }
 }
 
@@ -168,7 +174,6 @@ void BDSPrimaryGeneratorFileSampler::ReadSingleEvent(G4long index, G4Event* anEv
   else
     {ReadPrimaryParticlesFloat(index);}
   
-  double overallWeight = 1.0;
   G4int nParticlesSkipped = 0;
   for (const auto& xyzVertex : vertices)
     {
@@ -193,7 +198,7 @@ void BDSPrimaryGeneratorFileSampler::ReadSingleEvent(G4long index, G4Event* anEv
       G4double rp = unitMomentum.perp();
   
       BDSParticleCoordsFull centralCoords = bunch->GetNextParticleLocal();
-      centralCoords.AddOffset(xyzVertex.xyz); // add on the local offset from the sampler
+      centralCoords.AddOffset(xyzVertex.xyz, xyzVertex.T); // add on the local offset from the sampler
       
       BDSParticleCoordsFull local(centralCoords.x,
                                   centralCoords.y,
@@ -204,7 +209,7 @@ void BDSPrimaryGeneratorFileSampler::ReadSingleEvent(G4long index, G4Event* anEv
                                   centralCoords.T,
                                   centralCoords.s,
                                   vertex->GetTotalEnergy(),
-                                  overallWeight);
+                                  vertex->GetWeight());
 
       if (!bunch->AcceptParticle(local, rp, vertex->GetKineticEnergy(), vertex->GetPDGcode()))
         {

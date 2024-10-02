@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -52,12 +52,10 @@ BDSPhysicsMuon::~BDSPhysicsMuon()
 void BDSPhysicsMuon::ConstructParticle()
 { 
   // leptons
-  G4LeptonConstructor leptons;
-  leptons.ConstructParticle();
+  G4LeptonConstructor::ConstructParticle();
 
   // mesons, inc. all pions
-  G4MesonConstructor mConstructor;
-  mConstructor.ConstructParticle();
+  G4MesonConstructor::ConstructParticle();
 
   // photons
   G4Gamma::Gamma();

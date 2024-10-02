@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -111,7 +111,7 @@ const char* BDSBH4DBase::GetTitle() const
   return h_title.c_str();
 }
 
-unsigned long BDSBH4DBase::GetEntries_BDSBH4D()
+unsigned long BDSBH4DBase::GetEntries_BDSBH4D() const
 {
   return h_entries;
 }

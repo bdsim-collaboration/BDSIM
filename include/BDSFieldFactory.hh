@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -104,12 +104,6 @@ public:
 
   /// Suggest a default interpolator.
   static BDSInterpolatorType DefaultInterpolatorType(G4int numberOfDimensions);
-  
-  static G4double CalculateGlobalPhase(G4double oscillatorFrequency,
-                                       G4double tOffsetIn);
-  
-  static G4double CalculateGlobalPhase(const BDSModulatorInfo& modulatorInfo,
-                                       const BDSFieldInfo& fieldInfo);
 
 private:
   /// Create a purely magnetic field.

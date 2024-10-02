@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -101,6 +101,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   baseFileName(baseFileNameIn),
   fileExtension(fileExtensionIn),
   outputFileNumber(fileNumberOffset),
+  sMinHistograms(0),
   sMaxHistograms(0),
   nbins(0),
   energyDeposited(0),
@@ -118,6 +119,7 @@ BDSOutput::BDSOutput(const G4String& baseFileNameIn,
   numberEventPerFile = g->NumberOfEventsPerNtuple();
   useScoringMap      = g->UseScoringMap();
 
+  sMinHistograms             = g->BeamlineS();
   storeApertureImpacts       = g->StoreApertureImpacts();
   storeApertureImpactsHistograms = g->StoreApertureImpactsHistograms();
   storeCavityInfo            = g->StoreCavityInfo();
@@ -259,8 +261,7 @@ void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
     }
   else if (const auto vertexInfoBDSV = dynamic_cast<const BDSPrimaryVertexInformationV*>(vertexInfo))
     {// vector version - multiple primaries at primary vertex
-      primary->Fill(vertexInfoBDSV,
-                    turnsTaken);
+      primary->Fill(vertexInfoBDSV, turnsTaken);
       primaryGlobal->Fill(vertexInfoBDSV);
     }
   auto nextLinkedVertex = vertex->GetNext();
@@ -447,7 +448,7 @@ void BDSOutput::CalculateHistogramParameters()
       if (!flatBeamline->empty())
         {
           G4double sMax = flatBeamline->GetLastItem()->GetSPositionEnd();
-          nbins = (int) std::ceil(sMax / binWidth); // round up to integer # of bins
+          nbins = (int) std::ceil((sMax - sMinHistograms)/ binWidth); // round up to integer # of bins
         }
     }
   else
@@ -456,7 +457,7 @@ void BDSOutput::CalculateHistogramParameters()
   if (nbins == 0)
     {nbins = 1;}
   
-  sMaxHistograms = nbins * binWidth;
+  sMaxHistograms = sMinHistograms + nbins * binWidth;
 }
 
 void BDSOutput::CreateHistograms()
@@ -464,8 +465,8 @@ void BDSOutput::CreateHistograms()
   // construct output histograms
   // calculate histogram dimensions
   CalculateHistogramParameters();
-  const G4double smin   = 0.0;
-  const G4double smax   = sMaxHistograms / CLHEP::m;
+  const G4double smin = sMinHistograms / CLHEP::m;
+  const G4double smax = sMaxHistograms / CLHEP::m;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
   G4cout << "s minimum: " << smin     << " m" << G4endl;
@@ -587,44 +588,49 @@ void BDSOutput::CreateHistograms()
       for (const auto& nameDef : scorerHistogramDefs)
         {
           const auto def = nameDef.second;
-
-      // use safe output name without any slashes in the name
-      G4int histID = -1;
+          // use safe output name without any slashes in the name
+          G4int histID = -1;
 
           if (def.nBinsE <=1)
             {
-
-          if (def.geometryType == "box"){
-              histID = Create3DHistogram(def.outputName, def.outputName,
-                                         def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
-                                         def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
-                                         def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);}
-          else if (def.geometryType == "cylindrical"){
-              histID = Create3DHistogram(def.outputName, def.outputName,
-                                         def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
-                                         def.nBinsPhi, 0, 2*M_PI,
-                                         def.nBinsR, def.rLow/CLHEP::m, def.rHigh/CLHEP::m);}
-
+              if (def.geometryType == "box")
+                {
+                  histID = Create3DHistogram(def.outputName, def.outputName,
+                                             def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
+                                             def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
+                                             def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m);
+                }
+              else if (def.geometryType == "cylindrical")
+                {
+                  histID = Create3DHistogram(def.outputName, def.outputName,
+                                             def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
+                                             def.nBinsPhi, 0, CLHEP::twopi,
+                                             def.nBinsR, def.rLow/CLHEP::m, def.rHigh/CLHEP::m);
+                }
+              
               histIndices3D[def.uniqueName] = histID;
               histIndexToUnits3D[histID] = def.primitiveScorerUnitValue;
               // avoid using [] operator for map as we have no default constructor for BDSHistBinMapper3D
             }
           else
             {
-
-          if (def.geometryType == "box"){
-                histID = Create4DHistogram(def.outputName+"-"+def.eScale,def.outputName,def.eScale,def.eBinsEdges,
-                                           def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
-                                           def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
-                                           def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
-                                           def.nBinsE, def.eLow/CLHEP::GeV, def.eHigh/CLHEP::GeV);}
-          else if (def.geometryType == "cylindrical"){
-                histID = Create4DHistogram(def.outputName+"-"+def.eScale, def.outputName, def.eScale,def.eBinsEdges,
-                                           def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
-                                           def.nBinsPhi, 0, 2*M_PI,
-                                           def.nBinsR, def.rLow/CLHEP::m, def.rHigh/CLHEP::m,
-                                           def.nBinsE, def.eLow/CLHEP::GeV, def.eHigh/CLHEP::GeV);}
-
+              if (def.geometryType == "box")
+                {
+                  histID = Create4DHistogram(def.outputName+"-"+def.eScale,def.outputName,def.eScale,def.eBinsEdges,
+                                             def.nBinsX, def.xLow/CLHEP::m, def.xHigh/CLHEP::m,
+                                             def.nBinsY, def.yLow/CLHEP::m, def.yHigh/CLHEP::m,
+                                             def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
+                                             def.nBinsE, def.eLow/CLHEP::GeV, def.eHigh/CLHEP::GeV);
+                }
+              else if (def.geometryType == "cylindrical")
+                {
+                  histID = Create4DHistogram(def.outputName+"-"+def.eScale, def.outputName, def.eScale,def.eBinsEdges,
+                                             def.nBinsZ, def.zLow/CLHEP::m, def.zHigh/CLHEP::m,
+                                             def.nBinsPhi, 0, CLHEP::twopi,
+                                             def.nBinsR, def.rLow/CLHEP::m, def.rHigh/CLHEP::m,
+                                             def.nBinsE, def.eLow/CLHEP::GeV, def.eHigh/CLHEP::GeV);
+                }
+              
               histIndices4D[def.uniqueName] = histID;
               histIndexToUnits4D[histID] = def.primitiveScorerUnitValue;
             }
@@ -888,83 +894,88 @@ void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDepositionGlobal* hi
 void BDSOutput::FillEnergyLoss(const BDSHitsCollectionEnergyDeposition* hits,
                                const LossType lossType)
 {
-  G4int nHits            = (G4int)hits->entries();
+  G4int nHits = (G4int)hits->entries();
   if (nHits == 0)
     {return;}
-  G4int indELoss         = histIndices1D["Eloss"];
-  G4int indELossPE       = histIndices1D["ElossPE"];
-  G4int indELossTunnel   = -1;
-  G4int indELossTunnelPE = -1;
-  if (storeELossTunnelHistograms)
+  switch (lossType)
     {
-      indELossTunnel   = histIndices1D["ElossTunnel"];
-      indELossTunnelPE = histIndices1D["ElossTunnelPE"];
-    }
-  G4int indELossVacuum   = -1;
-  G4int indELossVacuumPE = -1;
-  if (storeELossVacuumHistograms)
-    {
-      indELossVacuum   = histIndices1D["ElossVacuum"];
-      indELossVacuumPE = histIndices1D["ElossVacuumPE"];
-    }
-  G4int indScoringMap    = -1;
-  if (useScoringMap)
-    {indScoringMap = histIndices3D["ScoringMap"];}
-  for (G4int i=0; i < nHits; i++)
-    {
-      BDSHitEnergyDeposition* hit = (*hits)[i];
-      G4double sHit = hit->GetSHit()/CLHEP::m;
-      G4double eW   = hit->GetEnergyWeighted()/CLHEP::GeV;
-      switch (lossType)
-        {
-        case BDSOutput::LossType::energy:
+    case BDSOutput::LossType::energy:
+      {
+        G4int indELoss = histIndices1D["Eloss"];
+        G4int indELossPE = histIndices1D["ElossPE"];
+        for (G4int i = 0; i < nHits; i++)
           {
+            BDSHitEnergyDeposition* hit = (*hits)[i];
+            G4double sHit = hit->GetSHit() / CLHEP::m;
+            G4double eW = hit->GetEnergyWeighted() / CLHEP::GeV;
             energyDeposited += eW;
             if (storeELoss)
               {eLoss->Fill(hit);}
             if (storeELossHistograms)
               {
-                runHistos->Fill1DHistogram(indELoss,   sHit, eW);
-                evtHistos->Fill1DHistogram(indELoss,   sHit, eW);
+                runHistos->Fill1DHistogram(indELoss, sHit, eW);
+                evtHistos->Fill1DHistogram(indELoss, sHit, eW);
                 runHistos->Fill1DHistogram(indELossPE, sHit, eW);
                 evtHistos->Fill1DHistogram(indELossPE, sHit, eW);
               }
-            break;
           }
-        case BDSOutput::LossType::vacuum:
+        break;
+      }
+    case BDSOutput::LossType::vacuum:
+      {
+        G4int indELossVacuum = storeELossVacuumHistograms ? histIndices1D["ElossVacuum"] : -1;
+        G4int indELossVacuumPE = storeELossVacuumHistograms ? histIndices1D["ElossVacuumPE"] : -1;
+        for (G4int i = 0; i < nHits; i++)
           {
+            BDSHitEnergyDeposition* hit = (*hits)[i];
+            G4double sHit = hit->GetSHit() / CLHEP::m;
+            G4double eW = hit->GetEnergyWeighted() / CLHEP::GeV;
             energyDepositedVacuum += eW;
             if (storeELossVacuum)
               {eLossVacuum->Fill(hit);}
             if (storeELossVacuumHistograms)
               {
-                evtHistos->Fill1DHistogram(indELossVacuum,   sHit, eW);
+                evtHistos->Fill1DHistogram(indELossVacuum, sHit, eW);
                 runHistos->Fill1DHistogram(indELossVacuumPE, sHit, eW);
               }
-            break;
           }
-        case BDSOutput::LossType::tunnel:
+        break;
+      }
+    case BDSOutput::LossType::tunnel:
+      {
+        G4int indELossTunnel = storeELossTunnelHistograms ? histIndices1D["ElossTunnel"] : -1;
+        G4int indELossTunnelPE = storeELossTunnelHistograms ? histIndices1D["ElossTunnelPE"] : -1;
+        for (G4int i = 0; i < nHits; i++)
           {
+            BDSHitEnergyDeposition *hit = (*hits)[i];
+            G4double sHit = hit->GetSHit() / CLHEP::m;
+            G4double eW = hit->GetEnergyWeighted() / CLHEP::GeV;
             energyDepositedTunnel += eW;
             if (storeELossTunnel)
               {eLossTunnel->Fill(hit);}
             if (storeELossTunnelHistograms)
               {
-                runHistos->Fill1DHistogram(indELossTunnel,   sHit, eW);
-                evtHistos->Fill1DHistogram(indELossTunnel,   sHit, eW);
+                runHistos->Fill1DHistogram(indELossTunnel, sHit, eW);
+                evtHistos->Fill1DHistogram(indELossTunnel, sHit, eW);
                 runHistos->Fill1DHistogram(indELossTunnelPE, sHit, eW);
                 evtHistos->Fill1DHistogram(indELossTunnelPE, sHit, eW);
               }
-            break;
           }
-        default:
-          {break;} // only to prevent compiler warning
-        }
-      
-      if (useScoringMap)
+      }
+    default:
+      {break;}
+    }
+
+  if (useScoringMap)
+    {
+      G4int indScoringMap = histIndices3D["ScoringMap"];
+      for (G4int i = 0; i < nHits; i++)
         {
-          G4double x = hit->Getx()/CLHEP::m;
-          G4double y = hit->Gety()/CLHEP::m;
+          BDSHitEnergyDeposition *hit = (*hits)[i];
+          G4double sHit = hit->GetSHit() / CLHEP::m;
+          G4double eW = hit->GetEnergyWeighted() / CLHEP::GeV;
+          G4double x = hit->Getx() / CLHEP::m;
+          G4double y = hit->Gety() / CLHEP::m;
           evtHistos->Fill3DHistogram(indScoringMap, x, y, sHit, eW);
           runHistos->Fill3DHistogram(indScoringMap, x, y, sHit, eW);
         }

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2023.
+University of London 2001 - 2024.
 
 This file is part of BDSIM.
 
@@ -30,12 +30,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 HistogramDefSet::HistogramDefSet(const std::string&  branchNameIn,
                                  const HistogramDef* baseDefinitionIn,
                                  const std::set<ParticleSpec>& particlesSpecs,
-                                 const std::string&  particleSpecificationIn):
+                                 const std::string&  particleSpecificationIn,
+                                 const std::string&  definitionLineIn):
   branchName(branchNameIn),
   dynamicallyStoreIons(false),
   dynamicallyStoreParticles(particlesSpecs.empty()),
   what(writewhat::all),
-  topN(1)
+  topN(1),
+  definitionLine(definitionLineIn),
+  samplerType(samplertype::plane)
 {
   if (!baseDefinitionIn)
     {throw std::invalid_argument("invalid histogram definition");}
@@ -129,9 +132,20 @@ std::string HistogramDefSet::RemoveSubString(const std::string& stringIn,
   return result;
 }
 
+void HistogramDefSet::ReplaceStringInVariable(const std::string& match,
+                                              const std::string& replacement)
+{
+  baseDefinition->ReplaceStringInVariable(match, replacement);
+  for (auto* def : definitionsV)
+    {def->ReplaceStringInVariable(match, replacement);}
+}
+
 std::ostream& operator<< (std::ostream &out, const HistogramDefSet& s)
 {
-  out << "Spectra: " << s.baseDefinition->histName << "\n";
+  out << "Spectra: " << s.baseDefinition->histName;
+  if (!s.definitionLine.empty())
+    {out << ": \"" << s.definitionLine << "\"";}
+  out << "\n";
   for (const auto* d : s.definitionsV)
     {out << *d;}
   return out;
