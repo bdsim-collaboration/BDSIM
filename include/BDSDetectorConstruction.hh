@@ -58,6 +58,7 @@ class BDSSamplerInfo;
 
 #if G4VERSION_NUMBER > 1009
 class BDSBOptrMultiParticleChangeCrossSection;
+class BDSBOptrMultiParticleFinalStateSplitting;
 #endif
 
 /**
@@ -235,6 +236,11 @@ private:
                                                                  const std::list<std::string>& defaultBias,
                                                                  const G4String& elementName);
 
+  /// Function that creates final state splitting
+  BDSBOptrMultiParticleFinalStateSplitting* BuildFinalStateSplitting(const std::list<std::string>& biasList,
+                                                                     const std::list<std::string>& defaultBias,
+                                                                     const G4String& elementName);
+
   /// Construct scoring meshes.
   void ConstructScoringMeshes();
 
@@ -246,6 +252,8 @@ private:
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;
   std::map<G4String, BDSBOptrMultiParticleChangeCrossSection*> biasSetObjects;
+  std::vector<BDSBOptrMultiParticleFinalStateSplitting*> fsBiasObjects;
+  std::map<G4String, BDSBOptrMultiParticleFinalStateSplitting*> fsBiasSetObjects;
 #endif
 
 #ifdef BDSDEBUG
