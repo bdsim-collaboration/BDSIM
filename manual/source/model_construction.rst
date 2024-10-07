@@ -387,6 +387,10 @@ If `k1` is specified, the integrator from the `bdsimmatrix` integrator set is us
 results in no physical pole face angle being constructed for tracking purposes. The
 tracking still includes the pole face effects.
 
+The default geometry is a C-shaped yoke and this is by default built on the inside
+of the bend. For H-shaped used :code:`hStyle=1` and for the yoke on the outside, use
+:code:`yokeOnInside=0` in the definition respectively.
+
 .. note:: See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -404,7 +408,7 @@ tracking still includes the pole face effects.
 +-----------------+-----------------------------------+-----------+-----------------+
 | `material`      | Magnet outer material             | Iron      | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `yokeOnInside`  | Yoke on inside of bend            | 0         | No              |
+| `yokeOnInside`  | Yoke on inside of bend            | 1         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `hStyle`        | H style poled geometry            | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -528,6 +532,10 @@ makes no effect on tracking, but allows a much higher variety of apertures and m
 geometry to be used given the Geant4 geometry. The number of segments is computed such
 that the maximum tangential error in the aperture is 1 mm.
 
+The default geometry is a C-shaped yoke and this is by default built on the inside
+of the bend. For H-shaped used :code:`hStyle=1` and for the yoke on the outside, use
+:code:`yokeOnInside=0` in the definition respectively.
+
 With the default integrator set, the pole face rotations are not built into the geometry
 such that the tracking will match MADX. If you use the :code:`geant4` integrator set,
 the pole face geometry will be built fully.
@@ -549,7 +557,7 @@ the pole face geometry will be built fully.
 +-----------------+-----------------------------------+-----------+-----------------+
 | `material`      | Magnet outer material             | Iron      | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `yokeOnInside`  | Yoke on inside of bend            | 0         | No              |
+| `yokeOnInside`  | Yoke on inside of bend            | 1         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
 | `hStyle`        | H style poled geometry            | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
