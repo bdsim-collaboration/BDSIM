@@ -70,7 +70,7 @@ General Updates
   but also the nominal rigidity at that point in the beamline. This is because if, say, a quadrupole
   is used later in the beamline after acceleration with the same `k1`, the actual field gradient
   is different and so the component must be uniquely constructed to have a different field.
-* The time coordinate is now loaded and applied to each particle when loading a bdsim output
+* The time coordinate is now loaded and applied to each particle when loading a BDSIM output
   sampler as a distribution.
 
 Bug Fixes
@@ -81,6 +81,9 @@ Bug Fixes
 * Fix a bug where rebdsim would crash if a Spectra command was used on a cylindrical or
   spherical sampler. This was caused by loading the data into the wrong class.
 * The pill-box field was fixed where it should have no `z` dependence whereas it did previously.
+* Fix the :code:`Event.Trajectory.pxpypz` variable in the output. It was implemented
+  incorrectly in code and was not the correct data. It is now components of the momentum
+  vector (absolute) in GeV/c in a frame local to that element as it should be.
 
 
 Output Changes
