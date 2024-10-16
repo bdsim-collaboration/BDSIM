@@ -255,6 +255,7 @@ private:
   BDSAcceleratorComponent* CreateParallelTransporter();
   BDSAcceleratorComponent* CreateRectangularCollimator();
   BDSAcceleratorComponent* CreateBeamMaskCollimator();
+  BDSAcceleratorComponent* CreateGasCapillary();
   BDSAcceleratorComponent* CreateTarget();
   BDSAcceleratorComponent* CreateEllipticalCollimator();
   BDSAcceleratorComponent* CreateJawCollimator();
